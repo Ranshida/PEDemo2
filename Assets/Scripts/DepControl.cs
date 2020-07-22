@@ -98,6 +98,7 @@ public class DepControl : MonoBehaviour
         if(CurrentTask.Value > 0)
         {
             GC.FinishedTask.Add(CurrentTask);
+            GC.UpdateResourceInfo();
         }
         CurrentTask = null;
         ResetText();

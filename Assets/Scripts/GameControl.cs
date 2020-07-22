@@ -7,7 +7,7 @@ using UnityEngine.Events;
 public class GameControl : MonoBehaviour
 {
     public int SelectMode = 1;
-
+    public int[,] ResCount;
 
     [HideInInspector] public EmpInfo CurrentEmpInfo;
     [HideInInspector] public DepControl CurrentDep;
@@ -21,7 +21,7 @@ public class GameControl : MonoBehaviour
     public Transform HireContent, EmpPanelContent, DepContent, DepSelectContent, TotalEmpContent, StandbyContent, EmpDetailContent;
     public InfoPanel infoPanel;
     public GameObject DepSelectPanel, StandbyButton;
-    public Text Text_Time;
+    public Text Text_Time, Text_TechResource, Text_MarketResource, Text_ProductResource;
     public SkillControl SC;
     [HideInInspector] public UnityEvent DailyEvent, WeeklyEvent, MonthlyEvent;
 
@@ -33,7 +33,6 @@ public class GameControl : MonoBehaviour
 
     int Year = 1, Month = 1, Week = 1, Day = 1, Hour = 1;
     float Timer;
-
     private void Update()
     {
         Timer += Time.deltaTime * 10;
@@ -359,5 +358,26 @@ public class GameControl : MonoBehaviour
             HireInfos[i].SkillsInfo.Clear();
             HireInfos[i].CreateEmp(EType);
         }
+    }
+
+    public void UpdateResourceInfo()
+    {
+        int[,] C = new int[9, 4];
+        for (int i = 0; i < FinishedTask.Count; i++)
+        {
+            C[(int)FinishedTask[i].TaskType * 3 + FinishedTask[i].Num - 1, (FinishedTask[i].Value - 1)] += 1;
+        }
+        ResCount = C;
+        Text_TechResource.text = "程序迭代: " + C[0, 0] + "/" + C[0, 1] + "/" + C[0, 2] + "/" + C[0, 3] + "\n" +
+            "技术研发: " + C[1, 0] + "/" + C[1, 1] + "/" + C[1, 2] + "/" + C[1, 3] + "\n" +
+            "可行性调研: " + C[2, 0] + "/" + C[2, 1] + "/" + C[2, 2] + "/" + C[2, 3] + "\n";
+
+        Text_MarketResource.text = "公关谈判: " + C[3, 0] + "/" + C[3, 1] + "/" + C[3, 2] + "/" + C[3, 3] + "\n" +
+            "营销文案: " + C[4, 0] + "/" + C[4, 1] + "/" + C[4, 2] + "/" + C[4, 3] + "\n" +
+            "资源拓展: " + C[5, 0] + "/" + C[5, 1] + "/" + C[5, 2] + "/" + C[5, 3] + "\n";
+
+        Text_ProductResource.text = "原型图: " + C[6, 0] + "/" + C[6, 1] + "/" + C[6, 2] + "/" + C[6, 3] + "\n" +
+           "产品研究: " + C[7, 0] + "/" + C[7, 1] + "/" + C[7, 2] + "/" + C[7, 3] + "\n" +
+           "用户访谈: " + C[8, 0] + "/" + C[8, 1] + "/" + C[8, 2] + "/" + C[8, 3] + "\n";
     }
 }
