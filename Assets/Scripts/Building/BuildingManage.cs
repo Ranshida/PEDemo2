@@ -56,33 +56,37 @@ public class BuildingManage : MonoBehaviour
 
     public void BuildingConfirm()
     {
-        ControlPanel.SetActive(false);
-
-        BuildingType T = SelectBuilding.Type;
-        if (T == BuildingType.技术部门 || T == BuildingType.市场部门 || T == BuildingType.产品部门 || T == BuildingType.运营部门)
+        if (GC.Stamina > 30)
         {
-            SelectBuilding.Department = GC.CreateDep((int)T + 1);
-            SelectBuilding.Department.building = SelectBuilding;
-        }
-        else if(T == BuildingType.高管办公司)
-        {
-            SelectBuilding.Office = GC.CreateOffice();
-            SelectBuilding.Office.building = SelectBuilding;
-        }
+            GC.Stamina -= 30;
+            ControlPanel.SetActive(false);
 
-        SelectBuilding.BuildingSet = true;
+            BuildingType T = SelectBuilding.Type;
+            if (T == BuildingType.技术部门 || T == BuildingType.市场部门 || T == BuildingType.产品部门 || T == BuildingType.运营部门)
+            {
+                SelectBuilding.Department = GC.CreateDep((int)T + 1);
+                SelectBuilding.Department.building = SelectBuilding;
+            }
+            else if (T == BuildingType.高管办公司)
+            {
+                SelectBuilding.Office = GC.CreateOffice();
+                SelectBuilding.Office.building = SelectBuilding;
+            }
 
-        //周围建筑对自身造成影响 
-        for (int i = 0; i < SelectBuilding.EffectBuildings.Count; i++)
-        {
-            SelectBuilding.EffectBuildings[i].Affect();
+            SelectBuilding.BuildingSet = true;
+
+            //周围建筑对自身造成影响 
+            for (int i = 0; i < SelectBuilding.EffectBuildings.Count; i++)
+            {
+                SelectBuilding.EffectBuildings[i].Affect();
+            }
+            //对自身周围建筑造成影响
+            SelectBuilding.effect.Affect();
+
+            ConstructedBuildings.Add(SelectBuilding);
+            ToggleEffectRange();
+            SelectBuilding = null;
         }
-        //对自身周围建筑造成影响
-        SelectBuilding.effect.Affect();
-
-        ConstructedBuildings.Add(SelectBuilding);
-        ToggleEffectRange();
-        SelectBuilding = null;
     }
     public void BuildingCancel()
     {

@@ -82,7 +82,47 @@ public class EmpInfo : MonoBehaviour
         SetSkillName();
         //AddPerk(new Perk5(emp));
         //AddPerk(new Perk1(emp));
-        AddSkill(new Skill2(emp));
+        int Snum = Random.Range(1, 21);
+        if (Snum == 1)
+            AddSkill(new Skill1(emp));
+        else if(Snum == 2)
+            AddSkill(new Skill2(emp));
+        else if (Snum == 3)
+            AddSkill(new Skill3(emp));
+        else if (Snum == 4)
+            AddSkill(new Skill4(emp));
+        else if (Snum == 5)
+            AddSkill(new Skill5(emp));
+        else if (Snum == 6)
+            AddSkill(new Skill6(emp));
+        else if (Snum == 7)
+            AddSkill(new Skill7(emp));
+        else if (Snum == 8)
+            AddSkill(new Skill8(emp));
+        else if (Snum == 9)
+            AddSkill(new Skill9(emp));
+        else if (Snum == 10)
+            AddSkill(new Skill10(emp));
+        else if (Snum == 11)
+            AddSkill(new Skill11(emp));
+        else if (Snum == 12)
+            AddSkill(new Skill12(emp));
+        else if (Snum == 12)
+            AddSkill(new Skill12(emp));
+        else if (Snum == 14)
+            AddSkill(new Skill14(emp));
+        else if (Snum == 15)
+            AddSkill(new Skill15(emp));
+        else if (Snum == 16)
+            AddSkill(new Skill16(emp));
+        else if (Snum == 17)
+            AddSkill(new Skill17(emp));
+        else if (Snum == 18)
+            AddSkill(new Skill18(emp));
+        else if (Snum == 19)
+            AddSkill(new Skill19(emp));
+        else if (Snum == 20)
+            AddSkill(new Skill20(emp));
     }
 
     public void CopyStatus(EmpInfo ei)
@@ -114,6 +154,7 @@ public class EmpInfo : MonoBehaviour
     public void Fire()
     {
         //重新计算工资
+        GC.Salary -= CalcSalary();
         GC.CurrentEmployees.Remove(emp);
         if(emp.CurrentDep != null)
         {
@@ -198,5 +239,11 @@ public class EmpInfo : MonoBehaviour
         newSkill.empInfo = this;
         newSkill.info = GC.infoPanel;
         SkillsInfo.Add(newSkill);
+    }
+
+    public int CalcSalary()
+    {
+        int salary = emp.Manage + emp.Skill1 + emp.Skill2 + emp.Skill3;
+        return salary;
     }
 }

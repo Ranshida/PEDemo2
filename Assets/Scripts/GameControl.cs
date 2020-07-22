@@ -6,7 +6,10 @@ using UnityEngine.Events;
 
 public class GameControl : MonoBehaviour
 {
+    [HideInInspector] public int Salary, Income;
     public int SelectMode = 1;
+    public int Money = 1000, Stamina = 100, Mentality = 100;
+
     public int[,] ResCount;
 
     [HideInInspector] public EmpInfo CurrentEmpInfo;
@@ -18,10 +21,11 @@ public class GameControl : MonoBehaviour
     public OfficeControl OfficePrefab;
     public DepSelect DepSelectButtonPrefab, OfficeSelectButtonPrefab;
     public ProduceControl PC;
+    public ProductControl PrC;
     public Transform HireContent, EmpPanelContent, DepContent, DepSelectContent, TotalEmpContent, StandbyContent, EmpDetailContent;
     public InfoPanel infoPanel;
     public GameObject DepSelectPanel, StandbyButton;
-    public Text Text_Time, Text_TechResource, Text_MarketResource, Text_ProductResource;
+    public Text Text_Time, Text_TechResource, Text_MarketResource, Text_ProductResource, Text_Money, Text_Stamina, Text_Mentality;
     public SkillControl SC;
     [HideInInspector] public UnityEvent DailyEvent, WeeklyEvent, MonthlyEvent;
 
@@ -41,6 +45,10 @@ public class GameControl : MonoBehaviour
             Timer = 0;
             HourPass();
         }
+        Text_Money.text = "金钱:" + Money +"\n" 
+                        + "    " + (Income - Salary) + "/月";
+        Text_Stamina.text = "体力:" + Stamina;
+        Text_Mentality.text = "心力:" + Mentality; 
     }
 
     void HourPass()
@@ -70,6 +78,14 @@ public class GameControl : MonoBehaviour
         {
             Month += 1;
             Week = 1;
+            PrC.UserChange();
+            Money = Money + Income - Salary;
+            Stamina += 30;
+            Mentality += 30;
+            if (Stamina > 100)
+                Stamina = 100;
+            if (Mentality > 100)
+                Mentality = 100;
             MonthlyEvent.Invoke();
         }
         if(Month > 12)
@@ -204,6 +220,7 @@ public class GameControl : MonoBehaviour
         if (SelectMode == 1)
         {
             //还需要重新计算工资
+            Salary += CurrentEmpInfo.CalcSalary();
             SetInfoPanel();
             CurrentEmpInfo.emp.InfoA.transform.parent = StandbyContent;
         }
@@ -223,6 +240,7 @@ public class GameControl : MonoBehaviour
         if (SelectMode == 1)
         {
             //还需要重新计算工资
+            Salary += CurrentEmpInfo.CalcSalary();
             office.CurrentManager = CurrentEmpInfo.emp;
             CurrentEmpInfo.emp.CurrentOffice = office;
             SetInfoPanel();
@@ -260,6 +278,7 @@ public class GameControl : MonoBehaviour
         if(SelectMode == 1)
         {
             //还需要重新计算工资
+            Salary += CurrentEmpInfo.CalcSalary();
             depControl.CurrentEmps.Add(CurrentEmpInfo.emp);
             depControl.ShowProducePower();
             CurrentEmpInfo.emp.CurrentDep = depControl;
@@ -338,25 +357,33 @@ public class GameControl : MonoBehaviour
 
     public void RefreshHire(int type)
     {
-        EmpType EType;
-        if (type == 1)
-            EType = EmpType.Tech;
-        else if (type == 2)
-            EType = EmpType.Market;
-        else if (type == 3)
-            EType = EmpType.Product;
-        else
-            EType = EmpType.Operate;
-
-        for(int i = 0; i < 5; i++)
+        if (Stamina > 30)
         {
-            foreach (Transform child in HireInfos[i].PerkContent)
+            Stamina -= 30;
+            EmpType EType;
+            if (type == 1)
+                EType = EmpType.Tech;
+            else if (type == 2)
+                EType = EmpType.Market;
+            else if (type == 3)
+                EType = EmpType.Product;
+            else
+                EType = EmpType.Operate;
+
+            for (int i = 0; i < 5; i++)
             {
-                Destroy(child.gameObject);
+                foreach (Transform child in HireInfos[i].PerkContent)
+                {
+                    Destroy(child.gameObject);
+                }
+                foreach (Transform child in HireInfos[i].SkillContent)
+                {
+                    Destroy(child.gameObject);
+                }
+                HireInfos[i].PerksInfo.Clear();
+                HireInfos[i].SkillsInfo.Clear();
+                HireInfos[i].CreateEmp(EType);
             }
-            HireInfos[i].PerksInfo.Clear();
-            HireInfos[i].SkillsInfo.Clear();
-            HireInfos[i].CreateEmp(EType);
         }
     }
 
@@ -379,5 +406,41 @@ public class GameControl : MonoBehaviour
         Text_ProductResource.text = "原型图: " + C[6, 0] + "/" + C[6, 1] + "/" + C[6, 2] + "/" + C[6, 3] + "\n" +
            "产品研究: " + C[7, 0] + "/" + C[7, 1] + "/" + C[7, 2] + "/" + C[7, 3] + "\n" +
            "用户访谈: " + C[8, 0] + "/" + C[8, 1] + "/" + C[8, 2] + "/" + C[8, 3] + "\n";
+    }
+
+    public void RemoveTask(int type, int value)
+    {
+        EmpType T;//0648
+        int num;
+        if(type == 1)
+        {
+            T = EmpType.Tech;
+            num = 1;
+        }
+        else if(type == 2)
+        {
+            T = EmpType.Product;
+            num = 1;
+        }
+        else if(type == 3)
+        {
+            T = EmpType.Market;
+            num = 2;
+        }
+        else
+        {
+            T = EmpType.Product;
+            num = 3;
+        }
+        List<Task> TempList = new List<Task>();
+        for(int i = 0; i < FinishedTask.Count; i++)
+        {
+            if (FinishedTask[i].TaskType == T && FinishedTask[i].Num == num && FinishedTask[i].Value == value)
+                TempList.Add(FinishedTask[i]);
+        }
+        for(int i = 0; i < TempList.Count; i++)
+        {
+            FinishedTask.Remove(TempList[i]);
+        }
     }
 }

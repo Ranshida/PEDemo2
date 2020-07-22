@@ -149,7 +149,11 @@ public class DepControl : MonoBehaviour
 
     public void StartMobilize()
     {
-        GC.SC.gameObject.SetActive(true);
-        GC.SC.SetDice(this);
+        if (GC.Mentality >= 20)
+        {
+            GC.Mentality -= 20;
+            GC.SC.gameObject.SetActive(true);
+            GC.SC.SetDice(this);
+        }
     }
 }

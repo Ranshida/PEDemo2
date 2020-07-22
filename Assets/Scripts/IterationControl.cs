@@ -6,11 +6,13 @@ using UnityEngine.UI;
 public class IterationControl : MonoBehaviour
 {
     public Text[] Text_Counts = new Text[16];
-    public Text[] Text_Value = new Text[5];
+    public Text[] Text_Value = new Text[4];
     public Transform ButtonTab1, ButtonTab2;
+    public Product TargetProduct;
     public GameControl GC;
+    public Button ConfirmButton;
 
-    int Art, Function, Fluence, Secure, Profit;
+    int Art, Function, Fluence, Secure;
     int IterationNum = 0, TotalSelectNum = 0;
 
     int[,] Value = new int[4, 4]; //类型,品质
@@ -124,7 +126,16 @@ public class IterationControl : MonoBehaviour
         {
             Text_Counts[i].text = Value[i % 4, i / 4].ToString();
         }
-        int a = 0, b = 0, c = 0, d = 0, e = 0;
+        ValueCalc();
+        Text_Value[0].text = Art.ToString();
+        Text_Value[1].text = Function.ToString();
+        Text_Value[2].text = Fluence.ToString();
+        Text_Value[3].text = Secure.ToString();
+    }
+
+    public void ValueCalc()
+    {
+        int a = 0, b = 0, c = 0, d = 0;
         for (int i = 0; i < 4; i++)
         {
             for (int j = 0; j < 4; j++)
@@ -144,7 +155,7 @@ public class IterationControl : MonoBehaviour
                     c += Value[i, j] * m;
                     d += Value[i, j] * m;
                 }
-                else if(i == 1)
+                else if (i == 1)
                 {
                     a += Value[i, j] * m;
                     b += Value[i, j] * m;
@@ -152,22 +163,40 @@ public class IterationControl : MonoBehaviour
                 else if (i == 2)
                 {
                     a += Value[i, j] * m;
-                    e += Value[i, j] * m;
                 }
                 else if (i == 3)
                 {
                     b += Value[i, j] * m;
                     c += Value[i, j] * m;
-                    e += Value[i, j] * m;
                 }
             }
         }
-        Art = a; Function = b; Fluence = c; Secure = d; Profit = e;
-        Text_Value[0].text = Art.ToString();
-        Text_Value[1].text = Function.ToString();
-        Text_Value[2].text = Fluence.ToString();
-        Text_Value[3].text = Secure.ToString();
-        Text_Value[4].text = Profit.ToString();
+        Art = a; Function = b; Fluence = c; Secure = d;
+    }
+
+    public void ConfirmIteration()
+    {
+        TargetProduct.Score[0] += Art;
+        TargetProduct.Score[1] += Function;
+        TargetProduct.Score[2] += Fluence;
+        TargetProduct.Score[3] += Secure;
+        TargetProduct.CalcUser();
+        TargetProduct.UpdateUI();
+        for (int i = 0; i < 4; i++)
+        {
+            for (int j = 0; j < 4; j++)
+            {
+                if (Value[i, j] > 0)
+                {
+                    int t = Value[i, j];
+                    for (int k = 0; k < t; k++)
+                    {
+                        GC.RemoveTask(i + 1, j + 1);
+                    }
+                }
+            }
+        }
+        GC.UpdateResourceInfo();
     }
 
     public void ButtonCheck()
@@ -182,6 +211,7 @@ public class IterationControl : MonoBehaviour
             {
                 child.gameObject.GetComponent<Button>().interactable = false;
             }
+            ConfirmButton.interactable = true;
         }
         else if(IterationNum < 1)
         {
@@ -193,6 +223,7 @@ public class IterationControl : MonoBehaviour
             {
                 child.gameObject.GetComponent<Button>().interactable = false;
             }
+            ConfirmButton.interactable = false;
         }
         else
         {
@@ -204,6 +235,7 @@ public class IterationControl : MonoBehaviour
             {
                 child.gameObject.GetComponent<Button>().interactable = true;
             }
+            ConfirmButton.interactable = false;
         }
     }
 
