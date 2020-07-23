@@ -35,11 +35,11 @@ public class GameControl : MonoBehaviour
     public List<Employee> CurrentEmployees = new List<Employee>();
     public List<Task> FinishedTask = new List<Task>();
 
-    int Year = 1, Month = 1, Week = 1, Day = 1, Hour = 1;
+    int Year = 1, Month = 1, Week = 1, Day = 1, Hour = 1, TimeMultiply = 1;
     float Timer;
     private void Update()
     {
-        Timer += Time.deltaTime * 10;
+        Timer += Time.deltaTime * TimeMultiply;
         if(Timer >= 2)
         {
             Timer = 0;
@@ -442,5 +442,10 @@ public class GameControl : MonoBehaviour
         {
             FinishedTask.Remove(TempList[i]);
         }
+    }
+
+    public void SetTimeMultiply(int value)
+    {
+        TimeMultiply = value;
     }
 }
