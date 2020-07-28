@@ -5,6 +5,11 @@ using UnityEngine.UI;
 
 public class ProductControl : MonoBehaviour
 {
+    public int UserType = 1, ProfitType = 1;
+
+    public int[,] ScoreExtra = new int[5, 4];
+    public int[] Profit;
+
     public Product ProductPrefab;
     public Transform ProductContent;
     public GameControl GC;
@@ -18,11 +23,6 @@ public class ProductControl : MonoBehaviour
     public Text[] Text3 = new Text[6];
     public Text[] Text4 = new Text[6];
     public Text[] Text5 = new Text[6];
-
-    public int UserType = 1, ProfitType = 1; 
-
-    public int[,] ScoreExtra = new int[5, 4];
-    public int[] Profit;
 
     private void Start()
     {

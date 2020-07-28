@@ -31,7 +31,7 @@ public class BuildingEffect : MonoBehaviour
             else if(T == BuildingType.高管办公司)
             {
                 if (T2 == BuildingType.技术部门 || T2 == BuildingType.市场部门 || T2 == BuildingType.产品部门
-                    || T2 == BuildingType.运营部门)
+                    || T2 == BuildingType.运营部门 || T2 == BuildingType.研发部门)
                 {
                     TargetBuildings[i].Department.InRangeOffices.Add(CurrentBuilding.Office);
                 }

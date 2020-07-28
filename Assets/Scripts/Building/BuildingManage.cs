@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public enum BuildingType
 {
-    技术部门, 市场部门, 产品部门, 运营部门, 高管办公司
+    技术部门, 市场部门, 产品部门, 运营部门, 高管办公司, 研发部门
 }
 
 public class BuildingManage : MonoBehaviour
@@ -51,6 +51,8 @@ public class BuildingManage : MonoBehaviour
             SelectBuilding.SetSize(2, 3);
         else if(type == BuildingType.高管办公司)
             SelectBuilding.SetSize(2, 2);
+        else if(type == BuildingType.研发部门)
+            SelectBuilding.SetSize(2, 4);
 
     }
 
@@ -71,6 +73,11 @@ public class BuildingManage : MonoBehaviour
             {
                 SelectBuilding.Office = GC.CreateOffice();
                 SelectBuilding.Office.building = SelectBuilding;
+            }
+            else if (T == BuildingType.研发部门)
+            {
+                SelectBuilding.Department = GC.CreateDep(4);
+                SelectBuilding.Department.building = SelectBuilding;
             }
 
             SelectBuilding.BuildingSet = true;

@@ -21,14 +21,14 @@ public class PerkInfo : MonoBehaviour
                 Timer += Time.deltaTime;
             else
             {
-                if (info.gameObject.activeSelf == false)
-                    info.gameObject.SetActive(true);
                 if (CurrentPerk != null)
                 {
                     info.Text_Name.text = CurrentPerk.Name;
                     info.Text_Description.text = CurrentPerk.Description;
                     info.Text_ExtraInfo.text = "剩余" + CurrentPerk.TimeLeft + "周";
                 }
+                if (info.Visible == false)
+                    info.ShowPanel();
                 info.transform.position = Input.mousePosition;
             }
         }
@@ -42,7 +42,7 @@ public class PerkInfo : MonoBehaviour
     public void PointerExit()
     {
         ShowPanel = false;
-        info.gameObject.SetActive(false);
+        info.ClosePanel();
         Timer = 0;
     }
 

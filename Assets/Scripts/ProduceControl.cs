@@ -8,7 +8,7 @@ public class Task
     //技术:程序迭代;技术研发;可行性调研
     //市场:公关谈判;营销文案;资源拓展
     //产品:原型图;产品研究;用户访谈
-    public EmpType TaskType;
+    public EmpType TaskType;            //Type:技术、市场、迭代; Num:各类的第1-3项; Value:品质, 最低是取1的低劣
     public int Num, DayLeft, Value;
     public float Progress;
     public string TaskName;

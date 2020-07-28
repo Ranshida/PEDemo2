@@ -27,8 +27,6 @@ public class SkillInfo : MonoBehaviour
                 Timer += Time.deltaTime;
             else
             {
-                if (info.gameObject.activeSelf == false)
-                    info.gameObject.SetActive(true);
                 if (skill != null)
                 {
                     info.Text_Name.text = skill.Name;
@@ -38,6 +36,8 @@ public class SkillInfo : MonoBehaviour
                     else
                         info.Text_ExtraInfo.text = "体力消耗:" + (skill.StaminaCost - skill.StaminaExtra) + " 点数需求:" + (skill.DiceCost - skill.DiceExtra);
                 }
+                if (info.Visible == false)
+                    info.ShowPanel();
                 info.transform.position = Input.mousePosition;
             }
         }
@@ -56,7 +56,7 @@ public class SkillInfo : MonoBehaviour
     public void PointerExit()
     {
         ShowPanel = false;
-        info.gameObject.SetActive(false);
+        info.ClosePanel();
         Timer = 0;
     }
 

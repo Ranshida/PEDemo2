@@ -4,7 +4,7 @@ using UnityEngine;
 
 public enum EmpType
 {
-    Tech, Market, Product, Operate
+    Tech, Market, Product, Operate, Science
 }
 
 public class Employee
@@ -29,15 +29,13 @@ public class Employee
 
     public string Name;
     public bool WantLeave = false;
+    public EmpType Type;
 
     public EmpInfo InfoA, InfoB, InfoDetail;
     public DepControl CurrentDep;
     public OfficeControl CurrentOffice;
 
-    public EmpType Type;
-
     int mentality;
-
 
     public void InitStatus(EmpType type)
     {

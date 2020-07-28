@@ -114,6 +114,8 @@ public class SkillControl : MonoBehaviour
             SelectedDices[i].GetComponent<Toggle>().interactable = false;
         }
         TotalValue = 0;
+        GC.SelectMode = 1;
+        GC.TotalEmpContent.parent.parent.gameObject.SetActive(false);
         SkillCheck();
     }
 }

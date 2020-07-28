@@ -11,11 +11,10 @@ public class Perk
 {
     public int TimeLeft;  //单位周
     public string Name, Description;
+    public EffectType effectType;
 
     public Employee TargetEmp;
     public PerkInfo Info;
-
-    public EffectType effectType;
 
     protected int TempValue1, TempValue2, TempValue3;
 

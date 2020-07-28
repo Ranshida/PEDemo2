@@ -6,22 +6,24 @@ using UnityEngine.Events;
 
 public class GameControl : MonoBehaviour
 {
-    [HideInInspector] public int Salary, Income;
+    [HideInInspector] public int Salary, Income, MobilizeExtraMent = 0, ManageExtra;
+    [HideInInspector] public float EfficiencyExtraNormal = 0, EfficiencyExtraScience = 0, ResearchSuccessRateExtra = 0;
     public int SelectMode = 1;
     public int Money = 1000, Stamina = 100, Mentality = 100;
 
-    public int[,] ResCount;
+    public int[,] ResCount = new int[9, 4];
 
     [HideInInspector] public EmpInfo CurrentEmpInfo;
     [HideInInspector] public DepControl CurrentDep;
     public EmpInfo EmpInfoPrefab, EmpDetailPrefab;
     public PerkInfo PerkInfoPrefab;
     public SkillInfo SkillInfoPrefab;
-    public DepControl DepPrefab;
+    public DepControl DepPrefab, LabPrefab;
     public OfficeControl OfficePrefab;
     public DepSelect DepSelectButtonPrefab, OfficeSelectButtonPrefab;
     public ProduceControl PC;
     public ProductControl PrC;
+    public StrategyControl StrC;
     public Transform HireContent, EmpPanelContent, DepContent, DepSelectContent, TotalEmpContent, StandbyContent, EmpDetailContent;
     public InfoPanel infoPanel;
     public GameObject DepSelectPanel, StandbyButton;
@@ -48,7 +50,7 @@ public class GameControl : MonoBehaviour
         Text_Money.text = "金钱:" + Money +"\n" 
                         + "    " + (Income - Salary) + "/月";
         Text_Stamina.text = "体力:" + Stamina;
-        Text_Mentality.text = "心力:" + Mentality; 
+        Text_Mentality.text = "心力:" + Mentality;
     }
 
     void HourPass()
@@ -98,26 +100,42 @@ public class GameControl : MonoBehaviour
 
     public DepControl CreateDep(int type)
     {
-        DepControl newDep = Instantiate(DepPrefab, this.transform);
+        DepControl newDep;
+        if (type < 4)
+            newDep = Instantiate(DepPrefab, this.transform);
+        else
+            newDep = Instantiate(LabPrefab, this.transform);
+
         newDep.EmpPanel.parent = EmpPanelContent;
+        if(newDep.LabPanel != null)
+            newDep.LabPanel.parent = EmpPanelContent;
         newDep.transform.parent = DepContent;
 
         //部门命名
-        string newDepName;
+        string newDepName = "";
         if (type == 1)
         {
             newDep.type = EmpType.Tech;
+            newDep.EmpLimit = 4;
             newDepName = "技术部门";
         }
         else if (type == 2)
         {
             newDep.type = EmpType.Market;
+            newDep.EmpLimit = 4;
             newDepName = "市场部门";
         }
-        else
+        else if (type == 3)
         {
             newDep.type = EmpType.Product;
+            newDep.EmpLimit = 4;
             newDepName = "产品部门";
+        }
+        else if (type == 4)
+        {
+            newDep.type = EmpType.Science;
+            newDep.EmpLimit = 4;
+            newDepName = "研发部门";
         }
         int num = 1;
         for(int i = 0; i < CurrentDeps.Count; i++)
@@ -144,6 +162,7 @@ public class GameControl : MonoBehaviour
         newOffice.transform.parent = DepContent;
         CurrentOffices.Add(newOffice);
         newOffice.Text_OfficeName.text = "高管办公室" + CurrentOffices.Count;
+        newOffice.GC = this;
 
         //创建对应按钮
         newOffice.DS = Instantiate(OfficeSelectButtonPrefab, DepSelectContent);
@@ -156,11 +175,16 @@ public class GameControl : MonoBehaviour
 
     public void ShowDepSelectPanel(EmpType type)
     {
+        //招募的部门选择
         DepSelectPanel.SetActive(true);
         StandbyButton.SetActive(true);
         for(int i = 0; i < CurrentDeps.Count; i++)
         {
-            if (CurrentDeps[i].type != type)
+            if(CurrentDeps[i].CheckEmpNum() == false)
+                CurrentDeps[i].DS.gameObject.SetActive(false);
+            else if (CurrentDeps[i].type != type && CurrentDeps[i].type != EmpType.Science)
+                CurrentDeps[i].DS.gameObject.SetActive(false);
+            else if(CurrentDeps[i].type == EmpType.Science && (type == EmpType.Operate || type == EmpType.Market))
                 CurrentDeps[i].DS.gameObject.SetActive(false);
             else
                 CurrentDeps[i].DS.gameObject.SetActive(true);
@@ -176,11 +200,16 @@ public class GameControl : MonoBehaviour
     }
     public void ShowDepSelectPanel(Employee emp)
     {
+        //移动的部门选择
         DepSelectPanel.SetActive(true);
         StandbyButton.SetActive(true);
         for (int i = 0; i < CurrentDeps.Count; i++)
         {
-            if (CurrentDeps[i].type != emp.Type || CurrentDeps[i] == emp.CurrentDep)
+            if (CurrentDeps[i] == emp.CurrentDep || CurrentDeps[i].CheckEmpNum() == false)
+                CurrentDeps[i].DS.gameObject.SetActive(false);
+            else if (CurrentDeps[i].type != emp.Type && CurrentDeps[i].type != EmpType.Science)
+                CurrentDeps[i].DS.gameObject.SetActive(false);
+            else if (CurrentDeps[i].type == EmpType.Science && (emp.Type == EmpType.Operate || emp.Type == EmpType.Market))
                 CurrentDeps[i].DS.gameObject.SetActive(false);
             else
                 CurrentDeps[i].DS.gameObject.SetActive(true);
@@ -195,6 +224,7 @@ public class GameControl : MonoBehaviour
     }
     public void ShowDepSelectPanel(DepControl dep)
     {
+        //办公室领导选择
         DepSelectPanel.SetActive(true);
         StandbyButton.SetActive(false);
         for (int i = 0; i < CurrentDeps.Count; i++)
@@ -300,6 +330,7 @@ public class GameControl : MonoBehaviour
         DepSelectPanel.SetActive(false);
     }
 
+    //招聘后信息转移
     void SetInfoPanel()
     {
         CurrentEmpInfo.HireButton.interactable = false;
@@ -334,6 +365,12 @@ public class GameControl : MonoBehaviour
             CurrentEmpInfo.SkillsInfo[i].transform.parent = ED.SkillContent;
         }
         ED.SkillsInfo = CurrentEmpInfo.SkillsInfo;
+        //复制战略
+        for (int i = 0; i < CurrentEmpInfo.StrategiesInfo.Count; i++)
+        {
+            CurrentEmpInfo.StrategiesInfo[i].transform.parent = ED.StrategyContent;
+        }
+        ED.StrategiesInfo = CurrentEmpInfo.StrategiesInfo;
 
     }
 
@@ -380,8 +417,13 @@ public class GameControl : MonoBehaviour
                 {
                     Destroy(child.gameObject);
                 }
+                foreach (Transform child in HireInfos[i].StrategyContent)
+                {
+                    Destroy(child.gameObject);
+                }
                 HireInfos[i].PerksInfo.Clear();
                 HireInfos[i].SkillsInfo.Clear();
+                HireInfos[i].StrategiesInfo.Clear();
                 HireInfos[i].CreateEmp(EType);
             }
         }

@@ -12,10 +12,11 @@ public class EmpInfo : MonoBehaviour
     public Text Text_DepName, Text_Observation, Text_Tenacity, Text_Strength, Text_Manage, Text_HR, Text_Finance, Text_Decision, 
         Text_Forecast, Text_Strategy, Text_Convince, Text_Charm, Text_Gossip, Text_SName1, Text_SName2, Text_SName3;
     public EmpInfo DetailInfo;
-    public Transform PerkContent, SkillContent;
+    public Transform PerkContent, SkillContent, StrategyContent;
 
     public List<PerkInfo> PerksInfo = new List<PerkInfo>();
     public List<SkillInfo> SkillsInfo = new List<SkillInfo>();
+    public List<StrategyInfo> StrategiesInfo = new List<StrategyInfo>();
 
     public int InfoType;
 
@@ -83,6 +84,8 @@ public class EmpInfo : MonoBehaviour
         //AddPerk(new Perk5(emp));
         //AddPerk(new Perk1(emp));
         int Snum = Random.Range(1, 21);
+
+        #region OldSkillAdd
         if (Snum == 1)
             AddSkill(new Skill1(emp));
         else if(Snum == 2)
@@ -123,6 +126,9 @@ public class EmpInfo : MonoBehaviour
             AddSkill(new Skill19(emp));
         else if (Snum == 20)
             AddSkill(new Skill20(emp));
+        #endregion
+        AddThreeRandomStrategy();
+ 
     }
 
     public void CopyStatus(EmpInfo ei)
@@ -239,6 +245,33 @@ public class EmpInfo : MonoBehaviour
         newSkill.empInfo = this;
         newSkill.info = GC.infoPanel;
         SkillsInfo.Add(newSkill);
+    }
+
+    public void AddStrategy(int num)
+    {
+        StrategyInfo newStrategy = Instantiate(GC.StrC.InfoPrefabA, StrategyContent);
+        newStrategy.Str = StrategyData.Strategies[num];
+        newStrategy.info = GC.infoPanel;
+        newStrategy.Text_Name.text = newStrategy.Str.Name;
+        StrategiesInfo.Add(newStrategy);
+    }
+    void AddThreeRandomStrategy()
+    {
+        int numA, numB, numC;
+        numA = Random.Range(0, StrategyData.Strategies.Count);
+        numB = Random.Range(0, StrategyData.Strategies.Count);
+        numC = Random.Range(0, StrategyData.Strategies.Count);
+        while(numB == numA)
+        {
+            numB = Random.Range(0, StrategyData.Strategies.Count);
+        }
+        while(numC == numB || numC == numA)
+        {
+            numC = Random.Range(0, StrategyData.Strategies.Count);
+        }
+        AddStrategy(numA);
+        AddStrategy(numB);
+        AddStrategy(numC);
     }
 
     public int CalcSalary()

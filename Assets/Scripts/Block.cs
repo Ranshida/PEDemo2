@@ -4,8 +4,9 @@ using UnityEngine;
 
 public class Block
 {
-    public int[] User = new int[5];
     public int Type; //1浏览器 2杀毒 3物流 4搜索引擎
+
+    public int[] User = new int[5];
 
     public Block(int type)
     {

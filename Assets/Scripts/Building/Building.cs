@@ -5,6 +5,9 @@ using UnityEngine.UI;
 
 public class Building : MonoBehaviour
 {
+    public bool BuildingSet = false;
+    public BuildingType Type;
+
     public DepControl Department;
     public OfficeControl Office;
     public RectTransform Rt;
@@ -12,15 +15,13 @@ public class Building : MonoBehaviour
     public BuildingManage BM;
     public Text Text_DepName;
 
-    public bool BuildingSet = false;
-    public BuildingType Type;
-
     public List<BuildingEffect> EffectBuildings = new List<BuildingEffect>();
-
-    Vector3 Offset;
 
     int XPos, YPos;
     bool Rotated = false;
+
+    Vector3 Offset;
+
 
     private void Start()
     {
