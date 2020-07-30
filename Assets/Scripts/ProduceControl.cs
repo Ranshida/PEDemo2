@@ -9,7 +9,7 @@ public class Task
     //市场:公关谈判;营销文案;资源拓展
     //产品:原型图;产品研究;用户访谈
     public EmpType TaskType;            //Type:技术、市场、迭代; Num:各类的第1-3项; Value:品质, 最低是取1的低劣
-    public int Num, DayLeft, Value;
+    public int Num, HourLeft, Value;
     public float Progress;
     public string TaskName;
 }
@@ -64,7 +64,7 @@ public class ProduceControl : MonoBehaviour
         newTask.TaskType = CurrentDep.type;
         newTask.TaskName = dropdown.options[TaskNum - 1].text;
         newTask.Num = TaskNum;
-        newTask.DayLeft = TaskTime * 5;
+        newTask.HourLeft = TaskTime * 8;
         CurrentDep.SetTask(newTask);
     }
 }

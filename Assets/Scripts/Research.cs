@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class Research : MonoBehaviour
 {
-    static public int BaseValue = 200;
+    static public int BaseValue = 50;
     public int Type, Progress, CurrentProgress, ExtraProgress;
     public float SuccessRate, ExtraRate;
 

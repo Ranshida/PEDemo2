@@ -312,7 +312,7 @@ public class Skill11 : Skill
     public override void StartEffect()
     {
         base.StartEffect();
-        TargetEmp.CurrentDep.Efficiency += 0.2f;
+        new ProduceBuff(0.2f, TargetEmp.CurrentDep);
         for(int i = 0; i < TargetEmp.CurrentDep.CurrentEmps.Count; i++)
         {
             TargetEmp.CurrentDep.CurrentEmps[i].Mentality -= 40;
@@ -335,7 +335,7 @@ public class Skill12 : Skill
     public override void StartEffect()
     {
         base.StartEffect();
-        TargetEmp.CurrentDep.Efficiency += 0.2f;
+        new ProduceBuff(0.2f, TargetEmp.CurrentDep);
         for (int i = 0; i < TargetEmp.CurrentDep.CurrentEmps.Count; i++)
         {
             TargetEmp.CurrentDep.CurrentEmps[i].InfoDetail.AddPerk(new Perk4(TargetEmp.CurrentDep.CurrentEmps[i]), true);
@@ -364,7 +364,7 @@ public class Skill13 : Skill
     public override void StartEffect()
     {
         base.StartEffect();
-        TargetEmp.CurrentDep.Efficiency += 0.2f;
+        new ProduceBuff(0.2f, TargetEmp.CurrentDep);
         TargetEmp.Mentality -= 80;
     }
 }
@@ -394,7 +394,7 @@ public class Skill14 : Skill
     public override void StartEffect()
     {
         base.StartEffect();
-        TargetEmp.CurrentDep.Efficiency += 0.5f;
+        new ProduceBuff(0.5f, TargetEmp.CurrentDep);
     }
 }
 
@@ -413,8 +413,8 @@ public class Skill15 : Skill
     public override void StartEffect()
     {
         base.StartEffect();
-        TargetEmp.CurrentDep.Efficiency += 0.2f;
-        for(int i = 0; i < TargetEmp.CurrentDep.CurrentEmps.Count; i++)
+        new ProduceBuff(0.2f, TargetEmp.CurrentDep);
+        for (int i = 0; i < TargetEmp.CurrentDep.CurrentEmps.Count; i++)
         {
             TargetEmp.CurrentDep.CurrentEmps[i].Stamina -= Random.Range(0, 31);
         }

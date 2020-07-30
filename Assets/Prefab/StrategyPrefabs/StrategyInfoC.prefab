@@ -184,6 +184,7 @@ MonoBehaviour:
   Text_RequestDescription: {fileID: 6179029530248497062}
   UseButton: {fileID: 2446658241305929509}
   AbolishButton: {fileID: 0}
+  SelectButton: {fileID: 0}
 --- !u!1 &2446658241127392010
 GameObject:
   m_ObjectHideFlags: 0

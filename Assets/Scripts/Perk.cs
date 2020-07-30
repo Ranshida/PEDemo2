@@ -29,11 +29,15 @@ public class Perk
         {
             TargetEmp.InfoA.GC.DailyEvent.AddListener(ContinuousEffect);
         }
-        else if(effectType == EffectType.Monthly)
+        else if (effectType == EffectType.Weekly)
+        {
+            TargetEmp.InfoA.GC.WeeklyEvent.AddListener(ContinuousEffect);
+        }
+        else if (effectType == EffectType.Monthly)
         {
             TargetEmp.InfoA.GC.MonthlyEvent.AddListener(ContinuousEffect);
         }
-        TargetEmp.InfoA.GC.WeeklyEvent.AddListener(TimePass);
+        TargetEmp.InfoA.GC.HourEvent.AddListener(TimePass);
 
         //else if (EType == EffectType.Weekly)
         //{
@@ -49,7 +53,15 @@ public class Perk
         {
             TargetEmp.InfoA.GC.DailyEvent.RemoveListener(ContinuousEffect);
         }
-        TargetEmp.InfoA.GC.WeeklyEvent.RemoveListener(TimePass);
+        else if (effectType == EffectType.Weekly)
+        {
+            TargetEmp.InfoA.GC.WeeklyEvent.RemoveListener(ContinuousEffect);
+        }
+        else if (effectType == EffectType.Monthly)
+        {
+            TargetEmp.InfoA.GC.MonthlyEvent.RemoveListener(ContinuousEffect);
+        }
+        TargetEmp.InfoA.GC.HourEvent.RemoveListener(TimePass);
 
         Info.RemovePerk();
         //else if (EType == EffectType.Weekly)
@@ -63,10 +75,6 @@ public class Perk
         TimeLeft -= 1;
         if (TimeLeft < 0)
             RemoveEffect();
-        else if(effectType == EffectType.Weekly)
-        {
-            ContinuousEffect();
-        }
     }
 
     public virtual void ContinuousEffect()
@@ -88,7 +96,7 @@ public class Perk1 : Perk
     {
         Name = "硬撑";
         Description = "强壮+2，心力下降20点";
-        TimeLeft = 4;
+        TimeLeft = 32;
     }
 
     public override void ImmEffect()
@@ -112,7 +120,7 @@ public class Perk2 : Perk
     {
         Name = "斯巴达";
         Description = "强壮+5";
-        TimeLeft = 4;
+        TimeLeft = 32;
     }
 
     public override void ImmEffect()
@@ -134,7 +142,7 @@ public class Perk3 : Perk
     {
         Name = "怪力";
         Description = "强壮+2";
-        TimeLeft = 12;
+        TimeLeft = 96;
     }
 
     public override void ImmEffect()
@@ -156,7 +164,7 @@ public class Perk4 : Perk
     {
         Name = "疲劳";
         Description = "每月生病几率增加20%";
-        TimeLeft = 12;
+        TimeLeft = 96;
         effectType = EffectType.Monthly;
     }
 
@@ -182,9 +190,9 @@ public class Perk5 : Perk
     public Perk5(Employee Emp) : base(Emp)
     {
         Name = "高效运行";
-        Description = "职业技能+3，每日体力-10";
-        TimeLeft = 4;
-        effectType = EffectType.Dayily;
+        Description = "职业技能+3，每周体力-10";
+        TimeLeft = 32;
+        effectType = EffectType.Weekly;
     }
 
     public override void ImmEffect()
@@ -214,9 +222,9 @@ public class Perk6 : Perk
     public Perk6(Employee Emp) : base(Emp)
     {
         Name = "超越极限";
-        Description = "职业技能+100%，每日体力-20";
-        TimeLeft = 4;
-        effectType = EffectType.Dayily;
+        Description = "职业技能+100%，每周体力-20";
+        TimeLeft = 32;
+        effectType = EffectType.Weekly;
     }
 
     public override void ImmEffect()
@@ -250,7 +258,7 @@ public class Perk7 : Perk
     {
         Name = "压力";
         Description = "职业技能+2，每周心力-30";
-        TimeLeft = 3;
+        TimeLeft = 24;
         effectType = EffectType.Weekly;
     }
 
@@ -282,7 +290,7 @@ public class Perk8 : Perk
     {
         Name = "逃亡主义";
         Description = "心力小于50时，立刻辞职";
-        TimeLeft = 9000;
+        TimeLeft = 72000;
     }
 
     public override void ImmEffect()
@@ -304,7 +312,7 @@ public class Perk9 : Perk
     {
         Name = "麻木";
         Description = "韧性+2";
-        TimeLeft = 12;
+        TimeLeft = 96;
     }
 
     public override void ImmEffect()
@@ -328,7 +336,7 @@ public class Perk10 : Perk
     {
         Name = "压抑";
         Description = "韧性+1，热情-1";
-        TimeLeft = 12;
+        TimeLeft = 96;
     }
 
     public override void ImmEffect()
@@ -352,9 +360,9 @@ public class Perk12 : Perk
     public Perk12(Employee Emp) : base(Emp)
     {
         Name = "高效运行";
-        Description = "职业技能+3，每日体力-10";
-        TimeLeft = 4;
-        effectType = EffectType.Dayily;
+        Description = "职业技能+3，每周体力-10";
+        TimeLeft = 32;
+        effectType = EffectType.Weekly;
     }
 
     public override void ContinuousEffect()
@@ -383,7 +391,7 @@ public class Perk15 : Perk
         Name = "生病";
         Description = "每周心力-20，强壮-5";
         effectType = EffectType.Weekly;
-        TimeLeft = 4;
+        TimeLeft = 32;
     }
 
     public override void ImmEffect()
@@ -410,7 +418,7 @@ public class Perk16 : Perk
     {
         Name = "烦躁";
         Description = "每周心力-20";
-        TimeLeft = 4;
+        TimeLeft = 32;
         effectType = EffectType.Weekly;
     }
 

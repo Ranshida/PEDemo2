@@ -10,6 +10,18 @@ public class GameControl : MonoBehaviour
     [HideInInspector] public float EfficiencyExtraNormal = 0, EfficiencyExtraScience = 0, ResearchSuccessRateExtra = 0;
     public int SelectMode = 1;
     public int Money = 1000, Stamina = 100, Mentality = 100;
+    public int Morale
+    {
+        get { return morale; }
+        set
+        {
+            if (morale > 100)
+                morale = 100;
+            else if (morale < 0)
+                morale = 0;
+            Text_Morale.text = "士气" + Morale;
+        }
+    }
 
     public int[,] ResCount = new int[9, 4];
 
@@ -27,9 +39,9 @@ public class GameControl : MonoBehaviour
     public Transform HireContent, EmpPanelContent, DepContent, DepSelectContent, TotalEmpContent, StandbyContent, EmpDetailContent;
     public InfoPanel infoPanel;
     public GameObject DepSelectPanel, StandbyButton;
-    public Text Text_Time, Text_TechResource, Text_MarketResource, Text_ProductResource, Text_Money, Text_Stamina, Text_Mentality;
+    public Text Text_Time, Text_TechResource, Text_MarketResource, Text_ProductResource, Text_Money, Text_Stamina, Text_Mentality, Text_Morale;
     public SkillControl SC;
-    [HideInInspector] public UnityEvent DailyEvent, WeeklyEvent, MonthlyEvent;
+    [HideInInspector] public UnityEvent DailyEvent, WeeklyEvent, MonthlyEvent, HourEvent;
 
     public EmpInfo[] HireInfos = new EmpInfo[5];
     public List<DepControl> CurrentDeps = new List<DepControl>();
@@ -37,12 +49,12 @@ public class GameControl : MonoBehaviour
     public List<Employee> CurrentEmployees = new List<Employee>();
     public List<Task> FinishedTask = new List<Task>();
 
-    int Year = 1, Month = 1, Week = 1, Day = 1, Hour = 1, TimeMultiply = 1;
+    int Year = 1, Month = 1, Week = 1, Day = 1, Hour = 1, TimeMultiply = 1, morale = 100;
     float Timer;
     private void Update()
     {
         Timer += Time.deltaTime * TimeMultiply;
-        if(Timer >= 2)
+        if(Timer >= 15)
         {
             Timer = 0;
             HourPass();
@@ -56,26 +68,29 @@ public class GameControl : MonoBehaviour
     void HourPass()
     {
         Hour += 1;
+        HourEvent.Invoke();
         for(int i = 0; i < CurrentDeps.Count; i++)
         {
             CurrentDeps[i].Produce();
         }
         if (Hour > 8)
         {
-            for(int i = 0; i < CurrentDeps.Count; i++)
-            {
-                CurrentDeps[i].OneDayPass();
-            }
+            //for(int i = 0; i < CurrentDeps.Count; i++)
+            //{
+            //    CurrentDeps[i].OneHourPass();
+            //}
             DailyEvent.Invoke();
-            Day += 1;
             Hour = 1;
-        }
-        if (Day > 5)
-        {
             Week += 1;
-            Day = 1;
             WeeklyEvent.Invoke();
+            //Day += 1;
         }
+        //if (Day > 5) //旧的5日1周时间流
+        //{
+        //    Week += 1;
+        //    Day = 1;
+        //    WeeklyEvent.Invoke();
+        //}
         if(Week > 4)
         {
             Month += 1;
@@ -89,13 +104,18 @@ public class GameControl : MonoBehaviour
             if (Mentality > 100)
                 Mentality = 100;
             MonthlyEvent.Invoke();
+            for (int i = 0; i < CurrentDeps.Count; i++)
+            {
+                CurrentDeps[i].FailCheck();
+            }
         }
         if(Month > 12)
         {
             Year += 1;
             Month = 1;
         }
-        Text_Time.text = "年" + Year + " 月" + Month + " 周" + Week + " 日" + Day + " 时" + Hour;
+        //Text_Time.text = "年" + Year + " 月" + Month + " 周" + Week + " 日" + Day + " 时" + Hour;
+        Text_Time.text = "年" + Year + " 月" + Month + " 周" + Week + " 时" + Hour;
     }
 
     public DepControl CreateDep(int type)

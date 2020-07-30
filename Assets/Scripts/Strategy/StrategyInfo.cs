@@ -60,7 +60,7 @@ public class StrategyInfo : MonoBehaviour
             if (Text_RequestDescription != null)
                 Text_RequestDescription.text = Str.RequestDescription;
             if (Text_Time != null)
-                Text_Time.text = "剩余" + TimeLeft + "周";
+                Text_Time.text = "剩余" + TimeLeft + "时";
         }
         else
         {
@@ -70,7 +70,7 @@ public class StrategyInfo : MonoBehaviour
             if (Text_RequestDescription != null)
                 Text_RequestDescription.text = "--";
             if (Text_Time != null)
-                Text_Time.text = "剩余--周";
+                Text_Time.text = "剩余--时";
         }
     }
 
@@ -103,10 +103,15 @@ public class StrategyInfo : MonoBehaviour
 
     public void SelectStrategy()
     {
-        SC.CurrentStrategy.Str = Str;
-        SC.CurrentStrategy.TimeLeft = 12;
-        SC.CurrentStrategy.UpdateUI();
-        SC.GC.WeeklyEvent.AddListener(SC.CurrentStrategy.TimePass);
+        StrategyInfo newS = Instantiate(SC.InfoPrefabC, SC.UnfinishedStrategyContent);
+        newS.TimeLeft = 96;
+        newS.Str = Str;
+        newS.SC = SC;
+        newS.UpdateUI();
+        SC.GC.HourEvent.AddListener(newS.TimePass);
+        UseButton.interactable = false;
+        Str = null;
+        UpdateUI();
     }
 
     public void TimePass()
@@ -118,17 +123,77 @@ public class StrategyInfo : MonoBehaviour
             {
                 if (Used == true)
                     ToggleUsage();
-                SC.GC.WeeklyEvent.RemoveListener(TimePass);
+                SC.GC.HourEvent.RemoveListener(TimePass);
                 Destroy(this.gameObject);
             }
             else if (Type == 4)
             {
                 Str = null;
                 UpdateUI();
-                SC.GC.WeeklyEvent.RemoveListener(TimePass);
+                SC.GC.HourEvent.RemoveListener(TimePass);
+                UseButton.gameObject.SetActive(false);
+                AbolishButton.gameObject.SetActive(true);
+                SC.GC.Morale -= 10;
+                SC.GC.Money -= (int)(SC.GC.Money * 0.2f);
             }
         }
         else
             UpdateUI();
+    }
+
+    public void CompleteStrategy()
+    {
+        bool Success = false;
+        if (Str != null)
+        {
+            List<Task> ts = new List<Task>();
+            for (int i = 0; i < Str.RequestTasks.Count; i++)
+            {
+                int num = 0;
+                for (int j = 0; j < SC.GC.FinishedTask.Count; j++)
+                {
+                    if (Str.RequestTasks[i].TaskType == SC.GC.FinishedTask[j].TaskType &&
+                       Str.RequestTasks[i].Num == SC.GC.FinishedTask[j].Num &&
+                       Str.RequestTasks[i].Value <= SC.GC.FinishedTask[j].Value)
+                    {
+                        num += 1;
+                        ts.Add(SC.GC.FinishedTask[j]);
+                        if (num == Str.RequestNum[i])
+                        {
+                            Success = true;
+                            break;
+                        }
+
+                    }
+                    else if (j == SC.GC.FinishedTask.Count - 1)
+                    {
+                        Success = false;
+                    }
+                }
+                if (Success == false)
+                    break;
+            }
+            if (Success == true)
+            {
+                for (int i = 0; i < ts.Count; i++)
+                {
+                    SC.GC.FinishedTask.Remove(ts[i]);
+                }
+                StrategyInfo newS = Instantiate(SC.InfoPrefabB, SC.StrategyContent);
+                newS.Str = Str;
+                newS.SC = SC;
+                newS.TimeLeft = 96;
+                newS.UpdateUI();
+                SC.GC.HourEvent.AddListener(newS.TimePass);
+
+                SC.GC.HourEvent.RemoveListener(TimePass);
+                Destroy(this.gameObject);
+            }
+        }
+    }
+
+    public void DeleteStrategy()
+    {
+        Destroy(this.gameObject);
     }
 }

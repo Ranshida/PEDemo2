@@ -92,13 +92,13 @@ public class Strategy1_2 : Strategy
     }
 }
 
-//积极心理学!!
+//积极心理学
 public class Strategy1_3 : Strategy
 {
     public Strategy1_3() : base()
     {
         Type = StrategyType.人力;
-        Name = "积极心理学!!";
+        Name = "积极心理学";
         EffectDescription = "士气+20";
         RequestDescription = "3个平庸及以上用户访谈";
 
@@ -112,13 +112,13 @@ public class Strategy1_3 : Strategy
     public override void Effect(GameControl GC)
     {
         base.Effect(GC);
-        MonoBehaviour.print("1_3Use");
+        GC.Morale += 20;
     }
 
     public override void EffectRemove(GameControl GC)
     {
         base.EffectRemove(GC);
-        MonoBehaviour.print("1_3Removed");
+        GC.Morale -= 20;
     }
 }
 
@@ -285,13 +285,13 @@ public class Strategy2_4 : Strategy
     }
 }
 
-//996加班制!
+//996加班制
 public class Strategy3_1 : Strategy
 {
     public Strategy3_1() : base()
     {
         Type = StrategyType.执行;
-        Name = "996加班制!";
+        Name = "996加班制";
         EffectDescription = "所有业务部门效率+20% \n 士气-15";
         RequestDescription = "2个低劣及以上公关谈判";
 
@@ -306,12 +306,14 @@ public class Strategy3_1 : Strategy
     {
         base.Effect(GC);
         GC.EfficiencyExtraNormal += 0.2f;
+        GC.Morale -= 15;
     }
 
     public override void EffectRemove(GameControl GC)
     {
         base.EffectRemove(GC);
         GC.EfficiencyExtraNormal -= 0.2f;
+        GC.Morale += 15;
     }
 }
 

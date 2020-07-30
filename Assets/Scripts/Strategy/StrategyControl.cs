@@ -9,9 +9,9 @@ public class StrategyControl : MonoBehaviour
     public int[] CurrentStrNum = new int[5];
     public int[] StrLimitNum = new int[5];
 
-    public StrategyInfo InfoPrefabA, InfoPrefabB, CurrentStrategy;
+    public StrategyInfo InfoPrefabA, InfoPrefabB, InfoPrefabC,CurrentStrategy;
     public GameObject NewStrPanel;
-    public Transform StrategyContent;
+    public Transform StrategyContent, UnfinishedStrategyContent;
     public GameControl GC;
 
     public List<StrategyInfo> StrInfos = new List<StrategyInfo>();
@@ -32,61 +32,63 @@ public class StrategyControl : MonoBehaviour
                 EmpInfo e = GC.CurrentEmployees[Random.Range(0, GC.CurrentEmployees.Count)].InfoDetail;
                 NewStrs[i].Str = e.StrategiesInfo[Random.Range(0, 3)].Str;
                 NewStrs[i].UpdateUI();
+                NewStrs[i].UseButton.interactable = true;
             }
             NewStrPanel.SetActive(true);
         }
     }
 
-    public void CompleteStrategy()
-    {
-        if(CurrentStrategy.Str != null)
-        {
-            bool Success = false;
-            List<Task> ts = new List<Task>();
-            for(int i = 0; i < CurrentStrategy.Str.RequestTasks.Count; i++)
-            {
-                int num = 0;
-                for(int j = 0; j < GC.FinishedTask.Count; j++)
-                {
-                    if (CurrentStrategy.Str.RequestTasks[i].TaskType == GC.FinishedTask[j].TaskType &&
-                       CurrentStrategy.Str.RequestTasks[i].Num == GC.FinishedTask[j].Num &&
-                       CurrentStrategy.Str.RequestTasks[i].Value <= GC.FinishedTask[j].Value)
-                    {
-                        num += 1;
-                        ts.Add(GC.FinishedTask[j]);
-                        if (num == CurrentStrategy.Str.RequestNum[i])
-                        {
-                            Success = true;
-                            break;
-                        }
+    //public bool CompleteStrategy()
+    //{
+    //    bool Success = false;
+    //    if (CurrentStrategy.Str != null)
+    //    {
+    //        List<Task> ts = new List<Task>();
+    //        for(int i = 0; i < CurrentStrategy.Str.RequestTasks.Count; i++)
+    //        {
+    //            int num = 0;
+    //            for(int j = 0; j < GC.FinishedTask.Count; j++)
+    //            {
+    //                if (CurrentStrategy.Str.RequestTasks[i].TaskType == GC.FinishedTask[j].TaskType &&
+    //                   CurrentStrategy.Str.RequestTasks[i].Num == GC.FinishedTask[j].Num &&
+    //                   CurrentStrategy.Str.RequestTasks[i].Value <= GC.FinishedTask[j].Value)
+    //                {
+    //                    num += 1;
+    //                    ts.Add(GC.FinishedTask[j]);
+    //                    if (num == CurrentStrategy.Str.RequestNum[i])
+    //                    {
+    //                        Success = true;
+    //                        break;
+    //                    }
 
-                    }
-                    else if (j == GC.FinishedTask.Count - 1)
-                        Success = false;
-                }
-                if (Success == false)
-                    break;
-            }
-            if(Success == true)
-            {
-                for(int i = 0; i < ts.Count; i++)
-                {
-                    GC.FinishedTask.Remove(ts[i]);
-                }
-                StrategyInfo newS = Instantiate(InfoPrefabB, StrategyContent);
-                newS.Str = CurrentStrategy.Str;
-                newS.SC = this;
-                newS.TimeLeft = 12;
-                newS.UpdateUI();
-                GC.WeeklyEvent.AddListener(newS.TimePass);
+    //                }
+    //                else if (j == GC.FinishedTask.Count - 1)
+    //                {
+    //                    Success = false;
+    //                    return false;
+    //                }
+    //            }
+    //        }
+    //        if(Success == true)
+    //        {
+    //            for(int i = 0; i < ts.Count; i++)
+    //            {
+    //                GC.FinishedTask.Remove(ts[i]);
+    //            }
+    //            StrategyInfo newS = Instantiate(InfoPrefabB, StrategyContent);
+    //            newS.Str = CurrentStrategy.Str;
+    //            newS.SC = this;
+    //            newS.TimeLeft = 96;
+    //            newS.UpdateUI();
+    //            GC.HourEvent.AddListener(newS.TimePass);
 
-                CurrentStrategy.Str = null;
-                CurrentStrategy.UpdateUI();
-                GC.WeeklyEvent.RemoveListener(CurrentStrategy.TimePass);
-            }
-            print(Success);
-        }
-    }
+    //            CurrentStrategy.Str = null;
+    //            CurrentStrategy.UpdateUI();
+    //            GC.HourEvent.RemoveListener(CurrentStrategy.TimePass);
+    //        }
+    //    }
+    //    return Success;
+    //}
 
     public void UpdateUI()
     {
@@ -98,7 +100,37 @@ public class StrategyControl : MonoBehaviour
 
     public void CheckStrNum()
     {
+        List<StrategyInfo> RemoveInfos = new List<StrategyInfo>();
+        for (int i = 0; i < 5; i++)
+        {
+            if(CurrentStrNum[i] > StrLimitNum[i])
+            {
+                int num = CurrentStrNum[i] - StrLimitNum[i];
+                for(int j = 0; j < StrInfos.Count; j++)
+                {
+                    if((int)StrInfos[j].Str.Type == i)
+                    {
+                        num -= 1;
+                        RemoveInfos.Add(StrInfos[j]);
+                    }
+                    if (num == 0)
+                        break;
+                }
+            }
+        }
+        for(int i = 0; i < RemoveInfos.Count; i++)
+        {
+            RemoveInfos[i].ToggleUsage();
+        }
+        RemoveInfos.Clear();
+    }
 
+    public void NewStrategyConfirm()
+    {
+        for(int i = 0; i < 3; i++)
+        {
+            NewStrs[i].SelectStrategy();
+        }
     }
 
     public void StrategyFail()
