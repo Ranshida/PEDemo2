@@ -5,7 +5,9 @@ using UnityEngine.UI;
 
 public enum BuildingType
 {
-    技术部门, 市场部门, 产品部门, 运营部门, 高管办公司, 研发部门
+    技术部门, 市场部门, 产品部门, 运营部门, 高管办公室, 研发部门, 人力资源部A, 
+    心理咨询室, 按摩房, 健身房, 目标修正小组, 档案管理室, 效能研究室,
+    财务部, 战略咨询部B, 精确标准委员会, 高级财务部A, 高级财务部B
 }
 
 public class BuildingManage : MonoBehaviour
@@ -23,7 +25,7 @@ public class BuildingManage : MonoBehaviour
     public void CreateOffice(int num)
     {
         //如果之前的建筑没有成功建造就删除
-        if(SelectBuilding != null)
+        if (SelectBuilding != null)
         {
             Destroy(SelectBuilding.effect.gameObject);
             Destroy(SelectBuilding.gameObject);
@@ -40,7 +42,7 @@ public class BuildingManage : MonoBehaviour
         ControlPanel.transform.position = SelectBuilding.transform.position;
         ControlPanel.SetActive(true);
         int DepNum = 1;
-        for(int i = 0; i < ConstructedBuildings.Count; i++)
+        for (int i = 0; i < ConstructedBuildings.Count; i++)
         {
             if (ConstructedBuildings[i].Type == type)
                 DepNum += 1;
@@ -49,10 +51,16 @@ public class BuildingManage : MonoBehaviour
 
         if (type == BuildingType.技术部门 || type == BuildingType.市场部门 || type == BuildingType.产品部门 || type == BuildingType.运营部门)
             SelectBuilding.SetSize(2, 3);
-        else if(type == BuildingType.高管办公司)
+        else if (type == BuildingType.高管办公室 || type == BuildingType.人力资源部A || type == BuildingType.按摩房)
             SelectBuilding.SetSize(2, 2);
-        else if(type == BuildingType.研发部门)
+        else if (type == BuildingType.研发部门)
             SelectBuilding.SetSize(2, 4);
+        else if (type == BuildingType.健身房)
+            SelectBuilding.SetSize(3, 4);
+        else if (type == BuildingType.目标修正小组 || type == BuildingType.档案管理室 || type == BuildingType.效能研究室
+            || type == BuildingType.财务部 || type == BuildingType.战略咨询部B || type == BuildingType.精确标准委员会
+            || type == BuildingType.高级财务部A || type == BuildingType.高级财务部B)
+            SelectBuilding.SetSize(1, 2);
 
     }
 
@@ -69,16 +77,56 @@ public class BuildingManage : MonoBehaviour
                 SelectBuilding.Department = GC.CreateDep((int)T + 1);
                 SelectBuilding.Department.building = SelectBuilding;
             }
-            else if (T == BuildingType.高管办公司)
+            else if (T == BuildingType.高管办公室)
             {
-                SelectBuilding.Office = GC.CreateOffice();
-                SelectBuilding.Office.building = SelectBuilding;
+                SelectBuilding.Office = GC.CreateOffice(SelectBuilding);
+                SelectBuilding.effectValue = 8;
             }
             else if (T == BuildingType.研发部门)
             {
                 SelectBuilding.Department = GC.CreateDep(4);
                 SelectBuilding.Department.building = SelectBuilding;
             }
+            else if(T == BuildingType.人力资源部A)
+            {
+                SelectBuilding.Office = GC.CreateOffice(SelectBuilding);
+                SelectBuilding.effectValue = 1;
+                SelectBuilding.StaminaRequest = 10;
+            }
+            else if (T == BuildingType.按摩房 || T == BuildingType.健身房)
+            {
+                SelectBuilding.Office = GC.CreateOffice(SelectBuilding);
+                SelectBuilding.effectValue = 3;
+                if(T == BuildingType.健身房)
+                    SelectBuilding.StaminaRequest = 10;
+            }
+            else if (T == BuildingType.战略咨询部B || T == BuildingType.精确标准委员会)
+            {
+                SelectBuilding.Office = GC.CreateOffice(SelectBuilding);
+                SelectBuilding.effectValue = 5;
+                SelectBuilding.StaminaRequest = 20;
+            }
+            else if (T == BuildingType.目标修正小组)
+            {
+                SelectBuilding.Office = GC.CreateOffice(SelectBuilding);
+                SelectBuilding.effectValue = 6;
+                SelectBuilding.StaminaRequest = 20;
+            }
+            else if (T == BuildingType.财务部 || T == BuildingType.高级财务部A || T == BuildingType.高级财务部B)
+            {
+                SelectBuilding.Office = GC.CreateOffice(SelectBuilding);
+                SelectBuilding.effectValue = 7;
+                SelectBuilding.StaminaRequest = 10;
+            }
+            else if (T == BuildingType.档案管理室 || T == BuildingType.效能研究室)
+            {
+                SelectBuilding.Office = GC.CreateOffice(SelectBuilding);
+                SelectBuilding.effectValue = 8;
+                SelectBuilding.StaminaRequest = 10;
+                if(T == BuildingType.效能研究室)
+                    SelectBuilding.StaminaRequest = 20;
+            }
+
 
             SelectBuilding.BuildingSet = true;
 

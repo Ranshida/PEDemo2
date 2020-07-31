@@ -180,18 +180,23 @@ public class EmpInfo : MonoBehaviour
 
     public void ShowDetailPanel()
     {
-        if (GC.SelectMode != 4)
+        if (GC.SelectMode == 4)
+        {
+            GC.CurrentEmpInfo = DetailInfo;
+            GC.SC.ConfirmPanel.SetActive(true);
+        }
+        else if(GC.SelectMode == 5)
+        {
+            GC.CurrentEmpInfo = DetailInfo;
+            GC.CurrentOffice.BuildingActive();
+        }
+        else
         {
             foreach (Transform child in GC.EmpDetailContent)
             {
                 child.gameObject.SetActive(false);
             }
             DetailInfo.gameObject.SetActive(true);
-        }
-        else
-        {
-            GC.CurrentEmpInfo = DetailInfo;
-            GC.SC.ConfirmPanel.SetActive(true);
         }
     }
 

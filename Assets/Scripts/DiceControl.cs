@@ -8,7 +8,7 @@ public class DiceControl : MonoBehaviour
     public Text Text_Value;
     public SkillControl SC;
 
-    int value;
+    public int value;
 
     public void RandomValue()
     {

@@ -25,14 +25,18 @@ public class SkillControl : MonoBehaviour
     public Transform DiceContent, SkillContent;
     public Text Text_TotalValue, Text_CurrentSkillName;
     public Button RollButton;
+    public DepControl TargetDep = null;
+
+    public bool SpecialSkill1Active = false;
 
     int DiceNum, totalValue;
 
     public void SetDice(DepControl dep)
     {
+        TargetDep = dep;
         if(dep.CommandingOffice != null)
         {
-            DiceNum = dep.CommandingOffice.ManageValue - dep.CommandingOffice.ControledDeps.Count;
+            DiceNum = dep.CommandingOffice.ManageValue - dep.CommandingOffice.ControledDeps.Count + GC.ManageExtra;
         }
         for(int i = 0; i < dep.CurrentEmps.Count; i++)
         {
@@ -59,14 +63,20 @@ public class SkillControl : MonoBehaviour
         RollButton.interactable = false;
     }
 
-    public void CreateDice(int num)
+    public void CreateDice(int num, int value = 0)
     {
         for (int i = 0; i < num; i++)
         {
             DiceControl newDice = Instantiate(DicePrefab, DiceContent);
             newDice.SC = this;
-            newDice.RandomValue();
             Dices.Add(newDice);
+            if (value > 0)
+            {
+                newDice.value = value;
+                newDice.Text_Value.text = value.ToString();
+            }
+            else
+                newDice.RandomValue();
         }
     }
 
@@ -85,6 +95,8 @@ public class SkillControl : MonoBehaviour
         Dices.Clear();
         SelectedDices.Clear();
         CurrentSkills.Clear();
+        TargetDep = null;
+        SpecialSkill1Active = false;
         this.gameObject.SetActive(false);
     }
 
@@ -117,5 +129,7 @@ public class SkillControl : MonoBehaviour
         GC.SelectMode = 1;
         GC.TotalEmpContent.parent.parent.gameObject.SetActive(false);
         SkillCheck();
+        if (SpecialSkill1Active == true)
+            CreateDice(1);
     }
 }

@@ -9,7 +9,7 @@ public class BuildingEffect : MonoBehaviour
     public Building CurrentBuilding;
     public Image image;
 
-    List<Building> AffectedBuildings = new List<Building>();
+    public List<Building> AffectedBuildings = new List<Building>();
     List<Building> TargetBuildings = new List<Building>();
 
     public void Affect()
@@ -25,10 +25,9 @@ public class BuildingEffect : MonoBehaviour
                     || T2 == BuildingType.运营部门) && T != T2)
                 {
                     TargetBuildings[i].Department.Efficiency += 0.1f;
-                    AffectedBuildings.Add(TargetBuildings[i]);
                 }
             }
-            else if(T == BuildingType.高管办公司)
+            else if(T == BuildingType.高管办公室)
             {
                 if (T2 == BuildingType.技术部门 || T2 == BuildingType.市场部门 || T2 == BuildingType.产品部门
                     || T2 == BuildingType.运营部门 || T2 == BuildingType.研发部门)
@@ -36,7 +35,8 @@ public class BuildingEffect : MonoBehaviour
                     TargetBuildings[i].Department.InRangeOffices.Add(CurrentBuilding.Office);
                 }
             }
-
+            if (AffectedBuildings.Contains(TargetBuildings[i]) == false)
+                AffectedBuildings.Add(TargetBuildings[i]);
         }
         TargetBuildings.Clear();
     }

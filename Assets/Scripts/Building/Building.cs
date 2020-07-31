@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class Building : MonoBehaviour
 {
     public bool BuildingSet = false;
+    public int effectValue = 1, StaminaRequest = 0; //1人力 2八卦 3强壮 4谋略 5行业 6决策 7财务 8管理
     public BuildingType Type;
 
     public DepControl Department;

@@ -43,7 +43,7 @@ public class DepControl : MonoBehaviour
     [HideInInspector] public Research CurrentResearch;
     public Transform EmpContent, EmpPanel, LabPanel;
     public GameObject OfficeWarning;
-    public Building building;
+    public Building building = null;
     public GameControl GC;
     public Task CurrentTask;
     public DepSelect DS;

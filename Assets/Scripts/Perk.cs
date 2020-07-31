@@ -10,6 +10,7 @@ public enum EffectType
 public class Perk
 {
     public int TimeLeft;  //单位周
+    public bool Positive = true;
     public string Name, Description;
     public EffectType effectType;
 

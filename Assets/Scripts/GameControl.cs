@@ -27,6 +27,7 @@ public class GameControl : MonoBehaviour
 
     [HideInInspector] public EmpInfo CurrentEmpInfo;
     [HideInInspector] public DepControl CurrentDep;
+    [HideInInspector] public OfficeControl CurrentOffice;
     public EmpInfo EmpInfoPrefab, EmpDetailPrefab;
     public PerkInfo PerkInfoPrefab;
     public SkillInfo SkillInfoPrefab;
@@ -176,13 +177,14 @@ public class GameControl : MonoBehaviour
         return newDep;
     }
 
-    public OfficeControl CreateOffice()
+    public OfficeControl CreateOffice(Building b)
     {
         OfficeControl newOffice = Instantiate(OfficePrefab, this.transform);
         newOffice.transform.parent = DepContent;
-        CurrentOffices.Add(newOffice);
-        newOffice.Text_OfficeName.text = "高管办公室" + CurrentOffices.Count;
+        newOffice.building = b;
         newOffice.GC = this;
+        newOffice.SetName();
+        CurrentOffices.Add(newOffice);
 
         //创建对应按钮
         newOffice.DS = Instantiate(OfficeSelectButtonPrefab, DepSelectContent);
@@ -257,6 +259,22 @@ public class GameControl : MonoBehaviour
                 CurrentOffices[i].DS.gameObject.SetActive(true);
             else
                 CurrentOffices[i].DS.gameObject.SetActive(false);
+        }
+    }
+    public void ShowDepSelectPanel(List<DepControl> deps)
+    {
+        DepSelectPanel.SetActive(true);
+        StandbyButton.SetActive(false);
+        for (int i = 0; i < CurrentDeps.Count; i++)
+        {
+            if(deps.Contains(CurrentDeps[i]))          
+                CurrentDeps[i].DS.gameObject.SetActive(true);
+            else
+                CurrentDeps[i].DS.gameObject.SetActive(false);
+        }
+        for(int i = 0; i < CurrentOffices.Count; i++)
+        {
+            CurrentOffices[i].DS.gameObject.SetActive(false);
         }
     }
 
@@ -346,6 +364,12 @@ public class GameControl : MonoBehaviour
             CurrentEmpInfo.emp.CurrentDep = depControl;
             depControl.CurrentEmps.Add(CurrentEmpInfo.emp);
             depControl.ShowProducePower();
+        }
+        //选择部门发动建筑特效
+        else if(SelectMode == 5)
+        {
+            CurrentDep = depControl;
+            CurrentOffice.BuildingActive();
         }
         DepSelectPanel.SetActive(false);
     }

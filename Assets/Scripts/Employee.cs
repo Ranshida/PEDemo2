@@ -9,9 +9,21 @@ public enum EmpType
 
 public class Employee
 {
-    public int Stamina, Skill1, Skill2, Skill3, SkillExtra1, SkillExtra2, SkillExtra3, 
+    public int Skill1, Skill2, Skill3, SkillExtra1, SkillExtra2, SkillExtra3, 
         Observation, Tenacity, Strength, Manage, HR, Finance, Decision, 
         Forecast, Strategy, Convince, Charm, Gossip;
+    public int Stamina
+    {
+        get { return stamina; }
+        set
+        {
+            stamina = value;
+            if (stamina > 100)
+                stamina = 100;
+            else if (stamina < 0)
+                stamina = 0;
+        }
+    }
     public int Mentality
     {
         get { return mentality; }
@@ -35,7 +47,7 @@ public class Employee
     public DepControl CurrentDep;
     public OfficeControl CurrentOffice;
 
-    int mentality;
+    int mentality, stamina;
 
     public void InitStatus(EmpType type)
     {
