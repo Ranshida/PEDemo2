@@ -97,7 +97,6 @@ public class Employee
             if (i == 4)
                 Character[4] = Random.Range(0, 3);
         }
-        Request[2] = 90;
     }
 
     public void EventCheck()
