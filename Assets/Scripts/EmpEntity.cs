@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class EmpEntity : MonoBehaviour
 {
-    public bool canMove = false, WorkShift = false;
+    public bool canMove = false, WorkShift = false, canChangePos = true;
     static public float MoveSpeed = 50.0f;
 
     public EmpInfo InfoDetail;
@@ -43,26 +43,21 @@ public class EmpEntity : MonoBehaviour
             {
                 canMove = false;
                 transform.position = Destination;
-                //接触目标
-                if (TargetEmp != null && WorkShift == false)
+
+                if (WorkShift == true)
                 {
-                    for (int i = 0; i < CurrentEvent.Count; i++)
+                    //下班
+                    if (canChangePos == false)
+                        InfoDetail.GC.WorkEndCheck();
+                    //上班后回到工位
+                    else
                     {
-                        if (CurrentEvent[i].Owner = this && CurrentEvent[i].Target == TargetEmp)
-                        {
-                            CurrentEvent[i].EventActive = true;
-                            canMove = false;
-                            TargetEmp.canMove = false;
-                        }
+                        WorkShift = false;
+                        SetTarget();
                     }
                 }
-                //下班
-                else if (WorkShift == true)
-                {
-                    InfoDetail.GC.WorkEndCheck();
-                }
                 //待命乱逛
-                else if (InfoDetail.emp.CurrentDep == null && InfoDetail.emp.CurrentOffice == null)
+                else if (InfoDetail.emp.CurrentDep == null && InfoDetail.emp.CurrentOffice == null && TargetEmp == null)
                 {
                     canMove = false;
                     WaitHour = Random.Range(1, 3);
@@ -87,7 +82,7 @@ public class EmpEntity : MonoBehaviour
         if(WaitHour > 0)
         {
             WaitHour -= 1;
-            if (WaitHour == 0)
+            if (WaitHour == 0 && EventCheck() == true)
                 FindWorkPos();
         }
         EventTimePass();
@@ -98,6 +93,7 @@ public class EmpEntity : MonoBehaviour
         WaitHour = 0;
         canMove = true;
         WorkShift = true;
+        canChangePos = false;
         Destination = BM.ExitPos.position;
         for(int i = 0; i < CurrentEvent.Count; i++)
         {
@@ -107,8 +103,8 @@ public class EmpEntity : MonoBehaviour
 
     public void WorkStart()
     {
-        WorkShift = false;
-        SetTarget();
+        canChangePos = true;
+        FindWorkPos();
     }
 
     public bool EventCheck()
@@ -128,24 +124,23 @@ public class EmpEntity : MonoBehaviour
 
     public void EventTimePass()
     {
-        if (WorkShift == false)
+
+        for (int i = 0; i < CurrentEvent.Count; i++)
         {
-            for (int i = 0; i < CurrentEvent.Count; i++)
+            if (CurrentEvent[i].EventActive == true)
             {
-                if (CurrentEvent[i].EventActive == true)
+                CurrentEvent[i].Time -= 1;
+                if (CurrentEvent[i].Time <= 0)
                 {
-                    CurrentEvent[i].Time -= 1;
-                    if(CurrentEvent[i].Time <= 0)
+                    CurrentEvent[i].FinishEvent();
+                    if (EventCheck() == true)
                     {
-                        CurrentEvent[i].FinishEvent();
-                        if(EventCheck() == true)
-                        {
-                            SetTarget();
-                        }
+                        SetTarget();
                     }
                 }
             }
         }
+        
     }
 
     public void AddEvent(int type)
@@ -229,27 +224,24 @@ public class EmpEntity : MonoBehaviour
             else
                 e.Value = 1;
         }
+        CurrentEvent.Add(e);
         if (e.HaveTarget == true)
         {
-            e.FindTarget();
+            if (e.FindTarget() == true)
+            {
+                e.Target.ReceivedEvent.Add(e);
+                if (EventCheck() == true)
+                    SetTarget();
+            }
         }
-        //if (e.HaveTarget == true)
-        //{
-        //    e.FindTarget();
-        //    e.Target.ReceivedEvent.Add(e);
-        //    if (EventCheck() == true)
-        //        SetTarget();
-        //}
-        //else
-        //    e.EventActive = true;
-        //CurrentEvent.Add(e);
-        print("添加了" + type + "类事件" + e.Value);
-        e.FinishEvent();
+        else
+            e.EventActive = true;
+        print(Text_Name.text + "添加了" + type + "类事件" + e.Value);
     }
 
     public bool SetTarget()
     {
-        for(int i = 0; i < CurrentEvent.Count; i++)
+        for (int i = 0; i < CurrentEvent.Count; i++)
         {
             //二次检测能否移动以防万一
             if (CurrentEvent[i].EventActive == true)
@@ -263,8 +255,9 @@ public class EmpEntity : MonoBehaviour
             }
             else
             {
-                canMove = true;
                 TargetEmp = CurrentEvent[i].Target;
+                Destination = TargetEmp.transform.position;
+                canMove = true;
                 return false;
             }
         }
@@ -275,9 +268,8 @@ public class EmpEntity : MonoBehaviour
     public void FindWorkPos()
     {
         //从当前部门转为待命或者从待命移动到某部门时都要调用
-        canMove = true;
         //此处检测主要为了防止在下班时安排工作导致移动
-        if (WorkShift == false)
+        if (canChangePos == true)
         {
             if (InfoDetail.emp.CurrentDep != null)
             {
@@ -294,7 +286,8 @@ public class EmpEntity : MonoBehaviour
                 Destination = new Vector2(x, y);
             }
         }
-
+        canMove = true;
+        TargetEmp = null;
     }
 
     public void ShowMarker(int type)
@@ -328,14 +321,36 @@ public class EmpEntity : MonoBehaviour
     {
         if (collision.gameObject.tag == "EmpEntity")
         {
-            if (Random.Range(0.0f, 1.0f) < 0.3f)
+            EmpEntity Et = collision.gameObject.GetComponent<EmpEntity>();
+            float posb = Random.Range(0.0f, 1.0f);
+            if (posb < 0.3f)
             {
                 ShowMarker(0);
                 Employee Es = InfoDetail.emp;
-                Employee Et = collision.gameObject.GetComponent<EmpEntity>().InfoDetail.emp;
 
-                Es.ChangeRelation(Et, 1);
-                Et.ChangeRelation(Es, 1);
+                Es.ChangeRelation(Et.InfoDetail.emp, 1);
+                Et.InfoDetail.emp.ChangeRelation(Es, 1);
+            }
+        }
+    }
+
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        //接触目标
+        if (TargetEmp != null && WorkShift == false)
+        {
+            EmpEntity Et = collision.gameObject.GetComponent<EmpEntity>();
+            if (TargetEmp == Et)
+            {
+                for (int i = 0; i < CurrentEvent.Count; i++)
+                {
+                    if (CurrentEvent[i].Target == TargetEmp)
+                    {
+                        CurrentEvent[i].EventActive = true;
+                        canMove = false;
+                        TargetEmp.canMove = false;
+                    }
+                }
             }
         }
     }
@@ -343,7 +358,6 @@ public class EmpEntity : MonoBehaviour
 
 public class EmpEvent
 {
-    public bool Owner;//是否是发起人
     public bool EventActive = false, HaveTarget = true;
     public int Type, Value, Time = 2;
     public EmpEntity Target = null, Self;
@@ -828,11 +842,10 @@ public class EmpEvent
         {
             Target.ReceivedEvent.Remove(this);
             if (Target.EventCheck() == true)
-                Target.SetTarget() ;
+                Target.SetTarget();
         }
-        MonoBehaviour.print("点数:" + a);
     }
-    public void FindTarget()
+    public bool FindTarget()
     {
         if (Self.InfoDetail.GC.CurrentEmployees.Count > 1)
         {
@@ -841,7 +854,9 @@ public class EmpEvent
                 int r = Random.Range(0, Self.InfoDetail.GC.CurrentEmployees.Count);
                 Target = Self.InfoDetail.GC.CurrentEmployees[r].InfoDetail.Entity;
             }
+            return true;
         }
+        return false;
     }
 
     public void EventResult(int value)
