@@ -16,7 +16,7 @@ public class BuildingManage : MonoBehaviour
     public Button ConfirmButton;
     public BuildingEffect BEPrefab;
     public GameControl GC;
-    public Transform BuildingContent;
+    public Transform BuildingContent, EntityContent, ExitPos, MaxPos, MinPos;
     public GameObject ControlPanel;
 
     public List<Building> ConstructedBuildings = new List<Building>();

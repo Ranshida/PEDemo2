@@ -6,7 +6,7 @@ using UnityEngine.Events;
 
 public class GameControl : MonoBehaviour
 {
-    [HideInInspector] public int Salary, Income, MobilizeExtraMent = 0, ManageExtra;
+    [HideInInspector] public int Salary, Income, MobilizeExtraMent = 0, ManageExtra, TimeMultiply = 1, WorkEndEmpCount = 0;
     [HideInInspector] public float EfficiencyExtraNormal = 0, EfficiencyExtraScience = 0, ResearchSuccessRateExtra = 0;
     public int SelectMode = 1;
     public int Money = 1000, Stamina = 100, Mentality = 100;
@@ -29,11 +29,15 @@ public class GameControl : MonoBehaviour
     [HideInInspector] public DepControl CurrentDep;
     [HideInInspector] public OfficeControl CurrentOffice;
     public EmpInfo EmpInfoPrefab, EmpDetailPrefab;
+    public EmpEntity EmpEntityPrefab;
     public PerkInfo PerkInfoPrefab;
     public SkillInfo SkillInfoPrefab;
     public DepControl DepPrefab, LabPrefab;
     public OfficeControl OfficePrefab;
     public DepSelect DepSelectButtonPrefab, OfficeSelectButtonPrefab;
+    public RelationInfo RelationInfoPrefab;
+    public Text HistoryTextPrefab;
+    public BuildingManage BM;
     public ProduceControl PC;
     public ProductControl PrC;
     public StrategyControl StrC;
@@ -50,11 +54,21 @@ public class GameControl : MonoBehaviour
     public List<Employee> CurrentEmployees = new List<Employee>();
     public List<Task> FinishedTask = new List<Task>();
 
-    int Year = 1, Month = 1, Week = 1, Day = 1, Hour = 1, TimeMultiply = 1, morale = 100;
+    Animator Anim;
+
+    int Year = 1, Month = 1, Week = 1, Day = 1, Hour = 1, morale = 100;
     float Timer;
+    bool TimePause = false; //现在仅用来判断是否处于下班状态，用于其他功能时需检查WorkEndCheck()和WeekStart
+
+    private void Start()
+    {
+        Anim = this.gameObject.GetComponent<Animator>();
+    }
+
     private void Update()
     {
-        Timer += Time.deltaTime * TimeMultiply;
+        if (TimePause == false)
+            Timer += Time.deltaTime * TimeMultiply;
         if(Timer >= 15)
         {
             Timer = 0;
@@ -80,11 +94,8 @@ public class GameControl : MonoBehaviour
             //{
             //    CurrentDeps[i].OneHourPass();
             //}
-            DailyEvent.Invoke();
-            Hour = 1;
-            Week += 1;
-            WeeklyEvent.Invoke();
-            //Day += 1;
+            Hour = 8;
+            StartWorkEnd();
         }
         //if (Day > 5) //旧的5日1周时间流
         //{
@@ -98,12 +109,6 @@ public class GameControl : MonoBehaviour
             Week = 1;
             PrC.UserChange();
             Money = Money + Income - Salary;
-            Stamina += 30;
-            Mentality += 30;
-            if (Stamina > 100)
-                Stamina = 100;
-            if (Mentality > 100)
-                Mentality = 100;
             MonthlyEvent.Invoke();
             for (int i = 0; i < CurrentDeps.Count; i++)
             {
@@ -117,6 +122,48 @@ public class GameControl : MonoBehaviour
         }
         //Text_Time.text = "年" + Year + " 月" + Month + " 周" + Week + " 日" + Day + " 时" + Hour;
         Text_Time.text = "年" + Year + " 月" + Month + " 周" + Week + " 时" + Hour;
+    }
+    public void WeekPass()
+    {
+        DailyEvent.Invoke();
+        Hour = 1;
+        Week += 1;
+        WeeklyEvent.Invoke();
+        //Day += 1;
+        Stamina += 30;
+        Mentality += 30;
+        if (Stamina > 100)
+            Stamina = 100;
+        if (Mentality > 100)
+            Mentality = 100;
+    }
+
+    void StartWorkEnd()
+    {
+        TimePause = true;
+        WorkEndEmpCount = CurrentEmployees.Count;
+        for (int i = 0; i < CurrentEmployees.Count; i++)
+        {
+            CurrentEmployees[i].InfoDetail.Entity.WorkEnd();
+        }
+    }
+
+    public void WorkEndCheck()
+    {
+        WorkEndEmpCount -= 1;
+        if(WorkEndEmpCount <= 0 && TimePause == true)
+        {
+            Anim.SetTrigger("FadeIn");
+        }
+    }
+
+    public void WorkStart()
+    {
+        TimePause = false;
+        for(int i = 0; i < CurrentEmployees.Count; i++)
+        {
+            CurrentEmployees[i].InfoDetail.Entity.WorkStart();
+        }
     }
 
     public DepControl CreateDep(int type)
@@ -279,7 +326,7 @@ public class GameControl : MonoBehaviour
     }
 
 
-    //员工管理 SelectMode 1雇佣 2移动 3指定高管（办公室）
+    //员工管理 SelectMode 1雇佣 2移动 3指定高管（办公室）5指定部门发动建筑特效
     //InfoB常驻Total面板
 
     //将移动或雇佣的员工放入待命室
@@ -298,13 +345,19 @@ public class GameControl : MonoBehaviour
                 CurrentEmpInfo = CurrentEmpInfo.emp.InfoA;
             CurrentEmpInfo.transform.parent = StandbyContent;
             ResetOldAssignment();
+            CurrentEmpInfo.DetailInfo.Entity.FindWorkPos();
         }
         DepSelectPanel.SetActive(false);
     }
 
-    //将移动或雇佣的员工放入特定办公室
+    //将移动或雇佣的员工放入特定办公室 + 确定部门领导者
     public void SelectDep(OfficeControl office)
     {
+        if(office.CurrentManager != null)
+        {
+            office.CurrentManager.CurrentOffice = null;
+            office.CurrentManager.InfoDetail.Entity.FindWorkPos();
+        }
         if (SelectMode == 1)
         {
             //还需要重新计算工资
@@ -324,8 +377,10 @@ public class GameControl : MonoBehaviour
             CurrentEmpInfo.emp.CurrentOffice = office;
             office.CurrentManager = CurrentEmpInfo.emp;
             office.SetOfficeStatus();
+            CurrentEmpInfo.DetailInfo.Entity.FindWorkPos();
         }
-        else if(SelectMode == 3)
+        //确定部门领导者
+        else if (SelectMode == 3)
         {
             if(CurrentDep.CommandingOffice != null)
             {
@@ -340,7 +395,7 @@ public class GameControl : MonoBehaviour
         DepSelectPanel.SetActive(false);
     }
 
-    //将移动或雇佣的员工放入特定部门
+    //将移动或雇佣的员工放入特定部门 + 选择部门发动建筑特效
     public void SelectDep(DepControl depControl)
     {
         if(SelectMode == 1)
@@ -364,6 +419,7 @@ public class GameControl : MonoBehaviour
             CurrentEmpInfo.emp.CurrentDep = depControl;
             depControl.CurrentEmps.Add(CurrentEmpInfo.emp);
             depControl.ShowProducePower();
+            CurrentEmpInfo.DetailInfo.Entity.FindWorkPos();
         }
         //选择部门发动建筑特效
         else if(SelectMode == 5)
@@ -374,7 +430,7 @@ public class GameControl : MonoBehaviour
         DepSelectPanel.SetActive(false);
     }
 
-    //招聘后信息转移
+    //(Hire)招聘后信息转移
     void SetInfoPanel()
     {
         CurrentEmpInfo.HireButton.interactable = false;
@@ -393,8 +449,13 @@ public class GameControl : MonoBehaviour
         ED.emp.InfoA = EI1;
         ED.emp.InfoB = EI2;
         ED.emp.InfoDetail = ED;
+        ED.emp.InitRelation();
         ED.SetSkillName();
+        //创建员工实体
+        ED.Entity = Instantiate(EmpEntityPrefab, BM.ExitPos.position, Quaternion.Euler(0, 0, 0), BM.EntityContent);
+        ED.Entity.SetInfo(ED);
 
+        //注意应放在初始化人际关系后再添加至链表
         CurrentEmployees.Add(CurrentEmpInfo.emp);
         //复制特质
         for (int i = 0; i < CurrentEmpInfo.PerksInfo.Count; i++)
@@ -415,7 +476,6 @@ public class GameControl : MonoBehaviour
             CurrentEmpInfo.StrategiesInfo[i].transform.parent = ED.StrategyContent;
         }
         ED.StrategiesInfo = CurrentEmpInfo.StrategiesInfo;
-
     }
 
     void ResetOldAssignment()

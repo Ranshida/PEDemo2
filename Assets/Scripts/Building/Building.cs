@@ -16,6 +16,7 @@ public class Building : MonoBehaviour
     public BuildingManage BM;
     public Text Text_DepName;
 
+    public Transform[] WorkPos = new Transform[4];
     public List<BuildingEffect> EffectBuildings = new List<BuildingEffect>();
 
     int XPos, YPos;

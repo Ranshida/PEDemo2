@@ -328,8 +328,6 @@ public class DepControl : MonoBehaviour
             totalObservation += CurrentEmps[i].Observation;
         }
         float ActualFailRate = FailRate - (totalObservation * GC.Morale * 0.0001f);
-        print(Posb);
-        print(ActualFailRate);
         if(Posb < ActualFailRate)
         {
             Failed = true;

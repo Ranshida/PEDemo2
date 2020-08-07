@@ -212,7 +212,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &221971406
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2619,9 +2619,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SurveyProgress: 0
+  FailProgress: 0
   SurveyStart: 0
+  Failed: 0
   EmpLimit: 0
   Efficiency: 1
+  FailRate: 0.3
   canWork: 0
   CurrentResearch: {fileID: 0}
   EmpContent: {fileID: 8823674}

@@ -5,14 +5,17 @@ using UnityEngine.UI;
 
 public class EmpInfo : MonoBehaviour
 {
+    [HideInInspector] public EmpEntity Entity;
+
     public Employee emp;
     public GameControl GC;
     public Button HireButton;
     public Text Text_Name, Text_Mentality, Text_Stamina, Text_Type, Text_Skill1, Text_Skill2, Text_Skill3,  Text_Ability;
     public Text Text_DepName, Text_Observation, Text_Tenacity, Text_Strength, Text_Manage, Text_HR, Text_Finance, Text_Decision, 
         Text_Forecast, Text_Strategy, Text_Convince, Text_Charm, Text_Gossip, Text_SName1, Text_SName2, Text_SName3;
+    public Scrollbar[] Scrollbar_Character = new Scrollbar[5];
     public EmpInfo DetailInfo;
-    public Transform PerkContent, SkillContent, StrategyContent;
+    public Transform PerkContent, SkillContent, StrategyContent, RelationContent, HistoryContent;
 
     public List<PerkInfo> PerksInfo = new List<PerkInfo>();
     public List<SkillInfo> SkillsInfo = new List<SkillInfo>();
@@ -57,6 +60,7 @@ public class EmpInfo : MonoBehaviour
                 Text_Convince.text = emp.Convince.ToString();
                 Text_Charm.text = emp.Charm.ToString();
                 Text_Gossip.text = emp.Gossip.ToString();
+                UpdateCharacterUI();
             }
             //详细面板
             if(InfoType == 2)
@@ -162,6 +166,7 @@ public class EmpInfo : MonoBehaviour
         //重新计算工资
         GC.Salary -= CalcSalary();
         GC.CurrentEmployees.Remove(emp);
+        GC.WorkEndCheck();
         if(emp.CurrentDep != null)
         {
             emp.CurrentDep.CurrentEmps.Remove(emp);
@@ -178,6 +183,7 @@ public class EmpInfo : MonoBehaviour
         Destroy(this.gameObject);
     }
 
+    //需要改名字
     public void ShowDetailPanel()
     {
         if (GC.SelectMode == 4)
@@ -192,12 +198,18 @@ public class EmpInfo : MonoBehaviour
         }
         else
         {
-            foreach (Transform child in GC.EmpDetailContent)
-            {
-                child.gameObject.SetActive(false);
-            }
-            DetailInfo.gameObject.SetActive(true);
+            DetailInfo.ShowPanel();
         }
+    }
+
+    public void ShowPanel()
+    {
+        foreach (Transform child in GC.EmpDetailContent)
+        {
+            child.gameObject.SetActive(false);
+        }
+        gameObject.SetActive(true);
+        AdjustSize();
     }
 
     public void SetSkillName()
@@ -226,6 +238,17 @@ public class EmpInfo : MonoBehaviour
             Text_SName2.text = "增长运营";
             Text_SName3.text = "产品运营";
         }
+    }
+
+    public void AddHistory(string Content)
+    {
+        Text t = Instantiate(GC.HistoryTextPrefab, HistoryContent);
+        t.text = "[" + GC.Text_Time.text + "] " + Content;
+    }
+
+    public void AdjustSize()
+    {
+        LayoutRebuilder.ForceRebuildLayoutImmediate(HistoryContent.gameObject.GetComponent<RectTransform>());
     }
 
     public void AddPerk(Perk perk, bool AddEffect = false)
@@ -281,7 +304,18 @@ public class EmpInfo : MonoBehaviour
 
     public int CalcSalary()
     {
-        int salary = emp.Manage + emp.Skill1 + emp.Skill2 + emp.Skill3;
+        int salary = emp.Manage + emp.Skill1 + emp.Skill2 + emp.Skill3 + emp.SalaryExtra;
         return salary;
+    }
+
+    void UpdateCharacterUI()
+    {
+        for (int i = 0; i < 5; i++)
+        {
+            if (i < 4)
+                Scrollbar_Character[i].value = (emp.Character[i] + 3) / 6;
+            else
+                Scrollbar_Character[4].value = emp.Character[4] / 3;
+        }
     }
 }

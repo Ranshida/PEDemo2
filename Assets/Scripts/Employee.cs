@@ -11,7 +11,7 @@ public class Employee
 {
     public int Skill1, Skill2, Skill3, SkillExtra1, SkillExtra2, SkillExtra3, 
         Observation, Tenacity, Strength, Manage, HR, Finance, Decision, 
-        Forecast, Strategy, Convince, Charm, Gossip;
+        Forecast, Strategy, Convince, Charm, Gossip, SalaryExtra = 0;
     public int Stamina
     {
         get { return stamina; }
@@ -39,6 +39,9 @@ public class Employee
         }
     }
 
+    public float[] Character = new float[5]; //0文化 1信仰 2道德 3行事 4信念
+    public float[] Request = new float[4];
+
     public string Name;
     public bool WantLeave = false;
     public EmpType Type;
@@ -46,6 +49,10 @@ public class Employee
     public EmpInfo InfoA, InfoB, InfoDetail;
     public DepControl CurrentDep;
     public OfficeControl CurrentOffice;
+    public Employee Master, Lover;
+
+    public List<Employee> Students = new List<Employee>();
+    public List<Relation> Relations = new List<Relation>();
 
     int mentality, stamina;
 
@@ -84,6 +91,61 @@ public class Employee
         Convince = Random.Range(1, 6);
         Charm = Random.Range(1, 6);
         Gossip = Random.Range(1, 6);
+        for(int i = 0; i < 5; i++)
+        {
+            Character[i] = Random.Range(-3, 3);
+            if (i == 4)
+                Character[4] = Random.Range(0, 3);
+        }
+        Request[2] = 90;
+    }
+
+    public void EventCheck()
+    {
+        Request[0] += (300 - stamina - mentality - InfoDetail.GC.Morale) * 0.05f;
+        Request[1] += Mathf.Abs(Character[0]) + Mathf.Abs(Character[4]);
+        Request[2] += Mathf.Abs(Character[2]) + Mathf.Abs(Character[3]) + Mathf.Abs(Character[4]);
+        Request[3] += Mathf.Abs(Character[1]) + Mathf.Abs(Character[3]) + Mathf.Abs(Character[4]);
+        for(int i = 0; i < 4; i++)
+        {
+            if(Request[i] >= 100)
+            {
+                InfoDetail.Entity.AddEvent(i + 1);
+                Request[i] = 0;
+                break;
+            }
+        }
+    }
+
+    public void InitRelation()
+    {
+        for(int i = 0; i < InfoDetail.GC.CurrentEmployees.Count; i++)
+        {
+            Relations.Add(new Relation(InfoDetail.GC.CurrentEmployees[i], this));
+            InfoDetail.GC.CurrentEmployees[i].Relations.Add(new Relation(this, InfoDetail.GC.CurrentEmployees[i]));
+        }
+    }
+
+    //改变跟目标的好感度并检查关系
+    public void ChangeRelation(Employee target, int value)
+    {
+        Relation r = FindRelation(target);
+        r.RPoint += value;
+        if (r.RPoint > 100)
+            r.RPoint = 100;
+        else if (r.RPoint < 0)
+            r.RPoint = 0;
+        r.RelationCheck();
+    }
+    //找到跟目标的关系
+    public Relation FindRelation(Employee t)
+    {
+        for(int i = 0; i < Relations.Count; i++)
+        {
+            if (Relations[i].Target == t)
+                return Relations[i];
+        }
+        return null;
     }
 }
 
