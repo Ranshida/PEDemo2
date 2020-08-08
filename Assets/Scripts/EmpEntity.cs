@@ -443,24 +443,28 @@ public class EmpEvent
                 if (a <= 2)
                 {
                     Es.Mentality -= 5;
-                    Self.InfoDetail.AddHistory(Ns + "向HR" + Nt + "倾诉时，HR睡着了，于是十分愤怒的摔门而去，可是HR依然没有醒来");
+                    Self.InfoDetail.AddHistory(Ns + "向HR" + Nt + "倾诉时，HR睡着了，于是十分愤怒的摔门而去，可是HR依然没有醒来，心力-5");
+                    Target.InfoDetail.AddHistory(Nt + "睡着了，没有听到" + Ns + "的倾诉");
                     EventResult(1);
                 }
                 else if (a <= 5)
                 {
                     Self.InfoDetail.AddHistory(Ns + "向HR" + Nt + "讲述了自己如何从意识流角度进行自我后现代性剖析，HR表示没有听懂");
+                    Target.InfoDetail.AddHistory(Nt + "对" + Ns + "的倾诉表示没有听懂");
                     EventResult(2);
                 }
                 else if (a < 11)
                 {
                     Es.Mentality += 10;
-                    Self.InfoDetail.AddHistory(Ns + "向HR" + Nt + "寻求了一些工作上的建议");
+                    Self.InfoDetail.AddHistory(Ns + "向HR" + Nt + "寻求了一些工作上的建议，心力+10");
+                    Target.InfoDetail.AddHistory(Nt + "给了" + Ns + "一些工作上的建议");
                     EventResult(3);
                 }
                 else
                 {
                     Es.Mentality += 20;
-                    Self.InfoDetail.AddHistory(Ns + "向HR" + Nt + "寻求答案，并从HR的话里感受到了智者的禅意，颇有开悟之感");
+                    Self.InfoDetail.AddHistory(Ns + "向HR" + Nt + "寻求答案，并从HR的话里感受到了智者的禅意，颇有开悟之感，心力+20");
+                    Target.InfoDetail.AddHistory(Nt + "给了" + Ns + "一些建议，使他颇有开悟之感");
                     EventResult(4);
                 }
             }
@@ -476,28 +480,32 @@ public class EmpEvent
                     Et.Mentality -= 10;
                     Es.ChangeRelation(Et, -5);
                     Et.ChangeRelation(Es, -5);
-                    Self.InfoDetail.AddHistory(Ns + "向" + Nt + "指出应该多向自己学习，认为对方太年轻，太幼稚，应该提高知识水平");
+                    Self.InfoDetail.AddHistory(Ns + "向" + Nt + "指出应该多向自己学习，认为对方太年轻，太幼稚，应该提高知识水平，好感度-5");
+                    Target.InfoDetail.AddHistory(Nt + "对" + Ns + "的指点表示无语，心力-10，好感度-5");
                     EventResult(1);
                 }
                 else if (a <= 8)
                 {
                     Es.ChangeRelation(Et, -5);
                     Et.ChangeRelation(Es, -5);
-                    Self.InfoDetail.AddHistory(Ns + "向" + Nt + "讲述了自己当年的英雄往事，对方不以为然的感慨“幸亏你的膝盖中了一箭”");
+                    Self.InfoDetail.AddHistory(Ns + "向" + Nt + "讲述了自己当年的英雄往事，对方不以为然的感慨“幸亏你的膝盖中了一箭”，好感度-5");
+                    Target.InfoDetail.AddHistory(Nt + "对" + Ns + "讲的故事感慨：“幸亏你的膝盖中了一剑”，好感度-5");
                     EventResult(2);
                 }
                 else if (a <= 12)
                 {
                     Es.ChangeRelation(Et, 5);
                     Et.ChangeRelation(Es, 5);
-                    Self.InfoDetail.AddHistory(Ns + "向" + Nt + "展示自己与大佬们的合影，对方表示感到惊奇");
+                    Self.InfoDetail.AddHistory(Ns + "向" + Nt + "展示自己与大佬们的合影，对方表示感到惊奇，好感度+5");
+                    Target.InfoDetail.AddHistory(Nt + "对" + Ns + "与大佬们的合影感到惊奇，好感度+5");
                     EventResult(3);
                 }
                 else
                 {
                     Es.ChangeRelation(Et, 10);
                     Et.ChangeRelation(Es, 10);
-                    Self.InfoDetail.AddHistory(Ns + "向" + Nt + "展示自己对于前沿领域的应用和深刻理解，使对方惊呼大佬");
+                    Self.InfoDetail.AddHistory(Ns + "向" + Nt + "展示自己对于前沿领域的应用和深刻理解，使对方惊呼大佬，好感度+10");
+                    Target.InfoDetail.AddHistory(Nt + "对" + Ns + "的展示惊呼大佬，好感度+10");
                     EventResult(4);
                 }
             }
@@ -510,28 +518,32 @@ public class EmpEvent
                     Et.Mentality -= 10;
                     Es.ChangeRelation(Et, -5);
                     Et.ChangeRelation(Es, -5);
-                    Self.InfoDetail.AddHistory(Ns + "与" + Nt + "聊天时，不小心把口水喷到了对方脸上，场面一度非常尴尬");
+                    Self.InfoDetail.AddHistory(Ns + "与" + Nt + "聊天时，不小心把口水喷到了对方脸上，场面一度非常尴尬，好感度-5");
+                    Target.InfoDetail.AddHistory(Nt + "被" + Ns + "的口水喷到了脸上，场面一度非常尴尬，心力-10，好感度-5");
                     EventResult(1);
                 }
                 else if (a <= 5)
                 {
                     Es.ChangeRelation(Et, -5);
                     Et.ChangeRelation(Es, -5);
-                    Self.InfoDetail.AddHistory(Ns + "与" + Nt + "聊天时，紧张的说不出话来，哆哆嗦嗦的寒暄了半天");
+                    Self.InfoDetail.AddHistory(Ns + "与" + Nt + "聊天时，紧张的说不出话来，哆哆嗦嗦的寒暄了半天，好感度-5");
+                    Target.InfoDetail.AddHistory(Nt + "对" + Ns + "紧张得说不出话的表现感到无语，好感度-5");
                     EventResult(2);
                 }
                 else if (a < 11)
                 {
                     Es.ChangeRelation(Et, 5);
                     Et.ChangeRelation(Es, 5);
-                    Self.InfoDetail.AddHistory(Ns + "与" + Nt + "聊起了很多感兴趣的话题，彼此感到非常愉快");
+                    Self.InfoDetail.AddHistory(Ns + "与" + Nt + "聊起了很多感兴趣的话题，彼此感到非常愉快，好感度+5");
+                    Target.InfoDetail.AddHistory(Nt + "与" + Ns + "聊天非常愉快，好感度+5");
                     EventResult(3);
                 }
                 else
                 {
                     Es.ChangeRelation(Et, 10);
                     Et.ChangeRelation(Es, 10);
-                    Self.InfoDetail.AddHistory(Ns + "与" + Nt + "聊起了很多童年往事，隐隐感到彼此心有灵犀");
+                    Self.InfoDetail.AddHistory(Ns + "与" + Nt + "聊起了很多童年往事，隐隐感到彼此心有灵犀，好感度+10");
+                    Target.InfoDetail.AddHistory(Nt + "感到与" + Ns + "心有灵犀，好感度+10");
                     EventResult(4);
                 }
             }
@@ -565,7 +577,8 @@ public class EmpEvent
                     if (Es.Character[4] < 0)
                         Es.Character[4] = 0;
 
-                    Self.InfoDetail.AddHistory(Ns + "试图与" + Nt + "要求上涨工资，却被上司羞辱其能力低下");
+                    Self.InfoDetail.AddHistory(Ns + "试图与" + Nt + "要求上涨工资，却被上司羞辱其能力低下，心力-20，信念-1");
+                    Target.InfoDetail.AddHistory(Nt + "羞辱了" + Ns + "能力低下");
                     EventResult(1);
                 }
                 else if (a <= 6)
@@ -573,19 +586,22 @@ public class EmpEvent
                     Es.Character[2] -= 0.15f;
                     if (Es.Character[2] < -3)
                         Es.Character[2] = -3;
-                    Self.InfoDetail.AddHistory(Ns + "试图与" + Nt + "要求上涨工资，但是以能力不足为由被上司婉言拒绝");
+                    Self.InfoDetail.AddHistory(Ns + "试图与" + Nt + "要求上涨工资，但是以能力不足为由被上司婉言拒绝，功利主义+5%");
+                    Target.InfoDetail.AddHistory(Nt + "认为" + Ns + "能力不足");
                     EventResult(2);
                 }
                 else if (a < 11)
                 {
                     Es.SalaryExtra += (int)(Self.InfoDetail.CalcSalary() * 0.2f);
-                    Self.InfoDetail.AddHistory(Ns + "试图与" + Nt + "要求上涨工资，上司对其成绩表示认可并同意上报");
+                    Self.InfoDetail.AddHistory(Ns + "试图与" + Nt + "要求上涨工资，上司对其成绩表示认可并同意上报，工资+20%");
+                    Target.InfoDetail.AddHistory(Nt + "认可" + Ns + "的工作能力，并同意上报涨工资请求");
                     EventResult(3);
                 }
                 else
                 {
                     Es.SalaryExtra += (int)(Self.InfoDetail.CalcSalary() * 0.4f);
-                    Self.InfoDetail.AddHistory(Ns + "试图与" + Nt + "要求上涨工资，上司对其最近表现大加赞赏，表示其工资要求太低");
+                    Self.InfoDetail.AddHistory(Ns + "试图与" + Nt + "要求上涨工资，上司对其最近表现大加赞赏，表示其工资要求太低，工资+40%");
+                    Target.InfoDetail.AddHistory(Nt + "对" + Ns + "最近的表现大加赞赏，表示其要求的工资太低");
                     EventResult(4);
                 }
             }
@@ -611,7 +627,8 @@ public class EmpEvent
                     if (Es.Character[2] < -3)
                         Es.Character[2] = -3;
 
-                    Self.InfoDetail.AddHistory(Ns + "试图向上司" + Nt + "展示自己卓越的领导才能，结果上司却笑出了声");
+                    Self.InfoDetail.AddHistory(Ns + "试图向上司" + Nt + "展示自己卓越的领导才能，结果上司却笑出了声，信念-1，功利主义+20%");
+                    Target.InfoDetail.AddHistory(Nt + "对" + Ns + "的表现笑出了声");
                     EventResult(1);
                 }
                 else if (a <= 8)
@@ -619,17 +636,20 @@ public class EmpEvent
                     Es.Character[0] -= 0.3f;
                     if (Es.Character[0] < -3)
                         Es.Character[0] = -3;
-                    Self.InfoDetail.AddHistory(Ns + "试图向上司" + Nt + "争取更高的管理职位，却被认为是好高骛远");
+                    Self.InfoDetail.AddHistory(Ns + "试图向上司" + Nt + "争取更高的管理职位，却被认为是好高骛远，独裁+10%");
+                    Target.InfoDetail.AddHistory(Nt + "认为" + Ns + "好高骛远");
                     EventResult(2);
                 }
                 else if (a < 12)
                 {
                     Self.InfoDetail.AddHistory(Ns + "有条不紊地向上司" + Nt + "展示了自己最近的进展，并提出可以进一步谋求更大的发展机会，得到上司认可(目前无效！！)");
+                    Target.InfoDetail.AddHistory(Nt + "认可了" + Ns + "最近的进展");
                     EventResult(3);
                 }
                 else
                 {
                     Self.InfoDetail.AddHistory(Ns + "向上司" + Nt + "展示了自己强劲的领导才能，并表达了无论什么岗位始终维护上级的决心，被大加赞赏(目前无效！！)");
+                    Target.InfoDetail.AddHistory(Nt + "对" + Ns + "的表现大加赞赏，并调整了他的工作岗位");
                     EventResult(4);
                 }
             }
@@ -651,22 +671,26 @@ public class EmpEvent
                     if (Es.Character[0] < -3)
                         Es.Character[0] = -3;
 
-                    Self.InfoDetail.AddHistory(Ns + "试图与" + Nt + "沟通建立一个公司内部派系，却遭到对方的疯狂嘲讽，被称为痴人说梦的野心家");
+                    Self.InfoDetail.AddHistory(Ns + "试图与" + Nt + "沟通建立一个公司内部派系，却遭到对方的疯狂嘲讽，被称为痴人说梦的野心家，信念-1，独裁+20%");
+                    Target.InfoDetail.AddHistory(Nt + "嘲讽" + Ns + "就是一个痴人说梦的野心家");
                     EventResult(1);
                 }
                 else if (a <= 8)
                 {
                     Self.InfoDetail.AddHistory(Ns + "试图与" + Nt + "建立一个公司内部派系，对方对这种想法似乎不以为然(没效果??)");
+                    Target.InfoDetail.AddHistory(Nt + "对" + Ns + "建立派系的想法不以为然");
                     EventResult(2);
                 }
                 else if (a < 12)
                 {
                     Self.InfoDetail.AddHistory(Ns + "试图与" + Nt + "建立一个公司内部派系，并获得了认同，从此二人将会共建派系彼此照应(目前无效！！)");
+                    Target.InfoDetail.AddHistory(Nt + "与" + Ns + "两人将会共建派系彼此照应");
                     EventResult(3);
                 }
                 else
                 {
                     Self.InfoDetail.AddHistory(Ns + "说出了与" + Nt + "建立一个公司内部派系，令对方十分惊异其雄图大志，并同意共建派系(目前无效！！)");
+                    Target.InfoDetail.AddHistory(Nt + "十分惊诧于" + Ns + "的雄图大志，并同意与之共建派系");
                     EventResult(4);
                 }
             }
@@ -678,12 +702,14 @@ public class EmpEvent
                 {
                     Et.Mentality -= 10;
                     Self.InfoDetail.AddHistory(Ns + "对" + Nt + "的工作指手画脚，横加干涉，使对方难以忍耐");
+                    Target.InfoDetail.AddHistory(Nt + "难以忍受" + Ns + "，心力-10");
                     EventResult(1);
                 }
                 else if (a <= 7)
                 {
                     Es.Mentality -= 5;
-                    Self.InfoDetail.AddHistory(Ns + "对" + Nt + "的工作主动提出了一些自己看法，对方表示不以为然");
+                    Self.InfoDetail.AddHistory(Ns + "对" + Nt + "的工作主动提出了一些自己看法，对方表示不以为然，心力-5");
+                    Target.InfoDetail.AddHistory(Nt + "对" + Ns + "的看法不以为然");
                     EventResult(2);
                 }
                 else if (a < 12)
@@ -691,12 +717,14 @@ public class EmpEvent
                     Es.Character[0] += 0.3f;
                     if (Es.Character[0] > 3)
                         Es.Character[0] = 3;
-                    Self.InfoDetail.AddHistory(Ns + "对" + Nt + "的工作提出了一些建议，对方欣然接受");
+                    Self.InfoDetail.AddHistory(Ns + "对" + Nt + "的工作提出了一些建议，对方欣然接受，开源+10%");
+                    Target.InfoDetail.AddHistory(Nt + "欣然接受了" + Ns + "的建议");
                     EventResult(3);
                 }
                 else
                 {
                     Self.InfoDetail.AddHistory(Ns + "帮助" + Nt + "捋清了整个业务流程，使对方通体舒爽，如沐春风(目前无效！！)");
+                    Target.InfoDetail.AddHistory(Nt + "对" + Ns + "的帮助感到通体舒爽，如沐春风");
                     EventResult(4);
                 }
             }
@@ -709,7 +737,8 @@ public class EmpEvent
                     Es.Character[3] -= 0.6f;
                     if (Es.Character[3] < -3)
                         Es.Character[3] = -3;
-                    Self.InfoDetail.AddHistory(Ns + "试图用来自热带的土著舞蹈引起" + Nt + "的注意，并给他一些工作上的启发，对方不知道说什么好");
+                    Self.InfoDetail.AddHistory(Ns + "试图用来自热带的土著舞蹈引起" + Nt + "的注意，并给他一些工作上的启发，对方不知道说什么好，随心所欲+20%");
+                    Target.InfoDetail.AddHistory(Nt + "对" + Ns + "的表演不知道说什么好");
                     EventResult(1);
                 }
                 else if (a <= 7)
@@ -717,17 +746,20 @@ public class EmpEvent
                     Es.Character[0] -= 0.3f;
                     if (Es.Character[0] < -3)
                         Es.Character[0] = -3;
-                    Self.InfoDetail.AddHistory(Ns + "滔滔不绝地提出了十条帮助" + Nt + "的建议，对方表示其根本没明白自己在讲什么");
+                    Self.InfoDetail.AddHistory(Ns + "滔滔不绝地提出了十条帮助" + Nt + "的建议，对方表示其根本没明白自己在讲什么，独裁+10%");
+                    Target.InfoDetail.AddHistory(Nt + "根本没听明白" + Ns + "在讲什么");
                     EventResult(2);
                 }
                 else if (a < 12)
                 {
                     Self.InfoDetail.AddHistory(Ns + "在" + Nt + "提到工作的困境时，使对方突然获得了巨大灵感(目前无效！！)");
+                    Target.InfoDetail.AddHistory(Nt + "从" + Ns + "的话语中获得了巨大的灵感");
                     EventResult(3);
                 }
                 else
                 {
                     Self.InfoDetail.AddHistory(Ns + "帮助" + Nt + "用更高维度视角对当前的困难降维打击，一个神奇的清晰图景立即浮现(目前无效！！)");
+                    Target.InfoDetail.AddHistory(Nt + "在" + Ns + "的帮助下，脑中浮现出一个神奇的清晰图景");
                     EventResult(4);
                 }
             }
@@ -736,25 +768,29 @@ public class EmpEvent
                 if (a <= 2)
                 {
                     Et.Mentality -= 10;
-                    Es.Character[3] -= 0.3f;
-                    if (Es.Character[3] < -3)
-                        Es.Character[3] = -3;
+                    Et.Character[3] -= 0.3f;
+                    if (Et.Character[3] < -3)
+                        Et.Character[3] = -3;
                     Self.InfoDetail.AddHistory(Ns + "向" + Nt + "阐述了热力学第二定律与当前工作问题的关系和解决方法，使对方感到根本听不懂");
+                    Target.InfoDetail.AddHistory(Nt + "对" + Ns + "的讲述表示完全听不懂，心力-10，随心所欲+10%");
                     EventResult(1);
                 }
                 else if (a <= 7)
                 {
                     Self.InfoDetail.AddHistory(Ns + "向" + Nt + "提出一起来通过倒立的方式头脑风暴，对方表示这样容易脑溢血并拒绝了他(没效果??)");
+                    Target.InfoDetail.AddHistory(Nt + "对" + Ns + "的建议表示这样容易脑溢血，并拒绝了他");
                     EventResult(2);
                 }
                 else if (a < 12)
                 {
                     Self.InfoDetail.AddHistory(Ns + "向" + Nt + "提出一起头脑风暴来解决问题，二人非常创造性的讨论了很多问题(目前无效！！)");
+                    Target.InfoDetail.AddHistory(Nt + "对" + Ns + "创造性地讨论了许多问题");
                     EventResult(3);
                 }
                 else
                 {
                     Self.InfoDetail.AddHistory(Ns + "在与" + Nt + "头脑风暴时感到彼此灵魂激荡，“等价交换！”，一扇真理之门似乎在他们面前显现(目前无效！！)");
+                    Target.InfoDetail.AddHistory(Nt + "对" + Ns + "感到一扇真理之门似乎在他们面前显现");
                     EventResult(4);
                 }
             }
@@ -771,12 +807,14 @@ public class EmpEvent
                 {
                     Et.Mentality -= 30;
                     Self.InfoDetail.AddHistory(Ns + "试图与" + Nt + "大力宣扬人类中心主义，并称非人类的一切都毫无价值，引起对方的剧烈反感");
+                    Target.InfoDetail.AddHistory(Nt + "的价值观宣传引起了" + Ns + "的剧烈反感，心力-30");
                     EventResult(1);
                 }
                 else if (a <= 8)
                 {
                     Et.Mentality -= 10;
                     Self.InfoDetail.AddHistory(Ns + "就人类的神圣地位和人工弱智能的关系向" + Nt + "发表论断，引发二人的不快争执");
+                    Target.InfoDetail.AddHistory(Nt + "与" + Ns + "产生争执，心力-10");
                     EventResult(2);
                 }
                 else if (a < 12)
@@ -785,6 +823,7 @@ public class EmpEvent
                     if (Et.Character[1] > 3)
                         Et.Character[1] = 3;
                     Self.InfoDetail.AddHistory(Ns + "向" + Nt + "讲解了人类如何与机械共同进化的话题，引起对方的强烈兴趣");
+                    Target.InfoDetail.AddHistory(Nt + "的价值观宣传引起了" + Ns + "的强烈兴趣，人文主义+10%");
                     EventResult(3);
                 }
                 else
@@ -795,6 +834,7 @@ public class EmpEvent
                         Et.Character[1] = 3;
                     Es.SalaryExtra += (int)(Self.InfoDetail.CalcSalary() * 0.4f);
                     Self.InfoDetail.AddHistory(Ns + "向" + Nt + "分享了人性的美好与光辉，使对方因人类的演化之美和混沌性，流下感动的热泪");
+                    Target.InfoDetail.AddHistory(Nt + "因" + Ns + "的宣传流下了感动的热泪，心力+20，人文主义+10%");
                     EventResult(4);
                 }
             }
@@ -808,12 +848,14 @@ public class EmpEvent
                 {
                     Et.Mentality -= 30;
                     Self.InfoDetail.AddHistory(Ns + "向" + Nt + "大力宣扬机械飞升主义，并称人类终将毁灭，世界属于数据，引起对方的剧烈反感");
+                    Target.InfoDetail.AddHistory(Nt + "的价值观宣传引起了" + Ns + "的剧烈方案，心力-30");
                     EventResult(1);
                 }
                 else if (a <= 8)
                 {
                     Et.Mentality -= 10;
                     Self.InfoDetail.AddHistory(Ns + "向" + Nt + "发表了人类本质邪恶而脆弱的见解，导致二人谈话气氛十分尴尬");
+                    Target.InfoDetail.AddHistory(Nt + "与" + Ns + "的谈话氛围十分尴尬，心力-10");
                     EventResult(2);
                 }
                 else if (a < 12)
@@ -822,6 +864,7 @@ public class EmpEvent
                     if (Et.Character[1] < -3)
                         Et.Character[1] = -3;
                     Self.InfoDetail.AddHistory(Ns + "向" + Nt + "讲解了人工智能对于生命意义的新的诠释，引起对方的强烈兴趣");
+                    Target.InfoDetail.AddHistory(Nt + "的价值观宣传引起了" + Ns + "的强烈兴趣，机械飞升+10%");
                     EventResult(3);
                 }
                 else
@@ -832,6 +875,7 @@ public class EmpEvent
                         Et.Character[1] = -3;
                     Es.SalaryExtra += (int)(Self.InfoDetail.CalcSalary() * 0.4f);
                     Self.InfoDetail.AddHistory(Ns + "向" + Nt + "描绘了一个由数据和理性构成的完美乌托邦的新图景，使对方流连于对未来都市的想象并振奋不已");
+                    Target.InfoDetail.AddHistory(Nt + "被" + Ns + "的价值观宣传打动，振奋不已，心力+20，机械飞升+10%");
                     EventResult(4);
                 }
             }
