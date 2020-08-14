@@ -210,6 +210,33 @@ public class ProductControl : MonoBehaviour
             }
         }
 
+        ScoreExtra[0, 0] = (int)(ScoreExtra[0, 0] * 0.05f);
+        ScoreExtra[0, 1] = (int)(ScoreExtra[0, 1] * 0.1f);
+        ScoreExtra[0, 2] = (int)(ScoreExtra[0, 2] * 0.6f);
+        ScoreExtra[0, 3] = (int)(ScoreExtra[0, 3] * 0.25f);
+
+        ScoreExtra[1, 0] = (int)(ScoreExtra[1, 0] * 0.1f);
+        ScoreExtra[1, 1] = (int)(ScoreExtra[1, 1] * 0.4f);
+        ScoreExtra[1, 2] = (int)(ScoreExtra[1, 2] * 0.35f);
+        ScoreExtra[1, 3] = (int)(ScoreExtra[1, 3] * 0.15f);
+
+        ScoreExtra[2, 0] = (int)(ScoreExtra[2, 0] * 0.4f);
+        ScoreExtra[2, 1] = (int)(ScoreExtra[2, 1] * 0.35f);
+        ScoreExtra[2, 2] = (int)(ScoreExtra[2, 2] * 0.15f);
+        ScoreExtra[2, 3] = (int)(ScoreExtra[2, 3] * 0.1f);
+
+        ScoreExtra[3, 0] = (int)(ScoreExtra[3, 0] * 0.5f);
+        ScoreExtra[3, 1] = (int)(ScoreExtra[3, 1] * 0.15f);
+        ScoreExtra[3, 2] = (int)(ScoreExtra[3, 2] * 0.05f);
+        ScoreExtra[3, 3] = (int)(ScoreExtra[3, 3] * 0.3f);
+
+        ScoreExtra[4, 0] = (int)(ScoreExtra[4, 0] * 0);
+        ScoreExtra[4, 1] = (int)(ScoreExtra[4, 1] * 0.35f);
+        ScoreExtra[4, 2] = (int)(ScoreExtra[4, 2] * 0.2f);
+        ScoreExtra[4, 3] = (int)(ScoreExtra[4, 3] * 0.45f);
+
+
+
         UpdateUI();
     }
 

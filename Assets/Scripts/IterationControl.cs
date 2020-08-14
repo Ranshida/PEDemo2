@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class IterationControl : MonoBehaviour
 {
-    public Text[] Text_Counts = new Text[16];
+    public Text[] Text_Counts = new Text[3];
     public Text[] Text_Value = new Text[4];
     public Transform ButtonTab1, ButtonTab2;
     public Product TargetProduct;
@@ -15,7 +15,7 @@ public class IterationControl : MonoBehaviour
     int Art, Function, Fluence, Secure;
     int IterationNum = 0, TotalSelectNum = 0;
 
-    int[,] Value = new int[4, 4]; //类型,品质
+    int[] Value = new int[3]; //类型,品质
 
     public void RefreshPanel()
     {
@@ -27,12 +27,9 @@ public class IterationControl : MonoBehaviour
         {
             Text_Value[i].text = "0";
         }
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 3; i++)
         {
-            for (int j = 0; j < 4; j++)
-            {
-                Value[i, j] = 0;
-            }
+            Value[i] = 0;
         }
         IterationNum = 0;
         TotalSelectNum = 0;
@@ -42,9 +39,9 @@ public class IterationControl : MonoBehaviour
     public void AddBad(int type)
     {
         int n = NumSet(type);
-        if (GC.ResCount[n, 0] > Value[type - 1, 0])
+        if (GC.FinishedTask[n] > Value[type - 1])
         {
-            Value[type - 1, 0] += 1;
+            Value[type - 1] += 1;
             NumCheck(false, type);
         }
         UpdateInfo();
@@ -52,79 +49,79 @@ public class IterationControl : MonoBehaviour
     public void ReduceBad(int type)
     {
         int n = NumSet(type);
-        if (Value[type - 1, 0] > 0)
+        if (Value[type - 1] > 0)
         {
-            Value[type - 1, 0] -= 1;
+            Value[type - 1] -= 1;
             NumCheck(true, type);
         }
         UpdateInfo();
     }
-    public void AddNormal(int type)
-    {
-        int n = NumSet(type);
-        if (GC.ResCount[n, 1] > Value[type - 1, 1])
-        {
-            Value[type - 1, 1] += 1;
-            NumCheck(false, type);
-        }
-        UpdateInfo();
-    }
-    public void ReduceNormal(int type)
-    {
-        int n = NumSet(type);
-        if (Value[type - 1, 1] > 0)
-        {
-            Value[type - 1, 1] -= 1;
-            NumCheck(true, type);
-        }
-        UpdateInfo();
-    }
-    public void AddGood(int type)
-    {
-        int n = NumSet(type);
-        if (GC.ResCount[n, 2] > Value[type - 1, 2])
-        {
-            Value[type - 1, 2] += 1;
-            NumCheck(false, type);
-        }
-        UpdateInfo();
-    }
-    public void ReduceGood(int type)
-    {
-        int n = NumSet(type);
-        if (Value[type - 1, 2] > 0)
-        {
-            Value[type - 1, 2] -= 1;
-            NumCheck(true, type);
-        }
-        UpdateInfo();
-    }
-    public void AddPerfect(int type)
-    {
-        int n = NumSet(type);
-        if (GC.ResCount[n, 3] > Value[type - 1, 3])
-        {
-            Value[type - 1, 3] += 1;
-            NumCheck(false, type);
-        }
-        UpdateInfo();
-    }
-    public void ReducePerfect(int type)
-    {
-        int n = NumSet(type);
-        if (Value[type - 1, 3] > 0)
-        {
-            Value[type - 1, 3] -= 1;
-            NumCheck(true, type);
-        }
-        UpdateInfo();
-    }
+    //public void AddNormal(int type)
+    //{
+    //    int n = NumSet(type);
+    //    if (GC.ResCount[n, 1] > Value[type - 1, 1])
+    //    {
+    //        Value[type - 1, 1] += 1;
+    //        NumCheck(false, type);
+    //    }
+    //    UpdateInfo();
+    //}
+    //public void ReduceNormal(int type)
+    //{
+    //    int n = NumSet(type);
+    //    if (Value[type - 1, 1] > 0)
+    //    {
+    //        Value[type - 1, 1] -= 1;
+    //        NumCheck(true, type);
+    //    }
+    //    UpdateInfo();
+    //}
+    //public void AddGood(int type)
+    //{
+    //    int n = NumSet(type);
+    //    if (GC.ResCount[n, 2] > Value[type - 1, 2])
+    //    {
+    //        Value[type - 1, 2] += 1;
+    //        NumCheck(false, type);
+    //    }
+    //    UpdateInfo();
+    //}
+    //public void ReduceGood(int type)
+    //{
+    //    int n = NumSet(type);
+    //    if (Value[type - 1, 2] > 0)
+    //    {
+    //        Value[type - 1, 2] -= 1;
+    //        NumCheck(true, type);
+    //    }
+    //    UpdateInfo();
+    //}
+    //public void AddPerfect(int type)
+    //{
+    //    int n = NumSet(type);
+    //    if (GC.ResCount[n, 3] > Value[type - 1, 3])
+    //    {
+    //        Value[type - 1, 3] += 1;
+    //        NumCheck(false, type);
+    //    }
+    //    UpdateInfo();
+    //}
+    //public void ReducePerfect(int type)
+    //{
+    //    int n = NumSet(type);
+    //    if (Value[type - 1, 3] > 0)
+    //    {
+    //        Value[type - 1, 3] -= 1;
+    //        NumCheck(true, type);
+    //    }
+    //    UpdateInfo();
+    //}
 
     void UpdateInfo()
     {
         for(int i = 0; i < Text_Counts.Length; i++)
         {
-            Text_Counts[i].text = Value[i % 4, i / 4].ToString();
+            Text_Counts[i].text = Value[i].ToString();
         }
         ValueCalc();
         Text_Value[0].text = Art.ToString();
@@ -136,41 +133,10 @@ public class IterationControl : MonoBehaviour
     public void ValueCalc()
     {
         int a = 0, b = 0, c = 0, d = 0;
-        for (int i = 0; i < 4; i++)
-        {
-            for (int j = 0; j < 4; j++)
-            {
-                int m;
-                if (j == 0)
-                    m = 10;
-                else if (j == 1)
-                    m = 20;
-                else if (j == 2)
-                    m = 40;
-                else
-                    m = 100;
-
-                if (i == 0)
-                {
-                    c += Value[i, j] * m;
-                    d += Value[i, j] * m;
-                }
-                else if (i == 1)
-                {
-                    a += Value[i, j] * m;
-                    b += Value[i, j] * m;
-                }
-                else if (i == 2)
-                {
-                    a += Value[i, j] * m;
-                }
-                else if (i == 3)
-                {
-                    b += Value[i, j] * m;
-                    c += Value[i, j] * m;
-                }
-            }
-        }
+        a += Value[1] * 20 + Value[2] * 40;
+        b += Value[0] * 20 + Value[1] * 40;
+        c += Value[0] * 20 + Value[1] * 20 + Value[2] * 20;
+        d += Value[0] * 40 + Value[2] * 20;
         Art = a; Function = b; Fluence = c; Secure = d;
     }
 
@@ -182,26 +148,15 @@ public class IterationControl : MonoBehaviour
         TargetProduct.Score[3] += Secure;
         TargetProduct.CalcUser();
         TargetProduct.UpdateUI();
-        for (int i = 0; i < 4; i++)
-        {
-            for (int j = 0; j < 4; j++)
-            {
-                if (Value[i, j] > 0)
-                {
-                    int t = Value[i, j];
-                    for (int k = 0; k < t; k++)
-                    {
-                        GC.RemoveTask(i + 1, j + 1);
-                    }
-                }
-            }
-        }
+        GC.FinishedTask[0] -= Value[0];
+        GC.FinishedTask[6] -= Value[1];
+        GC.FinishedTask[4] -= Value[0];
         GC.UpdateResourceInfo();
     }
 
     public void ButtonCheck()
     {
-        if(TotalSelectNum >= 4)
+        if(TotalSelectNum >= 10)
         {
             foreach(Transform child in ButtonTab1)
             {
@@ -247,8 +202,8 @@ public class IterationControl : MonoBehaviour
             return 6;
         else if (type == 3)
             return 4;
-        else
-            return 8;
+
+        return 0;
     }
 
     void NumCheck(bool Reduce , int type)

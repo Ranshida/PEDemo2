@@ -33,7 +33,7 @@ public class Building : MonoBehaviour
     public void SetSize(int x, int y)
     {
         Rt.localScale = new Vector3(x, y);
-        effect.Rt.localScale = new Vector3(x + 4, y + 4);
+        effect.Rt.localScale = new Vector3(x + 8, y + 8);
         effect.transform.parent = this.transform;
         effect.Rt.anchoredPosition = new Vector2(0, 0);
     }

@@ -170,7 +170,7 @@ public class EmpInfo : MonoBehaviour
         if(emp.CurrentDep != null)
         {
             emp.CurrentDep.CurrentEmps.Remove(emp);
-            emp.CurrentDep.ShowProducePower();
+            emp.CurrentDep.UpdateUI();
         }
         else if(emp.CurrentOffice != null)
         {

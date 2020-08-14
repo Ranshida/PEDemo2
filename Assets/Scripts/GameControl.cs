@@ -7,7 +7,7 @@ using UnityEngine.Events;
 public class GameControl : MonoBehaviour
 {
     [HideInInspector] public int Salary, Income, MobilizeExtraMent = 0, ManageExtra, TimeMultiply = 1, WorkEndEmpCount = 0;
-    [HideInInspector] public float EfficiencyExtraNormal = 0, EfficiencyExtraScience = 0, ResearchSuccessRateExtra = 0;
+    [HideInInspector] public float EfficiencyExtraNormal = 0, EfficiencyExtraScience = 0, ResearchSuccessRateExtra = 0, ExtrafailRate = 0;
     public int SelectMode = 1;
     public int Money = 1000, Stamina = 100, Mentality = 100;
     public int Morale
@@ -15,15 +15,14 @@ public class GameControl : MonoBehaviour
         get { return morale; }
         set
         {
+            morale = value;
             if (morale > 100)
                 morale = 100;
             else if (morale < 0)
                 morale = 0;
-            Text_Morale.text = "士气" + Morale;
+            Text_Morale.text = "士气:" + Morale;
         }
     }
-
-    public int[,] ResCount = new int[9, 4];
 
     [HideInInspector] public EmpInfo CurrentEmpInfo;
     [HideInInspector] public DepControl CurrentDep;
@@ -52,7 +51,7 @@ public class GameControl : MonoBehaviour
     public List<DepControl> CurrentDeps = new List<DepControl>();
     public List<OfficeControl> CurrentOffices = new List<OfficeControl>();
     public List<Employee> CurrentEmployees = new List<Employee>();
-    public List<Task> FinishedTask = new List<Task>();
+    public int[] FinishedTask = new int[9];
 
     Animator Anim;
 
@@ -69,7 +68,7 @@ public class GameControl : MonoBehaviour
     {
         if (TimePause == false)
             Timer += Time.deltaTime * TimeMultiply;
-        if(Timer >= 15)
+        if(Timer >= 10)
         {
             Timer = 0;
             HourPass();
@@ -103,23 +102,23 @@ public class GameControl : MonoBehaviour
         //    Day = 1;
         //    WeeklyEvent.Invoke();
         //}
-        if(Week > 4)
-        {
-            Month += 1;
-            Week = 1;
-            PrC.UserChange();
-            Money = Money + Income - Salary;
-            MonthlyEvent.Invoke();
-            for (int i = 0; i < CurrentDeps.Count; i++)
-            {
-                CurrentDeps[i].FailCheck();
-            }
-        }
-        if(Month > 12)
-        {
-            Year += 1;
-            Month = 1;
-        }
+        //if(Week > 4)
+        //{
+        //    Month += 1;
+        //    Week = 1;
+        //    PrC.UserChange();
+        //    Money = Money + Income - Salary;
+        //    MonthlyEvent.Invoke();
+        //    for (int i = 0; i < CurrentDeps.Count; i++)
+        //    {
+        //        CurrentDeps[i].FailCheck();
+        //    }
+        //}
+        //if(Month > 12)
+        //{
+        //    Year += 1;
+        //    Month = 1;
+        //}
         //Text_Time.text = "年" + Year + " 月" + Month + " 周" + Week + " 日" + Day + " 时" + Hour;
         Text_Time.text = "年" + Year + " 月" + Month + " 周" + Week + " 时" + Hour;
     }
@@ -136,16 +135,40 @@ public class GameControl : MonoBehaviour
             Stamina = 100;
         if (Mentality > 100)
             Mentality = 100;
+
+        if (Week > 4)
+        {
+            Month += 1;
+            Week = 1;
+            PrC.UserChange();
+            Money = Money + Income - Salary;
+            MonthlyEvent.Invoke();
+            for (int i = 0; i < CurrentDeps.Count; i++)
+            {
+                CurrentDeps[i].FailCheck();
+            }
+        }
+        if (Month > 12)
+        {
+            Year += 1;
+            Month = 1;
+        }
+        Text_Time.text = "年" + Year + " 月" + Month + " 周" + Week + " 时" + Hour;
     }
 
     void StartWorkEnd()
     {
-        TimePause = true;
-        WorkEndEmpCount = CurrentEmployees.Count;
-        for (int i = 0; i < CurrentEmployees.Count; i++)
+        if (CurrentEmployees.Count > 0)
         {
-            CurrentEmployees[i].InfoDetail.Entity.WorkEnd();
+            TimePause = true;
+            WorkEndEmpCount = CurrentEmployees.Count;
+            for (int i = 0; i < CurrentEmployees.Count; i++)
+            {
+                CurrentEmployees[i].InfoDetail.Entity.WorkEnd();
+            }
         }
+        else
+            Anim.SetTrigger("FadeIn");
     }
 
     public void WorkEndCheck()
@@ -403,7 +426,7 @@ public class GameControl : MonoBehaviour
             //还需要重新计算工资
             Salary += CurrentEmpInfo.CalcSalary();
             depControl.CurrentEmps.Add(CurrentEmpInfo.emp);
-            depControl.ShowProducePower();
+            depControl.UpdateUI();
             CurrentEmpInfo.emp.CurrentDep = depControl;
             SetInfoPanel();
             CurrentEmpInfo.emp.InfoA.transform.parent = depControl.EmpContent;
@@ -418,7 +441,7 @@ public class GameControl : MonoBehaviour
             //修改新部门生产力显示
             CurrentEmpInfo.emp.CurrentDep = depControl;
             depControl.CurrentEmps.Add(CurrentEmpInfo.emp);
-            depControl.ShowProducePower();
+            depControl.UpdateUI();
             CurrentEmpInfo.DetailInfo.Entity.FindWorkPos();
         }
         //选择部门发动建筑特效
@@ -484,7 +507,7 @@ public class GameControl : MonoBehaviour
         {
             CurrentEmpInfo.emp.CurrentDep.CurrentEmps.Remove(CurrentEmpInfo.emp);
             //修改生产力显示
-            CurrentEmpInfo.emp.CurrentDep.ShowProducePower();
+            CurrentEmpInfo.emp.CurrentDep.UpdateUI();
             CurrentEmpInfo.emp.CurrentDep = null;
         }
         if (CurrentEmpInfo.emp.CurrentOffice != null)
@@ -535,59 +558,18 @@ public class GameControl : MonoBehaviour
 
     public void UpdateResourceInfo()
     {
-        int[,] C = new int[9, 4];
-        for (int i = 0; i < FinishedTask.Count; i++)
-        {
-            C[(int)FinishedTask[i].TaskType * 3 + FinishedTask[i].Num - 1, (FinishedTask[i].Value - 1)] += 1;
-        }
-        ResCount = C;
-        Text_TechResource.text = "程序迭代: " + C[0, 0] + "/" + C[0, 1] + "/" + C[0, 2] + "/" + C[0, 3] + "\n" +
-            "技术研发: " + C[1, 0] + "/" + C[1, 1] + "/" + C[1, 2] + "/" + C[1, 3] + "\n" +
-            "可行性调研: " + C[2, 0] + "/" + C[2, 1] + "/" + C[2, 2] + "/" + C[2, 3] + "\n";
+        int[] C = FinishedTask;
+        Text_TechResource.text = "程序迭代: " + C[0] + "\n" +
+            "技术研发: " + C[1] + "\n" +
+            "可行性调研: " + C[2] + "\n";
 
-        Text_MarketResource.text = "公关谈判: " + C[3, 0] + "/" + C[3, 1] + "/" + C[3, 2] + "/" + C[3, 3] + "\n" +
-            "营销文案: " + C[4, 0] + "/" + C[4, 1] + "/" + C[4, 2] + "/" + C[4, 3] + "\n" +
-            "资源拓展: " + C[5, 0] + "/" + C[5, 1] + "/" + C[5, 2] + "/" + C[5, 3] + "\n";
+        Text_MarketResource.text = "公关谈判: " + C[3] + "\n" +
+            "营销文案: " + C[4] + "\n" +
+            "资源拓展: " + C[5] + "\n";
 
-        Text_ProductResource.text = "原型图: " + C[6, 0] + "/" + C[6, 1] + "/" + C[6, 2] + "/" + C[6, 3] + "\n" +
-           "产品研究: " + C[7, 0] + "/" + C[7, 1] + "/" + C[7, 2] + "/" + C[7, 3] + "\n" +
-           "用户访谈: " + C[8, 0] + "/" + C[8, 1] + "/" + C[8, 2] + "/" + C[8, 3] + "\n";
-    }
-
-    public void RemoveTask(int type, int value)
-    {
-        EmpType T;//0648
-        int num;
-        if(type == 1)
-        {
-            T = EmpType.Tech;
-            num = 1;
-        }
-        else if(type == 2)
-        {
-            T = EmpType.Product;
-            num = 1;
-        }
-        else if(type == 3)
-        {
-            T = EmpType.Market;
-            num = 2;
-        }
-        else
-        {
-            T = EmpType.Product;
-            num = 3;
-        }
-        List<Task> TempList = new List<Task>();
-        for(int i = 0; i < FinishedTask.Count; i++)
-        {
-            if (FinishedTask[i].TaskType == T && FinishedTask[i].Num == num && FinishedTask[i].Value == value)
-                TempList.Add(FinishedTask[i]);
-        }
-        for(int i = 0; i < TempList.Count; i++)
-        {
-            FinishedTask.Remove(TempList[i]);
-        }
+        Text_ProductResource.text = "原型图: " + C[6] + "\n" +
+           "产品研究: " + C[7] + "\n" +
+           "用户访谈: " + C[8] + "\n";
     }
 
     public void SetTimeMultiply(int value)

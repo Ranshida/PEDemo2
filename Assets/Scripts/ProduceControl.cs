@@ -10,7 +10,7 @@ public class Task
     //产品:原型图;产品研究;用户访谈
     public EmpType TaskType;            //Type:技术、市场、迭代; Num:各类的第1-3项; Value:品质, 最低是取1的低劣
     public int Num, HourLeft, Value;
-    public float Progress;
+    public int Progress;
     public string TaskName;
 }
 
@@ -21,7 +21,7 @@ public class ProduceControl : MonoBehaviour
 
     DepControl CurrentDep;
 
-    int TaskNum = 1, TaskTime = 1;
+    int TaskNum = 1;
 
     public void SetName(DepControl Dep)
     {
@@ -53,10 +53,6 @@ public class ProduceControl : MonoBehaviour
     {
         TaskNum = num + 1;
     }
-    public void SetTime(int time)
-    {
-        TaskTime = time + 1;
-    }
 
     public void CreateTask()
     {
@@ -64,7 +60,6 @@ public class ProduceControl : MonoBehaviour
         newTask.TaskType = CurrentDep.type;
         newTask.TaskName = dropdown.options[TaskNum - 1].text;
         newTask.Num = TaskNum;
-        newTask.HourLeft = TaskTime * 8;
         CurrentDep.SetTask(newTask);
     }
 }

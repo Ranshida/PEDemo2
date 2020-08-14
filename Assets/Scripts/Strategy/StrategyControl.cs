@@ -6,8 +6,11 @@ using UnityEngine.UI;
 public class StrategyControl : MonoBehaviour
 {
 
+    public int TimeLeft = 0;
+
     public int[] CurrentStrNum = new int[5];
     public int[] StrLimitNum = new int[5];
+    public int[] BlockTime = new int[3];
 
     public StrategyInfo InfoPrefabA, InfoPrefabB, InfoPrefabC,CurrentStrategy;
     public GameObject NewStrPanel;
@@ -16,11 +19,15 @@ public class StrategyControl : MonoBehaviour
 
     public List<StrategyInfo> StrInfos = new List<StrategyInfo>();
     public StrategyInfo[] NewStrs = new StrategyInfo[3];
+    public StrategyInfo[] CurrentStrs = new StrategyInfo[3];
     public Text[] Texts_Strnum = new Text[5];
+    public Text[] Texts_BlockTime = new Text[3];
+    public Button NewStrButton;
 
     private void Start()
     {
         UpdateUI();
+        GC.HourEvent.AddListener(TimePass);
     }
 
     public void RefreshNewStrs()
@@ -129,13 +136,68 @@ public class StrategyControl : MonoBehaviour
     {
         for(int i = 0; i < 3; i++)
         {
-            NewStrs[i].SelectStrategy();
+            if (NewStrs[i].Active == false)
+            {
+                if (CurrentStrs[i] != null)
+                    Destroy(CurrentStrs[i].gameObject);
+                CurrentStrs[i] = NewStrs[i].SelectStrategy();
+                CurrentStrs[i].StrNum = i;
+            }
         }
+        TimeLeft = 96;
+        NewStrButton.interactable = false;
     }
 
     public void StrategyFail()
     {
         if (GC.Money > 0)
             GC.Money -= (int)(GC.Money * 0.2f);
+    }
+
+    public void TimePass()
+    {
+        for(int i = 0; i < BlockTime.Length; i++)
+        {
+            if(BlockTime[i] > 0)
+            {
+                BlockTime[i] -= 1;
+                if (BlockTime[i] == 0)
+                {
+                    Texts_BlockTime[i].gameObject.SetActive(false);
+                    NewStrs[i].gameObject.SetActive(true);
+                    NewStrs[i].Active = false;
+                    GC.Morale += 10;
+                }
+                else
+                    Texts_BlockTime[i].text = "剩余封锁时间:" + BlockTime[i] + "时";
+            }
+        }
+
+        if(TimeLeft > 0)
+        {
+            TimeLeft -= 1;
+            if(TimeLeft == 0)
+            {
+                NewStrButton.interactable = true;
+                for(int i = 0; i < CurrentStrs.Length; i++)
+                {
+                    if (CurrentStrs[i].Used == false)
+                    {
+                        CurrentStrs[i].Str.EffectRemove(GC);
+                        CurrentStrs[i].Used = true;
+                        CurrentStrs[i].UseButton.interactable = false;
+                        GC.HourEvent.RemoveListener(CurrentStrs[i].TimePass);
+                        if (CurrentStrs[i].Active == false)
+                        {
+                            GC.Morale -= 10;
+                            BlockTime[CurrentStrs[i].StrNum] = 96;
+                            NewStrs[CurrentStrs[i].StrNum].Active = true;
+                            NewStrs[CurrentStrs[i].StrNum].gameObject.SetActive(false);
+                            Texts_BlockTime[CurrentStrs[i].StrNum].gameObject.SetActive(true);
+                        }
+                    }
+                }
+            }
+        }
     }
 }

@@ -34,8 +34,8 @@ public class ProduceBuff
 public class DepControl : MonoBehaviour
 {
     static public int StandardProducePoint = 50;
-    [HideInInspector] public int SurveyProgress = 0, FailProgress = 0;
-    [HideInInspector] public bool SurveyStart = false, Failed = false;
+    [HideInInspector] public int SurveyProgress = 0, FailProgress = 0, TaskChangeTime = 0;
+    [HideInInspector] public bool SurveyStart = false, Failed = false, TaskChange = false;
     public int EmpLimit;
     public float Efficiency = 1.0f, FailRate = 0.3f;
     public bool canWork = false;
@@ -66,21 +66,14 @@ public class DepControl : MonoBehaviour
 
     public void SetTask(Task task)
     {
-        if (Failed == false)
+        int Pp = CountProducePower(task.Num);
+        if(CurrentTask != null)
         {
-            Text_Task.text = "当前任务:" + task.TaskName;
-            Text_Progress.text = "进度:" + task.Progress + " + " + CountProducePower(task.Num) + "/天";
+            TaskChangeTime = 16;
+            TaskChange = true;
         }
-        Text_Quality.text = "当前进度:无";
-        Text_Time.text = "剩余时间:" + task.HourLeft + "时";
         CurrentTask = task;
-    }
-    void ResetText()
-    {
-        Text_Task.text = "当前任务:无";
-        Text_Progress.text = "进度:000 + 000/时";
-        Text_Quality.text = "当前进度:无";
-        Text_Time.text = "剩余时间:--时";
+        UpdateUI(Pp);
     }
 
     public void Produce()
@@ -89,125 +82,180 @@ public class DepControl : MonoBehaviour
         {
             if (Failed == false)
             {
-                if (CurrentTask != null)
+                if (CurrentTask != null && TaskChange == false)
                 {
                     int Pp = CountProducePower(CurrentTask.Num);
                     CurrentTask.Progress += Pp;
-                    Text_Progress.text = "进度:" + CurrentTask.Progress + " + " + Pp + "/时";
-                    string quality;
-                    float p = CurrentTask.Progress;
-                    if (p < StandardProducePoint)
-                        quality = "未完成";
-                    else if (p < StandardProducePoint * 2)
-                        quality = "低劣";
-                    else if (p < StandardProducePoint * 4)
-                        quality = "平庸";
-                    else if (p < StandardProducePoint * 8)
-                        quality = "优良";
-                    else
-                        quality = "完美";
-                    Text_Quality.text = "当前进度:" + quality;
+                    if (CurrentTask.Progress >= StandardProducePoint * 4)
+                    {
+                        GC.FinishedTask[(int)CurrentTask.TaskType * 3 + CurrentTask.Num - 1] += 1;
+                        GC.UpdateResourceInfo();
+                        CurrentTask.Progress = 0;
+                    }
+                    UpdateUI(Pp);
                 }
                 else if (CurrentResearch != null)
                 {
                     int Pp = CountProducePower(4);
                     CurrentResearch.CurrentProgress += Pp;
-                    Text_Progress.text = "当前进度: " + (int)((float)CurrentResearch.CurrentProgress / (float)(CurrentResearch.Progress) * 100) + "%";
                     CurrentResearch.UpdateUI();
                     if (CurrentResearch.CurrentProgress >= CurrentResearch.Progress)
                     {
                         CurrentResearch.ResearchFinish();
                         CurrentResearch.ExtraButton.gameObject.SetActive(false);
                         CurrentResearch = null;
-                        Text_Task.text = "当前任务: 无";
-                        Text_Progress.text = "当前进度:----";
                     }
+                    UpdateUI(Pp);
                 }
                 else if (SurveyStart == true)
                 {
                     int Pp = CountProducePower(4);
                     SurveyProgress += Pp;
-                    Text_Progress.text = "当前进度: " + (int)((float)SurveyProgress / (float)(StandardProducePoint * 10) * 100) + "%";
-                    Text_Quality.text = "调研进度: " + SurveyProgress + "/" + (StandardProducePoint * 10);
                     if (SurveyProgress >= StandardProducePoint * 10)
                     {
                         RandomResearch();
                         SurveyButton.interactable = true;
-                        Text_Task.text = "当前任务: 无";
-                        Text_Progress.text = "当前进度:----";
                         SurveyStart = false;
                     }
+                    UpdateUI(Pp);
                 }
             }
             else
             {
                 int Pp = CountProducePower(4);
                 FailProgress -= Pp;
-                if (FailProgress > 0)
-                    Text_Progress.text = "剩余失误点: " + FailProgress + " -" + Pp + "/时";
-                else
+                if (FailProgress <= 0)
                 {
                     Failed = false;
                     FailProgress = 0;
-                    if (CurrentTask != null)
-                    {
-                        Pp = CountProducePower(CurrentTask.Num);
-                        Text_Progress.text = "进度:" + CurrentTask.Progress + " + " + Pp + "/时";
-                        Text_Task.text = "当前任务:" + CurrentTask.TaskName;
-                    }
-                    else
-                    {
-                        Text_Task.text = "当前任务: 无";
-                        Text_Progress.text = "当前进度:----";
-                    }
                 }
+                UpdateUI(Pp);
             }
         }
-        OneHourPass();
+        if(TaskChange == true)
+        {
+            TaskChangeTime -= 1;
+            if(TaskChangeTime < 1)
+            {
+                TaskChange = false;
+                TaskChangeTime = 0;
+            }
+            UpdateUI();
+        }
     }
 
-    public void OneHourPass()
+    public void UpdateUI()
     {
-        if (CurrentTask != null && canWork == true && Failed == false)
+        if (Failed == true)
         {
-            CurrentTask.HourLeft -= 1;
-            if(CurrentTask.HourLeft < 1)
+            int Pp = CountProducePower(4);
+            Text_Task.text = "当前任务: 失误处理";
+            Text_Progress.text = "生产力:" + Pp + "/时";
+            Text_Quality.text = "剩余失误点: " + FailProgress;
+            Text_Time.text = "剩余时间:" + calcTime(Pp, FailProgress) + "时";
+        }
+        else if (type == EmpType.Science)
+        {
+            int Pp = CountProducePower(4);
+            if (CurrentResearch != null)
             {
-                TaskFinish();
+                Text_Task.text = "当前任务:" + CurrentResearch.Text_Name.text;
+                Text_Progress.text = "研究速度:" + Pp + "/时";
+                Text_Quality.text = "研究进度: " + CurrentResearch.CurrentProgress + "/" + CurrentResearch.Progress;
+                Text_Time.text = "剩余时间:" + calcTime(Pp, CurrentResearch.Progress - CurrentResearch.CurrentProgress) + "时";
+            }
+            else if (SurveyStart == true)
+            {
+                Text_Task.text = "当前任务: 调研";
+                Text_Progress.text = "研究速度:" + Pp + "/时";
+                Text_Quality.text = "研究进度: " + SurveyProgress + "/" + (StandardProducePoint * 10);
+                Text_Time.text = "剩余时间:" + calcTime(Pp, StandardProducePoint * 10 - SurveyProgress) + "时";
             }
             else
-                Text_Time.text = "剩余时间:" + CurrentTask.HourLeft + "时";
+            {
+                Text_Task.text = "当前任务: 无";
+                Text_Progress.text = "研究速度:" + Pp + "/时";
+                Text_Quality.text = "研究进度:----";
+                Text_Time.text = "剩余时间:----";
+            }
         }
-    }
-
-    public void TaskFinish()
-    {
-        float p = CurrentTask.Progress;
-        if (p < StandardProducePoint)
-            CurrentTask.Value = 0;
-        else if (p < StandardProducePoint * 2)
-            CurrentTask.Value = 1;
-        else if (p < StandardProducePoint * 4)
-            CurrentTask.Value = 2;
-        else if (p < StandardProducePoint * 8)
-            CurrentTask.Value = 3;
+        else if (TaskChange == true)
+        {
+            Text_Task.text = "当前任务: 切换目标";
+            Text_Progress.text = "生产力:----";
+            Text_Quality.text = "当前进度:----";
+            Text_Time.text = "剩余时间:" + TaskChangeTime + "时";
+        }
+        else if (CurrentTask != null)
+        {
+            int Pp = CountProducePower(CurrentTask.Num);
+            Text_Task.text = "当前任务:" + CurrentTask.TaskName;
+            Text_Progress.text = "生产力:" + Pp + "/时";
+            Text_Quality.text = "当前进度:" + CurrentTask.Progress + "/" + StandardProducePoint * 4;
+            Text_Time.text = "剩余时间:" + calcTime(Pp, StandardProducePoint * 4 - CurrentTask.Progress) + "时";
+        }
         else
-            CurrentTask.Value = 4;
-        if(CurrentTask.Value > 0)
         {
-            GC.FinishedTask.Add(CurrentTask);
-            GC.UpdateResourceInfo();
+            Text_Task.text = "当前任务: 无";
+            Text_Progress.text = "生产力:----";
+            Text_Progress.text = "当前进度:----";
+            Text_Progress.text = "当前进度:----";
         }
-        CurrentTask = null;
-        ResetText();
     }
 
-    public void ShowProducePower()
+    void UpdateUI(int Pp)
     {
-        if(CurrentTask != null)
+        if(Failed == true)
         {
-            int p = CountProducePower(CurrentTask.Num);
-            Text_Progress.text = "进度:" + CurrentTask.Progress + " + " + p + "/天";
+            Text_Task.text = "当前任务: 失误处理";
+            Text_Progress.text = "生产力:" + Pp + "/时";
+            Text_Quality.text = "剩余失误点: " + FailProgress;
+            Text_Time.text = "剩余时间:" + calcTime(Pp, FailProgress) + "时";
+        }
+        else if(type == EmpType.Science)
+        {
+            if (CurrentResearch != null)
+            {
+                Text_Task.text = "当前任务:" + CurrentResearch.Text_Name.text;
+                Text_Progress.text = "研究速度:" + Pp + "/时";
+                Text_Quality.text = "研究进度: " + CurrentResearch.CurrentProgress + "/" + CurrentResearch.Progress;
+                Text_Time.text = "剩余时间:" + calcTime(Pp, CurrentResearch.Progress - CurrentResearch.CurrentProgress) + "时";
+            }
+            else if (SurveyStart == true)
+            {
+                Text_Task.text = "当前任务: 调研";
+                Text_Progress.text = "研究速度:" + Pp + "/时";
+                Text_Quality.text = "研究进度: " + SurveyProgress + "/" + (StandardProducePoint * 10);
+                Text_Time.text = "剩余时间:" + calcTime(Pp, StandardProducePoint * 10 - SurveyProgress) + "时";
+            }
+            else
+            {
+                Text_Task.text = "当前任务: 无";
+                Text_Progress.text = "研究速度:" + Pp + "/时";
+                Text_Quality.text = "研究进度:----";
+                Text_Time.text = "剩余时间:----";
+            }
+        }
+        else if (TaskChange == true)
+        {
+            Text_Task.text = "当前任务: 切换目标";
+            Text_Progress.text = "生产力:----";
+            Text_Quality.text = "当前进度:----";
+            Text_Time.text = "剩余时间:" + TaskChangeTime + "时";
+        }
+        else if (CurrentTask != null)
+        {
+            Text_Task.text = "当前任务:" + CurrentTask.TaskName;
+            Text_Progress.text = "生产力:" + Pp + "/时";
+            Text_Quality.text = "当前进度:" + CurrentTask.Progress + "/" + StandardProducePoint * 4;
+            Text_Time.text = "剩余时间:" + calcTime(Pp, StandardProducePoint * 4 - CurrentTask.Progress) + "时";
+        }
+        else
+        {
+            Text_Task.text = "当前任务: 无";
+            Text_Progress.text = "生产力:----";
+            Text_Progress.text = "当前进度:----";
+            Text_Progress.text = "当前进度:----";
         }
     }
 
@@ -262,6 +310,14 @@ public class DepControl : MonoBehaviour
         return (int)(power * (Efficiency + extraEfficiency));
     }
 
+    int calcTime(int pp, int total)
+    {
+        int time = total / pp;
+        if (total % pp > 0)
+            time += 1;
+        return time;
+    }
+
     public void StartMobilize()
     {
         if (GC.Mentality >= 20)
@@ -283,9 +339,6 @@ public class DepControl : MonoBehaviour
     public void StartSurvey()
     {
         //开始调研
-        Text_Task.text = "当前任务: 调研";
-        Text_Progress.text = "当前进度: 0%";
-        Text_Quality.text = "调研进度: 0/" + (StandardProducePoint * 10);
         SurveyStart = true;
         SurveyProgress = 0;
         CurrentResearch = null;
@@ -295,12 +348,11 @@ public class DepControl : MonoBehaviour
             Researches[i].ExtraButton.gameObject.SetActive(false);
             Researches[i].SelectButton.gameObject.SetActive(false);
         }
+        UpdateUI(CountProducePower(4));
     }
 
     public void RandomResearch()
     {
-        Text_Task.text = "当前任务: 无";
-        Text_Progress.text = "当前进度:----";
         for(int i = 0; i < 3; i++)
         {
             Researches[i].SetResearch(Random.Range(1, 15));
@@ -327,13 +379,12 @@ public class DepControl : MonoBehaviour
         {
             totalObservation += CurrentEmps[i].Observation;
         }
-        float ActualFailRate = FailRate - (totalObservation * GC.Morale * 0.0001f);
+        float ActualFailRate = FailRate - (totalObservation * GC.Morale * 0.0001f) - GC.ExtrafailRate;
         if(Posb < ActualFailRate)
         {
             Failed = true;
             FailProgress += Random.Range(50, 120);
-            Text_Task.text = "当前任务:失误处理";
-            Text_Time.text = "剩余时间:--时";
+            UpdateUI(CountProducePower(4));
         }
     }
 }

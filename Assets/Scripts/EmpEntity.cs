@@ -224,19 +224,24 @@ public class EmpEntity : MonoBehaviour
             else
                 e.Value = 1;
         }
-        CurrentEvent.Add(e);
         if (e.HaveTarget == true)
         {
             if (e.FindTarget() == true)
             {
+                CurrentEvent.Add(e);
+                print(Text_Name.text + "添加了" + type + "类事件" + e.Value);
                 e.Target.ReceivedEvent.Add(e);
                 if (EventCheck() == true)
                     SetTarget();
             }
         }
         else
+        {
             e.EventActive = true;
-        print(Text_Name.text + "添加了" + type + "类事件" + e.Value);
+            CurrentEvent.Add(e);
+            print(Text_Name.text + "添加了" + type + "类事件" + e.Value);
+        }
+
     }
 
     public bool SetTarget()

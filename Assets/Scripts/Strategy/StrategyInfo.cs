@@ -5,13 +5,14 @@ using UnityEngine.UI;
 
 public class StrategyInfo : MonoBehaviour
 {
+    public bool Active = false; //原本用于检测是否放在插槽上，现在用来检测是否完成/是否被封锁
     public bool Used = false;
-    public int TimeLeft, Type;
+    public int TimeLeft, Type, StrNum;
 
     public Strategy Str;
     public StrategyControl SC;
     public InfoPanel info;
-    public Text Text_Name, Text_Time, Text_Type, Text_EffectDescription, Text_RequestDescription;
+    public Text Text_Name, Text_Time, Text_Type, Text_EffectDescription, Text_RequestDescription, Text_Complete;
     public Button UseButton, AbolishButton;
 
     float Timer = 0;
@@ -77,11 +78,11 @@ public class StrategyInfo : MonoBehaviour
     public void ToggleUsage()
     {
         int t = (int)Str.Type;
-        if (Used == false)
+        if (Active == false)
         {
             if (SC.CurrentStrNum[t] < SC.StrLimitNum[t])
             {
-                Used = true;
+                Active = true;
                 UseButton.gameObject.SetActive(false);
                 AbolishButton.gameObject.SetActive(true);
                 SC.CurrentStrNum[t] += 1;
@@ -91,7 +92,7 @@ public class StrategyInfo : MonoBehaviour
         }
         else
         {
-            Used = false;
+            Active = false;
             UseButton.gameObject.SetActive(true);
             AbolishButton.gameObject.SetActive(false);
             SC.CurrentStrNum[t] -= 1;
@@ -101,93 +102,80 @@ public class StrategyInfo : MonoBehaviour
         SC.UpdateUI();
     }
 
-    public void SelectStrategy()
+    public StrategyInfo SelectStrategy()
     {
         StrategyInfo newS = Instantiate(SC.InfoPrefabC, SC.UnfinishedStrategyContent);
         newS.TimeLeft = 96;
         newS.Str = Str;
         newS.SC = SC;
         newS.UpdateUI();
+        Str.Effect(SC.GC);
         SC.GC.HourEvent.AddListener(newS.TimePass);
         UseButton.interactable = false;
         Str = null;
         UpdateUI();
+        return newS;
     }
 
     public void TimePass()
     {
         TimeLeft -= 1;
-        if (TimeLeft < 1)
-        {
-            if (Type == 2)
-            {
-                if (Used == true)
-                    ToggleUsage();
-                SC.GC.HourEvent.RemoveListener(TimePass);
-                Destroy(this.gameObject);
-            }
-            else if (Type == 4)
-            {
-                Str = null;
-                UpdateUI();
-                SC.GC.HourEvent.RemoveListener(TimePass);
-                UseButton.gameObject.SetActive(false);
-                AbolishButton.gameObject.SetActive(true);
-                SC.GC.Morale -= 10;
-                SC.GC.Money -= (int)(SC.GC.Money * 0.2f);
-            }
-        }
-        else
-            UpdateUI();
+        UpdateUI();
+        //if (TimeLeft < 1)
+        //{
+        //    if (Type == 2)
+        //    {
+        //        if (Used == true)
+        //            ToggleUsage();
+        //        SC.GC.HourEvent.RemoveListener(TimePass);
+        //        Destroy(this.gameObject);
+        //    }
+        //    else if (Type == 4)
+        //    {
+        //        Str = null;
+        //        UpdateUI();
+        //        SC.GC.HourEvent.RemoveListener(TimePass);
+        //        UseButton.gameObject.SetActive(false);
+        //        AbolishButton.gameObject.SetActive(true);
+        //        SC.GC.Morale -= 10;
+        //        SC.GC.Money -= (int)(SC.GC.Money * 0.2f);
+        //    }
+        //}
+        //else
+        //    UpdateUI();
     }
 
     public void CompleteStrategy()
     {
-        bool Success = false;
+        bool Success = true;
         if (Str != null)
         {
-            List<Task> ts = new List<Task>();
             for (int i = 0; i < Str.RequestTasks.Count; i++)
             {
-                int num = 0;
-                for (int j = 0; j < SC.GC.FinishedTask.Count; j++)
+                if (SC.GC.FinishedTask[Str.RequestTasks[i]] < Str.RequestNum[i])
                 {
-                    if (Str.RequestTasks[i].TaskType == SC.GC.FinishedTask[j].TaskType &&
-                       Str.RequestTasks[i].Num == SC.GC.FinishedTask[j].Num &&
-                       Str.RequestTasks[i].Value <= SC.GC.FinishedTask[j].Value)
-                    {
-                        num += 1;
-                        ts.Add(SC.GC.FinishedTask[j]);
-                        if (num == Str.RequestNum[i])
-                        {
-                            Success = true;
-                            break;
-                        }
-
-                    }
-                    else if (j == SC.GC.FinishedTask.Count - 1)
-                    {
-                        Success = false;
-                    }
-                }
-                if (Success == false)
+                    Success = false;
                     break;
+                }
             }
             if (Success == true)
             {
-                for (int i = 0; i < ts.Count; i++)
+                for (int i = 0; i < Str.RequestTasks.Count; i++)
                 {
-                    SC.GC.FinishedTask.Remove(ts[i]);
+                    SC.GC.FinishedTask[Str.RequestTasks[i]] -= Str.RequestNum[i];
                 }
-                StrategyInfo newS = Instantiate(SC.InfoPrefabB, SC.StrategyContent);
-                newS.Str = Str;
-                newS.SC = SC;
-                newS.TimeLeft = 96;
-                newS.UpdateUI();
-                SC.GC.HourEvent.AddListener(newS.TimePass);
+                //StrategyInfo newS = Instantiate(SC.InfoPrefabB, SC.StrategyContent);
+                //newS.Str = Str;
+                //newS.SC = SC;
+                //newS.TimeLeft = 96;
+                //newS.UpdateUI();
+                //SC.GC.HourEvent.AddListener(newS.TimePass);
 
                 SC.GC.HourEvent.RemoveListener(TimePass);
-                Destroy(this.gameObject);
+                //Destroy(this.gameObject);
+                UseButton.interactable = false;
+                Active = true;
+                Text_Complete.text = "已完成";
             }
         }
     }

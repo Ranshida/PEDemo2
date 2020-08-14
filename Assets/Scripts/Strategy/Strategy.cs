@@ -13,7 +13,7 @@ public class Strategy
     public string Name, EffectDescription, RequestDescription;
     public StrategyType Type;
 
-    public List<Task> RequestTasks = new List<Task>();
+    public List<int> RequestTasks = new List<int>();
     public List<int> RequestNum;
 
     public Strategy()
@@ -42,9 +42,7 @@ public class Strategy1_1 : Strategy
         EffectDescription = "招募高级人才的概率+10% \n \n \n威信+5";
         RequestDescription = "2个低劣及以上用户访谈";
 
-        Task task1 = new Task();
-        task1.TaskType = EmpType.Product; task1.Num = 3; task1.Value = 1;
-        RequestTasks.Add(task1);
+        RequestTasks.Add(8);
 
         RequestNum = new List<int> { 2 };
     }
@@ -72,9 +70,7 @@ public class Strategy1_2 : Strategy
         EffectDescription = "HR部门心力加成效果提高50%";
         RequestDescription = "3个平庸及以上用户访谈";
 
-        Task task1 = new Task();
-        task1.TaskType = EmpType.Product; task1.Num = 3; task1.Value = 2;
-        RequestTasks.Add(task1);
+        RequestTasks.Add(8);
 
         RequestNum = new List<int> { 3 };
     }
@@ -102,9 +98,7 @@ public class Strategy1_3 : Strategy
         EffectDescription = "士气+20";
         RequestDescription = "3个平庸及以上用户访谈";
 
-        Task task1 = new Task();
-        task1.TaskType = EmpType.Product; task1.Num = 3; task1.Value = 2;
-        RequestTasks.Add(task1);
+        RequestTasks.Add(8);
 
         RequestNum = new List<int> { 3 };
     }
@@ -132,9 +126,7 @@ public class Strategy1_4 : Strategy
         EffectDescription = "HR部门技能成功率+15%";
         RequestDescription = "3个平庸及以上用户访谈";
 
-        Task task1 = new Task();
-        task1.TaskType = EmpType.Product; task1.Num = 3; task1.Value = 2;
-        RequestTasks.Add(task1);
+        RequestTasks.Add(8);
 
         RequestNum = new List<int> { 3 };
     }
@@ -162,12 +154,9 @@ public class Strategy2_1 : Strategy
         EffectDescription = "每次动员时心力损耗减少10点 \n 威信+5";
         RequestDescription = "1个低劣及以上可行性调研 \n 1个低劣以上用户访谈";
 
-        Task task1 = new Task();
-        task1.TaskType = EmpType.Tech; task1.Num = 3; task1.Value = 1;
-        RequestTasks.Add(task1);
+        RequestTasks.Add(2);
 
-        task1.TaskType = EmpType.Product; task1.Num = 3; task1.Value = 1;
-        RequestTasks.Add(task1);
+        RequestTasks.Add(8);
 
         RequestNum = new List<int> { 1, 1 };
     }
@@ -195,12 +184,9 @@ public class Strategy2_2 : Strategy
         EffectDescription = "高管管理能力+1点";
         RequestDescription = "2个平庸及以上可行性调研 \n 2个平庸及以上用户访谈 ";
 
-        Task task1 = new Task();
-        task1.TaskType = EmpType.Tech; task1.Num = 3; task1.Value = 2;
-        RequestTasks.Add(task1);
+        RequestTasks.Add(2);
 
-        task1.TaskType = EmpType.Product; task1.Num = 3; task1.Value = 2;
-        RequestTasks.Add(task1);
+        RequestTasks.Add(8);
 
         RequestNum = new List<int> { 2, 2 };
     }
@@ -228,12 +214,9 @@ public class Strategy2_3 : Strategy
         EffectDescription = "解锁新型办公室(这个战略可没法做时长限制)";
         RequestDescription = "2个平庸及以上可行性调研 \n 1个平庸及以上用户访谈 ";
 
-        Task task1 = new Task();
-        task1.TaskType = EmpType.Tech; task1.Num = 3; task1.Value = 2;
-        RequestTasks.Add(task1);
+        RequestTasks.Add(2);
 
-        task1.TaskType = EmpType.Product; task1.Num = 3; task1.Value = 2;
-        RequestTasks.Add(task1);
+        RequestTasks.Add(8);
 
         RequestNum = new List<int> { 2, 1 };
     }
@@ -261,12 +244,9 @@ public class Strategy2_4 : Strategy
         EffectDescription = "一般部门技能成功率+10%";
         RequestDescription = "2个平庸及以上用户访谈 \n 2个平庸及以上公关谈判 ";
 
-        Task task1 = new Task();
-        task1.TaskType = EmpType.Product; task1.Num = 3; task1.Value = 2;
-        RequestTasks.Add(task1);
+        RequestTasks.Add(8);
 
-        task1.TaskType = EmpType.Market; task1.Num = 1; task1.Value = 2;
-        RequestTasks.Add(task1);
+        RequestTasks.Add(3);
 
 
         RequestNum = new List<int> { 2, 2 };
@@ -295,9 +275,7 @@ public class Strategy3_1 : Strategy
         EffectDescription = "所有业务部门效率+20% \n 士气-15";
         RequestDescription = "2个低劣及以上公关谈判";
 
-        Task task1 = new Task();
-        task1.TaskType = EmpType.Market; task1.Num = 1; task1.Value = 1;
-        RequestTasks.Add(task1);
+        RequestTasks.Add(3);
 
         RequestNum = new List<int> { 2 };
     }
@@ -327,9 +305,7 @@ public class Strategy3_2 : Strategy
         EffectDescription = "公关成功率+20%";
         RequestDescription = "3个平庸及以上公关谈判";
 
-        Task task1 = new Task();
-        task1.TaskType = EmpType.Market; task1.Num = 1; task1.Value = 2;
-        RequestTasks.Add(task1);
+        RequestTasks.Add(3);
 
         RequestNum = new List<int> { 3 };
     }
@@ -357,9 +333,7 @@ public class Strategy3_3 : Strategy
         EffectDescription = "公关效果+20%";
         RequestDescription = "3个平庸及以上公关谈判";
 
-        Task task1 = new Task();
-        task1.TaskType = EmpType.Market; task1.Num = 1; task1.Value = 2;
-        RequestTasks.Add(task1);
+        RequestTasks.Add(3);
 
         RequestNum = new List<int> { 3 };
     }
@@ -377,25 +351,21 @@ public class Strategy3_3 : Strategy
     }
 }
 
-//KPI制度!!
+//KPI制度
 public class Strategy3_4 : Strategy
 {
     public Strategy3_4() : base()
     {
         Type = StrategyType.执行;
-        Name = "KPI制度!!";
+        Name = "KPI制度";
         EffectDescription = "部门失误率-10%";
         RequestDescription = "1个平庸及以上公关谈判 \n 1个平庸及以上可行性调研 \n 1个平庸及以上用户访谈";
 
-        Task task1 = new Task();
-        task1.TaskType = EmpType.Market; task1.Num = 1; task1.Value = 2;
-        RequestTasks.Add(task1);
+        RequestTasks.Add(3);
 
-        task1.TaskType = EmpType.Tech; task1.Num = 3; task1.Value = 2;
-        RequestTasks.Add(task1);
+        RequestTasks.Add(2);
 
-        task1.TaskType = EmpType.Product; task1.Num = 3; task1.Value = 2;
-        RequestTasks.Add(task1);
+        RequestTasks.Add(8);
 
         RequestNum = new List<int> { 1, 1, 1 };
     }
@@ -403,13 +373,13 @@ public class Strategy3_4 : Strategy
     public override void Effect(GameControl GC)
     {
         base.Effect(GC);
-        MonoBehaviour.print("3_4Use");
+        GC.ExtrafailRate += 0.1f;
     }
 
     public override void EffectRemove(GameControl GC)
     {
         base.EffectRemove(GC);
-        MonoBehaviour.print("3_4Remove");
+        GC.ExtrafailRate -= 0.1f;
     }
 }
 
@@ -423,15 +393,11 @@ public class Strategy4_1 : Strategy
         EffectDescription = "人力栏位+1 \n 执行栏位+1 \n 管理栏位+1";
         RequestDescription = "1个低劣及以上公关谈判 \n 1个低劣及以上可行性调研 \n 1个低劣及以上用户访谈";
 
-        Task task1 = new Task();
-        task1.TaskType = EmpType.Market; task1.Num = 1; task1.Value = 1;
-        RequestTasks.Add(task1);
+        RequestTasks.Add(3);
 
-        task1.TaskType = EmpType.Tech; task1.Num = 3; task1.Value = 1;
-        RequestTasks.Add(task1);
+        RequestTasks.Add(2);
 
-        task1.TaskType = EmpType.Product; task1.Num = 3; task1.Value = 1;
-        RequestTasks.Add(task1);
+        RequestTasks.Add(8);
 
         RequestNum = new List<int> { 1, 1, 1 };
     }
@@ -439,20 +405,21 @@ public class Strategy4_1 : Strategy
     public override void Effect(GameControl GC)
     {
         base.Effect(GC);
-        GC.StrC.StrLimitNum[0] += 1;
-        GC.StrC.StrLimitNum[1] += 1;
-        GC.StrC.StrLimitNum[2] += 1;
-        GC.StrC.UpdateUI();
+        //旧插槽版策略树检查
+        //GC.StrC.StrLimitNum[0] += 1;
+        //GC.StrC.StrLimitNum[1] += 1;
+        //GC.StrC.StrLimitNum[2] += 1;
+        //GC.StrC.UpdateUI();
     }
 
     public override void EffectRemove(GameControl GC)
     {
         base.EffectRemove(GC);
-        GC.StrC.StrLimitNum[0] -= 1;
-        GC.StrC.StrLimitNum[1] -= 1;
-        GC.StrC.StrLimitNum[2] -= 1;
-        GC.StrC.CheckStrNum();
-        GC.StrC.UpdateUI();
+        //GC.StrC.StrLimitNum[0] -= 1;
+        //GC.StrC.StrLimitNum[1] -= 1;
+        //GC.StrC.StrLimitNum[2] -= 1;
+        //GC.StrC.CheckStrNum();
+        //GC.StrC.UpdateUI();
     }
 }
 
@@ -466,12 +433,9 @@ public class Strategy4_2 : Strategy
         EffectDescription = "人力栏位+3 \n 管理栏位+1 \n 文化变更时士气-10";
         RequestDescription = "2个平庸及以上可行性调研 \n 2个平庸及以上公关谈判";
 
-        Task task1 = new Task();
-        task1.TaskType = EmpType.Tech; task1.Num = 3; task1.Value = 2;
-        RequestTasks.Add(task1);
+        RequestTasks.Add(2);
 
-        task1.TaskType = EmpType.Market; task1.Num = 1; task1.Value = 2;
-        RequestTasks.Add(task1);
+        RequestTasks.Add(3);
 
         RequestNum = new List<int> { 2, 2 };
     }
@@ -504,12 +468,9 @@ public class Strategy4_3 : Strategy
         EffectDescription = "解锁新型文化相关办公室";
         RequestDescription = "1个平庸及以上可行性调研 \n 2个平庸及以上公关谈判";
 
-        Task task1 = new Task();
-        task1.TaskType = EmpType.Tech; task1.Num = 3; task1.Value = 2;
-        RequestTasks.Add(task1);
+        RequestTasks.Add(2);
 
-        task1.TaskType = EmpType.Market; task1.Num = 1; task1.Value = 2;
-        RequestTasks.Add(task1);
+        RequestTasks.Add(3);
 
         RequestNum = new List<int> { 1, 2 };
     }
@@ -537,12 +498,9 @@ public class Strategy4_4 : Strategy
         EffectDescription = "开源文化偏好者发生事件正向修正+1";
         RequestDescription = "1个平庸及以上可行性调研 \n 2个平庸及以上公关谈判";
 
-        Task task1 = new Task();
-        task1.TaskType = EmpType.Tech; task1.Num = 3; task1.Value = 2;
-        RequestTasks.Add(task1);
+        RequestTasks.Add(2);
 
-        task1.TaskType = EmpType.Market; task1.Num = 1; task1.Value = 2;
-        RequestTasks.Add(task1);
+        RequestTasks.Add(3);
 
         RequestNum = new List<int> { 1, 2 };
     }
@@ -570,9 +528,7 @@ public class Strategy5_1 : Strategy
         EffectDescription = "研发成功率+10%";
         RequestDescription = "2个低劣及以上可行性调研";
 
-        Task task1 = new Task();
-        task1.TaskType = EmpType.Tech; task1.Num = 3; task1.Value = 1;
-        RequestTasks.Add(task1);
+        RequestTasks.Add(2);
 
         RequestNum = new List<int> { 2 };
     }
@@ -600,9 +556,7 @@ public class Strategy5_2 : Strategy
         EffectDescription = "研发部门效率+15%";
         RequestDescription = "3个平庸及以上可行性调研";
 
-        Task task1 = new Task();
-        task1.TaskType = EmpType.Tech; task1.Num = 3; task1.Value = 2;
-        RequestTasks.Add(task1);
+        RequestTasks.Add(2);
 
         RequestNum = new List<int> { 3 };
     }
@@ -630,9 +584,7 @@ public class Strategy5_3 : Strategy
         EffectDescription = "研发成功率+20%";
         RequestDescription = "3个平庸及以上可行性调研";
 
-        Task task1 = new Task();
-        task1.TaskType = EmpType.Tech; task1.Num = 3; task1.Value = 2;
-        RequestTasks.Add(task1);
+        RequestTasks.Add(2);
 
         RequestNum = new List<int> { 3 };
     }
@@ -660,9 +612,7 @@ public class Strategy5_4 : Strategy
         EffectDescription = "研发部门效率+30%";
         RequestDescription = "4个平庸及以上可行性调研";
 
-        Task task1 = new Task();
-        task1.TaskType = EmpType.Tech; task1.Num = 3; task1.Value = 2;
-        RequestTasks.Add(task1);
+        RequestTasks.Add(2);
 
         RequestNum = new List<int> { 4 };
     }
