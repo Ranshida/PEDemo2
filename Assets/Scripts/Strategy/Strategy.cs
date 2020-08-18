@@ -630,7 +630,7 @@ public class Strategy5_4 : Strategy
     }
 }
 
-static public class StrategyData
+public static class StrategyData
 {
     public static List<Strategy> Strategies = new List<Strategy>()
     {

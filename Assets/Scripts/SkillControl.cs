@@ -11,32 +11,63 @@ public class SkillControl : MonoBehaviour
         set
         {
             totalValue = value;
-            Text_TotalValue.text = totalValue.ToString();
+            Text_TotalValue.text = "骰子点数:" + totalValue.ToString();
         }
     }
+    //1发动技能后加一个1点骰子, 4下一个非基础技能消耗翻倍
+    public bool Sp1Active = false;
+    //头脑风暴点数和无事件技能时间,2下一个基础技能获得点数倍率,3每用一个骰子头脑风暴点数+1
+    //4非基础技能消耗倍率, 需要额外添加的点数1骰子数量
+    public int CurrentPoint = 0, EventLimit = 0, Sp2Multiply = 0, Sp3Multiply = 0, Sp4Multiply = 0, Sp5Multiply = 0;
 
     public List<SkillInfo> CurrentSkills = new List<SkillInfo>();
     public List<DiceControl> Dices = new List<DiceControl>();
     public List<DiceControl> SelectedDices = new List<DiceControl>();
     public SkillInfo CurrentSkill, SkillInfoPrefab;
-    public GameObject ConfirmPanel;
+    public GameObject ConfirmPanel, EventPanel;
     public GameControl GC;
     public DiceControl DicePrefab;
     public Transform DiceContent, SkillContent;
-    public Text Text_TotalValue, Text_CurrentSkillName;
+    public Text Text_TotalValue, Text_CurrentSkillName, Text_EventDescription, Text_Point;
     public Button RollButton;
     public DepControl TargetDep = null;
 
-    public bool SpecialSkill1Active = false;
 
-    int DiceNum, totalValue;
+
+    int DiceNum, totalValue, RequirePoint;
 
     public void SetDice(DepControl dep)
     {
+        CurrentPoint = 0;
+        if (dep.EfficiencyLevel == 0)
+            RequirePoint = 20;
+        else if (dep.EfficiencyLevel == 1)
+            RequirePoint = 40;
+        else if (dep.EfficiencyLevel == 2)
+            RequirePoint = 80;
+        else if (dep.EfficiencyLevel == 3)
+            RequirePoint = 160;
+        else if (dep.EfficiencyLevel == 4)
+            RequirePoint = 320;
+        else if (dep.EfficiencyLevel == 5)
+            RequirePoint = 640;
+        Text_Point.text = "当前点数:" + CurrentPoint + "\n下一级所需点数:" + RequirePoint;
+
         TargetDep = dep;
         if(dep.CommandingOffice != null)
         {
             DiceNum = dep.CommandingOffice.ManageValue - dep.CommandingOffice.ControledDeps.Count + GC.ManageExtra;
+            if (GC.FinishedTask[9] < DiceNum)
+            {
+                DiceNum = GC.FinishedTask[9];
+                GC.FinishedTask[9] = 0;
+            }
+            else
+            {
+                //DiceNum += (GC.FinishedTask[9] - DiceNum);
+                GC.FinishedTask[9] -= DiceNum;
+            }
+            GC.UpdateResourceInfo();
         }
         for(int i = 0; i < dep.CurrentEmps.Count; i++)
         {
@@ -92,11 +123,25 @@ public class SkillControl : MonoBehaviour
             CurrentSkills[i].skill.StaminaExtra = 0;
             Destroy(CurrentSkills[i].gameObject);
         }
+        if (CurrentPoint >= RequirePoint)
+        {
+            if (TargetDep.EfficiencyLevel < 5)
+                TargetDep.EfficiencyLevel += 1;
+            TargetDep.Efficiency += 0.2f;
+            TargetDep.LevelDownTime = 96;
+            TargetDep.Text_LevelDownTime.text = "降级时间:" + TargetDep.LevelDownTime + "时";
+        }
         Dices.Clear();
         SelectedDices.Clear();
         CurrentSkills.Clear();
+        CurrentPoint = 0;
+        EventLimit = 0;
         TargetDep = null;
-        SpecialSkill1Active = false;
+        Sp1Active = false;
+        Sp2Multiply = 0;
+        Sp3Multiply = 0;
+        Sp4Multiply = 0;
+        Sp5Multiply = 0;
         this.gameObject.SetActive(false);
     }
 
@@ -107,7 +152,7 @@ public class SkillControl : MonoBehaviour
             if ((TotalValue == CurrentSkills[i].skill.DiceCost - CurrentSkills[i].skill.DiceExtra ||
                 CurrentSkills[i].skill.DiceCost == CurrentSkills[i].skill.DiceExtra) &&
                 CurrentSkills[i].empInfo.emp.Stamina >= (CurrentSkills[i].skill.StaminaCost - CurrentSkills[i].skill.StaminaExtra)
-                && CurrentSkills[i].skill.ConditionCheck() == true)
+                && CurrentSkills[i].skill.ConditionCheck() == true && CurrentSkills[i].Active == true && ExtraDiceCheck(CurrentSkills[i]) == true)
             {
                 CurrentSkills[i].button.interactable = true;
             }
@@ -118,18 +163,159 @@ public class SkillControl : MonoBehaviour
 
     public void SkillConfirm()
     {
-        CurrentSkill.skill.StartEffect();
-        CurrentSkill.skill.DiceExtra = 0;
-        CurrentSkill.skill.StaminaExtra = 0;
-        for(int i = 0; i < SelectedDices.Count; i++)
+        int TempPoint = CurrentPoint;
+
+        //先设置骰子状态
+        for (int i = 0; i < SelectedDices.Count; i++)
         {
-            SelectedDices[i].GetComponent<Toggle>().interactable = false;
+            Toggle t = SelectedDices[i].GetComponent<Toggle>();
+            if (t.interactable == true)
+            {
+                t.interactable = false;
+                if (Sp3Multiply > 0)
+                    CurrentPoint += Sp3Multiply;
+            }
         }
+
+        CurrentSkill.skill.StartEffect();
+        if(Sp4Multiply > 0)
+        {
+            for(int i = 0; i < CurrentSkills.Count; i++)
+            {
+                if (CurrentSkills[i].skill.Type != SkillType.Basic)
+                    CurrentSkills[i].skill.StaminaExtra = 0;
+            }
+        }
+
+        //获得本次效果作用后增加的点数
+        TempPoint = CurrentPoint - TempPoint;
         TotalValue = 0;
         GC.SelectMode = 1;
         GC.TotalEmpContent.parent.parent.gameObject.SetActive(false);
         SkillCheck();
-        if (SpecialSkill1Active == true)
+
+        if (Sp1Active == true)
             CreateDice(1);
+        if (Sp2Multiply > 0 && CurrentSkill.skill.Type == SkillType.Basic)
+        {
+            CurrentPoint += TempPoint * Sp2Multiply + TempPoint;
+            Sp2Multiply = 0;
+        }
+        if (EventLimit > 0)
+            EventLimit -= 1;
+        else
+            RandomEvent();
+
+        Text_Point.text = "当前点数:" + CurrentPoint + "\n下一级所需点数:" + RequirePoint; 
+    }  
+
+    public void RandomEvent()
+    {
+        int type = Random.Range(1, 8);
+        string Description = "";
+        if(type == 1)
+        {
+            Description = "全体恢复10点心力";
+            for(int i = 0; i < TargetDep.CurrentEmps.Count; i++)
+            {
+                TargetDep.CurrentEmps[i].Mentality += 10;
+            }
+        }
+        else if (type == 2)
+        {
+            Description = "全体员工降低20点心力";
+            for (int i = 0; i < TargetDep.CurrentEmps.Count; i++)
+            {
+                TargetDep.CurrentEmps[i].Mentality -= 20;
+            }
+        }
+        else if (type == 3)
+        {
+            Description = "随机一个非基础技能不可用";
+            List<SkillInfo> S = new List<SkillInfo>();
+            for(int i = 0; i < CurrentSkills.Count; i++)
+            {
+                if (CurrentSkills[i].Active == true && CurrentSkills[i].skill.Type != SkillType.Basic)
+                    S.Add(CurrentSkills[i]);
+            }
+            if (S.Count > 0)
+            {
+                int num = Random.Range(0, S.Count);
+                S[num].Active = false;
+                S[num].gameObject.SetActive(false);
+            }
+        }
+        else if (type == 4)
+        {
+            Description = "一名员工退场（技能不可用）";
+            Employee E = TargetDep.CurrentEmps[Random.Range(0, TargetDep.CurrentEmps.Count)];
+            for(int i = 0; i < CurrentSkills.Count; i++)
+            {
+                if (CurrentSkills[i].skill.TargetEmp == E)
+                    CurrentSkills[i].gameObject.SetActive(false);
+            }
+        }
+        else if (type == 5)
+        {
+            Description = "下一次使用非基础技能的消耗翻倍";
+            if (Sp4Multiply == 0)
+            {
+                for (int i = 0; i < CurrentSkills.Count; i++)
+                {
+                    if (CurrentSkills[i].skill.Type != SkillType.Basic)
+                        CurrentSkills[i].skill.StaminaExtra = CurrentSkills[i].skill.StaminaCost;
+                }
+            }
+            else
+            {
+                for (int i = 0; i < CurrentSkills.Count; i++)
+                {
+                    if (CurrentSkills[i].skill.Type != SkillType.Basic)
+                        CurrentSkills[i].skill.StaminaExtra *= 2;
+                }
+            }
+            Sp4Multiply += 1;
+        }
+        else if (type == 6)
+        {
+            Description = "所有基础技能消耗翻倍";
+            for (int i = 0; i < CurrentSkills.Count; i++)
+            {
+                if (CurrentSkills[i].skill.Type == SkillType.Basic)
+                {
+                    if (CurrentSkills[i].skill.StaminaExtra == 0)
+                        CurrentSkills[i].skill.StaminaExtra = CurrentSkills[i].skill.StaminaCost * -1;
+                    else
+                        CurrentSkills[i].skill.StaminaExtra *= 2;
+                }
+            }
+        }
+        else if (type == 7)
+        {
+            Description = "所有技能必须额外使用一枚点数为1的骰子才可以使用";
+            Sp5Multiply += 1;
+        }
+        Text_EventDescription.text = Description;
+        EventPanel.SetActive(true);
+    }
+
+    public bool ExtraDiceCheck(SkillInfo s)
+    {
+        if (Sp5Multiply == 0)
+            return true;
+        else
+        {
+            int num = 0;
+            for(int i = 0; i < SelectedDices.Count; i++)
+            {
+                if (SelectedDices[i].GetComponent<Toggle>().interactable == true && SelectedDices[i].value == 1)
+                    num += 1;
+            }
+            if (num >= Sp5Multiply && totalValue - s.skill.DiceExtra - Sp5Multiply >= s.skill.DiceCost)
+                return true;
+            else
+                return false;
+        }
+        return false;
     }
 }

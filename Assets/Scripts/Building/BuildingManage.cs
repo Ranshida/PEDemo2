@@ -7,7 +7,7 @@ public enum BuildingType
 {
     技术部门, 市场部门, 产品部门, 运营部门, 高管办公室, 研发部门, 人力资源部A, 
     心理咨询室, 按摩房, 健身房, 目标修正小组, 档案管理室, 效能研究室,
-    财务部, 战略咨询部B, 精确标准委员会, 高级财务部A, 高级财务部B
+    财务部, 战略咨询部B, 精确标准委员会, 高级财务部A, 高级财务部B, 人力资源部B
 }
 
 public class BuildingManage : MonoBehaviour
@@ -51,7 +51,7 @@ public class BuildingManage : MonoBehaviour
 
         if (type == BuildingType.技术部门 || type == BuildingType.市场部门 || type == BuildingType.产品部门 || type == BuildingType.运营部门)
             SelectBuilding.SetSize(2, 3);
-        else if (type == BuildingType.高管办公室 || type == BuildingType.人力资源部A || type == BuildingType.按摩房)
+        else if (type == BuildingType.高管办公室 || type == BuildingType.人力资源部A || type == BuildingType.人力资源部B  || type == BuildingType.按摩房)
             SelectBuilding.SetSize(2, 2);
         else if (type == BuildingType.研发部门)
             SelectBuilding.SetSize(2, 4);
@@ -125,6 +125,11 @@ public class BuildingManage : MonoBehaviour
                 SelectBuilding.StaminaRequest = 10;
                 if(T == BuildingType.效能研究室)
                     SelectBuilding.StaminaRequest = 20;
+            }
+            else if (T == BuildingType.人力资源部B)
+            {
+                SelectBuilding.Department = GC.CreateDep(5);
+                SelectBuilding.Department.building = SelectBuilding;
             }
 
 

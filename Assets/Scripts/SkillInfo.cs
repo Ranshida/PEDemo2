@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class SkillInfo : MonoBehaviour
 {
     public int InfoType;
+    public bool Active = true;
 
     public Skill skill;
     public SkillControl SC;

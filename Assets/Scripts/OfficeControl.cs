@@ -219,7 +219,7 @@ public class OfficeControl : MonoBehaviour
         {
             if (GC.SC.TargetDep != null && building.effect.AffectedBuildings.Contains(GC.SC.TargetDep.building))
             {
-                GC.SC.SpecialSkill1Active = true;
+                GC.SC.Sp1Active = true;
             }
             else
                 ActiveSuccess = false;

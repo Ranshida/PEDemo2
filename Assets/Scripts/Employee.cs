@@ -4,7 +4,7 @@ using UnityEngine;
 
 public enum EmpType
 {
-    Tech, Market, Product, Operate, Science
+    Tech, Market, Product, Operate, Science, HR
 }
 
 public class Employee

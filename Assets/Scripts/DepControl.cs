@@ -34,8 +34,8 @@ public class ProduceBuff
 public class DepControl : MonoBehaviour
 {
     static public int StandardProducePoint = 50;
-    [HideInInspector] public int SurveyProgress = 0, FailProgress = 0, TaskChangeTime = 0;
-    [HideInInspector] public bool SurveyStart = false, Failed = false, TaskChange = false;
+    [HideInInspector] public int SpProgress = 0, FailProgress = 0, TaskChangeTime = 0, EfficiencyLevel = 0, LevelDownTime = 0;
+    [HideInInspector] public bool SurveyStart = false, Failed = false, TaskChange = false, WorkStart = false; //WorkStart专门用于特殊业务
     public int EmpLimit;
     public float Efficiency = 1.0f, FailRate = 0.3f;
     public bool canWork = false;
@@ -48,7 +48,7 @@ public class DepControl : MonoBehaviour
     public Task CurrentTask;
     public DepSelect DS;
     public OfficeControl CommandingOffice;
-    public Text Text_DepName, Text_Task, Text_Progress, Text_Quality, Text_Time, Text_Office;
+    public Text Text_DepName, Text_Task, Text_Progress, Text_Quality, Text_Time, Text_Office, Text_Efficiency, Text_LevelDownTime;
     public Button SurveyButton;
     public EmpType type;
 
@@ -57,6 +57,13 @@ public class DepControl : MonoBehaviour
     public List<Employee> CurrentEmps = new List<Employee>();
     public List<OfficeControl> InRangeOffices = new List<OfficeControl>();
 
+    private void Update()
+    {
+        if (type == EmpType.Science)
+            Text_Efficiency.text = "效率:" + (Efficiency + GC.EfficiencyExtraScience) * 100 + "%";
+        else if (type != EmpType.HR)
+            Text_Efficiency.text = "效率:" + (Efficiency + GC.EfficiencyExtraNormal) * 100 + "%";
+    }
 
     public void StartTaskManage()
     {
@@ -76,6 +83,7 @@ public class DepControl : MonoBehaviour
         UpdateUI(Pp);
     }
 
+    //目前不只是制作，还有很多别的跟事件相关的功能都写在这儿
     public void Produce()
     {
         if (canWork == true)
@@ -110,8 +118,8 @@ public class DepControl : MonoBehaviour
                 else if (SurveyStart == true)
                 {
                     int Pp = CountProducePower(4);
-                    SurveyProgress += Pp;
-                    if (SurveyProgress >= StandardProducePoint * 10)
+                    SpProgress += Pp;
+                    if (SpProgress >= StandardProducePoint * 10)
                     {
                         RandomResearch();
                         SurveyButton.interactable = true;
@@ -119,6 +127,23 @@ public class DepControl : MonoBehaviour
                     }
                     UpdateUI(Pp);
                 }
+                else if (WorkStart == true)
+                {
+                    if(type == EmpType.HR)
+                    {
+                        int Pp = CountProducePower(5);
+                        SpProgress += Pp;
+                        if(SpProgress >= StandardProducePoint * 4)
+                        {
+                            GC.FinishedTask[9] += 1;
+                            GC.UpdateResourceInfo();
+                            SpProgress = 0;
+                            WorkStart = false;
+                        }
+                        UpdateUI(Pp);
+                    }
+                }
+
             }
             else
             {
@@ -141,6 +166,16 @@ public class DepControl : MonoBehaviour
                 TaskChangeTime = 0;
             }
             UpdateUI();
+        }
+        if(LevelDownTime > 0)
+        {
+            LevelDownTime -= 1;
+            Text_LevelDownTime.text = "降级时间:" + LevelDownTime + "时";
+            if (LevelDownTime == 0 && EfficiencyLevel > 1)
+            {
+                EfficiencyLevel -= 1;
+                Efficiency -= 0.2f;
+            }
         }
     }
 
@@ -168,8 +203,8 @@ public class DepControl : MonoBehaviour
             {
                 Text_Task.text = "当前任务: 调研";
                 Text_Progress.text = "研究速度:" + Pp + "/时";
-                Text_Quality.text = "研究进度: " + SurveyProgress + "/" + (StandardProducePoint * 10);
-                Text_Time.text = "剩余时间:" + calcTime(Pp, StandardProducePoint * 10 - SurveyProgress) + "时";
+                Text_Quality.text = "研究进度: " + SpProgress + "/" + (StandardProducePoint * 10);
+                Text_Time.text = "剩余时间:" + calcTime(Pp, StandardProducePoint * 10 - SpProgress) + "时";
             }
             else
             {
@@ -194,12 +229,20 @@ public class DepControl : MonoBehaviour
             Text_Quality.text = "当前进度:" + CurrentTask.Progress + "/" + StandardProducePoint * 4;
             Text_Time.text = "剩余时间:" + calcTime(Pp, StandardProducePoint * 4 - CurrentTask.Progress) + "时";
         }
+        else if (type == EmpType.HR && WorkStart == true)
+        {
+            int Pp = CountProducePower(5);
+            Text_Task.text = "当前任务:资源汇总";
+            Text_Progress.text = "生产力:" + Pp + "/时";
+            Text_Quality.text = "当前进度:" + SpProgress + "/" + StandardProducePoint * 4;
+            Text_Time.text = "剩余时间:" + calcTime(Pp, StandardProducePoint * 4 - SpProgress) + "时";
+        }
         else
         {
             Text_Task.text = "当前任务: 无";
             Text_Progress.text = "生产力:----";
-            Text_Progress.text = "当前进度:----";
-            Text_Progress.text = "当前进度:----";
+            Text_Quality.text = "当前进度:----";
+            Text_Time.text = "当前进度:----";
         }
     }
 
@@ -225,8 +268,8 @@ public class DepControl : MonoBehaviour
             {
                 Text_Task.text = "当前任务: 调研";
                 Text_Progress.text = "研究速度:" + Pp + "/时";
-                Text_Quality.text = "研究进度: " + SurveyProgress + "/" + (StandardProducePoint * 10);
-                Text_Time.text = "剩余时间:" + calcTime(Pp, StandardProducePoint * 10 - SurveyProgress) + "时";
+                Text_Quality.text = "研究进度: " + SpProgress + "/" + (StandardProducePoint * 10);
+                Text_Time.text = "剩余时间:" + calcTime(Pp, StandardProducePoint * 10 - SpProgress) + "时";
             }
             else
             {
@@ -250,12 +293,19 @@ public class DepControl : MonoBehaviour
             Text_Quality.text = "当前进度:" + CurrentTask.Progress + "/" + StandardProducePoint * 4;
             Text_Time.text = "剩余时间:" + calcTime(Pp, StandardProducePoint * 4 - CurrentTask.Progress) + "时";
         }
+        else if (type == EmpType.HR && WorkStart == true)
+        {
+            Text_Task.text = "当前任务:资源汇总";
+            Text_Progress.text = "生产力:" + Pp + "/时";
+            Text_Quality.text = "当前进度:" + SpProgress + "/" + StandardProducePoint * 4;
+            Text_Time.text = "剩余时间:" + calcTime(Pp, StandardProducePoint * 4 - SpProgress) + "时";
+        }
         else
         {
             Text_Task.text = "当前任务: 无";
             Text_Progress.text = "生产力:----";
-            Text_Progress.text = "当前进度:----";
-            Text_Progress.text = "当前进度:----";
+            Text_Quality.text = "当前进度:----";
+            Text_Time.text = "当前进度:----";
         }
     }
 
@@ -290,7 +340,7 @@ public class DepControl : MonoBehaviour
                 power += CurrentEmps[i].Skill3 + CurrentEmps[i].SkillExtra3;
             }
         }
-        else
+        else if (num == 4)
         {
             for (int i = 0; i < CurrentEmps.Count; i++)
             {
@@ -300,6 +350,14 @@ public class DepControl : MonoBehaviour
                 if (CurrentEmps[i].Skill3 > temp)
                     temp = CurrentEmps[i].Skill3;
                 power += temp;
+            }
+        }
+        else if (num == 5)
+        {
+            //人力资源部B计算
+            for (int i = 0; i < CurrentEmps.Count; i++)
+            {
+                power += CurrentEmps[i].HR;
             }
         }
         float extraEfficiency = 0;
@@ -312,20 +370,20 @@ public class DepControl : MonoBehaviour
 
     int calcTime(int pp, int total)
     {
-        int time = total / pp;
-        if (total % pp > 0)
-            time += 1;
+        int time = 0;
+        if (pp != 0)
+        {
+            time = total / pp;
+            if (total % pp > 0)
+                time += 1;
+        }        
         return time;
     }
 
     public void StartMobilize()
     {
-        if (GC.Mentality >= 20)
-        {
-            GC.Mentality -= 20 - GC.MobilizeExtraMent;
-            GC.SC.gameObject.SetActive(true);
-            GC.SC.SetDice(this);
-        }
+        GC.SC.gameObject.SetActive(true);
+        GC.SC.SetDice(this);
     }
 
     public bool CheckEmpNum()
@@ -340,7 +398,7 @@ public class DepControl : MonoBehaviour
     {
         //开始调研
         SurveyStart = true;
-        SurveyProgress = 0;
+        SpProgress = 0;
         CurrentResearch = null;
         for (int i = 0; i < 3; i++)
         {
@@ -385,6 +443,16 @@ public class DepControl : MonoBehaviour
             Failed = true;
             FailProgress += Random.Range(50, 120);
             UpdateUI(CountProducePower(4));
+        }
+    }
+
+    public void StartSpecialBusiness(int type)
+    {
+        if(type == 1 && WorkStart == false && GC.Mentality >= 20)
+        {
+            WorkStart = true;
+            GC.Mentality -= 20;
+            UpdateUI();
         }
     }
 }
