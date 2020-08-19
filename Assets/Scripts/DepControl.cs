@@ -53,6 +53,7 @@ public class DepControl : MonoBehaviour
     public EmpType type;
 
     public Research[] Researches = new Research[3];
+    public Skill[] DSkillSetA = new Skill[6], DSkillSetB = new Skill[6], DSkillSetC = new Skill[6];
     public List<ProduceBuff> produceBuffs = new List<ProduceBuff>();
     public List<Employee> CurrentEmps = new List<Employee>();
     public List<OfficeControl> InRangeOffices = new List<OfficeControl>();
@@ -96,6 +97,7 @@ public class DepControl : MonoBehaviour
                     CurrentTask.Progress += Pp;
                     if (CurrentTask.Progress >= StandardProducePoint * 4)
                     {
+                        GC.CreateMessage(Text_DepName.text + " 完成了 " + CurrentTask.TaskName + " 的生产");
                         GC.FinishedTask[(int)CurrentTask.TaskType * 3 + CurrentTask.Num - 1] += 1;
                         GC.UpdateResourceInfo();
                         CurrentTask.Progress = 0;
@@ -109,6 +111,7 @@ public class DepControl : MonoBehaviour
                     CurrentResearch.UpdateUI();
                     if (CurrentResearch.CurrentProgress >= CurrentResearch.Progress)
                     {
+                        GC.CreateMessage(Text_DepName.text + " 完成了 " + CurrentResearch.Text_Name.text + " 的研究");
                         CurrentResearch.ResearchFinish();
                         CurrentResearch.ExtraButton.gameObject.SetActive(false);
                         CurrentResearch = null;
@@ -121,6 +124,7 @@ public class DepControl : MonoBehaviour
                     SpProgress += Pp;
                     if (SpProgress >= StandardProducePoint * 10)
                     {
+                        GC.CreateMessage(Text_DepName.text + " 完成了调研");
                         RandomResearch();
                         SurveyButton.interactable = true;
                         SurveyStart = false;
@@ -135,6 +139,7 @@ public class DepControl : MonoBehaviour
                         SpProgress += Pp;
                         if(SpProgress >= StandardProducePoint * 4)
                         {
+                            GC.CreateMessage(Text_DepName.text + " 完成了 资源汇总 的生产");
                             GC.FinishedTask[9] += 1;
                             GC.UpdateResourceInfo();
                             SpProgress = 0;
@@ -151,6 +156,7 @@ public class DepControl : MonoBehaviour
                 FailProgress -= Pp;
                 if (FailProgress <= 0)
                 {
+                    GC.CreateMessage(Text_DepName.text + "完成了 失误处理");
                     Failed = false;
                     FailProgress = 0;
                 }
@@ -162,6 +168,7 @@ public class DepControl : MonoBehaviour
             TaskChangeTime -= 1;
             if(TaskChangeTime < 1)
             {
+                GC.CreateMessage(Text_DepName.text + " 完成了生产线调整");
                 TaskChange = false;
                 TaskChangeTime = 0;
             }
@@ -175,6 +182,7 @@ public class DepControl : MonoBehaviour
             {
                 EfficiencyLevel -= 1;
                 Efficiency -= 0.2f;
+                GC.CreateMessage(Text_DepName.text + " 的头脑风暴等级下降了");
             }
         }
     }
@@ -443,6 +451,7 @@ public class DepControl : MonoBehaviour
             Failed = true;
             FailProgress += Random.Range(50, 120);
             UpdateUI(CountProducePower(4));
+            GC.CreateMessage(Text_DepName.text + " 发生了失误");
         }
     }
 

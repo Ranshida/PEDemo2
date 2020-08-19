@@ -18,21 +18,22 @@ public class SkillControl : MonoBehaviour
     public bool Sp1Active = false;
     //头脑风暴点数和无事件技能时间,2下一个基础技能获得点数倍率,3每用一个骰子头脑风暴点数+1
     //4非基础技能消耗倍率, 需要额外添加的点数1骰子数量
-    public int CurrentPoint = 0, EventLimit = 0, Sp2Multiply = 0, Sp3Multiply = 0, Sp4Multiply = 0, Sp5Multiply = 0;
+    public int SelectNum = 0, CurrentPoint = 0, EventLimit = 0, Sp2Multiply = 0, Sp3Multiply = 0, Sp4Multiply = 0, Sp5Multiply = 0;
 
-    public List<SkillInfo> CurrentSkills = new List<SkillInfo>();
-    public List<DiceControl> Dices = new List<DiceControl>();
-    public List<DiceControl> SelectedDices = new List<DiceControl>();
-    public SkillInfo CurrentSkill, SkillInfoPrefab;
-    public GameObject ConfirmPanel, EventPanel;
+
+    public SkillInfo CurrentSkill, SkillInfoPrefab, SkillInfoPrefab2;
+    public GameObject ConfirmPanel, EventPanel, SkillSelectPanel;
     public GameControl GC;
     public DiceControl DicePrefab;
-    public Transform DiceContent, SkillContent;
+    public Transform DiceContent, SkillContent, SkillSelectContent;
     public Text Text_TotalValue, Text_CurrentSkillName, Text_EventDescription, Text_Point;
     public Button RollButton;
     public DepControl TargetDep = null;
 
-
+    public List<SkillInfo> CurrentSkills = new List<SkillInfo>(), TotalSkills = new List<SkillInfo>();
+    public List<DiceControl> Dices = new List<DiceControl>();
+    public List<DiceControl> SelectedDices = new List<DiceControl>();
+    public SkillInfo[] CSkillSetA = new SkillInfo[6], CSkillSetB = new SkillInfo[6], CSkillSetC = new SkillInfo[6];
 
     int DiceNum, totalValue, RequirePoint;
 
@@ -54,9 +55,30 @@ public class SkillControl : MonoBehaviour
         Text_Point.text = "当前点数:" + CurrentPoint + "\n下一级所需点数:" + RequirePoint;
 
         TargetDep = dep;
-        if(dep.CommandingOffice != null)
+        ShowSkill();
+
+        for(int i = 0; i < dep.CurrentEmps.Count; i++)
         {
-            DiceNum = dep.CommandingOffice.ManageValue - dep.CommandingOffice.ControledDeps.Count + GC.ManageExtra;
+            for(int j = 0; j < dep.CurrentEmps[i].InfoDetail.SkillsInfo.Count; j++)
+            {
+                SkillInfo newSkill = Instantiate(SkillInfoPrefab, SkillSelectContent);
+                newSkill.skill = dep.CurrentEmps[i].InfoDetail.SkillsInfo[j].skill;
+                newSkill.SC = this;
+                newSkill.empInfo = dep.CurrentEmps[i].InfoDetail;
+                newSkill.UpdateUI();
+                newSkill.info = GC.infoPanel;
+                TotalSkills.Add(newSkill);
+            }
+        }
+        TotalValue = 0;
+        RollButton.interactable = true;
+    }
+
+    public void StartRoll(int num)
+    {
+        if (TargetDep.CommandingOffice != null)
+        {
+            DiceNum = TargetDep.CommandingOffice.ManageValue - TargetDep.CommandingOffice.ControledDeps.Count + GC.ManageExtra;
             if (GC.FinishedTask[9] < DiceNum)
             {
                 DiceNum = GC.FinishedTask[9];
@@ -69,29 +91,36 @@ public class SkillControl : MonoBehaviour
             }
             GC.UpdateResourceInfo();
         }
-        for(int i = 0; i < dep.CurrentEmps.Count; i++)
+        CreateDice(DiceNum);
+        RollButton.interactable = false;
+
+        SkillInfo[] s;
+        if (num == 1)
+            s = CSkillSetA;
+        else if (num == 2)
+            s = CSkillSetB;
+        else
+            s = CSkillSetC;
+
+        for (int j = 0; j < 6; j++)
         {
-            for(int j = 0; j < dep.CurrentEmps[i].InfoDetail.SkillsInfo.Count; j++)
+            if (s[j].skill != null)
             {
-                SkillInfo newSkill = Instantiate(SkillInfoPrefab, SkillContent);
-                newSkill.skill = dep.CurrentEmps[i].InfoDetail.SkillsInfo[j].skill;
-                newSkill.Text_Name.text = newSkill.skill.Name;
-                newSkill.Text_EmpName.text = dep.CurrentEmps[i].Name;
+                SkillInfo newSkill = Instantiate(SkillInfoPrefab2, SkillContent);
+                newSkill.skill = s[j].skill;
                 newSkill.SC = this;
-                newSkill.empInfo = dep.CurrentEmps[i].InfoDetail;
+                newSkill.empInfo = s[j].skill.TargetEmp.InfoDetail;
+                newSkill.UpdateUI();
                 newSkill.button.interactable = false;
-                newSkill.info = GC.infoPanel;
                 CurrentSkills.Add(newSkill);
             }
         }
-        TotalValue = 0;
-        RollButton.interactable = true;
+
     }
 
-    public void StartRoll()
+    public void ShowSetPanel(bool Start)
     {
-        CreateDice(DiceNum);
-        RollButton.interactable = false;
+
     }
 
     public void CreateDice(int num, int value = 0)
@@ -123,6 +152,12 @@ public class SkillControl : MonoBehaviour
             CurrentSkills[i].skill.StaminaExtra = 0;
             Destroy(CurrentSkills[i].gameObject);
         }
+        for (int i = 0; i < TotalSkills.Count; i++)
+        {
+            TotalSkills[i].skill.DiceExtra = 0;
+            TotalSkills[i].skill.StaminaExtra = 0;
+            Destroy(TotalSkills[i].gameObject);
+        }
         if (CurrentPoint >= RequirePoint)
         {
             if (TargetDep.EfficiencyLevel < 5)
@@ -134,6 +169,7 @@ public class SkillControl : MonoBehaviour
         Dices.Clear();
         SelectedDices.Clear();
         CurrentSkills.Clear();
+        TotalSkills.Clear();
         CurrentPoint = 0;
         EventLimit = 0;
         TargetDep = null;
@@ -158,6 +194,48 @@ public class SkillControl : MonoBehaviour
             }
             else
                 CurrentSkills[i].button.interactable = false;
+        }
+    }
+
+    public void ShowSkill()
+    {
+        for(int i = 0; i < 6; i++)
+        {
+            if (TargetDep.DSkillSetA[i] != null)
+            {
+                CSkillSetA[i].skill = TargetDep.DSkillSetA[i];
+                CSkillSetA[i].empInfo = TargetDep.DSkillSetA[i].TargetEmp.InfoDetail;
+            }
+            else
+            {
+                CSkillSetA[i].skill = null;
+                CSkillSetA[i].empInfo = null;
+            }
+            CSkillSetA[i].UpdateUI();
+
+            if (TargetDep.DSkillSetB[i] != null)
+            {
+                CSkillSetB[i].skill = TargetDep.DSkillSetB[i];
+                CSkillSetB[i].empInfo = TargetDep.DSkillSetB[i].TargetEmp.InfoDetail;
+            }
+            else
+            {
+                CSkillSetB[i].skill = null;
+                CSkillSetB[i].empInfo = null;
+            }
+            CSkillSetB[i].UpdateUI();
+
+            if (TargetDep.DSkillSetC[i] != null)
+            {
+                CSkillSetC[i].skill = TargetDep.DSkillSetC[i];
+                CSkillSetC[i].empInfo = TargetDep.DSkillSetC[i].TargetEmp.InfoDetail;
+            }
+            else
+            {
+                CSkillSetC[i].skill = null;
+                CSkillSetC[i].empInfo = null;
+            }
+            CSkillSetC[i].UpdateUI();
         }
     }
 

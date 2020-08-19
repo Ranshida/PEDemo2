@@ -87,7 +87,7 @@ public class EmpInfo : MonoBehaviour
         SetSkillName();
         //AddPerk(new Perk5(emp));
         //AddPerk(new Perk1(emp));
-        for(int i = 0; i < 2; i++)
+        for(int i = 0; i < 4; i++)
         {
             int Snum = Random.Range(20, SkillData.Skills.Count);
             Skill NewSkill = SkillData.Skills[Snum].Clone();
@@ -130,6 +130,7 @@ public class EmpInfo : MonoBehaviour
     public void Fire()
     {
         //重新计算工资
+        ClearSkillPreset();
         GC.Salary -= CalcSalary();
         GC.CurrentEmployees.Remove(emp);
         GC.WorkEndCheck();
@@ -282,6 +283,28 @@ public class EmpInfo : MonoBehaviour
                 Scrollbar_Character[i].value = (emp.Character[i] + 3) / 6;
             else
                 Scrollbar_Character[4].value = emp.Character[4] / 3;
+        }
+    }
+
+    public void ClearSkillPreset()
+    {
+        //清除技能预设
+        if(emp.CurrentDep != null)
+        {
+            for(int i = 0; i < SkillsInfo.Count; i++)
+            {
+                for(int j = 0; j < 6; j++)
+                {
+                    if (emp.CurrentDep.DSkillSetA[j] == SkillsInfo[i].skill)
+                        emp.CurrentDep.DSkillSetA[j] = null;
+
+                    if (emp.CurrentDep.DSkillSetB[j] == SkillsInfo[i].skill)
+                        emp.CurrentDep.DSkillSetB[j] = null;
+
+                    if (emp.CurrentDep.DSkillSetB[j] == SkillsInfo[i].skill)
+                        emp.CurrentDep.DSkillSetB[j] = null;
+                }
+            }
         }
     }
 }

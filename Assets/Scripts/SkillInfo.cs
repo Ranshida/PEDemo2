@@ -13,7 +13,7 @@ public class SkillInfo : MonoBehaviour
     public EmpInfo empInfo;
     public InfoPanel info;
 
-    public Text Text_Name, Text_EmpName, Text_StaminaCost, Text_DiceCost;
+    public Text Text_Name, Text_EmpName, Text_StaminaCost, Text_DiceCost, Text_Description;
     public Button button;
 
 
@@ -44,8 +44,16 @@ public class SkillInfo : MonoBehaviour
         }
         if(InfoType == 1)
         {
-            Text_StaminaCost.text = (skill.StaminaCost - skill.StaminaExtra).ToString();
-            Text_DiceCost.text = (skill.DiceCost - skill.DiceExtra).ToString();
+            if (skill != null)
+            {
+                Text_StaminaCost.text = (skill.StaminaCost - skill.StaminaExtra).ToString();
+                Text_DiceCost.text = (skill.DiceCost - skill.DiceExtra).ToString();
+            }
+            else
+            {
+                Text_StaminaCost.text = "-";
+                Text_DiceCost.text = "-";
+            }
         }
     }
 
@@ -59,6 +67,80 @@ public class SkillInfo : MonoBehaviour
         ShowPanel = false;
         info.ClosePanel();
         Timer = 0;
+    }
+
+    public void UpdateUI()
+    {
+        if (skill != null && empInfo != null)
+        {
+            Text_Name.text = skill.Name;
+            Text_EmpName.text = empInfo.emp.Name;
+            if (Text_Description != null)
+                Text_Description.text = skill.Description;
+        }
+        else
+        {
+            Text_Name.text = "---";
+            Text_EmpName.text = "---";
+            Text_Description.text = "---";
+        }
+    }
+
+    public void SetSCNum(int num)
+    {
+        SC.SelectNum = num;
+        int SetNum1 = num / 6;
+        SkillInfo[] s;
+        if (SetNum1 == 0)
+            s = SC.CSkillSetA;
+        else if (SetNum1 == 1)
+            s = SC.CSkillSetB;
+        else
+            s = SC.CSkillSetC;
+
+        for(int i = 0; i < SC.TotalSkills.Count; i++)
+        {
+            SC.TotalSkills[i].gameObject.SetActive(true);
+            for (int j = 0; j < 6; j++)
+            {
+                if(s[j].skill != null && s[j].skill == SC.TotalSkills[i].skill)
+                {
+                    SC.TotalSkills[i].gameObject.SetActive(false);
+                    break;
+                }
+            }
+
+        }
+        SC.SkillSelectPanel.SetActive(true);
+    }
+
+    public void SkillSet()
+    {
+        int num = SC.SelectNum;
+        int SetNum1 = num / 6;
+        int SetNum2 = num % 6;
+        if(SetNum1 == 0)
+        {
+            SC.CSkillSetA[SetNum2].skill = skill;
+            SC.CSkillSetA[SetNum2].empInfo = empInfo;
+            SC.CSkillSetA[SetNum2].UpdateUI();
+            SC.TargetDep.DSkillSetA[SetNum2] = skill;
+        }
+        else if (SetNum1 == 1)
+        {
+            SC.CSkillSetB[SetNum2].skill = skill;
+            SC.CSkillSetB[SetNum2].empInfo = empInfo;
+            SC.CSkillSetB[SetNum2].UpdateUI();
+            SC.TargetDep.DSkillSetB[SetNum2] = skill;
+        }
+        else if (SetNum1 == 2)
+        {
+            SC.CSkillSetC[SetNum2].skill = skill;
+            SC.CSkillSetC[SetNum2].empInfo = empInfo;
+            SC.CSkillSetC[SetNum2].UpdateUI();
+            SC.TargetDep.DSkillSetC[SetNum2] = skill;
+        }
+        SC.SkillSelectPanel.SetActive(false);
     }
 
     public void SelectSkill()

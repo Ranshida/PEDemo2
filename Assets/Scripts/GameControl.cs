@@ -40,9 +40,9 @@ public class GameControl : MonoBehaviour
     public ProduceControl PC;
     public ProductControl PrC;
     public StrategyControl StrC;
-    public Transform HireContent, EmpPanelContent, DepContent, DepSelectContent, TotalEmpContent, StandbyContent, EmpDetailContent;
+    public Transform HireContent, EmpPanelContent, DepContent, DepSelectContent, TotalEmpContent, StandbyContent, EmpDetailContent, MessageContent;
     public InfoPanel infoPanel;
-    public GameObject DepSelectPanel, StandbyButton;
+    public GameObject DepSelectPanel, StandbyButton, MessagePrefab;
     public Text Text_Time, Text_TechResource, Text_MarketResource, Text_ProductResource, Text_Money, Text_Stamina, Text_Mentality, Text_Morale,
         Text_MobilzeResource;
     public SkillControl SC;
@@ -63,6 +63,7 @@ public class GameControl : MonoBehaviour
     private void Start()
     {
         Anim = this.gameObject.GetComponent<Animator>();
+        CreateMessage("啊啊啊啊啊啊啊啊啊啊啊啊啊啊");
     }
 
     private void Update()
@@ -526,6 +527,7 @@ public class GameControl : MonoBehaviour
     {
         if (CurrentEmpInfo.emp.CurrentDep != null)
         {
+            CurrentEmpInfo.ClearSkillPreset();
             CurrentEmpInfo.emp.CurrentDep.CurrentEmps.Remove(CurrentEmpInfo.emp);
             //修改生产力显示
             CurrentEmpInfo.emp.CurrentDep.UpdateUI();
@@ -593,6 +595,12 @@ public class GameControl : MonoBehaviour
            "用户访谈: " + C[8] + "\n";
 
         Text_MobilzeResource.text = "资源汇总:" + C[9];
+    }
+
+    public void CreateMessage(string content)
+    {
+        Text T = Instantiate(MessagePrefab, MessageContent).GetComponentInChildren<Text>();
+        T.text = content;
     }
 
     public void SetTimeMultiply(int value)

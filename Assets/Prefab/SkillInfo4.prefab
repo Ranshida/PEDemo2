@@ -78,7 +78,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u67D0\u67D0\u67D0"
+  m_Text: '---'
 --- !u!1 &482371248207342643
 GameObject:
   m_ObjectHideFlags: 0
@@ -157,7 +157,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 5
+  m_Text: '-'
 --- !u!1 &957091588581622056
 GameObject:
   m_ObjectHideFlags: 0
@@ -216,7 +216,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 0.392}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -246,7 +246,7 @@ GameObject:
   - component: {fileID: 2595932619986225699}
   - component: {fileID: 1799514236483567646}
   m_Layer: 5
-  m_Name: SkillInfo2
+  m_Name: SkillInfo4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -352,8 +352,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2595932619986225699}
-        m_MethodName: SkillSet
-        m_Mode: 1
+        m_MethodName: SetSCNum
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -442,7 +442,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u6F5C\u80FD\u5206\u6790"
+  m_Text: "\u65E0"
 --- !u!1 &4580869360819683683
 GameObject:
   m_ObjectHideFlags: 0
@@ -521,7 +521,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 40
+  m_Text: '-'
 --- !u!1 &6562356517681560313
 GameObject:
   m_ObjectHideFlags: 0
@@ -600,4 +600,4 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u4EA7\u751Fn*3\u70B9\u5934\u8111\u98CE\u66B4\u70B9\u6570(n=\u53D1\u52A8\u540E\u5269\u4F59\u9AB0\u5B50\u7684\u6570\u91CF)"
+  m_Text: '----'
