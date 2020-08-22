@@ -56,14 +56,14 @@ public class GameControl : MonoBehaviour
 
     Animator Anim;
 
-    int Year = 1, Month = 1, Week = 1, Day = 1, Hour = 1, morale = 100;
+    int Year = 1, Month = 1, Week = 1, Day = 1, Hour = 1, morale = 100, SpecialEventCount = 0;
     float Timer;
     bool TimePause = false; //现在仅用来判断是否处于下班状态，用于其他功能时需检查WorkEndCheck()和WeekStart
 
     private void Start()
     {
         Anim = this.gameObject.GetComponent<Animator>();
-        CreateMessage("啊啊啊啊啊啊啊啊啊啊啊啊啊啊");
+        SpecialEventCount = Random.Range(1, 6);//随机一段时间发生影响产品的事件
     }
 
     private void Update()
@@ -126,6 +126,7 @@ public class GameControl : MonoBehaviour
     }
     public void WeekPass()
     {
+        PrC.UserChange();
         DailyEvent.Invoke();
         Hour = 1;
         Week += 1;
@@ -142,7 +143,6 @@ public class GameControl : MonoBehaviour
         {
             Month += 1;
             Week = 1;
-            PrC.UserChange();
             Money = Money + Income - Salary;
             MonthlyEvent.Invoke();
             for (int i = 0; i < CurrentDeps.Count; i++)
@@ -154,6 +154,12 @@ public class GameControl : MonoBehaviour
         {
             Year += 1;
             Month = 1;
+            SpecialEventCount -= 1;
+            if(SpecialEventCount == 0)
+            {
+                SpecialEventCount = Random.Range(1, 6);
+                PrC.StartSpecialEvent();
+            }
         }
         Text_Time.text = "年" + Year + " 月" + Month + " 周" + Week + " 时" + Hour;
     }

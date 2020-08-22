@@ -262,4 +262,25 @@ public class ProductControl : MonoBehaviour
         }
         GC.Income = income;
     }
+
+    public void StartSpecialEvent()
+    {
+        int num = Random.Range(1, 4);
+        for(int i = 0; i < CurrentProduct.Count; i++)
+        {
+            CurrentProduct[i].SpecialEvent(num);
+        }
+        if(num == 1)
+        {
+            GC.CreateMessage("发生了 大革命 事件");
+        }
+        else if (num == 2)
+        {
+            GC.CreateMessage("发生了 经济危机 事件");
+        }
+        else if (num == 3)
+        {
+            GC.CreateMessage("发生了 政治放宽 事件");
+        }
+    }
 }

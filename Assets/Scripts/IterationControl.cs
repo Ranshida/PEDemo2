@@ -147,6 +147,7 @@ public class IterationControl : MonoBehaviour
         TargetProduct.Score[2] += Fluence;
         TargetProduct.Score[3] += Secure;
         TargetProduct.CalcUser();
+        TargetProduct.AddUser(1.0f);
         TargetProduct.UpdateUI();
         GC.FinishedTask[0] -= Value[0];
         GC.FinishedTask[6] -= Value[1];
