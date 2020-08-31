@@ -56,19 +56,19 @@ public class BuildingManage : MonoBehaviour
         else if (type == BuildingType.研发部门)
             SelectBuilding.SetSize(2, 4);
         else if (type == BuildingType.健身房)
-            SelectBuilding.SetSize(3, 4);
+            SelectBuilding.SetSize(3, 3);
         else if (type == BuildingType.目标修正小组 || type == BuildingType.档案管理室 || type == BuildingType.效能研究室
             || type == BuildingType.财务部 || type == BuildingType.战略咨询部B || type == BuildingType.精确标准委员会
             || type == BuildingType.高级财务部A || type == BuildingType.高级财务部B)
-            SelectBuilding.SetSize(1, 2);
+            SelectBuilding.SetSize(2, 3);
 
     }
 
     public void BuildingConfirm()
     {
-        if (GC.Stamina > 30)
+        if (GC.Money >= 100)
         {
-            GC.Stamina -= 30;
+            GC.Money -= 100;
             ControlPanel.SetActive(false);
 
             BuildingType T = SelectBuilding.Type;

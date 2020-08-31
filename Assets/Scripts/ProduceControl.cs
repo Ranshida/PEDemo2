@@ -21,7 +21,7 @@ public class ProduceControl : MonoBehaviour
 
     DepControl CurrentDep;
 
-    int TaskNum = 1;
+    int TaskNum = 1, HireType = 1, HireLevel = 1;
 
     public void SetName(DepControl Dep)
     {
@@ -52,6 +52,32 @@ public class ProduceControl : MonoBehaviour
     public void SetNum(int num)
     {
         TaskNum = num + 1;
+    }
+
+    public void SetHire(DepControl Dep)
+    {
+        CurrentDep = Dep;
+        dropdown.value = 0;
+        dopdown2.value = 0;
+    }
+
+    public void SetHireType(int num)
+    {
+        HireType = num + 1;
+    }
+
+    public void SetHireLevel(int num)
+    {
+        HireLevel = num + 1;
+    }
+
+    public void CreateHire()
+    {
+        CurrentDep.WorkStart = true;
+        CurrentDep.SpType = HireType;
+        CurrentDep.SpTotalProgress = HireLevel * 100;
+        CurrentDep.SpProgress = 0;
+        CurrentDep.UpdateUI();
     }
 
     public void CreateTask()

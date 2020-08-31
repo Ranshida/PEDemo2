@@ -9,10 +9,10 @@ public class ProduceBuff
     public int TimeLeft;
     public DepControl TargetDep;
 
-    public ProduceBuff(float value, DepControl Dep)
+    public ProduceBuff(float value, DepControl Dep, int Time = 32)
     {
         Value = value;
-        TimeLeft = 32;
+        TimeLeft = Time;
         TargetDep = Dep;
         Dep.produceBuffs.Add(this);
         Dep.Efficiency += Value;
@@ -30,11 +30,20 @@ public class ProduceBuff
         }
     }
 }
+public class HireType
+{
+    public int Level, Type;
+    public HireType(int level, int type)
+    {
+        Level = level;
+        Type = type;
+    }
+}
 
 public class DepControl : MonoBehaviour
 {
     static public int StandardProducePoint = 50;
-    [HideInInspector] public int SpProgress = 0, FailProgress = 0, TaskChangeTime = 0, EfficiencyLevel = 0, LevelDownTime = 0;
+    [HideInInspector] public int SpProgress = 0, SpTotalProgress, FailProgress = 0, TaskChangeTime = 0, EfficiencyLevel = 0, LevelDownTime = 0, SpType, SpTime;//SPTime:CEO技能
     [HideInInspector] public bool SurveyStart = false, Failed = false, TaskChange = false, WorkStart = false; //WorkStart专门用于特殊业务
     public int EmpLimit;
     public float Efficiency = 1.0f, FailRate = 0.3f;
@@ -68,8 +77,16 @@ public class DepControl : MonoBehaviour
 
     public void StartTaskManage()
     {
-        GC.PC.gameObject.SetActive(true);
-        GC.PC.SetName(this);
+        if (type != EmpType.HR)
+        {
+            GC.PC.gameObject.SetActive(true);
+            GC.PC.SetName(this);
+        }
+        else
+        {
+            GC.PC2.gameObject.SetActive(true);
+            GC.PC2.SetHire(this);
+        }
     }
 
     public void SetTask(Task task)
@@ -100,7 +117,14 @@ public class DepControl : MonoBehaviour
                         GC.CreateMessage(Text_DepName.text + " 完成了 " + CurrentTask.TaskName + " 的生产");
                         GC.FinishedTask[(int)CurrentTask.TaskType * 3 + CurrentTask.Num - 1] += 1;
                         GC.UpdateResourceInfo();
+                        EmpsGetExp(CurrentTask.Num);
                         CurrentTask.Progress = 0;
+                        if (CurrentTask.Num == 1 && (int)CurrentTask.TaskType == 2)
+                            GC.StrC.SolveStrRequest(3, 1);
+                        else if (CurrentTask.Num == 2 && (int)CurrentTask.TaskType == 1)
+                            GC.StrC.SolveStrRequest(4, 1);
+                        else if (CurrentTask.Num == 1 && (int)CurrentTask.TaskType == 0)
+                            GC.StrC.SolveStrRequest(5, 1);
                     }
                     UpdateUI(Pp);
                 }
@@ -114,7 +138,9 @@ public class DepControl : MonoBehaviour
                         GC.CreateMessage(Text_DepName.text + " 完成了 " + CurrentResearch.Text_Name.text + " 的研究");
                         CurrentResearch.ResearchFinish();
                         CurrentResearch.ExtraButton.gameObject.SetActive(false);
+                        EmpsGetExp(1);
                         CurrentResearch = null;
+                        GC.StrC.SolveStrRequest(7, 1);
                     }
                     UpdateUI(Pp);
                 }
@@ -129,7 +155,9 @@ public class DepControl : MonoBehaviour
                         SurveyButton.interactable = true;
                         SurveyStart = false;
                     }
+                    EmpsGetExp(1);
                     UpdateUI(Pp);
+                    GC.StrC.SolveStrRequest(7, 1);
                 }
                 else if (WorkStart == true)
                 {
@@ -137,12 +165,16 @@ public class DepControl : MonoBehaviour
                     {
                         int Pp = CountProducePower(5);
                         SpProgress += Pp;
-                        if(SpProgress >= StandardProducePoint * 4)
+                        if(SpProgress >= SpTotalProgress)
                         {
-                            GC.CreateMessage(Text_DepName.text + " 完成了 资源汇总 的生产");
-                            GC.FinishedTask[9] += 1;
-                            GC.UpdateResourceInfo();
+                            GC.CreateMessage(Text_DepName.text + " 完成了 招聘");
+                            //GC.FinishedTask[9] += 1; 原人力资源部2相关
+                            //GC.UpdateResourceInfo();
+                            EmpsGetExp(8);
+                            GC.AddHireTypes(new HireType(SpTotalProgress / 100, SpType));
+                            SpType = 0;
                             SpProgress = 0;
+                            SpTotalProgress = 0;
                             WorkStart = false;
                         }
                         UpdateUI(Pp);
@@ -185,6 +217,8 @@ public class DepControl : MonoBehaviour
                 GC.CreateMessage(Text_DepName.text + " 的头脑风暴等级下降了");
             }
         }
+        if (SpTime > 0)
+            SpTime -= 1;
     }
 
     public void UpdateUI()
@@ -240,10 +274,10 @@ public class DepControl : MonoBehaviour
         else if (type == EmpType.HR && WorkStart == true)
         {
             int Pp = CountProducePower(5);
-            Text_Task.text = "当前任务:资源汇总";
+            Text_Task.text = "当前任务:招聘";
             Text_Progress.text = "生产力:" + Pp + "/时";
-            Text_Quality.text = "当前进度:" + SpProgress + "/" + StandardProducePoint * 4;
-            Text_Time.text = "剩余时间:" + calcTime(Pp, StandardProducePoint * 4 - SpProgress) + "时";
+            Text_Quality.text = "当前进度:" + SpProgress + "/" + SpTotalProgress;
+            Text_Time.text = "剩余时间:" + calcTime(Pp, SpTotalProgress - SpProgress) + "时";
         }
         else
         {
@@ -303,10 +337,10 @@ public class DepControl : MonoBehaviour
         }
         else if (type == EmpType.HR && WorkStart == true)
         {
-            Text_Task.text = "当前任务:资源汇总";
+            Text_Task.text = "当前任务:招聘";
             Text_Progress.text = "生产力:" + Pp + "/时";
-            Text_Quality.text = "当前进度:" + SpProgress + "/" + StandardProducePoint * 4;
-            Text_Time.text = "剩余时间:" + calcTime(Pp, StandardProducePoint * 4 - SpProgress) + "时";
+            Text_Quality.text = "当前进度:" + SpProgress + "/" + SpTotalProgress;
+            Text_Time.text = "剩余时间:" + calcTime(Pp, SpTotalProgress - SpProgress) + "时";
         }
         else
         {
@@ -371,9 +405,15 @@ public class DepControl : MonoBehaviour
         float extraEfficiency = 0;
         if (type != EmpType.Science)
             extraEfficiency = GC.EfficiencyExtraNormal;
-        else if(type == EmpType.Science)
+        else if (type == EmpType.Science)
             extraEfficiency = GC.EfficiencyExtraScience;
-        return (int)(power * (Efficiency + extraEfficiency));
+        else if (type == EmpType.HR)
+            extraEfficiency = GC.HireEfficiencyExtra;
+
+        float FinalEfficiency = Efficiency + extraEfficiency;
+        if (FinalEfficiency < 0)
+            FinalEfficiency = 0;
+        return (int)(power * FinalEfficiency);
     }
 
     int calcTime(int pp, int total)
@@ -455,6 +495,16 @@ public class DepControl : MonoBehaviour
         }
     }
 
+    public void EmpsGetExp(int type)
+    {
+        for(int i = 0; i < CurrentEmps.Count; i++)
+        {
+            CurrentEmps[i].GainExp(100, type);
+        }
+    }
+    
+
+    //旧人力资源部2功能 已过时
     public void StartSpecialBusiness(int type)
     {
         if(type == 1 && WorkStart == false && GC.Mentality >= 20)

@@ -15,7 +15,7 @@ public class SkillControl : MonoBehaviour
         }
     }
     //1发动技能后加一个1点骰子, 4下一个非基础技能消耗翻倍
-    public bool Sp1Active = false;
+    public bool Sp1Active = false, AdvanceMobilize = false;
     //头脑风暴点数和无事件技能时间,2下一个基础技能获得点数倍率,3每用一个骰子头脑风暴点数+1
     //4非基础技能消耗倍率, 需要额外添加的点数1骰子数量
     public int SelectNum = 0, CurrentPoint = 0, EventLimit = 0, Sp2Multiply = 0, Sp3Multiply = 0, Sp4Multiply = 0, Sp5Multiply = 0;
@@ -40,6 +40,8 @@ public class SkillControl : MonoBehaviour
     public void SetDice(DepControl dep)
     {
         CurrentPoint = 0;
+        if (dep.SpTime > 0)
+            CurrentPoint += 5;
         if (dep.EfficiencyLevel == 0)
             RequirePoint = 20;
         else if (dep.EfficiencyLevel == 1)
@@ -52,6 +54,8 @@ public class SkillControl : MonoBehaviour
             RequirePoint = 320;
         else if (dep.EfficiencyLevel == 5)
             RequirePoint = 640;
+        if (GC.DoubleMobilizeCost > 0)
+            RequirePoint *= 2;
         Text_Point.text = "当前点数:" + CurrentPoint + "\n下一级所需点数:" + RequirePoint;
 
         TargetDep = dep;
@@ -78,17 +82,7 @@ public class SkillControl : MonoBehaviour
     {
         if (TargetDep.CommandingOffice != null)
         {
-            DiceNum = TargetDep.CommandingOffice.ManageValue - TargetDep.CommandingOffice.ControledDeps.Count + GC.ManageExtra;
-            if (GC.FinishedTask[9] < DiceNum)
-            {
-                DiceNum = GC.FinishedTask[9];
-                GC.FinishedTask[9] = 0;
-            }
-            else
-            {
-                //DiceNum += (GC.FinishedTask[9] - DiceNum);
-                GC.FinishedTask[9] -= DiceNum;
-            }
+            DiceNum = TargetDep.CommandingOffice.ManageValue - TargetDep.CommandingOffice.ControledDeps.Count + GC.ManageExtra;           
             GC.UpdateResourceInfo();
         }
         CreateDice(DiceNum);
@@ -115,7 +109,8 @@ public class SkillControl : MonoBehaviour
                 CurrentSkills.Add(newSkill);
             }
         }
-
+        if (AdvanceMobilize == true)
+            Sp2Multiply += 1;
     }
 
     public void ShowSetPanel(bool Start)
@@ -165,6 +160,8 @@ public class SkillControl : MonoBehaviour
             TargetDep.Efficiency += 0.2f;
             TargetDep.LevelDownTime = 96;
             TargetDep.Text_LevelDownTime.text = "降级时间:" + TargetDep.LevelDownTime + "时";
+            if (GC.DoubleMobilizeCost > 0)
+                GC.DoubleMobilizeCost -= 1;
         }
         Dices.Clear();
         SelectedDices.Clear();

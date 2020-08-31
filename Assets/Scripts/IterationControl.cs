@@ -153,6 +153,7 @@ public class IterationControl : MonoBehaviour
         GC.FinishedTask[6] -= Value[1];
         GC.FinishedTask[4] -= Value[0];
         GC.UpdateResourceInfo();
+        GC.StrC.SolveStrRequest(2, Art + Function + Fluence + Secure);
     }
 
     public void ButtonCheck()

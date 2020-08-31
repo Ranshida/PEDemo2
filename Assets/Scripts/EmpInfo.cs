@@ -13,15 +13,19 @@ public class EmpInfo : MonoBehaviour
     public Text Text_Name, Text_Mentality, Text_Stamina, Text_Type, Text_Skill1, Text_Skill2, Text_Skill3,  Text_Ability;
     public Text Text_DepName, Text_Observation, Text_Tenacity, Text_Strength, Text_Manage, Text_HR, Text_Finance, Text_Decision, 
         Text_Forecast, Text_Strategy, Text_Convince, Text_Charm, Text_Gossip, Text_SName1, Text_SName2, Text_SName3;
+    public Text[] Text_Stars = new Text[5], Text_Exps = new Text[5];
     public Scrollbar[] Scrollbar_Character = new Scrollbar[5];
     public EmpInfo DetailInfo;
     public Transform PerkContent, SkillContent, StrategyContent, RelationContent, HistoryContent;
+    public StrategyInfo CurrentStrategy;
 
     public List<PerkInfo> PerksInfo = new List<PerkInfo>();
     public List<SkillInfo> SkillsInfo = new List<SkillInfo>();
     public List<StrategyInfo> StrategiesInfo = new List<StrategyInfo>();
 
     public int InfoType;
+
+    int RechargeStrategyNum = -1, RechargeProgress = 0;
 
     void Update()
     {
@@ -61,6 +65,10 @@ public class EmpInfo : MonoBehaviour
                 Text_Charm.text = emp.Charm.ToString();
                 Text_Gossip.text = emp.Gossip.ToString();
                 UpdateCharacterUI();
+                for(int i = 0; i < 5; i++)
+                {
+                    Text_Stars[i].text = "热情 " + emp.Stars[i] + "/" + emp.StarLimit[i];
+                }
             }
             //详细面板
             if(InfoType == 2)
@@ -73,15 +81,19 @@ public class EmpInfo : MonoBehaviour
                     Text_DepName.text = "所属部门:" + emp.CurrentOffice.Text_OfficeName.text;
                 else
                     Text_DepName.text = "所属部门:无";
+                for (int i = 0; i < 5; i++)
+                {
+                    Text_Exps[i].text = "Exp " + emp.SkillExp[i] + "/" + (emp.Levels[i] * 50 + 50);
+                }
             }
         }
     }
 
-    public void CreateEmp(EmpType type)
+    public void CreateEmp(EmpType type, int level = 3)
     {       
         emp = new Employee();
         emp.InfoA = this;
-        emp.InitStatus(type);
+        emp.InitStatus(type, level);
         Text_Name.text = emp.Name;
         HireButton.interactable = true;
         SetSkillName();
@@ -141,6 +153,7 @@ public class EmpInfo : MonoBehaviour
         }
         else if(emp.CurrentOffice != null)
         {
+            TempDestroyStrategy();
             emp.CurrentOffice.CurrentManager = null;
         }
         if (emp.InfoA == this)
@@ -162,6 +175,19 @@ public class EmpInfo : MonoBehaviour
         {
             GC.CurrentEmpInfo = DetailInfo;
             GC.CurrentOffice.BuildingActive();
+        }
+        else if(GC.SelectMode == 6)
+        {
+            if (GC.CEOSkillNum == 4)
+            {
+                emp.Mentality += 10;
+            }
+            else if (GC.CEOSkillNum == 5)
+            {
+                GC.CurrentEmpInfo = this;
+                GC.EmpTrainingPanel.SetActive(true);
+            }
+            GC.CEOSkillConfirm();
         }
         else
         {
@@ -305,6 +331,43 @@ public class EmpInfo : MonoBehaviour
                         emp.CurrentDep.DSkillSetB[j] = null;
                 }
             }
+        }
+    }
+
+    //以下三个函数为战略充能相关
+    public void CreateStrategy()
+    {
+        if (RechargeStrategyNum < 0)
+            RechargeStrategyNum = Random.Range(0, StrategiesInfo.Count);
+        StrategyInfo NewStr = Instantiate(GC.StrC.ChargePrefab, GC.StrC.StrategyContent);
+        CurrentStrategy = NewStr;
+        NewStr.SC = GC.StrC;
+        GC.StrC.StrInfos.Add(NewStr);
+        NewStr.Str = StrategiesInfo[RechargeStrategyNum].Str;
+        NewStr.UpdateUI();
+        NewStr.Text_Progress.text = RechargeProgress + "/600";
+    }
+    public void ReChargeStrategy()
+    {
+        RechargeProgress += emp.Manage;
+        if (RechargeProgress >= 400)
+        {
+            RechargeProgress = 0;
+            RechargeStrategyNum = -1;
+            CurrentStrategy.Text_Progress.text = "充能完毕";
+            CurrentStrategy.RechargeComplete = true;
+            CreateStrategy();
+        }
+        else
+            CurrentStrategy.Text_Progress.text = RechargeProgress + "/400";
+    }
+    public void TempDestroyStrategy()
+    {
+        if(CurrentStrategy != null)
+        {
+            GC.StrC.StrInfos.Remove(CurrentStrategy);
+            Destroy(CurrentStrategy.gameObject);
+            CurrentStrategy = null;
         }
     }
 }

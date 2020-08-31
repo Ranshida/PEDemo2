@@ -784,8 +784,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 8290254732809842710}
-        m_MethodName: StartSpecialBusiness
-        m_Mode: 3
+        m_MethodName: StartTaskManage
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -1480,7 +1480,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u751F\u4EA7\u8D44\u6E90\u6C47\u603B(20\u5FC3\u529B)"
+  m_Text: "\u62DB\u8058\u8BBE\u7F6E"
 --- !u!1 &6656649411013207428
 GameObject:
   m_ObjectHideFlags: 0
@@ -1580,10 +1580,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SpProgress: 0
+  SpTotalProgress: 0
   FailProgress: 0
   TaskChangeTime: 0
   EfficiencyLevel: 0
   LevelDownTime: 0
+  SpType: 0
   SurveyStart: 0
   Failed: 0
   TaskChange: 0

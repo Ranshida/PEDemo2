@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class OfficeControl : MonoBehaviour
 {
-    public int ManageValue = 0;
+    public int ManageValue = 0, Progress = 100;
 
     public Employee CurrentManager;
     public DepSelect DS;
@@ -16,8 +16,9 @@ public class OfficeControl : MonoBehaviour
 
     public List<DepControl> ControledDeps = new List<DepControl>();
 
-    int Progress = 100;
+    
 
+    //放入和移除高管时调用
     public void SetOfficeStatus()
     {
         if (CurrentManager != null)
@@ -27,6 +28,7 @@ public class OfficeControl : MonoBehaviour
             {
                 Text_MAbility.text = "管理:" + CurrentManager.Manage;
                 ManageValue = CurrentManager.Manage + GC.ManageExtra;
+                CurrentManager.InfoDetail.CreateStrategy();
             }
             else if (building.effectValue == 1)
                 Text_MAbility.text = "人力:" + CurrentManager.HR;
@@ -92,11 +94,11 @@ public class OfficeControl : MonoBehaviour
     public void SetName()
     {
         int num = 0;
+        GC.HourEvent.AddListener(TimePass);
         if (building.Type != BuildingType.高管办公室)
         {
             Text_Progress.gameObject.SetActive(true);
             ActiveButton.gameObject.SetActive(true);
-            GC.HourEvent.AddListener(TimePass);
             num = 1;
         }
         for (int i = 0; i < GC.CurrentOffices.Count; i++)
@@ -113,16 +115,20 @@ public class OfficeControl : MonoBehaviour
         //建筑物特效
         bool ActiveSuccess = true;
         float Posb = Random.Range(0.0f, 1.0f);
+        float extra = GC.BuildingSkillSuccessExtra, extra2 = 0;
+        if (extra > 0.2f)
+            extra2 = extra - 0.2f;
+
         if (building.Type == BuildingType.人力资源部A)
         {       
             int value = 0;
-            if (Posb < 0.2f)
+            if (Posb < 0.2f - extra)
                 value = 20;
-            else if (Posb < 0.8f)
+            else if (Posb < 0.8f - extra2)
                 value = 10;
             else
                 value = 5;
-
+            value = (int)(value * GC.HRBuildingMentalityExtra);
             DepControl d = GC.CurrentDep;
             for (int i = 0; i < d.CurrentEmps.Count; i++)
             {
@@ -144,9 +150,9 @@ public class OfficeControl : MonoBehaviour
                 }
             }
             int value = 0;
-            if (Posb < 0.2f)
+            if (Posb < 0.2f - extra)
                 value = 50;
-            else if (Posb < 0.8f)
+            else if (Posb < 0.8f - extra2)
                 value = 30;
             else
                 value = 10;
@@ -318,31 +324,39 @@ public class OfficeControl : MonoBehaviour
 
     public void TimePass()
     {
-        if (CurrentManager != null && Progress < 100)
+        if (building.Type != BuildingType.高管办公室)
         {
-            if (building.effectValue == 1)
-                Progress += CurrentManager.HR;
-            else if (building.effectValue == 2)
-                Progress += CurrentManager.Gossip;
-            else if (building.effectValue == 3)
-                Progress += CurrentManager.Strength;
-            else if (building.effectValue == 4)
-                Progress += CurrentManager.Strategy;
-            else if (building.effectValue == 5)
-                Progress += CurrentManager.Forecast;
-            else if (building.effectValue == 6)
-                Progress += CurrentManager.Decision;
-            else if (building.effectValue == 7)
-                Progress += CurrentManager.Finance;
-            else if (building.effectValue == 8)
-                Progress += CurrentManager.Manage;
-
-            if (Progress >= 100)
+            if (CurrentManager != null && Progress < 100)
             {
-                Progress = 100;
-                ActiveButton.interactable = true;
+                if (building.effectValue == 1)
+                    Progress += CurrentManager.HR;
+                else if (building.effectValue == 2)
+                    Progress += CurrentManager.Gossip;
+                else if (building.effectValue == 3)
+                    Progress += CurrentManager.Strength;
+                else if (building.effectValue == 4)
+                    Progress += CurrentManager.Strategy;
+                else if (building.effectValue == 5)
+                    Progress += CurrentManager.Forecast;
+                else if (building.effectValue == 6)
+                    Progress += CurrentManager.Decision;
+                else if (building.effectValue == 7)
+                    Progress += CurrentManager.Finance;
+                else if (building.effectValue == 8)
+                    Progress += CurrentManager.Manage;
+
+                if (Progress >= 100)
+                {
+                    Progress = 100;
+                    ActiveButton.interactable = true;
+                }
+                Text_Progress.text = "激活进度:" + Progress + "%";
             }
-            Text_Progress.text = "激活进度:" + Progress + "%";
+        }
+        else
+        {
+            if (CurrentManager != null)
+                CurrentManager.InfoDetail.ReChargeStrategy();
         }
     }
 }

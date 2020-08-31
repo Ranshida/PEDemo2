@@ -369,6 +369,9 @@ public class EmpEvent
 
     public void FinishEvent()
     {
+        //加战略进度
+        Self.InfoDetail.GC.StrC.SolveStrRequest(6, 1);
+
         int a = Random.Range(2, 13);
         string Ns = Self.InfoDetail.emp.Name;
         string Nt = "";

@@ -5,15 +5,20 @@ using UnityEngine.UI;
 
 public class StrategyInfo : MonoBehaviour
 {
-    public bool Active = false; //原本用于检测是否放在插槽上，现在用来检测是否完成/是否被封锁
+    public bool Active = false; //原本用于检测是否放在插槽上，现在用来检测是否完成/是否被封锁,在投票中判断是否被选中
     public bool Used = false;
-    public int TimeLeft, Type, StrNum;
+    public bool RechargeComplete = false;
+    public int TimeLeft, Type, StrNum, CurrentRequestValue = 0;//Type1-4已废弃, 5:充能完毕 6:投票用 7:已启用
+    public int VoteNum = 0;
 
     public Strategy Str;
+    public StrategyInfo TargetStr;//开会功能中用于保存自身代表的，保存在待使用面板的战略
     public StrategyControl SC;
     public InfoPanel info;
-    public Text Text_Name, Text_Time, Text_Type, Text_EffectDescription, Text_RequestDescription, Text_Complete;
+    public Text Text_Name, Text_Time, Text_Type, Text_EffectDescription, Text_RequestDescription, Text_Complete, Text_Progress;
     public Button UseButton, AbolishButton;
+    public Toggle StrSelectToggle;
+    public GameObject ActiveMarker;
 
     float Timer = 0;
     bool ShowPanel = false;
@@ -41,7 +46,7 @@ public class StrategyInfo : MonoBehaviour
 
     public void PointerEnter()
     {
-        ShowPanel = true;
+        ShowPanel = true;        
     }
 
     public void PointerExit()
@@ -62,6 +67,30 @@ public class StrategyInfo : MonoBehaviour
                 Text_RequestDescription.text = Str.RequestDescription;
             if (Text_Time != null)
                 Text_Time.text = "剩余" + TimeLeft + "时";
+            if (Type == 6)
+                Text_Progress.text = "得票数:" + VoteNum;
+            else if (Type == 7)
+            {
+                if (Active == false)
+                {
+                    if (Str.RequestType == 1)
+                        Text_Progress.text = "提升 " + CurrentRequestValue + "/" + Str.RequestValue + " 人心力";
+                    else if (Str.RequestType == 2)
+                        Text_Progress.text = "增加产品分 " + CurrentRequestValue + "/" + Str.RequestValue;
+                    else if (Str.RequestType == 3)
+                        Text_Progress.text = "生产产品原型图 " + CurrentRequestValue + "/" + Str.RequestValue;
+                    else if (Str.RequestType == 4)
+                        Text_Progress.text = "生产产品营销文案 " + CurrentRequestValue + "/" + Str.RequestValue;
+                    else if (Str.RequestType == 5)
+                        Text_Progress.text = "生产产品程序迭代 " + CurrentRequestValue + "/" + Str.RequestValue;
+                    else if (Str.RequestType == 6)
+                        Text_Progress.text = "发生 " + CurrentRequestValue + "/" + Str.RequestValue + " 次事件";
+                    else if (Str.RequestType == 7)
+                        Text_Progress.text = "完成 " + CurrentRequestValue + "/" + Str.RequestValue + " 次研究或调研";
+                }
+                else
+                    Text_Progress.text = "已完成";
+            }
         }
         else
         {
@@ -178,6 +207,11 @@ public class StrategyInfo : MonoBehaviour
                 Text_Complete.text = "已完成";
             }
         }
+    }
+
+    public void SelectStr(bool check)
+    {
+        SC.SkillStrSelect(this, check);
     }
 
     public void DeleteStrategy()
