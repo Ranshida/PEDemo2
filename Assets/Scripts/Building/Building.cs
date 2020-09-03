@@ -9,11 +9,13 @@ public class Building : MonoBehaviour
     public int effectValue = 1, StaminaRequest = 0; //1人力 2八卦 3强壮 4谋略 5行业 6决策 7财务 8管理
     public BuildingType Type;
 
-    public DepControl Department;
+    public DepControl Department; //
     public OfficeControl Office;
+    public BuildingManage BM;
+
     public RectTransform Rt;
     public BuildingEffect effect;
-    public BuildingManage BM;
+
     public Text Text_DepName;
 
     public Transform[] WorkPos = new Transform[4];

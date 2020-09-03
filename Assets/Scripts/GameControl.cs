@@ -6,6 +6,7 @@ using UnityEngine.Events;
 
 public class GameControl : MonoBehaviour
 {
+    public static GameControl SGC; 
     [HideInInspector] public int Salary, Income, MobilizeExtraMent = 0, ManageExtra, TimeMultiply = 1, WorkEndEmpCount = 0;
     [HideInInspector] public bool AdvanceHire = false;
     [HideInInspector] public float EfficiencyExtraNormal = 0, EfficiencyExtraScience = 0, ResearchSuccessRateExtra = 0, ExtrafailRate = 0, HireEfficiencyExtra = 1.0f,
@@ -73,6 +74,7 @@ public class GameControl : MonoBehaviour
         AddHireTypes(new HireType(1, 1));
         SpecialEventCount = Random.Range(1, 6);//随机一段时间发生影响产品的事件
         HourEvent.AddListener(GCTimePass);
+        SGC = this;
     }
 
     private void Update()
@@ -435,7 +437,7 @@ public class GameControl : MonoBehaviour
     //将移动或雇佣的员工放入特定办公室 + 确定部门领导者 + CEO技能发动
     public void SelectDep(OfficeControl office)
     {
-        if(office.CurrentManager != null)
+        if(office.CurrentManager != null && SelectMode < 3)
         {
             office.CurrentManager.InfoDetail.TempDestroyStrategy();
             office.CurrentManager.CurrentOffice = null;
