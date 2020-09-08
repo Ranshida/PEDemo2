@@ -444,6 +444,7 @@ public class DepControl : MonoBehaviour
     {
         GC.SC.gameObject.SetActive(true);
         GC.SC.SetDice(this);
+        EmpPanel.gameObject.SetActive(true);
     }
 
     public bool CheckEmpNum()

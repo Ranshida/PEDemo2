@@ -137,6 +137,8 @@ public class SkillControl : MonoBehaviour
 
     public void ClearPanel()
     {
+        if (TargetDep != null && TargetDep.EmpPanel != null)
+            TargetDep.EmpPanel.gameObject.SetActive(false);
         for(int i = 0; i < Dices.Count; i++)
         {
             Destroy(Dices[i].gameObject);
