@@ -16,12 +16,30 @@ public class Task
 
 public class ProduceControl : MonoBehaviour
 {
-    public Text Text_DepName;
+    public Text Text_DepName, Text_Cost;
     public Dropdown dropdown, dopdown2;
+
+    public float HireCostRate = 1.0f, HeadHuntCostRate = 1.0f;
+
+    public int[] HeadHuntStatus = new int[15];
+    public Toggle[] HeadHuntToggles = new Toggle[15];
 
     DepControl CurrentDep;
 
     int TaskNum = 1, HireType = 1, HireLevel = 1;
+    int HeadHuntSelectNum = 0;
+    int HireCost = 200;
+
+    private void Update()
+    {
+        if (Text_Cost != null)
+        {
+            if (HeadHuntSelectNum == 0)
+                Text_Cost.text = "生产力消耗:" + (int)(HireCost * HireCostRate);
+            else
+                Text_Cost.text = "生产力消耗:" + (int)(HireCost * HeadHuntCostRate);
+        }
+    }
 
     public void SetName(DepControl Dep)
     {
@@ -59,6 +77,55 @@ public class ProduceControl : MonoBehaviour
         CurrentDep = Dep;
         dropdown.value = 0;
         dopdown2.value = 0;
+        if (Dep.type == EmpType.HR)
+            ResetHeadHunt();
+    }
+    //猎头相关
+    public void ResetHeadHunt()
+    {
+        for(int i = 0; i < 15; i++)
+        {
+            HeadHuntToggles[i].isOn = false;
+            HeadHuntToggles[i].interactable = true;
+        }
+        for (int i = 0; i < 15; i++)
+        {
+            HeadHuntStatus[i] = 0;
+        }
+        HeadHuntSelectNum = 0;
+        HireCost = 200;
+    }
+    public void SetHeadHunt(int num)
+    {
+        if(HeadHuntStatus[num] == 0)
+        {
+            HeadHuntStatus[num] = 1;
+            HeadHuntSelectNum += 1;
+            if (HeadHuntSelectNum > 1)
+                HireCost *= 2;
+            if(HeadHuntSelectNum == 5)
+            {
+                for(int i = 0; i < 15; i++)
+                {
+                    if (HeadHuntToggles[i].isOn == false)
+                        HeadHuntToggles[i].interactable = false;
+                }
+            }
+        }
+        else
+        {
+            HeadHuntStatus[num] = 0;
+            HeadHuntSelectNum -= 1;
+            if (HeadHuntSelectNum > 0)
+                HireCost /= 2;
+            if (HeadHuntSelectNum < 5)
+            {
+                for (int i = 0; i < 15; i++)
+                {
+                    HeadHuntToggles[i].interactable = true;  
+                }
+            }
+        }
     }
 
     public void SetHireType(int num)
@@ -71,13 +138,22 @@ public class ProduceControl : MonoBehaviour
         HireLevel = num + 1;
     }
 
+
     public void CreateHire()
     {
         CurrentDep.WorkStart = true;
         CurrentDep.SpType = HireType;
-        CurrentDep.SpTotalProgress = HireLevel * 100;
+        if (HeadHuntSelectNum == 0)
+            CurrentDep.SpTotalProgress = (int)(HireCost * HireCostRate);
+        else
+            CurrentDep.SpTotalProgress = (int)(HireCost * HeadHuntCostRate);
+        for (int i = 0; i < 15; i++)
+        {
+            CurrentDep.DepHeadHuntStatus[i] = HeadHuntStatus[i];
+        }
         CurrentDep.SpProgress = 0;
         CurrentDep.UpdateUI();
+        ResetHeadHunt();
     }
 
     public void CreateTask()
@@ -88,4 +164,6 @@ public class ProduceControl : MonoBehaviour
         newTask.Num = TaskNum;
         CurrentDep.SetTask(newTask);
     }
+
+
 }

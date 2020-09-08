@@ -42,7 +42,7 @@ public class Strategy1_1 : Strategy
         Name = "人才数据库";
         //EffectDescription = "招募高级人才的概率+10% \n \n \n威信+5";
         //RequestDescription = "2个低劣及以上用户访谈";
-        EffectDescription = "招聘效率+50%";
+        EffectDescription = "普通招聘消耗-30%";
         RequestDescription = "提升10人心力";
         RequestType = 1;
         RequestValue = 10;
@@ -54,13 +54,13 @@ public class Strategy1_1 : Strategy
     public override void Effect(GameControl GC)
     {
         base.Effect(GC);
-        GC.HireEfficiencyExtra += 0.5f;
+        GC.PC2.HireCostRate = 0.7f;
     }
 
     public override void EffectRemove(GameControl GC)
     {
         base.EffectRemove(GC);
-        GC.HireEfficiencyExtra -= 0.5f;
+        GC.PC2.HireCostRate = 1.0f;
     }
 }
 
@@ -132,7 +132,7 @@ public class Strategy1_4 : Strategy
     {
         Type = StrategyType.人力;
         Name = "首席人力官";
-        EffectDescription = "提升招聘时高属性员工的出现概率";
+        EffectDescription = "降低猎头生产力需求30%";
         RequestDescription = "提升10人心力";
         RequestType = 1;
         RequestValue = 10;
@@ -145,13 +145,13 @@ public class Strategy1_4 : Strategy
     public override void Effect(GameControl GC)
     {
         base.Effect(GC);
-        GC.AdvanceHire = true;
+        GC.PC2.HeadHuntCostRate = 0.7f;
     }
 
     public override void EffectRemove(GameControl GC)
     {
         base.EffectRemove(GC);
-        GC.AdvanceHire = false;
+        GC.PC2.HeadHuntCostRate = 1.0f;
     }
 }
 
@@ -351,7 +351,7 @@ public class Strategy3_2 : Strategy
     {
         Type = StrategyType.执行;
         Name = "舆论战";
-        EffectDescription = "减少一个竞争对手金钱100";
+        EffectDescription = "公关谈判效果增加50%";
         RequestDescription = "生产15次营销文案";
         RequestType = 4;
         RequestValue = 15;
@@ -365,13 +365,13 @@ public class Strategy3_2 : Strategy
     public override void Effect(GameControl GC)
     {
         base.Effect(GC);
-        GC.FOEMoney -= 100;
+        GC.foeControl.NegotiateEfficiency += 0.5f;
     }
 
     public override void EffectRemove(GameControl GC)
     {
         base.EffectRemove(GC);
-        MonoBehaviour.print("3_2Remove");
+        GC.foeControl.NegotiateEfficiency -= 0.5f;
     }
 }
 
@@ -396,7 +396,7 @@ public class Strategy3_3 : Strategy
     public override void Effect(GameControl GC)
     {
         base.Effect(GC);
-        GC.FOEEventProtection += 2;
+        GC.foeControl.FOEEventProtection += 2;
     }
 
     public override void EffectRemove(GameControl GC)
@@ -774,7 +774,7 @@ public static class StrategyData
         new Strategy2_5(),
         //new Strategy3_1(),
         new Strategy3_2(),
-        new Strategy3_3(),
+        //new Strategy3_3(),
         new Strategy3_4(),
         new Strategy4_1(),
         new Strategy4_2(),

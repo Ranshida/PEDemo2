@@ -17,7 +17,7 @@ public class StrategyControl : MonoBehaviour
     public Transform StrategyContent, UnfinishedStrategyContent, VoteContent, ActiveStrsContent;
     public GameControl GC;
     public Button NewStrButton, MeetingButton;
-    public Text Text_Time, Text_CTime;
+    public Text Text_Time, Text_CTime, Text_StrategyStatus;
 
     public List<StrategyInfo> StrInfos = new List<StrategyInfo>(), VoteStrs = new List<StrategyInfo>(), ActiveStrs = new List<StrategyInfo>()
         , VoteSelectStrs = new List<StrategyInfo>();
@@ -28,7 +28,7 @@ public class StrategyControl : MonoBehaviour
 
 
     bool canChangeCulture = true;
-    int VoteSeqNum = 0, MeetingSkillNum = 0, StrSelectNum = 0;
+    int VoteSeqNum = 0, MeetingSkillNum = 0, StrSelectNum = 0, FinishedStrNum = 0;
     List<Strategy> TempStrs = new List<Strategy>();
 
     private void Start()
@@ -113,6 +113,7 @@ public class StrategyControl : MonoBehaviour
         }
         Text_Time.text = "距离下次会议召开还剩:" + TimeLeft + "时";
         Text_CTime.text = "距离下次文化变更还剩:" + CultureTimeLeft + "时";
+        Text_StrategyStatus.text = "未完成战略:" + ActiveStrs.Count + "\n剩余时间:" + TimeLeft;
     }
 
     public void CheckStrNum()
@@ -251,6 +252,9 @@ public class StrategyControl : MonoBehaviour
             TimeLeft = 384;
             if (CultureTimeLeft == -1)
                 CultureTimeLeft = 1152;
+            FinishedStrNum = 0;
+            if (ActiveStrs.Count > 0)
+                Text_StrategyStatus.gameObject.SetActive(true);
             UpdateUI();
             VotePanel.gameObject.SetActive(false);
         }
@@ -534,10 +538,7 @@ public class StrategyControl : MonoBehaviour
                 MeetingButton.interactable = true;
                 for(int i = 0; i < ActiveStrs.Count; i++)
                 {
-                    if(ActiveStrs[i].Active == false)
-                    {
-                        GC.Stamina -= 20;
-                    }
+                    
                     ActiveStrs[i].Str.EffectRemove(GC);
                     Destroy(ActiveStrs[i].gameObject);
                 }
@@ -561,8 +562,14 @@ public class StrategyControl : MonoBehaviour
             {
                 ActiveStrs[i].CurrentRequestValue += value;
                 if (ActiveStrs[i].CurrentRequestValue >= ActiveStrs[i].Str.RequestValue)
+                {
                     ActiveStrs[i].Active = true;
+                    FinishedStrNum += 1;
+                    if (FinishedStrNum == ActiveStrs.Count)
+                        Text_StrategyStatus.gameObject.SetActive(false);
+                }
                 ActiveStrs[i].UpdateUI();
+                
                 break;
             }
         }

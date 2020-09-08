@@ -133,10 +133,10 @@ public class IterationControl : MonoBehaviour
     public void ValueCalc()
     {
         int a = 0, b = 0, c = 0, d = 0;
-        a += Value[1] * 20 + Value[2] * 40;
-        b += Value[0] * 20 + Value[1] * 40;
-        c += Value[0] * 20 + Value[1] * 20 + Value[2] * 20;
-        d += Value[0] * 40 + Value[2] * 20;
+        a += Value[1] * 2 + Value[2] * 4;
+        b += Value[0] * 2 + Value[1] * 4;
+        c += Value[0] * 2 + Value[1] * 2 + Value[2] * 2;
+        d += Value[0] * 4 + Value[2] * 2;
         Art = a; Function = b; Fluence = c; Secure = d;
     }
 

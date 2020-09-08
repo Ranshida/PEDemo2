@@ -32,11 +32,20 @@ public class ProduceBuff
 }
 public class HireType
 {
-    public int Level, Type;
-    public HireType(int level, int type)
+    public int Level = 0, Type;
+    public int[] HeadHuntStatus = new int[15];
+    public HireType(int type)
     {
-        Level = level;
         Type = type;
+    }
+    public void SetHeadHuntStatus(int[] Hst)
+    {
+        for(int i = 0; i < HeadHuntStatus.Length; i++)
+        {
+            HeadHuntStatus[i] = Hst[i];
+            if (Hst[i] == 1)
+                Level += 1;
+        }
     }
 }
 
@@ -66,6 +75,7 @@ public class DepControl : MonoBehaviour
     public List<ProduceBuff> produceBuffs = new List<ProduceBuff>();
     public List<Employee> CurrentEmps = new List<Employee>();
     public List<OfficeControl> InRangeOffices = new List<OfficeControl>();
+    public int[] DepHeadHuntStatus = new int[15];
 
     private void Update()
     {
@@ -112,7 +122,7 @@ public class DepControl : MonoBehaviour
                 {
                     int Pp = CountProducePower(CurrentTask.Num);
                     CurrentTask.Progress += Pp;
-                    if (CurrentTask.Progress >= StandardProducePoint * 4)
+                    if (CurrentTask.Progress >= StandardProducePoint * 10)
                     {
                         GC.CreateMessage(Text_DepName.text + " 完成了 " + CurrentTask.TaskName + " 的生产");
                         GC.FinishedTask[(int)CurrentTask.TaskType * 3 + CurrentTask.Num - 1] += 1;
@@ -136,9 +146,9 @@ public class DepControl : MonoBehaviour
                     if (CurrentResearch.CurrentProgress >= CurrentResearch.Progress)
                     {
                         GC.CreateMessage(Text_DepName.text + " 完成了 " + CurrentResearch.Text_Name.text + " 的研究");
+                        EmpsGetExp(2, CurrentResearch.Progress / 10);
                         CurrentResearch.ResearchFinish();
-                        CurrentResearch.ExtraButton.gameObject.SetActive(false);
-                        EmpsGetExp(1);
+                        CurrentResearch.ExtraButton.gameObject.SetActive(false);                       
                         CurrentResearch = null;
                         GC.StrC.SolveStrRequest(7, 1);
                     }
@@ -154,8 +164,8 @@ public class DepControl : MonoBehaviour
                         RandomResearch();
                         SurveyButton.interactable = true;
                         SurveyStart = false;
-                    }
-                    EmpsGetExp(1);
+                        EmpsGetExp(2);
+                    }                    
                     UpdateUI(Pp);
                     GC.StrC.SolveStrRequest(7, 1);
                 }
@@ -171,7 +181,9 @@ public class DepControl : MonoBehaviour
                             //GC.FinishedTask[9] += 1; 原人力资源部2相关
                             //GC.UpdateResourceInfo();
                             EmpsGetExp(8);
-                            GC.AddHireTypes(new HireType(SpTotalProgress / 100, SpType));
+                            HireType ht = new HireType(SpType);
+                            ht.SetHeadHuntStatus(DepHeadHuntStatus);
+                            GC.AddHireTypes(ht);
                             SpType = 0;
                             SpProgress = 0;
                             SpTotalProgress = 0;
@@ -268,8 +280,8 @@ public class DepControl : MonoBehaviour
             int Pp = CountProducePower(CurrentTask.Num);
             Text_Task.text = "当前任务:" + CurrentTask.TaskName;
             Text_Progress.text = "生产力:" + Pp + "/时";
-            Text_Quality.text = "当前进度:" + CurrentTask.Progress + "/" + StandardProducePoint * 4;
-            Text_Time.text = "剩余时间:" + calcTime(Pp, StandardProducePoint * 4 - CurrentTask.Progress) + "时";
+            Text_Quality.text = "当前进度:" + CurrentTask.Progress + "/" + StandardProducePoint * 10;
+            Text_Time.text = "剩余时间:" + calcTime(Pp, StandardProducePoint * 10 - CurrentTask.Progress) + "时";
         }
         else if (type == EmpType.HR && WorkStart == true)
         {
@@ -332,8 +344,8 @@ public class DepControl : MonoBehaviour
         {
             Text_Task.text = "当前任务:" + CurrentTask.TaskName;
             Text_Progress.text = "生产力:" + Pp + "/时";
-            Text_Quality.text = "当前进度:" + CurrentTask.Progress + "/" + StandardProducePoint * 4;
-            Text_Time.text = "剩余时间:" + calcTime(Pp, StandardProducePoint * 4 - CurrentTask.Progress) + "时";
+            Text_Quality.text = "当前进度:" + CurrentTask.Progress + "/" + StandardProducePoint * 10;
+            Text_Time.text = "剩余时间:" + calcTime(Pp, StandardProducePoint * 10 - CurrentTask.Progress) + "时";
         }
         else if (type == EmpType.HR && WorkStart == true)
         {
@@ -490,16 +502,18 @@ public class DepControl : MonoBehaviour
         {
             Failed = true;
             FailProgress += Random.Range(50, 120);
+            if (type != EmpType.Market && type != EmpType.Operate && type != EmpType.Product && type != EmpType.Tech)
+                FailProgress = 50;
             UpdateUI(CountProducePower(4));
             GC.CreateMessage(Text_DepName.text + " 发生了失误");
         }
     }
 
-    public void EmpsGetExp(int type)
+    public void EmpsGetExp(int type, int value = 50)
     {
         for(int i = 0; i < CurrentEmps.Count; i++)
         {
-            CurrentEmps[i].GainExp(100, type);
+            CurrentEmps[i].GainExp(value, type);
         }
     }
     

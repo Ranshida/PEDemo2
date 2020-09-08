@@ -133,6 +133,11 @@ public class OfficeControl : MonoBehaviour
             for (int i = 0; i < d.CurrentEmps.Count; i++)
             {
                 d.CurrentEmps[i].Mentality += value;
+                int StarNum = Random.Range(0, 6);
+                if (d.CurrentEmps[i].Stars[StarNum] < d.CurrentEmps[i].StarLimit[StarNum] * 5)
+                {
+                    d.CurrentEmps[i].Stars[StarNum] += 1;                   
+                }
             }
         }
         else if(building.Type == BuildingType.心理咨询室)

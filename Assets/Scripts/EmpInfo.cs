@@ -10,7 +10,7 @@ public class EmpInfo : MonoBehaviour
     public Employee emp;
     public GameControl GC;
     public Button HireButton;
-    public Text Text_Name, Text_Mentality, Text_Stamina, Text_Type, Text_Skill1, Text_Skill2, Text_Skill3,  Text_Ability;
+    public Text Text_Name, Text_Mentality, Text_Stamina, Text_Type, Text_Skill1, Text_Skill2, Text_Skill3,  Text_Ability, Text_Age;
     public Text Text_DepName, Text_Observation, Text_Tenacity, Text_Strength, Text_Manage, Text_HR, Text_Finance, Text_Decision, 
         Text_Forecast, Text_Strategy, Text_Convince, Text_Charm, Text_Gossip, Text_SName1, Text_SName2, Text_SName3;
     public Text[] Text_Stars = new Text[5], Text_Exps = new Text[5];
@@ -49,6 +49,7 @@ public class EmpInfo : MonoBehaviour
             //雇佣和详细面板通用部分
             else
             {
+                Text_Age.text = emp.Age + "岁";
                 Text_Skill1.text = (emp.Skill1 + emp.SkillExtra1).ToString();
                 Text_Skill2.text = (emp.Skill2 + emp.SkillExtra2).ToString();
                 Text_Skill3.text = (emp.Skill3 + emp.SkillExtra3).ToString();
@@ -67,7 +68,7 @@ public class EmpInfo : MonoBehaviour
                 UpdateCharacterUI();
                 for(int i = 0; i < 5; i++)
                 {
-                    Text_Stars[i].text = "热情 " + emp.Stars[i] + "/" + emp.StarLimit[i];
+                    Text_Stars[i].text = "热情 " + ((float)emp.Stars[i] / 5f) + "/" + emp.StarLimit[i];
                 }
             }
             //详细面板
@@ -81,7 +82,7 @@ public class EmpInfo : MonoBehaviour
                     Text_DepName.text = "所属部门:" + emp.CurrentOffice.Text_OfficeName.text;
                 else
                     Text_DepName.text = "所属部门:无";
-                for (int i = 0; i < 5; i++)
+                for (int i = 0; i < 15; i++)
                 {
                     Text_Exps[i].text = "Exp " + emp.SkillExp[i] + "/" + (emp.Levels[i] * 50 + 50);
                 }
@@ -89,11 +90,11 @@ public class EmpInfo : MonoBehaviour
         }
     }
 
-    public void CreateEmp(EmpType type, int level = 3)
+    public void CreateEmp(EmpType type, int[] Hst, int AgeRange)
     {       
         emp = new Employee();
         emp.InfoA = this;
-        emp.InitStatus(type, level);
+        emp.InitStatus(type, Hst, AgeRange);
         Text_Name.text = emp.Name;
         HireButton.interactable = true;
         SetSkillName();
@@ -345,21 +346,22 @@ public class EmpInfo : MonoBehaviour
         GC.StrC.StrInfos.Add(NewStr);
         NewStr.Str = StrategiesInfo[RechargeStrategyNum].Str;
         NewStr.UpdateUI();
-        NewStr.Text_Progress.text = RechargeProgress + "/600";
+        NewStr.Text_Progress.text = RechargeProgress + "/300";
     }
     public void ReChargeStrategy()
     {
         RechargeProgress += emp.Manage;
-        if (RechargeProgress >= 400)
+        if (RechargeProgress >= 300)
         {
             RechargeProgress = 0;
             RechargeStrategyNum = -1;
             CurrentStrategy.Text_Progress.text = "充能完毕";
             CurrentStrategy.RechargeComplete = true;
             CreateStrategy();
+            emp.GainExp(50, 7);
         }
         else
-            CurrentStrategy.Text_Progress.text = RechargeProgress + "/400";
+            CurrentStrategy.Text_Progress.text = RechargeProgress + "/300";
     }
     public void TempDestroyStrategy()
     {

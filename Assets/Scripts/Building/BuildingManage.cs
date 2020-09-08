@@ -78,7 +78,7 @@ public class BuildingManage : MonoBehaviour
         if (GC.Money >= 100)
         {
             GC.Money -= 100;
-
+            GC.BuildingPay += 100;
             ControlPanel.SetActive(false);
 
             BuildingType T = SelectBuilding.Type;

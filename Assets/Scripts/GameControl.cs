@@ -7,12 +7,11 @@ using UnityEngine.Events;
 public class GameControl : MonoBehaviour
 {
     public static GameControl SGC; 
-    [HideInInspector] public int Salary, Income, MobilizeExtraMent = 0, ManageExtra, TimeMultiply = 1, WorkEndEmpCount = 0;
-    [HideInInspector] public bool AdvanceHire = false;
+    [HideInInspector] public int Salary, Income, BuildingPay, MobilizeExtraMent = 0, ManageExtra, TimeMultiply = 1, WorkEndEmpCount = 0;
     [HideInInspector] public float EfficiencyExtraNormal = 0, EfficiencyExtraScience = 0, ResearchSuccessRateExtra = 0, ExtrafailRate = 0, HireEfficiencyExtra = 1.0f,
         HRBuildingMentalityExtra = 1.0f, BuildingSkillSuccessExtra = 0, BuildingMaintenanceCostRate = 1.0f;
     public int SelectMode = 1; //1员工招聘时部门选择 2员工移动时部门选择 3部门的高管办公室选择 4发动动员技能时员工选择 5发动建筑技能时员工选择 6CEO技能员工/部门选择
-    public int Money = 1000, Stamina = 100, Mentality = 100, CEOSkillNum = 0, FOEEventProtection = 0, FOEMoney = 0, DoubleMobilizeCost = 0, MeetingBlockTime = 0;
+    public int Money = 1000, Stamina = 100, Mentality = 100, CEOSkillNum = 0, DoubleMobilizeCost = 0, MeetingBlockTime = 0;
     public int Morale
     {
         get { return morale; }
@@ -43,9 +42,10 @@ public class GameControl : MonoBehaviour
     public ProduceControl PC, PC2;
     public ProductControl PrC;
     public StrategyControl StrC;
+    public FOEControl foeControl;
     public Transform HireContent, EmpPanelContent, DepContent, DepSelectContent, TotalEmpContent, StandbyContent, EmpDetailContent, MessageContent;
     public InfoPanel infoPanel;
-    public GameObject DepSelectPanel, StandbyButton, MessagePrefab, CEOSkillPanel, EmpTrainingPanel;
+    public GameObject DepSelectPanel, StandbyButton, MessagePrefab, CEOSkillPanel, EmpTrainingPanel, GameOverPanel;
     public Button HireRefreshButton;
     public Text Text_Time, Text_TechResource, Text_MarketResource, Text_ProductResource, Text_Money, Text_Stamina, Text_Mentality, Text_Morale;
     public SkillControl SC;
@@ -61,7 +61,7 @@ public class GameControl : MonoBehaviour
 
     Animator Anim;
 
-    int Year = 1, Month = 1, Week = 1, Day = 1, Hour = 1, morale = 100, SpecialEventCount = 0, FOEMoneyRequest = 100;
+    int Year = 1, Month = 1, Week = 1, Day = 1, Hour = 1, morale = 100, SpecialEventCount = 0;
     float Timer;
     bool TimePause = false; //现在仅用来判断是否处于下班状态，用于其他功能时需检查WorkEndCheck()和WeekStart
 
@@ -71,7 +71,7 @@ public class GameControl : MonoBehaviour
     private void Start()
     {
         Anim = this.gameObject.GetComponent<Animator>();
-        AddHireTypes(new HireType(1, 1));
+        AddHireTypes(new HireType(1));
         SpecialEventCount = Random.Range(1, 6);//随机一段时间发生影响产品的事件
         HourEvent.AddListener(GCTimePass);
         SGC = this;
@@ -86,8 +86,12 @@ public class GameControl : MonoBehaviour
             Timer = 0;
             HourPass();
         }
+        if (Input.GetKeyDown(KeyCode.I))
+            Money += 1000;
+        if (Money < 0)
+            GameOverPanel.SetActive(true);
         Text_Money.text = "金钱:" + Money +"\n" 
-                        + "    " + (Income - Salary) + "/月";
+                        + "    " + (Income - Salary - (int)(BuildingPay * BuildingMaintenanceCostRate)) + "/月";
         Text_Stamina.text = "体力:" + Stamina;
         Text_Mentality.text = "心力:" + Mentality;
     }
@@ -107,9 +111,6 @@ public class GameControl : MonoBehaviour
             //    CurrentDeps[i].OneHourPass();
             //}
             Hour = 8;
-            FOEMoney += 30;
-            if (FOEMoney >= FOEMoneyRequest)
-                FOEEvent();
             StartWorkEnd();
         }
         //if (Day > 5) //旧的5日1周时间流
@@ -157,7 +158,7 @@ public class GameControl : MonoBehaviour
         {
             Month += 1;
             Week = 1;
-            Money = Money + Income - Salary - (int)((CurrentDeps.Count + CurrentOffices.Count) * 100 * BuildingMaintenanceCostRate);
+            Money = Money + Income - Salary - (int)(BuildingPay * BuildingMaintenanceCostRate);
             MonthlyEvent.Invoke();
             for (int i = 0; i < CurrentDeps.Count; i++)
             {
@@ -176,6 +177,8 @@ public class GameControl : MonoBehaviour
                 SpecialEventCount = Random.Range(1, 6);
                 PrC.StartSpecialEvent();
             }
+            for (int i = 0; i < CurrentEmployees.Count; i++)
+                CurrentEmployees[i].Age += 1;
         }
         Text_Time.text = "年" + Year + " 月" + Month + " 周" + Week + " 时" + Hour;
     }
@@ -635,7 +638,7 @@ public class GameControl : MonoBehaviour
                 HireInfos[i].PerksInfo.Clear();
                 HireInfos[i].SkillsInfo.Clear();
                 HireInfos[i].StrategiesInfo.Clear();
-                HireInfos[i].CreateEmp(EType, HireTypes[0].Level);
+                HireInfos[i].CreateEmp(EType, HireTypes[0].HeadHuntStatus, HireTypes[0].Level);
             }
             HireTypes.RemoveAt(0);
             if (HireTypes.Count < 1)
@@ -789,87 +792,5 @@ public class GameControl : MonoBehaviour
         CEOSkillNum = 0;
     }
 
-    void FOEEvent()
-    {
-        FOEMoney = 0;
-        FOEMoneyRequest = Random.Range(100, 501);
-        if (FOEEventProtection > 0)
-            FOEEventProtection -= 1;
-        else
-        {
-            int type = Random.Range(1, 9);
-            if(type == 1)
-            {
-                if(PrC.CurrentProduct.Count > 0)
-                {
-                    int num = Random.Range(0, PrC.CurrentProduct.Count);
-                    PrC.CurrentProduct[num].Score[3] -= 100;
-                    PrC.CurrentProduct[num].UpdateUI();
-                    CreateMessage("由于敌对公司骇客攻击，我们的一个产品安全评分下降100");
-                }
-            }
-            else if (type == 2)
-            {
-                if (PrC.CurrentProduct.Count > 0)
-                {
-                    int num = Random.Range(0, PrC.CurrentProduct.Count);
-                    for (int i = 0; i < 5; i++)
-                    {
-                        PrC.CurrentProduct[num].User[i] -= (int)(PrC.CurrentProduct[num].User[i] * 0.04f);                       
-                    }
-                    PrC.CurrentProduct[num].UpdateUI();
-                    CreateMessage("我们一个产品的用户被敌对公司夺取,用户流失20%");
-                }
-            }
-            else if (type == 3)
-            {
-                for(int i = 0; i < CurrentDeps.Count; i++)
-                {
-                    if(CurrentDeps[i].type == EmpType.Tech)
-                    {
-                        new ProduceBuff(-0.5f, CurrentDeps[i], 96);
-                    }
-                }
-                CreateMessage("遇到技术阻碍，所有技术部门效率下降50%，持续3个月");
-            }
-            else if (type == 4)
-            {
-                FinishedTask[4] -= 6;
-                if (FinishedTask[4] < 0)
-                    FinishedTask[4] = 0;
-                UpdateResourceInfo();
-            }
-            else if (type == 5)
-            {
-                List<EmpInfo> e = new List<EmpInfo>();
-                for(int i = 0; i < CurrentOffices.Count; i++)
-                {
-                    if (CurrentOffices[i].building.Type == BuildingType.高管办公室 && CurrentOffices[i].CurrentManager != null)
-                        e.Add(CurrentOffices[i].CurrentManager.InfoDetail);
-                }
-                if (e.Count > 0)
-                {
-                    int num = Random.Range(0, e.Count);
-                    CreateMessage("由于敌对公司的猎头行动,高管" + e[num].emp.Name + "离职了");
-                    e[num].Fire();
-                }
-            }
-            else if (type == 6)
-            {
-                Morale -= 15;
-                CreateMessage("由于受到敌对公司的强力干扰，士气下降15");
-            }
-            else if (type == 7)
-            {
-                DoubleMobilizeCost += 1;
-                CreateMessage("由于公司内鬼影响，下一次头脑风暴所需点数上升100%，层数:" + DoubleMobilizeCost);
-            }
-            else if (type == 8)
-            {
-                MeetingBlockTime += 96;
-                CreateMessage("由于敌对公司的全面打击，3个月时间内无法布置战略");
-            }
-        }
-        
-    }
+    
 }
