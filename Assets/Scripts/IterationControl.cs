@@ -15,7 +15,7 @@ public class IterationControl : MonoBehaviour
     int Art, Function, Fluence, Secure;
     int IterationNum = 0, TotalSelectNum = 0;
 
-    int[] Value = new int[3]; //类型,品质
+    int[] Value = new int[3]; 
 
     public void RefreshPanel()
     {
@@ -151,7 +151,7 @@ public class IterationControl : MonoBehaviour
         TargetProduct.UpdateUI();
         GC.FinishedTask[0] -= Value[0];
         GC.FinishedTask[6] -= Value[1];
-        GC.FinishedTask[4] -= Value[0];
+        GC.FinishedTask[4] -= Value[2];
         GC.UpdateResourceInfo();
         GC.StrC.SolveStrRequest(2, Art + Function + Fluence + Secure);
     }
@@ -170,7 +170,7 @@ public class IterationControl : MonoBehaviour
             }
             ConfirmButton.interactable = true;
         }
-        else if(IterationNum < 1)
+        else if(IterationNum < 3)
         {
             foreach (Transform child in ButtonTab1)
             {
@@ -192,7 +192,7 @@ public class IterationControl : MonoBehaviour
             {
                 child.gameObject.GetComponent<Button>().interactable = true;
             }
-            ConfirmButton.interactable = false;
+            ConfirmButton.interactable = true;
         }
     }
 
