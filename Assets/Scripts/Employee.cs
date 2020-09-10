@@ -9,6 +9,7 @@ public enum EmpType
 
 public class Employee
 {
+    static public int HeadHuntLevel = 11;
     public int Skill1, Skill2, Skill3, SkillExtra1, SkillExtra2, SkillExtra3, 
         Observation, Tenacity, Strength, Manage, HR, Finance, Decision, 
         Forecast, Strategy, Convince, Charm, Gossip, SalaryExtra = 0, Age;
@@ -93,7 +94,7 @@ public class Employee
                 Skill1 = Random.Range(1, 4);
         }
         else
-            Skill1 = 10;
+            Skill1 = HeadHuntLevel;
 
         if (Hst[1] == 0)
         {
@@ -103,7 +104,7 @@ public class Employee
                 Skill2 = Random.Range(1, 4);
         }
         else
-            Skill2 = 10;
+            Skill2 = HeadHuntLevel;
 
         if (Hst[2] == 0)
         {
@@ -113,7 +114,7 @@ public class Employee
                 Skill3 = Random.Range(1, 4);
         }
         else
-            Skill3 = 10;
+            Skill3 = HeadHuntLevel;
         Levels[0] = Skill1 + Skill2 + Skill3;
         //基础技能
         if (Hst[3] == 0)
@@ -124,7 +125,7 @@ public class Employee
                 Observation = Random.Range(1, 4);
         }
         else
-            Observation = 10;
+            Observation = HeadHuntLevel;
 
         if (Hst[4] == 0)
         {
@@ -134,7 +135,7 @@ public class Employee
                 Tenacity = Random.Range(1, 4);
         }
         else
-            Tenacity = 10;
+            Tenacity = HeadHuntLevel;
 
         if (Hst[5] == 0)
         {
@@ -144,7 +145,7 @@ public class Employee
                 Strength = Random.Range(1, 4);
         }
         else
-            Strength = 10;
+            Strength = HeadHuntLevel;
         Levels[1] = Observation + Tenacity + Strength;
         //经营技能
         if (Hst[6] == 0)
@@ -155,7 +156,7 @@ public class Employee
                 Manage = Random.Range(1, 4);
         }
         else
-            Manage = 10;
+            Manage = HeadHuntLevel;
 
         if (Hst[7] == 0)
         {
@@ -165,7 +166,7 @@ public class Employee
                 HR = Random.Range(1, 4);
         }
         else
-            HR = 10;
+            HR = HeadHuntLevel;
 
         if (Hst[8] == 0)
         {
@@ -175,7 +176,7 @@ public class Employee
                 Finance = Random.Range(1, 4);
         }
         else
-            Finance = 10;
+            Finance = HeadHuntLevel;
         Levels[2] = Manage + HR + Finance;
         //战略技能
         if (Hst[9] == 0)
@@ -186,7 +187,7 @@ public class Employee
                 Decision = Random.Range(1, 4);
         }
         else
-            Decision = 10;
+            Decision = HeadHuntLevel;
 
         if (Hst[10] == 0)
         {
@@ -196,7 +197,7 @@ public class Employee
                 Forecast = Random.Range(1, 4);
         }
         else
-            Forecast = 10;
+            Forecast = HeadHuntLevel;
 
         if (Hst[11] == 0)
         {
@@ -206,7 +207,7 @@ public class Employee
                 Strategy = Random.Range(1, 4);
         }
         else
-            Strategy = 10;
+            Strategy = HeadHuntLevel;
         Levels[3] = Decision + Forecast + Strategy;
         //社交技能        
         if (Hst[12] == 0)
@@ -217,7 +218,7 @@ public class Employee
                 Convince = Random.Range(1, 4);
         }
         else
-            Convince = 10;
+            Convince = HeadHuntLevel;
 
         if (Hst[13] == 0)
         {
@@ -227,7 +228,7 @@ public class Employee
                 Charm = Random.Range(1, 4);
         }
         else
-            Charm = 10;
+            Charm = HeadHuntLevel;
 
         if (Hst[14] == 0)
         {
@@ -237,7 +238,7 @@ public class Employee
                 Gossip = Random.Range(1, 4);
         }
         else
-            Gossip = 10;
+            Gossip = HeadHuntLevel;
         Levels[4] = Convince + Charm + Gossip;
 
         //确定年龄

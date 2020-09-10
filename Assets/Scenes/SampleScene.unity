@@ -5693,7 +5693,7 @@ PrefabInstance:
     - target: {fileID: 5815906006951344470, guid: ff3a64471eade99488c2a6f3fcd321f4,
         type: 3}
       propertyPath: ManageValue
-      value: 6
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 5815906006951344470, guid: ff3a64471eade99488c2a6f3fcd321f4,
         type: 3}
@@ -59995,7 +59995,7 @@ MonoBehaviour:
   BuildingSkillSuccessExtra: 0
   BuildingMaintenanceCostRate: 1
   SelectMode: 1
-  Money: 1000
+  Money: 6000
   Stamina: 100
   Mentality: 100
   CEOSkillNum: 0
