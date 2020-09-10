@@ -258,7 +258,7 @@ public class EmpEntity : MonoBehaviour
                 canMove = false;
                 return false;
             }
-            else
+            else if (CurrentEvent[i].Target != null || CurrentEvent[i].FindTarget() == true)
             {
                 TargetEmp = CurrentEvent[i].Target;
                 Destination = TargetEmp.transform.position;
@@ -314,6 +314,35 @@ public class EmpEntity : MonoBehaviour
     public void ShowDetailPanel()
     {
         InfoDetail.ShowPanel();
+    }
+
+    public void RemoveEntity()
+    {
+        for (int i = 0; i < CurrentEvent.Count; i++)
+        {
+            if (CurrentEvent[i].Target != null && CurrentEvent[i].Target.ReceivedEvent.Contains(CurrentEvent[i]))
+            {
+                //遇到有在进行中的且有目标的事件，先停止其激活，再检查目标是否可以动，最后从目标的ReceiveEvent中删除该事件
+                if(CurrentEvent[i].EventActive == true)
+                {
+                    CurrentEvent[i].EventActive = false;
+                    if (CurrentEvent[i].Target.EventCheck() == true)
+                        CurrentEvent[i].Target.SetTarget();
+                }
+                CurrentEvent[i].Target.ReceivedEvent.Remove(CurrentEvent[i]);
+            }
+        }
+        for(int i = 0; i < ReceivedEvent.Count; i++)
+        {
+            if(ReceivedEvent[i].EventActive == true)
+            {
+                ReceivedEvent[i].EventActive = false;
+                if (ReceivedEvent[i].Self.EventCheck() == true)
+                    ReceivedEvent[i].Self.SetTarget();
+            }
+            ReceivedEvent[i].Self.CurrentEvent.Remove(ReceivedEvent[i]);
+        }
+        Destroy(this.gameObject);
     }
 
     IEnumerator ResetMarker(int type)

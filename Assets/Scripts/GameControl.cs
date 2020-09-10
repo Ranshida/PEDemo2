@@ -792,5 +792,14 @@ public class GameControl : MonoBehaviour
         CEOSkillNum = 0;
     }
 
+    public void SellTask(int num)
+    {
+        if (FinishedTask[num] > 0)
+        {
+            FinishedTask[num] -= 1;
+            Money += 100;
+            UpdateResourceInfo();
+        }
+    }
     
 }

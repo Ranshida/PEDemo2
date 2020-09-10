@@ -140,13 +140,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20901fd08a70e2a43b22cfc8de611aae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Active: 0
   Used: 0
+  RechargeComplete: 0
   TimeLeft: 0
   Type: 1
+  StrNum: 0
+  CurrentRequestValue: 0
+  VoteNum: 0
+  TargetStr: {fileID: 0}
+  SC: {fileID: 0}
   info: {fileID: 0}
   Text_Name: {fileID: 2955320182570690957}
   Text_Time: {fileID: 0}
   Text_Type: {fileID: 0}
-  Text_Description: {fileID: 0}
+  Text_EffectDescription: {fileID: 0}
+  Text_RequestDescription: {fileID: 0}
+  Text_Complete: {fileID: 0}
+  Text_Progress: {fileID: 0}
   UseButton: {fileID: 0}
   AbolishButton: {fileID: 0}
+  StrSelectToggle: {fileID: 0}
+  ActiveMarker: {fileID: 0}

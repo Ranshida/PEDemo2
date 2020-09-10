@@ -84,7 +84,16 @@ public class EmpInfo : MonoBehaviour
                     Text_DepName.text = "所属部门:无";
                 for (int i = 0; i < 15; i++)
                 {
-                    Text_Exps[i].text = "Exp " + emp.SkillExp[i] + "/" + (emp.Levels[i] * 50 + 50);
+                    int Exp = 0;
+                    if (emp.Levels[i] < 10)
+                        Exp = 50 + 50 * (emp.Levels[i] - 0);
+                    else if (emp.Levels[i] < 15)
+                        Exp = 500 + 100 * (emp.Levels[i] - 10);                    
+                    else if (emp.Levels[i] < 20)
+                        Exp = 1000 + 200 * (emp.Levels[i] - 15);
+                    else
+                        Exp = 2000 + 300 * (emp.Levels[i] - 20);
+                    Text_Exps[i].text = "Exp " + emp.SkillExp[i] + "/" + Exp;
                 }
             }
         }
@@ -123,7 +132,7 @@ public class EmpInfo : MonoBehaviour
         else if (emp.Type == EmpType.Market)
             ei.Text_Type.text = "市场";
         else
-            ei.Text_Type.text = "运营";
+            ei.Text_Type.text = "产品";
         ei.Text_Name.text = emp.Name;
     }
 
@@ -142,6 +151,9 @@ public class EmpInfo : MonoBehaviour
 
     public void Fire()
     {
+        //删除员工实体
+        emp.InfoDetail.Entity.RemoveEntity();
+
         //重新计算工资
         ClearSkillPreset();
         GC.Salary -= CalcSalary();
@@ -358,7 +370,7 @@ public class EmpInfo : MonoBehaviour
             CurrentStrategy.Text_Progress.text = "充能完毕";
             CurrentStrategy.RechargeComplete = true;
             CreateStrategy();
-            emp.GainExp(50, 7);
+            emp.GainExp(250, 7);
         }
         else
             CurrentStrategy.Text_Progress.text = RechargeProgress + "/300";

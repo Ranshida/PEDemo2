@@ -84,76 +84,160 @@ public class Employee
         Stamina = 100;
         mentality = 100;
 
-
         //职业技能
         if (Hst[0] == 0)
-            Skill1 = Random.Range(3, 6);
+        {
+            if (AgeRange == 0)
+                Skill1 = Random.Range(1, 6);
+            else
+                Skill1 = Random.Range(1, 4);
+        }
         else
-            Skill1 = Random.Range(15, 21);
+            Skill1 = 10;
+
         if (Hst[1] == 0)
-            Skill2 = Random.Range(3, 6);
+        {
+            if (AgeRange == 0)
+                Skill2 = Random.Range(1, 6);
+            else
+                Skill2 = Random.Range(1, 4);
+        }
         else
-            Skill2 = Random.Range(15, 21);
+            Skill2 = 10;
+
         if (Hst[2] == 0)
-            Skill3 = Random.Range(3, 6);
+        {
+            if (AgeRange == 0)
+                Skill3 = Random.Range(1, 6);
+            else
+                Skill3 = Random.Range(1, 4);
+        }
         else
-            Skill3 = Random.Range(15, 21);
+            Skill3 = 10;
         Levels[0] = Skill1 + Skill2 + Skill3;
         //基础技能
         if (Hst[3] == 0)
-            Observation = Random.Range(3, 6);
+        {
+            if (AgeRange == 0)
+                Observation = Random.Range(1, 6);
+            else
+                Observation = Random.Range(1, 4);
+        }
         else
-            Observation = Random.Range(15, 21);
+            Observation = 10;
+
         if (Hst[4] == 0)
-            Tenacity = Random.Range(3, 6);
+        {
+            if (AgeRange == 0)
+                Tenacity = Random.Range(1, 6);
+            else
+                Tenacity = Random.Range(1, 4);
+        }
         else
-            Tenacity = Random.Range(15, 21);
+            Tenacity = 10;
+
         if (Hst[5] == 0)
-            Strength = Random.Range(3, 6);
+        {
+            if (AgeRange == 0)
+                Strength = Random.Range(1, 6);
+            else
+                Strength = Random.Range(1, 4);
+        }
         else
-            Strength = Random.Range(15, 21);
+            Strength = 10;
         Levels[1] = Observation + Tenacity + Strength;
         //经营技能
         if (Hst[6] == 0)
-            Manage = Random.Range(3, 6);
+        {
+            if (AgeRange == 0)
+                Manage = Random.Range(1, 6);
+            else
+                Manage = Random.Range(1, 4);
+        }
         else
-            Manage = Random.Range(15, 21);
+            Manage = 10;
+
         if (Hst[7] == 0)
-            HR = Random.Range(3, 6);
+        {
+            if (AgeRange == 0)
+                HR = Random.Range(1, 6);
+            else
+                HR = Random.Range(1, 4);
+        }
         else
-            HR = Random.Range(15, 21);
+            HR = 10;
+
         if (Hst[8] == 0)
-            Finance = Random.Range(3, 6);
+        {
+            if (AgeRange == 0)
+                Finance = Random.Range(1, 6);
+            else
+                Finance = Random.Range(1, 4);
+        }
         else
-            Finance = Random.Range(15, 21);
+            Finance = 10;
         Levels[2] = Manage + HR + Finance;
         //战略技能
         if (Hst[9] == 0)
-            Decision = Random.Range(3, 6);
+        {
+            if (AgeRange == 0)
+                Decision = Random.Range(1, 6);
+            else
+                Decision = Random.Range(1, 4);
+        }
         else
-            Decision = Random.Range(15, 21);
+            Decision = 10;
+
         if (Hst[10] == 0)
-            Forecast = Random.Range(3, 6);
+        {
+            if (AgeRange == 0)
+                Forecast = Random.Range(1, 6);
+            else
+                Forecast = Random.Range(1, 4);
+        }
         else
-            Forecast = Random.Range(15, 21);
+            Forecast = 10;
+
         if (Hst[11] == 0)
-            Strategy = Random.Range(3, 6);
+        {
+            if (AgeRange == 0)
+                Strategy = Random.Range(1, 6);
+            else
+                Strategy = Random.Range(1, 4);
+        }
         else
-            Strategy = Random.Range(15, 21);
+            Strategy = 10;
         Levels[3] = Decision + Forecast + Strategy;
         //社交技能        
         if (Hst[12] == 0)
-            Convince = Random.Range(3, 6);
+        {
+            if (AgeRange == 0)
+                Convince = Random.Range(1, 6);
+            else
+                Convince = Random.Range(1, 4);
+        }
         else
-            Convince = Random.Range(15, 21);
+            Convince = 10;
+
         if (Hst[13] == 0)
-            Charm = Random.Range(3, 6);
+        {
+            if (AgeRange == 0)
+                Charm = Random.Range(1, 6);
+            else
+                Charm = Random.Range(1, 4);
+        }
         else
-            Charm = Random.Range(15, 21);
+            Charm = 10;
+
         if (Hst[14] == 0)
-            Gossip = Random.Range(3, 6);
+        {
+            if (AgeRange == 0)
+                Gossip = Random.Range(1, 6);
+            else
+                Gossip = Random.Range(1, 4);
+        }
         else
-            Gossip = Random.Range(15, 21);
+            Gossip = 10;
         Levels[4] = Convince + Charm + Gossip;
 
         //确定年龄
@@ -162,7 +246,7 @@ public class Employee
         else
             Age = 25 + AgeRange * 5;
         
-        //确定倾向
+        //确定热情(Star)和天赋(StarLimit)
         int TopStartNum = (Random.Range(0, 5));
         for(int i = 0; i < 5; i++)
         {
@@ -170,9 +254,12 @@ public class Employee
                 StarLimit[i] = Random.Range(1, 6);
             else
                 StarLimit[i] = Random.Range(0, 3);
-            Stars[i] = Random.Range(0, StarLimit[i] * 5 + 1);
+            if (AgeRange == 0)
+                Stars[i] = Random.Range(0, StarLimit[i] * 5 + 1);
+            else
+                Stars[i] = 0;
         }
-
+        //确定倾向
         for (int i = 0; i < 5; i++)
         {
             Character[i] = Random.Range(-3, 3);
@@ -204,7 +291,33 @@ public class Employee
             Efficiency = 0;
         SkillExp[type - 1] += (int)(value * Efficiency);
 
-        if (SkillExp[type - 1] >= 50 + Levels[type - 1] * 50 && Levels[type - 1] < 25)
+        int StartExp = 50, ExtraExp = 50, ExtraLevel = 0;
+        if(Levels[type - 1] < 10)
+        {
+            StartExp = 50;
+            ExtraExp = 50;
+            ExtraLevel = 0;
+        }
+        else if (Levels[type - 1] < 15)
+        {
+            StartExp = 500;
+            ExtraExp = 100;
+            ExtraLevel = 10;
+        }
+        else if (Levels[type - 1] < 20)
+        {
+            StartExp = 1000;
+            ExtraExp = 200;
+            ExtraLevel = 15;
+        }
+        else
+        {
+            StartExp = 2000;
+            ExtraExp = 300;
+            ExtraLevel = 20;
+        }
+
+        if (SkillExp[type - 1] >= StartExp + ((Levels[type - 1] - ExtraLevel) * ExtraExp) && Levels[type - 1] < 25)
         {
             SkillExp[type - 1] = 0;
             Levels[type - 1] += 1;

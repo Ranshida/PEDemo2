@@ -16,8 +16,9 @@ public class Task
 
 public class ProduceControl : MonoBehaviour
 {
-    public Text Text_DepName, Text_Cost;
+    public Text Text_DepName, Text_Cost, Text_MoneyCost;
     public Dropdown dropdown, dopdown2;
+    public GameControl GC;
 
     public float HireCostRate = 1.0f, HeadHuntCostRate = 1.0f;
 
@@ -39,6 +40,8 @@ public class ProduceControl : MonoBehaviour
             else
                 Text_Cost.text = "生产力消耗:" + (int)(HireCost * HeadHuntCostRate);
         }
+        if (Text_MoneyCost != null)
+            Text_MoneyCost.text = "金钱消耗:" + HeadHuntSelectNum * 1000;
     }
 
     public void SetName(DepControl Dep)
@@ -101,8 +104,8 @@ public class ProduceControl : MonoBehaviour
         {
             HeadHuntStatus[num] = 1;
             HeadHuntSelectNum += 1;
-            if (HeadHuntSelectNum > 1)
-                HireCost *= 2;
+            if (HeadHuntSelectNum > 0)
+                HireCost = 2000 + (HeadHuntSelectNum - 1) * 2000;
             if(HeadHuntSelectNum == 5)
             {
                 for(int i = 0; i < 15; i++)
@@ -117,7 +120,9 @@ public class ProduceControl : MonoBehaviour
             HeadHuntStatus[num] = 0;
             HeadHuntSelectNum -= 1;
             if (HeadHuntSelectNum > 0)
-                HireCost /= 2;
+                HireCost = 2000 + (HeadHuntSelectNum - 1) * 2000;
+            else
+                HireCost = 200;
             if (HeadHuntSelectNum < 5)
             {
                 for (int i = 0; i < 15; i++)
@@ -141,19 +146,24 @@ public class ProduceControl : MonoBehaviour
 
     public void CreateHire()
     {
-        CurrentDep.WorkStart = true;
-        CurrentDep.SpType = HireType;
-        if (HeadHuntSelectNum == 0)
-            CurrentDep.SpTotalProgress = (int)(HireCost * HireCostRate);
-        else
-            CurrentDep.SpTotalProgress = (int)(HireCost * HeadHuntCostRate);
-        for (int i = 0; i < 15; i++)
+        if (GC.Money >= HeadHuntSelectNum * 1000)
         {
-            CurrentDep.DepHeadHuntStatus[i] = HeadHuntStatus[i];
+            this.gameObject.SetActive(false);
+            GC.Money -= HeadHuntSelectNum * 1000;
+            CurrentDep.WorkStart = true;
+            CurrentDep.SpType = HireType;
+            if (HeadHuntSelectNum == 0)
+                CurrentDep.SpTotalProgress = (int)(HireCost * HireCostRate);
+            else
+                CurrentDep.SpTotalProgress = (int)(HireCost * HeadHuntCostRate);
+            for (int i = 0; i < 15; i++)
+            {
+                CurrentDep.DepHeadHuntStatus[i] = HeadHuntStatus[i];
+            }
+            CurrentDep.SpProgress = 0;
+            CurrentDep.UpdateUI();
+            ResetHeadHunt();
         }
-        CurrentDep.SpProgress = 0;
-        CurrentDep.UpdateUI();
-        ResetHeadHunt();
     }
 
     public void CreateTask()

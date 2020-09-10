@@ -2781,10 +2781,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   SpProgress: 0
+  SpTotalProgress: 0
   FailProgress: 0
   TaskChangeTime: 0
   EfficiencyLevel: 0
   LevelDownTime: 0
+  SpType: 0
+  SpTime: 0
   SurveyStart: 0
   Failed: 0
   TaskChange: 0
@@ -2817,6 +2820,7 @@ MonoBehaviour:
   - {fileID: 7968604670684463595}
   - {fileID: 7968604668918735160}
   InRangeOffices: []
+  DepHeadHuntStatus: 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 --- !u!1 &6875758098464698913
 GameObject:
   m_ObjectHideFlags: 0

@@ -8,7 +8,7 @@ public enum SkillType
 public class Skill
 {
     public SkillType Type = SkillType.Basic;
-    public int StaminaCost, DiceCost, StaminaExtra, DiceExtra, EffectMode = 1; //EffectMode为2时需要选择作用员工
+    public int StaminaCost, DiceCost, StaminaExtra, DiceExtra, EffectMode = 1; //EffectMode为2时需要选择作用员工 DiceExtra指减少的点数，为负时代表需要更多点数
     public string Name, Description;
 
     public Employee TargetEmp;

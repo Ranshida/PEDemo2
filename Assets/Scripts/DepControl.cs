@@ -146,7 +146,7 @@ public class DepControl : MonoBehaviour
                     if (CurrentResearch.CurrentProgress >= CurrentResearch.Progress)
                     {
                         GC.CreateMessage(Text_DepName.text + " 完成了 " + CurrentResearch.Text_Name.text + " 的研究");
-                        EmpsGetExp(2, CurrentResearch.Progress / 10);
+                        EmpsGetExp(2, CurrentResearch.Progress / 2);
                         CurrentResearch.ResearchFinish();
                         CurrentResearch.ExtraButton.gameObject.SetActive(false);                       
                         CurrentResearch = null;
@@ -444,6 +444,10 @@ public class DepControl : MonoBehaviour
     {
         GC.SC.gameObject.SetActive(true);
         GC.SC.SetDice(this);
+        for(int i = 0; i < GC.CurrentDeps.Count; i++)
+        {
+            GC.CurrentDeps[i].EmpPanel.gameObject.SetActive(false);
+        }
         EmpPanel.gameObject.SetActive(true);
     }
 
@@ -510,7 +514,7 @@ public class DepControl : MonoBehaviour
         }
     }
 
-    public void EmpsGetExp(int type, int value = 50)
+    public void EmpsGetExp(int type, int value = 250)
     {
         for(int i = 0; i < CurrentEmps.Count; i++)
         {

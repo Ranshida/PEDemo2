@@ -82,7 +82,7 @@ public class SkillControl : MonoBehaviour
     {
         if (TargetDep.CommandingOffice != null)
         {
-            DiceNum = TargetDep.CommandingOffice.ManageValue - TargetDep.CommandingOffice.ControledDeps.Count + GC.ManageExtra;           
+            DiceNum = (TargetDep.CommandingOffice.ManageValue - TargetDep.CommandingOffice.ControledDeps.Count + GC.ManageExtra) / 2;
             GC.UpdateResourceInfo();
         }
         CreateDice(DiceNum);
@@ -184,15 +184,29 @@ public class SkillControl : MonoBehaviour
     {
         for(int i = 0; i < CurrentSkills.Count; i++)
         {
-            if ((TotalValue == CurrentSkills[i].skill.DiceCost - CurrentSkills[i].skill.DiceExtra ||
-                CurrentSkills[i].skill.DiceCost == CurrentSkills[i].skill.DiceExtra) &&
-                CurrentSkills[i].empInfo.emp.Stamina >= (CurrentSkills[i].skill.StaminaCost - CurrentSkills[i].skill.StaminaExtra)
-                && CurrentSkills[i].skill.ConditionCheck() == true && CurrentSkills[i].Active == true && ExtraDiceCheck(CurrentSkills[i]) == true)
+            if (Sp5Multiply == 0)
             {
-                CurrentSkills[i].button.interactable = true;
+                if ((TotalValue == CurrentSkills[i].skill.DiceCost - CurrentSkills[i].skill.DiceExtra ||
+                    CurrentSkills[i].skill.DiceCost == CurrentSkills[i].skill.DiceExtra) &&
+                    CurrentSkills[i].empInfo.emp.Stamina >= (CurrentSkills[i].skill.StaminaCost - CurrentSkills[i].skill.StaminaExtra)
+                    && CurrentSkills[i].skill.ConditionCheck() == true && CurrentSkills[i].Active == true)
+                {
+                    CurrentSkills[i].button.interactable = true;
+                }
+                else
+                    CurrentSkills[i].button.interactable = false;
             }
             else
-                CurrentSkills[i].button.interactable = false;
+            {
+                if (ExtraDiceCheck(CurrentSkills[i]) == true &&
+                    CurrentSkills[i].empInfo.emp.Stamina >= (CurrentSkills[i].skill.StaminaCost - CurrentSkills[i].skill.StaminaExtra)
+                    && CurrentSkills[i].skill.ConditionCheck() == true && CurrentSkills[i].Active == true)
+                {
+                    CurrentSkills[i].button.interactable = true;
+                }
+                else
+                    CurrentSkills[i].button.interactable = false;
+            }
         }
     }
 
@@ -388,11 +402,10 @@ public class SkillControl : MonoBehaviour
                 if (SelectedDices[i].GetComponent<Toggle>().interactable == true && SelectedDices[i].value == 1)
                     num += 1;
             }
-            if (num >= Sp5Multiply && totalValue - s.skill.DiceExtra - Sp5Multiply >= s.skill.DiceCost)
+            if (num >= Sp5Multiply && totalValue - s.skill.DiceExtra - Sp5Multiply == s.skill.DiceCost)
                 return true;
             else
                 return false;
         }
-        return false;
     }
 }

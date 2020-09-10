@@ -244,7 +244,9 @@ public class StrategyControl : MonoBehaviour
                 NewStr.SC = this;
                 NewStr.Str = TempStrs[i];
                 NewStr.UpdateUI();
-                NewStr.Str.Effect(GC);
+                //如果是文化战略就已经激活过了，不能再次激活
+                if (TempStrs[i].Type != StrategyType.文化)
+                    NewStr.Str.Effect(GC);
                 ActiveStrs.Add(NewStr);
             }
             MeetingButton.interactable = false;
@@ -297,6 +299,9 @@ public class StrategyControl : MonoBehaviour
         for(int i = 0; i < TempStrInfos.Count; i++)
         {
             VoteStrs.Add(TempStrInfos[i]);//重新将被选中的战略放回
+            //如果是文化战略则及时生效
+            if (TempStrInfos[i].Str.Type == StrategyType.文化)
+                TempStrInfos[i].Str.Effect(GC);
         }
     }
 
