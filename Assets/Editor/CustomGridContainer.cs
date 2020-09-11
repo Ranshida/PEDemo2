@@ -26,7 +26,7 @@ public class CustomGridContainer : Editor
     {
         foreach (Grid temp in script.GridList)
         {
-            RefreshGrid(temp);
+            temp.RefreshGrid();
         }
     }
 
@@ -41,7 +41,6 @@ public class CustomGridContainer : Editor
 
         GameObject gridPrefab = ResourcesLoader.LoadPrefab("Prefabs/MaLingyu/Grid");
         script.GridList = new List<Grid>();
-        script.InitInEditor(script.xInput, script.zInput);
         
         for (int i = 0; i < script.zInput; i++)
         {
@@ -62,51 +61,7 @@ public class CustomGridContainer : Editor
     
         grid.X = x;
         grid.Z = z;
-        grid.transform.position = new Vector3(x * 10 + 5, 0, z * 10 + 5);
-        grid.transform.name = "Grid(" + x + "," + z + ")";
         grid.transform.parent = script.transform;
-        Function.SetMaterial(grid.transform, ResourcesLoader.LoadMaterial("Material/MaLingyu/TransWhite"));
-        switch (grid.Type)
-        {
-            case Grid.GridType.障碍:
-                Function.SetMaterial(grid.transform, ResourcesLoader.LoadMaterial("Material/MaLingyu/TransBlack"));
-                break;
-            case Grid.GridType.道路:
-                Function.SetMaterial(grid.transform, ResourcesLoader.LoadMaterial("Material/MaLingyu/TransGray"));
-                break;
-            case Grid.GridType.可放置:
-                Function.SetMaterial(grid.transform, ResourcesLoader.LoadMaterial("Material/MaLingyu/TransGreen"));
-                break;
-            case Grid.GridType.已放置:
-                Function.SetMaterial(grid.transform, ResourcesLoader.LoadMaterial("Material/MaLingyu/TransRed"));
-                break;
-            default:
-                break;
-        }
-    }
-
-    private void RefreshGrid(Grid grid)
-    {
-        grid.transform.position = new Vector3(grid.X * 10 + 5, 0, grid.Z * 10 + 5);
-        grid.transform.name = "Grid(" + grid.X + "," + grid.Z + ")";
-        grid.transform.parent = script.transform;
-        Transform child = grid.transform.Find("GridDebug");
-        switch (grid.Type)
-        {
-            case Grid.GridType.障碍:
-                Function.SetMaterial(child, ResourcesLoader.LoadMaterial("Material/MaLingyu/TransBlack"));
-                break;
-            case Grid.GridType.道路:
-                Function.SetMaterial(child, ResourcesLoader.LoadMaterial("Material/MaLingyu/TransGray"));
-                break;
-            case Grid.GridType.可放置:
-                Function.SetMaterial(child, ResourcesLoader.LoadMaterial("Material/MaLingyu/TransGreen"));
-                break;
-            case Grid.GridType.已放置:
-                Function.SetMaterial(child, ResourcesLoader.LoadMaterial("Material/MaLingyu/TransRed"));
-                break;
-            default:
-                break;
-        }
+        grid.RefreshGrid();
     }
 }

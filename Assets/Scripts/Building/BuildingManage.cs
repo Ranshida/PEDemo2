@@ -12,6 +12,7 @@ public enum BuildingType
 
 public class BuildingManage : MonoBehaviour
 {
+    public static BuildingManage Instance;
     public Building BuildingPrefab, SelectBuilding;//SelectBuilding:当前创建出来但没有确认的建筑
     public Button ConfirmButton;
     public BuildingEffect BEPrefab;
@@ -20,6 +21,11 @@ public class BuildingManage : MonoBehaviour
     public GameObject ControlPanel;
 
     public List<Building> ConstructedBuildings = new List<Building>();
+
+    private void Awake()
+    {
+        Instance = this;
+    }
 
     //创建建筑
     public void CreateOffice(int num)
@@ -36,7 +42,6 @@ public class BuildingManage : MonoBehaviour
 
         //创建建筑预制体，设定Building脚本的变量
         SelectBuilding = Instantiate(BuildingPrefab, BuildingContent);
-        SelectBuilding.BM = this;
         SelectBuilding.Type = type; //枚举第一位是0
         //创建EffectRange并赋值
         SelectBuilding.effect = Instantiate(BEPrefab, BuildingContent);
@@ -56,18 +61,18 @@ public class BuildingManage : MonoBehaviour
         SelectBuilding.Text_DepName.text = SelectBuilding.Type.ToString() + DepNum;
 
         //设置尺寸
-        if (type == BuildingType.技术部门 || type == BuildingType.市场部门 || type == BuildingType.产品部门 || type == BuildingType.运营部门)
-            SelectBuilding.SetSize(2, 3);
-        else if (type == BuildingType.高管办公室 || type == BuildingType.人力资源部A || type == BuildingType.人力资源部B  || type == BuildingType.按摩房)
-            SelectBuilding.SetSize(2, 2);
-        else if (type == BuildingType.研发部门)
-            SelectBuilding.SetSize(2, 4);
-        else if (type == BuildingType.健身房)
-            SelectBuilding.SetSize(3, 3);
-        else if (type == BuildingType.目标修正小组 || type == BuildingType.档案管理室 || type == BuildingType.效能研究室
-            || type == BuildingType.财务部 || type == BuildingType.战略咨询部B || type == BuildingType.精确标准委员会
-            || type == BuildingType.高级财务部A || type == BuildingType.高级财务部B)
-            SelectBuilding.SetSize(2, 3);
+        //if (type == BuildingType.技术部门 || type == BuildingType.市场部门 || type == BuildingType.产品部门 || type == BuildingType.运营部门)
+        //    SelectBuilding.SetSize(2, 3);
+        //else if (type == BuildingType.高管办公室 || type == BuildingType.人力资源部A || type == BuildingType.人力资源部B  || type == BuildingType.按摩房)
+        //    SelectBuilding.SetSize(2, 2);
+        //else if (type == BuildingType.研发部门)
+        //    SelectBuilding.SetSize(2, 4);
+        //else if (type == BuildingType.健身房)
+        //    SelectBuilding.SetSize(3, 3);
+        //else if (type == BuildingType.目标修正小组 || type == BuildingType.档案管理室 || type == BuildingType.效能研究室
+        //    || type == BuildingType.财务部 || type == BuildingType.战略咨询部B || type == BuildingType.精确标准委员会
+        //    || type == BuildingType.高级财务部A || type == BuildingType.高级财务部B)
+        //    SelectBuilding.SetSize(2, 3);
 
     }
 
@@ -148,7 +153,7 @@ public class BuildingManage : MonoBehaviour
 
 
             //确定建筑已摆放完毕,不能再移动
-            SelectBuilding.BuildingSet = true;
+            //SelectBuilding.BuildingSet = true;
 
             //周围建筑对自身造成影响 
             for (int i = 0; i < SelectBuilding.EffectBuildings.Count; i++)
@@ -186,11 +191,9 @@ public class BuildingManage : MonoBehaviour
         }
     }
 
-    public void RotateBuilding()
-    {
-        SelectBuilding.Rotate();
-        ControlPanel.transform.position = SelectBuilding.transform.position;
-    }
-
-
+    //public void RotateBuilding()
+    //{
+    //    SelectBuilding.Rotate();
+    //    ControlPanel.transform.position = SelectBuilding.transform.position;
+    //}
 }
