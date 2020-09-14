@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public enum BuildingType
 {
-    技术部门, 市场部门, 产品部门, 运营部门, 研发部门, 创业车库, 高管办公室, CEO办公室, 会议室,
+    技术部门, 市场部门, 产品部门, 运营部门, 研发部门, 创业车库, 高管办公室, 会议室,
     人力资源部A, 人力资源部B,中央监控室, 心理咨询室,
     体能研究室, 按摩房, 健身房,
     战略咨询部A, pr部门,
@@ -29,12 +29,16 @@ public class BuildingManage : MonoBehaviour
 
     private GameObject[] buildingPrefabs;  //建筑预制体
     private Dictionary<BuildingType, GameObject> buildingDict;   //<建筑类型，预制体> 的字典
-    
+    private GameObject CEOBuilding;
+
     public Transform optionPanel;   //建造选项面板
     Button[] buildingButton;        //建造选项面板下的所有按钮
 
     //已建成简述
     public List<Building> ConstructedBuildings = new List<Building>();
+    public int CEOPositionX;
+    public int CEOPositionZ;
+    public OfficeControl CEOOffice;
 
     private void Awake()
     {
@@ -111,11 +115,14 @@ public class BuildingManage : MonoBehaviour
 
         //加载建筑预制体，加入建筑字典
         buildingPrefabs = ResourcesLoader.LoadAll<GameObject>("Prefabs/MaLingyu/Buildings");
+        CEOBuilding = ResourcesLoader.LoadPrefab("Prefabs/Malingyu/Buildings/CEO办公室");
         foreach (GameObject prefab in buildingPrefabs)
         {
             Building building = prefab.GetComponent<Building>();
             buildingDict.Add(building.Type, prefab);
         }
+
+        InitBuilding();
     }
 
     private void Update()
@@ -212,6 +219,83 @@ public class BuildingManage : MonoBehaviour
         }
     }
 
+    private void InitBuilding()
+    {
+        GameObject buildingGo = Instantiate(CEOBuilding);
+        temp_Building = buildingGo.GetComponent<Building>();
+
+        //确定名称
+        temp_Building.Text_DepName.text = "CEO办公室";
+        
+        //已经选择建筑，检测网格可否可以建造
+        if (temp_Building)
+        {
+            //检查覆盖到的网格
+            Grid grid;
+            Dictionary<int, Grid> gridDict;
+            for (int i = 0; i < temp_Building.Length; i++)
+            {
+                if (GridContainer.Instance.GridDict.TryGetValue(CEOPositionX + i, out gridDict))
+                {
+                    for (int j = 0; j < temp_Building.Width; j++)
+                    {
+                        if (gridDict.TryGetValue(CEOPositionZ + j, out grid))
+                        {
+                            if (!gridDict[CEOPositionZ + j].Lock && gridDict[CEOPositionZ + j].Type == Grid.GridType.可放置)
+                            {
+                                selectGrids.Add(gridDict[CEOPositionZ + j]);
+                            }
+                        }
+                    }
+                }
+            }
+
+            //全部覆盖到网格 => 可以建造
+            if (selectGrids.Count == temp_Building.Width * temp_Building.Length)
+            {
+                canBuild = true;
+                foreach (Grid tempGrid in selectGrids)
+                {
+                    tempGrid.IsPutting = true;
+                    tempGrid.RefreshGrid();
+                }
+                temp_Building.transform.position = new Vector3(CEOPositionX * 10, 0, CEOPositionZ * 10);
+            }
+            //不能覆盖全部网格 => 不能建造
+            else
+                temp_Building.transform.position = AimingPosition + new Vector3(-5, 0, -5);
+        }
+
+        if (!canBuild)
+            Debug.LogError("无法建造，检查坐标");
+
+        CEOOffice.building = temp_Building;  //互相引用
+        temp_Building.Office = CEOOffice;    //互相引用
+        temp_Building.effectValue = 8;
+
+        //确定建筑已摆放完毕,不能再移动
+        temp_Building.Build(selectGrids);
+
+        //获取建筑相互影响情况
+        temp_Building.effect.GetEffectBuilding();
+
+        //对自身周围建筑造成影响
+        temp_Building.effect.Affect();
+
+        //周围建筑对自身造成影响 
+        for (int i = 0; i < temp_Building.effect.AffectedBuildings.Count; i++)
+        {
+            temp_Building.effect.AffectedBuildings[i].effect.Affect();
+        }
+
+        //在链表上保存新建筑
+        ConstructedBuildings.Add(temp_Building);
+       
+
+        temp_Building = null;
+
+    }
+
     //创建建筑 button
     public void StartBuild(BuildingType type)
     {
@@ -278,14 +362,14 @@ public class BuildingManage : MonoBehaviour
     public void BuildConfirm()
     {
         //金钱相关暂时保留
-        if (GameControl.SGC.Money < 100)
+        if (GameControl.Instance.Money < 100)
             return;
 
-        GameControl.SGC.Money -= 100;
-        GameControl.SGC.BuildingPay += 50;
+        GameControl.Instance.Money -= 100;
+        GameControl.Instance.BuildingPay += 50;
         ControlPanel.SetActive(false);
 
-        GameControl.SGC.Money -= 100;
+        GameControl.Instance.Money -= 100;
 
         ControlPanel.SetActive(false);
 
@@ -294,60 +378,60 @@ public class BuildingManage : MonoBehaviour
         if (T == BuildingType.技术部门 || T == BuildingType.市场部门 || T == BuildingType.产品部门 || T == BuildingType.运营部门)
         {
             //新建部门必须要保留的
-            temp_Building.Department = GameControl.SGC.CreateDep((int)T + 1);//根据Type创建对应的生产部门面板
+            temp_Building.Department = GameControl.Instance.CreateDep((int)T + 1);//根据Type创建对应的生产部门面板
             temp_Building.Department.building = temp_Building;//把SelectBuilding赋值给新的部门面板
         }
         else if (T == BuildingType.研发部门)
         {
-            temp_Building.Department = GameControl.SGC.CreateDep(4);
+            temp_Building.Department = GameControl.Instance.CreateDep(4);
             temp_Building.Department.building = temp_Building;
         }
         else if (T == BuildingType.人力资源部B)
         {
-            temp_Building.Department = GameControl.SGC.CreateDep(5);
+            temp_Building.Department = GameControl.Instance.CreateDep(5);
             temp_Building.Department.building = temp_Building;
         }
 
         //办公室创建
         else if (T == BuildingType.高管办公室)
         {
-            temp_Building.Office = GameControl.SGC.CreateOffice(temp_Building);
+            temp_Building.Office = GameControl.Instance.CreateOffice(temp_Building);
             temp_Building.effectValue = 8;
         }
         else if (T == BuildingType.人力资源部A)
         {
-            temp_Building.Office = GameControl.SGC.CreateOffice(temp_Building);
+            temp_Building.Office = GameControl.Instance.CreateOffice(temp_Building);
             temp_Building.effectValue = 1;
             temp_Building.StaminaRequest = 10;
         }
         else if (T == BuildingType.按摩房 || T == BuildingType.健身房)
         {
-            temp_Building.Office = GameControl.SGC.CreateOffice(temp_Building);
+            temp_Building.Office = GameControl.Instance.CreateOffice(temp_Building);
             temp_Building.effectValue = 3;
             if (T == BuildingType.健身房)
                 temp_Building.StaminaRequest = 10;
         }
         else if (T == BuildingType.战略咨询部B || T == BuildingType.精确标准委员会)
         {
-            temp_Building.Office = GameControl.SGC.CreateOffice(temp_Building);
+            temp_Building.Office = GameControl.Instance.CreateOffice(temp_Building);
             temp_Building.effectValue = 5;
             temp_Building.StaminaRequest = 20;
         }
         else if (T == BuildingType.目标修正小组)
         {
-            temp_Building.Office = GameControl.SGC.CreateOffice(temp_Building);
+            temp_Building.Office = GameControl.Instance.CreateOffice(temp_Building);
             temp_Building.effectValue = 6;
             temp_Building.StaminaRequest = 20;
         }
         else if (T == BuildingType.财务部 || T == BuildingType.高级财务部A || T == BuildingType.高级财务部B)
         {
-            temp_Building.Office = GameControl.SGC.CreateOffice(temp_Building);
+            temp_Building.Office = GameControl.Instance.CreateOffice(temp_Building);
             temp_Building.effectValue = 7;
             temp_Building.StaminaRequest = 10;
         }
         else if (T == BuildingType.档案管理室 || T == BuildingType.效能研究室)
         {
-            temp_Building.Office = GameControl.SGC.CreateOffice(temp_Building);
+            temp_Building.Office = GameControl.Instance.CreateOffice(temp_Building);
             temp_Building.effectValue = 8;
             temp_Building.StaminaRequest = 10;
             if (T == BuildingType.效能研究室)

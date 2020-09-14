@@ -6,7 +6,7 @@ using UnityEngine.Events;
 
 public class GameControl : MonoBehaviour
 {
-    public static GameControl SGC; 
+    public static GameControl Instance; 
     [HideInInspector] public int Salary, Income, BuildingPay, MobilizeExtraMent = 0, ManageExtra, TimeMultiply = 1, WorkEndEmpCount = 0;
     [HideInInspector] public float EfficiencyExtraNormal = 0, EfficiencyExtraScience = 0, ResearchSuccessRateExtra = 0, ExtrafailRate = 0, HireEfficiencyExtra = 1.0f,
         HRBuildingMentalityExtra = 1.0f, BuildingSkillSuccessExtra = 0, BuildingMaintenanceCostRate = 1.0f;
@@ -68,13 +68,18 @@ public class GameControl : MonoBehaviour
     int[] CEOSkillCD = new int[5];
     List<HireType> HireTypes = new List<HireType>();
 
+    private void Awake()
+    {
+        Instance = this;
+    }
+
     private void Start()
     {
         Anim = this.gameObject.GetComponent<Animator>();
         AddHireTypes(new HireType(1));
         SpecialEventCount = Random.Range(1, 6);//随机一段时间发生影响产品的事件
         HourEvent.AddListener(GCTimePass);
-        SGC = this;
+      
     }
 
     private void Update()
