@@ -24,9 +24,16 @@ public class BuildingEffect
 
     public void Affect()
     {
-        Debug.Log("Affect");
+        Debug.Log("!!!!!" + CurrentBuilding.name);
+        foreach (var b in m_TargetBuildings)
+        {
+            Debug.Log(b + "  Affect  ");
+        }
         for (int i = 0; i < m_TargetBuildings.Count; i++)
         {
+            if (AffectedBuildings.Contains(m_TargetBuildings[i]))
+                continue;
+
             BuildingType T = CurrentBuilding.Type;
             BuildingType T2 = m_TargetBuildings[i].Type;
             if (T == BuildingType.技术部门 || T == BuildingType.市场部门 || T == BuildingType.产品部门 || T == BuildingType.运营部门)
@@ -37,7 +44,7 @@ public class BuildingEffect
                     m_TargetBuildings[i].Department.Efficiency += 0.1f;
                 }
             }
-            else if(T == BuildingType.高管办公室)
+            else if (T == BuildingType.高管办公室 || T == BuildingType.CEO办公室) 
             {
                 if (T2 == BuildingType.技术部门 || T2 == BuildingType.市场部门 || T2 == BuildingType.产品部门
                     || T2 == BuildingType.运营部门 || T2 == BuildingType.研发部门)
@@ -99,14 +106,10 @@ public class BuildingEffect
         //辐射到的建筑
         foreach (Grid tempGrid in effectGirds)
         {
-            if (tempGrid.belongBuilding == CurrentBuilding || tempGrid.belongBuilding == null) 
+            if (tempGrid.belongBuilding == CurrentBuilding || tempGrid.belongBuilding == null || m_TargetBuildings.Contains(tempGrid.belongBuilding)) 
                 continue;
 
-            if (!m_TargetBuildings.Contains(tempGrid.belongBuilding))
-            {
-                m_TargetBuildings.Add(tempGrid.belongBuilding);
-            }
-
+            m_TargetBuildings.Add(tempGrid.belongBuilding);
             for (int i = 0; i < m_TargetBuildings.Count; i++)
             {
                 m_TargetBuildings[i].effect.AddBuilding(CurrentBuilding);

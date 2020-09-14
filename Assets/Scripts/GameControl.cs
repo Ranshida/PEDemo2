@@ -604,7 +604,7 @@ public class GameControl : MonoBehaviour
         }
         if (CurrentEmpInfo.emp.CurrentOffice != null)
         {
-            if (CurrentEmpInfo.emp.CurrentOffice.building.Type == BuildingType.高管办公室)
+            if (CurrentEmpInfo.emp.CurrentOffice.building.Type == BuildingType.高管办公室 || CurrentEmpInfo.emp.CurrentOffice.building.Type == BuildingType.CEO办公室)
                 CurrentEmpInfo.emp.InfoDetail.TempDestroyStrategy();
             CurrentEmpInfo.emp.CurrentOffice.CurrentManager = null;
             CurrentEmpInfo.emp.CurrentOffice.SetOfficeStatus();

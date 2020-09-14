@@ -24,7 +24,7 @@ public class OfficeControl : MonoBehaviour
         if (CurrentManager != null)
         {
             Text_EmpName.text = "当前高管:" + CurrentManager.Name;
-            if (building.Type == BuildingType.高管办公室)
+            if (building.Type == BuildingType.高管办公室 || building.Type == BuildingType.CEO办公室)
             {
                 Text_MAbility.text = "管理:" + CurrentManager.Manage;
                 ManageValue = CurrentManager.Manage + GC.ManageExtra;
@@ -95,7 +95,7 @@ public class OfficeControl : MonoBehaviour
     {
         int num = 0;
         GC.HourEvent.AddListener(TimePass);
-        if (building.Type != BuildingType.高管办公室)
+        if (building.Type != BuildingType.高管办公室 && building.Type != BuildingType.CEO办公室)
         {
             Text_Progress.gameObject.SetActive(true);
             ActiveButton.gameObject.SetActive(true);
@@ -329,7 +329,7 @@ public class OfficeControl : MonoBehaviour
 
     public void TimePass()
     {
-        if (building.Type != BuildingType.高管办公室)
+        if (building.Type != BuildingType.高管办公室 && building.Type != BuildingType.CEO办公室)
         {
             if (CurrentManager != null && Progress < 100)
             {

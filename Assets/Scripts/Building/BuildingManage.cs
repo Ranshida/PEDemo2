@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public enum BuildingType
 {
-    技术部门, 市场部门, 产品部门, 运营部门, 研发部门, 创业车库, 高管办公室, 会议室,
+    技术部门, 市场部门, 产品部门, 运营部门, 研发部门, 创业车库, 高管办公室, CEO办公室, 会议室,
     人力资源部A, 人力资源部B,中央监控室, 心理咨询室,
     体能研究室, 按摩房, 健身房,
     战略咨询部A, pr部门,
@@ -44,7 +44,6 @@ public class BuildingManage : MonoBehaviour
     {
         Instance = this;
     }
-
    
     private void Start()
     {
@@ -67,7 +66,10 @@ public class BuildingManage : MonoBehaviour
                     button.onClick.AddListener(() => { StartBuild(BuildingType.产品部门); optionPanel.gameObject.SetActive(false); });
                 break;
                 case "Btn_运营部门":
-                    button.onClick.AddListener(() => { StartBuild(BuildingType.产品部门); optionPanel.gameObject.SetActive(false); });
+                    button.onClick.AddListener(() => { StartBuild(BuildingType.运营部门); optionPanel.gameObject.SetActive(false); });
+                break;
+                case "Btn_研发部门":
+                    button.onClick.AddListener(() => { StartBuild(BuildingType.研发部门); optionPanel.gameObject.SetActive(false); });
                 break;
                 case "Btn_高管办公室":
                     button.onClick.AddListener(() => { StartBuild(BuildingType.高管办公室); optionPanel.gameObject.SetActive(false); });
@@ -393,7 +395,7 @@ public class BuildingManage : MonoBehaviour
         }
 
         //办公室创建
-        else if (T == BuildingType.高管办公室)
+        else if (T == BuildingType.高管办公室 || T == BuildingType.CEO办公室)
         {
             temp_Building.Office = GameControl.Instance.CreateOffice(temp_Building);
             temp_Building.effectValue = 8;

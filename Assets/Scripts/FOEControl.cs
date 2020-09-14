@@ -120,7 +120,7 @@ public class FOEControl : MonoBehaviour
                 List<EmpInfo> e = new List<EmpInfo>();
                 for (int i = 0; i < GC.CurrentOffices.Count; i++)
                 {
-                    if (GC.CurrentOffices[i].building.Type == BuildingType.高管办公室 && GC.CurrentOffices[i].CurrentManager != null)
+                    if ((GC.CurrentOffices[i].building.Type == BuildingType.高管办公室 || GC.CurrentOffices[i].building.Type == BuildingType.CEO办公室) && GC.CurrentOffices[i].CurrentManager != null)
                         e.Add(GC.CurrentOffices[i].CurrentManager.InfoDetail);
                 }
                 if (e.Count > 0)
