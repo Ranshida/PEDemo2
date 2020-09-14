@@ -27,8 +27,8 @@ public class HireControl : MonoBehaviour
         ED.emp.InitRelation();
         ED.SetSkillName();
         //创建员工实体
-        ED.Entity = Instantiate(GC.EmpEntityPrefab, GC.BM.ExitPos.position, Quaternion.Euler(0, 0, 0), GC.BM.EntityContent);
-        ED.Entity.SetInfo(ED);
+        //ED.Entity = Instantiate(GC.EmpEntityPrefab, GC.BM.ExitPos.position, Quaternion.Euler(0, 0, 0), GC.BM.EntityContent);
+        //ED.Entity.SetInfo(ED);
 
         //注意应放在初始化人际关系后再添加至链表
         GC.CurrentEmployees.Add(GC.CurrentEmpInfo.emp);

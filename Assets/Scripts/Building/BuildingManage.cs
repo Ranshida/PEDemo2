@@ -278,13 +278,12 @@ public class BuildingManage : MonoBehaviour
     public void BuildConfirm()
     {
         //金钱相关暂时保留
-        if (GC.Money >= 100)
-        {
-            GC.Money -= 100;
-            GC.BuildingPay += 50;
-            ControlPanel.SetActive(false);
-        if (GameControl.SGC.Money < 100) 
+        if (GameControl.SGC.Money < 100)
             return;
+
+        GameControl.SGC.Money -= 100;
+        GameControl.SGC.BuildingPay += 50;
+        ControlPanel.SetActive(false);
 
         GameControl.SGC.Money -= 100;
 

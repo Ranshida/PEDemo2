@@ -185,35 +185,36 @@ public class GameControl : MonoBehaviour
 
     void StartWorkEnd()
     {
-        if (CurrentEmployees.Count > 0)
-        {
-            TimePause = true;
-            WorkEndEmpCount = CurrentEmployees.Count;
-            for (int i = 0; i < CurrentEmployees.Count; i++)
-            {
-                CurrentEmployees[i].InfoDetail.Entity.WorkEnd();
-            }
-        }
-        else
-            Anim.SetTrigger("FadeIn");
+        Anim.SetTrigger("FadeIn");
+        //if (CurrentEmployees.Count > 0)
+        //{
+        //    TimePause = true;
+        //    WorkEndEmpCount = CurrentEmployees.Count;
+        //    for (int i = 0; i < CurrentEmployees.Count; i++)
+        //    {
+        //        CurrentEmployees[i].InfoDetail.Entity.WorkEnd();
+        //    }
+        //}
+        //else
     }
 
     public void WorkEndCheck()
     {
-        WorkEndEmpCount -= 1;
-        if(WorkEndEmpCount <= 0 && TimePause == true)
-        {
-            Anim.SetTrigger("FadeIn");
-        }
+        //WorkEndEmpCount -= 1;
+        //if(WorkEndEmpCount <= 0 && TimePause == true)
+        //{
+        //    Anim.SetTrigger("FadeIn");
+        //}
+        Anim.SetTrigger("FadeIn");
     }
 
     public void WorkStart()
     {
         TimePause = false;
-        for(int i = 0; i < CurrentEmployees.Count; i++)
-        {
-            CurrentEmployees[i].InfoDetail.Entity.WorkStart();
-        }
+        //for(int i = 0; i < CurrentEmployees.Count; i++)
+        //{
+        //    CurrentEmployees[i].InfoDetail.Entity.WorkStart();
+        //}
     }
 
     public DepControl CreateDep(int type)
@@ -560,8 +561,8 @@ public class GameControl : MonoBehaviour
         ED.emp.InitRelation();
         ED.SetSkillName();
         //创建员工实体
-        ED.Entity = Instantiate(EmpEntityPrefab, BM.ExitPos.position, Quaternion.Euler(0, 0, 0), BM.EntityContent);
-        ED.Entity.SetInfo(ED);
+        //ED.Entity = Instantiate(EmpEntityPrefab, BM.ExitPos.position, Quaternion.Euler(0, 0, 0), BM.EntityContent);
+        //ED.Entity.SetInfo(ED);
 
         //注意应放在初始化人际关系后再添加至链表
         CurrentEmployees.Add(CurrentEmpInfo.emp);
