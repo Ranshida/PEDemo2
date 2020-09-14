@@ -163,6 +163,12 @@ public class BuildingManage : MonoBehaviour
         //拆除建筑，先不做
         if (Input.GetKeyDown(KeyCode.Mouse1))
         {
+            if (temp_Building)
+            {
+                temp_Building.Dismantle();
+                temp_Building = null;
+            }
+
             if (GridContainer.Instance.GridDict[tempX][tempZ].Type == Grid.GridType.已放置)
             {
                 //GridContainer.Instance.GridDict[tempX][tempZ].belongBuilding.Dismantle();

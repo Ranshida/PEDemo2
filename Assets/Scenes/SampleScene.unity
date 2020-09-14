@@ -18287,6 +18287,11 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 225948636504645460, guid: 7e2a6ab9e322e5f45831d092b9c7f966,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7e2a6ab9e322e5f45831d092b9c7f966, type: 3}
 --- !u!1 &568933901
@@ -46453,8 +46458,8 @@ MonoBehaviour:
   ControlPanel: {fileID: 136628749}
   optionPanel: {fileID: 1594211988}
   ConstructedBuildings: []
-  CEOPositionX: 1
-  CEOPositionZ: 11
+  CEOPositionX: 13
+  CEOPositionZ: 1
   CEOOffice: {fileID: 1051092804}
 --- !u!1 &1403584084
 GameObject:
