@@ -22,35 +22,55 @@ public static class Function
 
 public class Int2
 {
-    public int x { get; set; }
-    public int y { get; set; }
+    public int X { get; set; }
+    public int Y { get; set; }
+
+    public Int2(int x,int y)
+    {
+        X = x;
+        Y = y;
+    }
 
     public Vector2 Trans2Vector2()
     {
-        return new Vector2(x, y);
+        return new Vector2(X, Y);
     }
 }
 public class Int3
 {
-    public int x { get; set; }
-    public int y { get; set; }
-    public int z { get; set; }
+    public int X { get; set; }
+    public int Y { get; set; }
+    public int Z { get; set; }
+
+    public Int3(int x, int y, int z)
+    {
+        X = x;
+        Y = y;
+        Z = z;
+    }
 
     public Vector3 Trans2Vector3()
     {
-        return new Vector3(x, y, z);
+        return new Vector3(X, Y, Z);
     }
 }
 public class Int4
 {
-    public int x { get; set; }
-    public int y { get; set; }
-    public int z { get; set; }
-    public int w { get; set; }
+    public int X { get; set; }
+    public int Y { get; set; }
+    public int Z { get; set; }
+    public int W { get; set; }
 
+    public Int4(int x, int y, int z, int w)
+    {
+        X = x;
+        Y = y;
+        Z = z;
+        W = w;
+    }
     public Vector4 Trans2Vector4()
     {
-        return new Vector4(x, y, z, w);
+        return new Vector4(X, Y, Z, W);
     }
 }
 public class Float2

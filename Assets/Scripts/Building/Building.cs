@@ -10,23 +10,22 @@ public class Building : MonoBehaviour
     public bool BuildingSet { get; private set; }   //设置完毕不再动
     public int effectValue = 1, StaminaRequest = 0; //1人力 2八卦 3强壮 4谋略 5行业 6决策 7财务 8管理
     public BuildingType Type;    //现在是创建时赋值，需改为预制体赋值或子类构造
+    private GameObject m_Decoration;   //修饰物，建造后删除
 
-    public GameObject decoration;   //修饰物，建造后删除
-    public List<Grid> containsGrids;   //所包含的格子
-
+    public List<Grid> ContainsGrids { get; private set; }   //所包含的格子
     public DepControl Department; //BM赋值
     public OfficeControl Office;  //BM赋值
     public BuildingEffect effect;
-    public Text Text_DepName;
+    public TextMesh Text_DepName;
     public Transform[] WorkPos = new Transform[4];
     public List<BuildingEffect> EffectBuildings = new List<BuildingEffect>();
 
-    Vector3 Offset;
-
-    private void Start()
+    private void Awake()
     {
-        containsGrids = new List<Grid>();
-        decoration = transform.Find("Decoration").gameObject;
+        ContainsGrids = new List<Grid>();
+        effect = new BuildingEffect(this);
+        m_Decoration = transform.Find("Decoration").gameObject;
+        Text_DepName = transform.Find("Description").GetComponent<TextMesh>();
     }
 
     //确定建造
@@ -35,16 +34,16 @@ public class Building : MonoBehaviour
         BuildingSet = true;
         foreach (Grid grid in grids)
         {
-            containsGrids.Add(grid);
+            ContainsGrids.Add(grid);
             grid.Build(this);
         }
-        Destroy(decoration);
+        Destroy(m_Decoration);
     }
 
     //拆除
     public void Dismantle()
     {
-        foreach (Grid grid in containsGrids)
+        foreach (Grid grid in ContainsGrids)
         {
             grid.Dismantle();
         }

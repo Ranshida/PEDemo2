@@ -16,34 +16,30 @@ public class MlySystem : MonoBehaviour
         Instance = this;
     }
 
-    public Transform buildingWindow;
-
     private bool canBuild;
-    private List<Grid> buildGrid;
-    public Vector3 AimingPosition { get; private set; } = Vector3.zero;  //Aiming屏幕射线位置
+    private List<Grid> selectGrids;
+    private Vector3 AimingPosition = Vector3.zero;  //Aiming屏幕射线位置
     private Ray rayAiming; //实际瞄准的位置，与任何物体碰撞
     private Building temp_Building;
-    private GameObject building_2_2;
-    private GameObject building_2_3;
-    private GameObject building_3_2;
-    private GameObject building_3_3;
-    private GameObject building_2_4;
-    private GameObject building_4_2;
+
+    private GameObject[] buildingPrefabs;  //建筑预制体
+    private Dictionary<BuildingType, GameObject> buildingDict;   //<建筑类型，预制体> 的字典
 
     private void Start()
     {
-        buildGrid = new List<Grid>();
-        building_2_2 = ResourcesLoader.LoadPrefab("Prefabs/MaLingyu/2_2");
-        building_2_3 = ResourcesLoader.LoadPrefab("Prefabs/MaLingyu/2_3");
-        building_3_2 = ResourcesLoader.LoadPrefab("Prefabs/MaLingyu/3_2");
-        building_3_3 = ResourcesLoader.LoadPrefab("Prefabs/MaLingyu/3_3");
-        building_2_4 = ResourcesLoader.LoadPrefab("Prefabs/MaLingyu/2_4");
-        building_4_2 = ResourcesLoader.LoadPrefab("Prefabs/MaLingyu/4_2");
+        selectGrids = new List<Grid>();
+        buildingDict = new Dictionary<BuildingType, GameObject>();
+        //加载建筑预制体，加入建筑字典
+        buildingPrefabs = ResourcesLoader.LoadAll<GameObject>("Prefabs/MaLingyu/Buildings");
+        foreach (GameObject prefab in buildingPrefabs)
+        {
+            Building building = prefab.GetComponent<Building>();
+            buildingDict.Add(building.Type, prefab);
+        }
     }
 
     private void Update()
     {
-
         if (!GridContainer.Instance)
             return;
         
@@ -71,7 +67,7 @@ public class MlySystem : MonoBehaviour
         {
             if (temp_Building && canBuild)
             {
-                temp_Building.Build(buildGrid);
+                temp_Building.Build(selectGrids);
                 temp_Building = null;
             }
         }
@@ -86,12 +82,12 @@ public class MlySystem : MonoBehaviour
 
 
         //刷新临时建筑网格
-        foreach (Grid grid in buildGrid)
+        foreach (Grid grid in selectGrids)
         {
             grid.IsPutting = false;
             grid.RefreshGrid();
         }
-        buildGrid.Clear();
+        selectGrids.Clear();
         canBuild = false;
 
 
@@ -111,7 +107,7 @@ public class MlySystem : MonoBehaviour
                         {
                             if (!gridDict[tempZ + j].Lock && gridDict[tempZ + j].Type == Grid.GridType.可放置)
                             {
-                                buildGrid.Add(gridDict[tempZ + j]);
+                                selectGrids.Add(gridDict[tempZ + j]);
                             }
                         }
                     }
@@ -119,10 +115,10 @@ public class MlySystem : MonoBehaviour
             }
 
             //全部覆盖到网格 => 可以建造
-            if (buildGrid.Count == temp_Building.Width * temp_Building.Length)
+            if (selectGrids.Count == temp_Building.Width * temp_Building.Length)
             {
                 canBuild = true;
-                foreach (Grid tempGrid in buildGrid)
+                foreach (Grid tempGrid in selectGrids)
                 {
                     tempGrid.IsPutting = true;
                     tempGrid.RefreshGrid();
@@ -136,44 +132,11 @@ public class MlySystem : MonoBehaviour
         }
     }
     
-    public void Build(int id)
-    {
-        switch (id)
-        {
-            case 1:
-                NewTempBuilding(building_2_2);
-                break;
-            case 2:
-                NewTempBuilding(building_2_3);
-                break;
-            case 3:
-                NewTempBuilding(building_3_2);
-                break;
-            case 4:
-                NewTempBuilding(building_3_3);
-                break;
-            case 5:
-                NewTempBuilding(building_2_4);
-                break;
-            case 6:
-                NewTempBuilding(building_4_2);
-                break;
-            default:
-                break;
-        }
-    }
+  
 
+    //button
     public void UnlockGrids(int id)
     {
         GridContainer.Instance.UnlockGrids(id);
-    }
-
-    private void NewTempBuilding(GameObject prefab)
-    {
-        if (temp_Building)
-            Destroy(temp_Building.gameObject);
-
-        GameObject buildingGo = Instantiate(prefab);
-        temp_Building = buildingGo.GetComponent<Building>();
     }
 }

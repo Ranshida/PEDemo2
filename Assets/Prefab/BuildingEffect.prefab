@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 1102629177046298570}
   - component: {fileID: 1102629177046298571}
   - component: {fileID: 1102629177046298548}
-  - component: {fileID: 1102629177046298549}
   - component: {fileID: 7444298537926790876}
   m_Layer: 5
   m_Name: BuildingEffect
@@ -104,21 +103,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 80, y: 80}
   m_EdgeRadius: 0
---- !u!114 &1102629177046298549
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1102629177046298551}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 72aa2182483ea8b44b0903058b8aeabd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Rt: {fileID: 1102629177046298550}
-  CurrentBuilding: {fileID: 0}
-  image: {fileID: 1102629177046298571}
 --- !u!50 &7444298537926790876
 Rigidbody2D:
   serializedVersion: 4
