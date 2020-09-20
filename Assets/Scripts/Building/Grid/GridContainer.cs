@@ -21,10 +21,6 @@ public class GridContainer : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-    }
-
-    private void Start()
-    {
         GridDict = new Dictionary<int, Dictionary<int, Grid>>();
         foreach (Grid grid in GridList)
         {
@@ -38,6 +34,11 @@ public class GridContainer : MonoBehaviour
                 GridDict[grid.X].Add(grid.Z, grid);
             }
         }
+    }
+
+    private void Start()
+    {
+      
     }
 
     public void UnlockGrids(int id)
