@@ -23,7 +23,7 @@ public class BuildingManage : MonoBehaviour
 
     private bool canBuild;
     private List<Grid> selectGrids;
-    private Vector3 AimingPosition = Vector3.zero;  //Aiming屏幕射线位置
+    public Vector3 AimingPosition { get; private set; } = Vector3.zero;  //Aiming屏幕射线位置
     private Ray rayAiming; //实际瞄准的位置，与任何物体碰撞
     private Building temp_Building;
 
@@ -34,7 +34,7 @@ public class BuildingManage : MonoBehaviour
     public Transform optionPanel;   //建造选项面板
     Button[] buildingButton;        //建造选项面板下的所有按钮
 
-    //已建成简述
+    //默认建筑（CEO办公室）
     public List<Building> ConstructedBuildings = new List<Building>();
     public int CEOPositionX;
     public int CEOPositionZ;
@@ -116,8 +116,8 @@ public class BuildingManage : MonoBehaviour
         }
 
         //加载建筑预制体，加入建筑字典
-        buildingPrefabs = ResourcesLoader.LoadAll<GameObject>("Prefabs/MaLingyu/Buildings");
-        CEOBuilding = ResourcesLoader.LoadPrefab("Prefabs/Malingyu/Buildings/CEO办公室");
+        buildingPrefabs = ResourcesLoader.LoadAll<GameObject>("Prefabs/Scene/Buildings");
+        CEOBuilding = ResourcesLoader.LoadPrefab("Prefabs/Scene/Buildings/CEO办公室");
         foreach (GameObject prefab in buildingPrefabs)
         {
             Building building = prefab.GetComponent<Building>();

@@ -39,7 +39,7 @@ public class CustomGridContainer : Editor
         foreach (Transform temp in tempList)
             DestroyImmediate(temp.gameObject);
 
-        GameObject gridPrefab = ResourcesLoader.LoadPrefab("Prefabs/MaLingyu/Grid");
+        GameObject gridPrefab = ResourcesLoader.LoadPrefab("Prefabs/Scene/Grid");
         script.GridList = new List<Grid>();
         
         for (int i = 0; i < script.zInput; i++)
