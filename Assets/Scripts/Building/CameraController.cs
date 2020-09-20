@@ -20,7 +20,7 @@ public class CameraController : MonoBehaviour
     private void Start()
     {
         mainCamera = transform.Find("Main Camera");
-        focus = Instantiate(ResourcesLoader.LoadPrefab("Prefabs/MaLingyu/FucosGo"));
+        focus = Instantiate(ResourcesLoader.LoadPrefab("Prefabs/Scene/FucosGo"));
         height = minHeight;
     }
 
