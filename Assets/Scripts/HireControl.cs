@@ -1,22 +1,76 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class HireControl : MonoBehaviour
 {
     public GameControl GC;
-    //(Hire)招聘后信息转移
+    public Button HireRefreshButton;
+    public EmpInfo EmpInfoPrefab, EmpDetailPrefab;
+
+    public EmpInfo[] HireInfos = new EmpInfo[5];
+    List<HireType> HireTypes = new List<HireType>();
+
+    //添加从人力资源部获得的招聘
+    public void AddHireTypes(HireType ht)
+    {
+        HireTypes.Add(ht);
+        HireRefreshButton.interactable = true;
+    }
+
+    //刷新招聘
+    public void RefreshHire()
+    {
+        if (HireTypes.Count > 0)
+        {
+            EmpType EType;
+            if (HireTypes[0].Type == 1)
+                EType = EmpType.Tech;
+            else if (HireTypes[0].Type == 2)
+                EType = EmpType.Market;
+            else if (HireTypes[0].Type == 3)
+                EType = EmpType.Product;
+            else
+                EType = EmpType.Operate;
+
+            for (int i = 0; i < 5; i++)
+            {
+                foreach (Transform child in HireInfos[i].PerkContent)
+                {
+                    Destroy(child.gameObject);
+                }
+                foreach (Transform child in HireInfos[i].SkillContent)
+                {
+                    Destroy(child.gameObject);
+                }
+                foreach (Transform child in HireInfos[i].StrategyContent)
+                {
+                    Destroy(child.gameObject);
+                }
+                HireInfos[i].PerksInfo.Clear();
+                HireInfos[i].SkillsInfo.Clear();
+                HireInfos[i].StrategiesInfo.Clear();
+                HireInfos[i].CreateEmp(EType, HireTypes[0].HeadHuntStatus, HireTypes[0].Level);
+            }
+            HireTypes.RemoveAt(0);
+            if (HireTypes.Count < 1)
+                HireRefreshButton.interactable = false;
+        }
+    }
+
+    //(Hire)招聘后信息转移和创建信息面板
     public void SetInfoPanel()
     {
         GC.CurrentEmpInfo.HireButton.interactable = false;
 
-        EmpInfo ED = Instantiate(GC.EmpDetailPrefab, GC.EmpDetailContent);
+        EmpInfo ED = Instantiate(EmpDetailPrefab, GC.EmpDetailContent);
         GC.CurrentEmpInfo.CopyStatus(ED);
 
-        EmpInfo EI1 = Instantiate(GC.EmpInfoPrefab, GC.TotalEmpContent);
+        EmpInfo EI1 = Instantiate(EmpInfoPrefab, GC.TotalEmpContent);
         GC.CurrentEmpInfo.CopyStatus(EI1);
 
-        EmpInfo EI2 = Instantiate(GC.EmpInfoPrefab, GC.TotalEmpContent);
+        EmpInfo EI2 = Instantiate(EmpInfoPrefab, GC.TotalEmpContent);
         GC.CurrentEmpInfo.CopyStatus(EI2);
 
         EI1.DetailInfo = ED;
@@ -52,4 +106,5 @@ public class HireControl : MonoBehaviour
         }
         ED.StrategiesInfo = GC.CurrentEmpInfo.StrategiesInfo;
     }
+
 }

@@ -29,7 +29,6 @@ public class GameControl : MonoBehaviour
     [HideInInspector] public EmpInfo CurrentEmpInfo;
     [HideInInspector] public DepControl CurrentDep;
     [HideInInspector] public OfficeControl CurrentOffice;
-    public EmpInfo EmpInfoPrefab, EmpDetailPrefab;
     public EmpEntity EmpEntityPrefab;
     public PerkInfo PerkInfoPrefab;
     public SkillInfo SkillInfoPrefab;
@@ -38,6 +37,7 @@ public class GameControl : MonoBehaviour
     public DepSelect DepSelectButtonPrefab, OfficeSelectButtonPrefab;
     public RelationInfo RelationInfoPrefab;
     public Text HistoryTextPrefab;
+    public HireControl HC;
     public BuildingManage BM;
     public ProduceControl PC, PC2;
     public ProductControl PrC;
@@ -46,12 +46,10 @@ public class GameControl : MonoBehaviour
     public Transform HireContent, EmpPanelContent, DepContent, DepSelectContent, TotalEmpContent, StandbyContent, EmpDetailContent, MessageContent;
     public InfoPanel infoPanel;
     public GameObject DepSelectPanel, StandbyButton, MessagePrefab, CEOSkillPanel, EmpTrainingPanel, GameOverPanel;
-    public Button HireRefreshButton;
     public Text Text_Time, Text_TechResource, Text_MarketResource, Text_ProductResource, Text_Money, Text_Stamina, Text_Mentality, Text_Morale;
     public SkillControl SC;
     [HideInInspector] public UnityEvent DailyEvent, WeeklyEvent, MonthlyEvent, HourEvent;
 
-    public EmpInfo[] HireInfos = new EmpInfo[5];
     public Button[] CEOSkillButton = new Button[5];
     public Text[] Text_CEOSkillCD = new Text[5];
     public List<DepControl> CurrentDeps = new List<DepControl>();
@@ -66,7 +64,6 @@ public class GameControl : MonoBehaviour
     bool TimePause = false; //现在仅用来判断是否处于下班状态，用于其他功能时需检查WorkEndCheck()和WeekStart
 
     int[] CEOSkillCD = new int[5];
-    List<HireType> HireTypes = new List<HireType>();
 
     private void Awake()
     {
@@ -76,10 +73,9 @@ public class GameControl : MonoBehaviour
     private void Start()
     {
         Anim = this.gameObject.GetComponent<Animator>();
-        AddHireTypes(new HireType(1));
+        HC.AddHireTypes(new HireType(1));
         SpecialEventCount = Random.Range(1, 6);//随机一段时间发生影响产品的事件
-        HourEvent.AddListener(GCTimePass);
-      
+        HourEvent.AddListener(GCTimePass);      
     }
 
     private void Update()
@@ -429,7 +425,7 @@ public class GameControl : MonoBehaviour
         {
             //还需要重新计算工资
             Salary += CurrentEmpInfo.CalcSalary();
-            SetInfoPanel();
+            HC.SetInfoPanel();
             CurrentEmpInfo.emp.InfoA.transform.parent = StandbyContent;
         }
         else if (SelectMode == 2)
@@ -458,7 +454,7 @@ public class GameControl : MonoBehaviour
             Salary += CurrentEmpInfo.CalcSalary();
             office.CurrentManager = CurrentEmpInfo.emp;
             CurrentEmpInfo.emp.CurrentOffice = office;
-            SetInfoPanel();
+            HC.SetInfoPanel();
             CurrentEmpInfo.emp.InfoA.transform.parent = StandbyContent;
             office.SetOfficeStatus();
         }
@@ -510,7 +506,7 @@ public class GameControl : MonoBehaviour
             depControl.CurrentEmps.Add(CurrentEmpInfo.emp);
             depControl.UpdateUI();
             CurrentEmpInfo.emp.CurrentDep = depControl;
-            SetInfoPanel();
+            HC.SetInfoPanel();
             CurrentEmpInfo.emp.InfoA.transform.parent = depControl.EmpContent;
         }
         else if(SelectMode == 2)
@@ -544,54 +540,6 @@ public class GameControl : MonoBehaviour
         DepSelectPanel.SetActive(false);
     }
 
-    //(Hire)招聘后信息转移
-    void SetInfoPanel()
-    {
-        CurrentEmpInfo.HireButton.interactable = false;
-
-        EmpInfo ED = Instantiate(EmpDetailPrefab, EmpDetailContent);
-        CurrentEmpInfo.CopyStatus(ED);
-
-        EmpInfo EI1 = Instantiate(EmpInfoPrefab, TotalEmpContent);
-        CurrentEmpInfo.CopyStatus(EI1);
-
-        EmpInfo EI2 = Instantiate(EmpInfoPrefab, TotalEmpContent);
-        CurrentEmpInfo.CopyStatus(EI2);
-
-        EI1.DetailInfo = ED;
-        EI2.DetailInfo = ED;
-        ED.emp.InfoA = EI1;
-        ED.emp.InfoB = EI2;
-        ED.emp.InfoDetail = ED;
-        ED.emp.InitRelation();
-        ED.SetSkillName();
-        //创建员工实体
-        //ED.Entity = Instantiate(EmpEntityPrefab, BM.ExitPos.position, Quaternion.Euler(0, 0, 0), BM.EntityContent);
-        //ED.Entity.SetInfo(ED);
-
-        //注意应放在初始化人际关系后再添加至链表
-        CurrentEmployees.Add(CurrentEmpInfo.emp);
-        //复制特质
-        for (int i = 0; i < CurrentEmpInfo.PerksInfo.Count; i++)
-        {
-            CurrentEmpInfo.PerksInfo[i].CurrentPerk.AddEffect();
-            CurrentEmpInfo.PerksInfo[i].transform.parent = ED.PerkContent;
-        }
-        ED.PerksInfo = CurrentEmpInfo.PerksInfo;
-        //复制能力
-        for(int i = 0; i < CurrentEmpInfo.SkillsInfo.Count; i++)
-        {
-            CurrentEmpInfo.SkillsInfo[i].transform.parent = ED.SkillContent;
-        }
-        ED.SkillsInfo = CurrentEmpInfo.SkillsInfo;
-        //复制战略
-        for (int i = 0; i < CurrentEmpInfo.StrategiesInfo.Count; i++)
-        {
-            CurrentEmpInfo.StrategiesInfo[i].transform.parent = ED.StrategyContent;
-        }
-        ED.StrategiesInfo = CurrentEmpInfo.StrategiesInfo;
-    }
-
     void ResetOldAssignment()
     {
         if (CurrentEmpInfo.emp.CurrentDep != null)
@@ -613,45 +561,6 @@ public class GameControl : MonoBehaviour
         }
     }
 
-    public void RefreshHire()
-    {
-        if (HireTypes.Count > 0)
-        {
-            EmpType EType;
-            if (HireTypes[0].Type == 1)
-                EType = EmpType.Tech;
-            else if (HireTypes[0].Type == 2)
-                EType = EmpType.Market;
-            else if (HireTypes[0].Type == 3)
-                EType = EmpType.Product;
-            else
-                EType = EmpType.Operate;
-
-            for (int i = 0; i < 5; i++)
-            {
-                foreach (Transform child in HireInfos[i].PerkContent)
-                {
-                    Destroy(child.gameObject);
-                }
-                foreach (Transform child in HireInfos[i].SkillContent)
-                {
-                    Destroy(child.gameObject);
-                }
-                foreach (Transform child in HireInfos[i].StrategyContent)
-                {
-                    Destroy(child.gameObject);
-                }
-                HireInfos[i].PerksInfo.Clear();
-                HireInfos[i].SkillsInfo.Clear();
-                HireInfos[i].StrategiesInfo.Clear();
-                HireInfos[i].CreateEmp(EType, HireTypes[0].HeadHuntStatus, HireTypes[0].Level);
-            }
-            HireTypes.RemoveAt(0);
-            if (HireTypes.Count < 1)
-                HireRefreshButton.interactable = false;
-        }
-    }
-
     public void UpdateResourceInfo()
     {
         int[] C = FinishedTask;
@@ -666,12 +575,6 @@ public class GameControl : MonoBehaviour
         Text_ProductResource.text = "原型图: " + C[6] + "\n" +
            "产品研究: " + C[7] + "\n" +
            "用户访谈: " + C[8] + "\n";
-    }
-
-    public void AddHireTypes(HireType ht)
-    {
-        HireTypes.Add(ht);
-        HireRefreshButton.interactable = true;
     }
 
     public void CreateMessage(string content)

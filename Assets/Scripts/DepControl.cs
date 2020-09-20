@@ -183,7 +183,7 @@ public class DepControl : MonoBehaviour
                             EmpsGetExp(8);
                             HireType ht = new HireType(SpType);
                             ht.SetHeadHuntStatus(DepHeadHuntStatus);
-                            GC.AddHireTypes(ht);
+                            GC.HC.AddHireTypes(ht);
                             SpType = 0;
                             SpProgress = 0;
                             SpTotalProgress = 0;

@@ -137,7 +137,7 @@ public class BuildingManage : MonoBehaviour
         if (Physics.Raycast(rayAiming, out RaycastHit hit, 1000))
             AimingPosition = new Vector3(hit.point.x, 0, hit.point.z);
         else
-            Debug.LogError("未碰撞到地面");
+            Debug.Log("未碰撞到地面");
         //鼠标所属网格的X坐标
         int tempX;
         if (AimingPosition.x > 0)
