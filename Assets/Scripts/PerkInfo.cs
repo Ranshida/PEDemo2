@@ -25,7 +25,8 @@ public class PerkInfo : MonoBehaviour
                 {
                     info.Text_Name.text = CurrentPerk.Name;
                     info.Text_Description.text = CurrentPerk.Description;
-                    info.Text_ExtraInfo.text = "剩余" + CurrentPerk.TimeLeft + "周";
+                    if (CurrentPerk.TimeLeft != -1)
+                        info.Text_ExtraInfo.text = "剩余" + (CurrentPerk.TimeLeft / 8) + "周";
                 }
                 if (info.Visible == false)
                     info.ShowPanel();

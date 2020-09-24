@@ -492,9 +492,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6102515751864992952}
-        m_MethodName: SetActive
-        m_Mode: 6
+      - m_Target: {fileID: 8290254732809842710}
+        m_MethodName: ShowEmpInfoPanel
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -1586,6 +1586,7 @@ MonoBehaviour:
   EfficiencyLevel: 0
   LevelDownTime: 0
   SpType: 0
+  SpTime: 0
   SurveyStart: 0
   Failed: 0
   TaskChange: 0
@@ -1618,6 +1619,7 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   InRangeOffices: []
+  DepHeadHuntStatus: 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 --- !u!1 &6875758098464698913
 GameObject:
   m_ObjectHideFlags: 0

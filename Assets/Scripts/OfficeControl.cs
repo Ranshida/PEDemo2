@@ -29,6 +29,7 @@ public class OfficeControl : MonoBehaviour
                 Text_MAbility.text = "管理:" + CurrentManager.Manage;
                 ManageValue = CurrentManager.Manage + GC.ManageExtra;
                 CurrentManager.InfoDetail.CreateStrategy();
+                CheckManage();
             }
             else if (building.effectValue == 1)
                 Text_MAbility.text = "人力:" + CurrentManager.HR;

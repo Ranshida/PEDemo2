@@ -97,7 +97,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &657412516657973078
 RectTransform:
   m_ObjectHideFlags: 0
@@ -463,7 +463,7 @@ GameObject:
   - component: {fileID: 7304820793347005819}
   - component: {fileID: 1923080826609381477}
   m_Layer: 5
-  m_Name: EmpDepInfo
+  m_Name: EmpCEODepInfo
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -895,7 +895,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u5F20\u5C0F\u4E09"
+  m_Text: CEO
 --- !u!1 &7304820794850983584
 GameObject:
   m_ObjectHideFlags: 0

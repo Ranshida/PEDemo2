@@ -101,7 +101,7 @@ public class DepControl : MonoBehaviour
 
     public void SetTask(Task task)
     {
-        int Pp = CountProducePower(task.Num);
+        int Pp = CountProducePower((int)type + 1);
         if(CurrentTask != null)
         {
             TaskChangeTime = 16;
@@ -120,7 +120,7 @@ public class DepControl : MonoBehaviour
             {
                 if (CurrentTask != null && TaskChange == false)
                 {
-                    int Pp = CountProducePower(CurrentTask.Num);
+                    int Pp = CountProducePower((int)type + 1);
                     CurrentTask.Progress += Pp;
                     if (CurrentTask.Progress >= StandardProducePoint * 10)
                     {
@@ -140,7 +140,7 @@ public class DepControl : MonoBehaviour
                 }
                 else if (CurrentResearch != null)
                 {
-                    int Pp = CountProducePower(4);
+                    int Pp = CountProducePower(6);
                     CurrentResearch.CurrentProgress += Pp;
                     CurrentResearch.UpdateUI();
                     if (CurrentResearch.CurrentProgress >= CurrentResearch.Progress)
@@ -156,7 +156,7 @@ public class DepControl : MonoBehaviour
                 }
                 else if (SurveyStart == true)
                 {
-                    int Pp = CountProducePower(4);
+                    int Pp = CountProducePower(6);
                     SpProgress += Pp;
                     if (SpProgress >= StandardProducePoint * 10)
                     {
@@ -245,7 +245,7 @@ public class DepControl : MonoBehaviour
         }
         else if (type == EmpType.Science)
         {
-            int Pp = CountProducePower(4);
+            int Pp = CountProducePower(6);
             if (CurrentResearch != null)
             {
                 Text_Task.text = "当前任务:" + CurrentResearch.Text_Name.text;
@@ -277,7 +277,7 @@ public class DepControl : MonoBehaviour
         }
         else if (CurrentTask != null)
         {
-            int Pp = CountProducePower(CurrentTask.Num);
+            int Pp = CountProducePower((int)type + 1);
             Text_Task.text = "当前任务:" + CurrentTask.TaskName;
             Text_Progress.text = "生产力:" + Pp + "/时";
             Text_Quality.text = "当前进度:" + CurrentTask.Progress + "/" + StandardProducePoint * 10;
@@ -373,37 +373,45 @@ public class DepControl : MonoBehaviour
     public int CountProducePower(int num)
     {
         int power = 0;
+        //1-3对应3个生产技能
         if (num == 1)
         {
             for(int i = 0; i < CurrentEmps.Count; i++)
             {
-                power += CurrentEmps[i].Skill1 + CurrentEmps[i].SkillExtra1;
+                if (CurrentEmps[i].canWork == true)
+                    power += CurrentEmps[i].Skill1 + CurrentEmps[i].SkillExtra1;
             }
         }
         else if (num == 2)
         {
             for (int i = 0; i < CurrentEmps.Count; i++)
             {
-                power += CurrentEmps[i].Skill2 + CurrentEmps[i].SkillExtra2;
+                if (CurrentEmps[i].canWork == true)
+                    power += CurrentEmps[i].Skill2 + CurrentEmps[i].SkillExtra2;
             }
         }
         else if (num == 3)
         {
             for (int i = 0; i < CurrentEmps.Count; i++)
             {
-                power += CurrentEmps[i].Skill3 + CurrentEmps[i].SkillExtra3;
+                if (CurrentEmps[i].canWork == true)
+                    power += CurrentEmps[i].Skill3 + CurrentEmps[i].SkillExtra3;
             }
         }
+        //取最高
         else if (num == 4)
         {
             for (int i = 0; i < CurrentEmps.Count; i++)
             {
-                int temp = CurrentEmps[i].Skill1;
-                if (CurrentEmps[i].Skill2 > temp)
-                    temp = CurrentEmps[i].Skill2;
-                if (CurrentEmps[i].Skill3 > temp)
-                    temp = CurrentEmps[i].Skill3;
-                power += temp;
+                if (CurrentEmps[i].canWork == true)
+                {
+                    int temp = CurrentEmps[i].Skill1;
+                    if (CurrentEmps[i].Skill2 > temp)
+                        temp = CurrentEmps[i].Skill2;
+                    if (CurrentEmps[i].Skill3 > temp)
+                        temp = CurrentEmps[i].Skill3;
+                    power += temp;
+                }
             }
         }
         else if (num == 5)
@@ -411,7 +419,22 @@ public class DepControl : MonoBehaviour
             //人力资源部B计算
             for (int i = 0; i < CurrentEmps.Count; i++)
             {
-                power += CurrentEmps[i].HR;
+                if (CurrentEmps[i].canWork == true)
+                    power += CurrentEmps[i].HR;
+            }
+        }
+        //技术和产品里取最高（科研用）
+        else if (num == 6)
+        {
+            for (int i = 0; i < CurrentEmps.Count; i++)
+            {
+                if (CurrentEmps[i].canWork == true)
+                {
+                    int temp = CurrentEmps[i].Skill1;
+                    if (CurrentEmps[i].Skill3 > temp)
+                        temp = CurrentEmps[i].Skill3;
+                    power += temp;
+                }
             }
         }
         float extraEfficiency = 0;
@@ -440,11 +463,18 @@ public class DepControl : MonoBehaviour
         return time;
     }
 
+    //开始动员
     public void StartMobilize()
     {
         GC.SC.gameObject.SetActive(true);
         GC.SC.SetDice(this);
-        for(int i = 0; i < GC.CurrentDeps.Count; i++)
+        ShowEmpInfoPanel();
+    }
+
+    //显示员工面板并关闭其他部门面板
+    public void ShowEmpInfoPanel()
+    {
+        for (int i = 0; i < GC.CurrentDeps.Count; i++)
         {
             GC.CurrentDeps[i].EmpPanel.gameObject.SetActive(false);
         }
@@ -471,7 +501,7 @@ public class DepControl : MonoBehaviour
             Researches[i].ExtraButton.gameObject.SetActive(false);
             Researches[i].SelectButton.gameObject.SetActive(false);
         }
-        UpdateUI(CountProducePower(4));
+        UpdateUI(CountProducePower(6));
     }
 
     public void RandomResearch()
@@ -494,7 +524,7 @@ public class DepControl : MonoBehaviour
         }
     }
 
-    public void FailCheck()
+    public void FailCheck(bool ForceFail = false)
     {
         float Posb = Random.Range(0.0f, 1.0f);
         float totalObservation = 0;
@@ -503,7 +533,7 @@ public class DepControl : MonoBehaviour
             totalObservation += CurrentEmps[i].Observation;
         }
         float ActualFailRate = FailRate - (totalObservation * GC.Morale * 0.0001f) - GC.ExtrafailRate;
-        if(Posb < ActualFailRate)
+        if(Posb < ActualFailRate || ForceFail == true)
         {
             Failed = true;
             FailProgress += Random.Range(50, 120);

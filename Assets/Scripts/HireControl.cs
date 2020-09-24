@@ -7,10 +7,15 @@ public class HireControl : MonoBehaviour
 {
     public GameControl GC;
     public Button HireRefreshButton;
-    public EmpInfo EmpInfoPrefab, EmpDetailPrefab;
+    public EmpInfo EmpInfoPrefab, EmpDetailPrefab, CEOInfoPrefab;
 
     public EmpInfo[] HireInfos = new EmpInfo[5];
     List<HireType> HireTypes = new List<HireType>();
+
+    private void Start()
+    {
+        InitCEO();
+    }
 
     //添加从人力资源部获得的招聘
     public void AddHireTypes(HireType ht)
@@ -79,6 +84,7 @@ public class HireControl : MonoBehaviour
         ED.emp.InfoB = EI2;
         ED.emp.InfoDetail = ED;
         ED.emp.InitRelation();
+        GC.HourEvent.AddListener(ED.emp.TimePass);
         ED.SetSkillName();
         //创建员工实体
         //ED.Entity = Instantiate(GC.EmpEntityPrefab, GC.BM.ExitPos.position, Quaternion.Euler(0, 0, 0), GC.BM.EntityContent);
@@ -107,4 +113,37 @@ public class HireControl : MonoBehaviour
         ED.StrategiesInfo = GC.CurrentEmpInfo.StrategiesInfo;
     }
 
+    //初始化CEO
+    public void InitCEO()
+    {
+        Employee emp = new Employee();
+        emp.InitCEOStatus();
+
+        EmpInfo ED = Instantiate(EmpDetailPrefab, GC.EmpDetailContent);
+        ED.GC = GC;
+        ED.emp = emp;
+        ED.SetSkillName();
+        ED.InitSkillAndStrategy();
+
+        EmpInfo EI1 = Instantiate(CEOInfoPrefab, GC.TotalEmpContent);
+        ED.CopyStatus(EI1);
+
+        EmpInfo EI2 = Instantiate(CEOInfoPrefab, GC.TotalEmpContent);
+        ED.CopyStatus(EI2);
+
+        emp.InfoDetail = ED;
+        emp.InfoA = EI1;
+        emp.InfoB = EI2;
+        EI1.DetailInfo = ED;
+        EI2.DetailInfo = ED;
+        EI1.transform.parent = GC.StandbyContent;
+        emp.InitRelation();
+
+        GC.CurrentEmployees.Add(emp);
+
+        emp.CurrentOffice = GC.CurrentOffices[0];
+        GC.CurrentOffices[0].CurrentManager = emp;
+        GC.CurrentOffices[0].SetOfficeStatus();
+        GC.HourEvent.AddListener(emp.TimePass);
+    }
 }

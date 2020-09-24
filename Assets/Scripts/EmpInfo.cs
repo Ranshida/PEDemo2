@@ -10,7 +10,7 @@ public class EmpInfo : MonoBehaviour
     public Employee emp;
     public GameControl GC;
     public Button HireButton;
-    public Text Text_Name, Text_Mentality, Text_Stamina, Text_Type, Text_Skill1, Text_Skill2, Text_Skill3,  Text_Ability, Text_Age;
+    public Text Text_Name, Text_Mentality, Text_Stamina, Text_Skill1, Text_Skill2, Text_Skill3,  Text_Ability, Text_Age;
     public Text Text_DepName, Text_Observation, Text_Tenacity, Text_Strength, Text_Manage, Text_HR, Text_Finance, Text_Decision, 
         Text_Forecast, Text_Strategy, Text_Convince, Text_Charm, Text_Gossip, Text_SName1, Text_SName2, Text_SName3;
     public Text[] Text_Stars = new Text[5], Text_Exps = new Text[5];
@@ -84,55 +84,81 @@ public class EmpInfo : MonoBehaviour
                     Text_DepName.text = "所属部门:无";
                 for (int i = 0; i < 15; i++)
                 {
-                    int Exp = 0;
-                    if (emp.Levels[i] < 10)
-                        Exp = 50 + 50 * (emp.Levels[i] - 0);
-                    else if (emp.Levels[i] < 15)
-                        Exp = 500 + 100 * (emp.Levels[i] - 10);                    
-                    else if (emp.Levels[i] < 20)
-                        Exp = 1000 + 200 * (emp.Levels[i] - 15);
+                    int Exp = 0, SkillLevel = 0;
+                    #region 设定等级
+                    if (i == 0)
+                        SkillLevel = emp.Skill1;
+                    else if (i == 1)
+                        SkillLevel = emp.Skill2;
+                    else if (i == 2)
+                        SkillLevel = emp.Skill3;
+                    else if (i == 3)
+                        SkillLevel = emp.Observation;
+                    else if (i == 4)
+                        SkillLevel = emp.Tenacity;
+                    else if (i == 5)
+                        SkillLevel = emp.Strength;
+                    else if (i == 6)
+                        SkillLevel = emp.Manage;
+                    else if (i == 7)
+                        SkillLevel = emp.HR;
+                    else if (i == 8)
+                        SkillLevel = emp.Finance;
+                    else if (i == 9)
+                        SkillLevel = emp.Decision;
+                    else if (i == 10)
+                        SkillLevel = emp.Forecast;
+                    else if (i == 11)
+                        SkillLevel = emp.Strategy;
+                    else if (i == 12)
+                        SkillLevel = emp.Convince;
+                    else if (i == 13)
+                        SkillLevel = emp.Charm;
+                    else if (i == 14)
+                        SkillLevel = emp.Gossip;
+                    #endregion
+                    if (SkillLevel < 10)
+                        Exp = 50 + 50 * (SkillLevel - 0);
+                    else if (SkillLevel < 15)
+                        Exp = 500 + 100 * (SkillLevel - 10);                    
+                    else if (SkillLevel < 20)
+                        Exp = 1000 + 200 * (SkillLevel - 15);
                     else
-                        Exp = 2000 + 300 * (emp.Levels[i] - 20);
+                        Exp = 2000 + 300 * (SkillLevel - 20);
                     Text_Exps[i].text = "Exp " + emp.SkillExp[i] + "/" + Exp;
                 }
             }
         }
     }
 
+    //新建一个Employee并初始化数值
     public void CreateEmp(EmpType type, int[] Hst, int AgeRange)
     {       
         emp = new Employee();
         emp.InfoA = this;
         emp.InitStatus(type, Hst, AgeRange);
-        Text_Name.text = emp.Name;
         HireButton.interactable = true;
         SetSkillName();
-        //AddPerk(new Perk5(emp));
-        //AddPerk(new Perk1(emp));
-        for(int i = 0; i < 4; i++)
+        InitSkillAndStrategy();
+    }
+
+    //初始化头脑风暴技能和战略
+    public void InitSkillAndStrategy()
+    {
+        for (int i = 0; i < 4; i++)
         {
             int Snum = Random.Range(20, SkillData.Skills.Count);
             Skill NewSkill = SkillData.Skills[Snum].Clone();
             NewSkill.TargetEmp = this.emp;
             AddSkill(NewSkill);
         }
-
-
-
         AddThreeRandomStrategy();
- 
     }
 
     public void CopyStatus(EmpInfo ei)
     {
         ei.GC = GC;
         ei.emp = emp;
-        if (emp.Type == EmpType.Tech)
-            ei.Text_Type.text = "技术";
-        else if (emp.Type == EmpType.Market)
-            ei.Text_Type.text = "市场";
-        else
-            ei.Text_Type.text = "产品";
         ei.Text_Name.text = emp.Name;
     }
 
@@ -151,11 +177,20 @@ public class EmpInfo : MonoBehaviour
 
     public void Fire()
     {
+        //不能删CEO
+        if (emp.isCEO == true)
+            return;
+
+        //会议未通过不能开除
+        if (GC.EC.ManagerVoteCheck(emp, true, true) == false)
+            return;
+
         //删除员工实体
-        emp.InfoDetail.Entity.RemoveEntity();
+        //emp.InfoDetail.Entity.RemoveEntity();
 
         //重新计算工资
         ClearSkillPreset();
+        GC.HourEvent.RemoveListener(emp.TimePass);
         GC.Salary -= CalcSalary();
         GC.CurrentEmployees.Remove(emp);
         GC.WorkEndCheck();
@@ -220,30 +255,31 @@ public class EmpInfo : MonoBehaviour
 
     public void SetSkillName()
     {
-        if (emp.Type == EmpType.Tech)
-        {
-            Text_SName1.text = "程序迭代";
-            Text_SName2.text = "技术研发";
-            Text_SName3.text = "可行性调研";
-        }
-        else if (emp.Type == EmpType.Market)
-        {
-            Text_SName1.text = "公关谈判";
-            Text_SName2.text = "营销文案";
-            Text_SName3.text = "资源拓展";
-        }
-        else if (emp.Type == EmpType.Product)
-        {
-            Text_SName1.text = "原型图";
-            Text_SName2.text = "产品研究";
-            Text_SName3.text = "用户访谈";
-        }
-        else if (emp.Type == EmpType.Operate)
-        {
-            Text_SName1.text = "技术维护";
-            Text_SName2.text = "增长运营";
-            Text_SName3.text = "产品运营";
-        }
+        Text_Name.text = emp.Name;
+        //if (emp.Type == EmpType.Tech)
+        //{
+        //    Text_SName1.text = "程序迭代";
+        //    Text_SName2.text = "技术研发";
+        //    Text_SName3.text = "可行性调研";
+        //}
+        //else if (emp.Type == EmpType.Market)
+        //{
+        //    Text_SName1.text = "公关谈判";
+        //    Text_SName2.text = "营销文案";
+        //    Text_SName3.text = "资源拓展";
+        //}
+        //else if (emp.Type == EmpType.Product)
+        //{
+        //    Text_SName1.text = "原型图";
+        //    Text_SName2.text = "产品研究";
+        //    Text_SName3.text = "用户访谈";
+        //}
+        //else if (emp.Type == EmpType.Operate)
+        //{
+        //    Text_SName1.text = "技术维护";
+        //    Text_SName2.text = "增长运营";
+        //    Text_SName3.text = "产品运营";
+        //}
     }
 
     public void AddHistory(string Content)
@@ -319,9 +355,9 @@ public class EmpInfo : MonoBehaviour
         for (int i = 0; i < 5; i++)
         {
             if (i < 4)
-                Scrollbar_Character[i].value = (emp.Character[i] + 3) / 6;
+                Scrollbar_Character[i].value = (emp.Character[i] + 100) / 200;
             else
-                Scrollbar_Character[4].value = emp.Character[4] / 3;
+                Scrollbar_Character[4].value = emp.Character[4] / 100;
         }
     }
 
