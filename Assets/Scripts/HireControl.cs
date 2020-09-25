@@ -124,6 +124,7 @@ public class HireControl : MonoBehaviour
         ED.emp = emp;
         ED.SetSkillName();
         ED.InitSkillAndStrategy();
+        GC.CC.CEO = emp;
 
         EmpInfo EI1 = Instantiate(CEOInfoPrefab, GC.TotalEmpContent);
         ED.CopyStatus(EI1);

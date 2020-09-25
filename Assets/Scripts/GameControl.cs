@@ -12,6 +12,7 @@ public class GameControl : MonoBehaviour
         HRBuildingMentalityExtra = 1.0f, BuildingSkillSuccessExtra = 0, BuildingMaintenanceCostRate = 1.0f;
     public int SelectMode = 1; //1员工招聘时部门选择 2员工移动时部门选择 3部门的高管办公室选择 4发动动员技能时员工选择 5发动建筑技能时员工选择 6CEO技能员工/部门选择
     public int Money = 1000, CEOSkillNum = 0, DoubleMobilizeCost = 0, MeetingBlockTime = 0;
+    public bool ForceTimePause = false;
     public int Stamina
     {
         get
@@ -74,6 +75,7 @@ public class GameControl : MonoBehaviour
     public StrategyControl StrC;
     public FOEControl foeControl;
     public EventControl EC;
+    public CEOControl CC;
     public Transform HireContent, EmpPanelContent, DepContent, DepSelectContent, TotalEmpContent, StandbyContent, EmpDetailContent, MessageContent;
     public InfoPanel infoPanel;
     public GameObject DepSelectPanel, StandbyButton, MessagePrefab, CEOSkillPanel, EmpTrainingPanel, GameOverPanel;
@@ -111,7 +113,7 @@ public class GameControl : MonoBehaviour
 
     private void Update()
     {
-        if (TimePause == false)
+        if (TimePause == false && ForceTimePause == false)
             Timer += Time.deltaTime * TimeMultiply;
         if(Timer >= 10)
         {
@@ -680,6 +682,13 @@ public class GameControl : MonoBehaviour
             CEOSkillNum = 5;
             CEOSkillPanel.SetActive(false);
             TotalEmpContent.parent.parent.gameObject.SetActive(true);            
+        }
+        else
+        {
+            SelectMode = 6;
+            CEOSkillNum = num;
+            CEOSkillPanel.SetActive(false);
+            TotalEmpContent.parent.parent.gameObject.SetActive(true);
         }
     }
     public void CEOSkillConfirm()

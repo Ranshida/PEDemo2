@@ -12,7 +12,7 @@ public class Employee
     static public int HeadHuntLevel = 11;
     public int Skill1, Skill2, Skill3, SkillExtra1, SkillExtra2, SkillExtra3, 
         Observation, Tenacity, Strength, Manage, HR, Finance, Decision, 
-        Forecast, Strategy, Convince, Charm, Gossip, SalaryExtra = 0, Age, EventTime;
+        Forecast, Strategy, Convince, Charm, Gossip, SalaryExtra = 0, Age, EventTime, ObeyTime;
     public int Stamina
     {
         get { return stamina; }
@@ -512,6 +512,7 @@ public class Employee
             if (r.RPoint > 100)
                 r.RPoint = 100;
         }
+        r.UpdateUI();
         //else if (r.RPoint < 0)
         //    r.RPoint = 0;
         //r.RelationCheck();
@@ -602,6 +603,7 @@ public class Employee
             //严格守序偏好
             if (Character[3] > 50)
                 value += 15;
+            value += BaseMotivation[1];
         }
         else if (type == 2)
         {
@@ -625,7 +627,7 @@ public class Employee
             //独裁文化倾向
             if (Character[0] < -50)
                 value += 15;
-
+            value += BaseMotivation[2];
         }
         else if (type == 3)
         {
@@ -648,6 +650,7 @@ public class Employee
             //随心所以偏好
             if (Character[3] < -50)
                 value += 15;
+            value += BaseMotivation[3];
         }
 
         return value;
@@ -657,28 +660,29 @@ public class Employee
     {
         int value1 = CheckMotivation(0), value2 = CheckMotivation(1), value3 = CheckMotivation(2), value4 = CheckMotivation(3), Motiv = 0;
         List<Event> EF = new List<Event>(), E = new List<Event>();
+
         if (value1 >= value2 && value1 >= value3 && value1 >= value4)
         {
-            EF = EventData.StudyForceEvents;
-            E = EventData.StudyEvents;
+            EventData.CopyList(EF, EventData.StudyForceEvents);
+            EventData.CopyList(E, EventData.StudyEvents);
             Motiv = value1;
         }
         else if (value2 >= value1 && value2 >= value3 && value2 >= value4)
         {
-            EF = EventData.RecoverForceEvent;
-            E = EventData.RecoverEvent;
+            EventData.CopyList(EF, EventData.RecoverForceEvent);
+            EventData.CopyList(E, EventData.RecoverEvent);
             Motiv = value2;
         }
         else if (value3 >= value1 && value3 >= value2 && value3 >= value4)
         {
-            EF = EventData.AmbitionForceEvent;
-            E = EventData.AmbitionEvent;
+            EventData.CopyList(EF, EventData.AmbitionForceEvent);
+            EventData.CopyList(E, EventData.AmbitionEvent);
             Motiv = value3;
         }
         else
         {
-            EF = EventData.SocialForceEvent;
-            E = EventData.SocialEvent;
+            EventData.CopyList(EF, EventData.SocialForceEvent);
+            EventData.CopyList(E, EventData.SocialEvent);
             Motiv = value4;
         }
         //先检测排他事件
@@ -710,6 +714,7 @@ public class Employee
                 E.Remove(e);
             }
         }
+        MonoBehaviour.print("R:" + EF.Count);
     }
 
     public void TimePass()

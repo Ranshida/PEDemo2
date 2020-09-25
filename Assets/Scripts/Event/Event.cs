@@ -7,8 +7,10 @@ public enum EventType
     工作学习, 心体恢复, 谋划野心, 关系交往
 }
 
+//基类
 public class Event
 {
+    public int FailureNum = 0;//用来检测干预事件发生前是大失败还是失败
     public int MinFaith = 101;
     public int MotivationRequire = 3; //1弱 2弱中 3弱中强 4中 5中强 6强
     public int MoralRequire = 0; // 0无 1功利主义 2中庸 3绝对律令
@@ -17,7 +19,6 @@ public class Event
     public bool HaveTarget = true;
     public string EventName = "无";
     public string ResultText = "无";
-    public string OptionEventDescribe, OptionAText, OptionBText, OptionCText, OptionDText;
 
 
     public GameControl GC;
@@ -39,6 +40,7 @@ public class Event
         //防止没设置上
         if (GC == null)
             GC = GameControl.Instance;
+
         //建筑需求检测
         if (BuildingCheck() == false)
             return false;
@@ -194,7 +196,6 @@ public class Event
         AddHistory();
         MonoBehaviour.print(Self.Name + "发生了事件" + EventName);
     }
-
     //事件结果判定
     public virtual int FindResult()
     {
@@ -306,6 +307,38 @@ public class Event
         }
         return Value;
     }
+    public int CEORelationBonus(Employee Emp)
+    {
+        int Value = 0;
+        Relation r = Emp.FindRelation(GC.CurrentEmployees[0]);
+        if (r.FriendValue == -2)
+            Value -= 4;
+        else if (r.FriendValue == -1)
+            Value -= 2;
+        else if (r.FriendValue == 1)
+            Value += 1;
+        else if (r.FriendValue == 2)
+            Value += 3;
+
+        if (r.MasterValue == 1)
+            Value += 1;
+        else if (r.MasterValue == 2)
+            Value += 2;
+
+        if (r.LoveValue == 1)
+            Value += 1;
+        else if (r.LoveValue == 2)
+            Value -= 1;
+        else if (r.LoveValue == 3)
+            Value += 2;
+        else if (r.LoveValue == 4)
+            Value += 3;
+
+        if (Self.CurrentClique == Target.CurrentClique)
+            Value += 3;
+
+        return Value;
+    }
     //文化信仰点数判定
     public int CRBonus(bool Reverse = false)
     {
@@ -372,11 +405,22 @@ public class Event
         return Value;
     }
 
-    public void AddSolvableEvent()
+    //干预事件相关
+    public virtual void AddSolvableEvent()
     {
-
+        TimeLeft = 6;
+        GC.EC.CreateEventInfo(this);
+    }
+    public virtual string SetSolvableEventText(int type)
+    {
+        return "";
+    }
+    public virtual string ConfirmEventSelect(int type)
+    {
+        return "";
     }
 
+    //添加时间历史（暂时）
     public void AddHistory()
     {
         if(Target != null)
@@ -403,6 +447,7 @@ public class Event
         return (Event)this.MemberwiseClone();
     }
 }
+
 //要求涨工资
 public class Event1: Event
 {
@@ -1847,30 +1892,24 @@ public class Event19 : Event
         return Extra;
     }
 
+    public override bool SpecialCheck()
+    {
+        if (Self == GC.CurrentEmployees[0] || Target == GC.CurrentEmployees[0])
+            return false;
+        return true;
+    }
+
     public override void MajorFailure(float Posb)
     {
         base.MajorFailure(Posb);
-        Self.Mentality -= 15;
-        Self.ChangeCharacter(2, -30);
-        Self.ChangeCharacter(4, -5);
-        if (Posb < 0.5f)
-            Self.ChangeCharacter(0, 30);
-        else
-            Self.ChangeCharacter(3, -30);
+        FailureNum = 1;
         AddSolvableEvent();
-        ResultText += "信念-5，单方面心力下降15点，功利主义倾向大幅增加（+30）";
     }
     public override void Failure(float Posb)
     {
         base.Failure(Posb);
-        Self.Mentality -= 5;
-        Self.ChangeCharacter(2, -10);
-        if (Posb < 0.5f)
-            Self.ChangeCharacter(0, 10);
-        else
-            Self.ChangeCharacter(3, -10);
+        FailureNum = 2;
         AddSolvableEvent();
-        ResultText += "单方面心力下降5点，功利主义倾向小幅增加（+10）";
     }
     public override void Success(float Posb)
     {
@@ -1893,6 +1932,157 @@ public class Event19 : Event
             Self.ChangeCharacter(3, 30);
         ResultText += "对方绝对律令倾向大幅增加（+30），信念+5";
     }
+    public override string SetSolvableEventText(int type)
+    {
+        string Content = "";
+        Employee CEO = GC.CurrentEmployees[0];
+        if (type == 0)
+            Content = Self.Name + "感到闷闷不乐，仿佛头顶聚集着一大片积雨云，直到在走廊上碰到你时，对方仍然在唉声叹气。“难道没有人在乎穷人了吗？”于是" +
+              Self.Name + "希望你来主持公道。";
+        else if (type == 1)
+        {
+            int value = (CEORelationBonus(Self) + CEORelationBonus(Target)) / 2;
+            if (CEO.Character[2] > 50)
+                value += 2;
+            value += (int)(CEO.Convince * 0.1f);
+            int Posb = (int)((4 + value) / 11.0f * 100);
+            if (Posb > 100)
+                Posb = 100;
+            Content = "支持" + Self.Name + "(说服,绝对律令)成功率:" + Posb + "%"; 
+        }
+        else if (type == 2)
+        {
+            int value = (CEORelationBonus(Self) + CEORelationBonus(Target)) / 2;
+            if (CEO.Character[2] < -50)
+                value += 2;
+            value += (int)(CEO.Convince * 0.1f);
+            int Posb = (int)((4 + value) / 11.0f * 100);
+            if (Posb > 100)
+                Posb = 100;
+            Content = "支持" + Target.Name + "(说服,功利主义)成功率:" + Posb + "%";
+        }
+        else if (type == 3)
+        {
+            int value = (CEORelationBonus(Self) + CEORelationBonus(Target)) / 2;
+            value += (int)(CEO.Strategy * 0.2f);
+            int Posb = (int)((4 + value) / 11.0f * 100);
+            if (Posb > 100)
+                Posb = 100;
+            Content = "激化矛盾" + "(谋略)成功率:" + Posb + "%";
+        }
+        else if (type == 4)
+        {
+            int value = (CEORelationBonus(Self) + CEORelationBonus(Target)) / 2;
+            value += (int)(CEO.HR * 0.1f);
+            int Posb = (int)((4 + value) / 11.0f * 100);
+            if (Posb > 100)
+                Posb = 100;
+            Content = "调停矛盾" + "(人力)成功率:" + Posb + "%";
+        }
+        return Content;
+    }
+
+    public override string ConfirmEventSelect(int type)
+    {
+        Employee CEO = GC.CurrentEmployees[0];
+        int value = (CEORelationBonus(Self) + CEORelationBonus(Target)) / 2;
+        int RValue = Random.Range(2, 12);
+        if (type == 1)
+        {
+            if (CEO.Character[2] > 50)
+                value += 2;
+            value += (int)(CEO.Convince * 0.1f);
+            if (RValue + value > 8)
+            {
+                Self.ChangeRelation(CEO, 10);
+                Self.ChangeCharacter(4, 5);
+                Self.Mentality += 10;
+                CEO.ChangeCharacter(2, 10);
+                Target.ChangeRelation(CEO, -10);
+                Target.ChangeCharacter(4, -5);
+                Target.Mentality -= 10;
+                Self.InfoDetail.AddHistory("在" + EventName + "事件中受到CEO支持,对CEO好感度+10，信念+5，心力+10，CEO在绝对律令倾向+10");
+                Target.InfoDetail.AddHistory("在" + EventName + "事件中受到CEO反对,对CEO好感度-10，信念-5，心力-10，CEO在绝对律令倾向+10");
+                return "(成功) " + Self.Name + "对CEO好感度+10，" + Self.Name + "信念+5 " + Self.Name + "心力+10，CEO在绝对律令倾向+10，"
+                    + Target.Name + "对CEO好感度-10，" + Target.Name + "信念-5，" + Target.Name + "心力-10";
+            }
+        }
+        else if (type == 2)
+        {
+            if (CEO.Character[2] > 50)
+                value += 2;
+            value += (int)(CEO.Convince * 0.1f);
+            if (RValue + value > 8)
+            {
+                Target.ChangeRelation(CEO, 10);
+                Target.ChangeCharacter(4, 5);
+                Target.Mentality += 10;
+                CEO.ChangeCharacter(2, -10);
+                Self.ChangeRelation(CEO, -10);
+                Self.ChangeCharacter(4, -5);
+                Self.Mentality -= 10;
+                Target.InfoDetail.AddHistory("在" + EventName + "事件中受到CEO支持,对CEO好感度+10，信念+5，心力+10，CEO在功利主义倾向+10");
+                Self.InfoDetail.AddHistory("在" + EventName + "事件中受到CEO反对,对CEO好感度-10，信念-5，心力-10，CEO在功利主义倾向+10");
+                return "(成功) " + Target.Name + "对CEO好感度+10，" + Target.Name + "信念+5 " + Target.Name + "心力+10，CEO在功利主义倾向+10，"
+                    + Self.Name + "对CEO好感度-10，" + Self.Name + "信念-5，" + Self.Name + "心力-10";
+            }
+        }
+        else if (type == 3)
+        {
+            value += (int)(CEO.Strategy * 0.2f);
+            if (RValue + value > 8)
+            {
+                Target.ChangeRelation(Self, -20);
+                Self.ChangeRelation(Target, -20);
+                Target.InfoDetail.AddHistory("在" + EventName + "事件中受到CEO挑拨,双方之间好感度-20");
+                Self.InfoDetail.AddHistory("在" + EventName + "事件中受到CEO挑拨,双方之间好感度-20");
+                return "(成功) " + Target.Name + "与" + Self.Name + "双方之间好感度-20";
+            }
+        }
+        else if (type == 4)
+        {
+            value += (int)(CEO.HR * 0.1f);
+            if (RValue + value > 8)
+            {
+                Target.ChangeRelation(Self, 10);
+                Target.ChangeRelation(CEO, 5);
+                Self.ChangeRelation(Target, 10);
+                Self.ChangeRelation(CEO, 5);
+                Target.InfoDetail.AddHistory("在" + EventName + "事件中受到CEO调停,双方之间好感度+10，对CEO好感度+5");
+                Self.InfoDetail.AddHistory("在" + EventName + "事件中受到CEO调停,双方之间好感度+10，对CEO好感度+5");
+                return "(成功) " + Target.Name + "与" + Self.Name + "双方之间好感度+10，" + Target.Name + "对CEO好感度+5，" + Self.Name + "对CEO好感度+5";
+            }
+        }
+
+        if (FailureNum == 1)
+        {
+            float Posb = Random.Range(0.0f, 1.0f);
+            Self.Mentality -= 15;
+            Self.ChangeCharacter(2, -30);
+            Self.ChangeCharacter(4, -5);
+            if (Posb < 0.5f)
+                Self.ChangeCharacter(0, 30);
+            else
+                Self.ChangeCharacter(3, -30);
+            ResultText += "信念-5，单方面心力下降15点，功利主义倾向大幅增加（+30）";
+            AddHistory();
+            return "(失败)" + Self.Name + "信念-5，单方面心力下降15点，功利主义倾向大幅增加（+30）";
+        }
+        else
+        {
+            float Posb = Random.Range(0.0f, 1.0f);
+            Self.Mentality -= 5;
+            Self.ChangeCharacter(2, -10);
+            if (Posb < 0.5f)
+                Self.ChangeCharacter(0, 10);
+            else
+                Self.ChangeCharacter(3, -10);
+            ResultText += "单方面心力下降5点，功利主义倾向小幅增加（+10）";
+            AddHistory();
+            return "(失败)" + Self.Name + "单方面心力下降5点，功利主义倾向小幅增加（+10）";
+        }
+    }
+
 }
 
 //友善交谈1
@@ -1975,6 +2165,12 @@ public class Event21 : Event
         MotivationRequire = 2;
         MoralRequire = 2;
     }
+    public override bool SpecialCheck()
+    {
+        if (Self == GC.CurrentEmployees[0] || Target == GC.CurrentEmployees[0])
+            return false;
+        return true;
+    }
     public override int ExtraValue()
     {
         int Extra = 0;
@@ -1988,29 +2184,14 @@ public class Event21 : Event
     public override void MajorFailure(float Posb)
     {
         base.MajorFailure(Posb);
-        Self.ChangeRelation(Target, -20);
-        Target.ChangeRelation(Self, -20);
-        Self.ChangeCharacter(4, -5);
-        Self.Mentality -= 15;
-        if (Posb < 0.5f)
-            Self.ChangeCharacter(0, 30);
-        else
-            Self.ChangeCharacter(3, -30);
+        FailureNum = 1;
         AddSolvableEvent();
-        ResultText += "信念-5，双方好感下降20点，单方面心力下降15点";
     }
     public override void Failure(float Posb)
     {
         base.Failure(Posb);
-        Self.ChangeRelation(Target, -10);
-        Target.ChangeRelation(Self, -10);
-        Self.Mentality -= 5;
-        if (Posb < 0.5f)
-            Self.ChangeCharacter(0, 10);
-        else
-            Self.ChangeCharacter(3, -10);
+        FailureNum = 2;
         AddSolvableEvent();
-        ResultText += "双方好感下降10点，单方面心力下降5点";
     }
     public override void Success(float Posb)
     {
@@ -2034,6 +2215,147 @@ public class Event21 : Event
         else
             Self.ChangeCharacter(3, 30);
         ResultText += "信念+5，双方好感上升了20点";
+    }
+    public override string SetSolvableEventText(int type)
+    {
+        string Content = "";
+        Employee CEO = GC.CurrentEmployees[0];
+        if (type == 0)
+            Content = Target.Name + "向你举报" + Self.Name + "无事生非，在办公室里传播八卦，抹黑CEO，但是被自己强烈谴责，所以向CEO说明情况";
+        else if (type == 1)
+        {
+            int value = (CEORelationBonus(Self) + CEORelationBonus(Target)) / 2;
+            value += (int)(CEO.Gossip * 0.2f);
+            int Posb = (int)((4 + value) / 11.0f * 100);
+            if (Posb > 100)
+                Posb = 100;
+            Content = "支持" + Self.Name + "(八卦)成功率:" + Posb + "%";
+        }
+        else if (type == 2)
+        {
+            int value = (CEORelationBonus(Self) + CEORelationBonus(Target)) / 2;
+            value += (int)(CEO.Convince * 0.2f);
+            int Posb = (int)((4 + value) / 11.0f * 100);
+            if (Posb > 100)
+                Posb = 100;
+            Content = "支持" + Target.Name + "(说服)成功率:" + Posb + "%";
+        }
+        else if (type == 3)
+        {
+            int value = (CEORelationBonus(Self) + CEORelationBonus(Target)) / 2;
+            value += (int)(CEO.Strategy * 0.2f);
+            int Posb = (int)((4 + value) / 11.0f * 100);
+            if (Posb > 100)
+                Posb = 100;
+            Content = "激化矛盾" + "(谋略)成功率:" + Posb + "%";
+        }
+        else if (type == 4)
+        {
+            int value = (CEORelationBonus(Self) + CEORelationBonus(Target)) / 2;
+            value += (int)(CEO.HR * 0.1f);
+            int Posb = (int)((4 + value) / 11.0f * 100);
+            if (Posb > 100)
+                Posb = 100;
+            Content = "调停矛盾" + "(人力)成功率:" + Posb + "%";
+        }
+        return Content;
+    }
+
+    public override string ConfirmEventSelect(int type)
+    {
+        Employee CEO = GC.CurrentEmployees[0];
+        int value = (CEORelationBonus(Self) + CEORelationBonus(Target)) / 2;
+        int RValue = Random.Range(2, 12);
+        if (type == 1)
+        {
+            value += (int)(CEO.Gossip * 0.2f);
+            if (RValue + value > 8)
+            {
+                Self.ChangeRelation(CEO, 10);
+                Self.ChangeCharacter(4, 5);
+                Self.Mentality += 10;
+                Target.ChangeRelation(CEO, -10);
+                Target.ChangeCharacter(4, -5);
+                Target.Mentality -= 10;
+                Self.InfoDetail.AddHistory("在" + EventName + "事件中受到CEO支持,对CEO好感度+10，信念+5，心力+10");
+                Target.InfoDetail.AddHistory("在" + EventName + "事件中受到CEO反对,对CEO好感度-10，信念-5，心力-10");
+                return "(成功) " + Self.Name + "对CEO好感度+10，" + Self.Name + "信念+5 " + Self.Name + "心力+10，"
+                    + Target.Name + "对CEO好感度-10，" + Target.Name + "信念-5，" + Target.Name + "心力-10";
+            }
+        }
+        else if (type == 2)
+        {
+            value += (int)(CEO.Convince * 0.2f);
+            if (RValue + value > 8)
+            {
+                Target.ChangeRelation(CEO, 10);
+                Target.ChangeCharacter(4, 5);
+                Target.Mentality += 10;
+                Self.ChangeRelation(CEO, -10);
+                Self.ChangeCharacter(4, -5);
+                Self.Mentality -= 10;
+                Target.InfoDetail.AddHistory("在" + EventName + "事件中受到CEO支持,对CEO好感度+10，信念+5，心力+10");
+                Self.InfoDetail.AddHistory("在" + EventName + "事件中受到CEO反对,对CEO好感度-10，信念-5，心力-10");
+                return "(成功) " + Target.Name + "对CEO好感度+10，" + Target.Name + "信念+5 " + Target.Name + "心力+10，"
+                    + Self.Name + "对CEO好感度-10，" + Self.Name + "信念-5，" + Self.Name + "心力-10";
+            }
+        }
+        else if (type == 3)
+        {
+            value += (int)(CEO.Strategy * 0.2f);
+            if (RValue + value > 8)
+            {
+                Target.ChangeRelation(Self, -20);
+                Self.ChangeRelation(Target, -20);
+                Target.InfoDetail.AddHistory("在" + EventName + "事件中受到CEO挑拨,双方之间好感度-20");
+                Self.InfoDetail.AddHistory("在" + EventName + "事件中受到CEO挑拨,双方之间好感度-20");
+                return "(成功) " + Target.Name + "与" + Self.Name + "双方之间好感度-20";
+            }
+        }
+        else if (type == 4)
+        {
+            value += (int)(CEO.HR * 0.1f);
+            if (RValue + value > 8)
+            {
+                Target.ChangeRelation(Self, 10);
+                Target.ChangeRelation(CEO, 5);
+                Self.ChangeRelation(Target, 10);
+                Self.ChangeRelation(CEO, 5);
+                Target.InfoDetail.AddHistory("在" + EventName + "事件中受到CEO调停,双方之间好感度+10，对CEO好感度+5");
+                Self.InfoDetail.AddHistory("在" + EventName + "事件中受到CEO调停,双方之间好感度+10，对CEO好感度+5");
+                return "(成功) " + Target.Name + "与" + Self.Name + "双方之间好感度+10，" + Target.Name + "对CEO好感度+5，" + Self.Name + "对CEO好感度+5";
+            }
+        }
+
+        if (FailureNum == 1)
+        {
+            float Posb = Random.Range(0.0f, 1.0f);
+            Self.ChangeRelation(Target, -20);
+            Target.ChangeRelation(Self, -20);
+            Self.ChangeCharacter(4, -5);
+            Self.Mentality -= 15;
+            if (Posb < 0.5f)
+                Self.ChangeCharacter(0, 30);
+            else
+                Self.ChangeCharacter(3, -30);
+            ResultText += "信念-5，双方好感下降20点，单方面心力下降15点";
+            AddHistory();
+            return "(失败)" + Self.Name + "信念-5，双方好感下降20点，单方面心力下降15点";
+        }
+        else
+        {
+            float Posb = Random.Range(0.0f, 1.0f);
+            Self.ChangeRelation(Target, -10);
+            Target.ChangeRelation(Self, -10);
+            Self.Mentality -= 5;
+            if (Posb < 0.5f)
+                Self.ChangeCharacter(0, 10);
+            else
+                Self.ChangeCharacter(3, -10);
+            ResultText += "双方好感下降10点，单方面心力下降5点";
+            AddHistory();
+            return "(失败)" + Self.Name + "双方好感下降10点，单方面心力下降5点";
+        }
     }
 }
 
@@ -2086,7 +2408,6 @@ public class Event22 : Event
             Self.ChangeCharacter(0, 30);
         else
             Self.ChangeCharacter(3, -30);
-        AddSolvableEvent();
         ResultText += "信念-5，双方好感下降25点，单方面心力下降20点";
     }
     public override void Failure(float Posb)
@@ -2099,7 +2420,6 @@ public class Event22 : Event
             Self.ChangeCharacter(0, 10);
         else
             Self.ChangeCharacter(3, -10);
-        AddSolvableEvent();
         ResultText += "双方好感下降15点，单方面心力下降10点";
     }
     public override void Success(float Posb)
@@ -2137,6 +2457,12 @@ public class Event23 : Event
         MotivationRequire = 3;
         MoralRequire = 1;
     }
+    public override bool SpecialCheck()
+    {
+        if (Self == GC.CurrentEmployees[0] || Target == GC.CurrentEmployees[0])
+            return false;
+        return true;
+    }
     public override int ExtraValue()
     {
         int Extra = 0;
@@ -2144,33 +2470,20 @@ public class Event23 : Event
         Extra += (int)(Self.Convince * 0.2);
 
         Extra += RelationBonus() + CRBonus() + MoraleBonus(1);
-        return Extra;
+        return -10;
     }
 
     public override void MajorFailure(float Posb)
     {
         base.MajorFailure(Posb);
-        Target.Mentality -= 15;
-        Self.ChangeCharacter(2, 30);
-        Self.ChangeCharacter(4, -5);
-        if (Posb < 0.5f)
-            Self.ChangeCharacter(0, 30);
-        else
-            Self.ChangeCharacter(3, -30);
+        FailureNum = 1;
         AddSolvableEvent();
-        ResultText += "信念-5，对方心力下降15点，绝对律令倾向大幅增加（+30）";
     }
     public override void Failure(float Posb)
     {
         base.Failure(Posb);
-        Target.Mentality -= 5;
-        Self.ChangeCharacter(2, 10);
-        if (Posb < 0.5f)
-            Self.ChangeCharacter(0, 10);
-        else
-            Self.ChangeCharacter(3, -10);
+        FailureNum = 2;
         AddSolvableEvent();
-        ResultText += "对方心力下降5点，绝对律令倾向小幅增加（+10）";
     }
     public override void Success(float Posb)
     {
@@ -2193,6 +2506,155 @@ public class Event23 : Event
         else
             Self.ChangeCharacter(3, 30);
         ResultText += "信念+5 对方功利主义倾向小幅增加（+30）单方面好感+20";
+    }
+    public override string SetSolvableEventText(int type)
+    {
+        string Content = "";
+        Employee CEO = GC.CurrentEmployees[0];
+        if (type == 0)
+            Content = Self.Name + "到处转来转去焦躁不安，就像是一个待喷发的火山。一边转悠一边还嘟囔着“现在的年轻人太不像话了！”之类的，" +
+                "被烦扰的同事偷偷向你报告，希望你能解决一下。";
+        else if (type == 1)
+        {
+            int value = (CEORelationBonus(Self) + CEORelationBonus(Target)) / 2;
+            if (CEO.Character[2] < -50)
+                value += 2;
+            value += (int)(CEO.Convince * 0.1f);
+            int Posb = (int)((4 + value) / 11.0f * 100);
+            if (Posb > 100)
+                Posb = 100;
+            Content = "支持" + Self.Name + "(说服,功利主义)成功率:" + Posb + "%";
+        }
+        else if (type == 2)
+        {
+            int value = (CEORelationBonus(Self) + CEORelationBonus(Target)) / 2;
+            if (CEO.Character[2] > 50)
+                value += 2;
+            value += (int)(CEO.Convince * 0.1f);
+            int Posb = (int)((4 + value) / 11.0f * 100);
+            if (Posb > 100)
+                Posb = 100;
+            Content = "支持" + Target.Name + "(说服,绝对律令)成功率:" + Posb + "%";
+        }
+        else if (type == 3)
+        {
+            int value = (CEORelationBonus(Self) + CEORelationBonus(Target)) / 2;
+            value += (int)(CEO.Strategy * 0.2f);
+            int Posb = (int)((4 + value) / 11.0f * 100);
+            if (Posb > 100)
+                Posb = 100;
+            Content = "激化矛盾" + "(谋略)成功率:" + Posb + "%";
+        }
+        else if (type == 4)
+        {
+            int value = (CEORelationBonus(Self) + CEORelationBonus(Target)) / 2;
+            value += (int)(CEO.HR * 0.1f);
+            int Posb = (int)((4 + value) / 11.0f * 100);
+            if (Posb > 100)
+                Posb = 100;
+            Content = "调停矛盾" + "(人力)成功率:" + Posb + "%";
+        }
+        return Content;
+    }
+    public override string ConfirmEventSelect(int type)
+    {
+        Employee CEO = GC.CurrentEmployees[0];
+        int value = (CEORelationBonus(Self) + CEORelationBonus(Target)) / 2;
+        int RValue = Random.Range(2, 12);
+        if (type == 1)
+        {
+            if (CEO.Character[2] < -50)
+                value += 2;
+            value += (int)(CEO.Convince * 0.1f);
+            if (RValue + value > 8)
+            {
+                Self.ChangeRelation(CEO, 10);
+                Self.ChangeCharacter(4, 5);
+                Self.Mentality += 10;
+                CEO.ChangeCharacter(2, -10);
+                Target.ChangeRelation(CEO, -10);
+                Target.ChangeCharacter(4, -5);
+                Target.Mentality -= 10;
+                Self.InfoDetail.AddHistory("在" + EventName + "事件中受到CEO支持,对CEO好感度+10，信念+5，心力+10，CEO在功利主义倾向+10");
+                Target.InfoDetail.AddHistory("在" + EventName + "事件中受到CEO反对,对CEO好感度-10，信念-5，心力-10，CEO在功利主义倾向+10");
+                return "(成功) " + Self.Name + "对CEO好感度+10，" + Self.Name + "信念+5 " + Self.Name + "心力+10，CEO在绝对律令倾向+10，"
+                    + Target.Name + "对CEO好感度-10，" + Target.Name + "信念-5，" + Target.Name + "心力-10";
+            }
+        }
+        else if (type == 2)
+        {
+            if (CEO.Character[2] > 50)
+                value += 2;
+            value += (int)(CEO.Convince * 0.1f);
+            if (RValue + value > 8)
+            {
+                Target.ChangeRelation(CEO, 10);
+                Target.ChangeCharacter(4, 5);
+                Target.Mentality += 10;
+                CEO.ChangeCharacter(2, 10);
+                Self.ChangeRelation(CEO, 10);
+                Self.ChangeCharacter(4, -5);
+                Self.Mentality -= 10;
+                Target.InfoDetail.AddHistory("在" + EventName + "事件中受到CEO支持,对CEO好感度+10，信念+5，心力+10，CEO在绝对律令倾向+10");
+                Self.InfoDetail.AddHistory("在" + EventName + "事件中受到CEO反对,对CEO好感度-10，信念-5，心力-10，CEO在绝对律令倾向+10");
+                return "(成功) " + Target.Name + "对CEO好感度+10，" + Target.Name + "信念+5 " + Target.Name + "心力+10，CEO在绝对律令倾向+10，"
+                    + Self.Name + "对CEO好感度-10，" + Self.Name + "信念-5，" + Self.Name + "心力-10";
+            }
+        }
+        else if (type == 3)
+        {
+            value += (int)(CEO.Strategy * 0.2f);
+            if (RValue + value > 8)
+            {
+                Target.ChangeRelation(Self, -20);
+                Self.ChangeRelation(Target, -20);
+                Target.InfoDetail.AddHistory("在" + EventName + "事件中受到CEO挑拨,双方之间好感度-20");
+                Self.InfoDetail.AddHistory("在" + EventName + "事件中受到CEO挑拨,双方之间好感度-20");
+                return "(成功) " + Target.Name + "与" + Self.Name + "双方之间好感度-20";
+            }
+        }
+        else if (type == 4)
+        {
+            value += (int)(CEO.HR * 0.1f);
+            if (RValue + value > 8)
+            {
+                Target.ChangeRelation(Self, 10);
+                Target.ChangeRelation(CEO, 5);
+                Self.ChangeRelation(Target, 10);
+                Self.ChangeRelation(CEO, 5);
+                Target.InfoDetail.AddHistory("在" + EventName + "事件中受到CEO调停,双方之间好感度+10，对CEO好感度+5");
+                Self.InfoDetail.AddHistory("在" + EventName + "事件中受到CEO调停,双方之间好感度+10，对CEO好感度+5");
+                return "(成功) " + Target.Name + "与" + Self.Name + "双方之间好感度+10，" + Target.Name + "对CEO好感度+5，" + Self.Name + "对CEO好感度+5";
+            }
+        }
+
+        if (FailureNum == 1)
+        {
+            float Posb = Random.Range(0.0f, 1.0f);
+            Target.Mentality -= 15;
+            Self.ChangeCharacter(2, 30);
+            Self.ChangeCharacter(4, -5);
+            if (Posb < 0.5f)
+                Self.ChangeCharacter(0, 30);
+            else
+                Self.ChangeCharacter(3, -30);
+            ResultText += "信念-5，对方心力下降15点，绝对律令倾向大幅增加（+30）";
+            AddHistory();
+            return "(失败)" + Self.Name + "信念-5，对方心力下降15点，绝对律令倾向大幅增加（+30）";
+        }
+        else
+        {
+            float Posb = Random.Range(0.0f, 1.0f);
+            Target.Mentality -= 5;
+            Self.ChangeCharacter(2, 10);
+            if (Posb < 0.5f)
+                Self.ChangeCharacter(0, 10);
+            else
+                Self.ChangeCharacter(3, -10);
+            ResultText += "对方心力下降5点，绝对律令倾向小幅增加（+10）";
+            AddHistory();
+            return "(失败)" + Self.Name + "对方心力下降5点，绝对律令倾向小幅增加（+10）";
+        }
     }
 }
 
@@ -2458,10 +2920,11 @@ public class Event28 : Event
         MotivationRequire = 5;
         ReligionRequire = 1;
     }
-
     public override bool SpecialCheck()
     {
-        for(int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
+        if (Self == GC.CurrentEmployees[0] || Target == GC.CurrentEmployees[0])
+            return false;
+        for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
         {
             if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 11)
                 return true;
@@ -2481,27 +2944,14 @@ public class Event28 : Event
     public override void MajorFailure(float Posb)
     {
         base.MajorFailure(Posb);
-        Target.Mentality -= 15;
-        Target.ChangeRelation(Self, -15);
-        Self.ChangeCharacter(4, -5);
-        if (Posb < 0.5f)
-            Self.ChangeCharacter(0, 30);
-        else
-            Self.ChangeCharacter(3, -30);
+        FailureNum = 1;
         AddSolvableEvent();
-        ResultText += "信念-5，对方心力-15  对方单方面好感-15";
     }
     public override void Failure(float Posb)
     {
         base.Failure(Posb);
-        Target.Mentality -= 5;
-        Target.ChangeRelation(Self, -5);
-        if (Posb < 0.5f)
-            Self.ChangeCharacter(0, 10);
-        else
-            Self.ChangeCharacter(3, -10);
+        FailureNum = 2;
         AddSolvableEvent();
-        ResultText += "对方心力-5 对方单方面好感-5";
     }
     public override void Success(float Posb)
     {
@@ -2526,6 +2976,155 @@ public class Event28 : Event
             Self.ChangeCharacter(3, 30);
         ResultText += "对方机械智能信仰大幅增加（+30）单方面好感+10，信念+5";
     }
+    public override string SetSolvableEventText(int type)
+    {
+        string Content = "";
+        Employee CEO = GC.CurrentEmployees[0];
+        if (type == 0)
+            Content = Self.Name + "还在四处转悠寻找下一个猎物，“愚蠢！”“迷失的人类！”，" + Self.Name + "一边低声重复着一边抚摸手里的微型机器人，" +
+                "不知不觉便走到了你面前，向你抱怨那些拒绝传教的“迷途羔羊”。";
+        else if (type == 1)
+        {
+            int value = (CEORelationBonus(Self) + CEORelationBonus(Target)) / 2;
+            if (CEO.Character[1] < -50)
+                value += 2;
+            value += (int)(CEO.Convince * 0.1f);
+            int Posb = (int)((4 + value) / 11.0f * 100);
+            if (Posb > 100)
+                Posb = 100;
+            Content = "支持" + Self.Name + "(说服,机械飞升)成功率:" + Posb + "%";
+        }
+        else if (type == 2)
+        {
+            int value = (CEORelationBonus(Self) + CEORelationBonus(Target)) / 2;
+            if (CEO.Character[1] > 50)
+                value += 2;
+            value += (int)(CEO.Convince * 0.1f);
+            int Posb = (int)((4 + value) / 11.0f * 100);
+            if (Posb > 100)
+                Posb = 100;
+            Content = "支持" + Target.Name + "(说服,人文主义)成功率:" + Posb + "%";
+        }
+        else if (type == 3)
+        {
+            int value = (CEORelationBonus(Self) + CEORelationBonus(Target)) / 2;
+            value += (int)(CEO.Strategy * 0.2f);
+            int Posb = (int)((4 + value) / 11.0f * 100);
+            if (Posb > 100)
+                Posb = 100;
+            Content = "激化矛盾" + "(谋略)成功率:" + Posb + "%";
+        }
+        else if (type == 4)
+        {
+            int value = (CEORelationBonus(Self) + CEORelationBonus(Target)) / 2;
+            value += (int)(CEO.HR * 0.1f);
+            int Posb = (int)((4 + value) / 11.0f * 100);
+            if (Posb > 100)
+                Posb = 100;
+            Content = "调停矛盾" + "(人力)成功率:" + Posb + "%";
+        }
+        return Content;
+    }
+    public override string ConfirmEventSelect(int type)
+    {
+        Employee CEO = GC.CurrentEmployees[0];
+        int value = (CEORelationBonus(Self) + CEORelationBonus(Target)) / 2;
+        int RValue = Random.Range(2, 12);
+        if (type == 1)
+        {
+            if (CEO.Character[1] < -50)
+                value += 2;
+            value += (int)(CEO.Convince * 0.1f);
+            if (RValue + value > 8)
+            {
+                Self.ChangeRelation(CEO, 10);
+                Self.ChangeCharacter(4, 5);
+                Self.Mentality += 10;
+                CEO.ChangeCharacter(1, -10);
+                Target.ChangeRelation(CEO, -10);
+                Target.ChangeCharacter(4, -5);
+                Target.Mentality -= 10;
+                Self.InfoDetail.AddHistory("在" + EventName + "事件中受到CEO支持,对CEO好感度+10，信念+5，心力+10，CEO机械飞升倾向+10");
+                Target.InfoDetail.AddHistory("在" + EventName + "事件中受到CEO反对,对CEO好感度-10，信念-5，心力-10，CEO机械飞升倾向+10");
+                return "(成功) " + Self.Name + "对CEO好感度+10，" + Self.Name + "信念+5 " + Self.Name + "心力+10，CEO机械飞升倾向+10，"
+                    + Target.Name + "对CEO好感度-10，" + Target.Name + "信念-5，" + Target.Name + "心力-10";
+            }
+        }
+        else if (type == 2)
+        {
+            if (CEO.Character[1] > 50)
+                value += 2;
+            value += (int)(CEO.Convince * 0.1f);
+            if (RValue + value > 8)
+            {
+                Target.ChangeRelation(CEO, 10);
+                Target.ChangeCharacter(4, 5);
+                Target.Mentality += 10;
+                CEO.ChangeCharacter(1, 10);
+                Self.ChangeRelation(CEO, 10);
+                Self.ChangeCharacter(4, -5);
+                Self.Mentality -= 10;
+                Target.InfoDetail.AddHistory("在" + EventName + "事件中受到CEO支持,对CEO好感度+10，信念+5，心力+10，CEO人文主义倾向+10");
+                Self.InfoDetail.AddHistory("在" + EventName + "事件中受到CEO反对,对CEO好感度-10，信念-5，心力-10，CEO人文主义倾向+10");
+                return "(成功) " + Target.Name + "对CEO好感度+10，" + Target.Name + "信念+5 " + Target.Name + "心力+10，CEO人文主义倾向+10，"
+                    + Self.Name + "对CEO好感度-10，" + Self.Name + "信念-5，" + Self.Name + "心力-10";
+            }
+        }
+        else if (type == 3)
+        {
+            value += (int)(CEO.Strategy * 0.2f);
+            if (RValue + value > 8)
+            {
+                Target.ChangeRelation(Self, -20);
+                Self.ChangeRelation(Target, -20);
+                Target.InfoDetail.AddHistory("在" + EventName + "事件中受到CEO挑拨,双方之间好感度-20");
+                Self.InfoDetail.AddHistory("在" + EventName + "事件中受到CEO挑拨,双方之间好感度-20");
+                return "(成功) " + Target.Name + "与" + Self.Name + "双方之间好感度-20";
+            }
+        }
+        else if (type == 4)
+        {
+            value += (int)(CEO.HR * 0.1f);
+            if (RValue + value > 8)
+            {
+                Target.ChangeRelation(Self, 10);
+                Target.ChangeRelation(CEO, 5);
+                Self.ChangeRelation(Target, 10);
+                Self.ChangeRelation(CEO, 5);
+                Target.InfoDetail.AddHistory("在" + EventName + "事件中受到CEO调停,双方之间好感度+10，对CEO好感度+5");
+                Self.InfoDetail.AddHistory("在" + EventName + "事件中受到CEO调停,双方之间好感度+10，对CEO好感度+5");
+                return "(成功) " + Target.Name + "与" + Self.Name + "双方之间好感度+10，" + Target.Name + "对CEO好感度+5，" + Self.Name + "对CEO好感度+5";
+            }
+        }
+
+        if (FailureNum == 1)
+        {
+            float Posb = Random.Range(0.0f, 1.0f);
+            Target.Mentality -= 15;
+            Target.ChangeRelation(Self, -15);
+            Self.ChangeCharacter(4, -5);
+            if (Posb < 0.5f)
+                Self.ChangeCharacter(0, 30);
+            else
+                Self.ChangeCharacter(3, -30);
+            ResultText += "信念-5，对方心力-15  对方单方面好感-15";
+            AddHistory();
+            return "(失败)" + Self.Name + "信念-5，对方心力-15  对方单方面好感-15";
+        }
+        else
+        {
+            float Posb = Random.Range(0.0f, 1.0f);
+            Target.Mentality -= 5;
+            Target.ChangeRelation(Self, -5);
+            if (Posb < 0.5f)
+                Self.ChangeCharacter(0, 10);
+            else
+                Self.ChangeCharacter(3, -10);
+            ResultText += "对方心力-5 对方单方面好感-5";
+            AddHistory();
+            return "(失败)" + Self.Name + "对方心力-5 对方单方面好感-5";
+        }
+    }
 }
 
 //狂热传教2 重点再查一下!!!!!!!!!!!
@@ -2538,9 +3137,10 @@ public class Event29 : Event
         MotivationRequire = 5;
         ReligionRequire = 3;
     }
-
     public override bool SpecialCheck()
     {
+        if (Self == GC.CurrentEmployees[0] || Target == GC.CurrentEmployees[0])
+            return false;
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
         {
             if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 11)
@@ -2561,28 +3161,14 @@ public class Event29 : Event
     public override void MajorFailure(float Posb)
     {
         base.MajorFailure(Posb);
-        Target.Mentality -= 15;
-        Target.ChangeRelation(Self, -15);
-        Self.ChangeCharacter(4, -5);
-        if (Posb < 0.5f)
-            Self.ChangeCharacter(0, 30);
-        else
-            Self.ChangeCharacter(3, -30);
+        FailureNum = 1;
         AddSolvableEvent();
-        ResultText += "信念-5，对方心力-15  对方单方面好感-15";
     }
     public override void Failure(float Posb)
     {
         base.Failure(Posb);
-        Target.Mentality -= 5;
-        Target.ChangeRelation(Self, -5);
-        Self.ChangeCharacter(4, 5);
-        if (Posb < 0.5f)
-            Self.ChangeCharacter(0, 10);
-        else
-            Self.ChangeCharacter(3, -10);
+        FailureNum = 2;
         AddSolvableEvent();
-        ResultText += "信念+5，对方心力-5 对方单方面好感-5";
     }
     public override void Success(float Posb)
     {
@@ -2605,6 +3191,159 @@ public class Event29 : Event
         else
             Self.ChangeCharacter(3, 30);
         ResultText += "对方人文主义信仰大幅增加（+30）单方面好感+10";
+    }
+
+    public override string SetSolvableEventText(int type)
+    {
+        string Content = "";
+        Employee CEO = GC.CurrentEmployees[0];
+        if (type == 0)
+            Content = Self.Name + "两个人的争吵让旁边的同事苦不堪言，虽然" +  Target.Name + "除了“松手！”之外什么也没说。" +
+                "你抵达现场时"+ Self.Name + "还在死命拽着" + Target.Name + "不撒手，没完没了地说着什么“人类是永远不会消失的" +
+                "除非所有人都信什么机械飞升”之类的话，" + Target.Name + "向你投来了求助的眼神。";
+        else if (type == 1)
+        {
+            int value = (CEORelationBonus(Self) + CEORelationBonus(Target)) / 2;
+            if (CEO.Character[1] > 50)
+                value += 2;
+            value += (int)(CEO.Convince * 0.1f);
+            int Posb = (int)((4 + value) / 11.0f * 100);
+            if (Posb > 100)
+                Posb = 100;
+            Content = "支持" + Self.Name + "(说服,人文主义)成功率:" + Posb + "%";
+        }
+        else if (type == 2)
+        {
+            int value = (CEORelationBonus(Self) + CEORelationBonus(Target)) / 2;
+            if (CEO.Character[1] < -50)
+                value += 2;
+            value += (int)(CEO.Convince * 0.1f);
+            int Posb = (int)((4 + value) / 11.0f * 100);
+            if (Posb > 100)
+                Posb = 100;
+            Content = "支持" + Target.Name + "(说服,机械飞升)成功率:" + Posb + "%";
+        }
+        else if (type == 3)
+        {
+            int value = (CEORelationBonus(Self) + CEORelationBonus(Target)) / 2;
+            value += (int)(CEO.Strategy * 0.2f);
+            int Posb = (int)((4 + value) / 11.0f * 100);
+            if (Posb > 100)
+                Posb = 100;
+            Content = "激化矛盾" + "(谋略)成功率:" + Posb + "%";
+        }
+        else if (type == 4)
+        {
+            int value = (CEORelationBonus(Self) + CEORelationBonus(Target)) / 2;
+            value += (int)(CEO.HR * 0.1f);
+            int Posb = (int)((4 + value) / 11.0f * 100);
+            if (Posb > 100)
+                Posb = 100;
+            Content = "调停矛盾" + "(人力)成功率:" + Posb + "%";
+        }
+        return Content;
+    }
+
+    public override string ConfirmEventSelect(int type)
+    {
+        Employee CEO = GC.CurrentEmployees[0];
+        int value = (CEORelationBonus(Self) + CEORelationBonus(Target)) / 2;
+        int RValue = Random.Range(2, 12);
+        if (type == 1)
+        {
+            if (CEO.Character[1] > 50)
+                value += 2;
+            value += (int)(CEO.Convince * 0.1f);
+            if (RValue + value > 8)
+            {
+                Self.ChangeRelation(CEO, 10);
+                Self.ChangeCharacter(4, 5);
+                Self.Mentality += 10;
+                CEO.ChangeCharacter(1, 10);
+                Target.ChangeRelation(CEO, -10);
+                Target.ChangeCharacter(4, -5);
+                Target.Mentality -= 10;
+                Self.InfoDetail.AddHistory("在" + EventName + "事件中受到CEO支持,对CEO好感度+10，信念+5，心力+10，CEO人文主义倾向+10");
+                Target.InfoDetail.AddHistory("在" + EventName + "事件中受到CEO反对,对CEO好感度-10，信念-5，心力-10，CEO人文主义倾向+10");
+                return "(成功) " + Self.Name + "对CEO好感度+10，" + Self.Name + "信念+5 " + Self.Name + "心力+10，CEO人文主义倾向+10，"
+                    + Target.Name + "对CEO好感度-10，" + Target.Name + "信念-5，" + Target.Name + "心力-10";
+            }
+        }
+        else if (type == 2)
+        {
+            if (CEO.Character[1] < -50)
+                value += 2;
+            value += (int)(CEO.Convince * 0.1f);
+            if (RValue + value > 8)
+            {
+                Target.ChangeRelation(CEO, 10);
+                Target.ChangeCharacter(4, 5);
+                Target.Mentality += 10;
+                CEO.ChangeCharacter(1, -10);
+                Self.ChangeRelation(CEO, 10);
+                Self.ChangeCharacter(4, -5);
+                Self.Mentality -= 10;
+                Target.InfoDetail.AddHistory("在" + EventName + "事件中受到CEO支持,对CEO好感度+10，信念+5，心力+10，CEO机械飞升倾向+10");
+                Self.InfoDetail.AddHistory("在" + EventName + "事件中受到CEO反对,对CEO好感度-10，信念-5，心力-10，CEO机械飞升倾向+10");
+                return "(成功) " + Target.Name + "对CEO好感度+10，" + Target.Name + "信念+5 " + Target.Name + "心力+10，CEO机械飞升倾向+10，"
+                    + Self.Name + "对CEO好感度-10，" + Self.Name + "信念-5，" + Self.Name + "心力-10";
+            }
+        }
+        else if (type == 3)
+        {
+            value += (int)(CEO.Strategy * 0.2f);
+            if (RValue + value > 8)
+            {
+                Target.ChangeRelation(Self, -20);
+                Self.ChangeRelation(Target, -20);
+                Target.InfoDetail.AddHistory("在" + EventName + "事件中受到CEO挑拨,双方之间好感度-20");
+                Self.InfoDetail.AddHistory("在" + EventName + "事件中受到CEO挑拨,双方之间好感度-20");
+                return "(成功) " + Target.Name + "与" + Self.Name + "双方之间好感度-20";
+            }
+        }
+        else if (type == 4)
+        {
+            value += (int)(CEO.HR * 0.1f);
+            if (RValue + value > 8)
+            {
+                Target.ChangeRelation(Self, 10);
+                Target.ChangeRelation(CEO, 5);
+                Self.ChangeRelation(Target, 10);
+                Self.ChangeRelation(CEO, 5);
+                Target.InfoDetail.AddHistory("在" + EventName + "事件中受到CEO调停,双方之间好感度+10，对CEO好感度+5");
+                Self.InfoDetail.AddHistory("在" + EventName + "事件中受到CEO调停,双方之间好感度+10，对CEO好感度+5");
+                return "(成功) " + Target.Name + "与" + Self.Name + "双方之间好感度+10，" + Target.Name + "对CEO好感度+5，" + Self.Name + "对CEO好感度+5";
+            }
+        }
+
+        if (FailureNum == 1)
+        {
+            float Posb = Random.Range(0.0f, 1.0f);
+            Target.Mentality -= 15;
+            Target.ChangeRelation(Self, -15);
+            Self.ChangeCharacter(4, -5);
+            if (Posb < 0.5f)
+                Self.ChangeCharacter(0, 30);
+            else
+                Self.ChangeCharacter(3, -30);
+            ResultText += "信念-5，对方心力-15  对方单方面好感-15";
+            AddHistory();
+            return "(失败)" + Self.Name + "信念-5，对方心力-15  对方单方面好感-15";
+        }
+        else
+        {
+            float Posb = Random.Range(0.0f, 1.0f);
+            Target.Mentality -= 5;
+            Target.ChangeRelation(Self, -5);
+            Self.ChangeCharacter(4, 5);
+            if (Posb < 0.5f)
+                Self.ChangeCharacter(0, 10);
+            else
+                Self.ChangeCharacter(3, -10);
+            ResultText += "信念+5，对方心力-5 对方单方面好感-5";
+            AddHistory();
+            return "(失败)" + Self.Name + "信念+5，对方心力-5 对方单方面好感-5";
+        }
     }
 }
 
@@ -2763,7 +3502,6 @@ public class Event31 : Event
             Self.ChangeCharacter(0, 10);
         else
             Self.ChangeCharacter(3, -10);
-        AddSolvableEvent();
         ResultText += "双方好感-5，双方心力-5";
     }
     public override void Success(float Posb)
@@ -2956,7 +3694,7 @@ public class Event33 : Event
             Self.ChangeCharacter(0, 10);
         else
             Self.ChangeCharacter(3, -10);
-        AddSolvableEvent();
+
         ResultText += "心力-10，信念-5";
     }
     public override void Success(float Posb)
@@ -4323,5 +5061,12 @@ static public class EventData
         new Event28(), new Event29(), new Event30(), new Event36(), new Event38(), new Event40()
     };
 
+    static public void CopyList(List<Event> Self, List<Event> Target)
+    {
+        for(int i = 0; i < Target.Count; i++)
+        {
+            Self.Add(Target[i]);
+        }
+    }
 }
     
