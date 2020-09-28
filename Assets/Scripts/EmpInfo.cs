@@ -12,7 +12,8 @@ public class EmpInfo : MonoBehaviour
     public Button HireButton;
     public Text Text_Name, Text_Mentality, Text_Stamina, Text_Skill1, Text_Skill2, Text_Skill3,  Text_Ability, Text_Age;
     public Text Text_DepName, Text_Observation, Text_Tenacity, Text_Strength, Text_Manage, Text_HR, Text_Finance, Text_Decision, 
-        Text_Forecast, Text_Strategy, Text_Convince, Text_Charm, Text_Gossip, Text_SName1, Text_SName2, Text_SName3;
+        Text_Forecast, Text_Strategy, Text_Convince, Text_Charm, Text_Gossip, Text_SName1, Text_SName2, Text_SName3,
+         Text_Motiv_Study, Text_Motiv_Recover, Text_Motive_Ambition, Text_Motiv_Social;
     public Text[] Text_Stars = new Text[5], Text_Exps = new Text[5];
     public Scrollbar[] Scrollbar_Character = new Scrollbar[5];
     public EmpInfo DetailInfo;
@@ -386,6 +387,14 @@ public class EmpInfo : MonoBehaviour
                 }
             }
         }
+    }
+
+    public void UpdateMotivationPanel()
+    {
+        Text_Motiv_Study.text = emp.CheckMotivationContent(0);
+        Text_Motiv_Recover.text = emp.CheckMotivationContent(1);
+        Text_Motive_Ambition.text = emp.CheckMotivationContent(2);
+        Text_Motiv_Social.text = emp.CheckMotivationContent(3);
     }
 
     //以下三个函数为战略充能相关

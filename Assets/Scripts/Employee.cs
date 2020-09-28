@@ -12,7 +12,7 @@ public class Employee
     static public int HeadHuntLevel = 11;
     public int Skill1, Skill2, Skill3, SkillExtra1, SkillExtra2, SkillExtra3, 
         Observation, Tenacity, Strength, Manage, HR, Finance, Decision, 
-        Forecast, Strategy, Convince, Charm, Gossip, SalaryExtra = 0, Age, EventTime, ObeyTime;
+        Forecast, Strategy, Convince, Charm, Gossip, SalaryExtra = 0, Age, EventTime, ObeyTime, NoPromotionTime = 0, NoMarriageTime = 0;
     public int Stamina
     {
         get { return stamina; }
@@ -577,14 +577,14 @@ public class Employee
                             value += 10;
                     }
                 }
-                //严格守序偏好
-                if (Character[3] > 50)
-                    value += 10;
-                //开源文化倾向
-                if (Character[1] > 50)
-                    value += 15;
-                value += BaseMotivation[0];
             }
+            //严格守序偏好
+            if (Character[3] > 0)
+                value += (int)(Character[3] * 0.25f);
+            //开源文化倾向
+            if (Character[1] > 0)
+                value += (int)(Character[1] * 0.25f);
+            value += BaseMotivation[0];
         }
         else if (type == 1)
         {
@@ -598,11 +598,11 @@ public class Employee
             else if (Stamina < 40)
                 value += 10;
             //独裁文化倾向
-            if (Character[0] < -50)
-                value += 10;
+            if (Character[0] < 0)
+                value += (int)(Mathf.Abs(Character[0]) * 0.25f);
             //严格守序偏好
-            if (Character[3] > 50)
-                value += 15;
+            if (Character[3] > 0)
+                value += (int)(Character[3] * 0.25f);
             value += BaseMotivation[1];
         }
         else if (type == 2)
@@ -617,25 +617,28 @@ public class Employee
                     value += 5;
             }
             //随心所欲偏好
-            if (Character[3] < -50)
-                value += 10;
+            if (Character[3] < 0)
+                value += (int)(Mathf.Abs(Character[3]) * 0.25f);
             //低于平均工资
             if (isCEO == false && InfoDetail.CalcSalary() < InfoDetail.GC.Salary / (InfoDetail.GC.CurrentEmployees.Count - 1))
                 value += 10;
             //一年之内无晋升-----------
-
+            if (NoPromotionTime >= 384)
+                value += 10;
             //独裁文化倾向
-            if (Character[0] < -50)
-                value += 15;
+            if (Character[0] < 0)
+                value += (int)(Mathf.Abs(Character[0]) * 0.25f);
             value += BaseMotivation[2];
         }
         else if (type == 3)
         {
             //开源文化倾向
-            if (Character[0] > 50)
-                value += 10;
+            if (Character[0] > 0)
+                value += (int)(Character[0] * 0.25f);
             //没有朋友
-            for(int i = 0; i < Relations.Count; i++)
+            if (Relations.Count == 0)
+                value += 10;
+            for (int i = 0; i < Relations.Count; i++)
             {
                 if (Relations[i].FriendValue > 0)
                     break;
@@ -648,12 +651,236 @@ public class Employee
             else if (CurrentOffice != null)
                 value += 25;
             //随心所以偏好
-            if (Character[3] < -50)
+            if (Character[3] < 0)
+                value += (int)(Mathf.Abs(Character[3]) * 0.25f);
+            //单身5年以上
+            if (NoMarriageTime >= 1920)
                 value += 15;
             value += BaseMotivation[3];
         }
 
         return value;
+    }
+    public string CheckMotivationContent(int type)
+    {
+        //0工作学习 1心体恢复 2谋划野心 3关系交往
+        string Content = "";
+        int value = 0;
+        if (type == 0)
+        {
+            //同事亦朋友&同事即仇敌
+            if (CurrentDep != null)
+            {
+                int ValueA = 0, ValueB = 0;
+                for (int i = 0; i < CurrentDep.CurrentEmps.Count; i++)
+                {
+                    if (CurrentDep.CurrentEmps[i] == this)
+                        continue;
+                    else
+                    {
+                        int num = FindRelation(CurrentDep.CurrentEmps[i]).FriendValue;
+                        if (num < 0)
+                        {
+                            value -= 10;
+                            ValueA += 10;
+                        }
+                        else if (num > 0)
+                        {
+                            value += 10;
+                            ValueB += 10;
+                        }
+                    }
+                }
+                if (ValueA > 0)
+                    Content += "  同事即仇敌+" + ValueA;
+                if (ValueB > 0)
+                    Content += "  同事亦朋友+" + ValueB;
+            }
+            //严格守序偏好
+            if (Character[3] > 0)
+            {
+                value += (int)(Character[3] * 0.25f);
+                Content += "  严格守序偏好+" + (int)(Character[3] * 0.25f);
+            }
+            //开源文化倾向
+            if (Character[1] > 0)
+            { 
+                value += (int)(Character[1] * 0.25f);
+                Content += "  开源文化倾向+" + (int)(Character[1] * 0.25f);
+            }
+            for(int i = 0; i < InfoDetail.PerksInfo.Count; i++)
+            {
+                if (InfoDetail.PerksInfo[i].CurrentPerk.Num == 5)
+                    Content += "  奋斗逼+15";
+                else if (InfoDetail.PerksInfo[i].CurrentPerk.Num == 6)
+                    Content += "  欧洲人-15";
+                else if (InfoDetail.PerksInfo[i].CurrentPerk.Num == 7)
+                    Content += "  抑郁-20";
+            }
+            value += BaseMotivation[0];
+            Content = "工作学习场景:" + value + "\n" + Content;
+        }
+        else if (type == 1)
+        {
+            //心力体力数值
+            if (Mentality < 20)
+            {
+                value += 50;
+                Content += "  心力小于20 +50";
+            }
+            else if (Mentality < 40)
+            { 
+                value += 15;
+                Content += "  心力小于40 +15";
+            }
+            if (Stamina < 20)
+            { 
+                value += 20;
+                Content += "  体力小于20 +20";
+            }
+            else if (Stamina < 40)
+            { 
+                value += 10;
+                Content += "  体力小于40 +10";
+            }
+            //独裁文化倾向
+            if (Character[0] < 0)
+            {
+                value += (int)(Mathf.Abs(Character[0]) * 0.25f);
+                Content += "  独裁文化倾向+" + (int)(Mathf.Abs(Character[0]) * 0.25f);
+            }
+            //严格守序偏好
+            if (Character[3] > 0)
+            {
+                value += (int)(Character[3] * 0.25f);
+                Content += "  严格守序偏好+" + (int)(Character[3] * 0.25f);
+            }
+            for (int i = 0; i < InfoDetail.PerksInfo.Count; i++)
+            {
+                if (InfoDetail.PerksInfo[i].CurrentPerk.Num == 9)
+                    Content += "  元气满满+15";
+                else if (InfoDetail.PerksInfo[i].CurrentPerk.Num == 10)
+                    Content += "  狂热-15";
+            }
+            value += BaseMotivation[1];
+            Content = "心体恢复场景:" + value + "\n" + Content;
+        }
+        else if (type == 2)
+        {
+            //和上级关系
+            if (CurrentDep != null && CurrentDep.CommandingOffice != null && CurrentDep.CommandingOffice.CurrentManager != null)
+            {
+                int num = FindRelation(CurrentDep.CommandingOffice.CurrentManager).FriendValue;
+                if (num == -2)
+                {
+                    value += 15;
+                    Content += "  与上级关系仇人+15";
+                }
+                else if (num == -1)
+                {
+                    value += 5;
+                    Content += "  与上级关系陌路+5";
+                }
+            }
+            //随心所欲偏好
+            if (Character[3] < 0)
+            {
+                value += (int)(Mathf.Abs(Character[3]) * 0.25f);
+                Content += "  随心所欲偏好+" + (int)(Mathf.Abs(Character[3]) * 0.25f);
+            }
+            //低于平均工资
+            if (isCEO == false && InfoDetail.CalcSalary() < InfoDetail.GC.Salary / (InfoDetail.GC.CurrentEmployees.Count - 1))
+            {
+                value += 10;
+                Content += "低于平均工资+10";
+            }
+            //一年之内无晋升
+            if (NoPromotionTime >= 384)
+            {
+                value += 10;
+                Content += "  一年之内无晋升+10";
+            }
+            //独裁文化倾向
+            if (Character[0] < 0)
+            {
+                value += (int)(Mathf.Abs(Character[0]) * 0.25f);
+                Content += "  独裁文化倾向+" + (int)(Mathf.Abs(Character[0]) * 0.25f);
+            }
+            for (int i = 0; i < InfoDetail.PerksInfo.Count; i++)
+            {
+                if (InfoDetail.PerksInfo[i].CurrentPerk.Num == 12)
+                    Content += "  鹰视狼顾+20";
+                else if (InfoDetail.PerksInfo[i].CurrentPerk.Num == 13)
+                    Content += "  平凡之路-15";
+                else if (InfoDetail.PerksInfo[i].CurrentPerk.Num == 14)
+                    Content += "  复仇者+15";
+            }
+            value += BaseMotivation[2];
+            Content = "谋划野心场景:" + value + "\n" + Content;
+        }
+        else if (type == 3)
+        {
+            //开源文化倾向
+            if (Character[0] > 0)
+            {
+                value += (int)(Character[0] * 0.25f);
+                Content += "  开源文化倾向+" + (int)(Character[0] * 0.25f);
+            }
+            //没有朋友
+            if(Relations.Count == 0)
+            {
+                value += 10;
+                Content += "没有朋友+10";
+            }
+            for (int i = 0; i < Relations.Count; i++)
+            {
+                if (Relations[i].FriendValue > 0)
+                    break;
+                if (i == Relations.Count - 1)
+                {
+                    value += 10;
+                    Content += "没有朋友+10";
+                }
+            }
+            //办公室中独自一人
+            if (CurrentDep != null && CurrentDep.CurrentEmps.Count == 1)
+            {
+                value += 25;
+                Content += "  部门中独自一人+25";
+            }
+            else if (CurrentOffice != null)
+            {
+                value += 25;
+                Content += "  办公室中独自一人+25";
+            }
+            //随心所以偏好
+            if (Character[3] < 0)
+            {
+                value += (int)(Mathf.Abs(Character[3]) * 0.25f);
+                Content += "  随心所欲偏好+" + (int)(Mathf.Abs(Character[3]) * 0.25f);
+            }
+            //单身5年以上
+            if (NoMarriageTime >= 1920)
+            {
+                value += 15;
+                Content += "单身5年以上+15";
+            }
+            for (int i = 0; i < InfoDetail.PerksInfo.Count; i++)
+            {
+                if (InfoDetail.PerksInfo[i].CurrentPerk.Num == 16)
+                    Content += "  好色+15";
+                else if (InfoDetail.PerksInfo[i].CurrentPerk.Num == 17)
+                    Content += "  社交狂人+20";
+                else if (InfoDetail.PerksInfo[i].CurrentPerk.Num == 22)
+                    Content += "  友尽-10";
+                else if (InfoDetail.PerksInfo[i].CurrentPerk.Num == 24)
+                    Content += "  我恋爱了+25";
+            }
+            value += BaseMotivation[3];
+            Content = "关系交往场景:" + value + "\n" + Content;
+        }
+
+        return Content;
     }
 
     public void AddEvent()
@@ -714,7 +941,6 @@ public class Employee
                 E.Remove(e);
             }
         }
-        MonoBehaviour.print("R:" + EF.Count);
     }
 
     public void TimePass()
@@ -725,6 +951,16 @@ public class Employee
             AddEvent();
             EventTime = Random.Range(6, 12);
         }
+
+        if (CurrentOffice == null)
+            NoPromotionTime += 1;
+        else if (CurrentOffice.building.Type != BuildingType.CEO办公室 || CurrentOffice.building.Type != BuildingType.高管办公室)
+            NoPromotionTime += 1;
+
+        if (Lover == null)
+            NoMarriageTime += 1;
+        else if (FindRelation(Lover).LoveValue < 3)
+            NoMarriageTime += 1;
     }
 }
 

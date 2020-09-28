@@ -29,6 +29,7 @@ public class OfficeControl : MonoBehaviour
                 Text_MAbility.text = "管理:" + CurrentManager.Manage;
                 ManageValue = CurrentManager.Manage + GC.ManageExtra;
                 CurrentManager.InfoDetail.CreateStrategy();
+                CurrentManager.NoPromotionTime = 0;
                 CheckManage();
             }
             else if (building.effectValue == 1)
@@ -94,7 +95,7 @@ public class OfficeControl : MonoBehaviour
 
     public void SetName()
     {
-        int num = 0;
+        int num = 1;
         GC.HourEvent.AddListener(TimePass);
         if (building.Type != BuildingType.高管办公室 && building.Type != BuildingType.CEO办公室)
         {
