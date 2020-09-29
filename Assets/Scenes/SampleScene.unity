@@ -327,6 +327,18 @@ MonoBehaviour:
   CEOPositionX: 13
   CEOPositionZ: 1
   CEOOffice: {fileID: 1051092804}
+--- !u!114 &1561559394 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 5288326411292264009, guid: c56c09a7e0b7ccc4eac9c70aff4f410d,
+    type: 3}
+  m_PrefabInstance: {fileID: 500598437789522488}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8618da236c622fc4688243d4c595e609, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!224 &2145870879 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 500598435790470695, guid: c56c09a7e0b7ccc4eac9c70aff4f410d,
@@ -465,7 +477,7 @@ PrefabInstance:
         type: 3}
       propertyPath: HC
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 1561559394}
     - target: {fileID: 8205797266917151895, guid: c56c09a7e0b7ccc4eac9c70aff4f410d,
         type: 3}
       propertyPath: m_AnchoredPosition.x
@@ -23883,6 +23895,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3187402727958478035}
   - component: {fileID: 1400140011}
+  - component: {fileID: 3187402727958478033}
   m_Layer: 0
   m_Name: Scene
   m_TagString: Untagged
@@ -23890,6 +23903,18 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &3187402727958478033
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3187402727958478032}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a3afe75681993d4c84cea8dc43277cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &3187402727958478035
 Transform:
   m_ObjectHideFlags: 0

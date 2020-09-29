@@ -1,69 +1,88 @@
-﻿using System.Collections;
+﻿using BehaviorDesigner.Runtime;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class EmpEntity : MonoBehaviour
 {
-    public bool canMove = false, WorkShift = false, canChangePos = true;
+    //public bool canMove = false, WorkShift = false, canChangePos = true;
     static public float MoveSpeed = 50.0f;
+    private Vector3 offset = new Vector3(0, 2.2f, 2.2f);
+    private Transform mesh;
+    public MeshRenderer Renderer { get; private set; }
+    private BehaviorTree selfTree;
+
+    public bool OffWork { get; private set;  }  //下班
+    public bool HasEvent { get { return SelfEvent.Count > 0 && ReceivedEvent.Count > 0; } }
 
     public EmpInfo InfoDetail;
     public RectTransform Rect;
     public BuildingManage BM;
-    public EmpEntity TargetEmp;
-    public Text Text_Name;
 
-    public List<EmpEvent> CurrentEvent = new List<EmpEvent>();
-    public List<EmpEvent> ReceivedEvent = new List<EmpEvent>();
-    public GameObject[] Markers = new GameObject[5];
+    public EmpEntity TargetEmp;                                     //事件的对象
+    public EmpEvent CurrentEvent;                                   //进行中的事件
+    public List<EmpEvent> SelfEvent = new List<EmpEvent>();         //主动发起的事件
+    public List<EmpEvent> ReceivedEvent = new List<EmpEvent>();     //被动接受的事件
 
-    int WaitHour = 0;
+    //int WaitHour = 0;
+    private string empName;
 
-    Vector2 Destination = new Vector2(0,0);
-    private void Start()
+    //移动目标位置
+    public Vector3 Destination;
+
+    public void Init()
     {
-        
+        mesh = transform.parent.Find("Mesh");
+        Renderer = mesh.GetComponent<MeshRenderer>();
+        selfTree = gameObject.AddComponent<BehaviorTree>();
+        selfTree.ExternalBehavior = Resources.Load<ExternalBehavior>("BehaviourTree/Emp");
+        selfTree.SetVariableValue("EmpEntity", this);
+        selfTree.Start();
     }
 
     void Update()
     {
-        if (TargetEmp != null && WorkShift == false)
-            Destination = TargetEmp.transform.position;
-        if (canMove == true)
-        {
-            //移动
-            if (Vector2.Distance((Vector2)transform.position, Destination) > 2 * InfoDetail.GC.TimeMultiply)
-            {
-                Vector2 Dir = (Destination - (Vector2)transform.position).normalized;
-                transform.Translate(Dir * Time.deltaTime * InfoDetail.GC.TimeMultiply * MoveSpeed);
-            }
-            //到达目的地
-            else
-            {
-                canMove = false;
-                transform.position = Destination;
+        //模型只同步位置，不同步旋转
+        mesh.position = this.transform.position + offset;
 
-                if (WorkShift == true)
-                {
-                    //下班
-                    if (canChangePos == false)
-                        InfoDetail.GC.WorkEndCheck();
-                    //上班后回到工位
-                    else
-                    {
-                        WorkShift = false;
-                        SetTarget();
-                    }
-                }
-                //待命乱逛
-                else if (InfoDetail.emp.CurrentDep == null && InfoDetail.emp.CurrentOffice == null && TargetEmp == null)
-                {
-                    canMove = false;
-                    WaitHour = Random.Range(1, 3);
-                }
-            }
-        }
+        //if (TargetEmp != null && WorkShift == false)
+        //    Destination = TargetEmp.transform.position;
+
+        //if (canMove == true)
+        //{
+        //    //移动
+        //    if (Vector2.Distance((Vector2)transform.position, Destination) > 2 * InfoDetail.GC.TimeMultiply)
+        //    {
+        //        Vector2 Dir = (Destination - (Vector2)transform.position).normalized;
+        //        transform.Translate(Dir * Time.deltaTime * InfoDetail.GC.TimeMultiply * MoveSpeed);
+        //    }
+        //    //到达目的地
+        //    else
+        //    {
+        //        canMove = false;
+        //        transform.position = Destination;
+
+        //        if (WorkShift == true)
+        //        {
+        //            //下班
+        //            if (canChangePos == false)
+        //                InfoDetail.GC.WorkEndCheck();
+        //            //上班后回到工位
+        //            else
+        //            {
+        //                WorkShift = false;
+        //                SetTarget();
+        //            }
+        //        }
+        //        //待命乱逛
+        //        else if (InfoDetail.emp.CurrentDep == null && InfoDetail.emp.CurrentOffice == null && TargetEmp == null)
+        //        {
+        //            canMove = false;
+        //            WaitHour = Random.Range(1, 3);
+        //        }
+        //    }
+        //}
     }
 
     public void SetInfo(EmpInfo detail)
@@ -73,45 +92,61 @@ public class EmpEntity : MonoBehaviour
         detail.GC.HourEvent.AddListener(TimePass);
         detail.GC.HourEvent.AddListener(detail.emp.EventCheck);
         BM = detail.GC.BM;
+        empName = detail.emp.Name;
         FindWorkPos();
-        Text_Name.text = detail.emp.Name;
     }
 
+    //时间增加
     public void TimePass()
     {
-        if(WaitHour > 0)
-        {
-            WaitHour -= 1;
-            if (WaitHour == 0 && EventCheck() == true)
-                FindWorkPos();
-        }
-        EventTimePass();
+        //刷新状态
+
+        //没有事件 => 找工作位置
+
+        //有事件 => 处理事件
+
+        //EventTimePass();
+
+        if (!HasEvent)
+            FindWorkPos();
     }
+    //private void EventTimePass()
+    //{
+    //    for (int i = 0; i < CurrentEvent.Count; i++)
+    //    {
+    //        if (CurrentEvent[i].EventActive == true)
+    //        {
+    //            CurrentEvent[i].Time -= 1;
+    //            if (CurrentEvent[i].Time <= 0)
+    //            {
+    //                CurrentEvent[i].FinishEvent();
+    //                if (EventCheck() == true)
+    //                {
+    //                    SetTarget();
+    //                }
+    //            }
+    //        }
+    //    }
+    //}
+    //下班
 
     public void WorkEnd()
     {
-        WaitHour = 0;
-        canMove = true;
-        WorkShift = true;
-        canChangePos = false;
-        Destination = BM.ExitPos.position;
-        for(int i = 0; i < CurrentEvent.Count; i++)
-        {
-            CurrentEvent[i].EventActive = false;
-        }
+        OffWork = true;
     }
-
+    
+    //上班
     public void WorkStart()
     {
-        canChangePos = true;
+        OffWork = false;
         FindWorkPos();
     }
 
     public bool EventCheck()
     {
-        for(int i = 0; i < CurrentEvent.Count; i++)
+        for(int i = 0; i < SelfEvent.Count; i++)
         {
-            if (CurrentEvent[i].EventActive == true)
+            if (SelfEvent[i].EventActive == true)
                 return false;
         }
         for(int i = 0; i < ReceivedEvent.Count; i++)
@@ -122,30 +157,8 @@ public class EmpEntity : MonoBehaviour
         return true;
     }
 
-    public void EventTimePass()
-    {
-
-        for (int i = 0; i < CurrentEvent.Count; i++)
-        {
-            if (CurrentEvent[i].EventActive == true)
-            {
-                CurrentEvent[i].Time -= 1;
-                if (CurrentEvent[i].Time <= 0)
-                {
-                    CurrentEvent[i].FinishEvent();
-                    if (EventCheck() == true)
-                    {
-                        SetTarget();
-                    }
-                }
-            }
-        }
-        
-    }
-
     public void AddEvent(int type)
     {
-
         EmpEvent e = new EmpEvent();
         Employee m = InfoDetail.emp;
         e.Self = this;
@@ -228,8 +241,8 @@ public class EmpEntity : MonoBehaviour
         {
             if (e.FindTarget() == true)
             {
-                CurrentEvent.Add(e);
-                print(Text_Name.text + "添加了" + type + "类事件" + e.Value);
+                SelfEvent.Add(e);
+                print(empName + "添加了" + type + "类事件" + e.Value);
                 e.Target.ReceivedEvent.Add(e);
                 if (EventCheck() == true)
                     SetTarget();
@@ -238,31 +251,31 @@ public class EmpEntity : MonoBehaviour
         else
         {
             e.EventActive = true;
-            CurrentEvent.Add(e);
-            print(Text_Name.text + "添加了" + type + "类事件" + e.Value);
+            SelfEvent.Add(e);
+            print(empName + "添加了" + type + "类事件" + e.Value);
         }
 
     }
 
     public bool SetTarget()
     {
-        for (int i = 0; i < CurrentEvent.Count; i++)
+        for (int i = 0; i < SelfEvent.Count; i++)
         {
             //二次检测能否移动以防万一
-            if (CurrentEvent[i].EventActive == true)
+            if (SelfEvent[i].EventActive == true)
                 return false;
             //再次检测是否需要移动
-            else if (CurrentEvent[i].HaveTarget == false)
+            else if (SelfEvent[i].HaveTarget == false)
             {
-                CurrentEvent[i].EventActive = true;
-                canMove = false;
+                SelfEvent[i].EventActive = true;
+                //canMove = false;
                 return false;
             }
-            else if (CurrentEvent[i].Target != null || CurrentEvent[i].FindTarget() == true)
+            else if (SelfEvent[i].Target != null || SelfEvent[i].FindTarget() == true)
             {
-                TargetEmp = CurrentEvent[i].Target;
+                TargetEmp = SelfEvent[i].Target;
                 Destination = TargetEmp.transform.position;
-                canMove = true;
+                //canMove = true;
                 return false;
             }
         }
@@ -274,62 +287,41 @@ public class EmpEntity : MonoBehaviour
     {
         //从当前部门转为待命或者从待命移动到某部门时都要调用
         //此处检测主要为了防止在下班时安排工作导致移动
-        if (canChangePos == true)
-        {
-            if (InfoDetail.emp.CurrentDep != null)
-            {
-                Destination = InfoDetail.emp.CurrentDep.building.WorkPos[InfoDetail.emp.CurrentDep.CurrentEmps.IndexOf(InfoDetail.emp)].position;
-            }
-            else if (InfoDetail.emp.CurrentOffice != null)
-            {
-                Destination = InfoDetail.emp.CurrentOffice.building.WorkPos[0].position;
-            }
-            else
-            {
-                float x = Random.Range(BM.MinPos.position.x, BM.MaxPos.position.x);
-                float y = Random.Range(BM.MinPos.position.y, BM.MaxPos.position.y);
-                Destination = new Vector2(x, y);
-            }
-        }
-        canMove = true;
-        TargetEmp = null;
-    }
-
-    public void ShowMarker(int type)
-    {
-        Markers[type].SetActive(true);
-        StartCoroutine(ResetMarker(type));
-    }
-
-    public void ShowName()
-    {
-        Text_Name.transform.parent.gameObject.SetActive(true);
-    }
-
-    public void HideName()
-    {
-        Text_Name.transform.parent.gameObject.SetActive(false);
-    }
-
-    public void ShowDetailPanel()
-    {
-        InfoDetail.ShowPanel();
+        //if (canChangePos == true)
+        //{
+        //    if (InfoDetail.emp.CurrentDep != null)
+        //    {
+        //        Destination = InfoDetail.emp.CurrentDep.building.WorkPos[InfoDetail.emp.CurrentDep.CurrentEmps.IndexOf(InfoDetail.emp)].position;
+        //    }
+        //    else if (InfoDetail.emp.CurrentOffice != null)
+        //    {
+        //        Destination = InfoDetail.emp.CurrentOffice.building.WorkPos[0].position;
+        //    }
+        //    else
+        //    {
+        //        float x = Random.Range(BM.MinPos.position.x, BM.MaxPos.position.x);
+        //        float y = Random.Range(BM.MinPos.position.y, BM.MaxPos.position.y);
+        //        Destination = new Vector2(x, y);
+        //    }
+        //}
+        //canMove = true;
+        //TargetEmp = null;
     }
 
     public void RemoveEntity()
     {
-        for (int i = 0; i < CurrentEvent.Count; i++)
+        for (int i = 0; i < SelfEvent.Count; i++)
         {
-            if (CurrentEvent[i].Target != null && CurrentEvent[i].Target.ReceivedEvent.Contains(CurrentEvent[i]))
+            if (SelfEvent[i].Target != null && SelfEvent[i].Target.ReceivedEvent.Contains(SelfEvent[i]))
             {
                 //遇到有在进行中的且有目标的事件，先停止其激活，再检查目标是否可以动，最后从目标的ReceiveEvent中删除该事件
-                if(CurrentEvent[i].EventActive == true)
+                if(SelfEvent[i].EventActive == true)
                 {
-                    CurrentEvent[i].EventActive = false;
-                    if (CurrentEvent[i].Target.EventCheck() == true)
-                        CurrentEvent[i].Target.SetTarget();
+                    SelfEvent[i].EventActive = false;
+                    if (SelfEvent[i].Target.EventCheck() == true)
+                        SelfEvent[i].Target.SetTarget();
                 }
-                CurrentEvent[i].Target.ReceivedEvent.Remove(CurrentEvent[i]);
+                SelfEvent[i].Target.ReceivedEvent.Remove(SelfEvent[i]);
             }
         }
         for(int i = 0; i < ReceivedEvent.Count; i++)
@@ -340,15 +332,9 @@ public class EmpEntity : MonoBehaviour
                 if (ReceivedEvent[i].Self.EventCheck() == true)
                     ReceivedEvent[i].Self.SetTarget();
             }
-            ReceivedEvent[i].Self.CurrentEvent.Remove(ReceivedEvent[i]);
+            ReceivedEvent[i].Self.SelfEvent.Remove(ReceivedEvent[i]);
         }
         Destroy(this.gameObject);
-    }
-
-    IEnumerator ResetMarker(int type)
-    {
-        yield return new WaitForSeconds(3.5f / InfoDetail.GC.TimeMultiply);
-        Markers[type].SetActive(false);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -359,7 +345,6 @@ public class EmpEntity : MonoBehaviour
             float posb = Random.Range(0.0f, 1.0f);
             if (posb < 0.3f)
             {
-                ShowMarker(0);
                 Employee Es = InfoDetail.emp;
 
                 Es.ChangeRelation(Et.InfoDetail.emp, 1);
@@ -371,23 +356,38 @@ public class EmpEntity : MonoBehaviour
     private void OnTriggerStay2D(Collider2D collision)
     {
         //接触目标
-        if (TargetEmp != null && WorkShift == false)
-        {
-            EmpEntity Et = collision.gameObject.GetComponent<EmpEntity>();
-            if (TargetEmp == Et)
-            {
-                for (int i = 0; i < CurrentEvent.Count; i++)
-                {
-                    if (CurrentEvent[i].Target == TargetEmp)
-                    {
-                        CurrentEvent[i].EventActive = true;
-                        canMove = false;
-                        TargetEmp.canMove = false;
-                    }
-                }
-            }
-        }
+        //if (TargetEmp != null && WorkShift == false)
+        //{
+        //    EmpEntity Et = collision.gameObject.GetComponent<EmpEntity>();
+        //    if (TargetEmp == Et)
+        //    {
+        //        for (int i = 0; i < CurrentEvent.Count; i++)
+        //        {
+        //            if (CurrentEvent[i].Target == TargetEmp)
+        //            {
+        //                CurrentEvent[i].EventActive = true;
+        //                canMove = false;
+        //                TargetEmp.canMove = false;
+        //            }
+        //        }
+        //    }
+        //}
     }
+
+    public void ShowDetailPanel()
+    {
+        InfoDetail.ShowPanel();
+    }
+
+    //public void ShowName()
+    //{
+    //    Text_Name.transform.parent.gameObject.SetActive(true);
+    //}
+
+    //public void HideName()
+    //{
+    //    Text_Name.transform.parent.gameObject.SetActive(false);
+    //}
 }
 
 public class EmpEvent
@@ -918,7 +918,7 @@ public class EmpEvent
             }
         }
 
-        Self.CurrentEvent.Remove(this);
+        Self.SelfEvent.Remove(this);
         if (Target != null)
         {
             Target.ReceivedEvent.Remove(this);
@@ -950,7 +950,6 @@ public class EmpEvent
             MonoBehaviour.print("成功");
         else if (value == 4)
             MonoBehaviour.print("大成功");
-        Self.ShowMarker(value);
     }
 }
 

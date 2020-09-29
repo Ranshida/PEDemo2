@@ -8,14 +8,13 @@ using UnityEngine.AI;
 /// 员工的行进间状态
 /// 更新时间2020.9.19
 /// </summary>
-public class BTE_Moving : Action
+[TaskCategory("Employee")]
+public class BTE_Moving : BTE_Action
 {
-    public Vector3 dir;
-
     // cache the navmeshagent component
     private NavMeshAgent navMeshAgent;
 
-    public override void OnStart()
+    protected override void AfterOnStart()
     {
         navMeshAgent = gameObject.GetComponent<NavMeshAgent>();
     }

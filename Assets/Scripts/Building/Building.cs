@@ -17,13 +17,15 @@ public class Building : MonoBehaviour
     public OfficeControl Office;  //BM赋值
     public BuildingEffect effect;
     public TextMesh Text_DepName;
-    public Transform[] WorkPos = new Transform[4];
+    public List<Transform> WorkPos;
     public List<BuildingEffect> EffectBuildings = new List<BuildingEffect>();
 
     private void Awake()
     {
         ContainsGrids = new List<Grid>();
         effect = new BuildingEffect(this);
+        WorkPos = new List<Transform>();
+        WorkPos = Function.ReturnChildList(transform.Find("WorkPosition"));
         m_Decoration = transform.Find("Decoration").gameObject;
         Text_DepName = transform.Find("Description").GetComponent<TextMesh>();
     }
