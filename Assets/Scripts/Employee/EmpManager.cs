@@ -7,7 +7,7 @@ using UnityEngine;
 /// </summary>
 public class EmpManager : MonoBehaviour
 {
-    private static EmpManager Instance;
+    public static EmpManager Instance { get; private set; }
     private GameObject empPrefabs;
     private Material[] empMaterials;
 
@@ -30,10 +30,11 @@ public class EmpManager : MonoBehaviour
         }
     }
 
-    public void CreateEmp(Vector3 position)
+    public EmpEntity CreateEmp(Vector3 position)
     {
         EmpEntity emp = GameObject.Instantiate(empPrefabs, position, Quaternion.identity).GetComponentInChildren<EmpEntity>();
         emp.Init();
         emp.Renderer.material = empMaterials[Random.Range(0, empMaterials.Length)];
+        return emp;
     }
 }
