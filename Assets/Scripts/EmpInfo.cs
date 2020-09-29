@@ -227,6 +227,27 @@ public class EmpInfo : MonoBehaviour
         }
         else if(GC.SelectMode == 6)
         {
+            //调查员工
+            if(GC.CEOSkillNum == 18)
+            {
+                GC.CC.EmpSelectWarning.SetActive(false);
+                GC.CEOSkillNum = 15;
+                int Posb = Random.Range(1, 7);
+                Posb += (int)(GC.CurrentEmpInfo.emp.Gossip * 0.2f);
+                if (Posb >= 3)
+                {
+                    if (emp.isSpy == true)
+                    {
+                        emp.InfoDetail.AddPerk(new Perk29(emp), true);
+                        GC.CreateMessage("成功发现了内鬼" + emp.Name);
+                    }
+                    else
+                        GC.CreateMessage("发现" + emp.Name + "不是内鬼");
+                }
+                else
+                    GC.CreateMessage("调查失败，无法了解" + emp.Name + "的成分");
+                return;
+            }
             if (GC.CEOSkillNum == 4)
             {
                 emp.Mentality += 10;
@@ -236,7 +257,7 @@ public class EmpInfo : MonoBehaviour
                 GC.CurrentEmpInfo = this;
                 GC.EmpTrainingPanel.SetActive(true);
             }
-            else if (GC.CEOSkillNum > 5)
+            else if (GC.CEOSkillNum > 5 && emp.isCEO == false)
             {
                 GC.CC.SetPanelContent(emp);
             }
@@ -257,6 +278,10 @@ public class EmpInfo : MonoBehaviour
         }
         gameObject.SetActive(true);
         AdjustSize();
+        for(int i = 0; i < emp.Relations.Count; i++)
+        {
+            emp.Relations[i].UpdateUI();
+        }
     }
 
     public void SetSkillName()

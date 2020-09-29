@@ -7,7 +7,7 @@ public class CEOControl : MonoBehaviour
 {
     public GameControl GC;
     public Text Text_Name, Text_Name2, Text_FailContent, Text_SuccessContent, Text_OptionContent, Text_Result, Text_Requirement;
-    public GameObject SelectPanel, ResultPanel, WarningPanel, SuccessText, FailText;
+    public GameObject SelectPanel, ResultPanel, WarningPanel, SuccessText, FailText, ResultCheckButton, ConvinceButtons, EmpSelectWarning, SpyButton;
     public Employee Target, CEO;
 
     private void Start()
@@ -91,8 +91,17 @@ public class CEOControl : MonoBehaviour
             Text_Requirement.text = "自己不属于某一派系，对方属于某一派系";
             Text_OptionContent.text = "执行，成功率:" + CalcPosb() + "%";
         }
+        else if (GC.CEOSkillNum == 15)
+        {
+            Text_Name.text = "加入" + Target.Name + "的派系";
+            Text_SuccessContent.text = "员工被说服，可以从说服的可执行列表中选择一项命令员工进行";
+            Text_FailContent.text = "好感度-5员工独裁文化倾向 + 10";
+            Text_Requirement.text = "体力20";
+            Text_OptionContent.text = "执行，成功率:" + CalcPosb() + "%";
+        }
         Text_Name2.text = Text_Name.text;
         SelectPanel.SetActive(true);
+        ResultPanel.SetActive(false);
     }
 
     public void ConfirmSkill()
@@ -168,6 +177,16 @@ public class CEOControl : MonoBehaviour
             else
                 WarningPanel.SetActive(true);
         }
+        else if (GC.CEOSkillNum == 15)
+        {
+            if (GC.Stamina >= 20)
+            {
+                GC.Stamina -= 20;
+                ActiveSkill();
+            }
+            else
+                WarningPanel.SetActive(true);
+        }
     }
 
     void ActiveSkill()
@@ -226,6 +245,19 @@ public class CEOControl : MonoBehaviour
                 CEO.CurrentClique = Target.CurrentClique;
                 CEO.CurrentClique.Members.Add(CEO);
             }
+            else if (GC.CEOSkillNum == 15)
+            {
+                ResultCheckButton.SetActive(false);
+                ConvinceButtons.SetActive(true);
+                for (int i = 0; i < Target.InfoDetail.PerksInfo.Count; i++)
+                {
+                    if (Target.InfoDetail.PerksInfo[i].CurrentPerk.Num == 29)
+                    {
+                        SpyButton.SetActive(true);
+                        break;
+                    }
+                }
+            }
         }
         else
         {
@@ -276,8 +308,61 @@ public class CEOControl : MonoBehaviour
                 Target.ChangeRelation(CEO, -10);
                 Target.ChangeCharacter(4, -5);
             }
+            else if (GC.CEOSkillNum == 15)
+            {
+                CEO.ChangeRelation(Target, -5);
+                Target.ChangeRelation(CEO, -5);
+                Target.ChangeCharacter(0, -10);
+            }
         }
         ResultPanel.SetActive(true);
+    }
+
+    public void SetConvinceNum(int num)
+    {
+        //17获取支持 18调查 19当间谍 20解除内鬼
+        if (num == 18 || num == 19)
+        {
+            GC.CEOSkillNum = num;
+            GC.CurrentEmpInfo = Target.InfoDetail;
+            if (num == 18)
+                EmpSelectWarning.SetActive(true);
+            else
+            {
+                GC.foeControl.TargetSelectPanel.SetActive(true);
+                GC.TotalEmpContent.parent.parent.gameObject.SetActive(false);
+            }
+        }
+        else if (num == 17)
+        {
+            Target.ObeyTime += 32;
+            GC.CreateMessage("从" + Target.Name + "处获取了支持");
+        }
+        else if (num == 20)
+        {
+            PerkInfo P = null;
+            for (int i = 0; i < Target.InfoDetail.PerksInfo.Count; i++)
+            {
+                if (Target.InfoDetail.PerksInfo[i].CurrentPerk.Num == 29)
+                {
+                    P = Target.InfoDetail.PerksInfo[i];
+                    break;
+                }
+            }
+            if(P != null)
+            {
+                Target.InfoDetail.PerksInfo.Remove(P);
+                Destroy(P.gameObject);
+                GC.CreateMessage("解除了" + Target.Name + "的内鬼状态");
+                Target.BaseMotivation[2] -= 50;
+                Target.isSpy = false;
+            }
+
+        }
+        ResultPanel.SetActive(false);
+        ResultCheckButton.SetActive(true);
+        SpyButton.SetActive(false);
+        ConvinceButtons.SetActive(false);
     }
 
     int CalcPosb()
@@ -438,6 +523,23 @@ public class CEOControl : MonoBehaviour
                 value -= 2;
 
             value += (int)(CEO.Charm * 0.2f);
+            value += (int)(CEO.Convince * 0.2f);
+        }
+        //说服
+        else if (GC.CEOSkillNum == 15)
+        {
+            if (r.FriendValue == 1)
+                value += 1;
+            else if (r.FriendValue == 2)
+                value += 3;
+            else if (r.FriendValue == -1)
+                value -= 2;
+            else if (r.FriendValue == -2)
+                value -= 4;
+
+            if (CEO.CurrentClique != null && Target.CurrentClique != null && CEO.CurrentClique == Target.CurrentClique)
+                value += 3;
+
             value += (int)(CEO.Convince * 0.2f);
         }
         return value;

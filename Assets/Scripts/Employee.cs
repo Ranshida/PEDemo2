@@ -53,7 +53,7 @@ public class Employee
     public int[] BaseMotivation = new int[4];//0工作学习 1心体恢复 2谋划野心 3关系交往
 
     public string Name;
-    public bool WantLeave = false, isCEO = false, canWork = true, SupportCEO; //WantLeave没有在使用
+    public bool WantLeave = false, isCEO = false, canWork = true, SupportCEO, isSpy = false; //WantLeave没有在使用
     public EmpType Type;
 
     public EmpInfo InfoA, InfoB, InfoDetail;

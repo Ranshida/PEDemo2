@@ -81,14 +81,14 @@ public class GameControl : MonoBehaviour
     public GameObject DepSelectPanel, StandbyButton, MessagePrefab, CEOSkillPanel, EmpTrainingPanel, GameOverPanel;
     public Text Text_Time, Text_TechResource, Text_MarketResource, Text_ProductResource, Text_Money, Text_Stamina, Text_Mentality, Text_Morale;
     public SkillControl SC;
-    [HideInInspector] public UnityEvent DailyEvent, WeeklyEvent, MonthlyEvent, HourEvent;
+    [HideInInspector] public UnityEvent DailyEvent, WeeklyEvent, MonthlyEvent, HourEvent, YearEvent;
 
     public Button[] CEOSkillButton = new Button[5];
     public Text[] Text_CEOSkillCD = new Text[5];
     public List<DepControl> CurrentDeps = new List<DepControl>();
     public List<OfficeControl> CurrentOffices = new List<OfficeControl>();
     public List<Employee> CurrentEmployees = new List<Employee>();
-    public int[] FinishedTask = new int[10];
+    public int[] FinishedTask = new int[10];//0程序迭代 1技术研发 2可行性调研 3公关谈判 4营销文案 5资源拓展 6原型图 7产品研究 8用户访谈 9已删除
 
     Animator Anim;
 
@@ -201,6 +201,7 @@ public class GameControl : MonoBehaviour
         }
         if (Month > 12)
         {
+            YearEvent.Invoke();
             Year += 1;
             Month = 1;
             SpecialEventCount -= 1;

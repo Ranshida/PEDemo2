@@ -2092,7 +2092,7 @@ public class Event20 : Event
     {
         EventName = "友善交谈1";
         BuildingRequire = BuildingType.运营部门;
-        MotivationRequire = 2;
+        MotivationRequire = 3;
         MoralRequire = 2;
     }
     public override int ExtraValue()
@@ -2162,7 +2162,7 @@ public class Event21 : Event
     {
         EventName = "友善交谈2";
         BuildingRequire = BuildingType.运营部门;
-        MotivationRequire = 2;
+        MotivationRequire = 3;
         MoralRequire = 2;
     }
     public override bool SpecialCheck()
@@ -4815,7 +4815,7 @@ public class Event44 : Event
         base.MajorSuccess(Posb);
         Self.ChangeCharacter(4, 10);
         Self.InfoDetail.AddPerk(new Perk3(Self), true);
-        Target.InfoDetail.AddPerk(new Perk3(Target), true);
+        Self.InfoDetail.AddPerk(new Perk3(Target), true);
         Target.ChangeCharacter(4, 10);
         Target.InfoDetail.AddPerk(new Perk3(Target), true);
         Target.InfoDetail.AddPerk(new Perk3(Target), true);
@@ -5023,6 +5023,157 @@ public class Event46 : Event
     }
 }
 
+//摸鱼
+public class Event47 : Event
+{
+    public Event47() : base()
+    {
+        EventName = "摸鱼";
+        BuildingRequire = BuildingType.运营部门;
+        MotivationRequire = 3;
+    }
+    public override int ExtraValue()
+    {
+        int Extra = 0;
+
+        Extra += (int)(Self.Strategy * 0.2);
+        Extra += (int)(Self.Convince * 0.2);
+        Extra += CRBonus() + MoraleBonus(2) + RelationBonus(true);
+        return Extra;
+    }
+
+    public override void MajorFailure(float Posb)
+    {
+        base.MajorFailure(Posb);
+        Self.Mentality -= 20;
+        if (Posb < 0.5f)
+            Self.ChangeCharacter(0, -30);
+        else
+            Self.ChangeCharacter(3, -30);
+        ResultText += "心力-20";
+    }
+    public override void Failure(float Posb)
+    {
+        base.Failure(Posb);
+        Self.Mentality -= 10;
+        if (Posb < 0.5f)
+            Self.ChangeCharacter(0, -10);
+        else
+            Self.ChangeCharacter(3, -10);
+        ResultText += "心力-10";
+    }
+    public override void Success(float Posb)
+    {
+        base.Success(Posb);
+        Self.Mentality += 10;
+        if (Posb < 0.5f)
+            Self.ChangeCharacter(0, 10);
+        else
+            Self.ChangeCharacter(3, 10);
+        ResultText += "心力+10";
+    }
+    public override void MajorSuccess(float Posb)
+    {
+        base.MajorSuccess(Posb);
+        Self.Mentality += 20;
+        if (Posb < 0.5f)
+            Self.ChangeCharacter(0, 30);
+        else
+            Self.ChangeCharacter(3, 30);
+        ResultText += "心力+20";
+    }
+}
+
+//抱怨
+public class Event48 : Event
+{
+    public Event48() : base()
+    {
+        EventName = "抱怨";
+        BuildingRequire = BuildingType.运营部门;
+        MotivationRequire = 2;
+    }
+
+    public override bool RelationCheck()
+    {
+        List<Employee> E = new List<Employee>();
+        if (Self.CurrentDep == null)
+            return false;
+        for (int i = 0; i < Self.CurrentDep.CurrentEmps.Count; i++)
+        {
+            if (Self.CurrentDep.CurrentEmps[i] != Self)
+                E.Add(Self.CurrentDep.CurrentEmps[i]);
+        }
+        if (E.Count > 0)
+        {
+            Target = E[Random.Range(0, E.Count)];
+            return true;
+        }
+        return false;
+    }
+
+    public override int ExtraValue()
+    {
+        int Extra = 0;
+        if (Self.Tenacity > 20)
+            Extra += 2;
+        else if (Self.Tenacity > 10)
+            Extra += 1;
+        if (Target.HR > 15)
+            Extra += 3;
+        else if (Target.HR > 10)
+            Extra += 2;
+        else if (Target.HR > 5)
+            Extra += 1;
+        Extra += CRBonus() + MoraleBonus(1) + RelationBonus();
+        return Extra;
+    }
+
+    public override void MajorFailure(float Posb)
+    {
+        base.MajorFailure(Posb);
+        Self.Mentality -= 20;
+        Self.ChangeRelation(Target, -20);
+        if (Posb < 0.5f)
+            Self.ChangeCharacter(0, -30);
+        else
+            Self.ChangeCharacter(3, -30);
+        ResultText += "心力-20，单方面好感-20";
+    }
+    public override void Failure(float Posb)
+    {
+        base.Failure(Posb);
+        Self.Mentality -= 10;
+        Self.ChangeRelation(Target, -10);
+        if (Posb < 0.5f)
+            Self.ChangeCharacter(0, -10);
+        else
+            Self.ChangeCharacter(3, -10);
+        ResultText += "心力-10，单方面好感-10";
+    }
+    public override void Success(float Posb)
+    {
+        base.Success(Posb);
+        Self.Mentality += 2;
+        Self.ChangeRelation(Target, 5);
+        if (Posb < 0.5f)
+            Self.ChangeCharacter(0, 10);
+        else
+            Self.ChangeCharacter(3, 10);
+        ResultText += "心力+2，单方面好感+5";
+    }
+    public override void MajorSuccess(float Posb)
+    {
+        base.MajorSuccess(Posb);
+        Self.Mentality += 5;
+        if (Posb < 0.5f)
+            Self.ChangeCharacter(0, 30);
+        else
+            Self.ChangeCharacter(3, 30);
+        ResultText += "心力+5";
+    }
+}
+
 static public class EventData
 {
     //工作学习事件
@@ -5035,7 +5186,7 @@ static public class EventData
     //心体恢复事件
     static public List<Event> RecoverEvent = new List<Event>()
     {
-        new Event8(), new Event10(), new Event11(), new Event12()
+        new Event8(), new Event10(), new Event11(), new Event12(), new Event48()
     };
     static public List<Event> RecoverForceEvent = new List<Event>()
     {
@@ -5045,7 +5196,7 @@ static public class EventData
     //谋划野心事件
     static public List<Event> AmbitionEvent = new List<Event>()
     {
-        new Event1(), new Event2(), new Event3(), new Event4(), new Event5(), new Event6(), new Event7()
+        new Event1(), new Event2(), new Event3(), new Event4(), new Event5(), new Event6(), new Event7(), new Event47()
     };
     static public List<Event> AmbitionForceEvent = new List<Event>();
 

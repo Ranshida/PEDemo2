@@ -6,10 +6,14 @@ using UnityEngine.UI;
 public class FOEControl : MonoBehaviour
 {
     public GameControl GC;
-    public Text Text_SelectNum, Text_FoeMoney, Text_FoeRequestMoney, Text_Result;
+    public GameObject TargetSelectPanel;
+    public Text Text_SelectNum, Text_FoeMoney, Text_FoeRequestMoney, Text_Result, Text_Efficiency;
+    public List<FOECompany> CurrentCompanies = new List<FOECompany>();
+    public Button[] TargetSelectButtons = new Button[3];
 
+    public int ActiveCompanyCount = 3;
     public int FOEMoney = 0, FOEMoneyRequest;
-    public int NegotiateSelectNum = 0, FOEEventProtection = 0;
+    public int NegotiateSelectNum = 0, FOEEventProtection = 0, SkillEfficiency = 1;
     public float NegotiateEfficiency = 1.0f;
 
     // Start is called before the first frame update
@@ -17,18 +21,20 @@ public class FOEControl : MonoBehaviour
     {
         GC.WeeklyEvent.AddListener(HourPass);
         FOEMoneyRequest = 100;
+        ActiveCompanyCount = 3;
     }
 
     private void Update()
     {
-        Text_FoeMoney.text = "对手金钱:" + FOEMoney + " +30/周";
-        Text_FoeRequestMoney.text = "下次干扰所需金钱:" + FOEMoneyRequest;
-        Text_Result.text = "对手金钱-" + (int)(NegotiateSelectNum * 10 * NegotiateEfficiency);
-        Text_SelectNum.text = NegotiateSelectNum.ToString();
-        if (NegotiateSelectNum > 0)
-            Text_Result.gameObject.SetActive(true);
-        else
-            Text_Result.gameObject.SetActive(false);
+        //Text_FoeMoney.text = "对手金钱:" + FOEMoney + " +30/周";
+        //Text_FoeRequestMoney.text = "下次干扰所需金钱:" + FOEMoneyRequest;
+        //Text_Result.text = "对手金钱-" + (int)(NegotiateSelectNum * 10 * NegotiateEfficiency);
+        //Text_SelectNum.text = NegotiateSelectNum.ToString();
+        //if (NegotiateSelectNum > 0)
+        //    Text_Result.gameObject.SetActive(true);
+        //else
+        //    Text_Result.gameObject.SetActive(false);
+        Text_Efficiency.text = "技能效率" + SkillEfficiency * 100 + "%";
     }
 
     public void ChangeSelectNum(bool Increase)
@@ -61,9 +67,9 @@ public class FOEControl : MonoBehaviour
 
     void HourPass()
     {
-        FOEMoney += 30;
-        if (FOEMoney >= FOEMoneyRequest)
-            FOEEvent();
+        //FOEMoney += 30;
+        //if (FOEMoney >= FOEMoneyRequest)
+        //    FOEEvent();
     }
     void FOEEvent()
     {
@@ -147,5 +153,64 @@ public class FOEControl : MonoBehaviour
             }
         }
 
+    }
+
+    //如果要改消耗，既要改检测(if部分)也要改需求(if括号内减业务的部分)，攻击1的需求和效果在下面的SetTarget()函数中
+    //FinishedTask各项所代表的的业务可以在其定义处的注释查找
+    public void UseSkill(int type)
+    {        
+        if(type == 1 && GC.FinishedTask[3] >= 2)//攻击1检测
+        {
+            TargetSelectPanel.SetActive(true);
+        }
+        else if (type == 2 && GC.FinishedTask[3] >= 1 && GC.FinishedTask[2] >= 2)//回复1检测
+        {
+            //回复1需求
+            GC.FinishedTask[3] -= 1;
+            GC.FinishedTask[2] -= 2;
+            //回复1效果
+            GC.Morale += 10 * SkillEfficiency;
+
+            SkillEfficiency = 1;
+        }
+        else if (type == 3 && GC.FinishedTask[3] >= 1 && GC.FinishedTask[2] >= 1 && GC.Morale < 20)//破釜沉舟检测
+        {
+            //破釜沉舟需求
+            GC.FinishedTask[3] -= 1;
+            GC.FinishedTask[2] -= 1;
+            //破釜沉舟效果
+            SkillEfficiency *= 2;
+        }
+        GC.UpdateResourceInfo();
+    }
+
+    public void SetTarget(int type)
+    {
+        if (GC.CEOSkillNum != 19)
+        {
+            //攻击1需求
+            GC.FinishedTask[3] -= 2;
+            //攻击1效果
+            CurrentCompanies[type - 1].Morale -= 5 * SkillEfficiency;
+            CurrentCompanies[type - 1].CloseCheck();
+            SkillEfficiency = 1;
+            GC.UpdateResourceInfo();
+        }
+        else
+        {
+            GC.CEOSkillNum = 15;
+            GC.CEOSkillNum = 0;
+            GC.SelectMode = 0;
+            int Posb = Random.Range(1, 7);
+            Posb += (int)(GC.CurrentEmpInfo.emp.Strategy * 0.2f);
+            if (Posb >= 4)
+            {
+                CurrentCompanies[type - 1].Text_Target.gameObject.SetActive(true);
+                CurrentCompanies[type - 1].Text_SkillName.gameObject.SetActive(true);
+                GC.CreateMessage("内鬼行动成功,获得了" + CurrentCompanies[type - 1].Text_CompanyName.text + "的信息");
+            }
+            else
+                GC.CreateMessage("内鬼行动失败");
+        }
     }
 }

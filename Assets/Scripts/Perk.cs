@@ -748,3 +748,23 @@ public class Perk28 : Perk
         base.RemoveEffect();
     }
 }
+
+//内鬼
+public class Perk29 : Perk
+{
+    public Perk29(Employee Emp) : base(Emp)
+    {
+        Name = "内鬼";
+        Description = "谋划野心动机+50";
+        TimeLeft = -1;
+        Num = 29;
+    }
+    public override void ImmEffect()
+    {
+
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+    }
+}
