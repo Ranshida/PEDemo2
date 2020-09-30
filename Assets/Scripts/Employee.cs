@@ -886,21 +886,22 @@ public class Employee
     public void AddEvent()
     {
         int value1 = CheckMotivation(0), value2 = CheckMotivation(1), value3 = CheckMotivation(2), value4 = CheckMotivation(3), Motiv = 0;
+        int Posb = Random.Range(1, (value1 + value2 + value3 + value4));
         List<Event> EF = new List<Event>(), E = new List<Event>();
 
-        if (value1 >= value2 && value1 >= value3 && value1 >= value4)
+        if (Posb < value1)
         {
             EventData.CopyList(EF, EventData.StudyForceEvents);
             EventData.CopyList(E, EventData.StudyEvents);
             Motiv = value1;
         }
-        else if (value2 >= value1 && value2 >= value3 && value2 >= value4)
+        else if (Posb < value2)
         {
             EventData.CopyList(EF, EventData.RecoverForceEvent);
             EventData.CopyList(E, EventData.RecoverEvent);
             Motiv = value2;
         }
-        else if (value3 >= value1 && value3 >= value2 && value3 >= value4)
+        else if (Posb < value3)
         {
             EventData.CopyList(EF, EventData.AmbitionForceEvent);
             EventData.CopyList(E, EventData.AmbitionEvent);

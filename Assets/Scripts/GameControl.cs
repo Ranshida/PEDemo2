@@ -92,7 +92,7 @@ public class GameControl : MonoBehaviour
 
     Animator Anim;
 
-    int Year = 1, Month = 1, Week = 1, Day = 1, Hour = 1, morale = 100, SpecialEventCount = 0;
+    int Year = 1, Month = 1, Week = 1, Day = 1, Hour = 1, morale = 50, SpecialEventCount = 0;
     float Timer;
     bool TimePause = false; //现在仅用来判断是否处于下班状态，用于其他功能时需检查WorkEndCheck()和WeekStart
 
