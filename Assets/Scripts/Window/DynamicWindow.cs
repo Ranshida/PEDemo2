@@ -14,12 +14,25 @@ public class DynamicWindow : MonoBehaviour
     private Transform tips;
     private Transform infos;
 
+    private Text empName;
+
+    private bool showName;
+
     private void Awake()
     {
         Instance = this;
         tips = transform.Find("Tips");
-        tips = transform.Find("Infos");
+        infos = transform.Find("Infos");
+        empName = infos.Find("EmpName").GetComponent<Text>();
         dialoguePrefab = ResourcesLoader.LoadPrefab("Prefabs/UI/Dialogue");
+    }
+
+    private void Update()
+    {
+
+        if (!showName)
+            empName.transform.position = new Vector3(-1000, 0, 0);
+        showName = false;
     }
 
     //设置对话
@@ -29,5 +42,12 @@ public class DynamicWindow : MonoBehaviour
         UIDialogue pooledDialogue = sign.GetComponentInChildren<UIDialogue>();
         pooledDialogue.Init(conversition, timer);
         pooledDialogue.Anchor(followedTrans, UIOffset, worldOffset);
+    }
+
+    public void SetEmpName(string name, Transform trans, Vector3 worldOffset = default)
+    {
+        showName = true;
+        empName.transform.position = Function.World2ScreenPoint(trans.position + worldOffset);
+        empName.text = name;
     }
 }

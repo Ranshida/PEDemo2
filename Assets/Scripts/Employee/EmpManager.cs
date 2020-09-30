@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 /// <summary>
 /// 员工类的临时管理器
@@ -10,6 +11,7 @@ public class EmpManager : MonoBehaviour
     public static EmpManager Instance { get; private set; }
     private GameObject empPrefabs;
     private Material[] empMaterials;
+    private EmpEntity pointEmp;
 
     private void Awake()
     {
@@ -25,7 +27,15 @@ public class EmpManager : MonoBehaviour
 
     private void Update()
     {
+        pointEmp = null;
 
+        if (CameraController.CharacterHit && !CameraController.IsPointingUI)
+        {
+            pointEmp = CameraController.CharacterRaycast.collider.transform.parent.parent.GetComponentInChildren<EmpEntity>();
+            DynamicWindow.Instance.SetEmpName(pointEmp.EmpName, pointEmp.transform, Vector3.up * 10);
+        }
+        if (pointEmp && Input.GetMouseButtonDown(1))
+            pointEmp.ShowDetailPanel();
     }
 
     public EmpEntity CreateEmp(Vector3 position)

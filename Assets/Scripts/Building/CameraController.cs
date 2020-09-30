@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 /// <summary>
 /// 相机控制器
@@ -8,8 +9,9 @@ using UnityEngine;
 /// </summary>
 public class CameraController : MonoBehaviour
 {
+    public static CameraController Instance { get; private set; }
     private GameObject focus;   //聚焦中心物体，直接控制其位移
-
+    
     [Tooltip("最大视野")]public float maxHeight = 80;
     [Tooltip("最低视野")]public float minHeight = 140;
     [Tooltip("高度平滑度")] [SerializeField] private float m_HeightSmooth = 10;
@@ -17,7 +19,16 @@ public class CameraController : MonoBehaviour
     [HideInInspector]public float height;    //高度参数
     private Transform mainCamera;
 
-    private void Start()
+    public static bool IsPointingUI { get { return EventSystem.current.IsPointerOverGameObject(); } }
+    private Ray RayTerrain; 
+    private Ray RayCharacter;
+    public static bool TerrainHit { get; private set; }
+    public static bool CharacterHit { get; private set; }
+    public static RaycastHit TerrainRaycast;      //与地面的碰撞
+    public static RaycastHit CharacterRaycast;   //与人物的碰撞
+
+
+    private void Awake()
     {
         mainCamera = transform.Find("Main Camera");
         focus = Instantiate(ResourcesLoader.LoadPrefab("Prefabs/Scene/FucosGo"));
@@ -42,10 +53,13 @@ public class CameraController : MonoBehaviour
             height -= 20;
         height = Mathf.Clamp(height, minHeight, maxHeight);
 
-     
+        //检查鼠标位置及所属网格
+        RayTerrain = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RayCharacter = Camera.main.ScreenPointToRay(Input.mousePosition);
+        TerrainHit = Physics.Raycast(RayTerrain, out TerrainRaycast, 1000, 1 << 8);
+        CharacterHit = Physics.Raycast(RayTerrain, out CharacterRaycast, 1000, 1 << 9);
     }
 
-   
     private float m_TempHeight;   //临时高度变量，像height靠拢
     private void LateUpdate()
     {

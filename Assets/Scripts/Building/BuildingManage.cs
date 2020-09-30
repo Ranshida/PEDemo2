@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public enum BuildingType
@@ -22,16 +23,17 @@ public class BuildingManage : MonoBehaviour
    // public Transform BuildingContent, EntityContent, ExitPos, MaxPos, MinPos;
     public GameObject ControlPanel;
 
-    private bool canBuild;
-    private List<Grid> selectGrids;
-    public Vector3 AimingPosition { get; private set; } = Vector3.zero;  //Aiming屏幕射线位置
-    private Ray rayAiming; //实际瞄准的位置，与任何物体碰撞
-    private Building temp_Building;
-
+    //初始化
     private GameObject[] buildingPrefabs;  //建筑预制体
     private Dictionary<BuildingType, GameObject> buildingDict;   //<建筑类型，预制体> 的字典
+
+    //准备建造的建筑
+    private bool canBuild;
+    private List<Grid> temp_Grids;
+    private Building temp_Building; 
     private GameObject CEOBuilding;
 
+    //建造面板
     public Transform optionPanel;   //建造选项面板
     Button[] buildingButton;        //建造选项面板下的所有按钮
 
@@ -41,6 +43,13 @@ public class BuildingManage : MonoBehaviour
     public int CEOPositionZ;
     public OfficeControl CEOOffice;
 
+    //选中的建筑
+    private Building selectBuilding;
+    private GameObject effectHalo;
+
+    //屏幕射线位置
+    public static Vector3 AimingPosition { get; private set; } = Vector3.zero; 
+
     private void Awake()
     {
         Instance = this;
@@ -48,7 +57,7 @@ public class BuildingManage : MonoBehaviour
    
     private void Start()
     {
-        selectGrids = new List<Grid>();
+        temp_Grids = new List<Grid>();
         buildingDict = new Dictionary<BuildingType, GameObject>();
 
         //注册Button
@@ -119,6 +128,9 @@ public class BuildingManage : MonoBehaviour
         //加载建筑预制体，加入建筑字典
         buildingPrefabs = ResourcesLoader.LoadAll<GameObject>("Prefabs/Scene/Buildings");
         CEOBuilding = ResourcesLoader.LoadPrefab("Prefabs/Scene/Buildings/CEO办公室");
+        effectHalo = Instantiate(ResourcesLoader.LoadPrefab("Prefabs/Scene/EffectHalo"), transform);
+        effectHalo.SetActive(false);
+
         foreach (GameObject prefab in buildingPrefabs)
         {
             Building building = prefab.GetComponent<Building>();
@@ -133,12 +145,12 @@ public class BuildingManage : MonoBehaviour
         if (!GridContainer.Instance)
             return;
 
-        //检查鼠标位置及所属网格
-        rayAiming = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (Physics.Raycast(rayAiming, out RaycastHit hit, 1000))
-            AimingPosition = new Vector3(hit.point.x, 0, hit.point.z);
+        //屏幕射线命中地面
+        if (CameraController.TerrainHit && !CameraController.IsPointingUI)
+            AimingPosition = new Vector3(CameraController.TerrainRaycast.point.x, 0, CameraController.TerrainRaycast.point.z);
         else
-            Debug.Log("未碰撞到地面");
+            AimingPosition = new Vector3(-1000, 0, 0);
+
         //鼠标所属网格的X坐标
         int tempX;
         if (AimingPosition.x > 0)
@@ -151,41 +163,69 @@ public class BuildingManage : MonoBehaviour
             tempZ = (int)(AimingPosition.z / 10);
         else
             tempZ = (int)(AimingPosition.z / 10) - 1;
-
-        //确定建造
+    
         if (Input.GetKeyDown(KeyCode.Mouse0))
-        {
-            if (temp_Building && canBuild)
-            {
+        { 
+            Dictionary<int, Grid> dict = null;
+            Grid grid = null;
+
+            //取消选中
+            if (selectBuilding)
+                selectBuilding = null;
+            //确定建造
+            else if (temp_Building && canBuild)
                 BuildConfirm();
+            //选中建筑
+            else if (GridContainer.Instance.GridDict.TryGetValue(tempX, out dict))
+            {
+                if (dict.TryGetValue(tempZ,out grid))
+                {
+                    if (grid.Type == Grid.GridType.已放置)
+                        selectBuilding = GridContainer.Instance.GridDict[tempX][tempZ].belongBuilding;
+                }
             }
         }
 
-        //拆除建筑，先不做
         if (Input.GetKeyDown(KeyCode.Mouse1))
         {
+            //取消建造
             if (temp_Building)
             {
                 temp_Building.Dismantle();
                 temp_Building = null;
             }
+            //取消选中
+            else if (selectBuilding)
+            {
+                selectBuilding = null;
+            }
 
+            //拆除建筑，先不做
             if (GridContainer.Instance.GridDict[tempX][tempZ].Type == Grid.GridType.已放置)
             {
                 //GridContainer.Instance.GridDict[tempX][tempZ].belongBuilding.Dismantle();
             }
         }
 
+        if (selectBuilding)
+        {
+            effectHalo.SetActive(true);
+            effectHalo.transform.position = selectBuilding.transform.position + new Vector3(selectBuilding.Length * 5, 0.2f, selectBuilding.Width * 5);
+            effectHalo.transform.localScale = new Vector3(selectBuilding.Length + 8, 1, selectBuilding.Width + 8);
+        }
+        else
+        {
+            effectHalo.SetActive(false);
+        }
 
         //刷新临时建筑网格
-        foreach (Grid grid in selectGrids)
+        foreach (Grid grid in temp_Grids)
         {
             grid.IsPutting = false;
             grid.RefreshGrid();
         }
-        selectGrids.Clear();
+        temp_Grids.Clear();
         canBuild = false;
-
 
         //已经选择建筑，检测网格可否可以建造
         if (temp_Building)
@@ -203,7 +243,7 @@ public class BuildingManage : MonoBehaviour
                         {
                             if (!gridDict[tempZ + j].Lock && gridDict[tempZ + j].Type == Grid.GridType.可放置)
                             {
-                                selectGrids.Add(gridDict[tempZ + j]);
+                                temp_Grids.Add(gridDict[tempZ + j]);
                             }
                         }
                     }
@@ -211,10 +251,10 @@ public class BuildingManage : MonoBehaviour
             }
 
             //全部覆盖到网格 => 可以建造
-            if (selectGrids.Count == temp_Building.Width * temp_Building.Length)
+            if (temp_Grids.Count == temp_Building.Width * temp_Building.Length)
             {
                 canBuild = true;
-                foreach (Grid tempGrid in selectGrids)
+                foreach (Grid tempGrid in temp_Grids)
                 {
                     tempGrid.IsPutting = true;
                     tempGrid.RefreshGrid();
@@ -227,6 +267,7 @@ public class BuildingManage : MonoBehaviour
                 temp_Building.transform.position = AimingPosition + new Vector3(-5, 0, -5);
         }
     }
+
 
     private void InitBuilding()
     {
@@ -252,7 +293,7 @@ public class BuildingManage : MonoBehaviour
                         {
                             if (!gridDict[CEOPositionZ + j].Lock && gridDict[CEOPositionZ + j].Type == Grid.GridType.可放置)
                             {
-                                selectGrids.Add(gridDict[CEOPositionZ + j]);
+                                temp_Grids.Add(gridDict[CEOPositionZ + j]);
                             }
                         }
                     }
@@ -260,10 +301,10 @@ public class BuildingManage : MonoBehaviour
             }
 
             //全部覆盖到网格 => 可以建造
-            if (selectGrids.Count == temp_Building.Width * temp_Building.Length)
+            if (temp_Grids.Count == temp_Building.Width * temp_Building.Length)
             {
                 canBuild = true;
-                foreach (Grid tempGrid in selectGrids)
+                foreach (Grid tempGrid in temp_Grids)
                 {
                     tempGrid.IsPutting = true;
                     tempGrid.RefreshGrid();
@@ -283,7 +324,7 @@ public class BuildingManage : MonoBehaviour
         temp_Building.effectValue = 8;
 
         //确定建筑已摆放完毕,不能再移动
-        temp_Building.Build(selectGrids);
+        temp_Building.Build(temp_Grids);
 
         //获取建筑相互影响情况
         temp_Building.effect.GetEffectBuilding();
@@ -448,7 +489,7 @@ public class BuildingManage : MonoBehaviour
         }
 
         //确定建筑已摆放完毕,不能再移动
-        temp_Building.Build(selectGrids);
+        temp_Building.Build(temp_Grids);
 
         //获取建筑相互影响情况
         temp_Building.effect.GetEffectBuilding();

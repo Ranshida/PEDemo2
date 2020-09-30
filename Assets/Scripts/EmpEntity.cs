@@ -26,7 +26,7 @@ public class EmpEntity : MonoBehaviour
     public List<EmpEvent> ReceivedEvent = new List<EmpEvent>();     //被动接受的事件
 
     //int WaitHour = 0;
-    public string empName;
+    public string EmpName { get; private set; }
 
     //移动目标位置
     public Vector3 Destination;
@@ -110,7 +110,7 @@ public class EmpEntity : MonoBehaviour
         //detail.GC.HourEvent.AddListener(TimePass);
         //detail.GC.HourEvent.AddListener(detail.emp.EventCheck);
         BM = detail.GC.BM;
-        empName = detail.emp.Name;
+        EmpName = detail.emp.Name;
     }
     
     //private void EventTimePass()
