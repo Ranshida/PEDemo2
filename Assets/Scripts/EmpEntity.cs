@@ -46,6 +46,24 @@ public class EmpEntity : MonoBehaviour
         //模型只同步位置，不同步旋转
         mesh.position = this.transform.position + offset;
 
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+            ShowTips(1);
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+            ShowTips(2);
+        if (Input.GetKeyDown(KeyCode.Alpha3))
+            ShowTips(3);
+        if (Input.GetKeyDown(KeyCode.Alpha4))
+            ShowTips(4);
+        if (Input.GetKeyDown(KeyCode.Alpha5))
+            ShowTips(5);
+        if (Input.GetKeyDown(KeyCode.Alpha6))
+            ShowTips(6);
+        if (Input.GetKeyDown(KeyCode.Alpha7))
+            ShowTips(7);
+        if (Input.GetKeyDown(KeyCode.Alpha8))
+            ShowTips(8);
+
+
         //if (TargetEmp != null && WorkShift == false)
         //    Destination = TargetEmp.transform.position;
 
@@ -275,7 +293,41 @@ public class EmpEntity : MonoBehaviour
 
     public void ShowTips(int index)
     {
-
+        if (index < 1 || index > 8) 
+        {
+            Debug.LogError("请输入1-8");
+        }
+        string str = "";
+        switch (index)
+        {
+            case 1:
+                str = "≖‿≖✧";
+                break;
+            case 2:
+                str = "(ง •̀_•́)ง";
+                break;
+            case 3:
+                str = "(:3[▓▓]";
+                break;
+            case 4:
+                str = "╭(●｀∀´●)╯";
+                break;
+            case 5:
+                str = "♪♪♪";
+                break;
+            case 6:
+                str = "♪";
+                break;
+            case 7:
+                str = "。";
+                break;
+            case 8:
+                str = "！！！";
+                break;
+            default:
+                break;
+        }
+        DynamicWindow.Instance.SetDialogue(transform, str, 3, default, Vector3.up * 10 + Vector3.right * 5);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

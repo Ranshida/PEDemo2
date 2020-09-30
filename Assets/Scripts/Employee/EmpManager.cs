@@ -25,10 +25,7 @@ public class EmpManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.D))
-        {
-            CreateEmp(BuildingManage.Instance.AimingPosition);
-        }
+
     }
 
     public EmpEntity CreateEmp(Vector3 position)

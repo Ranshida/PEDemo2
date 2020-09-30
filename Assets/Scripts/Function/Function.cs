@@ -29,7 +29,11 @@ public static class Function
         return list;
     }
 
-
+    //世界坐标转屏幕坐标
+    public static Vector3 World2ScreenPoint(Vector3 worldPos)
+    {
+        return Camera.main.WorldToScreenPoint(worldPos);
+    }
 }
 
 public class Int2
