@@ -21,7 +21,7 @@ public class FOECompany : MonoBehaviour
         {
             FindTarget();
             RandomSkill();
-            FC.GC.MonthlyEvent.AddListener(TimePass);
+            FC.GC.WeeklyEvent.AddListener(TimePass);
             FC.GC.YearEvent.AddListener(IncreaseIncome);
         }
     }
