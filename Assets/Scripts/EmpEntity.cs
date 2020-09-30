@@ -45,24 +45,7 @@ public class EmpEntity : MonoBehaviour
     {
         //模型只同步位置，不同步旋转
         mesh.position = this.transform.position + offset;
-
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-            ShowTips(1);
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-            ShowTips(2);
-        if (Input.GetKeyDown(KeyCode.Alpha3))
-            ShowTips(3);
-        if (Input.GetKeyDown(KeyCode.Alpha4))
-            ShowTips(4);
-        if (Input.GetKeyDown(KeyCode.Alpha5))
-            ShowTips(5);
-        if (Input.GetKeyDown(KeyCode.Alpha6))
-            ShowTips(6);
-        if (Input.GetKeyDown(KeyCode.Alpha7))
-            ShowTips(7);
-        if (Input.GetKeyDown(KeyCode.Alpha8))
-            ShowTips(8);
-
+        
 
         //if (TargetEmp != null && WorkShift == false)
         //    Destination = TargetEmp.transform.position;
