@@ -86,9 +86,10 @@ public class HireControl : MonoBehaviour
         ED.emp.InitRelation();
         GC.HourEvent.AddListener(ED.emp.TimePass);
         ED.SetSkillName();
+
         //创建员工实体
-        //ED.Entity = Instantiate(GC.EmpEntityPrefab, GC.BM.ExitPos.position, Quaternion.Euler(0, 0, 0), GC.BM.EntityContent);
-        //ED.Entity.SetInfo(ED);
+        ED.Entity = EmpManager.Instance.CreateEmp(GC.BM.ExitPos.position);
+        ED.Entity.SetInfo(ED);
 
         //注意应放在初始化人际关系后再添加至链表
         GC.CurrentEmployees.Add(GC.CurrentEmpInfo.emp);
@@ -139,6 +140,10 @@ public class HireControl : MonoBehaviour
         EI2.DetailInfo = ED;
         EI1.transform.parent = GC.StandbyContent;
         emp.InitRelation();
+
+        //创建员工实体
+        ED.Entity = EmpManager.Instance.CreateEmp(GC.BM.ExitPos.position);
+        ED.Entity.SetInfo(ED);
 
         GC.CurrentEmployees.Add(emp);
 

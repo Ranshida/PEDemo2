@@ -96,7 +96,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &4237088999540035020
 RectTransform:
   m_ObjectHideFlags: 0
@@ -172,7 +172,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &6966895417948999507
 RectTransform:
   m_ObjectHideFlags: 0
@@ -327,7 +327,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &8766564248202516173
 RectTransform:
   m_ObjectHideFlags: 0
@@ -403,7 +403,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1578653645955430609
 RectTransform:
   m_ObjectHideFlags: 0
@@ -479,7 +479,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &430970320900017501
 RectTransform:
   m_ObjectHideFlags: 0
@@ -733,17 +733,18 @@ MonoBehaviour:
   canMove: 0
   WorkShift: 0
   canChangePos: 1
+  OffWork: 0
   InfoDetail: {fileID: 0}
   Rect: {fileID: 0}
   BM: {fileID: 0}
   TargetEmp: {fileID: 0}
-  Text_Name: {fileID: 2461365126007339321}
   Markers:
   - {fileID: 1665956923376397579}
   - {fileID: 2452542900601052624}
   - {fileID: 2349276464223682556}
   - {fileID: 5770721539411585742}
   - {fileID: 1258102197254155106}
+  Destination: {x: 0, y: 0, z: 0}
 --- !u!50 &199382957018911912
 Rigidbody2D:
   serializedVersion: 4
@@ -753,7 +754,7 @@ Rigidbody2D:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4645509049477255500}
   m_BodyType: 0
-  m_Simulated: 1
+  m_Simulated: 0
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
   m_Mass: 0.0001
@@ -925,7 +926,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &8084684937592081096
 RectTransform:
   m_ObjectHideFlags: 0

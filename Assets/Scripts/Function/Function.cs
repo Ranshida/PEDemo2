@@ -8,7 +8,6 @@ using UnityEngine;
 /// </summary>
 public static class Function
 {
-
     //设置物体及子物体材质
     public static void SetMaterial(Transform transform, Material material, bool childs = true)
     {
@@ -18,6 +17,19 @@ public static class Function
             renderer.material = material;
         }
     }
+
+    //返回子物体列表
+    public static List<Transform> ReturnChildList(Transform parent)
+    {
+        List<Transform> list = new List<Transform>();
+        foreach (Transform transform in parent)
+        {
+            list.Add(transform);
+        }
+        return list;
+    }
+
+
 }
 
 public class Int2

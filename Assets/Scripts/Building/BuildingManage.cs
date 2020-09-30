@@ -18,7 +18,8 @@ public class BuildingManage : MonoBehaviour
     public static BuildingManage Instance;
     public Button ConfirmButton;
     public BuildingEffect BEPrefab;
-    public Transform BuildingContent, EntityContent, ExitPos, MaxPos, MinPos;
+    public Transform BuildingContent, EntityContent, ExitPos;
+   // public Transform BuildingContent, EntityContent, ExitPos, MaxPos, MinPos;
     public GameObject ControlPanel;
 
     private bool canBuild;
