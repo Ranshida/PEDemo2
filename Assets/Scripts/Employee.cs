@@ -478,19 +478,19 @@ public class Employee
 
     public void EventCheck()
     {
-        Request[0] += (300 - stamina - mentality - InfoDetail.GC.Morale) * 0.05f;
-        Request[1] += Mathf.Abs(Character[0]) + Mathf.Abs(Character[4]);
-        Request[2] += Mathf.Abs(Character[2]) + Mathf.Abs(Character[3]) + Mathf.Abs(Character[4]);
-        Request[3] += Mathf.Abs(Character[1]) + Mathf.Abs(Character[3]) + Mathf.Abs(Character[4]);
-        for(int i = 0; i < 4; i++)
-        {
-            if(Request[i] >= 100)
-            {
-                InfoDetail.Entity.AddEvent(i + 1);
-                Request[i] = 0;
-                break;
-            }
-        }
+        //Request[0] += (300 - stamina - mentality - InfoDetail.GC.Morale) * 0.05f;
+        //Request[1] += Mathf.Abs(Character[0]) + Mathf.Abs(Character[4]);
+        //Request[2] += Mathf.Abs(Character[2]) + Mathf.Abs(Character[3]) + Mathf.Abs(Character[4]);
+        //Request[3] += Mathf.Abs(Character[1]) + Mathf.Abs(Character[3]) + Mathf.Abs(Character[4]);
+        //for(int i = 0; i < 4; i++)
+        //{
+        //    if(Request[i] >= 100)
+        //    {
+        //        InfoDetail.Entity.AddEvent(i + 1);
+        //        Request[i] = 0;
+        //        break;
+        //    }
+        //}
     }
 
     public void InitRelation()
@@ -894,24 +894,28 @@ public class Employee
             EventData.CopyList(EF, EventData.StudyForceEvents);
             EventData.CopyList(E, EventData.StudyEvents);
             Motiv = value1;
+            InfoDetail.Entity.ShowTips(2);
         }
         else if (Posb < value2)
         {
             EventData.CopyList(EF, EventData.RecoverForceEvent);
             EventData.CopyList(E, EventData.RecoverEvent);
             Motiv = value2;
+            InfoDetail.Entity.ShowTips(3);
         }
         else if (Posb < value3)
         {
             EventData.CopyList(EF, EventData.AmbitionForceEvent);
             EventData.CopyList(E, EventData.AmbitionEvent);
             Motiv = value3;
+            InfoDetail.Entity.ShowTips(1);
         }
         else
         {
             EventData.CopyList(EF, EventData.SocialForceEvent);
             EventData.CopyList(E, EventData.SocialEvent);
             Motiv = value4;
+            InfoDetail.Entity.ShowTips(4);
         }
         //先检测排他事件
         while (EF.Count > 0)

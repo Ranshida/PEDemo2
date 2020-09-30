@@ -515,6 +515,7 @@ public class Event1: Event
             Self.ChangeCharacter(3, 10);
         ResultText += "心力+5,工资上涨20%";
         GC.CreateMessage(Self.Name + "的工资根据需求上涨了20%");
+        Self.InfoDetail.Entity.ShowTips(6);
     }
     public override void MajorSuccess(float Posb)
     {
@@ -527,6 +528,7 @@ public class Event1: Event
             Self.ChangeCharacter(3, 30);
         ResultText += "心力+15,工资上涨40%";
         GC.CreateMessage(Self.Name + "的工资根据需求上涨了40%");
+        Self.InfoDetail.Entity.ShowTips(5);
     }
 }
 
@@ -578,6 +580,7 @@ public class Event2 : Event
             Self.ChangeCharacter(3, -30);
         ResultText += "心力-20，信念-10";
         GC.CreateMessage(Self.Name + "谋求高位大失败");
+        Self.InfoDetail.Entity.ShowTips(8);
     }
     public override void Failure(float Posb)
     {
@@ -590,6 +593,7 @@ public class Event2 : Event
             Self.ChangeCharacter(3, -10);
         ResultText += "心力-10，信念-5";
         GC.CreateMessage(Self.Name + "谋求高位失败");
+        Self.InfoDetail.Entity.ShowTips(7);
     }
     public override void Success(float Posb)
     {
@@ -602,6 +606,7 @@ public class Event2 : Event
             Self.ChangeCharacter(3, 10);
         ResultText += "信念+5";
         GC.CreateMessage(Self.Name + "谋求高位成功");
+        Self.InfoDetail.Entity.ShowTips(6);
     }
     public override void MajorSuccess(float Posb)
     {
@@ -615,6 +620,7 @@ public class Event2 : Event
             Self.ChangeCharacter(3, 30);
         ResultText += "获得状态 启发*1，信念+10";
         GC.CreateMessage(Self.Name + "谋求高位大成功");
+        Self.InfoDetail.Entity.ShowTips(5);
     }
 }
 
@@ -773,6 +779,7 @@ public class Event4 : Event
             Self.ChangeCharacter(3, -30);
         ResultText += "与对方的好感-30，心力-20";
         GC.CreateMessage(Self.Name + "在试图搞破坏但是没成功");
+        Self.InfoDetail.Entity.ShowTips(8);
     }
     public override void Failure(float Posb)
     {
@@ -891,6 +898,7 @@ public class Event5 : Event
         }
         GC.CreateMessage(Self.Name + "领导所在派系罢工");
         ResultText += "开展了持续一个月的罢工";
+        Self.InfoDetail.Entity.ShowTips(6);
     }
     public override void MajorSuccess(float Posb)
     {
@@ -907,6 +915,7 @@ public class Event5 : Event
         }
         GC.CreateMessage(Self.Name + "领导所在派系罢工");
         ResultText += "开展了持续一个月的罢工,所有派系成员心力+20";
+        Self.InfoDetail.Entity.ShowTips(5);
     }
 }
 
@@ -991,6 +1000,7 @@ public class Event6 : Event
             Self.ChangeCharacter(3, -10);
         Self.ChangeCharacter(4, -10);
         ResultText += "成立了新派系,信念-10";
+        Self.InfoDetail.Entity.ShowTips(6);
     }
     public override void MajorSuccess(float Posb)
     {
@@ -1007,6 +1017,7 @@ public class Event6 : Event
             Self.ChangeCharacter(3, -10);
         Self.ChangeCharacter(4, -15);
         ResultText += "成立了新派系,双方关系+20,信念-15";
+        Self.InfoDetail.Entity.ShowTips(5);
     }
 }
 
@@ -1248,6 +1259,7 @@ public class Event10 : Event
         else
             Self.ChangeCharacter(3, 30);
         ResultText += "心力下降10点，信念-10";
+        Self.InfoDetail.Entity.ShowTips(8);
     }
     public override void Failure(float Posb)
     {
@@ -1259,6 +1271,7 @@ public class Event10 : Event
         else
             Self.ChangeCharacter(3, 10);
         ResultText += "体力回复10%，信念-5";
+        Self.InfoDetail.Entity.ShowTips(7);
     }
     public override void Success(float Posb)
     {
@@ -1270,6 +1283,7 @@ public class Event10 : Event
         else
             Self.ChangeCharacter(3, -10);
         ResultText += "体力回复30%，信念+5";
+        Self.InfoDetail.Entity.ShowTips(6);
     }
     public override void MajorSuccess(float Posb)
     {
@@ -1281,6 +1295,7 @@ public class Event10 : Event
         else
             Self.ChangeCharacter(3, -30);
         ResultText += "体力回复50%，信念+10";
+        Self.InfoDetail.Entity.ShowTips(5);
     }
 }
 
@@ -1439,6 +1454,7 @@ public class Event12 : Event
             Self.ChangeCharacter(3, 30);
         ResultText += "心力下降10点，信念-10";
         GC.CreateMessage(ResultText);
+        Self.InfoDetail.Entity.ShowTips(8);
     }
     public override void Failure(float Posb)
     {
@@ -1451,6 +1467,7 @@ public class Event12 : Event
             Self.ChangeCharacter(3, 10);
         ResultText += "心力下降5点，信念-5";
         GC.CreateMessage(ResultText);
+        Self.InfoDetail.Entity.ShowTips(7);
     }
     public override void Success(float Posb)
     {
@@ -1463,6 +1480,7 @@ public class Event12 : Event
             Self.ChangeCharacter(3, -10);
         ResultText += "心力提升10%，信念+5";
         GC.CreateMessage(ResultText);
+        Self.InfoDetail.Entity.ShowTips(6);
     }
     public override void MajorSuccess(float Posb)
     {
@@ -1475,6 +1493,7 @@ public class Event12 : Event
             Self.ChangeCharacter(3, -30);
         ResultText += "心力提升20%，信念+10";
         GC.CreateMessage(ResultText);
+        Self.InfoDetail.Entity.ShowTips(5);
     }
 }
 
@@ -1551,6 +1570,7 @@ public class Event14 : Event
         }
         ResultText += "获得特质" + PerkName + "，心力回复50%，信念-10";
         GC.CreateMessage(ResultText);
+        Self.InfoDetail.Entity.ShowTips(8);
     }
     public override void MajorSuccess(float Posb)
     {
@@ -1561,6 +1581,7 @@ public class Event14 : Event
 
         ResultText += "获得特质“元气满满”，心力回复50%，信念+10";
         GC.CreateMessage(ResultText);
+        Self.InfoDetail.Entity.ShowTips(5);
     }
 }
 
@@ -1621,6 +1642,7 @@ public class Event15 : Event
         Self.InfoDetail.AddPerk(new Perk19(Self), true);
         ResultText += "获得特质“反社会人格”，心力回复50%，信念-10";
         GC.CreateMessage(ResultText);
+        Self.InfoDetail.Entity.ShowTips(8);
     }
     public override void MajorSuccess(float Posb)
     {
@@ -1630,6 +1652,7 @@ public class Event15 : Event
         Self.InfoDetail.AddPerk(new Perk25(Self), true);
         ResultText += "获得特质“爱的艺术”，心力回复50%，信念+10";
         GC.CreateMessage(ResultText);
+        Self.InfoDetail.Entity.ShowTips(5);
     }
 }
 
@@ -1691,6 +1714,7 @@ public class Event16 : Event
         Self.InfoDetail.AddPerk(new Perk10(Self), true);
         ResultText += "获得特质“狂热”，心力回复50%，信念-10";
         GC.CreateMessage(ResultText);
+        Self.InfoDetail.Entity.ShowTips(8);
     }
     public override void MajorSuccess(float Posb)
     {
@@ -1700,6 +1724,7 @@ public class Event16 : Event
         Self.InfoDetail.AddPerk(new Perk26(Self), true);
         ResultText += "获得特质“悟者”，心力回复50%，信念+10";
         GC.CreateMessage(ResultText);
+        Self.InfoDetail.Entity.ShowTips(5);
     }
 }
 
@@ -1760,6 +1785,7 @@ public class Event17 : Event
         Self.InfoDetail.AddPerk(new Perk10(Self), true);
         ResultText += "获得特质“复仇者”，心力回复50%，信念-10";
         GC.CreateMessage(ResultText);
+        Self.InfoDetail.Entity.ShowTips(8);
     }
     public override void MajorSuccess(float Posb)
     {
@@ -1779,6 +1805,7 @@ public class Event17 : Event
         }
         ResultText += "获得特质" + PerkName + "，心力回复50%，信念+10";
         GC.CreateMessage(ResultText);
+        Self.InfoDetail.Entity.ShowTips(5);
     }
 }
 
@@ -3713,6 +3740,7 @@ public class Event33 : Event
             Self.ChangeCharacter(3, 10);
         ResultText += "信念+5，获得特质师承授业(没有这个特质)，体力-30," + Self.Name + "师承" + Target.Name;
         GC.CreateMessage(ResultText);
+        Self.InfoDetail.Entity.ShowTips(6);
     }
     public override void MajorSuccess(float Posb)
     {
@@ -3734,6 +3762,7 @@ public class Event33 : Event
             Self.ChangeCharacter(3, 30);
         ResultText += "信念+10，获得特质师承授业(没有这个特质)，双方好感+10," + Self.Name + "师承" + Target.Name;
         GC.CreateMessage(ResultText);
+        Self.InfoDetail.Entity.ShowTips(5);
     }
 }
 
@@ -3994,6 +4023,8 @@ public class Event36 : Event
         else
             Self.ChangeCharacter(3, -30);
         ResultText += "对方好感-10";
+        GC.CreateMessage(ResultText);
+        Self.InfoDetail.Entity.ShowTips(8);
     }
     public override void Failure(float Posb)
     {
@@ -4003,6 +4034,8 @@ public class Event36 : Event
         else
             Self.ChangeCharacter(3, -10);
         ResultText += "无事发生";
+        GC.CreateMessage(ResultText);
+        Self.InfoDetail.Entity.ShowTips(7);
     }
     public override void Success(float Posb)
     {
@@ -4019,6 +4052,7 @@ public class Event36 : Event
             Self.ChangeCharacter(3, 10);
         ResultText += "双方心力+5，彼此结成伴侣关系";
         GC.CreateMessage(ResultText);
+        Self.InfoDetail.Entity.ShowTips(6);
     }
     public override void MajorSuccess(float Posb)
     {
@@ -4035,6 +4069,7 @@ public class Event36 : Event
             Self.ChangeCharacter(3, 30);
         ResultText += "双方心力+10，彼此结成伴侣关系";
         GC.CreateMessage(ResultText);
+        Self.InfoDetail.Entity.ShowTips(5);
     }
 }
 
@@ -4725,6 +4760,8 @@ public class Event43 : Event
         else
             Self.ChangeCharacter(3, -30);
         ResultText += "信念+10，获得 状态 启发*2";
+        GC.CreateMessage(ResultText);
+        Self.InfoDetail.Entity.ShowTips(5);
     }
 }
 
@@ -4809,6 +4846,8 @@ public class Event44 : Event
         else
             Self.ChangeCharacter(3, -10);
         ResultText += "信念+5，双方获得 状态 启发";
+        GC.CreateMessage(ResultText);
+        Self.InfoDetail.Entity.ShowTips(6);
     }
     public override void MajorSuccess(float Posb)
     {
@@ -4823,7 +4862,9 @@ public class Event44 : Event
             Self.ChangeCharacter(0, -30);
         else
             Self.ChangeCharacter(3, -30);
+        GC.CreateMessage(ResultText);
         ResultText += "信念+10，双方获得 状态 启发*2";
+        Self.InfoDetail.Entity.ShowTips(5);
     }
 }
 
@@ -4905,6 +4946,8 @@ public class Event45 : Event
         else
             Self.ChangeCharacter(3, -10);
         ResultText += "信念+5，双方获得状态 头脑风暴*1";
+        GC.CreateMessage(ResultText);
+        Self.InfoDetail.Entity.ShowTips(6);
     }
     public override void MajorSuccess(float Posb)
     {
@@ -4922,6 +4965,8 @@ public class Event45 : Event
         else
             Self.ChangeCharacter(3, -30);
         ResultText += "信念+10，双方获得状态 头脑风暴*2，双方好感+5";
+        GC.CreateMessage(ResultText);
+        Self.InfoDetail.Entity.ShowTips(5);
     }
 }
 
@@ -5020,6 +5065,8 @@ public class Event46 : Event
         else
             Self.ChangeCharacter(3, -30);
         ResultText += "信念+10，获得状态 头脑风暴*2 状态 启发*2";
+        GC.CreateMessage(ResultText);
+        Self.InfoDetail.Entity.ShowTips(5);
     }
 }
 
