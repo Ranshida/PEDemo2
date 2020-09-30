@@ -5,22 +5,31 @@ using BehaviorDesigner.Runtime;
 using BehaviorDesigner.Runtime.Tasks;
 
 /// <summary>
-/// 处理事件中
+/// 开始执行事件
 /// </summary>
 [TaskCategory("Employee")]
-public class BTE_DealtEvent : BTE_Action
+public class BTE_EventStart : BTE_Action
 {
     public SharedBool MoveFlag;
-    
+
+    protected override void AfterOnStart()
+    {
+        //设置寻路点至公司出口
+        //解除当前的行为
+    }
     public override TaskStatus OnUpdate()
     {
-        //处理时间，完成后return success
-
         if (!ThisEmp.HasEvent)
         {
             return TaskStatus.Failure;
         }
 
+        if (ThisEmp.CurrentEvent.HaveTarget)
+        {
+            MoveFlag.Value = true;
+            ThisEmp.Destination = ThisEmp.CurrentEvent.Target.transform.position;
+        }
+    
         return TaskStatus.Running;
     }
 }

@@ -14,7 +14,7 @@ public class EmpEntity : MonoBehaviour
     private BehaviorTree selfTree;
 
     public bool OffWork { get; private set;  }  //下班
-    public bool HasEvent { get { return SelfEvent.Count > 0 && ReceivedEvent.Count > 0; } }
+    public bool HasEvent { get { return SelfEvent.Count > 0 || ReceivedEvent.Count > 0; } }
 
     public EmpInfo InfoDetail;
     public RectTransform Rect;
@@ -26,7 +26,7 @@ public class EmpEntity : MonoBehaviour
     public List<EmpEvent> ReceivedEvent = new List<EmpEvent>();     //被动接受的事件
 
     //int WaitHour = 0;
-    private string empName;
+    public string empName;
 
     //移动目标位置
     public Vector3 Destination;
@@ -89,27 +89,12 @@ public class EmpEntity : MonoBehaviour
     {
         InfoDetail = detail;
         detail.Entity = this;
-        detail.GC.HourEvent.AddListener(TimePass);
-        detail.GC.HourEvent.AddListener(detail.emp.EventCheck);
+        //detail.GC.HourEvent.AddListener(TimePass);
+        //detail.GC.HourEvent.AddListener(detail.emp.EventCheck);
         BM = detail.GC.BM;
         empName = detail.emp.Name;
-        FindWorkPos();
     }
-
-    //时间增加
-    public void TimePass()
-    {
-        //刷新状态
-
-        //没有事件 => 找工作位置
-
-        //有事件 => 处理事件
-
-        //EventTimePass();
-
-        if (!HasEvent)
-            FindWorkPos();
-    }
+    
     //private void EventTimePass()
     //{
     //    for (int i = 0; i < CurrentEvent.Count; i++)
@@ -139,7 +124,7 @@ public class EmpEntity : MonoBehaviour
     public void WorkStart()
     {
         OffWork = false;
-        FindWorkPos();
+        //FindWorkPos();
     }
 
     public bool EventCheck()
@@ -159,6 +144,7 @@ public class EmpEntity : MonoBehaviour
 
     public void AddEvent(int index)
     {
+        Debug.LogError("Add");
         EmpEvent e = new EmpEvent();
         Employee m = InfoDetail.emp;
         e.Self = this;
@@ -171,8 +157,8 @@ public class EmpEntity : MonoBehaviour
                 SelfEvent.Add(e);
                 //print(empName + "添加了" + type + "类事件" + e.Value);
                 e.Target.ReceivedEvent.Add(e);
-                if (EventCheck() == true)
-                    SetTarget();
+                //if (EventCheck() == true)
+                //    SetTarget();
             }
         }
         else
@@ -258,57 +244,6 @@ public class EmpEntity : MonoBehaviour
 
     }
 
-    public bool SetTarget()
-    {
-        for (int i = 0; i < SelfEvent.Count; i++)
-        {
-            //二次检测能否移动以防万一
-            if (SelfEvent[i].EventActive == true)
-                return false;
-            //再次检测是否需要移动
-            else if (SelfEvent[i].HaveTarget == false)
-            {
-                SelfEvent[i].EventActive = true;
-                //canMove = false;
-                return false;
-            }
-            else if (SelfEvent[i].Target != null || SelfEvent[i].FindTarget() == true)
-            {
-                TargetEmp = SelfEvent[i].Target;
-                Destination = TargetEmp.transform.position;
-                //canMove = true;
-                return false;
-            }
-        }
-        FindWorkPos();
-        return true;
-    }
-
-    public void FindWorkPos()
-    {
-        //从当前部门转为待命或者从待命移动到某部门时都要调用
-        //此处检测主要为了防止在下班时安排工作导致移动
-        //if (canChangePos == true)
-        //{
-        //    if (InfoDetail.emp.CurrentDep != null)
-        //    {
-        //        Destination = InfoDetail.emp.CurrentDep.building.WorkPos[InfoDetail.emp.CurrentDep.CurrentEmps.IndexOf(InfoDetail.emp)].position;
-        //    }
-        //    else if (InfoDetail.emp.CurrentOffice != null)
-        //    {
-        //        Destination = InfoDetail.emp.CurrentOffice.building.WorkPos[0].position;
-        //    }
-        //    else
-        //    {
-        //        float x = Random.Range(BM.MinPos.position.x, BM.MaxPos.position.x);
-        //        float y = Random.Range(BM.MinPos.position.y, BM.MaxPos.position.y);
-        //        Destination = new Vector2(x, y);
-        //    }
-        //}
-        //canMove = true;
-        //TargetEmp = null;
-    }
-
     public void RemoveEntity()
     {
         for (int i = 0; i < SelfEvent.Count; i++)
@@ -319,8 +254,8 @@ public class EmpEntity : MonoBehaviour
                 if(SelfEvent[i].EventActive == true)
                 {
                     SelfEvent[i].EventActive = false;
-                    if (SelfEvent[i].Target.EventCheck() == true)
-                        SelfEvent[i].Target.SetTarget();
+                   // if (SelfEvent[i].Target.EventCheck() == true)
+                   //     SelfEvent[i].Target.SetTarget();
                 }
                 SelfEvent[i].Target.ReceivedEvent.Remove(SelfEvent[i]);
             }
@@ -330,12 +265,17 @@ public class EmpEntity : MonoBehaviour
             if(ReceivedEvent[i].EventActive == true)
             {
                 ReceivedEvent[i].EventActive = false;
-                if (ReceivedEvent[i].Self.EventCheck() == true)
-                    ReceivedEvent[i].Self.SetTarget();
+               // if (ReceivedEvent[i].Self.EventCheck() == true)
+               //     ReceivedEvent[i].Self.SetTarget();
             }
             ReceivedEvent[i].Self.SelfEvent.Remove(ReceivedEvent[i]);
         }
         Destroy(this.gameObject);
+    }
+
+    public void ShowTips(int index)
+    {
+
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -923,14 +863,22 @@ public class EmpEvent
         //        }
         //    }
         //}
+        //Self.SelfEvent.Remove(this);
+        //if (Target != null)
+        //{
+        //    Target.ReceivedEvent.Remove(this);
+        //    if (Target.EventCheck() == true)
+        //        Target.SetTarget();
+        //}
+
         #endregion
 
         Self.SelfEvent.Remove(this);
         if (Target != null)
         {
             Target.ReceivedEvent.Remove(this);
-            if (Target.EventCheck() == true)
-                Target.SetTarget();
+            //if (Target.EventCheck() == true)
+            //    Target.SetTarget();
         }
     }
 

@@ -218,16 +218,23 @@ public class GameControl : MonoBehaviour
     void StartWorkEnd()
     {
         Anim.SetTrigger("FadeIn");
-        //if (CurrentEmployees.Count > 0)
-        //{
-        //    TimePause = true;
-        //    WorkEndEmpCount = CurrentEmployees.Count;
-        //    for (int i = 0; i < CurrentEmployees.Count; i++)
-        //    {
-        //        CurrentEmployees[i].InfoDetail.Entity.WorkEnd();
-        //    }
-        //}
+        if (CurrentEmployees.Count > 0)
+        {
+            TimePause = true;
+            WorkEndEmpCount = CurrentEmployees.Count;
+            for (int i = 0; i < CurrentEmployees.Count; i++)
+            {
+                CurrentEmployees[i].InfoDetail.Entity.WorkEnd();
+            }
+        }
         //else
+
+        //start
+        TimePause = false;
+        for (int i = 0; i < CurrentEmployees.Count; i++)
+        {
+            CurrentEmployees[i].InfoDetail.Entity.WorkStart();
+        }
     }
 
     public void WorkEndCheck()
@@ -242,8 +249,8 @@ public class GameControl : MonoBehaviour
 
     public void WorkStart()
     {
-        TimePause = false;
-        //for(int i = 0; i < CurrentEmployees.Count; i++)
+        //TimePause = false;
+        //for (int i = 0; i < CurrentEmployees.Count; i++)
         //{
         //    CurrentEmployees[i].InfoDetail.Entity.WorkStart();
         //}

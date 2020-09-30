@@ -14,12 +14,13 @@ public class EmpManager : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+        empPrefabs = ResourcesLoader.LoadPrefab("Prefabs/Employee/Emp");
+        empMaterials = ResourcesLoader.LoadAll<Material>("Image/Employee/Materials");
     }
 
     private void Start()
     {
-        empPrefabs = ResourcesLoader.LoadPrefab("Prefabs/Employee/Emp");
-        empMaterials = ResourcesLoader.LoadAll<Material>("Image/Employee/Materials");
+    
     }
 
     private void Update()

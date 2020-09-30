@@ -10,10 +10,22 @@ using BehaviorDesigner.Runtime.Tasks;
 [TaskCategory("Employee")]
 public class BTE_OnWork : BTE_Action
 {
-    protected override void AfterOnStart()
+    public SharedBool MoveFlag;
+    public SharedVector3 Destination;
+    public SharedFloat StopDistance;
+    
+    public override TaskStatus OnUpdate()
     {
-        //设置寻路点至工作建筑
-
-        //如果没有指定岗位则闲逛
+        MoveFlag.Value = true;
+        StopDistance.Value = 0.1f;
+        if (ThisEmp.InfoDetail.emp.CurrentDep != null)
+        {
+            Destination.Value = ThisEmp.InfoDetail.emp.CurrentDep.building.WorkPos[ThisEmp.InfoDetail.emp.CurrentDep.CurrentEmps.IndexOf(ThisEmp.InfoDetail.emp)].position;
+        }
+        else if (ThisEmp.InfoDetail.emp.CurrentOffice != null)
+        {
+            Destination.Value = ThisEmp.InfoDetail.emp.CurrentOffice.building.WorkPos[0].position;
+        }
+        return TaskStatus.Running;
     }
 }
