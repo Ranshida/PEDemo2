@@ -154,7 +154,7 @@ public class Event
             return true;
         else if (MoralRequire == 1 && Self.Character[2] <= -50)
             return true;
-        else if (MoralRequire == 2 && Self.Character[2] > -50 && Self.Character[2] > 50)
+        else if (MoralRequire == 2 && Self.Character[2] > -50 && Self.Character[2] < 50)
             return true;
         else if (MoralRequire == 3 && Self.Character[2] >= 50)
             return true;
