@@ -17,6 +17,7 @@ public class Event
     public int ReligionRequire = 0; // 0无 1机械 2中庸 3人文
     public int TimeLeft = 4;
     public bool HaveTarget = true;
+    public bool isSolving = false;
     public string EventName = "无";
     public string ResultText = "无";
 

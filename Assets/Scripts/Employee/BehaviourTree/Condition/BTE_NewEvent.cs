@@ -12,14 +12,14 @@ public class BTE_NewEvent : BTE_Condition
 {
     public override TaskStatus OnUpdate()
     {
-        if (ThisEmp.CurrentEvent != null) 
+        if (ThisEmp.SelfEvent != null) 
         {
             //被动事件优先
 
             //主动时间次要
         }
 
-        return ThisEmp.CurrentEvent != null ? TaskStatus.Success : TaskStatus.Failure;
+        return ThisEmp.SelfEvent != null ? TaskStatus.Success : TaskStatus.Failure;
     }
 
 }

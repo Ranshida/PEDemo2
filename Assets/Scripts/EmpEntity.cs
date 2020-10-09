@@ -6,28 +6,29 @@ using UnityEngine.UI;
 
 public class EmpEntity : MonoBehaviour
 {
+    //新建的变量
+    public bool Available;      //员工为可用状态
+    public bool Movable;        //可移动
+    public Event CurrentEvent;
+    public List<Event> EventList = new List<Event>();
+
+  
     //public bool canMove = false, WorkShift = false, canChangePos = true;
-    static public float MoveSpeed = 50.0f;
+    public bool HasEvent;
     private Vector3 offset = new Vector3(0, 2.2f, 2.2f);
     private Transform mesh;
     public MeshRenderer Renderer { get; private set; }
     private BehaviorTree selfTree;
 
     public bool OffWork { get; private set;  }  //下班
-    public bool HasEvent { get { return SelfEvent.Count > 0 || ReceivedEvent.Count > 0; } }
 
     public EmpInfo InfoDetail;
     public RectTransform Rect;
     public BuildingManage BM;
 
-    public EmpEntity TargetEmp;                                     //事件的对象
-    public EmpEvent CurrentEvent;                                   //进行中的事件
-    public List<EmpEvent> SelfEvent = new List<EmpEvent>();         //主动发起的事件
-    public List<EmpEvent> ReceivedEvent = new List<EmpEvent>();     //被动接受的事件
-
     //int WaitHour = 0;
     public string EmpName { get; private set; }
-
+    public EmpEvent SelfEvent;
     //移动目标位置
     public Vector3 Destination;
 
@@ -90,10 +91,13 @@ public class EmpEntity : MonoBehaviour
     {
         InfoDetail = detail;
         detail.Entity = this;
-        //detail.GC.HourEvent.AddListener(TimePass);
-        //detail.GC.HourEvent.AddListener(detail.emp.EventCheck);
+        detail.GC.HourEvent.AddListener(TimePass);
         BM = detail.GC.BM;
         EmpName = detail.emp.Name;
+    }
+    private void TimePass()
+    {
+
     }
     
     //private void EventTimePass()
@@ -127,47 +131,76 @@ public class EmpEntity : MonoBehaviour
         OffWork = false;
         //FindWorkPos();
     }
+    
 
-    public bool EventCheck()
+    //添加事件
+    public void AddEvent(Event e)
     {
-        for(int i = 0; i < SelfEvent.Count; i++)
-        {
-            if (SelfEvent[i].EventActive == true)
-                return false;
-        }
-        for(int i = 0; i < ReceivedEvent.Count; i++)
-        {
-            if (ReceivedEvent[i].EventActive == true)
-                return false;
-        }
-        return true;
+
     }
+
+    //去当间谍
+    public void BecomeSpy()
+    {
+
+    }
+
+    //移除员工，清除全部事件
+    public void RemoveEntity()
+    {
+        //    for (int i = 0; i < SelfEvent.Count; i++)
+        //    {
+        //        if (SelfEvent[i].Target != null && SelfEvent[i].Target.ReceivedEvent.Contains(SelfEvent[i]))
+        //        {
+        //            //遇到有在进行中的且有目标的事件，先停止其激活，再检查目标是否可以动，最后从目标的ReceiveEvent中删除该事件
+        //            if (SelfEvent[i].EventActive == true)
+        //            {
+        //                SelfEvent[i].EventActive = false;
+        //                // if (SelfEvent[i].Target.EventCheck() == true)
+        //                //     SelfEvent[i].Target.SetTarget();
+        //            }
+        //            SelfEvent[i].Target.ReceivedEvent.Remove(SelfEvent[i]);
+        //        }
+        //    }
+        //    for (int i = 0; i < ReceivedEvent.Count; i++)
+        //    {
+        //        if (ReceivedEvent[i].EventActive == true)
+        //        {
+        //            ReceivedEvent[i].EventActive = false;
+        //            // if (ReceivedEvent[i].Self.EventCheck() == true)
+        //            //     ReceivedEvent[i].Self.SetTarget();
+        //        }
+        //        ReceivedEvent[i].Self.SelfEvent.Remove(ReceivedEvent[i]);
+        //    }
+        //    Destroy(this.gameObject);
+    }
+
 
     public void AddEvent(int index)
     {
-        Debug.LogError("Add");
-        EmpEvent e = new EmpEvent();
-        Employee m = InfoDetail.emp;
-        e.Self = this;
-        float[] r = InfoDetail.emp.Character;
-        //e.Type = type;
-        if (e.HaveTarget == true)
-        {
-            if (e.FindTarget() == true)
-            {
-                SelfEvent.Add(e);
-                //print(empName + "添加了" + type + "类事件" + e.Value);
-                e.Target.ReceivedEvent.Add(e);
-                //if (EventCheck() == true)
-                //    SetTarget();
-            }
-        }
-        else
-        {
-            e.EventActive = true;
-            SelfEvent.Add(e);
-            //print(empName + "添加了" + type + "类事件" + e.Value);
-        }
+        //Debug.LogError("Add");
+        //EmpEvent e = new EmpEvent();
+        //Employee m = InfoDetail.emp;
+        //e.Self = this;
+        //float[] r = InfoDetail.emp.Character;
+        ////e.Type = type;
+        //if (e.HaveTarget == true)
+        //{
+        //    if (e.FindTarget() == true)
+        //    {
+        //        SelfEvent.Add(e);
+        //        //print(empName + "添加了" + type + "类事件" + e.Value);
+        //        e.Target.ReceivedEvent.Add(e);
+        //        //if (EventCheck() == true)
+        //        //    SetTarget();
+        //    }
+        //}
+        //else
+        //{
+        //    e.EventActive = true;
+        //    SelfEvent.Add(e);
+        //    //print(empName + "添加了" + type + "类事件" + e.Value);
+        //}
 
         //if (type == 1)
         //{
@@ -245,34 +278,7 @@ public class EmpEntity : MonoBehaviour
 
     }
 
-    public void RemoveEntity()
-    {
-        for (int i = 0; i < SelfEvent.Count; i++)
-        {
-            if (SelfEvent[i].Target != null && SelfEvent[i].Target.ReceivedEvent.Contains(SelfEvent[i]))
-            {
-                //遇到有在进行中的且有目标的事件，先停止其激活，再检查目标是否可以动，最后从目标的ReceiveEvent中删除该事件
-                if(SelfEvent[i].EventActive == true)
-                {
-                    SelfEvent[i].EventActive = false;
-                   // if (SelfEvent[i].Target.EventCheck() == true)
-                   //     SelfEvent[i].Target.SetTarget();
-                }
-                SelfEvent[i].Target.ReceivedEvent.Remove(SelfEvent[i]);
-            }
-        }
-        for(int i = 0; i < ReceivedEvent.Count; i++)
-        {
-            if(ReceivedEvent[i].EventActive == true)
-            {
-                ReceivedEvent[i].EventActive = false;
-               // if (ReceivedEvent[i].Self.EventCheck() == true)
-               //     ReceivedEvent[i].Self.SetTarget();
-            }
-            ReceivedEvent[i].Self.SelfEvent.Remove(ReceivedEvent[i]);
-        }
-        Destroy(this.gameObject);
-    }
+    
 
     public void ShowTips(int index)
     {
@@ -908,13 +914,13 @@ public class EmpEvent
 
         #endregion
 
-        Self.SelfEvent.Remove(this);
-        if (Target != null)
-        {
-            Target.ReceivedEvent.Remove(this);
-            //if (Target.EventCheck() == true)
-            //    Target.SetTarget();
-        }
+        //Self.SelfEvent.Remove(this);
+        //if (Target != null)
+        //{
+        //    Target.ReceivedEvent.Remove(this);
+        //    //if (Target.EventCheck() == true)
+        //    //    Target.SetTarget();
+        //}
     }
 
     //随机寻找目标

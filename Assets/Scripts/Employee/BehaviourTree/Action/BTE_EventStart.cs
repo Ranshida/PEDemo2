@@ -24,10 +24,10 @@ public class BTE_EventStart : BTE_Action
             return TaskStatus.Failure;
         }
 
-        if (ThisEmp.CurrentEvent.HaveTarget)
+        if (ThisEmp.SelfEvent.HaveTarget)
         {
             MoveFlag.Value = true;
-            ThisEmp.Destination = ThisEmp.CurrentEvent.Target.transform.position;
+            ThisEmp.Destination = ThisEmp.SelfEvent.Target.transform.position;
         }
     
         return TaskStatus.Running;
