@@ -5266,7 +5266,7 @@ static public class EventData
     {
         for(int i = 0; i < Target.Count; i++)
         {
-            Self.Add(Target[i]);
+            Self.Add(Target[i].Clone());
         }
     }
 }
