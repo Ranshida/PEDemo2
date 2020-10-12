@@ -198,9 +198,14 @@ public class FOEControl : MonoBehaviour
         }
         else
         {
+            //当间谍
             GC.CEOSkillNum = 15;
             GC.CEOSkillNum = 0;
             GC.SelectMode = 0;
+
+            GC.CurrentEmpInfo.emp.InfoDetail.Entity.BecomeSpy();
+
+            //间谍结果判定
             int Posb = Random.Range(1, 7);
             Posb += (int)(GC.CurrentEmpInfo.emp.Strategy * 0.2f);
             if (Posb >= 4)

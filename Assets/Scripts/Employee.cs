@@ -924,7 +924,7 @@ public class Employee
             e.Self = this;
             if (e.ConditionCheck(Motiv) == true)
             {
-                e.EventFinish();
+                InfoDetail.Entity.AddEvent(e);
                 return;
             }
             else
@@ -938,7 +938,7 @@ public class Employee
             e.Self = this;
             if (e.ConditionCheck(Motiv) == true)
             {
-                e.EventFinish();
+                InfoDetail.Entity.AddEvent(e);
                 return;
             }
             else

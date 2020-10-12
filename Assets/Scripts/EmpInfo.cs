@@ -187,7 +187,7 @@ public class EmpInfo : MonoBehaviour
             return;
 
         //删除员工实体
-        //emp.InfoDetail.Entity.RemoveEntity();
+        emp.InfoDetail.Entity.RemoveEntity();
 
         //重新计算工资
         ClearSkillPreset();
