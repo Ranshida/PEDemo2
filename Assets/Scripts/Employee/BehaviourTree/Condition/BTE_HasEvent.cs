@@ -12,6 +12,7 @@ public class BTE_HasEvent : BTE_Condition
 {
     public override TaskStatus OnUpdate()
     {
-        return ThisEmp.HasEvent ? TaskStatus.Success : TaskStatus.Failure;
+        //return ThisEmp.HasEvent ? TaskStatus.Success : TaskStatus.Failure;
+        return TaskStatus.Running;
     }
 }

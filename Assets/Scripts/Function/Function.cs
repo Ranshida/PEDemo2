@@ -34,6 +34,26 @@ public static class Function
     {
         return Camera.main.WorldToScreenPoint(worldPos);
     }
+
+    //返回XZ平面上的距离，无视y轴（高度）
+    public static float XZDistance(Transform transA, Transform transB)
+    {
+        return Vector3.Distance(transA.position, new Vector3(transB.position.x, transA.position.y, transB.position.z));
+    }
+    public static float XZDistance(Vector3 posA, Vector3 posB)
+    {
+        return Vector3.Distance(posA, new Vector3(posB.x, posA.y, posB.z));
+    }
+
+    //返回PositionB相对PositionA在XZ平面上的方向，无视y轴
+    public static Vector3 XZDirection(Vector3 positionA, Vector3 positionB)
+    {
+        return positionB - new Vector3(positionA.x, positionB.y, positionA.z);
+    }
+    public static Vector3 XZDirection(Transform transA, Transform transB)
+    {
+        return transB.position - new Vector3(transA.position.x, transB.position.y, transA.position.z);
+    }
 }
 
 public class Int2

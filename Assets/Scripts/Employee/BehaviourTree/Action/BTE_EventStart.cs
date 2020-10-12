@@ -19,16 +19,16 @@ public class BTE_EventStart : BTE_Action
     }
     public override TaskStatus OnUpdate()
     {
-        if (!ThisEmp.HasEvent)
-        {
-            return TaskStatus.Failure;
-        }
+        //if (!ThisEmp.HasEvent)
+        //{
+        //    return TaskStatus.Failure;
+        //}
 
-        if (ThisEmp.SelfEvent.HaveTarget)
-        {
-            MoveFlag.Value = true;
-            ThisEmp.Destination = ThisEmp.SelfEvent.Target.transform.position;
-        }
+        //if (ThisEmp.SelfEvent.HaveTarget)
+        //{
+        //    MoveFlag.Value = true;
+        //    ThisEmp.Destination = ThisEmp.SelfEvent.Target.transform.position;
+        //}
     
         return TaskStatus.Running;
     }

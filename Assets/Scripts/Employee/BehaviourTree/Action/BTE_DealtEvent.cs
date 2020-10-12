@@ -16,10 +16,10 @@ public class BTE_DealtEvent : BTE_Action
     {
         //处理时间，完成后return success
 
-        if (!ThisEmp.HasEvent)
-        {
-            return TaskStatus.Failure;
-        }
+        //if (!ThisEmp.HasEvent)
+        //{
+        //    return TaskStatus.Failure;
+        //}
 
         return TaskStatus.Running;
     }
