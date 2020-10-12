@@ -12,17 +12,16 @@ using BehaviorDesigner.Runtime.Tasks;
 [TaskCategory("Employee")]
 public class BTE_WorkStart : BTE_Action
 {
-    public SharedBool MoveFlag;
+    public SharedBool Movable;
+    public SharedFloat StopDistance;
+    public SharedVector3 Destination;
 
-    protected override void AfterOnStart()
-    { 
-        //设置寻路点至工位
-        MoveFlag.Value = true;
-    }
+    
     public override TaskStatus OnUpdate()
     {
-        MoveFlag.Value = true;
-        ThisEmp.Destination = BuildingManage.Instance.ExitPos.position;
+        Movable.Value = true;
+        StopDistance.Value = 0.1f;
+        Destination.Value = FindWorkPosition();
 
         if (!ThisEmp.OffWork)
         {

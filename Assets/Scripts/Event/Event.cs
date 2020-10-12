@@ -24,6 +24,8 @@ public class Event
 
     public GameControl GC;
     public Employee Self, Target;
+    public EmpEntity SelfEntity { get { return Self.InfoDetail.Entity; } }
+    public EmpEntity TargetEntity { get { return Target.InfoDetail.Entity; } }
     public Building TargetBuilding;
     public BuildingType BuildingRequire = BuildingType.运营部门; //暂时用运营部门表示没有需求
 

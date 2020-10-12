@@ -11,16 +11,15 @@ using BehaviorDesigner.Runtime.Tasks;
 public class BTE_DealtEvent : BTE_Action
 {
     public SharedBool MoveFlag;
-    
+
+    protected override void AfterOnStart()
+    {
+        MoveFlag.Value = false;
+    }
+
     public override TaskStatus OnUpdate()
     {
-        //处理时间，完成后return success
-
-        //if (!ThisEmp.HasEvent)
-        //{
-        //    return TaskStatus.Failure;
-        //}
-
-        return TaskStatus.Running;
+        //没有当前事件，返回工作
+        return ThisEmp.Available ? TaskStatus.Failure : TaskStatus.Running;
     }
 }
