@@ -12,7 +12,7 @@ public class EmpEntity : MonoBehaviour
     public bool AvailableDebug = true;      //员工为可用状态
     public bool SolvingEvent { get { return !Available && CurrentEvent.isSolving; } }     //事件正在执行中
     public bool HasEvent { get { return EventList.Count > 0; } }        //事件列表不为空
-    public bool HasEventDebug = false;        //事件列表不为空
+    public int EventCount;        //事件列表不为空
     public bool OffWork { get; private set; }  //下班
     public Event CurrentEvent { get; private set; } = null;  //当前正在执行的事件
     public List<Event> EventList = new List<Event>();  //存储的待执行事件列表
@@ -40,7 +40,7 @@ public class EmpEntity : MonoBehaviour
         //模型只同步位置，不同步旋转
         mesh.position = this.transform.position + offset;
         AvailableDebug = CurrentEvent == null;
-        HasEventDebug = EventList.Count > 0;
+        EventCount = EventList.Count;
         //if (TargetEmp != null && WorkShift == false)
         //    Destination = TargetEmp.transform.position;
 
@@ -86,6 +86,7 @@ public class EmpEntity : MonoBehaviour
         detail.Entity = this;
         detail.GC.HourEvent.AddListener(TimePass);
         EmpName = detail.emp.Name;
+        transform.parent.name = EmpName;
     }
     private void TimePass()
     {
@@ -95,26 +96,23 @@ public class EmpEntity : MonoBehaviour
             if (!CurrentEvent.HaveTarget)
             {
                 CurrentEvent.TimeLeft--;
-                if (CurrentEvent.TimeLeft == 0)
+                if (CurrentEvent.TimeLeft <= 0)
                 {
                     CurrentEvent.EventFinish();
                     CurrentEvent = null;
                 }
             }
-            //主动事件方
+            //主动方控制
             else if (CurrentEvent.SelfEntity == this)
             {
                 CurrentEvent.TimeLeft--;
-                if (CurrentEvent.TimeLeft == 0)
+                if (CurrentEvent.TimeLeft <= 0)
                 {
                     CurrentEvent.EventFinish();
+                    //主被动双方都清理掉
+                    CurrentEvent.TargetEntity.CurrentEvent = null;
                     CurrentEvent = null;
                 }
-            }
-            //被动方
-            else
-            {
-                CurrentEvent = null;
             }
         }
 
@@ -129,7 +127,7 @@ public class EmpEntity : MonoBehaviour
         if (CurrentEvent==null)
             Debug.LogError("无事件");
 
-        Debug.LogError("开始处理事件");
+        Debug.Log("开始处理事件");
         CurrentEvent.isSolving = true;
     }
 
@@ -147,8 +145,9 @@ public class EmpEntity : MonoBehaviour
             //有目标的事件
             if (e.HaveTarget)
             {
+                //对方空闲
                 if (e.Target.InfoDetail.Entity.Available)
-                {
+                {  //双方做这个事件
                     CurrentEvent = e;
                     e.Target.InfoDetail.Entity.CurrentEvent = e;
                     break;
@@ -191,13 +190,10 @@ public class EmpEntity : MonoBehaviour
     {
         //独立事件
         if (!e.HaveTarget)
-            Debug.LogError(EmpName + "独立事件");
+            Debug.Log(EmpName + "独立事件");
         //主动事件
-        else if (e.SelfEntity == this)
-            Debug.LogError(EmpName + "主动事件");
-        //被动事件
         else
-            Debug.LogError(EmpName + "被动事件");
+            Debug.Log(EmpName + "主动事件");
 
         //当前有待执行事件，先加入列表
         if (CurrentEvent != null)

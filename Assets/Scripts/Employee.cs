@@ -954,7 +954,7 @@ public class Employee
         if (EventTime == 0)
         {
             AddEvent();
-            EventTime = Random.Range(6, 12);
+            EventTime = Random.Range(12, 21);
         }
 
         if (CurrentOffice == null)

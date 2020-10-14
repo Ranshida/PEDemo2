@@ -19,6 +19,7 @@ public class BTE_DealtEvent : BTE_Action
 
     public override TaskStatus OnUpdate()
     {
+        MoveFlag.Value = false;
         //没有当前事件，返回工作
         return ThisEmp.Available ? TaskStatus.Failure : TaskStatus.Running;
     }
