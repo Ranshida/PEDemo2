@@ -327,7 +327,7 @@ public class CEOControl : MonoBehaviour
             GC.CurrentEmpInfo = Target.InfoDetail;
             if (num == 18)
                 EmpSelectWarning.SetActive(true);
-            else
+            else if (num == 19 && Target.InfoDetail.Entity.SpyTarget == null)
             {
                 GC.foeControl.TargetSelectPanel.SetActive(true);
                 GC.TotalEmpContent.parent.parent.gameObject.SetActive(false);

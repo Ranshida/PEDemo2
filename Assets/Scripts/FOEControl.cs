@@ -203,19 +203,7 @@ public class FOEControl : MonoBehaviour
             GC.CEOSkillNum = 0;
             GC.SelectMode = 0;
 
-            GC.CurrentEmpInfo.emp.InfoDetail.Entity.BecomeSpy();
-
-            //间谍结果判定
-            int Posb = Random.Range(1, 7);
-            Posb += (int)(GC.CurrentEmpInfo.emp.Strategy * 0.2f);
-            if (Posb >= 4)
-            {
-                CurrentCompanies[type - 1].Text_Target.gameObject.SetActive(true);
-                CurrentCompanies[type - 1].Text_SkillName.gameObject.SetActive(true);
-                GC.CreateMessage("内鬼行动成功,获得了" + CurrentCompanies[type - 1].Text_CompanyName.text + "的信息");
-            }
-            else
-                GC.CreateMessage("内鬼行动失败");
+            GC.CurrentEmpInfo.emp.InfoDetail.Entity.BecomeSpy(CurrentCompanies[type - 1]);
         }
     }
 }
