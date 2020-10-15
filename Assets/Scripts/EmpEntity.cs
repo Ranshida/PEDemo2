@@ -7,30 +7,28 @@ using UnityEngine.UI;
 public class EmpEntity : MonoBehaviour
 {
     public string EmpName { get; private set; }
+    private BehaviorTree selfTree;
+    public MeshRenderer Renderer { get; private set; }
+    public EmpInfo InfoDetail;
+    private Vector3 offset = new Vector3(0, 2.2f, 2.2f);
+    private Transform mesh;
 
-    public bool Available { get { return CurrentEvent == null; } }      //员工为可用状态
-    public bool SolvingEvent { get { return !Available && CurrentEvent.isSolving; } }     //事件正在执行中
-    public bool HasEvent { get { return EventList.Count > 0; } }        //事件列表不为空
-
+    public bool SpecialWork { get { return IsSpying; } }
+    public bool IsSpying { get; private set; } = false;
+    private int SpyTimer = 4;
     public bool OffWork { get; private set; }  //下班
     public Event CurrentEvent { get; private set; } = null;  //当前正在执行的事件
     public List<Event> EventList = new List<Event>();  //存储的待执行事件列表
+    public FOECompany SpyTarget;
 
-    private Vector3 offset = new Vector3(0, 2.2f, 2.2f);
-    private Transform mesh;
-    private BehaviorTree selfTree;
-
-    public MeshRenderer Renderer { get; private set; }
-    public EmpInfo InfoDetail;
-<<<<<<< HEAD
+    public bool Available { get { return CurrentEvent == null && !IsSpying; } }      //员工为可用状态
+    public bool SolvingEvent { get { return CurrentEvent != null && CurrentEvent.isSolving; } }     //事件正在执行中
+    public bool HasEvent { get { return EventList.Count > 0; } }        //事件列表不为空
 
     //debug
     public string AvailableDebug;      //员工为可用状态
     public int EventCount;        //事件列表不为空
-=======
-    public FOECompany SpyTarget;
-    
->>>>>>> cb9433471b5b1fc1c97bbd54ff4da4d497821171
+    public int EventTimer;
 
     public void Init()
     {
@@ -57,6 +55,12 @@ public class EmpEntity : MonoBehaviour
             AvailableDebug = "主动事件";
         else
             AvailableDebug = "被动事件";
+
+        if (CurrentEvent == null)
+            EventTimer = 0;
+        else
+            EventTimer = CurrentEvent.TimeLeft;
+
         //if (TargetEmp != null && WorkShift == false)
         //    Destination = TargetEmp.transform.position;
 
@@ -106,6 +110,16 @@ public class EmpEntity : MonoBehaviour
     }
     private void TimePass()
     {
+        if (IsSpying)
+        {
+            SpyTimer--;
+            if (SpyTimer <= 0) 
+            {
+                SpyResult();
+            }
+        }
+
+        //事件处理中
         if (SolvingEvent)
         {
             //独立事件
@@ -157,7 +171,8 @@ public class EmpEntity : MonoBehaviour
         }
 
         foreach (Event e in EventList)
-        {//独立事件
+        {
+            //独立事件
             if (!e.HaveTarget)
             {
                 CurrentEvent = e;
@@ -170,7 +185,8 @@ public class EmpEntity : MonoBehaviour
             {
                 //对方空闲
                 if (e.TargetEntity.Available)
-                {  //双方做这个事件
+                {  
+                    //双方做这个事件
                     CurrentEvent = e;
                     EventList.Remove(CurrentEvent);
                     e.TargetEntity.CurrentEvent = e;
@@ -183,24 +199,24 @@ public class EmpEntity : MonoBehaviour
 
     public void WorkEnd()
     {
-        Debug.Log("下");
-        OffWork = true;
+        //Debug.Log("下");
+        //OffWork = true;
 
-        //放弃当前执行的事件，插到第一位
-        if (CurrentEvent != null)
-        {
-            if (CurrentEvent.SelfEntity == this)
-                CurrentEvent.isSolving = false;
-            EventList.Insert(0, CurrentEvent);
-            CurrentEvent = null;
-        }
+        ////放弃当前执行的事件，插到第一位
+        //if (CurrentEvent != null)
+        //{
+        //    if (CurrentEvent.SelfEntity == this)
+        //        CurrentEvent.isSolving = false;
+        //    EventList.Insert(0, CurrentEvent);
+        //    CurrentEvent = null;
+        //}
     }
 
     //上班
     public void WorkStart()
     {
-        Debug.Log("上");
-        OffWork = false;
+        //Debug.Log("上");
+        //OffWork = false;
         //FindWorkPos();
     }
 
@@ -250,15 +266,27 @@ public class EmpEntity : MonoBehaviour
     //去当间谍
     public void BecomeSpy(FOECompany Target)
     {
+        //放弃当前执行的事件，插到第一位
+        if (CurrentEvent != null)
+        {
+            if (CurrentEvent.SelfEntity == this)
+                CurrentEvent.isSolving = false;
+            EventList.Insert(0, CurrentEvent);
+            CurrentEvent = null;
+        }
+
+        IsSpying = true;
+        SpyTimer = 4;
+
         //设置目标
         SpyTarget = Target;
-
-
     }
 
     //间谍行动结果
     public void SpyResult()
     {
+        IsSpying = false;
+
         //间谍结果判定
         int Posb = Random.Range(1, 7);
         Posb += (int)(InfoDetail.GC.CurrentEmpInfo.emp.Strategy * 0.2f);

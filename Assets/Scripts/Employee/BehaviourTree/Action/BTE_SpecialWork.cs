@@ -5,11 +5,10 @@ using BehaviorDesigner.Runtime;
 using BehaviorDesigner.Runtime.Tasks;
 
 /// <summary>
-/// 员工下班
-/// 更新时间 before2020.10
+/// 员工的特殊工作，中断自己的事件和工作
 /// </summary>
 [TaskCategory("Employee")]
-public class BTE_OffWork : BTE_Action
+public class BTE_SpecialWork : BTE_Action
 {
     public SharedVector3 Destination;
     public SharedFloat StopDistance;
@@ -17,15 +16,18 @@ public class BTE_OffWork : BTE_Action
 
     public override TaskStatus OnUpdate()
     {
-        if (!ThisEmp.OffWork)
+        if (!ThisEmp.SpecialWork)
             return TaskStatus.Failure;
 
         //可以移动，精确寻找位置
         Movable.Value = true;
         StopDistance.Value = 1f;
+
         //设置寻路点至公司出口
-        Destination.Value = BuildingManage.Instance.ExitPos.position;
-       
+        if (ThisEmp.IsSpying)
+            Destination.Value = BuildingManage.Instance.ExitPos.position;
+
+        
         return TaskStatus.Running;
     }
 }
