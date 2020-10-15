@@ -18,13 +18,19 @@ public class EmpEntity : MonoBehaviour
 
     private Vector3 offset = new Vector3(0, 2.2f, 2.2f);
     private Transform mesh;
-    public MeshRenderer Renderer { get; private set; }
     private BehaviorTree selfTree;
+
+    public MeshRenderer Renderer { get; private set; }
     public EmpInfo InfoDetail;
+<<<<<<< HEAD
 
     //debug
     public string AvailableDebug;      //员工为可用状态
     public int EventCount;        //事件列表不为空
+=======
+    public FOECompany SpyTarget;
+    
+>>>>>>> cb9433471b5b1fc1c97bbd54ff4da4d497821171
 
     public void Init()
     {
@@ -242,9 +248,29 @@ public class EmpEntity : MonoBehaviour
     }
 
     //去当间谍
-    public void BecomeSpy()
+    public void BecomeSpy(FOECompany Target)
     {
+        //设置目标
+        SpyTarget = Target;
 
+
+    }
+
+    //间谍行动结果
+    public void SpyResult()
+    {
+        //间谍结果判定
+        int Posb = Random.Range(1, 7);
+        Posb += (int)(InfoDetail.GC.CurrentEmpInfo.emp.Strategy * 0.2f);
+        if (Posb >= 4)
+        {
+            SpyTarget.Text_Target.gameObject.SetActive(true);
+            SpyTarget.Text_SkillName.gameObject.SetActive(true);
+            InfoDetail.GC.CreateMessage("内鬼行动成功,获得了" + SpyTarget.Text_CompanyName.text + "的信息");
+        }
+        else
+            InfoDetail.GC.CreateMessage("内鬼行动失败");
+        SpyTarget = null;
     }
     
 
