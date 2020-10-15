@@ -21,7 +21,6 @@ public class Event
     public string EventName = "无";
     public string ResultText = "无";
 
-
     public GameControl GC;
     public Employee Self, Target;
     public EmpEntity SelfEntity { get { return Self.InfoDetail.Entity; } }
@@ -177,10 +176,11 @@ public class Event
 
         return false;
     }
-
+    
     //执行时间效果
     public virtual void EventFinish()
     {
+        isSolving = false;
         //再检测一下事件是否还有效
         if (HaveTarget == true && Target == null)
         {
