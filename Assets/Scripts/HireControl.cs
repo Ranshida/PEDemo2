@@ -15,6 +15,20 @@ public class HireControl : MonoBehaviour
     private void Start()
     {
         InitCEO();
+        AddHireTypes(new HireType(1));
+        RefreshHire();
+        for(int i = 0; i < 5; i++)
+        {
+            if (i < 3)
+            {
+                GC.CurrentEmpInfo = HireInfos[i];
+                GC.Salary += GC.CurrentEmpInfo.CalcSalary();
+                SetInfoPanel();
+                GC.CurrentEmpInfo.emp.InfoA.transform.parent = GC.StandbyContent;
+            }
+            HireInfos[i].gameObject.SetActive(false);
+        }
+        GC.CurrentEmpInfo = null;
     }
 
     //添加从人力资源部获得的招聘
@@ -41,6 +55,7 @@ public class HireControl : MonoBehaviour
 
             for (int i = 0; i < 5; i++)
             {
+                HireInfos[i].gameObject.SetActive(true);
                 foreach (Transform child in HireInfos[i].PerkContent)
                 {
                     Destroy(child.gameObject);
@@ -56,7 +71,12 @@ public class HireControl : MonoBehaviour
                 HireInfos[i].PerksInfo.Clear();
                 HireInfos[i].SkillsInfo.Clear();
                 HireInfos[i].StrategiesInfo.Clear();
-                HireInfos[i].CreateEmp(EType, HireTypes[0].HeadHuntStatus, HireTypes[0].Level);
+                HireInfos[i].CreateEmp(EType, HireTypes[0].HST, HireTypes[0].Level);
+
+                if(HireTypes[0].MajorSuccess == false && i > 2)
+                {
+                    HireInfos[i].gameObject.SetActive(false);
+                }
             }
             HireTypes.RemoveAt(0);
             if (HireTypes.Count < 1)
@@ -112,6 +132,7 @@ public class HireControl : MonoBehaviour
             GC.CurrentEmpInfo.StrategiesInfo[i].transform.parent = ED.StrategyContent;
         }
         ED.StrategiesInfo = GC.CurrentEmpInfo.StrategiesInfo;
+        HideOptions();
     }
 
     //初始化CEO
@@ -151,5 +172,14 @@ public class HireControl : MonoBehaviour
         GC.CurrentOffices[0].CurrentManager = emp;
         GC.CurrentOffices[0].SetOfficeStatus();
         GC.HourEvent.AddListener(emp.TimePass);
+    }
+
+    //招聘后隐藏其它选项
+    public void HideOptions()
+    {
+        for(int i = 0; i < 5; i++)
+        {
+            HireInfos[i].gameObject.SetActive(false);
+        }
     }
 }

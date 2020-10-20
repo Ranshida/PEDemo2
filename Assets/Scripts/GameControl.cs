@@ -106,9 +106,9 @@ public class GameControl : MonoBehaviour
     private void Start()
     {
         Anim = this.gameObject.GetComponent<Animator>();
-        HC.AddHireTypes(new HireType(1));
         SpecialEventCount = Random.Range(1, 6);//随机一段时间发生影响产品的事件
-        HourEvent.AddListener(GCTimePass);      
+        HourEvent.AddListener(GCTimePass);
+        print(0.3f - 0.15f - 0.25f);
     }
 
     private void Update()

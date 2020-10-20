@@ -118,14 +118,16 @@ public class EmpInfo : MonoBehaviour
                     else if (i == 14)
                         SkillLevel = emp.Gossip;
                     #endregion
-                    if (SkillLevel < 10)
-                        Exp = 50 + 50 * (SkillLevel - 0);
-                    else if (SkillLevel < 15)
-                        Exp = 500 + 100 * (SkillLevel - 10);                    
-                    else if (SkillLevel < 20)
-                        Exp = 1000 + 200 * (SkillLevel - 15);
-                    else
-                        Exp = 2000 + 300 * (SkillLevel - 20);
+                    //旧的经验值显示
+                    //if (SkillLevel < 10)
+                    //    Exp = 50 + 50 * (SkillLevel - 0);
+                    //else if (SkillLevel < 15)
+                    //    Exp = 500 + 100 * (SkillLevel - 10);                    
+                    //else if (SkillLevel < 20)
+                    //    Exp = 1000 + 200 * (SkillLevel - 15);
+                    //else
+                    //    Exp = 2000 + 300 * (SkillLevel - 20);
+                    Exp = SkillLevel * 50;
                     Text_Exps[i].text = "Exp " + emp.SkillExp[i] + "/" + Exp;
                 }
             }

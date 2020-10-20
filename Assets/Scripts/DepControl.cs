@@ -32,19 +32,64 @@ public class ProduceBuff
 }
 public class HireType
 {
-    public int Level = 0, Type;
-    public int[] HeadHuntStatus = new int[15];
+    public int Level = 0, Type; //Type目前已经没什么用了
+    public bool MajorSuccess = false;
+    public int[] HST = new int[15];
     public HireType(int type)
     {
         Type = type;
     }
     public void SetHeadHuntStatus(int[] Hst)
     {
-        for(int i = 0; i < HeadHuntStatus.Length; i++)
+        ////旧的招聘筛选
+        //for(int i = 0; i < HeadHuntStatus.Length; i++)
+        //{
+        //    HST[i] = Hst[i];
+        //    if (Hst[i] == 1)
+        //        Level += 1;
+        //}
+
+        int r1 = Random.Range(0, 5), r2 = Random.Range(0, 5);
+        while(r1 == r2)
         {
-            HeadHuntStatus[i] = Hst[i];
-            if (Hst[i] == 1)
-                Level += 1;
+            r2 = Random.Range(0, 5);
+        }
+        int count1 = 4, count2 = 2;
+
+        //HST = 0  (0,3)随机技能
+        //HST = 1  (0,2)随机技能
+        //HST = 2  (5,9)随机技能
+        for(int i = 0; i < 6; i++)
+        {
+            if (i < 3)
+                i = r1 * 3 + i;
+            else
+                i = r2 * 3 + i - 3;
+
+            if(count1 > 0 && count2 > 0)
+            {
+                int c = Random.Range(1, 3);
+                if (c == 1)
+                {
+                    HST[i] = 1;
+                    count1 -= 1;
+                }
+                else
+                {
+                    HST[i] = 2;
+                    count2 -= 1;
+                }
+            }
+            else if (count1 > 0)
+            {
+                HST[i] = 1;
+                count1 -= 1;
+            }
+            else
+            {
+                HST[i] = 2;
+                count2 -= 1;
+            }
         }
     }
 }
@@ -52,6 +97,7 @@ public class HireType
 public class DepControl : MonoBehaviour
 {
     static public int StandardProducePoint = 50;
+    static public int StandardProducePointB = 20;
     [HideInInspector] public int SpProgress = 0, SpTotalProgress, FailProgress = 0, TaskChangeTime = 0, EfficiencyLevel = 0, LevelDownTime = 0, SpType, SpTime;//SPTime:CEO技能
     [HideInInspector] public bool SurveyStart = false, Failed = false, TaskChange = false, WorkStart = false; //WorkStart专门用于特殊业务
     public int EmpLimit;
@@ -120,21 +166,85 @@ public class DepControl : MonoBehaviour
             {
                 if (CurrentTask != null && TaskChange == false)
                 {
-                    int Pp = CountProducePower((int)type + 1);
+                    //旧的生产结算
+                    //int Pp = CountProducePower((int)type + 1);
+                    //CurrentTask.Progress += Pp;
+                    //if (CurrentTask.Progress >= StandardProducePoint * 10)
+                    //{
+                    //    GC.CreateMessage(Text_DepName.text + " 完成了 " + CurrentTask.TaskName + " 的生产");
+                    //    GC.FinishedTask[(int)CurrentTask.TaskType * 3 + CurrentTask.Num - 1] += 1;
+                    //    GC.UpdateResourceInfo();
+                    //    EmpsGetExp(CurrentTask.Num);
+                    //    CurrentTask.Progress = 0;
+                    //    if (CurrentTask.Num == 1 && (int)CurrentTask.TaskType == 2)
+                    //        GC.StrC.SolveStrRequest(3, 1);
+                    //    else if (CurrentTask.Num == 2 && (int)CurrentTask.TaskType == 1)
+                    //        GC.StrC.SolveStrRequest(4, 1);
+                    //    else if (CurrentTask.Num == 1 && (int)CurrentTask.TaskType == 0)
+                    //        GC.StrC.SolveStrRequest(5, 1);
+                    //}
+                    int Pp = CurrentEmps.Count;
                     CurrentTask.Progress += Pp;
-                    if (CurrentTask.Progress >= StandardProducePoint * 10)
+                    if(CurrentTask.Progress >= StandardProducePointB)
                     {
-                        GC.CreateMessage(Text_DepName.text + " 完成了 " + CurrentTask.TaskName + " 的生产");
-                        GC.FinishedTask[(int)CurrentTask.TaskType * 3 + CurrentTask.Num - 1] += 1;
-                        GC.UpdateResourceInfo();
-                        EmpsGetExp(CurrentTask.Num);
                         CurrentTask.Progress = 0;
-                        if (CurrentTask.Num == 1 && (int)CurrentTask.TaskType == 2)
-                            GC.StrC.SolveStrRequest(3, 1);
-                        else if (CurrentTask.Num == 2 && (int)CurrentTask.TaskType == 1)
-                            GC.StrC.SolveStrRequest(4, 1);
-                        else if (CurrentTask.Num == 1 && (int)CurrentTask.TaskType == 0)
-                            GC.StrC.SolveStrRequest(5, 1);
+                        float BaseSuccessRate = 0.3f + CountSuccessRate(1);
+                        float Posb = Random.Range(0.0f, 1.0f);
+
+                        //成功和大成功
+                        if(Posb <= BaseSuccessRate)
+                        {
+                            if(Random.Range(0.0f, 1.0f) < 0.1f)
+                            {
+                                //大成功
+                                GC.CreateMessage(Text_DepName.text + " 完美完成了 " + CurrentTask.TaskName + " 的生产");
+                                GC.FinishedTask[(int)CurrentTask.TaskType * 3 + CurrentTask.Num - 1] += 2;
+                                GC.UpdateResourceInfo();
+                                EmpsGetExp(CurrentTask.Num, 20);
+                                CurrentTask.Progress = 0;
+                                if (CurrentTask.Num == 1 && (int)CurrentTask.TaskType == 2)
+                                    GC.StrC.SolveStrRequest(3, 2);
+                                else if (CurrentTask.Num == 2 && (int)CurrentTask.TaskType == 1)
+                                    GC.StrC.SolveStrRequest(4, 2);
+                                else if (CurrentTask.Num == 1 && (int)CurrentTask.TaskType == 0)
+                                    GC.StrC.SolveStrRequest(5, 2);
+                            }
+                            else
+                            {
+                                //成功
+                                GC.CreateMessage(Text_DepName.text + " 完成了 " + CurrentTask.TaskName + " 的生产");
+                                GC.FinishedTask[(int)CurrentTask.TaskType * 3 + CurrentTask.Num - 1] += 1;
+                                GC.UpdateResourceInfo();
+                                EmpsGetExp(CurrentTask.Num, 10);
+                                CurrentTask.Progress = 0;
+                                if (CurrentTask.Num == 1 && (int)CurrentTask.TaskType == 2)
+                                    GC.StrC.SolveStrRequest(3, 1);
+                                else if (CurrentTask.Num == 2 && (int)CurrentTask.TaskType == 1)
+                                    GC.StrC.SolveStrRequest(4, 1);
+                                else if (CurrentTask.Num == 1 && (int)CurrentTask.TaskType == 0)
+                                    GC.StrC.SolveStrRequest(5, 1);
+                            }
+                        }
+
+                        //失败和大失败
+                        else
+                        {
+                            EmpsGetExp(CurrentTask.Num, 10);
+                            if (Random.Range(0.0f, 1.0f) < 0.4f)
+                            {
+                                //大失败
+                                GC.CreateMessage(Text_DepName.text + " 生产 " + CurrentTask.TaskName + " 大失败，部门员工心力-20");
+                                for(int i = 0; i < CurrentEmps.Count; i++)
+                                {
+                                    CurrentEmps[i].Mentality -= 20;
+                                }
+                            }
+                            else
+                            {
+                                //失败
+                                GC.CreateMessage(Text_DepName.text + " 生产 " + CurrentTask.TaskName + " 失败");
+                            }
+                        }
                     }
                     UpdateUI(Pp);
                 }
@@ -173,21 +283,71 @@ public class DepControl : MonoBehaviour
                 {
                     if(type == EmpType.HR)
                     {
-                        int Pp = CountProducePower(5);
+                        //旧的招聘结算
+                        //int Pp = CountProducePower(5);
+                        //SpProgress += Pp;
+                        //if(SpProgress >= SpTotalProgress)
+                        //{
+                        //    GC.CreateMessage(Text_DepName.text + " 完成了 招聘");
+                        //    //GC.FinishedTask[9] += 1; 原人力资源部2相关
+                        //    //GC.UpdateResourceInfo();
+                        //    EmpsGetExp(8);
+                        //    HireType ht = new HireType(SpType);
+                        //    ht.SetHeadHuntStatus(DepHeadHuntStatus);
+                        //    GC.HC.AddHireTypes(ht);
+                        //    SpType = 0;
+                        //    SpProgress = 0;
+                        //    SpTotalProgress = 0;
+                        //    WorkStart = false;
+                        //}
+                        int Pp = CurrentEmps.Count;
                         SpProgress += Pp;
-                        if(SpProgress >= SpTotalProgress)
+                        if(SpProgress >= StandardProducePointB)
                         {
-                            GC.CreateMessage(Text_DepName.text + " 完成了 招聘");
-                            //GC.FinishedTask[9] += 1; 原人力资源部2相关
-                            //GC.UpdateResourceInfo();
-                            EmpsGetExp(8);
-                            HireType ht = new HireType(SpType);
-                            ht.SetHeadHuntStatus(DepHeadHuntStatus);
-                            GC.HC.AddHireTypes(ht);
-                            SpType = 0;
                             SpProgress = 0;
-                            SpTotalProgress = 0;
                             WorkStart = false;
+                            float BaseSuccessRate = 0.5f + CountSuccessRate(2);
+                            float Posb = Random.Range(0.0f, 1.0f);
+
+                            //成功和大成功
+                            if(Posb <= BaseSuccessRate)
+                            {
+                                HireType ht = new HireType(SpType);
+                                ht.SetHeadHuntStatus(DepHeadHuntStatus);
+
+                                //大成功
+                                if (Random.Range(0.0f, 1.0f) < 0.1f)
+                                {
+                                    ht.MajorSuccess = true;
+                                    EmpsGetExp(8, 20);
+                                    GC.CreateMessage(Text_DepName.text + " 招聘 大成功");
+                                }
+                                //成功
+                                else
+                                {
+                                    EmpsGetExp(8, 10);
+                                    GC.CreateMessage(Text_DepName.text + " 招聘 成功");
+                                } 
+
+                                GC.HC.AddHireTypes(ht);
+                            }
+
+                            //失败和大失败
+                            else
+                            {
+                                EmpsGetExp(8, 10);
+                                if (Random.Range(0.0f, 1.0f) < 0.4f)
+                                {
+                                    //大失败
+                                    for(int i = 0; i < CurrentEmps.Count; i++)
+                                    {
+                                        CurrentEmps[i].Mentality -= 20;
+                                        GC.CreateMessage(Text_DepName.text + " 招聘 大失败，部门员工心力-20");
+                                    }
+                                }
+                                else
+                                    GC.CreateMessage(Text_DepName.text + " 招聘 失败");
+                            }
                         }
                         UpdateUI(Pp);
                     }
@@ -277,19 +437,38 @@ public class DepControl : MonoBehaviour
         }
         else if (CurrentTask != null)
         {
-            int Pp = CountProducePower((int)type + 1);
+            //旧的生产力结算
+            //int Pp = CountProducePower((int)type + 1);
+            int Pp = CurrentEmps.Count;
             Text_Task.text = "当前任务:" + CurrentTask.TaskName;
             Text_Progress.text = "生产力:" + Pp + "/时";
-            Text_Quality.text = "当前进度:" + CurrentTask.Progress + "/" + StandardProducePoint * 10;
-            Text_Time.text = "剩余时间:" + calcTime(Pp, StandardProducePoint * 10 - CurrentTask.Progress) + "时";
+
+            //旧显示
+            //Text_Quality.text = "当前进度:" + CurrentTask.Progress + "/" + StandardProducePoint * 10;
+            //Text_Time.text = "剩余时间:" + calcTime(Pp, StandardProducePoint * 10 - CurrentTask.Progress) + "时";
+
+            //成功率计算
+            Text_Quality.text = "成功率:" + (int)((0.3f + CountSuccessRate(1)) * 100) + "%";
+
+            Text_Time.text = "剩余时间:" + calcTime(Pp, StandardProducePointB - CurrentTask.Progress) + "时";
         }
         else if (type == EmpType.HR && WorkStart == true)
         {
-            int Pp = CountProducePower(5);
+            //旧的生产力结算
+            //int Pp = CountProducePower(5);
+            int Pp = CurrentEmps.Count;
             Text_Task.text = "当前任务:招聘";
             Text_Progress.text = "生产力:" + Pp + "/时";
-            Text_Quality.text = "当前进度:" + SpProgress + "/" + SpTotalProgress;
-            Text_Time.text = "剩余时间:" + calcTime(Pp, SpTotalProgress - SpProgress) + "时";
+
+            //旧显示
+            //Text_Quality.text = "当前进度:" + SpProgress + "/" + SpTotalProgress;
+            //Text_Time.text = "剩余时间:" + calcTime(Pp, SpTotalProgress - SpProgress) + "时";
+
+            //成功率计算
+            Text_Quality.text = "成功率:" + (int)((0.5f + CountSuccessRate(2)) * 100) + "%";
+
+            Text_Time.text = "剩余时间:" + calcTime(Pp, StandardProducePointB - SpProgress) + "时";
+
         }
         else
         {
@@ -344,15 +523,29 @@ public class DepControl : MonoBehaviour
         {
             Text_Task.text = "当前任务:" + CurrentTask.TaskName;
             Text_Progress.text = "生产力:" + Pp + "/时";
-            Text_Quality.text = "当前进度:" + CurrentTask.Progress + "/" + StandardProducePoint * 10;
-            Text_Time.text = "剩余时间:" + calcTime(Pp, StandardProducePoint * 10 - CurrentTask.Progress) + "时";
+            //旧进度计算
+            //Text_Quality.text = "当前进度:" + CurrentTask.Progress + "/" + StandardProducePoint * 10;
+            //旧时间计算
+            //Text_Time.text = "剩余时间:" + calcTime(Pp, StandardProducePoint * 10 - CurrentTask.Progress) + "时";
+
+            //成功率计算
+            Text_Quality.text = "成功率:" + (int)((0.3f + CountSuccessRate(1)) * 100) + "%";
+
+            Text_Time.text = "剩余时间:" + calcTime(Pp, StandardProducePointB - CurrentTask.Progress) + "时";
         }
         else if (type == EmpType.HR && WorkStart == true)
         {
             Text_Task.text = "当前任务:招聘";
             Text_Progress.text = "生产力:" + Pp + "/时";
-            Text_Quality.text = "当前进度:" + SpProgress + "/" + SpTotalProgress;
-            Text_Time.text = "剩余时间:" + calcTime(Pp, SpTotalProgress - SpProgress) + "时";
+
+            //旧显示
+            //Text_Quality.text = "当前进度:" + SpProgress + "/" + SpTotalProgress;
+            //Text_Time.text = "剩余时间:" + calcTime(Pp, SpTotalProgress - SpProgress) + "时";
+
+            //成功率计算
+            Text_Quality.text = "成功率:" + (int)((0.5f + CountSuccessRate(2)) * 100) + "%";
+
+            Text_Time.text = "剩余时间:" + calcTime(Pp, StandardProducePointB - SpProgress) + "时";
         }
         else
         {
@@ -526,22 +719,22 @@ public class DepControl : MonoBehaviour
 
     public void FailCheck(bool ForceFail = false)
     {
-        float Posb = Random.Range(0.0f, 1.0f);
-        float totalObservation = 0;
-        for(int i = 0; i < CurrentEmps.Count; i++)
-        {
-            totalObservation += CurrentEmps[i].Observation;
-        }
-        float ActualFailRate = FailRate - (totalObservation * GC.Morale * 0.0001f) - GC.ExtrafailRate;
-        if(Posb < ActualFailRate || ForceFail == true)
-        {
-            Failed = true;
-            FailProgress += Random.Range(50, 120);
-            if (type != EmpType.Market && type != EmpType.Operate && type != EmpType.Product && type != EmpType.Tech)
-                FailProgress = 50;
-            UpdateUI(CountProducePower(4));
-            GC.CreateMessage(Text_DepName.text + " 发生了失误");
-        }
+        //float Posb = Random.Range(0.0f, 1.0f);
+        //float totalObservation = 0;
+        //for(int i = 0; i < CurrentEmps.Count; i++)
+        //{
+        //    totalObservation += CurrentEmps[i].Observation;
+        //}
+        //float ActualFailRate = FailRate - (totalObservation * GC.Morale * 0.0001f) - GC.ExtrafailRate;
+        //if(Posb < ActualFailRate || ForceFail == true)
+        //{
+        //    Failed = true;
+        //    FailProgress += Random.Range(50, 120);
+        //    if (type != EmpType.Market && type != EmpType.Operate && type != EmpType.Product && type != EmpType.Tech)
+        //        FailProgress = 50;
+        //    UpdateUI(CountProducePower(4));
+        //    GC.CreateMessage(Text_DepName.text + " 发生了失误");
+        //}
     }
 
     public void EmpsGetExp(int type, int value = 250)
@@ -552,6 +745,105 @@ public class DepControl : MonoBehaviour
         }
     }
     
+    //计算生产成功率
+    float CountSuccessRate(int type)
+    {
+        float BaseSuccessRate = 0;
+        //业务生产
+        if (type == 1)
+        {
+            for (int i = 0; i < CurrentEmps.Count; i++)
+            {
+                int value = 0;
+                if ((int)type == 0)
+                    value = CurrentEmps[i].Skill1;
+                else if ((int)type == 1)
+                    value = CurrentEmps[i].Skill2;
+                else
+                    value = CurrentEmps[i].Skill3;
+                if (value <= 5)
+                    BaseSuccessRate -= 0.15f;
+                else if (value <= 9)
+                    BaseSuccessRate -= 0.05f;
+                else if (value <= 13)
+                    BaseSuccessRate += 0;
+                else if (value <= 17)
+                    BaseSuccessRate += 0.02f;
+                else if (value <= 21)
+                    BaseSuccessRate += 0.06f;
+                else if (value > 21)
+                    BaseSuccessRate += 0.1f;
+            }
+            if (CommandingOffice != null && CommandingOffice.CurrentManager != null)
+            {
+                int value = 0;
+                if ((int)type == 0)
+                    value = CommandingOffice.CurrentManager.Skill1;
+                else if ((int)type == 1)
+                    value = CommandingOffice.CurrentManager.Skill2;
+                else
+                    value = CommandingOffice.CurrentManager.Skill3;
+                if (value <= 5)
+                    BaseSuccessRate -= 0.25f;
+                else if (value <= 9)
+                    BaseSuccessRate -= 0.15f;
+                else if (value <= 13)
+                    BaseSuccessRate -= 0.05f;
+                else if (value <= 17)
+                    BaseSuccessRate += 0;
+                else if (value <= 21)
+                    BaseSuccessRate += 0.05f;
+                else if (value > 21)
+                    BaseSuccessRate += 0.1f;
+            }
+        }
+        //招聘
+        else if (type == 2)
+        {
+            for (int i = 0; i < CurrentEmps.Count; i++)
+            {
+                int value = CurrentEmps[i].HR;
+                if (value <= 5)
+                    BaseSuccessRate -= 0.15f;
+                else if (value <= 9)
+                    BaseSuccessRate -= 0.05f;
+                else if (value <= 13)
+                    BaseSuccessRate += 0;
+                else if (value <= 17)
+                    BaseSuccessRate += 0.02f;
+                else if (value <= 21)
+                    BaseSuccessRate += 0.06f;
+                else if (value > 21)
+                    BaseSuccessRate += 0.1f;
+            }
+            if (CommandingOffice != null && CommandingOffice.CurrentManager != null)
+            {
+                int value = CommandingOffice.CurrentManager.HR;
+                if (value <= 5)
+                    BaseSuccessRate -= 0.25f;
+                else if (value <= 9)
+                    BaseSuccessRate -= 0.15f;
+                else if (value <= 13)
+                    BaseSuccessRate -= 0.05f;
+                else if (value <= 17)
+                    BaseSuccessRate += 0;
+                else if (value <= 21)
+                    BaseSuccessRate += 0.05f;
+                else if (value > 21)
+                    BaseSuccessRate += 0.1f;
+            }
+        }
+        return BaseSuccessRate;
+    }
+
+    //开始招聘工作
+    public void StartHire()
+    {
+        //原本是StartTaskManage
+        WorkStart = true;
+        SpType = 0;
+        UpdateUI();
+    }
 
     //旧人力资源部2功能 已过时
     public void StartSpecialBusiness(int type)

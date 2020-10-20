@@ -784,7 +784,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 8290254732809842710}
-        m_MethodName: StartTaskManage
+        m_MethodName: StartHire
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1480,7 +1480,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u62DB\u8058\u8BBE\u7F6E"
+  m_Text: "\u5F00\u59CB\u62DB\u8058"
 --- !u!1 &6656649411013207428
 GameObject:
   m_ObjectHideFlags: 0
