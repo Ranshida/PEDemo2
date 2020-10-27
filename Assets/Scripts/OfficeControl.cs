@@ -21,6 +21,7 @@ public class OfficeControl : MonoBehaviour
     //放入和移除高管时调用
     public void SetOfficeStatus()
     {
+        Debug.LogError(building.Type);
         if (CurrentManager != null)
         {
             Text_EmpName.text = "当前高管:" + CurrentManager.Name;

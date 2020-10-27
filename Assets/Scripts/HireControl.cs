@@ -108,7 +108,7 @@ public class HireControl : MonoBehaviour
         ED.SetSkillName();
 
         //创建员工实体
-        ED.Entity = EmpManager.Instance.CreateEmp(GC.BM.ExitPos.position);
+        ED.Entity = EmpManager.Instance.CreateEmp(BuildingManage.Instance.ExitPos.position);
         ED.Entity.SetInfo(ED);
 
         //注意应放在初始化人际关系后再添加至链表
@@ -163,7 +163,7 @@ public class HireControl : MonoBehaviour
         emp.InitRelation();
 
         //创建员工实体
-        ED.Entity = EmpManager.Instance.CreateEmp(GC.BM.ExitPos.position);
+        ED.Entity = EmpManager.Instance.CreateEmp(BuildingManage.Instance.ExitPos.position);
         ED.Entity.SetInfo(ED);
 
         GC.CurrentEmployees.Add(emp);

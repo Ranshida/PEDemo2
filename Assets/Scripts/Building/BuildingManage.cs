@@ -17,15 +17,14 @@ public enum BuildingType
 public class BuildingManage : MonoBehaviour
 {
     public static BuildingManage Instance;
-    public Button ConfirmButton;
-    public BuildingEffect BEPrefab;
-    public Transform BuildingContent, EntityContent, ExitPos;
-   // public Transform BuildingContent, EntityContent, ExitPos, MaxPos, MinPos;
-    public GameObject ControlPanel;
+    public Transform ExitPos;
 
     //初始化
+    private GameObject lotteryBuilding;    //抽卡的UI按钮图标
+    private GameObject wareBuilding;      //仓库中的临时建筑
     private GameObject[] buildingPrefabs;  //建筑预制体
-    private Dictionary<BuildingType, GameObject> buildingDict;   //<建筑类型，预制体> 的字典
+    private Dictionary<BuildingType, GameObject> m_AllBuildingDict;   //<建筑类型，预制体> 的字典
+    private Dictionary<BuildingType, GameObject> m_SelectDict;   //<建筑类型，预制体> 的字典
 
     //准备建造的建筑
     private bool canBuild;
@@ -34,11 +33,16 @@ public class BuildingManage : MonoBehaviour
     private GameObject CEOBuilding;
 
     //建造面板
-    public Transform optionPanel;   //建造选项面板
-    Button[] buildingButton;        //建造选项面板下的所有按钮
+    public Button btn_FinishBuild;
+    public Transform lotteryPanel;   //抽卡面板
+    public List<Transform> lotteryUI;   //抽卡面板
+    public List<Transform> wareBuildings;  //仓库中存储的待建建筑
+    public Transform warePanel;     //仓库面板
+    public Transform wareBuildingsPanel;     //仓库面板
+    private bool m_InBuildingMode;          //建造中
 
     //默认建筑（CEO办公室）
-    public List<Building> ConstructedBuildings = new List<Building>();
+    private List<Building> ConstructedBuildings = new List<Building>();
     public int CEOPositionX;
     public int CEOPositionZ;
     public OfficeControl CEOOffice;
@@ -53,230 +57,58 @@ public class BuildingManage : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+        m_InBuildingMode = false;
+        lotteryUI = new List<Transform>();
+        wareBuildings = new List<Transform>();
+        temp_Grids = new List<Grid>();
+        m_AllBuildingDict = new Dictionary<BuildingType, GameObject>();
+        m_SelectDict = new Dictionary<BuildingType, GameObject>();
+       
+        //加载建筑预制体，加入建筑字典
+        lotteryBuilding = ResourcesLoader.LoadPrefab("Prefabs/UI/Building/LotteryBuilding");
+        wareBuilding = ResourcesLoader.LoadPrefab("Prefabs/UI/Building/WareBuilding");
+        buildingPrefabs = ResourcesLoader.LoadAll<GameObject>("Prefabs/Scene/Buildings");
+        CEOBuilding = ResourcesLoader.LoadPrefab("Prefabs/Scene/Buildings/CEO办公室");
+        effectHalo = Instantiate(ResourcesLoader.LoadPrefab("Prefabs/Scene/EffectHalo"), transform);
+        foreach (GameObject prefab in buildingPrefabs)
+        {
+            Building building = prefab.GetComponent<Building>();
+            m_AllBuildingDict.Add(building.Type, prefab);
+        }
+        foreach (GameObject prefab in buildingPrefabs)
+        {
+            Building building = prefab.GetComponent<Building>();
+            if (building.Type == BuildingType.技术部门 || building.Type == BuildingType.产品部门 || building.Type == BuildingType.市场部门 || building.Type == BuildingType.目标修正小组 || 
+                building.Type == BuildingType.高级财务部A || building.Type == BuildingType.高级财务部B || building.Type == BuildingType.精确标准委员会 || building.Type == BuildingType.效能研究室 || 
+                building.Type == BuildingType.高管办公室 || building.Type == BuildingType.人力资源部A || building.Type == BuildingType.人力资源部B || 
+                building.Type == BuildingType.财务部 || building.Type == BuildingType.档案管理室 || building.Type == BuildingType.按摩房 || building.Type == BuildingType.健身房)
+            {
+                m_SelectDict.Add(building.Type, prefab);
+            }
+        }
     }
    
     private void Start()
     {
-        temp_Grids = new List<Grid>();
-        buildingDict = new Dictionary<BuildingType, GameObject>();
+        Debug.LogError("!!!!!" );
+        lotteryPanel = transform.Find("LotteryPanel");
+        warePanel = transform.Find("WarePanel");
+        wareBuildingsPanel = warePanel.Find("Scroll View/Viewport/Content");
+        btn_FinishBuild = transform.Find("WarePanel/Btn_Finish").GetComponent<Button>();
+        btn_FinishBuild.onClick.AddListener(() => { TryQuitBuildMode(); });
 
-        //注册Button
-        buildingButton = optionPanel.GetComponentsInChildren<Button>();
-        foreach (Button button in buildingButton)
-        {
-            switch (button.name)
-            {
-                case "Btn_技术部门":
-                    button.onClick.AddListener(() => { StartBuild(BuildingType.技术部门); optionPanel.gameObject.SetActive(false); });
-                break;
-                case "Btn_市场部门":
-                    button.onClick.AddListener(() => { StartBuild(BuildingType.市场部门); optionPanel.gameObject.SetActive(false); });
-                break;
-                case "Btn_产品部门":
-                    button.onClick.AddListener(() => { StartBuild(BuildingType.产品部门); optionPanel.gameObject.SetActive(false); });
-                break;
-                case "Btn_运营部门":
-                    button.onClick.AddListener(() => { StartBuild(BuildingType.运营部门); optionPanel.gameObject.SetActive(false); });
-                break;
-                case "Btn_研发部门":
-                    button.onClick.AddListener(() => { StartBuild(BuildingType.研发部门); optionPanel.gameObject.SetActive(false); });
-                break;
-                case "Btn_高管办公室":
-                    button.onClick.AddListener(() => { StartBuild(BuildingType.高管办公室); optionPanel.gameObject.SetActive(false); });
-                break;
-                case "Btn_人力资源部A":
-                    button.onClick.AddListener(() => { StartBuild(BuildingType.人力资源部A); optionPanel.gameObject.SetActive(false); });
-                break;
-                case "Btn_人力资源部B":
-                    button.onClick.AddListener(() => { StartBuild(BuildingType.人力资源部B); optionPanel.gameObject.SetActive(false); });
-                break;
-                case "Btn_按摩房":
-                    button.onClick.AddListener(() => { StartBuild(BuildingType.按摩房); optionPanel.gameObject.SetActive(false); });
-                break;
-                case "Btn_健身房":
-                    button.onClick.AddListener(() => { StartBuild(BuildingType.健身房); optionPanel.gameObject.SetActive(false); });
-                break;
-                case "Btn_目标修正小组":
-                    button.onClick.AddListener(() => { StartBuild(BuildingType.目标修正小组); optionPanel.gameObject.SetActive(false); });
-                break;
-                case "Btn_档案管理室":
-                    button.onClick.AddListener(() => { StartBuild(BuildingType.档案管理室); optionPanel.gameObject.SetActive(false); });
-                break;
-                case "Btn_效能研究室":
-                    button.onClick.AddListener(() => { StartBuild(BuildingType.效能研究室); optionPanel.gameObject.SetActive(false); });
-                break;
-                case "Btn_财务部":
-                    button.onClick.AddListener(() => { StartBuild(BuildingType.财务部); optionPanel.gameObject.SetActive(false); });
-                break;
-                case "Btn_战略咨询部B":
-                    button.onClick.AddListener(() => { StartBuild(BuildingType.战略咨询部B); optionPanel.gameObject.SetActive(false); });
-                break;
-                case "Btn_精确标准委员会":
-                    button.onClick.AddListener(() => { StartBuild(BuildingType.精确标准委员会); optionPanel.gameObject.SetActive(false); });
-                break;
-                case "Btn_高级财务部A":
-                    button.onClick.AddListener(() => { StartBuild(BuildingType.高级财务部A); optionPanel.gameObject.SetActive(false); });
-                break;
-                case "Btn_高级财务部B":
-                    button.onClick.AddListener(() => { StartBuild(BuildingType.高级财务部B); optionPanel.gameObject.SetActive(false); });
-                break;
-                default:
-                    break;
-            }
-        }
-
-        //加载建筑预制体，加入建筑字典
-        buildingPrefabs = ResourcesLoader.LoadAll<GameObject>("Prefabs/Scene/Buildings");
-        CEOBuilding = ResourcesLoader.LoadPrefab("Prefabs/Scene/Buildings/CEO办公室");
-        effectHalo = Instantiate(ResourcesLoader.LoadPrefab("Prefabs/Scene/EffectHalo"), transform);
         effectHalo.SetActive(false);
-
-        foreach (GameObject prefab in buildingPrefabs)
-        {
-            Building building = prefab.GetComponent<Building>();
-            buildingDict.Add(building.Type, prefab);
-        }
-
         InitBuilding();
     }
-
-    private void Update()
-    {
-        if (!GridContainer.Instance)
-            return;
-
-        //屏幕射线命中地面
-        if (CameraController.TerrainHit && !CameraController.IsPointingUI)
-            AimingPosition = new Vector3(CameraController.TerrainRaycast.point.x, 0, CameraController.TerrainRaycast.point.z);
-        else
-            AimingPosition = new Vector3(-1000, 0, 0);
-
-        //鼠标所属网格的X坐标
-        int tempX;
-        if (AimingPosition.x > 0)
-            tempX = (int)(AimingPosition.x / 10);
-        else
-            tempX = (int)(AimingPosition.x / 10) - 1;
-        //鼠标所属网格的Z坐标
-        int tempZ;
-        if (AimingPosition.z > 0)
-            tempZ = (int)(AimingPosition.z / 10);
-        else
-            tempZ = (int)(AimingPosition.z / 10) - 1;
-    
-        if (Input.GetKeyDown(KeyCode.Mouse0))
-        { 
-            Dictionary<int, Grid> dict = null;
-            Grid grid = null;
-
-            //取消选中
-            if (selectBuilding)
-                selectBuilding = null;
-            //确定建造
-            else if (temp_Building && canBuild)
-                BuildConfirm();
-            //选中建筑
-            else if (GridContainer.Instance.GridDict.TryGetValue(tempX, out dict))
-            {
-                if (dict.TryGetValue(tempZ,out grid))
-                {
-                    if (grid.Type == Grid.GridType.已放置)
-                        selectBuilding = GridContainer.Instance.GridDict[tempX][tempZ].belongBuilding;
-                }
-            }
-        }
-
-        if (Input.GetKeyDown(KeyCode.Mouse1))
-        {
-            //取消建造
-            if (temp_Building)
-            {
-                temp_Building.Dismantle();
-                temp_Building = null;
-            }
-            //取消选中
-            else if (selectBuilding)
-            {
-                selectBuilding = null;
-            }
-
-            //拆除建筑，先不做
-            //if (GridContainer.Instance.GridDict[tempX][tempZ].Type == Grid.GridType.已放置)
-            //{
-                //GridContainer.Instance.GridDict[tempX][tempZ].belongBuilding.Dismantle();
-            //}
-        }
-
-        if (selectBuilding)
-        {
-            effectHalo.SetActive(true);
-            effectHalo.transform.position = selectBuilding.transform.position + new Vector3(selectBuilding.Length * 5, 0.2f, selectBuilding.Width * 5);
-            effectHalo.transform.localScale = new Vector3(selectBuilding.Length + 8, 1, selectBuilding.Width + 8);
-        }
-        else
-        {
-            effectHalo.SetActive(false);
-        }
-
-        //刷新临时建筑网格
-        foreach (Grid grid in temp_Grids)
-        {
-            grid.IsPutting = false;
-            grid.RefreshGrid();
-        }
-        temp_Grids.Clear();
-        canBuild = false;
-
-        //已经选择建筑，检测网格可否可以建造
-        if (temp_Building)
-        {
-            //检查覆盖到的网格
-            Grid grid;
-            Dictionary<int, Grid> gridDict;
-            for (int i = 0; i < temp_Building.Length; i++)
-            {
-                if (GridContainer.Instance.GridDict.TryGetValue(tempX + i, out gridDict))
-                {
-                    for (int j = 0; j < temp_Building.Width; j++)
-                    {
-                        if (gridDict.TryGetValue(tempZ + j, out grid))
-                        {
-                            if (!gridDict[tempZ + j].Lock && gridDict[tempZ + j].Type == Grid.GridType.可放置)
-                            {
-                                temp_Grids.Add(gridDict[tempZ + j]);
-                            }
-                        }
-                    }
-                }
-            }
-
-            //全部覆盖到网格 => 可以建造
-            if (temp_Grids.Count == temp_Building.Width * temp_Building.Length)
-            {
-                canBuild = true;
-                foreach (Grid tempGrid in temp_Grids)
-                {
-                    tempGrid.IsPutting = true;
-                    tempGrid.RefreshGrid();
-                }
-                temp_Building.transform.position = new Vector3(tempX * 10, 0, tempZ * 10);
-                return;
-            }
-            //不能覆盖全部网格 => 不能建造
-            else
-                temp_Building.transform.position = AimingPosition + new Vector3(-5, 0, -5);
-        }
-    }
-
-
-    private void InitBuilding()
+    //初始化默认建筑
+    void InitBuilding()
     {
         GameObject buildingGo = Instantiate(CEOBuilding);
         temp_Building = buildingGo.GetComponent<Building>();
-
+        Debug.LogError(temp_Building.Type);
         //确定名称
         temp_Building.Text_DepName.text = "CEO办公室";
-        
+
         //已经选择建筑，检测网格可否可以建造
         if (temp_Building)
         {
@@ -340,13 +172,225 @@ public class BuildingManage : MonoBehaviour
 
         //在链表上保存新建筑
         ConstructedBuildings.Add(temp_Building);
-       
 
         temp_Building = null;
-
     }
 
-    //创建建筑 button
+    private void Update()
+    {
+        if (!GridContainer.Instance)
+            return;
+
+        //屏幕射线命中地面
+        if (CameraController.TerrainHit && !CameraController.IsPointingUI)
+            AimingPosition = new Vector3(CameraController.TerrainRaycast.point.x, 0, CameraController.TerrainRaycast.point.z);
+        else
+            AimingPosition = new Vector3(-1000, 0, 0);
+        //鼠标所属网格的X坐标
+        int tempX;
+        if (AimingPosition.x > 0)
+            tempX = (int)(AimingPosition.x / 10);
+        else
+            tempX = (int)(AimingPosition.x / 10) - 1;
+        //鼠标所属网格的Z坐标
+        int tempZ;
+        if (AimingPosition.z > 0)
+            tempZ = (int)(AimingPosition.z / 10);
+        else
+            tempZ = (int)(AimingPosition.z / 10) - 1;
+
+        //建造模式下
+        if (m_InBuildingMode)
+        {
+            if (wareBuildings.Count > 0 || temp_Building)
+                btn_FinishBuild.interactable = false;
+            else
+                btn_FinishBuild.interactable = true;
+            //尝试退出建造模式
+            if (btn_FinishBuild.interactable && (Input.GetKeyDown(KeyCode.Mouse1) || Input.GetKeyDown(KeyCode.Escape)))
+            {
+                btn_FinishBuild.onClick.Invoke();
+            }
+            if (Input.GetKeyDown(KeyCode.Mouse0))
+            {
+                //确定建造当前建筑
+                if (temp_Building && canBuild)
+                    BuildConfirm();
+                else if (selectBuilding)
+                    selectBuilding = null;
+                //选中建筑
+                else if (GridContainer.Instance.GridDict.TryGetValue(tempX, out Dictionary<int, Grid> dict))
+                {
+                    if (dict.TryGetValue(tempZ, out Grid grid))
+                    {
+                        if (grid.Type == Grid.GridType.已放置)
+                            selectBuilding = GridContainer.Instance.GridDict[tempX][tempZ].belongBuilding;
+                    }
+                }
+            }
+            if (Input.GetKeyDown(KeyCode.Mouse1))
+            {
+                //取消建造当前建筑
+                if (temp_Building)
+                {
+                    BuildCancel();
+                }
+                //拆除建筑，先不做
+                //if (GridContainer.Instance.GridDict[tempX][tempZ].Type == Grid.GridType.已放置)
+                //{
+                //GridContainer.Instance.GridDict[tempX][tempZ].belongBuilding.Dismantle();
+                //}
+            }
+
+            //刷新临时建筑网格
+            foreach (Grid grid in temp_Grids)
+            {
+                grid.IsPutting = false;
+                grid.RefreshGrid();
+            }
+            temp_Grids.Clear();
+            canBuild = false;
+            //已经选择建筑，检测网格可否可以建造
+            if (temp_Building)
+            {
+                //检查覆盖到的网格
+                Grid grid;
+                Dictionary<int, Grid> gridDict;
+                for (int i = 0; i < temp_Building.Length; i++)
+                {
+                    if (GridContainer.Instance.GridDict.TryGetValue(tempX + i, out gridDict))
+                    {
+                        for (int j = 0; j < temp_Building.Width; j++)
+                        {
+                            if (gridDict.TryGetValue(tempZ + j, out grid))
+                            {
+                                if (!gridDict[tempZ + j].Lock && gridDict[tempZ + j].Type == Grid.GridType.可放置)
+                                {
+                                    temp_Grids.Add(gridDict[tempZ + j]);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                //全部覆盖到网格 => 可以建造
+                if (temp_Grids.Count == temp_Building.Width * temp_Building.Length)
+                {
+                    canBuild = true;
+                    foreach (Grid tempGrid in temp_Grids)
+                    {
+                        tempGrid.IsPutting = true;
+                        tempGrid.RefreshGrid();
+                    }
+                    temp_Building.transform.position = new Vector3(tempX * 10, 0, tempZ * 10);
+                    return;
+                }
+                //不能覆盖全部网格 => 不能建造
+                else
+                    temp_Building.transform.position = AimingPosition + new Vector3(-5, 0, -5);
+            }
+        }
+        else
+        {
+            if (Input.GetKeyDown(KeyCode.Mouse0))
+            {
+                //取消选中
+                if (selectBuilding)
+                    selectBuilding = null;
+                //选中建筑
+                else if (GridContainer.Instance.GridDict.TryGetValue(tempX, out Dictionary<int, Grid> dict))
+                {
+                    if (dict.TryGetValue(tempZ, out Grid grid))
+                    {
+                        if (grid.Type == Grid.GridType.已放置)
+                            selectBuilding = GridContainer.Instance.GridDict[tempX][tempZ].belongBuilding;
+                    }
+                }
+            }
+
+            if (Input.GetKeyDown(KeyCode.Mouse1))
+            {
+                //取消选中
+                if (selectBuilding)
+                    selectBuilding = null;
+            }
+
+            if (selectBuilding)
+            {
+                effectHalo.SetActive(true);
+                effectHalo.transform.position = selectBuilding.transform.position + new Vector3(selectBuilding.Length * 5, 0.2f, selectBuilding.Width * 5);
+                effectHalo.transform.localScale = new Vector3(selectBuilding.Length + 8, 1, selectBuilding.Width + 8);
+            }
+            else
+            {
+                effectHalo.SetActive(false);
+            }
+        }
+    }
+    
+    //抽奖选择建筑
+    public void Lottery(int count)
+    {
+        List<Building> tempBuildings;
+        if (lotteryUI.Count > 0) 
+            Debug.LogError("已经在抽建筑了");
+
+        lotteryPanel.gameObject.SetActive(true);
+        EnterBuildMode();
+
+        List<Building> buildingList = new List<Building>();
+        tempBuildings = new List<Building>();
+        foreach (KeyValuePair<BuildingType, GameObject> building in m_SelectDict)
+        {
+            buildingList.Add(building.Value.GetComponent<Building>());
+        }
+        for (int i = 0; i < count; i++)
+        {
+            Building temp = buildingList[Random.Range(0, buildingList.Count)];
+            tempBuildings.Add(temp);
+            buildingList.Remove(temp);
+        }
+        foreach (Building building in tempBuildings)
+        {
+            Transform panel = GameObject.Instantiate(lotteryBuilding, lotteryPanel).transform;
+            lotteryUI.Add(panel);
+            panel.name = building.Type.ToString();
+            panel.GetComponentInChildren<Text>().text = building.Type.ToString();
+            panel.GetComponent<Button>().onClick.AddListener(() =>
+            {
+                StartBuild(building.Type);
+                lotteryPanel.gameObject.SetActive(false);
+                warePanel.gameObject.SetActive(true);
+                foreach (Transform ui in lotteryUI)
+                {
+                    Destroy(ui.gameObject);
+                }
+                lotteryUI.Clear();
+            });
+        }
+    }
+
+    //进入建造模式
+    public void EnterBuildMode()
+    {
+        m_InBuildingMode = true;
+        GameControl.Instance.ForceTimePause = true;
+    }
+    //(尝试)退出建造模式
+    public void TryQuitBuildMode()
+    {
+        //没有将全部建筑摆放完毕
+        if (temp_Building || wareBuildings.Count > 0) //  ||仓库不为空
+        {
+            return;
+        }
+        warePanel.gameObject.SetActive(false);
+        lotteryPanel.gameObject.SetActive(false);
+        m_InBuildingMode = false;
+        GameControl.Instance.ForceTimePause = false;
+    }
+    
+    //开始建造
     public void StartBuild(BuildingType type)
     {
         //销毁已框选的建筑
@@ -354,7 +398,7 @@ public class BuildingManage : MonoBehaviour
             Destroy(temp_Building.gameObject);
 
         //Init
-        GameObject buildingGo = Instantiate(buildingDict[type]);
+        GameObject buildingGo = Instantiate(m_AllBuildingDict[type]);
         temp_Building = buildingGo.GetComponent<Building>();
         
         //确定名称
@@ -367,47 +411,6 @@ public class BuildingManage : MonoBehaviour
         temp_Building.Text_DepName.text = temp_Building.Type.ToString() + DepNum;
     }
 
-    //创建建筑 button
-    public void CreateOffice(int num)
-    {
-        ////如果之前的建筑没有成功建造就删除
-        //if (SelectBuilding != null)
-        //{
-        //    Destroy(SelectBuilding.effect.gameObject);
-        //    Destroy(SelectBuilding.gameObject);
-        //}
-
-        //ToggleEffectRange();
-        //BuildingType type = (BuildingType)num;
-
-        ////创建建筑预制体，设定Building脚本的变量
-        //SelectBuilding = Instantiate(BuildingPrefab, BuildingContent);
-        //SelectBuilding.Type = type; //枚举第一位是0
-        ////创建EffectRange并赋值
-      
-
-        ////把控制面板放到新建筑Prefab旁边
-        //ControlPanel.transform.position = SelectBuilding.transform.position;
-        //ControlPanel.SetActive(true);
-
-    
-
-        //设置尺寸
-        //if (type == BuildingType.技术部门 || type == BuildingType.市场部门 || type == BuildingType.产品部门 || type == BuildingType.运营部门)
-        //    SelectBuilding.SetSize(2, 3);
-        //else if (type == BuildingType.高管办公室 || type == BuildingType.人力资源部A || type == BuildingType.人力资源部B  || type == BuildingType.按摩房)
-        //    SelectBuilding.SetSize(2, 2);
-        //else if (type == BuildingType.研发部门)
-        //    SelectBuilding.SetSize(2, 4);
-        //else if (type == BuildingType.健身房)
-        //    SelectBuilding.SetSize(3, 3);
-        //else if (type == BuildingType.目标修正小组 || type == BuildingType.档案管理室 || type == BuildingType.效能研究室
-        //    || type == BuildingType.财务部 || type == BuildingType.战略咨询部B || type == BuildingType.精确标准委员会
-        //    || type == BuildingType.高级财务部A || type == BuildingType.高级财务部B)
-        //    SelectBuilding.SetSize(2, 3);
-
-    }
-
     //确定建筑
     public void BuildConfirm()
     {
@@ -417,11 +420,8 @@ public class BuildingManage : MonoBehaviour
 
         GameControl.Instance.Money -= 100;
         GameControl.Instance.BuildingPay += 50;
-        ControlPanel.SetActive(false);
 
         GameControl.Instance.Money -= 100;
-
-        ControlPanel.SetActive(false);
 
         BuildingType T = temp_Building.Type;
         //生产部门创建
@@ -511,28 +511,22 @@ public class BuildingManage : MonoBehaviour
     }
 
     //取消摆放
-    public void BuildingCancel()
+    public void BuildCancel()
     {
-        ControlPanel.SetActive(false);
-        Destroy(temp_Building.gameObject);
+        //放到仓库里
+        Transform panel = GameObject.Instantiate(wareBuilding, wareBuildingsPanel).transform;
+        wareBuildings.Add(panel);
+        BuildingType type = temp_Building.Type;
+        panel.name = type.ToString();
+        panel.GetComponentInChildren<Text>().text = type.ToString();
+        panel.GetComponent<Button>().onClick.AddListener(() =>
+        {
+            StartBuild(type);
+            wareBuildings.Remove(panel);
+            Destroy(panel.gameObject);
+        });
+        //temp设为空
+        temp_Building.Dismantle();
         temp_Building = null;
     }
-
-    //void ToggleEffectRange()
-    //{
-    //    //开关EffectRange图片显示
-    //    for(int i = 0; i < ConstructedBuildings.Count; i++)
-    //    {
-    //        if (ConstructedBuildings[i].effect.image.enabled == true)
-    //            ConstructedBuildings[i].effect.image.enabled = false;
-    //        else
-    //            ConstructedBuildings[i].effect.image.enabled = true;
-    //    }
-    //}
-
-    //public void RotateBuilding()
-    //{
-    //    SelectBuilding.Rotate();
-    //    ControlPanel.transform.position = SelectBuilding.transform.position;
-    //}
 }
