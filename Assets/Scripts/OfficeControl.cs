@@ -13,15 +13,11 @@ public class OfficeControl : MonoBehaviour
     public Building building;
     public Text Text_OfficeName, Text_EmpName, Text_MAbility, Text_Progress;
     public Button ActiveButton;
-
     public List<DepControl> ControledDeps = new List<DepControl>();
-
-    
 
     //放入和移除高管时调用
     public void SetOfficeStatus()
     {
-        Debug.LogError(building.Type);
         if (CurrentManager != null)
         {
             Text_EmpName.text = "当前高管:" + CurrentManager.Name;
