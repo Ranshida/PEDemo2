@@ -59,8 +59,10 @@ public class Building : MonoBehaviour
     {
         //重置影响范围
         effect.RemoveAffect();
+        //刷新网格
         foreach (Grid grid in ContainsGrids)
             grid.Dismantle();
+
         //销毁前的准备工作
         if (Department)
         {
@@ -70,6 +72,7 @@ public class Building : MonoBehaviour
         {
 
         }
+
         Destroy(gameObject);
     }
 }
