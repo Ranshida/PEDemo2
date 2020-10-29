@@ -554,7 +554,7 @@ public class SkillControl : MonoBehaviour
         BossHp -= damage;
         Text_BossHp.text = "Boss剩余血量:" + BossHp;
 
-        if(BossHp < 0)
+        if(BossHp <= 0)
         {
             VictoryPanel.SetActive(true);
             BossPanel.SetActive(false);
@@ -764,6 +764,7 @@ public class SkillControl : MonoBehaviour
     public void NextTurn()
     {
         DiceUseNum = 0;//重置回合使用骰子数
+        TotalValue = 0;//重置骰子点数
         if (DotValue > 0)//减Dot层数
             DotValue -= 1;
         ExtraDiceDamage = 0;//重置额外伤害

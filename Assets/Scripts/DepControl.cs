@@ -896,9 +896,12 @@ public class DepControl : MonoBehaviour
     //头脑风暴版本2，移动员工影响动员等级
     public void ChangeEmpAssignment()
     {
-        EmpChanged = true;
-        ExtraSuccessRate = 0;
-        ExtraMajorSuccessRate = 0;
-        Text_Efficiency.color = Color.red;
+        if (EfficiencyLevel > 0)
+        {
+            EmpChanged = true;
+            ExtraSuccessRate = 0;
+            ExtraMajorSuccessRate = 0;
+            Text_Efficiency.color = Color.red;
+        }
     }
 }
