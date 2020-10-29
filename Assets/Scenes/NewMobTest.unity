@@ -120,24 +120,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!114 &121047480 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 500598437808984960, guid: c56c09a7e0b7ccc4eac9c70aff4f410d,
-    type: 3}
-  m_PrefabInstance: {fileID: 500598437789522488}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!1 &136628749 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 500598437657153589, guid: c56c09a7e0b7ccc4eac9c70aff4f410d,
-    type: 3}
-  m_PrefabInstance: {fileID: 500598437789522488}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &358169786
 GameObject:
   m_ObjectHideFlags: 0
@@ -318,16 +300,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1f2db54fb001b847ac890aff4494204, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ConfirmButton: {fileID: 121047480}
-  BEPrefab:
-    CurrentBuilding: {fileID: 0}
-    AffectedBuildings: []
-  BuildingContent: {fileID: 3187402727080649948}
-  EntityContent: {fileID: 2071975211}
   ExitPos: {fileID: 1498200387}
-  ControlPanel: {fileID: 136628749}
-  optionPanel: {fileID: 225948636305239032}
-  ConstructedBuildings: []
+  btn_FinishBuild: {fileID: 0}
+  btn_EnterBuildMode: {fileID: 0}
+  lotteryPanel: {fileID: 0}
+  lotteryUI: []
+  warePanels: []
+  wareBuildings: []
+  warePanel: {fileID: 0}
+  wareBuildingsPanel: {fileID: 0}
+  selectBuildingPanel: {fileID: 0}
   CEOPositionX: 13
   CEOPositionZ: 1
   CEOOffice: {fileID: 1051092804}
@@ -391,12 +373,6 @@ Transform:
   m_Father: {fileID: 3187402727958478035}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!224 &225948636305239032 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 419046653664326080, guid: c56c09a7e0b7ccc4eac9c70aff4f410d,
-    type: 3}
-  m_PrefabInstance: {fileID: 500598437789522488}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &500598437789522488
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -685,6 +661,16 @@ PrefabInstance:
     - target: {fileID: 1512242943, guid: c56c09a7e0b7ccc4eac9c70aff4f410d, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: -18.599976
+      objectReference: {fileID: 0}
+    - target: {fileID: 500598437079338628, guid: c56c09a7e0b7ccc4eac9c70aff4f410d,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -38.00006
+      objectReference: {fileID: 0}
+    - target: {fileID: 500598437291270266, guid: c56c09a7e0b7ccc4eac9c70aff4f410d,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -44.774963
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c56c09a7e0b7ccc4eac9c70aff4f410d, type: 3}
