@@ -29,6 +29,8 @@ public class BTE_Moving : BTE_Action
         {
             return TaskStatus.Failure;
         }
+
+        //移动速度、暂停
         if (GameControl.Instance.ForceTimePause)
             navMeshAgent.speed = 0;
         else
