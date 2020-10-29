@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class SkillInfo : MonoBehaviour
 {
-    public int InfoType;
+    public int InfoType, LockTime = 0;
     public bool Active = true;
 
     public Skill skill;
@@ -145,14 +145,74 @@ public class SkillInfo : MonoBehaviour
 
     public void SelectSkill()
     {
-        SC.CurrentSkill = this;
-        SC.Text_CurrentSkillName.text = "确定发动 " + skill.Name + " 能力？";
-        if(skill.EffectMode == 1)
-            SC.ConfirmPanel.SetActive(true);
+        if (SC.SCSelectMode != 2)
+        {
+            SC.CurrentSkill = this;
+            SC.Text_CurrentSkillName.text = "确定发动 " + skill.Name + " 能力？";
+            //直接发动技能
+            if (skill.EffectMode == 1)
+                SC.ConfirmPanel.SetActive(true);
+            //选择一个员工后发动技能
+            else if (skill.EffectMode == 2)
+            {
+                empInfo.GC.CurrentEmpInfo = null;
+                empInfo.GC.SelectMode = 4;
+                empInfo.GC.TotalEmpContent.parent.parent.gameObject.SetActive(true);
+                empInfo.GC.Text_EmpSelectTip.gameObject.SetActive(true);
+                empInfo.GC.Text_EmpSelectTip.text = "选择一个员工";
+            }
+            //选择骰子后发动技能
+            else if (skill.EffectMode == 3)
+            {
+                SC.SCSelectMode = 1;
+                SC.Text_Tip.gameObject.SetActive(true);
+                SC.Text_Tip.text = "选择一个骰子";
+                for(int i = 0; i < SC.SelectedDices.Count; i++)
+                {
+                    SC.SelectedDices[i].toggle.interactable = false;
+                }
+            }
+            //选择技能后发动技能(6为选择技能后再选择员工）
+            else if (skill.EffectMode == 4 || skill.EffectMode == 6)
+            {
+                SC.SCSelectMode = 2;
+                SC.Text_Tip.gameObject.SetActive(true);
+                SC.Text_Tip.text = "选择一个技能";
+                for (int i = 0; i < SC.CurrentSkills.Count; i++)
+                {
+                    SC.CurrentSkills[i].button.interactable = true;
+                }
+            }
+            //选择两个员工后发动技能
+            else if (skill.EffectMode == 5)
+            {
+                empInfo.GC.CurrentEmpInfo = null;
+                empInfo.GC.CurrentEmpInfo2 = null;
+                empInfo.GC.SelectMode = 7;
+                empInfo.GC.TotalEmpContent.parent.parent.gameObject.SetActive(true);
+                empInfo.GC.Text_EmpSelectTip.gameObject.SetActive(true);
+                empInfo.GC.Text_EmpSelectTip.text = "选择第一个员工";
+            }
+            
+        }
         else
         {
-            empInfo.GC.SelectMode = 4;
-            empInfo.GC.TotalEmpContent.parent.parent.gameObject.SetActive(true);
+            if (skill.EffectMode != 6)
+            {
+                SC.TargetSkill = this;
+                SC.Text_CurrentSkillName.text = "确定发动 " + SC.TargetSkill.skill.Name + " 能力？";
+                SC.ConfirmPanel.SetActive(true);
+            }
+            //(选择一个技能后)选择一个员工
+            else if (skill.EffectMode == 6)
+            {
+                SC.TargetSkill = this;
+                empInfo.GC.CurrentEmpInfo = null;
+                empInfo.GC.SelectMode = 4;
+                empInfo.GC.TotalEmpContent.parent.parent.gameObject.SetActive(true);
+                empInfo.GC.Text_EmpSelectTip.gameObject.SetActive(true);
+                empInfo.GC.Text_EmpSelectTip.text = "选择一个员工";
+            }
         }
 
     }

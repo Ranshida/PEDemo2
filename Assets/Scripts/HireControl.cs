@@ -100,6 +100,7 @@ public class HireControl : MonoBehaviour
 
         EI1.DetailInfo = ED;
         EI2.DetailInfo = ED;
+        ED.DetailInfo = ED;
         ED.emp.InfoA = EI1;
         ED.emp.InfoB = EI2;
         ED.emp.InfoDetail = ED;

@@ -13,6 +13,7 @@ public class Employee
     public int Skill1, Skill2, Skill3, SkillExtra1, SkillExtra2, SkillExtra3, 
         Observation, Tenacity, Strength, Manage, HR, Finance, Decision, 
         Forecast, Strategy, Convince, Charm, Gossip, SalaryExtra = 0, Age, EventTime, ObeyTime, NoPromotionTime = 0, NoMarriageTime = 0;
+    public int Confidence;//信心，头脑风暴中的护盾
     public int Stamina
     {
         get { return stamina; }
@@ -604,10 +605,116 @@ public class Employee
                 SkillName = "八卦";
             }
             InfoDetail.GC.CreateMessage(Name + "的 " + SkillName + " 技能提升了");
+            NewSkillCheck();
+        }
+    }
+
+    public void NewSkillCheck()
+    {
+        if (Skill1 > 5 || Skill2 > 5 || Skill3 > 5)
+        {
+            if (Observation > 7 && HaveSkill("创意") == false)
+                CreateSkill(new Skill35());
+            if (Tenacity > 7 && HaveSkill("折衷选择") == false)
+                CreateSkill(new Skill47());
+            if (Strength > 7 && HaveSkill("熟练按摩") == false)
+                CreateSkill(new Skill42());
+            if (Forecast > 7 && HaveSkill("分析") == false)
+                CreateSkill(new Skill33());
+            if (Strategy > 7 && HaveSkill("妥协姿态") == false)
+                CreateSkill(new Skill39());
         }
 
+        if (Skill1 > 9 || Skill2 > 9 || Skill3 > 9)
+        {
+            if (HR > 10 && HaveSkill("和解") == false)
+                CreateSkill(new Skill41());
+            if (Finance > 8 && HaveSkill("权衡利弊") == false)
+                CreateSkill(new Skill46());
+        }
 
+        if (Skill1 > 13 || Skill2 > 13 || Skill3 > 13)
+        {
+            if (Observation > 17 && HaveSkill("深刻洞察") == false)
+                CreateSkill(new Skill40());
+            if (Tenacity > 14 && HaveSkill("私下承诺") == false)
+                CreateSkill(new Skill44());
+            if (Strength > 17 && HaveSkill("大师级按摩") == false)
+                CreateSkill(new Skill43());
+            if (Forecast > 17 && HaveSkill("连续推理") == false)
+                CreateSkill(new Skill37());
+            if (Strategy > 17 && HaveSkill("随机应变") == false)
+                CreateSkill(new Skill36());
+        }
 
+        if (Skill1 > 17 || Skill2 > 17 || Skill3 > 17)
+        {
+            if (HR > 19 && HaveSkill("坚定信念") == false)
+                CreateSkill(new Skill38());
+            if (Finance > 15 && HaveSkill("边际利润") == false)
+                CreateSkill(new Skill34());
+        }
+
+        if (Skill1 > 21 || Skill2 > 21 || Skill3 > 21)
+        {
+            if (Tenacity > 21 && HaveSkill("扭曲现实力场") == false)
+                CreateSkill(new Skill45());
+        }
+
+        if(Manage >= 5)
+        {
+            if (Forecast > 7 && HaveSkill("备选方案") == false)
+                CreateSkill(new Skill54());
+        }
+
+        if (Manage > 9)
+        {
+            if (Decision > 10 && HaveSkill("会议重点") == false)
+                CreateSkill(new Skill49());
+            if (HR > 10 && HaveSkill("放轻松") == false)
+                CreateSkill(new Skill53());
+            if (Finance > 10 && HaveSkill("标准化") == false)
+                CreateSkill(new Skill56());
+            if (Strategy > 10 && HaveSkill("模仿") == false)
+                CreateSkill(new Skill55());
+        }
+
+        if(Manage > 13)
+        {
+            if (Forecast > 14 && HaveSkill("步步为营") == false)
+                CreateSkill(new Skill57());
+        }
+
+        if (Manage > 17)
+        {
+            if (Decision > 19 && HaveSkill("头脑雷暴") == false)
+                CreateSkill(new Skill50());
+            if (HR > 19 && HaveSkill("解放思维") == false)
+                CreateSkill(new Skill48());
+            if (Finance > 19 && HaveSkill("精打细算") == false)
+                CreateSkill(new Skill51());
+            if (Strategy > 19 && HaveSkill("以退为进") == false)
+                CreateSkill(new Skill52());
+        }
+        if (Manage > 21)
+        {
+            if (Forecast > 21 && HaveSkill("破局") == false)
+                CreateSkill(new Skill58());
+        }
+    }
+    bool HaveSkill(string Name)
+    {
+        for(int i = 0; i < InfoDetail.SkillsInfo.Count; i++)
+        {
+            if (InfoDetail.SkillsInfo[i].skill.Name == Name)
+                return true;
+        }
+        return false;
+    }
+    void CreateSkill(Skill s)
+    {
+        s.TargetEmp = this;
+        InfoDetail.AddSkill(s);
     }
 
     public void EventCheck()

@@ -680,7 +680,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &7301261486719319549
 RectTransform:
   m_ObjectHideFlags: 0
@@ -809,10 +809,10 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 17
+    m_FontSize: 15
     m_FontStyle: 0
     m_BestFit: 0
-    m_MinSize: 10
+    m_MinSize: 1
     m_MaxSize: 40
     m_Alignment: 3
     m_AlignByGeometry: 0
@@ -820,7 +820,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u6548\u7387:100%"
+  m_Text: "\u52A8\u5458\u7B49\u7EA7:1"
 --- !u!1 &2993096304490324471
 GameObject:
   m_ObjectHideFlags: 0
@@ -1753,8 +1753,10 @@ MonoBehaviour:
   WorkStart: 0
   EmpLimit: 0
   Efficiency: 1
-  FailRate: 0.3
+  ExtraSuccessRate: 0
+  ExtraMajorSuccessRate: 0
   canWork: 0
+  EmpChanged: 0
   CurrentResearch: {fileID: 0}
   EmpContent: {fileID: 8823674}
   EmpPanel: {fileID: 8462709804129838565}

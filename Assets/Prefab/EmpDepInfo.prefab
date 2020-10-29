@@ -325,8 +325,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 50.43501, y: 25.399971}
-  m_SizeDelta: {x: 119.69, y: 33.02}
+  m_AnchoredPosition: {x: 64.08, y: 25.399971}
+  m_SizeDelta: {x: 87.45, y: 33.02}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7304820793050914306
 CanvasRenderer:
@@ -552,7 +552,6 @@ MonoBehaviour:
   Text_Name: {fileID: 7304820794338048668}
   Text_Mentality: {fileID: 7304820794304870686}
   Text_Stamina: {fileID: 7304820793050914309}
-  Text_Type: {fileID: 0}
   Text_Skill1: {fileID: 7304820793826842105}
   Text_Skill2: {fileID: 0}
   Text_Skill3: {fileID: 0}
@@ -574,6 +573,10 @@ MonoBehaviour:
   Text_SName1: {fileID: 0}
   Text_SName2: {fileID: 0}
   Text_SName3: {fileID: 0}
+  Text_Motiv_Study: {fileID: 0}
+  Text_Motiv_Recover: {fileID: 0}
+  Text_Motive_Ambition: {fileID: 0}
+  Text_Motiv_Social: {fileID: 0}
   Text_Stars:
   - {fileID: 0}
   - {fileID: 0}
@@ -603,6 +606,7 @@ MonoBehaviour:
   SkillsInfo: []
   StrategiesInfo: []
   InfoType: 1
+  Confidence: 0
 --- !u!114 &1923080826609381477
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -772,8 +776,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -56.705, y: 25.399952}
-  m_SizeDelta: {x: 94.59, y: 33.02}
+  m_AnchoredPosition: {x: -41.823, y: 25.399952}
+  m_SizeDelta: {x: 124.36, y: 33.02}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7304820794304870687
 CanvasRenderer:

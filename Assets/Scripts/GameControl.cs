@@ -10,9 +10,10 @@ public class GameControl : MonoBehaviour
     [HideInInspector] public int Salary, Income, BuildingPay, MobilizeExtraMent = 0, ManageExtra, TimeMultiply = 1, WorkEndEmpCount = 0;
     [HideInInspector] public float EfficiencyExtraNormal = 0, EfficiencyExtraScience = 0, ResearchSuccessRateExtra = 0, ExtrafailRate = 0, HireEfficiencyExtra = 1.0f,
         HRBuildingMentalityExtra = 1.0f, BuildingSkillSuccessExtra = 0, BuildingMaintenanceCostRate = 1.0f;
-    public int SelectMode = 1; //1员工招聘时部门选择 2员工移动时部门选择 3部门的高管办公室选择 4发动动员技能时员工选择 5发动建筑技能时员工选择 6CEO技能员工/部门选择
+    public int SelectMode = 1; //1员工招聘时部门选择 2员工移动时部门选择 3部门的高管办公室选择 4发动动员技能时员工选择 
+    //5发动建筑技能时员工选择 6CEO技能员工/部门选择 7选择两个员工发动动员技能
     public int Money = 1000, CEOSkillNum = 0, DoubleMobilizeCost = 0, MeetingBlockTime = 0;
-    public bool ForceTimePause = false;
+    public bool ForceTimePause = false, MobilizeTimePause = false;
     public int Stamina
     {
         get
@@ -57,7 +58,7 @@ public class GameControl : MonoBehaviour
         }
     }
 
-    [HideInInspector] public EmpInfo CurrentEmpInfo;
+    [HideInInspector] public EmpInfo CurrentEmpInfo, CurrentEmpInfo2;//2主要用于需要两个员工的动员技能
     [HideInInspector] public DepControl CurrentDep;
     [HideInInspector] public OfficeControl CurrentOffice;
     public EmpEntity EmpEntityPrefab;
@@ -67,7 +68,7 @@ public class GameControl : MonoBehaviour
     public OfficeControl OfficePrefab;
     public DepSelect DepSelectButtonPrefab, OfficeSelectButtonPrefab;
     public RelationInfo RelationInfoPrefab;
-    public Text HistoryTextPrefab;
+    public Text HistoryTextPrefab, Text_EmpSelectTip;
     public HireControl HC;
     public BuildingManage BM;
     public ProduceControl PC, PC2;
@@ -78,7 +79,7 @@ public class GameControl : MonoBehaviour
     public CEOControl CC;
     public Transform HireContent, EmpPanelContent, DepContent, DepSelectContent, TotalEmpContent, StandbyContent, EmpDetailContent, MessageContent;
     public InfoPanel infoPanel;
-    public GameObject DepSelectPanel, StandbyButton, MessagePrefab, CEOSkillPanel, EmpTrainingPanel, GameOverPanel;
+    public GameObject DepSelectPanel, StandbyButton, MessagePrefab, CEOSkillPanel, EmpTrainingPanel, GameOverPanel, OfficeModeSelectPanel, OfficeModeHireOptionButton;
     public Text Text_Time, Text_TechResource, Text_MarketResource, Text_ProductResource, Text_Money, Text_Stamina, Text_Mentality, Text_Morale;
     public SkillControl SC;
     [HideInInspector] public UnityEvent DailyEvent, WeeklyEvent, MonthlyEvent, HourEvent, YearEvent;
@@ -108,12 +109,11 @@ public class GameControl : MonoBehaviour
         Anim = this.gameObject.GetComponent<Animator>();
         SpecialEventCount = Random.Range(1, 6);//随机一段时间发生影响产品的事件
         HourEvent.AddListener(GCTimePass);
-        print(0.3f - 0.15f - 0.25f);
     }
 
     private void Update()
     {
-        if (TimePause == false && ForceTimePause == false)
+        if (TimePause == false && ForceTimePause == false && MobilizeTimePause == false)
             Timer += Time.deltaTime * TimeMultiply;
         if(Timer >= 10)
         {
@@ -505,7 +505,7 @@ public class GameControl : MonoBehaviour
                 if (EC.ManagerVoteCheck(CurrentEmpInfo.emp) == false)
                     return;
             }
-            else
+            else if (CurrentEmpInfo.emp.CurrentOffice != null && (CurrentEmpInfo.emp.CurrentOffice.building.Type == BuildingType.CEO办公室 || CurrentEmpInfo.emp.CurrentOffice.building.Type == BuildingType.高管办公室))
             {
                 //离任高管投票检测
                 if (EC.ManagerVoteCheck(CurrentEmpInfo.emp, true) == false)
@@ -527,6 +527,21 @@ public class GameControl : MonoBehaviour
             {
                 CurrentDep.CommandingOffice.ControledDeps.Remove(CurrentDep);
                 CurrentDep.CommandingOffice.CheckManage();
+                //清除前高管技能预设
+                if (CurrentDep.CommandingOffice.CurrentManager != null)
+                {
+                    for (int j = 0; j < 6; j++)
+                    {
+                        if (CurrentDep.DSkillSetA[j] != null && CurrentDep.DSkillSetA[j].TargetEmp == CurrentDep.CommandingOffice.CurrentManager)
+                            CurrentDep.DSkillSetA[j] = null;
+
+                        if (CurrentDep.DSkillSetB[j] != null && CurrentDep.DSkillSetB[j].TargetEmp == CurrentDep.CommandingOffice.CurrentManager)
+                            CurrentDep.DSkillSetB[j] = null;
+
+                        if (CurrentDep.DSkillSetC[j] != null && CurrentDep.DSkillSetC[j].TargetEmp == CurrentDep.CommandingOffice.CurrentManager)
+                            CurrentDep.DSkillSetC[j] = null;
+                    }
+                }
             }
             CurrentDep.CommandingOffice = office;
             CurrentDep.Text_Office.text = "由 " + office.Text_OfficeName.text + " 管理";
@@ -558,6 +573,7 @@ public class GameControl : MonoBehaviour
             CurrentEmpInfo.emp.CurrentDep = depControl;
             HC.SetInfoPanel();
             CurrentEmpInfo.emp.InfoA.transform.parent = depControl.EmpContent;
+            depControl.ChangeEmpAssignment();
         }
         else if(SelectMode == 2)
         {
@@ -572,6 +588,7 @@ public class GameControl : MonoBehaviour
             CurrentEmpInfo.transform.parent = depControl.EmpContent;
 
             ResetOldAssignment();
+            depControl.ChangeEmpAssignment();
             //修改新部门生产力显示
             CurrentEmpInfo.emp.CurrentDep = depControl;
             depControl.CurrentEmps.Add(CurrentEmpInfo.emp);
@@ -600,6 +617,8 @@ public class GameControl : MonoBehaviour
     {
         if (CurrentEmpInfo.emp.CurrentDep != null)
         {
+            CurrentDep.ChangeEmpAssignment();
+
             CurrentEmpInfo.ClearSkillPreset();
             CurrentEmpInfo.emp.CurrentDep.CurrentEmps.Remove(CurrentEmpInfo.emp);
             //修改生产力显示
@@ -608,6 +627,7 @@ public class GameControl : MonoBehaviour
         }
         if (CurrentEmpInfo.emp.CurrentOffice != null)
         {
+            CurrentEmpInfo.ClearSkillPreset();
             if (CurrentEmpInfo.emp.CurrentOffice.building.Type == BuildingType.高管办公室 || CurrentEmpInfo.emp.CurrentOffice.building.Type == BuildingType.CEO办公室)
                 CurrentEmpInfo.emp.InfoDetail.TempDestroyStrategy();
             CurrentEmpInfo.emp.CurrentOffice.CurrentManager = null;
@@ -762,6 +782,7 @@ public class GameControl : MonoBehaviour
     {
         SelectMode = 0;
         CEOSkillNum = 0;
+        Text_EmpSelectTip.gameObject.SetActive(false);
     }
 
     public void SellTask(int num)
@@ -771,6 +792,47 @@ public class GameControl : MonoBehaviour
             FinishedTask[num] -= 1;
             Money += 100;
             UpdateResourceInfo();
+        }
+    }
+
+    public void SetOfficeMode(int num)
+    {
+        if(CurrentOffice != null)
+        {
+            CurrentOffice.OfficeMode = num;
+            OfficeModeSelectPanel.SetActive(false);
+            CurrentOffice.Progress = 100;
+            CurrentOffice.SetOfficeUI();
+            if (num == 1)
+                CurrentOffice.Text_OfficeMode.text = "办公室模式:决策";
+            else if (num == 2)
+                CurrentOffice.Text_OfficeMode.text = "办公室模式:人力";
+            else if (num == 3)
+                CurrentOffice.Text_OfficeMode.text = "办公室模式:管理";
+            else if (num == 4)
+                CurrentOffice.Text_OfficeMode.text = "办公室模式:招聘";
+        }
+    }
+
+    public void CancelEmpSelect()
+    {
+        if(SelectMode == 4)
+        {
+            TotalEmpContent.parent.parent.gameObject.SetActive(false);
+            ResetSelectMode();
+        }
+        else if (SelectMode == 7)
+        {
+            if(CurrentEmpInfo2 == null)
+            {
+                TotalEmpContent.parent.parent.gameObject.SetActive(false);
+                ResetSelectMode();
+            }
+            else
+            {
+                CurrentEmpInfo2 = null;
+                Text_EmpSelectTip.text = "选择第一个员工";
+            }
         }
     }
 }

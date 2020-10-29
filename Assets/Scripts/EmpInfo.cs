@@ -37,6 +37,12 @@ public class EmpInfo : MonoBehaviour
             {
                 Text_Mentality.text = "心力:" + emp.Mentality;
                 Text_Stamina.text = "体力:" + emp.Stamina;
+
+                if (emp.Confidence > 0)
+                {
+                    Text_Mentality.text += "/" + emp.Confidence;
+                }
+
                 Text_Skill1.text = "职业技能: " + (emp.Skill1 + emp.SkillExtra1) + " / " + (emp.Skill2 + emp.SkillExtra2) + 
                     " / " + (emp.Skill3 + emp.SkillExtra3);
                 Text_Manage.text = "管理能力:" + emp.Manage;
@@ -140,6 +146,7 @@ public class EmpInfo : MonoBehaviour
         emp = new Employee();
         emp.InfoA = this;
         emp.InitStatus(type, Hst, AgeRange);
+        emp.NewSkillCheck();
         HireButton.interactable = true;
         SetSkillName();
         InitSkillAndStrategy();
@@ -148,13 +155,17 @@ public class EmpInfo : MonoBehaviour
     //初始化头脑风暴技能和战略
     public void InitSkillAndStrategy()
     {
-        for (int i = 0; i < 4; i++)
-        {
-            int Snum = Random.Range(20, SkillData.Skills.Count);
-            Skill NewSkill = SkillData.Skills[Snum].Clone();
-            NewSkill.TargetEmp = this.emp;
-            AddSkill(NewSkill);
-        }
+        //for (int i = 0; i < 4; i++)
+        //{
+        //    int Snum = Random.Range(20, SkillData.Skills.Count);
+        //    Skill NewSkill = SkillData.Skills[Snum].Clone();
+        //    NewSkill.TargetEmp = this.emp;
+        //    AddSkill(NewSkill);
+        //}
+        Skill NewSkill = new Skill32();
+        NewSkill.TargetEmp = this.emp;
+        AddSkill(NewSkill);
+
         AddThreeRandomStrategy();
     }
 
@@ -191,10 +202,9 @@ public class EmpInfo : MonoBehaviour
         //删除员工实体
         emp.InfoDetail.Entity.RemoveEntity();
 
-        //重新计算工资
         ClearSkillPreset();
         GC.HourEvent.RemoveListener(emp.TimePass);
-        GC.Salary -= CalcSalary();
+        GC.Salary -= CalcSalary();        //重新计算工资
         GC.CurrentEmployees.Remove(emp);
         GC.WorkEndCheck();
         if(emp.CurrentDep != null)
@@ -214,19 +224,22 @@ public class EmpInfo : MonoBehaviour
         Destroy(this.gameObject);
     }
 
-    //需要改名字
+    //选择Info后的各种行为
     public void ShowDetailPanel()
     {
+        //发动动员技能
         if (GC.SelectMode == 4)
         {
             GC.CurrentEmpInfo = DetailInfo;
             GC.SC.ConfirmPanel.SetActive(true);
         }
+        //发动建筑技能
         else if(GC.SelectMode == 5)
         {
             GC.CurrentEmpInfo = DetailInfo;
             GC.CurrentOffice.BuildingActive();
         }
+        //发动CEO技能
         else if(GC.SelectMode == 6)
         {
             //调查员工
@@ -266,6 +279,21 @@ public class EmpInfo : MonoBehaviour
             if (GC.CEOSkillNum < 6)
                 GC.CEOSkillConfirm();
         }
+        //选两个员工的动员技能
+        else if(GC.SelectMode == 7)
+        {
+            if (GC.CurrentEmpInfo2 == null)
+            {
+                GC.CurrentEmpInfo2 = DetailInfo;
+                GC.Text_EmpSelectTip.text = "选择第二个员工";
+            }
+            else
+            {
+                GC.CurrentEmpInfo = DetailInfo;
+                GC.SC.ConfirmPanel.SetActive(true);
+            }
+        }
+        //显示员工详细信息
         else
         {
             DetailInfo.ShowPanel();
@@ -397,22 +425,47 @@ public class EmpInfo : MonoBehaviour
     public void ClearSkillPreset()
     {
         //清除技能预设
-        if(emp.CurrentDep != null)
+        if (emp.CurrentDep != null)
         {
-            for(int i = 0; i < SkillsInfo.Count; i++)
+            for (int i = 0; i < DetailInfo.SkillsInfo.Count; i++)
             {
-                for(int j = 0; j < 6; j++)
+                for (int j = 0; j < 6; j++)
                 {
-                    if (emp.CurrentDep.DSkillSetA[j] == SkillsInfo[i].skill)
+                    if (emp.CurrentDep.DSkillSetA[j] == DetailInfo.SkillsInfo[i].skill)
                         emp.CurrentDep.DSkillSetA[j] = null;
 
-                    if (emp.CurrentDep.DSkillSetB[j] == SkillsInfo[i].skill)
+                    if (emp.CurrentDep.DSkillSetB[j] == DetailInfo.SkillsInfo[i].skill)
                         emp.CurrentDep.DSkillSetB[j] = null;
 
-                    if (emp.CurrentDep.DSkillSetB[j] == SkillsInfo[i].skill)
+                    if (emp.CurrentDep.DSkillSetB[j] == DetailInfo.SkillsInfo[i].skill)
                         emp.CurrentDep.DSkillSetB[j] = null;
                 }
             }
+        }
+        //检测并清除管理技能
+        else if (emp.CurrentOffice != null && (emp.CurrentOffice.building.Type == BuildingType.CEO办公室 || emp.CurrentOffice.building.Type == BuildingType.高管办公室))
+        {
+            for (int i = 0; i < DetailInfo.SkillsInfo.Count; i++)
+            {
+                if (DetailInfo.SkillsInfo[i].skill.ManageSkill == false)
+                    continue;
+                for (int k = 0; k < emp.CurrentOffice.ControledDeps.Count; k++)
+                {
+                    for (int j = 0; j < 6; j++)
+                    {
+
+                        if (emp.CurrentOffice.ControledDeps[k].DSkillSetA[j] == DetailInfo.SkillsInfo[i].skill)
+                            emp.CurrentOffice.ControledDeps[k].DSkillSetA[j] = null;
+
+                        if (emp.CurrentOffice.ControledDeps[k].DSkillSetB[j] == DetailInfo.SkillsInfo[i].skill)
+                            emp.CurrentOffice.ControledDeps[k].DSkillSetB[j] = null;
+
+                        if (emp.CurrentOffice.ControledDeps[k].DSkillSetB[j] == DetailInfo.SkillsInfo[i].skill)
+                            emp.CurrentOffice.ControledDeps[k].DSkillSetB[j] = null;
+                    }
+                }
+            }
+
         }
     }
 
@@ -424,41 +477,54 @@ public class EmpInfo : MonoBehaviour
         Text_Motiv_Social.text = emp.CheckMotivationContent(3);
     }
 
-    //以下三个函数为战略充能相关
-    public void CreateStrategy()
+    //以下四个函数为战略充能相关
+    public void DirectAddStrategy()
     {
-        if (RechargeStrategyNum < 0)
-            RechargeStrategyNum = Random.Range(0, StrategiesInfo.Count);
+        RechargeStrategyNum = Random.Range(0, StrategiesInfo.Count);
         StrategyInfo NewStr = Instantiate(GC.StrC.ChargePrefab, GC.StrC.StrategyContent);
         CurrentStrategy = NewStr;
         NewStr.SC = GC.StrC;
         GC.StrC.StrInfos.Add(NewStr);
         NewStr.Str = StrategiesInfo[RechargeStrategyNum].Str;
+        CurrentStrategy.Text_Progress.text = "充能完毕";
+        CurrentStrategy.RechargeComplete = true;
         NewStr.UpdateUI();
-        NewStr.Text_Progress.text = RechargeProgress + "/300";
+    }
+
+    public void CreateStrategy()
+    {
+        //if (RechargeStrategyNum < 0)
+        //    RechargeStrategyNum = Random.Range(0, StrategiesInfo.Count);
+        //StrategyInfo NewStr = Instantiate(GC.StrC.ChargePrefab, GC.StrC.StrategyContent);
+        //CurrentStrategy = NewStr;
+        //NewStr.SC = GC.StrC;
+        //GC.StrC.StrInfos.Add(NewStr);
+        //NewStr.Str = StrategiesInfo[RechargeStrategyNum].Str;
+        //NewStr.UpdateUI();
+        //NewStr.Text_Progress.text = RechargeProgress + "/300";
     }
     public void ReChargeStrategy()
     {
-        RechargeProgress += emp.Manage;
-        if (RechargeProgress >= 300)
-        {
-            RechargeProgress = 0;
-            RechargeStrategyNum = -1;
-            CurrentStrategy.Text_Progress.text = "充能完毕";
-            CurrentStrategy.RechargeComplete = true;
-            CreateStrategy();
-            emp.GainExp(250, 7);
-        }
-        else
-            CurrentStrategy.Text_Progress.text = RechargeProgress + "/300";
+        //RechargeProgress += emp.Manage;
+        //if (RechargeProgress >= 300)
+        //{
+        //    RechargeProgress = 0;
+        //    RechargeStrategyNum = -1;
+        //    CurrentStrategy.Text_Progress.text = "充能完毕";
+        //    CurrentStrategy.RechargeComplete = true;
+        //    CreateStrategy();
+        //    emp.GainExp(250, 7);
+        //}
+        //else
+        //    CurrentStrategy.Text_Progress.text = RechargeProgress + "/300";
     }
     public void TempDestroyStrategy()
     {
-        if(CurrentStrategy != null)
-        {
-            GC.StrC.StrInfos.Remove(CurrentStrategy);
-            Destroy(CurrentStrategy.gameObject);
-            CurrentStrategy = null;
-        }
+        //if(CurrentStrategy != null)
+        //{
+        //    GC.StrC.StrInfos.Remove(CurrentStrategy);
+        //    Destroy(CurrentStrategy.gameObject);
+        //    CurrentStrategy = null;
+        //}
     }
 }

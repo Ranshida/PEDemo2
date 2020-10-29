@@ -39,7 +39,10 @@ public class HireType
     {
         Type = type;
     }
-    public void SetHeadHuntStatus(int[] Hst)
+
+    //此处为原本的猎头相关功能
+    //public void SetHeadHuntStatus(int[] Hst)
+    public void SetHeadHuntStatus()
     {
         ////旧的招聘筛选
         //for(int i = 0; i < HeadHuntStatus.Length; i++)
@@ -50,7 +53,7 @@ public class HireType
         //}
 
         int r1 = Random.Range(0, 5), r2 = Random.Range(0, 5);
-        while(r1 == r2)
+        while (r1 == r2)
         {
             r2 = Random.Range(0, 5);
         }
@@ -59,14 +62,14 @@ public class HireType
         //HST = 0  (0,3)随机技能
         //HST = 1  (0,2)随机技能
         //HST = 2  (5,9)随机技能
-        for(int i = 0; i < 6; i++)
+        for (int i = 0; i < 6; i++)
         {
             if (i < 3)
                 i = r1 * 3 + i;
             else
                 i = r2 * 3 + i - 3;
 
-            if(count1 > 0 && count2 > 0)
+            if (count1 > 0 && count2 > 0)
             {
                 int c = Random.Range(1, 3);
                 if (c == 1)
@@ -101,8 +104,8 @@ public class DepControl : MonoBehaviour
     [HideInInspector] public int SpProgress = 0, SpTotalProgress, FailProgress = 0, TaskChangeTime = 0, EfficiencyLevel = 0, LevelDownTime = 0, SpType, SpTime;//SPTime:CEO技能
     [HideInInspector] public bool SurveyStart = false, Failed = false, TaskChange = false, WorkStart = false; //WorkStart专门用于特殊业务
     public int EmpLimit;
-    public float Efficiency = 1.0f, FailRate = 0.3f;
-    public bool canWork = false;
+    public float Efficiency = 1.0f, ExtraSuccessRate = 0, ExtraMajorSuccessRate = 0;
+    public bool canWork = false, EmpChanged = false;
 
     [HideInInspector] public Research CurrentResearch;
     public Transform EmpContent, EmpPanel, LabPanel;
@@ -125,10 +128,14 @@ public class DepControl : MonoBehaviour
 
     private void Update()
     {
-        if (type == EmpType.Science)
-            Text_Efficiency.text = "效率:" + (Efficiency + GC.EfficiencyExtraScience) * 100 + "%";
-        else if (type != EmpType.HR)
-            Text_Efficiency.text = "效率:" + (Efficiency + GC.EfficiencyExtraNormal) * 100 + "%";
+        //if (type == EmpType.Science)
+        //    Text_Efficiency.text = "效率:" + (Efficiency + GC.EfficiencyExtraScience) * 100 + "%";
+        //else if (type != EmpType.HR)
+        //    Text_Efficiency.text = "效率:" + (Efficiency + GC.EfficiencyExtraNormal) * 100 + "%";
+        if (type != EmpType.HR)
+        {
+            Text_Efficiency.text = "动员等级:" + EfficiencyLevel;
+        }
     }
 
     public void StartTaskManage()
@@ -188,13 +195,13 @@ public class DepControl : MonoBehaviour
                     if(CurrentTask.Progress >= StandardProducePointB)
                     {
                         CurrentTask.Progress = 0;
-                        float BaseSuccessRate = 0.3f + CountSuccessRate(1);
+                        float BaseSuccessRate = 0.3f + CountSuccessRate(1) + ExtraSuccessRate;
                         float Posb = Random.Range(0.0f, 1.0f);
 
                         //成功和大成功
                         if(Posb <= BaseSuccessRate)
                         {
-                            if(Random.Range(0.0f, 1.0f) < 0.1f)
+                            if(Random.Range(0.0f, 1.0f) < 0.1f + ExtraMajorSuccessRate)
                             {
                                 //大成功
                                 GC.CreateMessage(Text_DepName.text + " 完美完成了 " + CurrentTask.TaskName + " 的生产");
@@ -313,7 +320,10 @@ public class DepControl : MonoBehaviour
                             if(Posb <= BaseSuccessRate)
                             {
                                 HireType ht = new HireType(SpType);
-                                ht.SetHeadHuntStatus(DepHeadHuntStatus);
+                                ht.SetHeadHuntStatus();
+
+                                //此处的数组为原本的猎头相关功能
+                                //ht.SetHeadHuntStatus(DepHeadHuntStatus);
 
                                 //大成功
                                 if (Random.Range(0.0f, 1.0f) < 0.1f)
@@ -854,5 +864,14 @@ public class DepControl : MonoBehaviour
             GC.Mentality -= 20;
             UpdateUI();
         }
+    }
+
+    //头脑风暴版本2，移动员工影响动员等级
+    public void ChangeEmpAssignment()
+    {
+        EmpChanged = true;
+        ExtraSuccessRate = 0;
+        ExtraMajorSuccessRate = 0;
+        Text_Efficiency.color = Color.red;
     }
 }
