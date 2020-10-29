@@ -56,7 +56,7 @@ public class BuildingManage : MonoBehaviour
     private GameObject m_EffectHalo;
 
     //屏幕射线位置
-    public static Vector3 AimingPosition { get; private set; } = Vector3.zero;
+    public Vector3 AimingPosition = Vector3.zero;
 
     private void Awake()
     {
@@ -138,12 +138,12 @@ public class BuildingManage : MonoBehaviour
         {
             temp_Building.transform.position = new Vector3(leftDownGird.X * 10, 0, leftDownGird.Y * 10);
             BuildConfirm(temp_Building, temp_Grids);
-            temp_Grids.Clear();
         }
         else
         {
             Debug.LogError("无法建造，检查坐标");
         }
+        temp_Grids.Clear();
         temp_Building = null;
     }
 
@@ -152,8 +152,8 @@ public class BuildingManage : MonoBehaviour
         if (!GridContainer.Instance)
             return;
 
-        if (Input.GetKeyDown(KeyCode.T))
-            //Lottery(3);
+        //if (Input.GetKeyDown(KeyCode.T))
+        //    Lottery(3);
 
             //屏幕射线命中地面
             if (CameraController.TerrainHit && !CameraController.IsPointingUI)
