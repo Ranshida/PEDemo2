@@ -22,6 +22,7 @@ public class BuildingEffect
         CurrentBuilding = building;
     }
 
+    //遍历m_TargetBuildings，对每个目标建筑设置影响
     public void Affect()
     {
         Debug.Log("!!!!!" + CurrentBuilding.name);
@@ -38,8 +39,7 @@ public class BuildingEffect
             BuildingType T2 = m_TargetBuildings[i].Type;
             if (T == BuildingType.技术部门 || T == BuildingType.市场部门 || T == BuildingType.产品部门 || T == BuildingType.运营部门)
             {
-                if ((T2 == BuildingType.技术部门 || T2 == BuildingType.市场部门 || T2 == BuildingType.产品部门
-                    || T2 == BuildingType.运营部门) && T != T2)
+                if ((T2 == BuildingType.技术部门 || T2 == BuildingType.市场部门 || T2 == BuildingType.产品部门 || T2 == BuildingType.运营部门) && T != T2)
                 {
                     m_TargetBuildings[i].Department.Efficiency += 0.1f;
                 }
@@ -56,6 +56,40 @@ public class BuildingEffect
                 AffectedBuildings.Add(m_TargetBuildings[i]);
         }
         m_TargetBuildings.Clear();
+    }
+    public void RemoveAffect()
+    {
+        //这里可能存在问题
+        for (int i = 0; i < AffectedBuildings.Count; i++)
+        {
+            BuildingType T = CurrentBuilding.Type;
+            BuildingType T2 = AffectedBuildings[i].Type;
+            if (T == BuildingType.技术部门 || T == BuildingType.市场部门 || T == BuildingType.产品部门 || T == BuildingType.运营部门)
+            {
+                if ((T2 == BuildingType.技术部门 || T2 == BuildingType.市场部门 || T2 == BuildingType.产品部门 || T2 == BuildingType.运营部门) && T != T2)
+                {
+                    AffectedBuildings[i].Department.Efficiency -= 0.1f;
+                    CurrentBuilding.Department.Efficiency -= 0.1f;
+                }
+            }
+            else if (T == BuildingType.高管办公室 || T == BuildingType.CEO办公室)
+            {
+                if (T2 == BuildingType.技术部门 || T2 == BuildingType.市场部门 || T2 == BuildingType.产品部门
+                    || T2 == BuildingType.运营部门 || T2 == BuildingType.研发部门)
+                {
+                    AffectedBuildings[i].Department.InRangeOffices.Remove(CurrentBuilding.Office);
+                }
+            }
+            else if (T == BuildingType.技术部门 || T == BuildingType.市场部门 || T == BuildingType.产品部门
+                    || T == BuildingType.运营部门 || T == BuildingType.研发部门)
+            {
+                if (T2 == BuildingType.高管办公室 || T2 == BuildingType.CEO办公室)
+                {
+                    CurrentBuilding.Department.InRangeOffices.Remove(CurrentBuilding.Office);
+                }
+            }
+        }
+        AffectedBuildings.Clear();
     }
 
     public void GetEffectBuilding()
@@ -121,22 +155,4 @@ public class BuildingEffect
     {
         m_TargetBuildings.Add(building);
     }
-
-    //private void OnTriggerEnter2D(Collider2D collision)
-    //{
-    //    if(collision.gameObject.tag == "Building")
-    //    {
-    //        Building b = collision.GetComponent<Building>();
-    //        if (b != CurrentBuilding)
-    //            m_TargetBuildings.Add(b);
-    //    }
-    //}
-
-    //private void OnTriggerExit2D(Collider2D collision)
-    //{
-    //    if (collision.gameObject.tag == "Building")
-    //    {
-    //        m_TargetBuildings.Remove(collision.GetComponent<Building>());
-    //    }
-    //}
 }
