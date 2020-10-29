@@ -13,7 +13,7 @@ public class GameControl : MonoBehaviour
     public int SelectMode = 1; //1员工招聘时部门选择 2员工移动时部门选择 3部门的高管办公室选择 4发动动员技能时员工选择 
     //5发动建筑技能时员工选择 6CEO技能员工/部门选择 7选择两个员工发动动员技能
     public int Money = 1000, CEOSkillNum = 0, DoubleMobilizeCost = 0, MeetingBlockTime = 0;
-    public bool ForceTimePause = false, MobilizeTimePause = false;
+    public bool ForceTimePause = false;
     public int Stamina
     {
         get
@@ -112,8 +112,8 @@ public class GameControl : MonoBehaviour
     }
 
     private void Update()
-    {
-        if (TimePause == false && ForceTimePause == false && MobilizeTimePause == false)
+    {       
+        if (TimePause == false && ForceTimePause == false)
             Timer += Time.deltaTime * TimeMultiply;
         if(Timer >= 10)
         {
@@ -613,7 +613,7 @@ public class GameControl : MonoBehaviour
         DepSelectPanel.SetActive(false);
     }
 
-    void ResetOldAssignment()
+    public void ResetOldAssignment()
     {
         if (CurrentEmpInfo.emp.CurrentDep != null)
         {
@@ -811,6 +811,8 @@ public class GameControl : MonoBehaviour
                 CurrentOffice.Text_OfficeMode.text = "办公室模式:管理";
             else if (num == 4)
                 CurrentOffice.Text_OfficeMode.text = "办公室模式:招聘";
+            else if (num == 5)
+                CurrentOffice.Text_OfficeMode.text = "办公室模式:部门研究";
         }
     }
 

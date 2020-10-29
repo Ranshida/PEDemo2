@@ -66,11 +66,11 @@ public class Building : MonoBehaviour
         //销毁前的准备工作
         if (Department)
         {
-
+            Department.ClearDep();
         }
         if (Office)
         {
-
+            Office.ClearOffice();
         }
 
         Destroy(gameObject);

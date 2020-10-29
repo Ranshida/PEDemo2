@@ -360,7 +360,7 @@ public class OfficeControl : MonoBehaviour
 
             if (OfficeMode == 2 || OfficeMode == 4)
                 value = CurrentManager.HR;
-            else if (OfficeMode == 3)
+            else if (OfficeMode == 3 || OfficeMode == 5)
                 value = CurrentManager.Manage;
             else if (OfficeMode == 1)
                 value = CurrentManager.Decision;
@@ -512,6 +512,14 @@ public class OfficeControl : MonoBehaviour
                         GC.HC.AddHireTypes(ht);
                         GC.CreateMessage("(" + Text_OfficeName.text + ")完成了招聘");
                     }
+                    else if (OfficeMode == 5)
+                    {
+                        if (Random.Range(0.0f, 1.0f) < 0.1f)
+                            GC.BM.Lottery(3);
+                        else
+                            GC.BM.Lottery(2);
+                        GC.CreateMessage("(" + Text_OfficeName.text + ")完成了部门研究");
+                    }
                 }
 
             }
@@ -531,5 +539,23 @@ public class OfficeControl : MonoBehaviour
             Text_SuccessRate.text = "成功率:" + (BaseSRate * 100) + "%";
             Text_TimeLeft.text = "剩余时间:" + (Progress / 5) + "时";
         }
+    }
+
+    public void ClearOffice()
+    {
+        if(CurrentManager != null)
+        {
+            GC.CurrentEmpInfo = CurrentManager.InfoA;
+            GC.CurrentEmpInfo.transform.parent = GC.StandbyContent;
+            GC.ResetOldAssignment();
+        }
+        for(int i = 0; i < ControledDeps.Count; i++)
+        {
+            ControledDeps[i].CommandingOffice = null;
+        }
+        GC.HourEvent.RemoveListener(TimePass);
+        GC.CurrentOffices.Remove(this);
+        Destroy(DS.gameObject);
+        Destroy(this.gameObject);
     }
 }

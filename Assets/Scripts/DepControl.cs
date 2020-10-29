@@ -754,6 +754,33 @@ public class DepControl : MonoBehaviour
             CurrentEmps[i].GainExp(value, type);
         }
     }
+
+    //删除建筑时重置所有相关数据
+    public void ClearDep()
+    {
+        List<Employee> ED = new List<Employee>();
+        for(int i = 0; i < CurrentEmps.Count; i++)
+        {
+            ED.Add(CurrentEmps[i]);
+        }
+        for(int i = 0; i < ED.Count; i++)
+        {
+            GC.CurrentEmpInfo = ED[i].InfoA;
+            GC.CurrentEmpInfo.transform.parent = GC.StandbyContent;
+            GC.ResetOldAssignment();
+        }
+        GC.CurrentDeps.Remove(this);
+        if(CommandingOffice != null)
+        {
+            CommandingOffice.ControledDeps.Remove(this);
+            CommandingOffice.CheckManage();
+        }
+        Destroy(DS.gameObject);
+        Destroy(EmpPanel.gameObject);
+        if (LabPanel != null)
+            Destroy(LabPanel.gameObject);
+        Destroy(this.gameObject);
+    }
     
     //计算生产成功率
     float CountSuccessRate(int type)

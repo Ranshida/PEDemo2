@@ -85,7 +85,7 @@ public class SkillControl : MonoBehaviour
 
         //头脑风暴版本2 设定Boss等级
         BossLevel = dep.EfficiencyLevel + 1;
-        GC.MobilizeTimePause = true;
+        GC.ForceTimePause = true;
         if (dep.EmpChanged == true && BossLevel > 1)
             BossLevel -= 1;
         if (BossLevel == 1)
@@ -223,7 +223,7 @@ public class SkillControl : MonoBehaviour
     //清空面板，重置各项数值
     public void ClearPanel()
     {
-        GC.MobilizeTimePause = false;
+        GC.ForceTimePause = false;
         if (TargetDep != null && TargetDep.EmpPanel != null)
             TargetDep.EmpPanel.gameObject.SetActive(false);
         for(int i = 0; i < Dices.Count; i++)
