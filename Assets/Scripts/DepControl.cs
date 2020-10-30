@@ -207,7 +207,7 @@ public class DepControl : MonoBehaviour
                                 GC.CreateMessage(Text_DepName.text + " 完美完成了 " + CurrentTask.TaskName + " 的生产");
                                 GC.FinishedTask[(int)CurrentTask.TaskType * 3 + CurrentTask.Num - 1] += 2;
                                 GC.UpdateResourceInfo();
-                                EmpsGetExp(CurrentTask.Num, 20);
+                                EmpsGetExp(CurrentTask.Num, 100);
                                 CurrentTask.Progress = 0;
                                 if (CurrentTask.Num == 1 && (int)CurrentTask.TaskType == 2)
                                     GC.StrC.SolveStrRequest(3, 2);
@@ -222,7 +222,7 @@ public class DepControl : MonoBehaviour
                                 GC.CreateMessage(Text_DepName.text + " 完成了 " + CurrentTask.TaskName + " 的生产");
                                 GC.FinishedTask[(int)CurrentTask.TaskType * 3 + CurrentTask.Num - 1] += 1;
                                 GC.UpdateResourceInfo();
-                                EmpsGetExp(CurrentTask.Num, 10);
+                                EmpsGetExp(CurrentTask.Num, 50);
                                 CurrentTask.Progress = 0;
                                 if (CurrentTask.Num == 1 && (int)CurrentTask.TaskType == 2)
                                     GC.StrC.SolveStrRequest(3, 1);
@@ -236,7 +236,7 @@ public class DepControl : MonoBehaviour
                         //失败和大失败
                         else
                         {
-                            EmpsGetExp(CurrentTask.Num, 10);
+                            EmpsGetExp(CurrentTask.Num, 50);
                             if (Random.Range(0.0f, 1.0f) < 0.4f)
                             {
                                 //大失败
@@ -329,13 +329,13 @@ public class DepControl : MonoBehaviour
                                 if (Random.Range(0.0f, 1.0f) < 0.1f)
                                 {
                                     ht.MajorSuccess = true;
-                                    EmpsGetExp(8, 20);
+                                    EmpsGetExp(8, 100);
                                     GC.CreateMessage(Text_DepName.text + " 招聘 大成功");
                                 }
                                 //成功
                                 else
                                 {
-                                    EmpsGetExp(8, 10);
+                                    EmpsGetExp(8, 50);
                                     GC.CreateMessage(Text_DepName.text + " 招聘 成功");
                                 } 
 
@@ -345,7 +345,7 @@ public class DepControl : MonoBehaviour
                             //失败和大失败
                             else
                             {
-                                EmpsGetExp(8, 10);
+                                EmpsGetExp(8, 50);
                                 if (Random.Range(0.0f, 1.0f) < 0.4f)
                                 {
                                     //大失败

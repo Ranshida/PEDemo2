@@ -502,52 +502,42 @@ public class OfficeControl : MonoBehaviour
             if (ExpTime == 0 && CurrentManager != null)
             {
                 ExpTime = 5;
-                if (building.Type == BuildingType.目标修正小组)
-                    CurrentManager.GainExp(10, 13);
-                else if (building.Type == BuildingType.CEO办公室 || building.Type == BuildingType.高管办公室)
+                if (building.Type == BuildingType.CEO办公室 || building.Type == BuildingType.高管办公室)
                 {
                     if(OfficeMode == 1)
-                    {
-                        CurrentManager.GainExp(50, 10);
-                    }
+                        CurrentManager.GainExp(250, 10);
                     else if(OfficeMode == 2)
-                    {
-                        CurrentManager.GainExp(50, 13);
-                    }
+                        CurrentManager.GainExp(250, 13);
                     else if (OfficeMode == 3)
-                    {
-                        CurrentManager.GainExp(50, 7);
-                    }
+                        CurrentManager.GainExp(250, 7);
                     else if (OfficeMode == 4)
-                    {
-                        CurrentManager.GainExp(50, 8);
-                    }
+                        CurrentManager.GainExp(250, 8);
                     else if (OfficeMode == 5)
-                    {
-                        CurrentManager.GainExp(50, 11);
-                    }
-
+                        CurrentManager.GainExp(250, 11);
                 }
+
+                else if (building.Type == BuildingType.目标修正小组)
+                    CurrentManager.GainExp(50, 13);
                 else if (building.Type == BuildingType.高级财务部A)
-                    CurrentManager.GainExp(10, 14);
+                    CurrentManager.GainExp(50, 14);
                 else if (building.Type == BuildingType.精确标准委员会)
-                    CurrentManager.GainExp(10, 15);
+                    CurrentManager.GainExp(50, 15);
                 else if (building.Type == BuildingType.高级财务部B)
-                    CurrentManager.GainExp(10, 10);
+                    CurrentManager.GainExp(50, 10);
                 else if (building.Type == BuildingType.人力资源部A)
-                    CurrentManager.GainExp(10, 11);
+                    CurrentManager.GainExp(50, 11);
                 else if (building.Type == BuildingType.效能研究室)
-                    CurrentManager.GainExp(10, 12);
+                    CurrentManager.GainExp(50, 12);
                 else if (building.Type == BuildingType.人力资源部B)
-                    CurrentManager.GainExp(10, 8);
+                    CurrentManager.GainExp(50, 8);
                 else if (building.Type == BuildingType.财务部)
-                    CurrentManager.GainExp(10, 9);
+                    CurrentManager.GainExp(50, 9);
                 else if (building.Type == BuildingType.档案管理室)
-                    CurrentManager.GainExp(10, 4);
+                    CurrentManager.GainExp(50, 4);
                 else if (building.Type == BuildingType.按摩房)
-                    CurrentManager.GainExp(10, 5);
+                    CurrentManager.GainExp(50, 5);
                 else if (building.Type == BuildingType.健身房)
-                    CurrentManager.GainExp(10, 6);
+                    CurrentManager.GainExp(50, 6);
             }
         }
     }
