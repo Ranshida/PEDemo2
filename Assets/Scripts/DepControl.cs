@@ -458,7 +458,7 @@ public class DepControl : MonoBehaviour
             //Text_Time.text = "剩余时间:" + calcTime(Pp, StandardProducePoint * 10 - CurrentTask.Progress) + "时";
 
             //成功率计算
-            Text_Quality.text = "成功率:" + (int)((0.5f + CountSuccessRate(1)) * 100) + "%";
+            Text_Quality.text = "成功率:" + ((0.5f + CountSuccessRate(1)) * 100) + "%";
 
             Text_Time.text = "剩余时间:" + calcTime(Pp, StandardProducePointB - CurrentTask.Progress) + "时";
         }
@@ -475,7 +475,7 @@ public class DepControl : MonoBehaviour
             //Text_Time.text = "剩余时间:" + calcTime(Pp, SpTotalProgress - SpProgress) + "时";
 
             //成功率计算
-            Text_Quality.text = "成功率:" + (int)((0.6f + CountSuccessRate(2)) * 100) + "%";
+            Text_Quality.text = "成功率:" + ((0.6f + CountSuccessRate(2)) * 100) + "%";
 
             Text_Time.text = "剩余时间:" + calcTime(Pp, StandardProducePointB - SpProgress) + "时";
 
@@ -539,7 +539,7 @@ public class DepControl : MonoBehaviour
             //Text_Time.text = "剩余时间:" + calcTime(Pp, StandardProducePoint * 10 - CurrentTask.Progress) + "时";
 
             //成功率计算
-            Text_Quality.text = "成功率:" + (int)((0.5f + CountSuccessRate(1)) * 100) + "%";
+            Text_Quality.text = "成功率:" + ((0.5f + CountSuccessRate(1)) * 100) + "%";
 
             Text_Time.text = "剩余时间:" + calcTime(Pp, StandardProducePointB - CurrentTask.Progress) + "时";
         }
@@ -553,7 +553,7 @@ public class DepControl : MonoBehaviour
             //Text_Time.text = "剩余时间:" + calcTime(Pp, SpTotalProgress - SpProgress) + "时";
 
             //成功率计算
-            Text_Quality.text = "成功率:" + (int)((0.6f + CountSuccessRate(2)) * 100) + "%";
+            Text_Quality.text = "成功率:" + ((0.6f + CountSuccessRate(2)) * 100) + "%";
 
             Text_Time.text = "剩余时间:" + calcTime(Pp, StandardProducePointB - SpProgress) + "时";
         }
