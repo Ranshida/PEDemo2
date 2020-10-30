@@ -71,6 +71,7 @@ public class Employee
     //初始化员工属性
     public void InitStatus(EmpType type, int[] Hst, int AgeRange)
     {
+        int[] Nst = new int[15];
         #region
         int r1 = Random.Range(0, 5), r2 = Random.Range(0, 5);
         while (r1 == r2)
@@ -95,23 +96,23 @@ public class Employee
                 int c = Random.Range(1, 3);
                 if (c == 1)
                 {
-                    Hst[i] = 1;
+                    Nst[i] = 1;
                     count1 -= 1;
                 }
                 else
                 {
-                    Hst[i] = 2;
+                    Nst[i] = 2;
                     count2 -= 1;
                 }
             }
             else if (count1 > 0)
             {
-                Hst[i] = 1;
+                Nst[i] = 1;
                 count1 -= 1;
             }
             else
             {
-                Hst[i] = 2;
+                Nst[i] = 2;
                 count2 -= 1;
             }
             i = k;
@@ -300,117 +301,117 @@ public class Employee
         #endregion
 
         //职业技能
-        if (Hst[0] == 0)
+        if (Nst[0] == 0)
             Skill1 = Random.Range(0, 4);
-        else if (Hst[0] == 1)
+        else if (Nst[0] == 1)
             Skill1 = Random.Range(0, 3);
-        else if (Hst[0] == 2)
+        else if (Nst[0] == 2)
             Skill1 = Random.Range(5, 10);
 
-        if (Hst[1] == 0)
+        if (Nst[1] == 0)
             Skill2 = Random.Range(0, 4);
-        else if (Hst[1] == 1)
+        else if (Nst[1] == 1)
             Skill2 = Random.Range(0, 3);
-        else if (Hst[1] == 2)
+        else if (Nst[1] == 2)
             Skill2 = Random.Range(5, 10);
 
-        if (Hst[2] == 0)
+        if (Nst[2] == 0)
             Skill3 = Random.Range(0, 4);
-        else if (Hst[2] == 1)
+        else if (Nst[2] == 1)
             Skill3 = Random.Range(0, 3);
-        else if (Hst[2] == 2)
+        else if (Nst[2] == 2)
             Skill3 = Random.Range(5, 10);
         Levels[0] = Skill1 + Skill2 + Skill3;
 
         //基础技能
-        if (Hst[3] == 0)
+        if (Nst[3] == 0)
             Observation = Random.Range(0, 4);
-        else if (Hst[3] == 1)
+        else if (Nst[3] == 1)
             Observation = Random.Range(0, 3);
-        else if (Hst[3] == 2)
+        else if (Nst[3] == 2)
             Observation = Random.Range(5, 10);
 
-        if (Hst[4] == 0)
+        if (Nst[4] == 0)
             Tenacity = Random.Range(0, 4);
-        else if (Hst[4] == 1)
+        else if (Nst[4] == 1)
             Tenacity = Random.Range(0, 3);
-        else if (Hst[4] == 2)
+        else if (Nst[4] == 2)
             Tenacity = Random.Range(5, 10);
 
-        if (Hst[5] == 0)
+        if (Nst[5] == 0)
             Strength = Random.Range(0, 4);
-        else if (Hst[5] == 1)
+        else if (Nst[5] == 1)
             Strength = Random.Range(0, 3);
-        else if (Hst[5] == 2)
+        else if (Nst[5] == 2)
             Strength = Random.Range(5, 10);
         Levels[1] = Observation + Tenacity + Strength;
 
         //经营技能
-        if (Hst[6] == 0)
+        if (Nst[6] == 0)
             Manage = Random.Range(0, 4);
-        else if (Hst[6] == 1)
+        else if (Nst[6] == 1)
             Manage = Random.Range(0, 3);
-        else if (Hst[6] == 2)
+        else if (Nst[6] == 2)
             Manage = Random.Range(5, 10);
 
-        if (Hst[7] == 0)
+        if (Nst[7] == 0)
             HR = Random.Range(0, 4);
-        else if (Hst[7] == 1)
+        else if (Nst[7] == 1)
             HR = Random.Range(0, 3);
-        else if (Hst[7] == 2)
+        else if (Nst[7] == 2)
             HR = Random.Range(5, 10);
 
-        if (Hst[8] == 0)
+        if (Nst[8] == 0)
             Finance = Random.Range(0, 4);
-        else if (Hst[8] == 1)
+        else if (Nst[8] == 1)
             Finance = Random.Range(0, 3);
-        else if (Hst[8] == 2)
+        else if (Nst[8] == 2)
             Finance = Random.Range(5, 10);
         Levels[2] = Manage + HR + Finance;
 
         //战略技能
-        if (Hst[9] == 0)
+        if (Nst[9] == 0)
             Decision = Random.Range(0, 4);
-        else if (Hst[9] == 1)
+        else if (Nst[9] == 1)
             Decision = Random.Range(0, 3);
-        else if (Hst[9] == 2)
+        else if (Nst[9] == 2)
             Decision = Random.Range(5, 10);
 
-        if (Hst[10] == 0)
+        if (Nst[10] == 0)
             Forecast = Random.Range(0, 4);
-        else if (Hst[10] == 1)
+        else if (Nst[10] == 1)
             Forecast = Random.Range(0, 3);
-        else if (Hst[10] == 2)
+        else if (Nst[10] == 2)
             Forecast = Random.Range(5, 10);
 
-        if (Hst[11] == 0)
+        if (Nst[11] == 0)
             Strategy = Random.Range(0, 4);
-        else if (Hst[11] == 1)
+        else if (Nst[11] == 1)
             Strategy = Random.Range(0, 3);
-        else if (Hst[11] == 2)
+        else if (Nst[11] == 2)
             Strategy = Random.Range(5, 10);
         Levels[3] = Decision + Forecast + Strategy;
 
         //社交技能        
-        if (Hst[12] == 0)
+        if (Nst[12] == 0)
             Convince = Random.Range(0, 4);
-        else if (Hst[12] == 1)
+        else if (Nst[12] == 1)
             Convince = Random.Range(0, 3);
-        else if (Hst[12] == 2)
+        else if (Nst[12] == 2)
             Convince = Random.Range(5, 10);
 
-        if (Hst[13] == 0)
+        if (Nst[13] == 0)
             Charm = Random.Range(0, 4);
-        else if (Hst[13] == 1)
+        else if (Nst[13] == 1)
             Charm = Random.Range(0, 3);
-        else if (Hst[13] == 2)
+        else if (Nst[13] == 2)
             Charm = Random.Range(5, 10);
 
-        if (Hst[14] == 0)
+        if (Nst[14] == 0)
             Gossip = Random.Range(0, 4);
-        else if (Hst[14] == 1)
+        else if (Nst[14] == 1)
             Gossip = Random.Range(0, 3);
-        else if (Hst[14] == 2)
+        else if (Nst[14] == 2)
             Gossip = Random.Range(5, 10);
         Levels[4] = Convince + Charm + Gossip;
 
