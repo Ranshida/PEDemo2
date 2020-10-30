@@ -146,10 +146,10 @@ public class EmpInfo : MonoBehaviour
         emp = new Employee();
         emp.InfoA = this;
         emp.InitStatus(type, Hst, AgeRange);
-        emp.NewSkillCheck();
         HireButton.interactable = true;
         SetSkillName();
         InitSkillAndStrategy();
+        emp.NewSkillCheck();
     }
 
     //初始化头脑风暴技能和战略

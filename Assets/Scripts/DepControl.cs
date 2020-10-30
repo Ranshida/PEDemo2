@@ -195,7 +195,7 @@ public class DepControl : MonoBehaviour
                     if(CurrentTask.Progress >= StandardProducePointB)
                     {
                         CurrentTask.Progress = 0;
-                        float BaseSuccessRate = 0.3f + CountSuccessRate(1) + ExtraSuccessRate;
+                        float BaseSuccessRate = 0.5f + CountSuccessRate(1) + ExtraSuccessRate;
                         float Posb = Random.Range(0.0f, 1.0f);
 
                         //成功和大成功
@@ -313,7 +313,7 @@ public class DepControl : MonoBehaviour
                         {
                             SpProgress = 0;
                             WorkStart = false;
-                            float BaseSuccessRate = 0.5f + CountSuccessRate(2);
+                            float BaseSuccessRate = 0.6f + CountSuccessRate(2);
                             float Posb = Random.Range(0.0f, 1.0f);
 
                             //成功和大成功
@@ -458,7 +458,7 @@ public class DepControl : MonoBehaviour
             //Text_Time.text = "剩余时间:" + calcTime(Pp, StandardProducePoint * 10 - CurrentTask.Progress) + "时";
 
             //成功率计算
-            Text_Quality.text = "成功率:" + (int)((0.3f + CountSuccessRate(1)) * 100) + "%";
+            Text_Quality.text = "成功率:" + (int)((0.5f + CountSuccessRate(1)) * 100) + "%";
 
             Text_Time.text = "剩余时间:" + calcTime(Pp, StandardProducePointB - CurrentTask.Progress) + "时";
         }
@@ -475,7 +475,7 @@ public class DepControl : MonoBehaviour
             //Text_Time.text = "剩余时间:" + calcTime(Pp, SpTotalProgress - SpProgress) + "时";
 
             //成功率计算
-            Text_Quality.text = "成功率:" + (int)((0.5f + CountSuccessRate(2)) * 100) + "%";
+            Text_Quality.text = "成功率:" + (int)((0.6f + CountSuccessRate(2)) * 100) + "%";
 
             Text_Time.text = "剩余时间:" + calcTime(Pp, StandardProducePointB - SpProgress) + "时";
 
@@ -539,7 +539,7 @@ public class DepControl : MonoBehaviour
             //Text_Time.text = "剩余时间:" + calcTime(Pp, StandardProducePoint * 10 - CurrentTask.Progress) + "时";
 
             //成功率计算
-            Text_Quality.text = "成功率:" + (int)((0.3f + CountSuccessRate(1)) * 100) + "%";
+            Text_Quality.text = "成功率:" + (int)((0.5f + CountSuccessRate(1)) * 100) + "%";
 
             Text_Time.text = "剩余时间:" + calcTime(Pp, StandardProducePointB - CurrentTask.Progress) + "时";
         }
@@ -553,7 +553,7 @@ public class DepControl : MonoBehaviour
             //Text_Time.text = "剩余时间:" + calcTime(Pp, SpTotalProgress - SpProgress) + "时";
 
             //成功率计算
-            Text_Quality.text = "成功率:" + (int)((0.5f + CountSuccessRate(2)) * 100) + "%";
+            Text_Quality.text = "成功率:" + (int)((0.6f + CountSuccessRate(2)) * 100) + "%";
 
             Text_Time.text = "剩余时间:" + calcTime(Pp, StandardProducePointB - SpProgress) + "时";
         }

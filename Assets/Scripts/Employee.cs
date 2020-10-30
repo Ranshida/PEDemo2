@@ -71,6 +71,56 @@ public class Employee
     //初始化员工属性
     public void InitStatus(EmpType type, int[] Hst, int AgeRange)
     {
+        #region
+        int r1 = Random.Range(0, 5), r2 = Random.Range(0, 5);
+        while (r1 == r2)
+        {
+            r2 = Random.Range(0, 5);
+        }
+        int count1 = 4, count2 = 2;
+
+        //HST = 0  (0,3)随机技能
+        //HST = 1  (0,2)随机技能
+        //HST = 2  (5,9)随机技能
+        for (int i = 0; i < 6; i++)
+        {
+            int k = i;
+            if (i < 3)
+                i = r1 * 3 + i;
+            else
+                i = r2 * 3 + i - 3;
+
+            if (count1 > 0 && count2 > 0)
+            {
+                int c = Random.Range(1, 3);
+                if (c == 1)
+                {
+                    Hst[i] = 1;
+                    count1 -= 1;
+                }
+                else
+                {
+                    Hst[i] = 2;
+                    count2 -= 1;
+                }
+            }
+            else if (count1 > 0)
+            {
+                Hst[i] = 1;
+                count1 -= 1;
+            }
+            else
+            {
+                Hst[i] = 2;
+                count2 -= 1;
+            }
+            i = k;
+        }
+
+        #endregion
+
+
+
         Type = type;
         //设定姓名并检查是否重名
         bool nameCheck = false;
@@ -704,17 +754,29 @@ public class Employee
     }
     bool HaveSkill(string Name)
     {
-        for(int i = 0; i < InfoDetail.SkillsInfo.Count; i++)
+        EmpInfo C;
+        if (InfoDetail == null)
+            C = InfoA;
+        else
+            C = InfoDetail;
+
+        for(int i = 0; i < C.SkillsInfo.Count; i++)
         {
-            if (InfoDetail.SkillsInfo[i].skill.Name == Name)
+            if (C.SkillsInfo[i].skill.Name == Name)
                 return true;
         }
         return false;
     }
     void CreateSkill(Skill s)
     {
+        //因为在HireInfo中没有Detail，只有InfoA所以要判断一次
+        EmpInfo E;
+        if (InfoDetail == null)
+            E = InfoA;
+        else
+            E = InfoDetail;
         s.TargetEmp = this;
-        InfoDetail.AddSkill(s);
+        E.AddSkill(s);
     }
 
     public void EventCheck()
