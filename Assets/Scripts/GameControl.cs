@@ -617,7 +617,7 @@ public class GameControl : MonoBehaviour
     {
         if (CurrentEmpInfo.emp.CurrentDep != null)
         {
-            CurrentDep.ChangeEmpAssignment();
+            CurrentEmpInfo.emp.CurrentDep.ChangeEmpAssignment();
 
             CurrentEmpInfo.ClearSkillPreset();
             CurrentEmpInfo.emp.CurrentDep.CurrentEmps.Remove(CurrentEmpInfo.emp);

@@ -787,14 +787,14 @@ public class DepControl : MonoBehaviour
     {
         float BaseSuccessRate = 0;
         //业务生产
-        if (type == 1)
+        if (type == 1 && CurrentTask != null)
         {
             for (int i = 0; i < CurrentEmps.Count; i++)
             {
                 int value = 0;
-                if ((int)type == 0)
+                if ((int)CurrentTask.TaskType == 0)
                     value = CurrentEmps[i].Skill1;
-                else if ((int)type == 1)
+                else if ((int)CurrentTask.TaskType == 1)
                     value = CurrentEmps[i].Skill2;
                 else
                     value = CurrentEmps[i].Skill3;
@@ -814,9 +814,9 @@ public class DepControl : MonoBehaviour
             if (CommandingOffice != null && CommandingOffice.CurrentManager != null)
             {
                 int value = 0;
-                if ((int)type == 0)
+                if ((int)CurrentTask.TaskType == 0)
                     value = CommandingOffice.CurrentManager.Skill1;
-                else if ((int)type == 1)
+                else if ((int)CurrentTask.TaskType == 1)
                     value = CommandingOffice.CurrentManager.Skill2;
                 else
                     value = CommandingOffice.CurrentManager.Skill3;
