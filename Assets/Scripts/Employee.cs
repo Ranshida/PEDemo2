@@ -1298,6 +1298,20 @@ public class Employee
     {
 
     }
+
+    //根据已知目标确定一个事件
+    public Event RandomEvent(Employee e)
+    {
+        Event NewEvent = null;
+        return NewEvent;
+    }
+
+    //寻找其他可用员工
+    public List<Employee> FindAnotherEmp(Employee e)
+    {
+        List<Employee> EL = new List<Employee>();
+        return EL;
+    }
 }
 
 static public class CNName

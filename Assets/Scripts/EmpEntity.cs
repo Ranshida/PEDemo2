@@ -262,6 +262,11 @@ public class EmpEntity : MonoBehaviour
             }
         }
     }
+    //寻找目标（事件版本2）
+    public void AddEvent(EmpEntity Ee)
+    {
+
+    }
 
     //去当间谍
     public void BecomeSpy(FOECompany Target)
