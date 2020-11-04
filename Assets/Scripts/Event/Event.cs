@@ -6,7 +6,6 @@ public enum EventType
 {
     工作学习, 心体恢复, 谋划野心, 关系交往
 }
-
 //基类
 public class Event
 {
@@ -15,6 +14,7 @@ public class Event
     public int MotivationRequire = 3; //1弱 2弱中 3弱中强 4中 5中强 6强
     public int MoralRequire = 0; // 0无 1功利主义 2中庸 3绝对律令
     public int ReligionRequire = 0; // 0无 1机械 2中庸 3人文
+    public int RelationRequire = 0; //0无 1朋友 2挚友 3徒弟  4师傅 5倾慕 6追求 7情侣 8伴侣 -1陌路 -2仇人
     public int TimeLeft = 4;
     public bool HaveTarget = true;
     public bool isSolving = false;
@@ -27,6 +27,8 @@ public class Event
     public EmpEntity TargetEntity { get { return Target.InfoDetail.Entity; } }
     public Building TargetBuilding;
     public BuildingType BuildingRequire = BuildingType.运营部门; //暂时用运营部门表示没有需求
+    public EColor SelfEmotionRequire = EColor.None;
+    public EColor TargetEmotionRequire = EColor.None;
 
     public List<Employee> Targets = new List<Employee>();
 
@@ -52,13 +54,17 @@ public class Event
             return false;
 
         //关系检测
-        if (RelationCheck() == false)
-            return false;
-
+        if (HaveTarget == true)
+        {
+            if (RelationCheck() == false)
+                return false;
+        }
         //动机检测
-        if (MotivationCheck(Motivation) == false)
-            return false;
-
+        if (Motivation != -1)
+        {
+            if (MotivationCheck(Motivation) == false)
+                return false;
+        }
         //道德检测
         if (MoralCheck() == false)
             return false;
@@ -80,17 +86,17 @@ public class Event
             return true;
         else
         {
-            for(int i = 0; i < GC.CurrentDeps.Count; i++)
+            for (int i = 0; i < GC.CurrentDeps.Count; i++)
             {
-                if(GC.CurrentDeps[i].building.Type == BuildingRequire)
+                if (GC.CurrentDeps[i].building.Type == BuildingRequire)
                 {
                     TargetBuilding = GC.CurrentDeps[i].building;
                     return true;
                 }
             }
-            for(int i = 0; i < GC.CurrentOffices.Count; i++)
+            for (int i = 0; i < GC.CurrentOffices.Count; i++)
             {
-                if(GC.CurrentOffices[i].building.Type == BuildingRequire)
+                if (GC.CurrentOffices[i].building.Type == BuildingRequire)
                 {
                     TargetBuilding = GC.CurrentOffices[i].building;
                     return true;
@@ -102,7 +108,7 @@ public class Event
     //关系要求
     public virtual bool RelationCheck()
     {
-        if(HaveTarget == true)
+        if (Target == null)
         {
             if (Self.Relations.Count > 0)
             {
@@ -111,7 +117,33 @@ public class Event
             }
             return false;
         }
-        return true;
+        else
+        {
+            if (RelationRequire == 0)
+                return true;
+            else if (RelationRequire < 3)
+            {
+                if (Self.FindRelation(Target).FriendValue == RelationRequire)
+                    return true;
+                else
+                    return false;
+            }
+            else if (RelationRequire < 5)
+            {
+                if (Self.FindRelation(Target).MasterValue == RelationRequire - 2)
+                    return true;
+                else
+                    return false;
+            }
+            else if (RelationRequire < 9)
+            {
+                if (Self.FindRelation(Target).LoveValue == RelationRequire - 4)
+                    return true;
+                else
+                    return false;
+            }
+            return false;
+        }
     }
     //动机要求
     public virtual bool MotivationCheck(int Mo)
@@ -143,7 +175,47 @@ public class Event
             if (Mo >= 40)
                 return true;
         }
+        return false;
+    }
+    //情绪要求
+    public virtual bool EmotionCheck()
+    {
+        if (SelfEmotionRequire == EColor.None && TargetEmotionRequire == EColor.None)
+            return true;
+        else if (TargetEmotionRequire == EColor.None)
+        {
+            for(int i = 0; i < Self.EColors.Count; i++)
+            {
+                if (Self.EColors[i] == SelfEmotionRequire)
+                    return true;
+            }
             return false;
+        }
+        else if (SelfEmotionRequire == EColor.None)
+        {
+            for (int i = 0; i < Target.EColors.Count; i++)
+            {
+                if (Target.EColors[i] == TargetEmotionRequire)
+                    return true;
+            }
+            return false;
+        }
+        else
+        {
+            for (int i = 0; i < Self.EColors.Count; i++)
+            {
+                if (Self.EColors[i] == SelfEmotionRequire)
+                    break;
+                if (i == Self.EColors.Count - 1)
+                    return false;
+            }
+            for (int i = 0; i < Target.EColors.Count; i++)
+            {
+                if (Target.EColors[i] == TargetEmotionRequire)
+                    return true;
+            }
+            return false;
+        }
     }
     //其他要求
     public virtual bool SpecialCheck()
@@ -176,7 +248,7 @@ public class Event
 
         return false;
     }
-    
+
     //执行时间效果
     public virtual void EventFinish()
     {
@@ -253,7 +325,7 @@ public class Event
     public int RelationBonus(bool Reverse = false)
     {
         int Value = 0;
-        if(Reverse == false && Target != null)
+        if (Reverse == false && Target != null)
         {
             Relation r = Self.FindRelation(Target);
             if (r.FriendValue == -2)
@@ -426,15 +498,15 @@ public class Event
     //添加时间历史（暂时）
     public void AddHistory()
     {
-        if(Target != null)
+        if (Target != null)
         {
             Self.InfoDetail.AddHistory("自己和" + Target.Name + "发生了" + EventName + "事件" + ResultText);
             Target.InfoDetail.AddHistory("参与了" + Self.Name + "的" + EventName + "事件" + ResultText);
         }
-        else if(Targets.Count > 0)
+        else if (Targets.Count > 0)
         {
             Self.InfoDetail.AddHistory("自己与一群人参与了" + EventName + "事件" + ResultText);
-            for(int i = 0; i < Targets.Count; i++)
+            for (int i = 0; i < Targets.Count; i++)
             {
                 Targets[i].InfoDetail.AddHistory("自己与一群人参与了" + EventName + "事件" + ResultText);
             }
@@ -450,6 +522,7 @@ public class Event
         return (Event)this.MemberwiseClone();
     }
 }
+#region 事件版本2
 
 //要求涨工资
 public class Event1: Event
@@ -5224,8 +5297,131 @@ public class Event48 : Event
     }
 }
 
+#endregion
+
+//打招呼
+public class Event2_1 : Event
+{
+    public Event2_1() : base()
+    {
+        EventName = "打招呼";
+        HaveTarget = true;
+        SelfEmotionRequire = EColor.None;
+        TargetEmotionRequire = EColor.None;
+        RelationRequire = 0;
+    }
+    public override int ExtraValue()
+    {
+        int Extra = 0;
+        Extra += (int)(Self.Charm * 0.2);
+
+        Extra += RelationBonus() + MoraleBonus() + CRBonus();
+        return Extra;
+    }
+    public override int FindResult()
+    {
+        int value = Random.Range(2, 13);
+        value += ExtraValue();
+        if (value < 7)
+        {
+            ResultText = "失败,";
+            return 2;
+        }
+        else
+        {
+            ResultText = "成功,";
+            return 3;
+        }
+        //1大失败 2失败 3成功 4大成功
+    }
+
+    public override void Failure(float Posb)
+    {
+        base.Failure(Posb);
+        ResultText += "关系无变化";
+    }
+    public override void Success(float Posb)
+    {
+        base.Success(Posb);
+        Self.ChangeRelation(Target, 10);
+        Target.ChangeRelation(Self, 10);
+        ResultText += "好感度上升10";
+    }
+}
+//打招呼
+public class Event2_2 : Event
+{
+    public Event2_2() : base()
+    {
+        EventName = "解除朋友关系";
+        HaveTarget = true;
+        SelfEmotionRequire = EColor.None;
+        TargetEmotionRequire = EColor.None;
+        RelationRequire = 1;
+    }
+    public override bool RelationCheck()
+    {
+        if (Self.FindRelation(Target).RPoint < 10)
+            return false;
+        return base.RelationCheck();
+    }
+    public override int ExtraValue()
+    {
+        int Extra = 0;
+        Extra += (int)(Self.Charm * 0.2);
+        Relation r = Self.FindRelation(Target);
+
+        if (r.MasterValue == 1)
+            Extra += 1;
+        else if (r.MasterValue == 2)
+            Extra += 2;
+
+        if (r.LoveValue == 3)
+            Extra += 2;
+
+        if (Self.CurrentClique == Target.CurrentClique)
+            Extra += 3;
+
+        Extra += MoraleBonus() + CRBonus();
+        return Extra;
+    }
+    
+    public override int FindResult()
+    {
+        int value = Random.Range(2, 13);
+        value += ExtraValue();
+        if (value < 7)
+        {
+            ResultText = "失败,";
+            return 2;
+        }
+        else
+        {
+            ResultText = "成功,";
+            return 3;
+        }
+        //1大失败 2失败 3成功 4大成功
+    }
+
+    public override void Failure(float Posb)
+    {
+        base.Failure(Posb);
+        Self.FindRelation(Target).FriendValue = 0;
+        Target.FindRelation(Self).FriendValue = 0;
+        ResultText += "朋友关系解除";
+    }
+    public override void Success(float Posb)
+    {
+        base.Success(Posb);
+        Self.ChangeRelation(Target, 5);
+        Target.ChangeRelation(Self, 5);
+        ResultText += "好感度上升5";
+    }
+}
+
 static public class EventData
 {
+    #region 事件版本2内容
     //工作学习事件
     static public List<Event> StudyEvents = new List<Event>()
     {
@@ -5269,5 +5465,21 @@ static public class EventData
             Self.Add(Target[i].Clone());
         }
     }
+    #endregion
+    static public List<Event> E1 = new List<Event>()
+    {
+        new Event2_1()
+    };
+    static public List<Event> E2 = new List<Event>()
+    {
+        
+    };
+    static public List<Event> E3 = new List<Event>()
+    {
+        new Event2_2()
+    };
+    static public List<Event> E4 = new List<Event>()
+    {
+        
+    };
 }
-    

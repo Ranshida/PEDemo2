@@ -1593,8 +1593,10 @@ MonoBehaviour:
   WorkStart: 0
   EmpLimit: 0
   Efficiency: 1
-  FailRate: 0.3
+  ExtraSuccessRate: 0
+  ExtraMajorSuccessRate: 0
   canWork: 1
+  EmpChanged: 0
   CurrentResearch: {fileID: 0}
   EmpContent: {fileID: 8823674}
   EmpPanel: {fileID: 8462709804129838565}

@@ -46,10 +46,12 @@ public class BuildingEffect
             }
             else if (T == BuildingType.高管办公室 || T == BuildingType.CEO办公室) 
             {
-                if (T2 == BuildingType.技术部门 || T2 == BuildingType.市场部门 || T2 == BuildingType.产品部门
-                    || T2 == BuildingType.运营部门 || T2 == BuildingType.研发部门)
+                if (T2 != BuildingType.高管办公室 && T2 != BuildingType.CEO办公室)
                 {
-                    m_TargetBuildings[i].Department.InRangeOffices.Add(CurrentBuilding.Office);
+                    if (m_TargetBuildings[i].Department != null)
+                        m_TargetBuildings[i].Department.InRangeOffices.Add(CurrentBuilding.Office);
+                    else if (m_TargetBuildings[i].Office != null)
+                        m_TargetBuildings[i].Office.InRangeOffices.Add(CurrentBuilding.Office);
                 }
             }
             if (!AffectedBuildings.Contains(m_TargetBuildings[i]))
@@ -74,18 +76,22 @@ public class BuildingEffect
             }
             else if (T == BuildingType.高管办公室 || T == BuildingType.CEO办公室)
             {
-                if (T2 == BuildingType.技术部门 || T2 == BuildingType.市场部门 || T2 == BuildingType.产品部门
-                    || T2 == BuildingType.运营部门 || T2 == BuildingType.研发部门)
+                if (T2 != BuildingType.高管办公室 && T2 != BuildingType.CEO办公室)
                 {
-                    AffectedBuildings[i].Department.InRangeOffices.Remove(CurrentBuilding.Office);
+                    if (AffectedBuildings[i].Department != null)
+                        AffectedBuildings[i].Department.InRangeOffices.Remove(CurrentBuilding.Office);
+                    else if (AffectedBuildings[i].Office != null)
+                        AffectedBuildings[i].Office.InRangeOffices.Remove(CurrentBuilding.Office);
                 }
             }
-            else if (T == BuildingType.技术部门 || T == BuildingType.市场部门 || T == BuildingType.产品部门
-                    || T == BuildingType.运营部门 || T == BuildingType.研发部门)
+            else if (T != BuildingType.高管办公室 && T != BuildingType.CEO办公室)
             {
                 if (T2 == BuildingType.高管办公室 || T2 == BuildingType.CEO办公室)
                 {
-                    CurrentBuilding.Department.InRangeOffices.Remove(CurrentBuilding.Office);
+                    if (CurrentBuilding.Department != null)
+                        CurrentBuilding.Department.InRangeOffices.Remove(CurrentBuilding.Office);
+                    else if (CurrentBuilding.Office != null)
+                        CurrentBuilding.Office.InRangeOffices.Remove(CurrentBuilding.Office);
                 }
             }
         }

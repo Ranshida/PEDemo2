@@ -11,7 +11,7 @@ public class GameControl : MonoBehaviour
     [HideInInspector] public float EfficiencyExtraNormal = 0, EfficiencyExtraScience = 0, ResearchSuccessRateExtra = 0, ExtrafailRate = 0, HireEfficiencyExtra = 1.0f,
         HRBuildingMentalityExtra = 1.0f, BuildingSkillSuccessExtra = 0, BuildingMaintenanceCostRate = 1.0f;
     public int SelectMode = 1; //1员工招聘时部门选择 2员工移动时部门选择 3部门的高管办公室选择 4发动动员技能时员工选择 
-    //5发动建筑技能时员工选择 6CEO技能员工/部门选择 7选择两个员工发动动员技能
+    //5发动建筑技能时员工选择 6CEO技能员工/部门选择 7选择两个员工发动动员技能 8普通办公室的上级(高管办公室)选择
     public int Money = 1000, CEOSkillNum = 0, DoubleMobilizeCost = 0, MeetingBlockTime = 0;
     public bool ForceTimePause = false;
     public int Stamina
@@ -385,7 +385,7 @@ public class GameControl : MonoBehaviour
                 CurrentOffices[i].DS.gameObject.SetActive(true);
         }
     }
-    //办公室领导选择
+    //部门领导选择
     public void ShowDepSelectPanel(DepControl dep)
     {
         DepSelectPanel.SetActive(true);
@@ -397,6 +397,23 @@ public class GameControl : MonoBehaviour
             for (int i = 0; i < CurrentOffices.Count; i++)
         {
             if (dep.InRangeOffices.Contains(CurrentOffices[i]))
+                CurrentOffices[i].DS.gameObject.SetActive(true);
+            else
+                CurrentOffices[i].DS.gameObject.SetActive(false);
+        }
+    }
+    //办公室领导选择
+    public void ShowDepSelectPanel(OfficeControl office)
+    {
+        DepSelectPanel.SetActive(true);
+        StandbyButton.SetActive(false);
+        for (int i = 0; i < CurrentDeps.Count; i++)
+        {
+            CurrentDeps[i].DS.gameObject.SetActive(false);
+        }
+        for (int i = 0; i < CurrentOffices.Count; i++)
+        {
+            if (office.InRangeOffices.Contains(CurrentOffices[i]))
                 CurrentOffices[i].DS.gameObject.SetActive(true);
             else
                 CurrentOffices[i].DS.gameObject.SetActive(false);
@@ -468,7 +485,7 @@ public class GameControl : MonoBehaviour
         }
     }
 
-    //将移动或雇佣的员工放入特定办公室 + 确定部门领导者 + CEO技能发动
+    //将移动或雇佣的员工放入特定办公室 + 确定部门(办公室)领导者 + CEO技能发动
     public void SelectDep(OfficeControl office)
     {
         DepSelectPanel.SetActive(false);
@@ -546,6 +563,19 @@ public class GameControl : MonoBehaviour
             CurrentDep.CommandingOffice = office;
             CurrentDep.Text_Office.text = "由 " + office.Text_OfficeName.text + " 管理";
             office.ControledDeps.Add(CurrentDep);
+            office.CheckManage();
+        }
+        //确定办公室的部门领导者
+        else if (SelectMode == 8)
+        {
+            if (CurrentOffice.CommandingOffice != null)
+            {
+                CurrentOffice.CommandingOffice.ControledOffices.Remove(CurrentOffice);
+                CurrentOffice.CommandingOffice.CheckManage();
+            }
+            CurrentOffice.CommandingOffice = office;
+            //CurrentDep.Text_Office.text = "由 " + office.Text_OfficeName.text + " 管理";
+            office.ControledOffices.Add(CurrentOffice);
             office.CheckManage();
         }
         //CEO技能

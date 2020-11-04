@@ -566,6 +566,7 @@ public class DepControl : MonoBehaviour
         }
     }
 
+    //显示所有能当上级的办公室
     public void ShowAvailableOffices()
     {
         GC.SelectMode = 3;

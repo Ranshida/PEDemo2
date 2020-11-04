@@ -5,18 +5,23 @@ using UnityEngine.UI;
 
 public class OfficeControl : MonoBehaviour
 {
+    public bool CanWork = false;
     public int ManageValue = 0, Progress = 100;
     public int OfficeMode = 1;//1决策 战略充能 2人力 心力回复(说服) 3管理 加启发 4招聘 5行业 刷新建筑
     public int ExpTime = 5;//每5工时加经验
 
+    public GameObject OfficeWarning;
     public Employee CurrentManager;
+    public OfficeControl CommandingOffice;
     public DepSelect DS;
     public GameControl GC;
     public Building building;
     public Text Text_OfficeName, Text_EmpName, Text_MAbility, Text_Progress, Text_OfficeMode, Text_TimeLeft, Text_SuccessRate;
-    public Button ActiveButton, ModeChangeButton;
+    public Button ActiveButton, ModeChangeButton, SetCommaindgOfficeButton;
 
     public List<DepControl> ControledDeps = new List<DepControl>();
+    public List<OfficeControl> ControledOffices = new List<OfficeControl>();
+    public List<OfficeControl> InRangeOffices = new List<OfficeControl>();
 
     private void Start()
     {
@@ -99,6 +104,19 @@ public class OfficeControl : MonoBehaviour
                 ControledDeps[i].OfficeWarning.SetActive(true);
             }
         }
+        for (int i = 0; i < ControledOffices.Count; i++)
+        {
+            if (i < ManageValue - ControledOffices.Count)
+            {
+                ControledOffices[i].CanWork = true;
+                ControledOffices[i].OfficeWarning.SetActive(false);
+            }
+            else
+            {
+                ControledOffices[i].CanWork = false;
+                ControledOffices[i].OfficeWarning.SetActive(true);
+            }
+        }
     }
 
     public void SetName()
@@ -108,6 +126,8 @@ public class OfficeControl : MonoBehaviour
         if (building.Type != BuildingType.高管办公室 && building.Type != BuildingType.CEO办公室)
         {
             Text_Progress.gameObject.SetActive(true);
+            SetCommaindgOfficeButton.gameObject.SetActive(true);
+            OfficeWarning.SetActive(true);
             ModeChangeButton.gameObject.SetActive(false);
             ActiveButton.gameObject.SetActive(true);
             Text_SuccessRate.gameObject.SetActive(false);
@@ -325,9 +345,9 @@ public class OfficeControl : MonoBehaviour
         }
     }
 
+    //需要选择部门的建筑物特效，无需选择就直接施加效果
     public void ShowAvailableDeps()
     {
-        //需要选择部门的建筑物特效，无需选择就直接施加效果
         if (GC.Stamina >= building.StaminaRequest)
         {
             GC.CurrentOffice = this;
@@ -339,6 +359,14 @@ public class OfficeControl : MonoBehaviour
             else
                 BuildingActive();
         }
+    }
+
+    //显示所有能当上级的办公室
+    public void ShowAvailableOffices()
+    {
+        GC.SelectMode = 8;
+        GC.ShowDepSelectPanel(this);
+        GC.CurrentOffice = this;
     }
 
     public void ShowModeSelectPanel()
@@ -385,7 +413,7 @@ public class OfficeControl : MonoBehaviour
     {
         if (building.Type != BuildingType.高管办公室 && building.Type != BuildingType.CEO办公室)
         {
-            if (CurrentManager != null && Progress < 100)
+            if (CurrentManager != null && Progress < 100 && CanWork == true)
             {
                 if (building.effectValue == 1)
                     Progress += CurrentManager.HR;

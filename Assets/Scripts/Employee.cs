@@ -6,6 +6,21 @@ public enum EmpType
 {
     Tech, Market, Product, Operate, Science, HR
 }
+public enum EColor
+{//D开头为对应二级深色情绪
+    White, Gray, Yellow, Red, Blue, Orange, Purple, Green, DYellow, DRed, DBlue, DOrange, DPurple, DGreen, None
+}
+
+public class Emotion
+{
+    public EColor color;
+    public int Level;
+    public Emotion(EColor e)
+    {
+        color = e;
+        Level = 1;
+    }
+}
 
 public class Employee
 {
@@ -13,6 +28,8 @@ public class Employee
     public int Skill1, Skill2, Skill3, SkillExtra1, SkillExtra2, SkillExtra3, 
         Observation, Tenacity, Strength, Manage, HR, Finance, Decision, 
         Forecast, Strategy, Convince, Charm, Gossip, SalaryExtra = 0, Age, EventTime, ObeyTime, NoPromotionTime = 0, NoMarriageTime = 0;
+    //1技术 2市场 3产品 Ob观察 Te坚韧 Str强壮 Ma管理 HR人力 Fi财务 De决策 Fo行业 St谋略 Co说服 
+    //Ch魅力 Go八卦
     public int Confidence;//信心，头脑风暴中的护盾
     public int Stamina
     {
@@ -65,6 +82,7 @@ public class Employee
 
     public List<Employee> Students = new List<Employee>();
     public List<Relation> Relations = new List<Relation>();
+    public List<EColor> EColors = new List<EColor>();
 
     int mentality, stamina;
 
@@ -1270,6 +1288,15 @@ public class Employee
             NoMarriageTime += 1;
         else if (FindRelation(Lover).LoveValue < 3)
             NoMarriageTime += 1;
+    }
+
+    public void AddEmotion(EColor C)
+    {
+
+    }
+    public void RemoveEmotion(EColor C)
+    {
+
     }
 }
 
