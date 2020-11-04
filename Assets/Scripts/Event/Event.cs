@@ -15,8 +15,9 @@ public class Event
     public int MoralRequire = 0; // 0无 1功利主义 2中庸 3绝对律令
     public int ReligionRequire = 0; // 0无 1机械 2中庸 3人文
     public int RelationRequire = 0; //0无 1朋友 2挚友 3徒弟  4师傅 5倾慕 6追求 7情侣 8伴侣 -1陌路 -2仇人
+    public int PerkRequire = 0; //特质需求(Perk编号)
     public int TimeLeft = 4;
-    public bool HaveTarget = true;
+    public bool HaveTarget = true;  //是否有目标
     public bool isSolving = false;
     public string EventName = "无";
     public string ResultText = "无";
@@ -27,8 +28,8 @@ public class Event
     public EmpEntity TargetEntity { get { return Target.InfoDetail.Entity; } }
     public Building TargetBuilding;
     public BuildingType BuildingRequire = BuildingType.运营部门; //暂时用运营部门表示没有需求
-    public EColor SelfEmotionRequire = EColor.None;
-    public EColor TargetEmotionRequire = EColor.None;
+    public List<EColor> SelfEmotionRequire = new List<EColor>(); //自身颜色需求
+    public List<EColor> TargetEmotionRequire = new List<EColor>(); //对方颜色需求
 
     public List<Employee> Targets = new List<Employee>();
 
@@ -59,6 +60,11 @@ public class Event
             if (RelationCheck() == false)
                 return false;
         }
+
+        //特质检测
+        if (PerkCheck() == false)
+            return false;
+
         //动机检测
         if (Motivation != -1)
         {
@@ -180,38 +186,91 @@ public class Event
     //情绪要求
     public virtual bool EmotionCheck()
     {
-        if (SelfEmotionRequire == EColor.None && TargetEmotionRequire == EColor.None)
+        if (SelfEmotionRequire.Count == 0 && TargetEmotionRequire.Count == 0)
             return true;
-        else if (TargetEmotionRequire == EColor.None)
+        else if (TargetEmotionRequire.Count == 0)
         {
-            for(int i = 0; i < Self.EColors.Count; i++)
+            int count = 0;
+            for(int i = 0; i < SelfEmotionRequire.Count; i++)
             {
-                if (Self.EColors[i] == SelfEmotionRequire)
-                    return true;
+                for(int j = 0; j < Self.EColors.Count; j++)
+                {
+                    if (Self.EColors[j] == SelfEmotionRequire[i])
+                    {
+                        count += 1;
+                        break;
+                    }
+                }
             }
-            return false;
+            if (count < SelfEmotionRequire.Count)
+                return false;
+            else
+                return true;
         }
-        else if (SelfEmotionRequire == EColor.None)
+        else if (SelfEmotionRequire.Count == 0)
         {
-            for (int i = 0; i < Target.EColors.Count; i++)
+            int count = 0;
+            for (int i = 0; i < TargetEmotionRequire.Count; i++)
             {
-                if (Target.EColors[i] == TargetEmotionRequire)
-                    return true;
+                for (int j = 0; j < Target.EColors.Count; j++)
+                {
+                    if (Target.EColors[j] == TargetEmotionRequire[i])
+                    {
+                        count += 1;
+                        break;
+                    }
+                }
             }
-            return false;
+            if (count < TargetEmotionRequire.Count)
+                return false;
+            else
+                return true;
         }
         else
         {
-            for (int i = 0; i < Self.EColors.Count; i++)
+            int count = 0;
+            for (int i = 0; i < TargetEmotionRequire.Count; i++)
             {
-                if (Self.EColors[i] == SelfEmotionRequire)
-                    break;
-                if (i == Self.EColors.Count - 1)
-                    return false;
+                for (int j = 0; j < Target.EColors.Count; j++)
+                {
+                    if (Target.EColors[j] == TargetEmotionRequire[i])
+                    {
+                        count += 1;
+                        break;
+                    }
+                }
             }
-            for (int i = 0; i < Target.EColors.Count; i++)
+            if (count < TargetEmotionRequire.Count)
+                return false;
+
+            count = 0;
+            for (int i = 0; i < SelfEmotionRequire.Count; i++)
             {
-                if (Target.EColors[i] == TargetEmotionRequire)
+                for (int j = 0; j < Self.EColors.Count; j++)
+                {
+                    if (Self.EColors[j] == SelfEmotionRequire[i])
+                    {
+                        count += 1;
+                        break;
+                    }
+                }
+            }
+            if (count < SelfEmotionRequire.Count)
+                return false;
+            else
+                return true;
+        }
+    }
+    //特质需求
+    public virtual bool PerkCheck()
+    {
+        if (PerkRequire == 0)
+            return true;
+        else
+        {
+            for(int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
+            {
+                if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == PerkRequire)
                     return true;
             }
             return false;
@@ -5306,8 +5365,8 @@ public class Event2_1 : Event
     {
         EventName = "打招呼";
         HaveTarget = true;
-        SelfEmotionRequire = EColor.None;
-        TargetEmotionRequire = EColor.None;
+        SelfEmotionRequire = new List<EColor>(){ };
+        TargetEmotionRequire = new List<EColor>() { };
         RelationRequire = 0;
     }
     public override int ExtraValue()
@@ -5348,20 +5407,20 @@ public class Event2_1 : Event
         ResultText += "好感度上升10";
     }
 }
-//打招呼
+//解除朋友关系
 public class Event2_2 : Event
 {
     public Event2_2() : base()
     {
         EventName = "解除朋友关系";
         HaveTarget = true;
-        SelfEmotionRequire = EColor.None;
-        TargetEmotionRequire = EColor.None;
+        SelfEmotionRequire = new List<EColor>() { };
+        TargetEmotionRequire = new List<EColor>() { };
         RelationRequire = 1;
     }
     public override bool RelationCheck()
     {
-        if (Self.FindRelation(Target).RPoint < 10)
+        if (Self.FindRelation(Target).RPoint > 0)
             return false;
         return base.RelationCheck();
     }
@@ -5408,6 +5467,82 @@ public class Event2_2 : Event
         base.Failure(Posb);
         Self.FindRelation(Target).FriendValue = 0;
         Target.FindRelation(Self).FriendValue = 0;
+        ResultText += "朋友关系解除";
+        GC.CreateMessage(Self.Name + "完成了事件" + EventName);
+        
+    }
+    public override void Success(float Posb)
+    {
+        base.Success(Posb);
+        Self.ChangeRelation(Target, 5);
+        Target.ChangeRelation(Self, 5);
+        ResultText += "好感度上升5";
+    }
+}
+//提供帮助和鼓励
+public class Event2_3 : Event
+{
+    public Event2_3() : base()
+    {
+        EventName = "提供帮助和鼓励";
+        HaveTarget = true;
+        SelfEmotionRequire = new List<EColor>() { EColor.DGreen };
+        TargetEmotionRequire = new List<EColor>() { };
+        MoralRequire = 0;
+        ReligionRequire = 0;
+        PerkRequire = 0;
+        RelationRequire = 0;
+        BuildingRequire = BuildingType.运营部门;
+    }
+    public override bool RelationCheck()
+    {
+        if (Self.FindRelation(Target).RPoint < 10)
+            return false;
+        return base.RelationCheck();
+    }
+    public override int ExtraValue()
+    {
+        int Extra = 0;
+        Extra += (int)(Self.Charm * 0.2);
+        Relation r = Self.FindRelation(Target);
+
+        if (r.MasterValue == 1)
+            Extra += 1;
+        else if (r.MasterValue == 2)
+            Extra += 2;
+
+        if (r.LoveValue == 3)
+            Extra += 2;
+
+        if (Self.CurrentClique == Target.CurrentClique)
+            Extra += 3;
+
+        Extra += MoraleBonus() + CRBonus();
+        return Extra;
+    }
+
+    public override int FindResult()
+    {
+        int value = Random.Range(2, 13);
+        value += ExtraValue();
+        if (value < 7)
+        {
+            ResultText = "失败,";
+            return 2;
+        }
+        else
+        {
+            ResultText = "成功,";
+            return 3;
+        }
+        //1大失败 2失败 3成功 4大成功
+    }
+
+    public override void Failure(float Posb)
+    {
+        base.Failure(Posb);
+        Self.ChangeRelation(Target, 10);
+        Target.ChangeRelation(Self, 10);
         ResultText += "朋友关系解除";
     }
     public override void Success(float Posb)
@@ -5466,13 +5601,15 @@ static public class EventData
         }
     }
     #endregion
+
+    //权重1-4事件链表
     static public List<Event> E1 = new List<Event>()
     {
         new Event2_1()
     };
     static public List<Event> E2 = new List<Event>()
     {
-        
+        new Event2_3()
     };
     static public List<Event> E3 = new List<Event>()
     {

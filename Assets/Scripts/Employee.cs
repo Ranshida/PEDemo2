@@ -22,6 +22,19 @@ public class Emotion
     }
 }
 
+public class EmpItem
+{
+    public int Type, TimeLeft;
+    public Employee Target;
+
+    public EmpItem(int type, int timeleft = 0, Employee emp = null)
+    {
+        Type = type;
+        TimeLeft = timeleft;
+        Target = emp;
+    }
+}
+
 public class Employee
 {
     static public int HeadHuntLevel = 11;
@@ -69,6 +82,7 @@ public class Employee
     public float[] Character = new float[5]; //0文化 1信仰 2道德 3行事 4信念
     public float[] Request = new float[4];
     public int[] BaseMotivation = new int[4];//0工作学习 1心体恢复 2谋划野心 3关系交往
+    public int[] EventFlag = new int[99];//事件状态开关
 
     public string Name;
     public bool WantLeave = false, isCEO = false, canWork = true, SupportCEO, isSpy = false; //WantLeave没有在使用
