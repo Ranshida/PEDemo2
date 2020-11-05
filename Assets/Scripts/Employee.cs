@@ -27,7 +27,7 @@ public class EmpItem
     public int Type, TimeLeft;
     public Employee Target;
 
-    public EmpItem(int type, int timeleft = 0, Employee emp = null)
+    public EmpItem(int type, int timeleft = -1, Employee emp = null)
     {
         Type = type;
         TimeLeft = timeleft;
@@ -82,7 +82,7 @@ public class Employee
     public float[] Character = new float[5]; //0文化 1信仰 2道德 3行事 4信念
     public float[] Request = new float[4];
     public int[] BaseMotivation = new int[4];//0工作学习 1心体恢复 2谋划野心 3关系交往
-    public int[] EventFlag = new int[99];//事件状态开关
+    public int[] EventFlag = new int[200];//事件状态开关
 
     public string Name;
     public bool WantLeave = false, isCEO = false, canWork = true, SupportCEO, isSpy = false; //WantLeave没有在使用
@@ -96,6 +96,7 @@ public class Employee
 
     public List<Employee> Students = new List<Employee>();
     public List<Relation> Relations = new List<Relation>();
+    public List<EmpItem> CurrentItems = new List<EmpItem>();
     public List<EColor> EColors = new List<EColor>();
 
     int mentality, stamina;
@@ -1302,6 +1303,24 @@ public class Employee
             NoMarriageTime += 1;
         else if (FindRelation(Lover).LoveValue < 3)
             NoMarriageTime += 1;
+
+        //清除Items
+        if (CurrentItems.Count > 0)
+        {
+            List<EmpItem> DesItems = new List<EmpItem>();
+            for (int i = 0; i < CurrentItems.Count; i++)
+            {
+                if (CurrentItems[i].TimeLeft > 0)
+                    CurrentItems[i].TimeLeft -= 1;
+                if (CurrentItems[i].TimeLeft == 0)
+                    DesItems.Add(CurrentItems[i]);
+            }
+            for(int i = 0; i < DesItems.Count; i++)
+            {
+                CurrentItems.Remove(DesItems[i]);
+            }
+            DesItems.Clear();
+        }
     }
 
     public void AddEmotion(EColor C)
@@ -1317,6 +1336,60 @@ public class Employee
     public Event RandomEvent(Employee e)
     {
         Event NewEvent = null;
+        List<Event> AddEvents = new List<Event>();
+        List<Event> PosbEvents = new List<Event>();
+        for (int i = 0; i < 4; i++)
+        {
+            if (i == 0)
+                PosbEvents = EventData.E4;
+            else if (i == 1)
+                PosbEvents = EventData.E3;
+            else if (i == 2)
+                PosbEvents = EventData.E2;
+            else
+                PosbEvents = EventData.E1;
+            for (int j = 0; j < PosbEvents.Count; j++)
+            {
+                PosbEvents[j].Self = this;
+                PosbEvents[j].Target = e;
+                if (PosbEvents[j].ConditionCheck(-1) == true)
+                    AddEvents.Add(PosbEvents[j].Clone());
+                PosbEvents[j].Self = null;
+                PosbEvents[j].Target = null;
+                if (AddEvents.Count == 5)
+                    break;
+            }
+            if (AddEvents.Count == 5)
+                break;
+        }
+        if (AddEvents.Count > 0)
+        {
+            float MaxPosb = 0, Posb = 0;
+            if (AddEvents.Count == 1)
+            {
+                NewEvent = AddEvents[0];
+                return NewEvent;
+            }
+            else if (AddEvents.Count == 2)
+                MaxPosb = 0.7f;
+            else if (AddEvents.Count == 3)
+                MaxPosb = 0.8f;
+            else if (AddEvents.Count == 4)
+                MaxPosb = 0.9f;
+            else if (AddEvents.Count == 5)
+                MaxPosb = 1.0f;
+            Posb = Random.Range(0.0f, MaxPosb);
+            if (Posb < 0.5f)
+                NewEvent = AddEvents[0];
+            else if (Posb < 0.7f)
+                NewEvent = AddEvents[1];
+            else if (Posb < 0.8f)
+                NewEvent = AddEvents[2];
+            else if (Posb < 0.9f)
+                NewEvent = AddEvents[3];
+            else if (Posb < 1.0f)
+                NewEvent = AddEvents[4];
+        }
         return NewEvent;
     }
 
@@ -1324,6 +1397,23 @@ public class Employee
     public List<Employee> FindAnotherEmp(Employee e)
     {
         List<Employee> EL = new List<Employee>();
+        if(e.CurrentOffice == null && e.CurrentDep == null)
+        {
+            for(int i = 0; i < GameControl.Instance.CurrentEmployees.Count; i++)
+            {
+                if (GameControl.Instance.CurrentEmployees[i].CurrentOffice == null && 
+                    GameControl.Instance.CurrentEmployees[i].CurrentDep == null && GameControl.Instance.CurrentEmployees[i] != e)
+                    EL.Add(GameControl.Instance.CurrentEmployees[i]);
+            }
+        }
+        else if (e.CurrentDep != null)
+        {
+            for(int i = 0; i < e.CurrentDep.CurrentEmps.Count; i++)
+            {
+                if (e.CurrentDep.CurrentEmps[i] != e)
+                    EL.Add(e.CurrentDep.CurrentEmps[i]);
+            }
+        }
         return EL;
     }
 }
