@@ -44,6 +44,7 @@ public class Employee
     //1技术 2市场 3产品 Ob观察 Te坚韧 Str强壮 Ma管理 HR人力 Fi财务 De决策 Fo行业 St谋略 Co说服 
     //Ch魅力 Go八卦
     public int Confidence;//信心，头脑风暴中的护盾
+    public int NewRelationTargetTime = 1;
     public float ExtraSuccessRate = 0;
     public int Stamina
     {
@@ -485,7 +486,7 @@ public class Employee
                 Character[4] = Random.Range(0, 101);
         }
 
-        EventTime = Random.Range(6, 12);
+        EventTime = 8;
     }
 
     //初始化CEO属性
@@ -521,7 +522,7 @@ public class Employee
             if (i == 4)
                 Character[4] = Random.Range(0, 101);
         }
-        EventTime = Random.Range(6, 12);
+        EventTime = 8;
     }
 
     public void GainExp(int value, int type)
@@ -836,6 +837,63 @@ public class Employee
             Relations.Add(new Relation(InfoDetail.GC.CurrentEmployees[i], this));
             InfoDetail.GC.CurrentEmployees[i].Relations.Add(new Relation(this, InfoDetail.GC.CurrentEmployees[i]));
         }
+    }
+    //找到发展目标
+    public void FindRelationTarget()
+    {
+        List<Employee> EL = new List<Employee>();
+        RelationTargets.Clear();
+        for(int i = 0; i < InfoDetail.GC.CurrentEmployees.Count; i++)
+        {
+            if (InfoDetail.GC.CurrentEmployees[i] != this)
+                EL.Add(InfoDetail.GC.CurrentEmployees[i]);
+        }
+        if (CurrentDep != null)
+        {
+            for (int i = 0; i < CurrentDep.CurrentEmps.Count; i++)
+            {
+                if (CurrentDep.CurrentEmps[i] != this)
+                    EL.Remove(CurrentDep.CurrentEmps[i]);
+            }
+            if (CurrentDep.CommandingOffice != null && CurrentDep.CommandingOffice.CurrentManager != null)
+                EL.Remove(CurrentDep.CommandingOffice.CurrentManager);
+        }
+        else if (CurrentOffice != null && CurrentOffice.CommandingOffice != null && CurrentOffice.CommandingOffice.CurrentManager != null)
+            EL.Remove(CurrentOffice.CommandingOffice.CurrentManager);
+        for(int i = 0; i < 3; i++)
+        {
+            if(EL.Count > 1)
+            {
+                Employee NE = EL[Random.Range(0, EL.Count)];
+                RelationTargets.Add(NE);
+                EL.Remove(NE);
+            }
+        }
+    }
+
+    EmpEntity RandomEventTarget()
+    {
+        EmpEntity E = null;
+        List<Employee> EL = new List<Employee>();
+        for(int i = 0; i < RelationTargets.Count; i++)
+        {
+            EL.Add(RelationTargets[i]);
+        }
+        if (CurrentDep != null)
+        {
+            for (int i = 0; i < CurrentDep.CurrentEmps.Count; i++)
+            {
+                if (CurrentDep.CurrentEmps[i] != this)
+                    EL.Add(CurrentDep.CurrentEmps[i]);
+            }
+            if (CurrentDep.CommandingOffice != null && CurrentDep.CommandingOffice.CurrentManager != null)
+                EL.Add(CurrentDep.CommandingOffice.CurrentManager);
+        }
+        else if (CurrentOffice != null && CurrentOffice.CommandingOffice != null && CurrentOffice.CommandingOffice.CurrentManager != null)
+            EL.Add(CurrentOffice.CommandingOffice.CurrentManager);
+        if (EL.Count > 0)
+            E = EL[Random.Range(0, EL.Count)].InfoDetail.Entity;
+        return E;
     }
 
     //改变跟目标的好感度并检查关系
@@ -1314,9 +1372,18 @@ public class Employee
     {
         EventTime -= 1;
         if (EventTime == 0)
+        {//事件版本2
+            //AddEvent();
+            //EventTime = Random.Range(12, 21);
+            EventTime = 8;
+            InfoDetail.Entity.AddEvent(RandomEventTarget());
+        }
+        //寻找新关系发展目标
+        NewRelationTargetTime -= 1;
+        if(NewRelationTargetTime == 0)
         {
-            AddEvent();
-            EventTime = Random.Range(12, 21);
+            FindRelationTarget();
+            NewRelationTargetTime = 192;
         }
 
         if (CurrentOffice == null)
