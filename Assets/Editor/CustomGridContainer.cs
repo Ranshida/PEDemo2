@@ -10,6 +10,9 @@ public class CustomGridContainer : Editor
     public override void OnInspectorGUI()
     {
         script = (GridContainer)target;
+#pragma warning disable CS0618 // 类型或成员已过时
+        script.WayPoint = EditorGUILayout.ObjectField("寻路点父物体" ,script.WayPoint, typeof(Transform)) as Transform;
+#pragma warning restore CS0618 // 类型或成员已过时
         script.xInput = EditorGUILayout.IntField("X轴坐标：", script.xInput);
         script.zInput = EditorGUILayout.IntField("Z轴坐标：", script.zInput);
         if (GUILayout.Button("检测当前网格"))

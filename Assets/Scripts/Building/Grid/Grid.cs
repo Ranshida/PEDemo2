@@ -22,19 +22,19 @@ public class Grid : MonoBehaviour
     public GridType Type;
     public int[,] Location { get { return new int[X, Z]; } }
 
-    public Building belongBuilding { get; private set; }
+    public Building BelongBuilding { get; private set; } = null;
 
     public void Build(Building building)
     {
         Type = GridType.已放置;
-        belongBuilding = building;
+        BelongBuilding = building;
         RefreshGrid();
     }
 
     public void Dismantle()
     {
         Type = Grid.GridType.可放置;
-        belongBuilding = null;
+        BelongBuilding = null;
         RefreshGrid();
     }
 

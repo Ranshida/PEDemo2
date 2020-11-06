@@ -28,6 +28,15 @@ public static class Function
         }
         return list;
     }
+    public static List<T> ReturnChildList<T>(Transform parent) where T : MonoBehaviour
+    {
+        List<T> list = new List<T>();
+        foreach (Transform transform in parent)
+        {
+            list.Add(transform.GetComponent<T>());
+        }
+        return list;
+    }
 
     //世界坐标转屏幕坐标
     public static Vector3 World2ScreenPoint(Vector3 worldPos)

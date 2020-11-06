@@ -14,12 +14,12 @@ public class BTE_DealtEvent : BTE_Action
 
     public override TaskStatus OnUpdate()
     {
-        if (ThisEmp.Available)
+        if (ThisEntity.CurrentEvent == null) 
             return TaskStatus.Failure;
 
         MoveFlag.Value = false;
-        if (!ThisEmp.CurrentEvent.isSolving)
-            ThisEmp.DealtEvent();
+        if (!ThisEntity.CurrentEvent.isSolving)
+            ThisEntity.SolveEvent();
 
         //没有当前事件，返回工作
         return TaskStatus.Running;

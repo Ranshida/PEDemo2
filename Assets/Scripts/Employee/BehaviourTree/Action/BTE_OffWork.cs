@@ -17,7 +17,7 @@ public class BTE_OffWork : BTE_Action
 
     public override TaskStatus OnUpdate()
     {
-        if (!ThisEmp.OffWork)
+        if (!ThisEntity.OffWork)
             return TaskStatus.Failure;
 
         //可以移动，精确寻找位置

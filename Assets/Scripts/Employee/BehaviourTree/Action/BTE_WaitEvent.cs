@@ -16,39 +16,36 @@ public class BTE_WaitEvent : BTE_Action
     
     public override TaskStatus OnUpdate()
     {
-        if (ThisEmp.Available)
+        //没有事件了
+        if (ThisEntity.EventStage == 0)
             return TaskStatus.Failure;
 
         //事件开始执行
-        if (ThisEmp.CurrentEvent.isSolving)
+        if (ThisEntity.CurrentEvent != null && ThisEntity.CurrentEvent.isSolving) 
             return TaskStatus.Success;
 
-        //独立事件 => 直接执行
-        if (!ThisEmp.CurrentEvent.HaveTarget)
-        {
-            Movable.Value = false;
-            ThisEmp.DealtEvent();
-        }
-        //主动事件 => 寻找目标后执行
-        else if (ThisEmp.CurrentEvent.SelfEntity == ThisEmp)
+        if (ThisEntity.EventStage == 1)
         {
             Movable.Value = true;
-            StopDistance.Value = 8;
-            Destination.Value = ThisEmp.CurrentEvent.TargetEntity.transform.position;
+            StopDistance.Value = 1;
+            Destination.Value = ThisEntity.CurrentEvent.TargetEntity.transform.position;
 
-            //距离近 开始执行事件
-            if (Function.XZDistance(ThisEmp.transform.position, Destination.Value) < 10) 
-                ThisEmp.DealtEvent();
+            if (ThisEntity.CheckEventTarget()) //对象在游荡：进走廊时检查    对象在工作：进对方建筑检查
+            {
+                ThisEntity.EventConfirm();
+                //检查对象状态，找可用对象，添加人物，Stage + 1 = 2
+            }
         }
-        //被动事件 => 等待被找到后执行
-        else
+        else if (ThisEntity.EventStage == 2)
         {
-            StopDistance.Value = 0.5f;
             Movable.Value = true;
-            Destination.Value = FindWorkPosition();
-        }
-       
+            StopDistance.Value = 1;
+            Destination.Value = ThisEntity.CurrentEvent.TargetEntity.transform.position;
 
+            //满足开始执行事件的条件（TODO）
+            if (Function.XZDistance(ThisEntity.transform.position, Destination.Value) < 8)
+                ThisEntity.SolveEvent();
+        }
       
         return TaskStatus.Running;
     }

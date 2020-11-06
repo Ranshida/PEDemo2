@@ -198,7 +198,7 @@ public class BuildingManage : MonoBehaviour
                     {
                         if (grid.Type == Grid.GridType.已放置)
                         {
-                            m_SelectBuilding = GridContainer.Instance.GridDict[m_GridX][m_GridZ].belongBuilding;
+                            m_SelectBuilding = GridContainer.Instance.GridDict[m_GridX][m_GridZ].BelongBuilding;
                             selectBuildingPanel.gameObject.SetActive(true);
                             selectBuildingPanel.Find("Text").GetComponent<Text>().text = m_SelectBuilding.Type.ToString();
                         }
@@ -274,7 +274,7 @@ public class BuildingManage : MonoBehaviour
                     if (dict.TryGetValue(m_GridZ, out Grid grid))
                     {
                         if (grid.Type == Grid.GridType.已放置)
-                            m_SelectBuilding = GridContainer.Instance.GridDict[m_GridX][m_GridZ].belongBuilding;
+                            m_SelectBuilding = GridContainer.Instance.GridDict[m_GridX][m_GridZ].BelongBuilding;
                     }
                 }
             }

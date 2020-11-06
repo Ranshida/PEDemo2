@@ -13,6 +13,6 @@ public class BTE_SpecialFlag : BTE_Condition
 {
     public override TaskStatus OnUpdate()
     {
-        return ThisEmp.SpecialWork ? TaskStatus.Success : TaskStatus.Failure;
+        return ThisEmp.IsSpying ? TaskStatus.Success : TaskStatus.Failure;
     }
 }

@@ -146,10 +146,10 @@ public class BuildingEffect
         //辐射到的建筑
         foreach (Grid tempGrid in effectGirds)
         {
-            if (tempGrid.belongBuilding == CurrentBuilding || tempGrid.belongBuilding == null || m_TargetBuildings.Contains(tempGrid.belongBuilding)) 
+            if (tempGrid.BelongBuilding == CurrentBuilding || tempGrid.BelongBuilding == null || m_TargetBuildings.Contains(tempGrid.BelongBuilding)) 
                 continue;
 
-            m_TargetBuildings.Add(tempGrid.belongBuilding);
+            m_TargetBuildings.Add(tempGrid.BelongBuilding);
             for (int i = 0; i < m_TargetBuildings.Count; i++)
             {
                 m_TargetBuildings[i].effect.AddBuilding(CurrentBuilding);

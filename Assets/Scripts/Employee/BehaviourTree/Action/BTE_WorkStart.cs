@@ -23,7 +23,7 @@ public class BTE_WorkStart : BTE_Action
         StopDistance.Value = 0.1f;
         Destination.Value = FindWorkPosition();
 
-        if (!ThisEmp.OffWork)
+        if (!ThisEntity.OffWork)
         {
             return TaskStatus.Success;
         }
