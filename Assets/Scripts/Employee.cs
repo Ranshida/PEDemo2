@@ -1348,6 +1348,7 @@ public class Employee
         }
     }
 
+    //增减情绪
     public void AddEmotion(EColor C)
     {
         if (C == EColor.Yellow)
