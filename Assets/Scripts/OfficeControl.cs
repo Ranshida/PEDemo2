@@ -42,6 +42,14 @@ public class OfficeControl : MonoBehaviour
                 ManageValue = CurrentManager.Manage + GC.ManageExtra;
                 CurrentManager.InfoDetail.CreateStrategy();
                 CurrentManager.NoPromotionTime = 0;
+                for(int i = 0; i < CurrentManager.InfoDetail.PerksInfo.Count; i++)
+                {
+                    if (CurrentManager.InfoDetail.PerksInfo[i].CurrentPerk.Num == 32)
+                    {
+                        CurrentManager.InfoDetail.PerksInfo[i].CurrentPerk.RemoveEffect();
+                        break;
+                    }
+                }
                 CheckManage();
                 SetOfficeUI();
             }
@@ -405,6 +413,7 @@ public class OfficeControl : MonoBehaviour
                 BaseSRate += 0.06f;
             else if (value > 21)
                 BaseSRate += 0.1f;
+            BaseSRate += CurrentManager.ExtraSuccessRate;
         }
         return BaseSRate;
     }

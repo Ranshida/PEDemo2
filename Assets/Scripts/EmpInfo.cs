@@ -202,6 +202,8 @@ public class EmpInfo : MonoBehaviour
         //删除员工实体
         emp.InfoDetail.Entity.RemoveEntity();
 
+        emp.ClearRelations();//清空所有关系
+
         ClearSkillPreset();
         GC.HourEvent.RemoveListener(emp.TimePass);
         GC.Salary -= CalcSalary();        //重新计算工资

@@ -30,7 +30,7 @@ public class Event
     public BuildingType BuildingRequire = BuildingType.运营部门; //暂时用运营部门表示没有需求
     public List<EColor> SelfEmotionRequire = new List<EColor>(); //自身颜色需求
     public List<EColor> TargetEmotionRequire = new List<EColor>(); //对方颜色需求
-
+    public List<Event> SubEvents = new List<Event>(); //可能的子事件
     public List<Employee> Targets = new List<Employee>();
 
     public Event()
@@ -194,75 +194,50 @@ public class Event
             return true;
         else if (TargetEmotionRequire.Count == 0)
         {
-            int count = 0;
             for(int i = 0; i < SelfEmotionRequire.Count; i++)
             {
-                for(int j = 0; j < Self.EColors.Count; j++)
+                for(int j = 0; j < Self.CurrentEmotions.Count; j++)
                 {
-                    if (Self.EColors[j] == SelfEmotionRequire[i])
-                    {
-                        count += 1;
-                        break;
-                    }
+                    if (Self.CurrentEmotions[j].color == SelfEmotionRequire[i])
+                        return true;
                 }
             }
-            if (count < SelfEmotionRequire.Count)
-                return false;
-            else
-                return true;
+            return false;
         }
         else if (SelfEmotionRequire.Count == 0)
         {
-            int count = 0;
             for (int i = 0; i < TargetEmotionRequire.Count; i++)
             {
-                for (int j = 0; j < Target.EColors.Count; j++)
+                for (int j = 0; j < Target.CurrentEmotions.Count; j++)
                 {
-                    if (Target.EColors[j] == TargetEmotionRequire[i])
-                    {
-                        count += 1;
-                        break;
-                    }
+                    if (Target.CurrentEmotions[j].color == TargetEmotionRequire[i])
+                        return true;
                 }
             }
-            if (count < TargetEmotionRequire.Count)
-                return false;
-            else
-                return true;
+            return false;
         }
         else
         {
-            int count = 0;
             for (int i = 0; i < TargetEmotionRequire.Count; i++)
             {
-                for (int j = 0; j < Target.EColors.Count; j++)
+                for (int j = 0; j < Target.CurrentEmotions.Count; j++)
                 {
-                    if (Target.EColors[j] == TargetEmotionRequire[i])
-                    {
-                        count += 1;
+                    if (Target.CurrentEmotions[j].color == TargetEmotionRequire[i])
                         break;
-                    }
                 }
+                if (i == TargetEmotionRequire.Count - 1)
+                    return false;
             }
-            if (count < TargetEmotionRequire.Count)
-                return false;
 
-            count = 0;
             for (int i = 0; i < SelfEmotionRequire.Count; i++)
             {
-                for (int j = 0; j < Self.EColors.Count; j++)
+                for (int j = 0; j < Self.CurrentEmotions.Count; j++)
                 {
-                    if (Self.EColors[j] == SelfEmotionRequire[i])
-                    {
-                        count += 1;
-                        break;
-                    }
+                    if (Self.CurrentEmotions[j].color == SelfEmotionRequire[i])
+                        return true;
                 }
             }
-            if (count < SelfEmotionRequire.Count)
-                return false;
-            else
-                return true;
+            return false;
         }
     }
     //特质需求
@@ -310,6 +285,24 @@ public class Event
             return true;
 
         return false;
+    }
+    //子事件检测
+    public Event SubEventCheck()
+    {
+        if (SubEvents.Count == 0)
+            return null;
+        Event E = null;
+        List<Event> EL = new List<Event>();
+        for (int i = 0; i < SubEvents.Count; i++)
+        {
+            SubEvents[i].Self = Self;
+            SubEvents[i].Target = Target;
+            if (SubEvents[i].ConditionCheck(-1) == true)
+                EL.Add(SubEvents[i]);
+        }
+        if (EL.Count > 0)
+            E = EL[Random.Range(0, EL.Count)];
+        return E;
     }
 
     //执行时间效果
@@ -5726,7 +5719,7 @@ public class Event2_6 : Event
         ResultText += Self.Name + "与" + Target.Name + "谈论天气和路况，对方获得浅红色情绪";
     }
 }
-//!
+//.
 public class Event2_7 : Event
 {
     public Event2_7() : base()
@@ -5743,6 +5736,19 @@ public class Event2_7 : Event
     {
         if (Self.FindRelation(Target).RPoint < 10)
             return false;
+        if(Self.RelationTargets.Contains(Target) == false)//判断是否为额外发展对象
+        {
+            //判断是否为同事
+            if (Self.CurrentDep != null && Self.CurrentDep.CurrentEmps.Contains(Target) == false)
+                return false;
+            //判断是否为上司
+            if (Target.CurrentOffice == null || (Self.CurrentDep == null && Self.CurrentOffice == null))
+                return false;
+            if (Self.CurrentDep != null && Target.CurrentOffice.ControledDeps.Contains(Self.CurrentDep) == false)
+                return false;
+            if (Self.CurrentOffice != null && Target.CurrentOffice.ControledOffices.Contains(Self.CurrentOffice) == false)
+                return false;
+        }
         return base.RelationCheck();
     }
     public override int ExtraValue()
@@ -5768,6 +5774,16 @@ public class Event2_7 : Event
             return 3;
         }
         //1大失败 2失败 3成功 4大成功
+    }
+    public override bool SpecialCheck()
+    {
+        if (Self.CurrentDep != null && Self.CurrentDep.CommandingOffice != null && Self.CurrentDep.CommandingOffice.CurrentManager == Target)
+            return true;
+        else if (Self.CurrentDep != null && Self.CurrentDep.CurrentEmps.Contains(Target))
+            return true;
+        else if (Self.RelationTargets.Contains(Target))
+            return true;
+        return false;
     }
     public override void Success(float Posb)
     {
@@ -6153,7 +6169,7 @@ public class Event2_13 : Event
         ResultText += Self.Name + "跟" + Target.Name + "开了开玩笑，对方获得蓝色情绪，对方好感度下降10点";
     }
 }
-//?
+
 public class Event2_14 : Event
 {
     public Event2_14() : base()
@@ -6162,7 +6178,7 @@ public class Event2_14 : Event
         EventName = "安慰朋友";
         HaveTarget = true;
         SelfEmotionRequire = new List<EColor>() { };
-        TargetEmotionRequire = new List<EColor>() { EColor.DPurple };//蓝色和浅紫色也可以
+        TargetEmotionRequire = new List<EColor>() { EColor.DBlue, EColor.Purple, EColor.DPurple};//蓝色和浅紫色也可以
         RelationRequire = 0;
     }
     public override bool RelationCheck()
@@ -6229,7 +6245,7 @@ public class Event2_14 : Event
         ResultText += Self.Name + "安慰了" + Target.Name + "但碰到了对方的痛处，对方好感度下降10点";
     }
 }
-//?
+
 public class Event2_15 : Event
 {
     public Event2_15() : base()
@@ -6238,7 +6254,7 @@ public class Event2_15 : Event
         EventName = "分享经验";
         HaveTarget = true;
         SelfEmotionRequire = new List<EColor>() { };
-        TargetEmotionRequire = new List<EColor>() { EColor.DGreen };//浅绿色也可以
+        TargetEmotionRequire = new List<EColor>() { EColor.DGreen, EColor.Green };//浅绿色也可以
         RelationRequire = 0;
     }
     public override bool RelationCheck()
@@ -6734,7 +6750,7 @@ public class Event2_22 : Event
         ResultText += Self.Name + "想要与" + Target.Name + "结成挚友，但被对方婉拒了，好感度-10";
     }
 }
-//!
+
 public class Event2_23 : Event
 {
     public Event2_23() : base()
@@ -6749,6 +6765,8 @@ public class Event2_23 : Event
     }
     public override bool RelationCheck()
     {
+        if (Self.Lover == null)
+            return false;
         return base.RelationCheck();
     }
     public override int ExtraValue()
@@ -7198,7 +7216,7 @@ public class Event2_30 : Event
         ResultText += Self.Name + "送给" + Target.Name + "自己身上的饰品，对方好感度上升5点";
     }
 }
-//!
+
 public class Event2_31 : Event
 {
     public Event2_31() : base()
@@ -7309,14 +7327,14 @@ public class Event2_32 : Event
         ResultText += Self.Name + "邀请" + Target.Name + "去公共空间幽会，双方好感度下降5点";
     }
 }
-//?
+
 public class Event2_33 : Event
 {
     public Event2_33() : base()
     {
         EventName = "寻求安慰拥抱";
         HaveTarget = true;
-        SelfEmotionRequire = new List<EColor>() { EColor.DPurple };//蓝色情绪也可以
+        SelfEmotionRequire = new List<EColor>() { EColor.DPurple, EColor.DBlue };//蓝色情绪也可以
         TargetEmotionRequire = new List<EColor>() { };
         RelationRequire = 0;
     }
@@ -7421,7 +7439,7 @@ public class Event2_34 : Event
         ResultText += Self.Name + "与" + Target.Name + "相约月下散步，双方获得浅蓝色情绪";
     }
 }
-//!
+
 public class Event2_35 : Event
 {
     public Event2_35() : base()
@@ -7435,8 +7453,10 @@ public class Event2_35 : Event
     }
     public override bool RelationCheck()
     {
-        if (Self.FindRelation(Target).RPoint < 60)
+        if (Self.Lover != null)
             return false;
+        if (Self.FindRelation(Target).RPoint < 60)
+            return false;       
         return base.RelationCheck();
     }
     public override int ExtraValue()
@@ -7523,6 +7543,8 @@ public class Event2_36 : Event
         base.Success(Posb);
         Self.FindRelation(Target).LoveValue = 2;
         Target.FindRelation(Self).LoveValue = 2;
+        Self.Lover = Target;
+        Target.Lover = Self;
         Self.AddEmotion(EColor.Yellow);
         Target.AddEmotion(EColor.Yellow);
         ResultText += Self.Name + "向" + Target.Name + "求婚，双方结为伴侣，获得双方浅黄色情绪";
@@ -7603,7 +7625,7 @@ public class Event2_38 : Event
     }
     public override bool RelationCheck()
     {
-        if (Self.FindRelation(Target).RPoint >-20)
+        if (Self.FindRelation(Target).RPoint > -20)
             return false;
         return base.RelationCheck();
     }
@@ -7698,7 +7720,7 @@ public class Event2_39 : Event
         ResultText += Self.Name + "否认" + Target.Name + "在工作上的努力，对方获得蓝色情绪，对方好感度下降10点";
     }
 }
-//!
+//.
 public class Event2_40 : Event
 {
     public Event2_40() : base()
@@ -7712,7 +7734,11 @@ public class Event2_40 : Event
         //条件：对方不是己方上级
     }
     public override bool RelationCheck()
-    {
+    {//此处略过了RelationCheck下面的
+        if (Self.CurrentDep != null && Self.CurrentDep.CommandingOffice != null && Self.CurrentDep.CommandingOffice.CurrentManager != Target)
+            return true;
+        else
+            return false;
         return base.RelationCheck();
     }
     public override int ExtraValue()
@@ -7808,7 +7834,7 @@ public class Event2_41 : Event
         ResultText += Self.Name + "攻击" + Target.Name + "的信仰/文化，对方获得红色情绪，对方好感度下降5点";
     }
 }
-
+//.
 public class Event2_42 : Event
 {
     public Event2_42() : base()
@@ -7825,6 +7851,15 @@ public class Event2_42 : Event
         if (Self.FindRelation(Target).RPoint > -60)
             return false;
         return base.RelationCheck();
+    }
+    public override bool SpecialCheck()
+    {
+        for(int i = 0; i < Self.CurrentItems.Count; i++)
+        {
+            if (Self.CurrentItems[i].Target == Target)
+                return true;
+        }
+        return false;
     }
     public override int ExtraValue()
     {
@@ -7918,7 +7953,7 @@ public class Event2_43 : Event
         ResultText += Self.Name + "散播" + Target.Name + "的秘密被否认，对方好感度下降5点";
     }
 }
-//?
+
 public class Event2_44 : Event
 {
     public Event2_44() : base()
@@ -8243,7 +8278,7 @@ public class Event2_49 : Event
         ResultText += Self.Name + "向领导举报" + Target.Name + "图谋不轨，对方获得红色情绪";
     }
 }
-
+//.
 public class Event2_50 : Event
 {
     public Event2_50() : base()
@@ -8294,6 +8329,7 @@ public class Event2_50 : Event
         base.Failure(Posb);
         Target.AddEmotion(EColor.DRed);
         //成功率下降1%，持续三个星期
+        Target.InfoDetail.AddPerk(new Perk31(Target), true);
         ResultText += Self.Name + "删除了" + Target.Name + "的工作文件，对方获得红色情绪，成功率下降1%";
     }
 }
@@ -8351,7 +8387,7 @@ public class Event2_51 : Event
         ResultText += Self.Name + "与" + Target.Name + "发生了争吵，对方获得红色情绪";
     }
 }
-//!
+//.
 public class Event2_52 : Event
 {
     public Event2_52() : base()
@@ -8365,6 +8401,8 @@ public class Event2_52 : Event
     }
     public override bool RelationCheck()
     {
+        if (Self.Master != Target)
+            return false;
         return base.RelationCheck();
     }
     public override int ExtraValue()
@@ -8401,10 +8439,11 @@ public class Event2_52 : Event
         base.Failure(Posb);
         Self.FindRelation(Target).MasterValue = 0;
         Target.FindRelation(Self).MasterValue = 0;
+        Self.Master = null;
         ResultText += Self.Name + "由于" + Target.Name + "是仇人，解除了师徒关系";
     }
 }
-//!
+//.
 public class Event2_53 : Event
 {
     public Event2_53() : base()
@@ -8419,6 +8458,56 @@ public class Event2_53 : Event
     public override bool RelationCheck()
     {
         return base.RelationCheck();
+    }
+    public override bool SpecialCheck()
+    {
+        if(Self.CurrentDep != null)
+        {
+            if (Self.CurrentDep.type == EmpType.HR && Self.HR > Target.HR)
+                return true;
+            else if (Self.CurrentDep.type == EmpType.Tech && Self.Skill1 > Target.Skill1)
+                return true;
+            else if (Self.CurrentDep.type == EmpType.Market && Self.Skill2 > Target.Skill2)
+                return true;
+            else if (Self.CurrentDep.type == EmpType.Product && Self.Skill3 > Target.Skill3)
+                return true;
+        }
+        else if (Self.CurrentOffice != null)
+        {
+            if (Self.CurrentOffice.building.Type != BuildingType.CEO办公室 || Self.CurrentOffice.building.Type != BuildingType.高管办公室)
+            {
+                if (Self.CurrentOffice.building.effectValue == 1 && Self.HR > Target.HR)
+                    return true;
+                else if (Self.CurrentOffice.building.effectValue == 2 && Self.Gossip > Target.Gossip)
+                    return true;
+                else if (Self.CurrentOffice.building.effectValue == 3 && Self.Strength > Target.Strength)
+                    return true;
+                else if (Self.CurrentOffice.building.effectValue == 4 && Self.Strategy > Target.Strategy)
+                    return true;
+                else if (Self.CurrentOffice.building.effectValue == 5 && Self.Forecast > Target.Forecast)
+                    return true;
+                else if (Self.CurrentOffice.building.effectValue == 6 && Self.Decision > Target.Decision)
+                    return true;
+                else if (Self.CurrentOffice.building.effectValue == 7 && Self.Finance > Target.Finance)
+                    return true;
+                else if (Self.CurrentOffice.building.effectValue == 8 && Self.Manage > Target.Manage)
+                    return true;
+            }
+            else
+            {
+                if (Self.CurrentOffice.OfficeMode == 1 && Self.Decision > Target.Decision)
+                    return true;
+                else if (Self.CurrentOffice.OfficeMode == 2 && Self.Convince > Target.Convince)
+                    return true;
+                else if (Self.CurrentOffice.OfficeMode == 3 && Self.Manage > Target.Manage)
+                    return true;
+                else if (Self.CurrentOffice.OfficeMode == 4 && Self.HR > Target.HR)
+                    return true;
+                else if (Self.CurrentOffice.OfficeMode == 5 && Self.Forecast > Target.Forecast)
+                    return true;
+            }
+        }
+        return false;
     }
     public override int ExtraValue()
     {
@@ -8449,6 +8538,8 @@ public class Event2_53 : Event
         base.Success(Posb);
         Self.FindRelation(Target).MasterValue = 0;
         Target.FindRelation(Self).MasterValue = 0;
+        Self.Master = null;
+        Target.Students.Remove(Self);
         ResultText += Self.Name + "能力强于师傅" + Target.Name + "，选择了出师";
     }
     public override void Failure(float Posb)
@@ -8570,7 +8661,7 @@ public class Event2_55 : Event
         ResultText += Self.Name + "向" + Target.Name + "寻求工作上的帮助，双方获得浅蓝色情绪";
     }
 }
-//!
+//.
 public class Event2_56 : Event
 {
     public Event2_56() : base()
@@ -8615,7 +8706,40 @@ public class Event2_56 : Event
         base.Success(Posb);
         //成功率上升1%
         //办公室所需技能经验上升50点
-        ResultText += Self.Name + "请求" + Target.Name + "来办公室进行指导，成功率额外上升1%，获得办公室所需技能经验50点";
+        Self.InfoDetail.AddPerk(new Perk30(Self), true);
+        //涨经验
+        if (Self.CurrentDep != null)
+        {
+            if (Self.CurrentDep.type == EmpType.HR && Self.HR > Target.HR)
+                Self.GainExp(50, 8);
+            else if (Self.CurrentDep.type == EmpType.Tech && Self.Skill1 > Target.Skill1)
+                Self.GainExp(50, 1);
+            else if (Self.CurrentDep.type == EmpType.Market && Self.Skill2 > Target.Skill2)
+                Self.GainExp(50, 2);
+            else if (Self.CurrentDep.type == EmpType.Product && Self.Skill3 > Target.Skill3)
+                Self.GainExp(50, 3);
+        }
+        else if (Self.CurrentOffice != null)
+        {
+            if (Self.CurrentOffice.building.effectValue == 1 && Self.HR > Target.HR)
+                Self.GainExp(50, 8);
+            else if (Self.CurrentOffice.building.effectValue == 2 && Self.Gossip > Target.Gossip)
+                Self.GainExp(50, 15);
+            else if (Self.CurrentOffice.building.effectValue == 3 && Self.Strength > Target.Strength)
+                Self.GainExp(50, 6);
+            else if (Self.CurrentOffice.building.effectValue == 4 && Self.Strategy > Target.Strategy)
+                Self.GainExp(50, 12);
+            else if (Self.CurrentOffice.building.effectValue == 5 && Self.Forecast > Target.Forecast)
+                Self.GainExp(50, 11);
+            else if (Self.CurrentOffice.building.effectValue == 6 && Self.Decision > Target.Decision)
+                Self.GainExp(50, 10);
+            else if (Self.CurrentOffice.building.effectValue == 7 && Self.Finance > Target.Finance)
+                Self.GainExp(50, 9);
+            else if (Self.CurrentOffice.building.effectValue == 8 && Self.Manage > Target.Manage)
+                Self.GainExp(50, 7);
+        }
+
+            ResultText += Self.Name + "请求" + Target.Name + "来办公室进行指导，成功率额外上升1%，获得办公室所需技能经验50点";
     }
     public override void Failure(float Posb)
     {
@@ -8802,7 +8926,7 @@ public class Event2_59 : Event
         ResultText += Self.Name + "对" + Target.Name + "表示感谢，对方获得浅黄色情绪";
     }
 }
-//!
+//.
 public class Event2_60 : Event
 {
     public Event2_60() : base()
@@ -8817,6 +8941,8 @@ public class Event2_60 : Event
     }
     public override bool RelationCheck()
     {
+        if (Target.Students.Count > 0 || Target.Master != null)
+            return false;
         return base.RelationCheck();
     }
     public override int ExtraValue()
@@ -8848,6 +8974,8 @@ public class Event2_60 : Event
         base.Success(Posb);
         Target.FindRelation(Self).MasterValue = 1;
         Self.FindRelation(Target).MasterValue = 2;
+        Self.Master = Target;
+        Target.Students.Add(Self);
         ResultText += Self.Name + "拜" + Target.Name + "为师";
     }
     public override void Failure(float Posb)
@@ -8857,7 +8985,7 @@ public class Event2_60 : Event
         ResultText += Self.Name + "拜" + Target.Name + "为师，但被拒绝，好感度下降10点";
     }
 }
-//!
+//.
 public class Event2_61 : Event
 {
     public Event2_61() : base()
@@ -8901,6 +9029,52 @@ public class Event2_61 : Event
     {
         base.Success(Posb);
         //部门所需技能经验增长100点
+        if (Self.CurrentDep != null)
+        {
+            if (Self.CurrentDep.type == EmpType.HR && Self.HR > Target.HR)
+                Self.GainExp(100, 8);
+            else if (Self.CurrentDep.type == EmpType.Tech && Self.Skill1 > Target.Skill1)
+                Self.GainExp(100, 1);
+            else if (Self.CurrentDep.type == EmpType.Market && Self.Skill2 > Target.Skill2)
+                Self.GainExp(100, 2);
+            else if (Self.CurrentDep.type == EmpType.Product && Self.Skill3 > Target.Skill3)
+                Self.GainExp(100, 3);
+        }
+        else if (Self.CurrentOffice != null)
+        {
+            if (Self.CurrentOffice.building.Type != BuildingType.CEO办公室 || Self.CurrentOffice.building.Type != BuildingType.高管办公室)
+            {
+                if (Self.CurrentOffice.building.effectValue == 1 && Self.HR > Target.HR)
+                    Self.GainExp(100, 8);
+                else if (Self.CurrentOffice.building.effectValue == 2 && Self.Gossip > Target.Gossip)
+                    Self.GainExp(100, 15);
+                else if (Self.CurrentOffice.building.effectValue == 3 && Self.Strength > Target.Strength)
+                    Self.GainExp(100, 6);
+                else if (Self.CurrentOffice.building.effectValue == 4 && Self.Strategy > Target.Strategy)
+                    Self.GainExp(100, 12);
+                else if (Self.CurrentOffice.building.effectValue == 5 && Self.Forecast > Target.Forecast)
+                    Self.GainExp(100, 11);
+                else if (Self.CurrentOffice.building.effectValue == 6 && Self.Decision > Target.Decision)
+                    Self.GainExp(100, 10);
+                else if (Self.CurrentOffice.building.effectValue == 7 && Self.Finance > Target.Finance)
+                    Self.GainExp(100, 9);
+                else if (Self.CurrentOffice.building.effectValue == 8 && Self.Manage > Target.Manage)
+                    Self.GainExp(100, 7);
+            }
+            else
+            {
+                if (Self.CurrentOffice.OfficeMode == 1)
+                    Self.GainExp(50, 10);
+                else if (Self.CurrentOffice.OfficeMode == 2)
+                    Self.GainExp(50, 13);
+                else if (Self.CurrentOffice.OfficeMode == 3)
+                    Self.GainExp(50, 7);
+                else if (Self.CurrentOffice.OfficeMode == 4)
+                    Self.GainExp(50, 8);
+                else if (Self.CurrentOffice.OfficeMode == 5)
+                    Self.GainExp(50, 11);
+            }
+        }
         Self.AddEmotion(EColor.DYellow);
         ResultText += Self.Name + "向" + Target.Name + "吸取经验，部门所需技能经验增长100点，获得黄色情绪";
     }
@@ -8909,6 +9083,53 @@ public class Event2_61 : Event
         base.Failure(Posb);
         //部门所需技能经验增长50点
         Self.AddEmotion(EColor.Blue);
+
+        if (Self.CurrentDep != null)
+        {
+            if (Self.CurrentDep.type == EmpType.HR && Self.HR > Target.HR)
+                Self.GainExp(50, 8);
+            else if (Self.CurrentDep.type == EmpType.Tech && Self.Skill1 > Target.Skill1)
+                Self.GainExp(50, 1);
+            else if (Self.CurrentDep.type == EmpType.Market && Self.Skill2 > Target.Skill2)
+                Self.GainExp(50, 2);
+            else if (Self.CurrentDep.type == EmpType.Product && Self.Skill3 > Target.Skill3)
+                Self.GainExp(50, 3);
+        }
+        else if (Self.CurrentOffice != null)
+        {
+            if (Self.CurrentOffice.building.Type != BuildingType.CEO办公室 || Self.CurrentOffice.building.Type != BuildingType.高管办公室)
+            {
+                if (Self.CurrentOffice.building.effectValue == 1 && Self.HR > Target.HR)
+                    Self.GainExp(50, 8);
+                else if (Self.CurrentOffice.building.effectValue == 2 && Self.Gossip > Target.Gossip)
+                    Self.GainExp(50, 15);
+                else if (Self.CurrentOffice.building.effectValue == 3 && Self.Strength > Target.Strength)
+                    Self.GainExp(50, 6);
+                else if (Self.CurrentOffice.building.effectValue == 4 && Self.Strategy > Target.Strategy)
+                    Self.GainExp(50, 12);
+                else if (Self.CurrentOffice.building.effectValue == 5 && Self.Forecast > Target.Forecast)
+                    Self.GainExp(50, 11);
+                else if (Self.CurrentOffice.building.effectValue == 6 && Self.Decision > Target.Decision)
+                    Self.GainExp(50, 10);
+                else if (Self.CurrentOffice.building.effectValue == 7 && Self.Finance > Target.Finance)
+                    Self.GainExp(50, 9);
+                else if (Self.CurrentOffice.building.effectValue == 8 && Self.Manage > Target.Manage)
+                    Self.GainExp(50, 7);
+            }
+            else
+            {
+                if (Self.CurrentOffice.OfficeMode == 1)
+                    Self.GainExp(50, 10);
+                else if (Self.CurrentOffice.OfficeMode == 2)
+                    Self.GainExp(50, 13);
+                else if (Self.CurrentOffice.OfficeMode == 3)
+                    Self.GainExp(50, 7);
+                else if (Self.CurrentOffice.OfficeMode == 4)
+                    Self.GainExp(50, 8);
+                else if (Self.CurrentOffice.OfficeMode == 5)
+                    Self.GainExp(50, 11);
+            }
+        }
         ResultText += Self.Name + "向" + Target.Name + "吸取经验，部门所需技能经验增长50点，获得浅蓝色情绪";
     }
 }
@@ -9143,7 +9364,7 @@ public class Event2_65 : Event
         ResultText += Self.Name + "给" + Target.Name + "布置工作，对方获得蓝色情绪，对方好感度下降5点";
     }
 }
-//!
+//.
 public class Event2_66 : Event
 {
     public Event2_66() : base()
@@ -9159,6 +9380,13 @@ public class Event2_66 : Event
     {
         if (Self.FindRelation(Target).RPoint < 20)
             return false;
+        if (Self.CurrentOffice == null || (Target.CurrentDep == null && Target.CurrentOffice == null))
+            return false;
+        if (Target.CurrentDep != null && Self.CurrentOffice.ControledDeps.Contains(Target.CurrentDep) == false)
+            return false;
+        if (Target.CurrentOffice != null && Self.CurrentOffice.ControledOffices.Contains(Target.CurrentOffice) == false)
+            return false;
+
         return base.RelationCheck();
     }
     public override int ExtraValue()
@@ -9191,6 +9419,7 @@ public class Event2_66 : Event
         //对方工资上升10
         Target.AddEmotion(EColor.Yellow);
         Target.ChangeRelation(Self, 10);
+        Target.SalaryExtra += 10;
         ResultText += Self.Name + "帮助" + Target.Name + "申请涨工资，对方工资上升10，对方好感度上升10点，对方获得浅黄色情绪";
     }
     public override void Failure(float Posb)
@@ -9201,7 +9430,7 @@ public class Event2_66 : Event
         ResultText += Self.Name + "帮助" + Target.Name + "申请涨工资失败，对方好感度上升5点，获得浅蓝色情绪";
     }
 }
-//!?
+//..
 public class Event2_67 : Event
 {
     public Event2_67() : base()
@@ -9216,6 +9445,12 @@ public class Event2_67 : Event
     public override bool RelationCheck()
     {
         if (Self.FindRelation(Target).RPoint < 20)
+            return false;
+        if (Self.CurrentOffice == null || (Target.CurrentDep == null && Target.CurrentOffice == null))
+            return false;
+        if (Target.CurrentDep != null && Self.CurrentOffice.ControledDeps.Contains(Target.CurrentDep) == false)
+            return false;
+        if (Target.CurrentOffice != null && Self.CurrentOffice.ControledOffices.Contains(Target.CurrentOffice) == false)
             return false;
         return base.RelationCheck();
     }
@@ -9249,6 +9484,8 @@ public class Event2_67 : Event
         //弹出对话框，向CEO申请升职
         Target.AddEmotion(EColor.Yellow);
         Target.ChangeRelation(Self, 10);
+        Self.InfoDetail.AddPerk(new Perk32(Self), true);
+        GC.CreateMessage(Self.Name + "请求升职");
         ResultText += Self.Name + "帮助" + Target.Name + "申请升职，向CEO申请升职，对方好感度上升10点，对方获得浅黄色情绪";
     }
     public override void Failure(float Posb)
@@ -9256,10 +9493,12 @@ public class Event2_67 : Event
         base.Failure(Posb);
         Self.AddEmotion(EColor.Blue);
         Target.ChangeRelation(Self, 5);
+        Self.InfoDetail.AddPerk(new Perk32(Self), true);
+        GC.CreateMessage(Self.Name + "请求升职");
         ResultText += Self.Name + "帮助" + Target.Name + "申请升职，对方好感度上升5点，获得浅蓝色情绪";
     }
 }
-
+//.
 public class Event2_68 : Event
 {
     public Event2_68() : base()
@@ -9274,6 +9513,12 @@ public class Event2_68 : Event
     public override bool RelationCheck()
     {
         if (Self.FindRelation(Target).RPoint < 20)
+            return false;
+        if (Self.CurrentOffice == null || (Target.CurrentDep == null && Target.CurrentOffice == null))
+            return false;
+        if (Target.CurrentDep != null && Self.CurrentOffice.ControledDeps.Contains(Target.CurrentDep) == false)
+            return false;
+        if (Target.CurrentOffice != null && Self.CurrentOffice.ControledOffices.Contains(Target.CurrentOffice) == false)
             return false;
         return base.RelationCheck();
     }
@@ -9339,7 +9584,7 @@ public class Event2_68 : Event
         ResultText += Self.Name + "提醒员工" + Target.Name + "注意工作状态，对方获得红色情绪，对方好感度-5";
     }
 }
-//!
+//.
 public class Event2_69 : Event
 {
     public Event2_69() : base()
@@ -9353,6 +9598,12 @@ public class Event2_69 : Event
     }
     public override bool RelationCheck()
     {
+        if (Self.CurrentOffice == null || (Target.CurrentDep == null && Target.CurrentOffice == null))
+            return false;
+        if (Target.CurrentDep != null && Self.CurrentOffice.ControledDeps.Contains(Target.CurrentDep) == false)
+            return false;
+        if (Target.CurrentOffice != null && Self.CurrentOffice.ControledOffices.Contains(Target.CurrentOffice) == false)
+            return false;
         return base.RelationCheck();
     }
     public override int ExtraValue()
@@ -9418,7 +9669,7 @@ public class Event2_69 : Event
         ResultText += Self.Name + "对部下" + Target.Name + "进行鼓励和表扬，对方获得浅蓝色情绪，对方好感度下降5点";
     }
 }
-//!!
+//.
 public class Event2_70 : Event
 {
     public Event2_70() : base()
@@ -9433,6 +9684,12 @@ public class Event2_70 : Event
     public override bool RelationCheck()
     {
         if (Self.FindRelation(Target).RPoint < 40)
+            return false;
+        if (Self.CurrentOffice == null || (Target.CurrentDep == null && Target.CurrentOffice == null))
+            return false;
+        if (Target.CurrentDep != null && Self.CurrentOffice.ControledDeps.Contains(Target.CurrentDep) == false)
+            return false;
+        if (Target.CurrentOffice != null && Self.CurrentOffice.ControledOffices.Contains(Target.CurrentOffice) == false)
             return false;
         return base.RelationCheck();
     }
@@ -9465,6 +9722,36 @@ public class Event2_70 : Event
         base.Success(Posb);
         Target.AddEmotion(EColor.DYellow);
         //对方所在部门所需技能经验+50
+        if (Self.CurrentDep != null)
+        {
+            if (Self.CurrentDep.type == EmpType.HR && Self.HR > Target.HR)
+                Self.GainExp(50, 8);
+            else if (Self.CurrentDep.type == EmpType.Tech && Self.Skill1 > Target.Skill1)
+                Self.GainExp(50, 1);
+            else if (Self.CurrentDep.type == EmpType.Market && Self.Skill2 > Target.Skill2)
+                Self.GainExp(50, 2);
+            else if (Self.CurrentDep.type == EmpType.Product && Self.Skill3 > Target.Skill3)
+                Self.GainExp(50, 3);
+        }
+        else if (Self.CurrentOffice != null)
+        {
+            if (Self.CurrentOffice.building.effectValue == 1 && Self.HR > Target.HR)
+                Self.GainExp(50, 8);
+            else if (Self.CurrentOffice.building.effectValue == 2 && Self.Gossip > Target.Gossip)
+                Self.GainExp(50, 15);
+            else if (Self.CurrentOffice.building.effectValue == 3 && Self.Strength > Target.Strength)
+                Self.GainExp(50, 6);
+            else if (Self.CurrentOffice.building.effectValue == 4 && Self.Strategy > Target.Strategy)
+                Self.GainExp(50, 12);
+            else if (Self.CurrentOffice.building.effectValue == 5 && Self.Forecast > Target.Forecast)
+                Self.GainExp(50, 11);
+            else if (Self.CurrentOffice.building.effectValue == 6 && Self.Decision > Target.Decision)
+                Self.GainExp(50, 10);
+            else if (Self.CurrentOffice.building.effectValue == 7 && Self.Finance > Target.Finance)
+                Self.GainExp(50, 9);
+            else if (Self.CurrentOffice.building.effectValue == 8 && Self.Manage > Target.Manage)
+                Self.GainExp(50, 7);
+        }
         ResultText += Self.Name + "向员工" + Target.Name + "传授经验，对方所在部门所需的技能经验+50，对方获得黄色情绪";
     }
     public override void Failure(float Posb)
@@ -9474,7 +9761,7 @@ public class Event2_70 : Event
         ResultText += Self.Name + "向员工" + Target.Name + "传授经验，对方获得浅蓝色情绪";
     }
 }
-//!?
+//.
 public class Event2_71 : Event
 {
     public Event2_71() : base()
@@ -9488,6 +9775,12 @@ public class Event2_71 : Event
     }
     public override bool RelationCheck()
     {
+        if (Self.CurrentOffice == null || (Target.CurrentDep == null && Target.CurrentOffice == null))
+            return false;
+        if (Target.CurrentDep != null && Self.CurrentOffice.ControledDeps.Contains(Target.CurrentDep) == false)
+            return false;
+        if (Target.CurrentOffice != null && Self.CurrentOffice.ControledOffices.Contains(Target.CurrentOffice) == false)
+            return false;
         return base.RelationCheck();
     }
     public override int ExtraValue()
@@ -9519,6 +9812,7 @@ public class Event2_71 : Event
         base.Success(Posb);
         Target.AddEmotion(EColor.DYellow);
         //对方成功率上升1%
+        Target.InfoDetail.AddPerk(new Perk30(Target), true);
         ResultText += Self.Name + "启发员工" + Target.Name + "的想法，对方成功率上升1%，对方获得黄色情绪";
     }
     public override void Failure(float Posb)
@@ -9528,7 +9822,7 @@ public class Event2_71 : Event
         ResultText += Self.Name + "启发员工" + Target.Name + "的想法，对方获得蓝色情绪";
     }
 }
-//!
+//.
 public class Event2_72 : Event
 {
     public Event2_72() : base()
@@ -9542,6 +9836,13 @@ public class Event2_72 : Event
     }
     public override bool RelationCheck()
     {
+        if (Target.CurrentOffice == null || (Self.CurrentDep == null && Self.CurrentOffice == null))
+            return false;
+        if (Self.CurrentDep != null && Target.CurrentOffice.ControledDeps.Contains(Self.CurrentDep) == false)
+            return false;
+        if (Self.CurrentOffice != null && Target.CurrentOffice.ControledOffices.Contains(Self.CurrentOffice) == false)
+            return false;
+
         return base.RelationCheck();
     }
     public override int ExtraValue()
@@ -9608,7 +9909,7 @@ public class Event2_72 : Event
         ResultText += Self.Name + "恭迎领导" + Target.Name + "上任，获得蓝色情绪，对方获得浅红色情绪";
     }
 }
-//!?
+//.!
 public class Event2_73 : Event
 {
     public Event2_73() : base()
@@ -9623,6 +9924,13 @@ public class Event2_73 : Event
     }
     public override bool RelationCheck()
     {
+        if (Target.CurrentOffice == null || (Self.CurrentDep == null && Self.CurrentOffice == null))
+            return false;
+        if (Self.CurrentDep != null && Target.CurrentOffice.ControledDeps.Contains(Self.CurrentDep) == false)
+            return false;
+        if (Self.CurrentOffice != null && Target.CurrentOffice.ControledOffices.Contains(Self.CurrentOffice) == false)
+            return false;
+
         return base.RelationCheck();
     }
     public override int ExtraValue()
@@ -9653,6 +9961,7 @@ public class Event2_73 : Event
     {
         base.Success(Posb);
         //获得对方的秘密
+
         ResultText += Self.Name + "尝试挖掘" + Target.Name + "的秘密，获得对方的秘密";
     }
     public override void Failure(float Posb)
@@ -9678,6 +9987,13 @@ public class Event2_74 : Event
     }
     public override bool RelationCheck()
     {
+        if (Target.CurrentOffice == null || (Self.CurrentDep == null && Self.CurrentOffice == null))
+            return false;
+        if (Self.CurrentDep != null && Target.CurrentOffice.ControledDeps.Contains(Self.CurrentDep) == false)
+            return false;
+        if (Self.CurrentOffice != null && Target.CurrentOffice.ControledOffices.Contains(Self.CurrentOffice) == false)
+            return false;
+
         return base.RelationCheck();
     }
     public override int ExtraValue()
@@ -9717,7 +10033,7 @@ public class Event2_74 : Event
         ResultText += Self.Name + "想要组成谋害" + Target.Name + "的派系，组建派系，阴谋谋害领导";
     }
 }
-//!!
+//..
 public class Event2_75 : Event
 {
     public Event2_75() : base()
@@ -9732,6 +10048,13 @@ public class Event2_75 : Event
     }
     public override bool RelationCheck()
     {
+        if (Target.CurrentOffice == null || (Self.CurrentDep == null && Self.CurrentOffice == null))
+            return false;
+        if (Self.CurrentDep != null && Target.CurrentOffice.ControledDeps.Contains(Self.CurrentDep) == false)
+            return false;
+        if (Self.CurrentOffice != null && Target.CurrentOffice.ControledOffices.Contains(Self.CurrentOffice) == false)
+            return false;
+
         return base.RelationCheck();
     }
     public override int ExtraValue()
@@ -9762,6 +10085,7 @@ public class Event2_75 : Event
     {
         base.Success(Posb);
         //对方工资增长10
+        Self.SalaryExtra += 10;
         Self.AddEmotion(EColor.Yellow);
         ResultText += Self.Name + "向领导" + Target.Name + "申请涨工资，领导答应，工资增长10，获得浅黄色情绪";
     }
@@ -9775,7 +10099,7 @@ public class Event2_75 : Event
         ResultText += Self.Name + "向领导" + Target.Name + "申请涨工资，双方好感度下降5，获得浅蓝色情绪，对方获得浅红色情绪";
     }
 }
-//!
+//.
 public class Event2_76 : Event
 {
     public Event2_76() : base()
@@ -9790,6 +10114,13 @@ public class Event2_76 : Event
     }
     public override bool RelationCheck()
     {
+        if (Target.CurrentOffice == null || (Self.CurrentDep == null && Self.CurrentOffice == null))
+            return false;
+        if (Self.CurrentDep != null && Target.CurrentOffice.ControledDeps.Contains(Self.CurrentDep) == false)
+            return false;
+        if (Self.CurrentOffice != null && Target.CurrentOffice.ControledOffices.Contains(Self.CurrentOffice) == false)
+            return false;
+
         return base.RelationCheck();
     }
     public override int ExtraValue()
@@ -9833,7 +10164,7 @@ public class Event2_76 : Event
         ResultText += Self.Name + "指责领导" + Target.Name + "无理取闹，对方获得红色情绪，双方好感度-10";
     }
 }
-//!
+//.
 public class Event2_77 : Event
 {
     public Event2_77() : base()
@@ -9848,6 +10179,13 @@ public class Event2_77 : Event
     }
     public override bool RelationCheck()
     {
+        if (Target.CurrentOffice == null || (Self.CurrentDep == null && Self.CurrentOffice == null))
+            return false;
+        if (Self.CurrentDep != null && Target.CurrentOffice.ControledDeps.Contains(Self.CurrentDep) == false)
+            return false;
+        if (Self.CurrentOffice != null && Target.CurrentOffice.ControledOffices.Contains(Self.CurrentOffice) == false)
+            return false;
+
         return base.RelationCheck();
     }
     public override int ExtraValue()
@@ -9914,7 +10252,7 @@ public class Event2_77 : Event
         ResultText += Self.Name + "向领导" + Target.Name + "讲述工作中遇到的困难，获得红色情绪，好感度-10";
     }
 }
-//!!
+//..
 public class Event2_78 : Event
 {
     public Event2_78() : base()
@@ -9930,7 +10268,23 @@ public class Event2_78 : Event
     }
     public override bool RelationCheck()
     {
+        if (Target.CurrentOffice == null || (Self.CurrentDep == null && Self.CurrentOffice == null))
+            return false;
+        if (Self.CurrentDep != null && Target.CurrentOffice.ControledDeps.Contains(Self.CurrentDep) == false)
+            return false;
+        if (Self.CurrentOffice != null && Target.CurrentOffice.ControledOffices.Contains(Self.CurrentOffice) == false)
+            return false;
+
         return base.RelationCheck();
+    }
+    public override bool SpecialCheck()
+    {
+        for (int i = 0; i < Self.CurrentItems.Count; i++)
+        {
+            if (Self.CurrentItems[i].Target == Target)
+                return true;
+        }
+        return false;
     }
     public override int ExtraValue()
     {
@@ -9971,7 +10325,7 @@ public class Event2_78 : Event
         ResultText += Self.Name + "用领导" + Target.Name + "的秘密进行威胁，对方获得蓝色情绪，对方好感度-10";
     }
 }
-//!
+//.
 public class Event2_79 : Event
 {
     public Event2_79() : base()
@@ -9988,6 +10342,13 @@ public class Event2_79 : Event
     {
         if (Self.FindRelation(Target).RPoint < 20)
             return false;
+        if (Target.CurrentOffice == null || (Self.CurrentDep == null && Self.CurrentOffice == null))
+            return false;
+        if (Self.CurrentDep != null && Target.CurrentOffice.ControledDeps.Contains(Self.CurrentDep) == false)
+            return false;
+        if (Self.CurrentOffice != null && Target.CurrentOffice.ControledOffices.Contains(Self.CurrentOffice) == false)
+            return false;
+
         return base.RelationCheck();
     }
     public override int ExtraValue()
@@ -10029,7 +10390,7 @@ public class Event2_79 : Event
         ResultText += Self.Name + "给领导" + Target.Name + "送红包，对方获得浅红色情绪，获得浅蓝色情绪，对方好感度-5";
     }
 }
-//!
+//.
 public class Event2_80 : Event
 {
     public Event2_80() : base()
@@ -10046,6 +10407,13 @@ public class Event2_80 : Event
     {
         if (Self.FindRelation(Target).RPoint < 20)
             return false;
+        if (Target.CurrentOffice == null || (Self.CurrentDep == null && Self.CurrentOffice == null))
+            return false;
+        if (Self.CurrentDep != null && Target.CurrentOffice.ControledDeps.Contains(Self.CurrentDep) == false)
+            return false;
+        if (Self.CurrentOffice != null && Target.CurrentOffice.ControledOffices.Contains(Self.CurrentOffice) == false)
+            return false;
+
         return base.RelationCheck();
     }
     public override int ExtraValue()
@@ -10085,7 +10453,7 @@ public class Event2_80 : Event
         ResultText += Self.Name + "给领导" + Target.Name + "送红包，获得浅蓝色情绪";
     }
 }
-//!
+//.
 public class Event2_81 : Event
 {
     public Event2_81() : base()
@@ -10102,6 +10470,13 @@ public class Event2_81 : Event
     {
         if (Self.FindRelation(Target).RPoint < 60)
             return false;
+        if (Target.CurrentOffice == null || (Self.CurrentDep == null && Self.CurrentOffice == null))
+            return false;
+        if (Self.CurrentDep != null && Target.CurrentOffice.ControledDeps.Contains(Self.CurrentDep) == false)
+            return false;
+        if (Self.CurrentOffice != null && Target.CurrentOffice.ControledOffices.Contains(Self.CurrentOffice) == false)
+            return false;
+
         return base.RelationCheck();
     }
     public override int ExtraValue()

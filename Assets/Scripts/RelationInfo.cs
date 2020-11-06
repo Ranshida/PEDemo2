@@ -17,6 +17,8 @@ public class Relation
     public RelationInfo Info;
     public Employee Target, Self;
 
+    public int[] EventFlag = new int[200];//事件状态开关
+
     public Relation(Employee target, Employee self)
     {
         Target = target;
