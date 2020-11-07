@@ -5401,6 +5401,8 @@ public class Event2_1 : Event
         base.Success(Posb);
         Self.ChangeRelation(Target, 10);
         Target.ChangeRelation(Self, 10);
+        //flag编号1：前置事件1的标记
+        Self.FindRelation(Target).EventFlag[1] = 1;
         ResultText += Self.Name + "与" + Target.Name + "在走廊里打了个招呼，对方获得了浅黄色情绪，好感度上升5点";
     }
 }
@@ -5556,12 +5558,21 @@ public class Event2_4 : Event
 {
     public Event2_4() : base()
     {
-        //前置事件：Event2_1
         EventName = "尬聊";
         HaveTarget = true;
         SelfEmotionRequire = new List<EColor>() { EColor.DBlue};
         TargetEmotionRequire = new List<EColor>() { };
         RelationRequire = 0;
+    }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_1
+        bool c = false;
+        if(Self.FindRelation(Target).EventFlag[1] == 1)
+        {
+            c = true;
+        }
+        return c;
     }
     public override bool RelationCheck()
     {
@@ -5611,12 +5622,21 @@ public class Event2_5 : Event
 {
     public Event2_5() : base()
     {
-        //前置事件：Event2_1
         EventName = "分享昨天发生的趣事";
         HaveTarget = true;
         SelfEmotionRequire = new List<EColor>() { EColor.DYellow };
         TargetEmotionRequire = new List<EColor>() { };
         RelationRequire = 0;
+    }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_1
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[1] == 1)
+        {
+            c = true;
+        }
+        return c;
     }
     public override bool RelationCheck()
     {
@@ -5668,12 +5688,24 @@ public class Event2_6 : Event
 {
     public Event2_6() : base()
     {
-        //前置事件：Event2_1
         EventName = "讨论天气和路况";
         HaveTarget = true;
         SelfEmotionRequire = new List<EColor>() { };
         TargetEmotionRequire = new List<EColor>() { };
         RelationRequire = 0;
+    }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_1
+        bool c = false;
+        foreach (int i in Self.FindRelation(Target).EventFlag)
+        {
+            if (i == 1)
+            {
+                c = true;
+            }
+        }
+        return c;
     }
     public override bool RelationCheck()
     {
@@ -5724,7 +5756,6 @@ public class Event2_7 : Event
 {
     public Event2_7() : base()
     {
-        //前置事件：Event2_1
         //要求：是自身关系发展目标
         EventName = "赠送礼物给对方";
         HaveTarget = true;
@@ -5777,12 +5808,18 @@ public class Event2_7 : Event
     }
     public override bool SpecialCheck()
     {
+        //前置事件：Event2_1
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[1] == 1)
+        {
+            c = true;
+        }
         if (Self.CurrentDep != null && Self.CurrentDep.CommandingOffice != null && Self.CurrentDep.CommandingOffice.CurrentManager == Target)
-            return true;
+            return true&c;
         else if (Self.CurrentDep != null && Self.CurrentDep.CurrentEmps.Contains(Target))
-            return true;
+            return true&c;
         else if (Self.RelationTargets.Contains(Target))
-            return true;
+            return true&c;
         return false;
     }
     public override void Success(float Posb)
@@ -5804,12 +5841,21 @@ public class Event2_8 : Event
 {
     public Event2_8() : base()
     {
-        //前置事件：Event2_1
         EventName = "指出对方缺点";
         HaveTarget = true;
         SelfEmotionRequire = new List<EColor>() { };
         TargetEmotionRequire = new List<EColor>() { };
         RelationRequire = 0;
+    }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_1
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[1] == 1)
+        {
+            c = true;
+        }
+        return c;
     }
     public override bool RelationCheck()
     {
@@ -5860,12 +5906,22 @@ public class Event2_9 : Event
 {
     public Event2_9() : base()
     {
-        //前置事件：Event2_1
-        EventName = "指出对方缺点";
+        EventName = "邀请";
         HaveTarget = true;
         SelfEmotionRequire = new List<EColor>() { EColor.Yellow };
         TargetEmotionRequire = new List<EColor>() { };
         RelationRequire = 0;
+        SubEvents = new List<Event> { new Event2_82(), new Event2_83(),new Event2_84(),new Event2_85() };
+    }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_1
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[1] == 1)
+        {
+            c = true;
+        }
+        return c;
     }
     public override bool RelationCheck()
     {
@@ -5907,7 +5963,7 @@ public class Event2_9 : Event
     public override void Failure(float Posb)
     {
         base.Failure(Posb);
-        Target.AddEmotion(EColor.DBlue);
+        Target.AddEmotion(EColor.Red);
         ResultText += Self.Name + "邀请" + Target.Name + "一起玩耍，对方获得浅红色情绪";
     }
 }
@@ -5916,12 +5972,21 @@ public class Event2_10 : Event
 {
     public Event2_10() : base()
     {
-        //前置事件：Event2_1
         EventName = "指出对方缺点";
         HaveTarget = true;
         SelfEmotionRequire = new List<EColor>() { EColor.Red };
         TargetEmotionRequire = new List<EColor>() { };
         RelationRequire = 0;
+    }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_1
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[1] == 1)
+        {
+            c = true;
+        }
+        return c;
     }
     public override bool RelationCheck()
     {
@@ -5972,12 +6037,21 @@ public class Event2_11 : Event
 {
     public Event2_11() : base()
     {
-        //前置事件：Event2_1
         EventName = "闲聊";
         HaveTarget = true;
         SelfEmotionRequire = new List<EColor>() { EColor.Red };
         TargetEmotionRequire = new List<EColor>() { };
         RelationRequire = 0;
+    }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_1
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[1] == 1)
+        {
+            c = true;
+        }
+        return c;
     }
     public override bool RelationCheck()
     {
@@ -6040,12 +6114,21 @@ public class Event2_12 : Event
 {
     public Event2_12() : base()
     {
-        //前置事件：Event2_1
         EventName = "结成朋友关系";
         HaveTarget = true;
         SelfEmotionRequire = new List<EColor>() { };
         TargetEmotionRequire = new List<EColor>() { };
         RelationRequire = 0;
+    }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_1
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[1] == 1)
+        {
+            c = true;
+        }
+        return c;
     }
     public override bool RelationCheck()
     {
@@ -6082,6 +6165,8 @@ public class Event2_12 : Event
         base.Success(Posb);
         Self.FindRelation(Target).FriendValue = 1;
         Target.FindRelation(Self).FriendValue = 1;
+        //flag编号2：前置事件12的标记
+        Self.FindRelation(Target).EventFlag[2] = 1;
         ResultText += Self.Name + "跟" + Target.Name + "结成朋友关系";
     }
     public override void Failure(float Posb)
@@ -6096,12 +6181,21 @@ public class Event2_13 : Event
 {
     public Event2_13() : base()
     {
-        //前置事件：Event2_12
         EventName = "开开玩笑";
         HaveTarget = true;
         SelfEmotionRequire = new List<EColor>() { };
         TargetEmotionRequire = new List<EColor>() { };
         RelationRequire = 0;
+    }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_12
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[2] == 1)
+        {
+            c = true;
+        }
+        return c;
     }
     public override bool RelationCheck()
     {
@@ -6174,12 +6268,21 @@ public class Event2_14 : Event
 {
     public Event2_14() : base()
     {
-        //前置事件：Event2_12
         EventName = "安慰朋友";
         HaveTarget = true;
         SelfEmotionRequire = new List<EColor>() { };
         TargetEmotionRequire = new List<EColor>() { EColor.DBlue, EColor.Purple, EColor.DPurple};//蓝色和浅紫色也可以
         RelationRequire = 0;
+    }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_12
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[2] == 1)
+        {
+            c = true;
+        }
+        return c;
     }
     public override bool RelationCheck()
     {
@@ -6250,12 +6353,21 @@ public class Event2_15 : Event
 {
     public Event2_15() : base()
     {
-        //前置事件：Event2_12
         EventName = "分享经验";
         HaveTarget = true;
         SelfEmotionRequire = new List<EColor>() { };
         TargetEmotionRequire = new List<EColor>() { EColor.DGreen, EColor.Green };//浅绿色也可以
         RelationRequire = 0;
+    }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_12
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[2] == 1)
+        {
+            c = true;
+        }
+        return c;
     }
     public override bool RelationCheck()
     {
@@ -6326,12 +6438,21 @@ public class Event2_16 : Event
 {
     public Event2_16() : base()
     {
-        //前置事件：Event2_12
         EventName = "倾听烦恼";
         HaveTarget = true;
         SelfEmotionRequire = new List<EColor>() { };
         TargetEmotionRequire = new List<EColor>() { EColor.DRed };
         RelationRequire = 0;
+    }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_12
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[2] == 1)
+        {
+            c = true;
+        }
+        return c;
     }
     public override bool RelationCheck()
     {
@@ -6402,12 +6523,21 @@ public class Event2_17 : Event
 {
     public Event2_17() : base()
     {
-        //前置事件：Event2_12
         EventName = "与对方在一起庆祝";
         HaveTarget = true;
         SelfEmotionRequire = new List<EColor>() { };
         TargetEmotionRequire = new List<EColor>() { EColor.Yellow };
         RelationRequire = 0;
+    }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_12
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[2] == 1)
+        {
+            c = true;
+        }
+        return c;
     }
     public override bool RelationCheck()
     {
@@ -6451,12 +6581,16 @@ public class Event2_17 : Event
     {
         base.MajorSuccess(Posb);
         Target.ChangeRelation(Self, 10);
+        //flag编号17：前置事件17的标记
+        Self.FindRelation(Target).EventFlag[3] = 1;
         ResultText += Self.Name + "与" + Target.Name + "一起庆祝，对方好感度上升10点";
     }
     public override void Success(float Posb)
     {
         base.Success(Posb);
         Target.ChangeRelation(Self, 5);
+        //flag编号3：前置事件17的标记
+        Self.FindRelation(Target).EventFlag[3] = 1;
         ResultText += Self.Name + "与" + Target.Name + "一起庆祝，对方好感度上升5点";
     }
     public override void Failure(float Posb)
@@ -6478,12 +6612,21 @@ public class Event2_18 : Event
 {
     public Event2_18() : base()
     {
-        //前置事件：Event2_17
         EventName = "分享合影";
         HaveTarget = true;
         SelfEmotionRequire = new List<EColor>() { };
         TargetEmotionRequire = new List<EColor>() { };
         RelationRequire = 0;
+    }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_17
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[3] == 1)
+        {
+            c = true;
+        }
+        return c;
     }
     public override bool RelationCheck()
     {
@@ -6533,12 +6676,21 @@ public class Event2_19 : Event
 {
     public Event2_19() : base()
     {
-        //前置事件：Event2_12
         EventName = "赠送亲手制作的礼物";
         HaveTarget = true;
         SelfEmotionRequire = new List<EColor>() { };
         TargetEmotionRequire = new List<EColor>() { };
         RelationRequire = 0;
+    }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_12
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[2] == 1)
+        {
+            c = true;
+        }
+        return c;
     }
     public override bool RelationCheck()
     {
@@ -6589,12 +6741,21 @@ public class Event2_20 : Event
 {
     public Event2_20() : base()
     {
-        //前置事件：Event2_12
         EventName = "邀请对方来家里做客";
         HaveTarget = true;
         SelfEmotionRequire = new List<EColor>() { };
         TargetEmotionRequire = new List<EColor>() { };
         RelationRequire = 0;
+    }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_12
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[2] == 1)
+        {
+            c = true;
+        }
+        return c;
     }
     public override bool RelationCheck()
     {
@@ -6645,12 +6806,21 @@ public class Event2_21 : Event
 {
     public Event2_21() : base()
     {
-        //前置事件：Event2_12
         EventName = "询问对方近况";
         HaveTarget = true;
         SelfEmotionRequire = new List<EColor>() { };
         TargetEmotionRequire = new List<EColor>() { };
         RelationRequire = 0;
+    }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_12
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[2] == 1)
+        {
+            c = true;
+        }
+        return c;
     }
     public override bool RelationCheck()
     {
@@ -6686,6 +6856,8 @@ public class Event2_21 : Event
     {
         base.Success(Posb);
         Target.ChangeRelation(Self, 5);
+        //flag编号4：前置事件21的标记
+        Self.FindRelation(Target).EventFlag[4] = 1;
         ResultText += Self.Name + "询问了" + Target.Name + "的近况，对方好感度+5";
     }
     public override void Failure(float Posb)
@@ -6699,12 +6871,21 @@ public class Event2_22 : Event
 {
     public Event2_22() : base()
     {
-        //前置事件：Event2_12
         EventName = "结成挚友";
         HaveTarget = true;
         SelfEmotionRequire = new List<EColor>() { };
         TargetEmotionRequire = new List<EColor>() { };
         RelationRequire = 0;
+    }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_12
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[2] == 1)
+        {
+            c = true;
+        }
+        return c;
     }
     public override bool RelationCheck()
     {
@@ -6741,6 +6922,8 @@ public class Event2_22 : Event
         base.Success(Posb);
         Target.FindRelation(Self).FriendValue = 2;
         Self.FindRelation(Target).FriendValue = 2;
+        //flag编号5：前置事件22的标记
+        Self.FindRelation(Target).EventFlag[5] = 1;
         ResultText += Self.Name + "与" + Target.Name + "结成了挚友";
     }
     public override void Failure(float Posb)
@@ -6755,13 +6938,22 @@ public class Event2_23 : Event
 {
     public Event2_23() : base()
     {
-        //前置事件：Event2_22
         EventName = "谈论婚姻和家庭";
         HaveTarget = true;
         SelfEmotionRequire = new List<EColor>() { };
         TargetEmotionRequire = new List<EColor>() { };
         RelationRequire = 0;
         //条件：本人有恋人
+    }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_22
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[5] == 1)
+        {
+            c = true;
+        }
+        return c;
     }
     public override bool RelationCheck()
     {
@@ -6837,12 +7029,21 @@ public class Event2_24 : Event
 {
     public Event2_24() : base()
     {
-        //前置事件：Event2_21
         EventName = "提供工作上的帮助";
         HaveTarget = true;
         SelfEmotionRequire = new List<EColor>() { };
         TargetEmotionRequire = new List<EColor>() { };
         RelationRequire = 0;
+    }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_21
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[4] == 1)
+        {
+            c = true;
+        }
+        return c;
     }
     public override bool RelationCheck()
     {
@@ -6890,12 +7091,21 @@ public class Event2_25 : Event
 {
     public Event2_25() : base()
     {
-        //前置事件：Event2_21
         EventName = "向对方寻求帮助";
         HaveTarget = true;
         SelfEmotionRequire = new List<EColor>() {};
         TargetEmotionRequire = new List<EColor>() {};
         RelationRequire = 0;
+    }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_21
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[4] == 1)
+        {
+            c = true;
+        }
+        return c;
     }
     public override bool RelationCheck()
     {
@@ -7152,6 +7362,8 @@ public class Event2_29 : Event
         base.Success(Posb);
         Target.ChangeRelation(Self, 5);
         Target.AddEmotion(EColor.Yellow);
+        //flag编号6：前置事件29的标记
+        Self.FindRelation(Target).EventFlag[6] = 1;
         ResultText += Self.Name + "假装在走廊里偶遇" + Target.Name + "对方好感度上升5点，对方获得浅黄色情绪";
     }
     public override void Failure(float Posb)
@@ -7167,12 +7379,21 @@ public class Event2_30 : Event
 {
     public Event2_30() : base()
     {
-        //前置事件：Event2_29
         EventName = "送给对方自己身上的饰品";
         HaveTarget = true;
         SelfEmotionRequire = new List<EColor>() { };
         TargetEmotionRequire = new List<EColor>() { };
         RelationRequire = 0;
+    }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_29
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[6] == 1)
+        {
+            c = true;
+        }
+        return c;
     }
     public override bool RelationCheck()
     {
@@ -7207,6 +7428,8 @@ public class Event2_30 : Event
         base.Success(Posb);
         Target.ChangeRelation(Self, 10);
         Target.AddEmotion(EColor.DYellow);
+        //flag编号7：前置事件30的标记
+        Self.FindRelation(Target).EventFlag[7] = 1;
         ResultText += Self.Name + "送给" + Target.Name + "自己身上的饰品，对方好感度上升10点，对方获得黄色情绪";
     }
     public override void Failure(float Posb)
@@ -7221,13 +7444,21 @@ public class Event2_31 : Event
 {
     public Event2_31() : base()
     {
-        //前置事件：Event2_30
         EventName = "与对方佩戴一样的戒指";
         HaveTarget = true;
         SelfEmotionRequire = new List<EColor>() { };
         TargetEmotionRequire = new List<EColor>() { };
         RelationRequire = 0;
-        //并且做过一次之后需要重新回到29，不然无法发生30和31
+    }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_30
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[7] == 1)
+        {
+            c = true;
+        }
+        return c;
     }
     public override bool RelationCheck()
     {
@@ -7262,6 +7493,8 @@ public class Event2_31 : Event
         base.Success(Posb);
         Target.ChangeRelation(Self, 10);
         Target.AddEmotion(EColor.Yellow);
+        //并且做过一次之后需要重新回到29，不然无法发生30和31
+        //这里要移除标记29和30（如果存在）
         ResultText += Self.Name + "与" + Target.Name + "佩戴一样的戒指，对方好感度上升10点，对方获得浅黄色情绪";
     }
     public override void Failure(float Posb)
@@ -7373,6 +7606,8 @@ public class Event2_33 : Event
         base.Success(Posb);
         Self.RemoveEmotion(EColor.DBlue);
         Self.ChangeRelation(Target, 10);
+        //flag编号8：前置事件33的标记
+        Self.FindRelation(Target).EventFlag[8] = 1;
         ResultText += Self.Name + "向" + Target.Name + "寻求安慰拥抱，解除蓝色情绪，好感度上升10点";
     }
     public override void Failure(float Posb)
@@ -7393,6 +7628,16 @@ public class Event2_34 : Event
         SelfEmotionRequire = new List<EColor>() { };
         TargetEmotionRequire = new List<EColor>() { };
         RelationRequire = 0;
+    }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_33
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[8] == 1)
+        {
+            c = true;
+        }
+        return c;
     }
     public override bool RelationCheck()
     {
@@ -7488,6 +7733,8 @@ public class Event2_35 : Event
         base.Success(Posb);
         Self.FindRelation(Target).LoveValue = 1;
         Target.FindRelation(Self).LoveValue = 1;
+        //flag编号9：前置事件35的标记
+        Self.FindRelation(Target).EventFlag[9] = 1;
         ResultText += Self.Name + "希望与" + Target.Name + "结为恋人，双方结成恋人";
     }
     public override void Failure(float Posb)
@@ -7503,12 +7750,21 @@ public class Event2_36 : Event
 {
     public Event2_36() : base()
     {
-        //前置事件：35
         EventName = "求婚";
         HaveTarget = true;
         SelfEmotionRequire = new List<EColor>() { };
         TargetEmotionRequire = new List<EColor>() { };
         RelationRequire = 7;
+    }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_35
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[9] == 1)
+        {
+            c = true;
+        }
+        return c;
     }
     public override bool RelationCheck()
     {
@@ -7656,6 +7912,8 @@ public class Event2_38 : Event
     public override void Success(float Posb)
     {
         base.Success(Posb);
+        //flag编号10：前置事件38的标记
+        Self.FindRelation(Target).EventFlag[10] = 1;
         ResultText += Self.Name + "没有理会" + Target.Name + "打招呼，无事发生";
     }
     public override void Failure(float Posb)
@@ -7725,13 +7983,22 @@ public class Event2_40 : Event
 {
     public Event2_40() : base()
     {
-        //前置事件：38
         EventName = "在厕所弄湿了对方的鞋子但没有道歉";
         HaveTarget = true;
         SelfEmotionRequire = new List<EColor>() { };
         TargetEmotionRequire = new List<EColor>() { };
         RelationRequire =0;
         //条件：对方不是己方上级
+    }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_35
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[10] == 1)
+        {
+            c = true;
+        }
+        return c;
     }
     public override bool RelationCheck()
     {//此处略过了RelationCheck下面的
@@ -7889,6 +8156,8 @@ public class Event2_42 : Event
     {
         base.Success(Posb);
         Target.ChangeRelation(Self, -5);
+        //flag编号11：前置事件42的标记
+        Self.FindRelation(Target).EventFlag[11] = 1;
         ResultText += Self.Name + "散播" + Target.Name + "的秘密，对方好感度下降5点";
     }
     public override void Failure(float Posb)
@@ -7910,6 +8179,16 @@ public class Event2_43 : Event
         SelfEmotionRequire = new List<EColor>() { };
         TargetEmotionRequire = new List<EColor>() { };
         RelationRequire = 0;
+    }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_35
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[11] == 1)
+        {
+            c = true;
+        }
+        return c;
     }
     public override bool RelationCheck()
     {
@@ -7943,6 +8222,8 @@ public class Event2_43 : Event
     {
         base.Success(Posb);
         Target.AddEmotion(EColor.Red);
+        //flag编号12：前置事件43的标记
+        Self.FindRelation(Target).EventFlag[12] = 1;
         ResultText += Self.Name + "散播" + Target.Name + "的秘密被否认，对方获得浅红色情绪";
     }
     public override void Failure(float Posb)
@@ -7965,6 +8246,16 @@ public class Event2_44 : Event
         TargetEmotionRequire = new List<EColor>() { };
         RelationRequire = 0;
         //做一次之后会回到42，做完42之前不能做43和44
+    }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_43或45
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[12] == 1 | Self.FindRelation(Target).EventFlag[13] == 1)
+        {
+            c = true;
+        }
+        return c;
     }
     public override bool RelationCheck()
     {
@@ -7998,6 +8289,9 @@ public class Event2_44 : Event
     {
         base.Success(Posb);
         Target.AddEmotion(EColor.DBlue);
+        Self.FindRelation(Target).EventFlag[11] = 0;
+        Self.FindRelation(Target).EventFlag[12] = 0;
+        Self.FindRelation(Target).EventFlag[13] = 0;
         ResultText += Self.Name + "拿出" + Target.Name + "秘密的实锤，对方获得蓝色情绪";
     }
     public override void Failure(float Posb)
@@ -8053,6 +8347,8 @@ public class Event2_45 : Event
     {
         base.Success(Posb);
         Target.AddEmotion(EColor.Red);
+        //flag编号13：前置事件45的标记
+        Self.FindRelation(Target).EventFlag[13] = 1;
         ResultText += Self.Name + "传说" + Target.Name + "的生活作风有问题，对方获得浅红色情绪";
     }
     public override void Failure(float Posb)
@@ -8109,6 +8405,8 @@ public class Event2_46 : Event
         base.Success(Posb);
         Target.ChangeRelation(Self, 5);
         Self.ChangeRelation(Target, 5);
+        //flag编号13：前置事件45的标记
+        Self.FindRelation(Target).EventFlag[14] = 1;
         ResultText += Self.Name + "与" + Target.Name + "的关系稍微缓和了一点，双方好感度上升5点";
     }
     public override void Failure(float Posb)
@@ -8124,12 +8422,21 @@ public class Event2_47 : Event
 {
     public Event2_47() : base()
     {
-        //前置事件：46
         EventName = "嘲笑仇人的品位";
         HaveTarget = true;
         SelfEmotionRequire = new List<EColor>() { };
         TargetEmotionRequire = new List<EColor>() { };
         RelationRequire = -2;
+    }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_46
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[14] == 1)
+        {
+            c = true;
+        }
+        return c;
     }
     public override bool RelationCheck()
     {
@@ -8184,6 +8491,16 @@ public class Event2_48 : Event
         TargetEmotionRequire = new List<EColor>() { };
         RelationRequire = -2;
     }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_46
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[14] == 1)
+        {
+            c = true;
+        }
+        return c;
+    }
     public override bool RelationCheck()
     {
         return base.RelationCheck();
@@ -8216,6 +8533,8 @@ public class Event2_48 : Event
     {
         base.Success(Posb);
         Target.ChangeRelation(Self, -5);
+        //flag编号15：前置事件48的标记
+        Self.FindRelation(Target).EventFlag[15] = 1;
         ResultText += Self.Name + "大声辱骂" + Target.Name + "，对方获得浅红色情绪，对方好感度-5";
     }
     public override void Failure(float Posb)
@@ -8236,6 +8555,16 @@ public class Event2_49 : Event
         SelfEmotionRequire = new List<EColor>() { EColor.DOrange };
         TargetEmotionRequire = new List<EColor>() { };
         RelationRequire = -2;
+    }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_46
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[14] == 1)
+        {
+            c = true;
+        }
+        return c;
     }
     public override bool RelationCheck()
     {
@@ -8289,6 +8618,16 @@ public class Event2_50 : Event
         SelfEmotionRequire = new List<EColor>() { EColor.DPurple };
         TargetEmotionRequire = new List<EColor>() { };
         RelationRequire = -2;
+    }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_46
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[14] == 1)
+        {
+            c = true;
+        }
+        return c;
     }
     public override bool RelationCheck()
     {
@@ -8344,6 +8683,16 @@ public class Event2_51 : Event
         SelfEmotionRequire = new List<EColor>() { };
         TargetEmotionRequire = new List<EColor>() { };
         RelationRequire = -2;
+    }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_48
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[15] == 1)
+        {
+            c = true;
+        }
+        return c;
     }
     public override bool RelationCheck()
     {
@@ -8540,6 +8889,8 @@ public class Event2_53 : Event
         Target.FindRelation(Self).MasterValue = 0;
         Self.Master = null;
         Target.Students.Remove(Self);
+        //flag编号16：前置事件53的标记
+        Self.FindRelation(Target).EventFlag[16] = 1;
         ResultText += Self.Name + "能力强于师傅" + Target.Name + "，选择了出师";
     }
     public override void Failure(float Posb)
@@ -8559,6 +8910,16 @@ public class Event2_54 : Event
         SelfEmotionRequire = new List<EColor>() { };
         TargetEmotionRequire = new List<EColor>() { };
         RelationRequire = 0;
+    }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_53
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[16] == 1)
+        {
+            c = true;
+        }
+        return c;
     }
     public override bool RelationCheck()
     {
@@ -8651,6 +9012,8 @@ public class Event2_55 : Event
         Self.ChangeRelation(Target, 10);
         Self.AddEmotion(EColor.DYellow);
         Target.AddEmotion(EColor.DYellow);
+        //flag编号17：前置事件55的标记
+        Self.FindRelation(Target).EventFlag[17] = 1;
         ResultText += Self.Name + "向" + Target.Name + "寻求工作上的帮助，获得黄色情绪，好感度上升10点";
     }
     public override void Failure(float Posb)
@@ -8672,6 +9035,16 @@ public class Event2_56 : Event
         SelfEmotionRequire = new List<EColor>() { };
         TargetEmotionRequire = new List<EColor>() { };
         RelationRequire = 0;
+    }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_55
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[17] == 1)
+        {
+            c = true;
+        }
+        return c;
     }
     public override bool RelationCheck()
     {
@@ -8738,8 +9111,10 @@ public class Event2_56 : Event
             else if (Self.CurrentOffice.building.effectValue == 8 && Self.Manage > Target.Manage)
                 Self.GainExp(50, 7);
         }
+        //flag编号18：前置事件56的标记
+        Self.FindRelation(Target).EventFlag[18] = 1;
 
-            ResultText += Self.Name + "请求" + Target.Name + "来办公室进行指导，成功率额外上升1%，获得办公室所需技能经验50点";
+        ResultText += Self.Name + "请求" + Target.Name + "来办公室进行指导，成功率额外上升1%，获得办公室所需技能经验50点";
     }
     public override void Failure(float Posb)
     {
@@ -8760,6 +9135,16 @@ public class Event2_57 : Event
         SelfEmotionRequire = new List<EColor>() { EColor.DBlue };
         TargetEmotionRequire = new List<EColor>() { };
         RelationRequire = 0;
+    }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_55
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[17] == 1)
+        {
+            c = true;
+        }
+        return c;
     }
     public override bool RelationCheck()
     {
@@ -8829,6 +9214,16 @@ public class Event2_58 : Event
         TargetEmotionRequire = new List<EColor>() { };
         RelationRequire = 0;
     }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_55
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[17] == 1)
+        {
+            c = true;
+        }
+        return c;
+    }
     public override bool RelationCheck()
     {
         return base.RelationCheck();
@@ -8884,6 +9279,16 @@ public class Event2_59 : Event
         TargetEmotionRequire = new List<EColor>() { };
         RelationRequire = 0;
     }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_56
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[18] == 1)
+        {
+            c = true;
+        }
+        return c;
+    }
     public override bool RelationCheck()
     {
         return base.RelationCheck();
@@ -8938,6 +9343,16 @@ public class Event2_60 : Event
         TargetEmotionRequire = new List<EColor>() { };
         RelationRequire = 0;
         //对方不能是师傅或者徒弟
+    }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_55
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[171] == 1)
+        {
+            c = true;
+        }
+        return c;
     }
     public override bool RelationCheck()
     {
@@ -9076,6 +9491,8 @@ public class Event2_61 : Event
             }
         }
         Self.AddEmotion(EColor.DYellow);
+        //flag编号19：前置事件60的标记
+        Self.FindRelation(Target).EventFlag[19] = 1;
         ResultText += Self.Name + "向" + Target.Name + "吸取经验，部门所需技能经验增长100点，获得黄色情绪";
     }
     public override void Failure(float Posb)
@@ -9145,6 +9562,16 @@ public class Event2_62 : Event
         TargetEmotionRequire = new List<EColor>() { };
         RelationRequire = 4;
     }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_60
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[19] == 1)
+        {
+            c = true;
+        }
+        return c;
+    }
     public override bool RelationCheck()
     {
         return base.RelationCheck();
@@ -9200,6 +9627,16 @@ public class Event2_63 : Event
         TargetEmotionRequire = new List<EColor>() { };
         RelationRequire = 4;
     }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_60
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[19] == 1)
+        {
+            c = true;
+        }
+        return c;
+    }
     public override bool RelationCheck()
     {
         return base.RelationCheck();
@@ -9254,6 +9691,16 @@ public class Event2_64 : Event
         SelfEmotionRequire = new List<EColor>() { };
         TargetEmotionRequire = new List<EColor>() { };
         RelationRequire = 4;
+    }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_60
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[19] == 1)
+        {
+            c = true;
+        }
+        return c;
     }
     public override bool RelationCheck()
     {
@@ -9885,6 +10332,8 @@ public class Event2_72 : Event
         Target.ChangeRelation(Self, 10);
         Self.ChangeRelation(Target, 10);
         Target.AddEmotion(EColor.DYellow);
+        //flag编号20：前置事件72的标记
+        Self.FindRelation(Target).EventFlag[20] = 1;
         ResultText += Self.Name + "恭迎领导" + Target.Name + "上任，双方获得黄色情绪，双方好感度上升10点";
     }
     public override void Success(float Posb)
@@ -9892,6 +10341,8 @@ public class Event2_72 : Event
         base.Success(Posb);
         Target.AddEmotion(EColor.Yellow);
         Self.AddEmotion(EColor.Yellow);
+        //flag编号20：前置事件72的标记
+        Self.FindRelation(Target).EventFlag[20] = 1;
         ResultText += Self.Name + "恭迎领导" + Target.Name + "上任，双方获得浅黄色情绪";
     }
     public override void Failure(float Posb)
@@ -9922,6 +10373,16 @@ public class Event2_73 : Event
         RelationRequire = -2;
         //对方是自己的上司
     }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_72
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[20] == 1)
+        {
+            c = true;
+        }
+        return c;
+    }
     public override bool RelationCheck()
     {
         if (Target.CurrentOffice == null || (Self.CurrentDep == null && Self.CurrentOffice == null))
@@ -9961,7 +10422,7 @@ public class Event2_73 : Event
     {
         base.Success(Posb);
         //获得对方的秘密
-
+        Self.CurrentItems.Add(new EmpItem(0, -1, Target));
         ResultText += Self.Name + "尝试挖掘" + Target.Name + "的秘密，获得对方的秘密";
     }
     public override void Failure(float Posb)
@@ -9985,6 +10446,16 @@ public class Event2_74 : Event
         RelationRequire = 0;
         //对方是自己的上司
     }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_72
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[20] == 1)
+        {
+            c = true;
+        }
+        return c;
+    }
     public override bool RelationCheck()
     {
         if (Target.CurrentOffice == null || (Self.CurrentDep == null && Self.CurrentOffice == null))
@@ -10024,6 +10495,7 @@ public class Event2_74 : Event
     {
         base.Success(Posb);
         //获得对方的秘密
+        Self.CurrentItems.Add(new EmpItem(0, -1, Target));
         ResultText += Self.Name + "想要组成谋害" + Target.Name + "的派系，最后打消了主意，好感度上升5点";
     }
     public override void Failure(float Posb)
@@ -10045,6 +10517,16 @@ public class Event2_75 : Event
         TargetEmotionRequire = new List<EColor>() { };
         RelationRequire = 0;
         //对方是自己的上司
+    }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_72
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[20] == 1)
+        {
+            c = true;
+        }
+        return c;
     }
     public override bool RelationCheck()
     {
@@ -10112,6 +10594,16 @@ public class Event2_76 : Event
         RelationRequire = 0;
         //对方是自己的上司
     }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_72
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[20] == 1)
+        {
+            c = true;
+        }
+        return c;
+    }
     public override bool RelationCheck()
     {
         if (Target.CurrentOffice == null || (Self.CurrentDep == null && Self.CurrentOffice == null))
@@ -10176,6 +10668,16 @@ public class Event2_77 : Event
         TargetEmotionRequire = new List<EColor>() { };
         RelationRequire = 0;
         //对方是自己的上司
+    }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_72
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[20] == 1)
+        {
+            c = true;
+        }
+        return c;
     }
     public override bool RelationCheck()
     {
@@ -10279,12 +10781,18 @@ public class Event2_78 : Event
     }
     public override bool SpecialCheck()
     {
+        //前置事件：Event2_72
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[20] == 1)
+        {
+            c = true;
+        }
         for (int i = 0; i < Self.CurrentItems.Count; i++)
         {
             if (Self.CurrentItems[i].Target == Target)
-                return true;
+                return true&c;
         }
-        return false;
+        return false&c;
     }
     public override int ExtraValue()
     {
@@ -10337,6 +10845,16 @@ public class Event2_79 : Event
         TargetEmotionRequire = new List<EColor>() { };
         RelationRequire = 0;
         //对方是自己的上司
+    }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_72
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[20] == 1)
+        {
+            c = true;
+        }
+        return c;
     }
     public override bool RelationCheck()
     {
@@ -10403,6 +10921,16 @@ public class Event2_80 : Event
         RelationRequire = 0;
         //对方是自己的上司
     }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_72
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[20] == 1)
+        {
+            c = true;
+        }
+        return c;
+    }
     public override bool RelationCheck()
     {
         if (Self.FindRelation(Target).RPoint < 20)
@@ -10466,6 +10994,16 @@ public class Event2_81 : Event
         RelationRequire = 0;
         //对方是自己的上司
     }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_72
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[20] == 1)
+        {
+            c = true;
+        }
+        return c;
+    }
     public override bool RelationCheck()
     {
         if (Self.FindRelation(Target).RPoint < 60)
@@ -10516,6 +11054,262 @@ public class Event2_81 : Event
         Self.AddEmotion(EColor.Blue);
         Target.ChangeRelation(Self, 5);
         ResultText += Self.Name + "夸奖领导" + Target.Name + "统领有方，对方好感度+5，获得浅蓝色情绪";
+    }
+}
+public class Event2_82 : Event
+{
+    public Event2_82() : base()
+    {
+        EventName = "邀请朋友一起吃饭";
+        HaveTarget = true;
+        SelfEmotionRequire = new List<EColor>() { EColor.Yellow };
+        TargetEmotionRequire = new List<EColor>() { };
+        RelationRequire = 0;
+    }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_1
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[1] == 1)
+        {
+            c = true;
+        }
+        return c;
+    }
+    public override bool RelationCheck()
+    {
+        if (Self.FindRelation(Target).RPoint < 40)
+            return false;
+        return base.RelationCheck();
+    }
+    public override int ExtraValue()
+    {
+        int Extra = 0;
+        Extra += (int)(Self.Charm * 0.2);
+
+        Extra += RelationBonus() + MoraleBonus() + CRBonus();
+        return Extra;
+    }
+    public override int FindResult()
+    {
+        int value = Random.Range(2, 13);
+        value += ExtraValue();
+        if (value < 7)
+        {
+            ResultText = "失败,";
+            return 2;
+        }
+        else
+        {
+            ResultText = "成功,";
+            return 3;
+        }
+        //1大失败 2失败 3成功 4大成功
+    }
+    public override void Success(float Posb)
+    {
+        base.Success(Posb);
+        Target.AddEmotion(EColor.Yellow);
+        Target.ChangeRelation(Self, 10);
+        ResultText += Self.Name + "邀请" + Target.Name + "一起吃饭，对方获得浅黄色情绪，对方好感度上升10点";
+    }
+    public override void Failure(float Posb)
+    {
+        base.Failure(Posb);
+        Target.AddEmotion(EColor.Blue);
+        ResultText += Self.Name + "邀请" + Target.Name + "一起吃饭，对方获得浅蓝色情绪";
+    }
+}
+public class Event2_83 : Event
+{
+    public Event2_83() : base()
+    {
+        EventName = "邀请朋友一起喝咖啡";
+        HaveTarget = true;
+        SelfEmotionRequire = new List<EColor>() { EColor.Yellow };
+        TargetEmotionRequire = new List<EColor>() { };
+        RelationRequire = 0;
+    }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_1
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[1] == 1)
+        {
+            c = true;
+        }
+        return c;
+    }
+    public override bool RelationCheck()
+    {
+        if (Self.FindRelation(Target).RPoint < 40)
+            return false;
+        return base.RelationCheck();
+    }
+    public override int ExtraValue()
+    {
+        int Extra = 0;
+        Extra += (int)(Self.Charm * 0.2);
+
+        Extra += RelationBonus() + MoraleBonus() + CRBonus();
+        return Extra;
+    }
+    public override int FindResult()
+    {
+        int value = Random.Range(2, 13);
+        value += ExtraValue();
+        if (value < 7)
+        {
+            ResultText = "失败,";
+            return 2;
+        }
+        else
+        {
+            ResultText = "成功,";
+            return 3;
+        }
+        //1大失败 2失败 3成功 4大成功
+    }
+    public override void Success(float Posb)
+    {
+        base.Success(Posb);
+        Target.AddEmotion(EColor.DYellow);
+        Target.ChangeRelation(Self, 10);
+        ResultText += Self.Name + "邀请" + Target.Name + "一起喝咖啡，对方获得黄色情绪，对方好感度上升10点";
+    }
+    public override void Failure(float Posb)
+    {
+        base.Failure(Posb);
+        Target.AddEmotion(EColor.DRed);
+        ResultText += Self.Name + "邀请" + Target.Name + "一起喝咖啡，对方获得红色情绪";
+    }
+}
+public class Event2_84 : Event
+{
+    public Event2_84() : base()
+    {
+        EventName = "邀请朋友一起玩游戏";
+        HaveTarget = true;
+        SelfEmotionRequire = new List<EColor>() { EColor.Yellow };
+        TargetEmotionRequire = new List<EColor>() { };
+        RelationRequire = 0;
+    }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_1
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[1] == 1)
+        {
+            c = true;
+        }
+        return c;
+    }
+    public override bool RelationCheck()
+    {
+        if (Self.FindRelation(Target).RPoint < 40)
+            return false;
+        return base.RelationCheck();
+    }
+    public override int ExtraValue()
+    {
+        int Extra = 0;
+        Extra += (int)(Self.Charm * 0.2);
+
+        Extra += RelationBonus() + MoraleBonus() + CRBonus();
+        return Extra;
+    }
+    public override int FindResult()
+    {
+        int value = Random.Range(2, 13);
+        value += ExtraValue();
+        if (value < 7)
+        {
+            ResultText = "失败,";
+            return 2;
+        }
+        else
+        {
+            ResultText = "成功,";
+            return 3;
+        }
+        //1大失败 2失败 3成功 4大成功
+    }
+    public override void Success(float Posb)
+    {
+        base.Success(Posb);
+        Target.AddEmotion(EColor.DYellow);
+        Target.ChangeRelation(Self, 10);
+        ResultText += Self.Name + "邀请" + Target.Name + "一起玩游戏，对方获得黄色情绪，对方好感度上升10点";
+    }
+    public override void Failure(float Posb)
+    {
+        base.Failure(Posb);
+        Target.AddEmotion(EColor.DRed);
+        ResultText += Self.Name + "邀请" + Target.Name + "一起玩游戏，对方获得浅红色情绪";
+    }
+}
+public class Event2_85 : Event
+{
+    public Event2_85() : base()
+    {
+        EventName = "邀请朋友去公共空间闲聊";
+        HaveTarget = true;
+        SelfEmotionRequire = new List<EColor>() { EColor.Yellow };
+        TargetEmotionRequire = new List<EColor>() { };
+        RelationRequire = 0;
+    }
+    public override bool SpecialCheck()
+    {
+        //前置事件：Event2_1
+        bool c = false;
+        if (Self.FindRelation(Target).EventFlag[1] == 1)
+        {
+            c = true;
+        }
+        return c;
+    }
+    public override bool RelationCheck()
+    {
+        if (Self.FindRelation(Target).RPoint < 40)
+            return false;
+        return base.RelationCheck();
+    }
+    public override int ExtraValue()
+    {
+        int Extra = 0;
+        Extra += (int)(Self.Charm * 0.2);
+
+        Extra += RelationBonus() + MoraleBonus() + CRBonus();
+        return Extra;
+    }
+    public override int FindResult()
+    {
+        int value = Random.Range(2, 13);
+        value += ExtraValue();
+        if (value < 7)
+        {
+            ResultText = "失败,";
+            return 2;
+        }
+        else
+        {
+            ResultText = "成功,";
+            return 3;
+        }
+        //1大失败 2失败 3成功 4大成功
+    }
+    public override void Success(float Posb)
+    {
+        base.Success(Posb);
+        Target.AddEmotion(EColor.DYellow);
+        Target.ChangeRelation(Self, 10);
+        ResultText += Self.Name + "邀请" + Target.Name + "去公共空间闲聊，对方获得黄色情绪，对方好感度上升10点";
+    }
+    public override void Failure(float Posb)
+    {
+        base.Failure(Posb);
+        Target.AddEmotion(EColor.Blue);
+        ResultText += Self.Name + "邀请" + Target.Name + "去公共空间闲聊，对方获得浅蓝色情绪";
     }
 }
 static public class EventData
