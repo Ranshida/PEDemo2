@@ -148,8 +148,7 @@ public class EmpEntity : MonoBehaviour
                 CurrentEvent.TimeLeft--;
                 if (CurrentEvent.TimeLeft <= 0)
                 {
-                    CurrentEvent.EventFinish();
-                    CurrentEvent = null;
+                    EventFinish();
                 }
             }
             //主动方控制
@@ -158,10 +157,7 @@ public class EmpEntity : MonoBehaviour
                 CurrentEvent.TimeLeft--;
                 if (CurrentEvent.TimeLeft <= 0)
                 {
-                    CurrentEvent.EventFinish();
-                    //主被动双方都清理掉
-                    CurrentEvent.TargetEntity.CurrentEvent = null;
-                    CurrentEvent = null;
+                    EventFinish();
                 }
             }
         }
@@ -170,25 +166,33 @@ public class EmpEntity : MonoBehaviour
         //if (Available)
         //    CheckEvents();
     }
+    void EventFinish()
+    {
+        CurrentEvent.EventFinish();
+        EventStage = 0;
+        EventTarget = null;
+        if (CurrentEvent.HaveTarget)
+        {
+            CurrentEvent.TargetEntity.CurrentEvent = null;
+            CurrentEvent.TargetEntity.EventStage = 0;
+        }
+        CurrentEvent = null;
+    }
 
     //员工主动发起的执行事件的指令
     public void SolveEvent()
     {
-        if (CurrentEvent==null)
-            Debug.LogError("无事件");
-
         if (!EventTarget.Available)
         {
-            Debug.Log("对方不可用");
-            EventStage = 0;
-            CurrentEvent = null;
+            Debug.Log(EmpName + "：对方不可用");
+            EventAbandon();
             return;
         }
 
-        Debug.Log("开始处理事件");
+        Debug.Log(EmpName + "：开始处理事件");
         EventStage = 3;
         EventTarget.CurrentEvent = CurrentEvent;
-        CurrentEvent.Target = EventTarget.ThisEmp;
+        EventTarget.EventStage = 3;
         CurrentEvent.isSolving = true;
     }
 
@@ -351,8 +355,8 @@ public class EmpEntity : MonoBehaviour
             }
             if (AvailableEmps.Count == 0)
             {
-                Debug.Log("没有任何可用对象");
-                EventStage = 0;
+                Debug.Log(EmpName + "：没有任何可用对象");
+                EventAbandon();
                 return;
             }
             EventTarget = AvailableEmps[Random.Range(0, AvailableEmps.Count)].InfoDetail.Entity;
@@ -360,8 +364,8 @@ public class EmpEntity : MonoBehaviour
 
         if(EventTarget == null)
         {
-            Debug.Log("没有任何可用对象");
-            EventStage = 0;
+            Debug.Log(EmpName + "：没有任何可用对象");
+            EventAbandon();
             return;
         }
 
@@ -369,8 +373,13 @@ public class EmpEntity : MonoBehaviour
         if (ThisEmp == EventTarget.ThisEmp)
             print("FalseB");
         CurrentEvent = ThisEmp.RandomEvent(EventTarget.InfoDetail.emp);
-        CurrentEvent.Self = ThisEmp;
         EventStage = 2;
+    }
+    void EventAbandon()
+    {
+        CurrentEvent = null;
+        EventStage = 0;
+        EventTarget = null;
     }
 
     //去当间谍
