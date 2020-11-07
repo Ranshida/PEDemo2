@@ -28,7 +28,7 @@ public class BTE_WaitEvent : BTE_Action
         {
             Movable.Value = true;
             StopDistance.Value = 1;
-            Destination.Value = ThisEntity.CurrentEvent.TargetEntity.transform.position;
+            Destination.Value = ThisEntity.EventTarget.transform.position;
 
             if (ThisEntity.CheckEventTarget()) //对象在游荡：进走廊时检查    对象在工作：进对方建筑检查
             {
