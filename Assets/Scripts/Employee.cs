@@ -1733,24 +1733,24 @@ public class Employee
     }
 
     //寻找其他可用员工
-    public List<Employee> FindAnotherEmp(Employee e)
+    public List<Employee> FindAnotherEmp()
     {
         List<Employee> EL = new List<Employee>();
-        if(e.CurrentOffice == null && e.CurrentDep == null)
+        if(CurrentOffice == null && CurrentDep == null)
         {
             for(int i = 0; i < GameControl.Instance.CurrentEmployees.Count; i++)
             {
                 if (GameControl.Instance.CurrentEmployees[i].CurrentOffice == null && 
-                    GameControl.Instance.CurrentEmployees[i].CurrentDep == null && GameControl.Instance.CurrentEmployees[i] != e)
+                    GameControl.Instance.CurrentEmployees[i].CurrentDep == null && GameControl.Instance.CurrentEmployees[i] != this)
                     EL.Add(GameControl.Instance.CurrentEmployees[i]);
             }
         }
-        else if (e.CurrentDep != null)
+        else if (CurrentDep != null)
         {
-            for(int i = 0; i < e.CurrentDep.CurrentEmps.Count; i++)
+            for(int i = 0; i < CurrentDep.CurrentEmps.Count; i++)
             {
-                if (e.CurrentDep.CurrentEmps[i] != e)
-                    EL.Add(e.CurrentDep.CurrentEmps[i]);
+                if (CurrentDep.CurrentEmps[i] != this)
+                    EL.Add(CurrentDep.CurrentEmps[i]);
             }
         }
         return EL;
