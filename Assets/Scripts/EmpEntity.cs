@@ -307,7 +307,6 @@ public class EmpEntity : MonoBehaviour
         {
             EventStage = 1;
             EventTarget = Ee;
-            print("Added");
         }
     }
 

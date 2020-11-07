@@ -16,7 +16,7 @@ public class Event
     public int ReligionRequire = 0; // 0无 1机械 2中庸 3人文
     public int RelationRequire = 0; //0无 1朋友 2挚友 3徒弟  4师傅 5倾慕 6追求 7情侣 8伴侣 -1陌路 -2仇人
     public int PerkRequire = 0; //特质需求(Perk编号)
-    public int TimeLeft = 4;
+    public int TimeLeft = 2;
     public bool HaveTarget = true;  //是否有目标
     public bool isSolving = false;
     public string EventName = "无";
