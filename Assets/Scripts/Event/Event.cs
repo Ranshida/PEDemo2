@@ -5355,6 +5355,7 @@ public class Event48 : Event
 
 #endregion
 
+#region 事件版本3
 //打招呼
 public class Event2_1 : Event
 {
@@ -11312,6 +11313,8 @@ public class Event2_85 : Event
         ResultText += Self.Name + "邀请" + Target.Name + "去公共空间闲聊，对方获得浅蓝色情绪";
     }
 }
+#endregion
+
 static public class EventData
 {
     #region 事件版本2内容

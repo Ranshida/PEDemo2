@@ -299,8 +299,12 @@ public class EmpEntity : MonoBehaviour
     ///寻找目标（事件版本2）
     public void AddEvent(EmpEntity Ee)
     {
-        EventStage = 1;
-        EventTarget = Ee;
+        if (Ee != null)
+        {
+            EventStage = 1;
+            EventTarget = Ee;
+            print("Added");
+        }
     }
 
     //检查自己和事件对象的位置，是否可以进行事件
@@ -338,7 +342,7 @@ public class EmpEntity : MonoBehaviour
         //当前对象不可用
         if (!EventTarget.Available)
         {
-            List<Employee> tempEmployees = EventTarget.ThisEmp.FindAnotherEmp();
+            List<Employee> tempEmployees = ThisEmp.FindAnotherEmp();
             List<Employee> AvailableEmps = new List<Employee>();
             foreach (Employee temp in tempEmployees)
             {
@@ -354,8 +358,17 @@ public class EmpEntity : MonoBehaviour
             EventTarget = AvailableEmps[Random.Range(0, AvailableEmps.Count)].InfoDetail.Entity;
         }
 
+        if(EventTarget == null)
+        {
+            Debug.Log("没有任何可用对象");
+            EventStage = 0;
+            return;
+        }
+
         //只给自己添加事件，去找对方
-        CurrentEvent = EventTarget.InfoDetail.emp.RandomEvent(EventTarget.InfoDetail.emp);
+        if (ThisEmp == EventTarget.ThisEmp)
+            print("FalseB");
+        CurrentEvent = ThisEmp.RandomEvent(EventTarget.InfoDetail.emp);
         CurrentEvent.Self = ThisEmp;
         EventStage = 2;
     }

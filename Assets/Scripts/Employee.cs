@@ -1685,7 +1685,9 @@ public class Employee
                 PosbEvents[j].Self = this;
                 PosbEvents[j].Target = e;
                 if (PosbEvents[j].ConditionCheck(-1) == true)
+                {
                     AddEvents.Add(PosbEvents[j].Clone());
+                }
                 PosbEvents[j].Self = null;
                 PosbEvents[j].Target = null;
                 if (AddEvents.Count == 5)
@@ -1729,6 +1731,8 @@ public class Employee
             if (TempEvent != null)
                 NewEvent = TempEvent.Clone();
         }
+        if (NewEvent == null)
+            MonoBehaviour.print("无合适事件");
         return NewEvent;
     }
 
