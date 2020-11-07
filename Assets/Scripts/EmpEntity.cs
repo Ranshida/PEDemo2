@@ -110,7 +110,7 @@ public class EmpEntity : MonoBehaviour
         if (WalkAround)
         {
             //如果到达路点，则计时
-            if (Function.XZDistance(transform, NextWP.transform) < 0.5f) 
+            if (Function.XZDistance(transform, NextWP.transform) < 2f) 
                 m_WPTimer += Time.deltaTime;
             //计时0.5s前往下一个路点
             if (m_WPTimer > 0.5f)

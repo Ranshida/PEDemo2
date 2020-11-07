@@ -27,6 +27,7 @@ public class BTE_Moving : BTE_Action
     {
         if (!MoveFlag.Value)
         {
+            navMeshAgent.speed = 0;
             return TaskStatus.Failure;
         }
         if (GameControl.Instance.ForceTimePause)
