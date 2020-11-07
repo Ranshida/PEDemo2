@@ -768,3 +768,69 @@ public class Perk29 : Perk
         base.RemoveEffect();
     }
 }
+
+//成功率上升
+public class Perk30 : Perk
+{
+    public Perk30(Employee Emp) : base(Emp)
+    {
+        Name = "成功率上升";
+        Description = "部门生产和办公室业务的成功率+1%";
+        TimeLeft = 32;
+        Num = 30;
+    }
+    public override void ImmEffect()
+    {
+        TargetEmp.ExtraSuccessRate += 0.01f;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetEmp.ExtraSuccessRate -= 0.01f;
+    }
+}
+
+//成功率下降
+public class Perk31 : Perk
+{
+    public Perk31(Employee Emp) : base(Emp)
+    {
+        Name = "成功率下降";
+        Description = "部门生产和办公室业务的成功率-1%";
+        TimeLeft = 32;
+        Num = 31;
+    }
+    public override void ImmEffect()
+    {
+        TargetEmp.ExtraSuccessRate -= 0.01f;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetEmp.ExtraSuccessRate += 0.01f;
+    }
+}
+
+//请求升职
+public class Perk32 : Perk
+{
+    public Perk32(Employee Emp) : base(Emp)
+    {
+        Name = "请求升职";
+        Description = "持续时间内没有升职会额外获得蓝色情绪";
+        TimeLeft = 16;
+        Num = 32;
+    }
+    public override void ImmEffect()
+    {
+        
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        if (TargetEmp.CurrentOffice == null)
+            TargetEmp.AddEmotion(EColor.Blue);
+        else if (TargetEmp.CurrentOffice.building.Type != BuildingType.CEO办公室 || TargetEmp.CurrentOffice.building.Type != BuildingType.高管办公室)
+            TargetEmp.AddEmotion(EColor.Blue);
+    }
+}

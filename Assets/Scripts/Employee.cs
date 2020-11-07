@@ -22,6 +22,19 @@ public class Emotion
     }
 }
 
+public class EmpItem
+{
+    public int Type, TimeLeft;
+    public Employee Target;
+
+    public EmpItem(int type, int timeleft = -1, Employee emp = null)
+    {
+        Type = type;
+        TimeLeft = timeleft;
+        Target = emp;
+    }
+}
+
 public class Employee
 {
     static public int HeadHuntLevel = 11;
@@ -31,6 +44,8 @@ public class Employee
     //1技术 2市场 3产品 Ob观察 Te坚韧 Str强壮 Ma管理 HR人力 Fi财务 De决策 Fo行业 St谋略 Co说服 
     //Ch魅力 Go八卦
     public int Confidence;//信心，头脑风暴中的护盾
+    public int NewRelationTargetTime = 1;
+    public float ExtraSuccessRate = 0;
     public int Stamina
     {
         get { return stamina; }
@@ -81,8 +96,10 @@ public class Employee
     public Clique CurrentClique;
 
     public List<Employee> Students = new List<Employee>();
+    public List<Employee> RelationTargets = new List<Employee>(); 
     public List<Relation> Relations = new List<Relation>();
-    public List<EColor> EColors = new List<EColor>();
+    public List<EmpItem> CurrentItems = new List<EmpItem>();
+    public List<Emotion> CurrentEmotions = new List<Emotion>();
 
     int mentality, stamina;
 
@@ -137,8 +154,6 @@ public class Employee
         }
 
         #endregion
-
-
 
         Type = type;
         //设定姓名并检查是否重名
@@ -471,7 +486,7 @@ public class Employee
                 Character[4] = Random.Range(0, 101);
         }
 
-        EventTime = Random.Range(6, 12);
+        EventTime = 8;
     }
 
     //初始化CEO属性
@@ -507,7 +522,7 @@ public class Employee
             if (i == 4)
                 Character[4] = Random.Range(0, 101);
         }
-        EventTime = Random.Range(6, 12);
+        EventTime = 8;
     }
 
     public void GainExp(int value, int type)
@@ -823,6 +838,63 @@ public class Employee
             InfoDetail.GC.CurrentEmployees[i].Relations.Add(new Relation(this, InfoDetail.GC.CurrentEmployees[i]));
         }
     }
+    //找到发展目标
+    public void FindRelationTarget()
+    {
+        List<Employee> EL = new List<Employee>();
+        RelationTargets.Clear();
+        for(int i = 0; i < InfoDetail.GC.CurrentEmployees.Count; i++)
+        {
+            if (InfoDetail.GC.CurrentEmployees[i] != this)
+                EL.Add(InfoDetail.GC.CurrentEmployees[i]);
+        }
+        if (CurrentDep != null)
+        {
+            for (int i = 0; i < CurrentDep.CurrentEmps.Count; i++)
+            {
+                if (CurrentDep.CurrentEmps[i] != this)
+                    EL.Remove(CurrentDep.CurrentEmps[i]);
+            }
+            if (CurrentDep.CommandingOffice != null && CurrentDep.CommandingOffice.CurrentManager != null)
+                EL.Remove(CurrentDep.CommandingOffice.CurrentManager);
+        }
+        else if (CurrentOffice != null && CurrentOffice.CommandingOffice != null && CurrentOffice.CommandingOffice.CurrentManager != null)
+            EL.Remove(CurrentOffice.CommandingOffice.CurrentManager);
+        for(int i = 0; i < 3; i++)
+        {
+            if(EL.Count > 1)
+            {
+                Employee NE = EL[Random.Range(0, EL.Count)];
+                RelationTargets.Add(NE);
+                EL.Remove(NE);
+            }
+        }
+    }
+
+    EmpEntity RandomEventTarget()
+    {
+        EmpEntity E = null;
+        List<Employee> EL = new List<Employee>();
+        for(int i = 0; i < RelationTargets.Count; i++)
+        {
+            EL.Add(RelationTargets[i]);
+        }
+        if (CurrentDep != null)
+        {
+            for (int i = 0; i < CurrentDep.CurrentEmps.Count; i++)
+            {
+                if (CurrentDep.CurrentEmps[i] != this)
+                    EL.Add(CurrentDep.CurrentEmps[i]);
+            }
+            if (CurrentDep.CommandingOffice != null && CurrentDep.CommandingOffice.CurrentManager != null)
+                EL.Add(CurrentDep.CommandingOffice.CurrentManager);
+        }
+        else if (CurrentOffice != null && CurrentOffice.CommandingOffice != null && CurrentOffice.CommandingOffice.CurrentManager != null)
+            EL.Add(CurrentOffice.CommandingOffice.CurrentManager);
+        if (EL.Count > 0)
+            E = EL[Random.Range(0, EL.Count)].InfoDetail.Entity;
+        return E;
+    }
 
     //改变跟目标的好感度并检查关系
     public void ChangeRelation(Employee target, int value)
@@ -848,6 +920,32 @@ public class Employee
                 return Relations[i];
         }
         return null;
+    }
+
+    //(开除时)清空所有关系,此为暂定方法,因为部分永久关系如夫妻按理说不应该清除
+    public void ClearRelations()
+    {
+        for(int i = 0; i < InfoDetail.GC.CurrentEmployees.Count; i++)
+        {
+            //从关系列表中移除
+            if (InfoDetail.GC.CurrentEmployees[i] != this)
+                InfoDetail.GC.CurrentEmployees[i].Relations.Remove(InfoDetail.GC.CurrentEmployees[i].FindRelation(this));
+            //从潜在发展对象中移除
+            if (InfoDetail.GC.CurrentEmployees[i].RelationTargets.Contains(this))
+                InfoDetail.GC.CurrentEmployees[i].RelationTargets.Remove(this);
+        }
+        //特殊关系移除
+        if (Lover != null)
+            Lover.Lover = null;
+        if (Master != null)
+            Master.Students.Remove(this);
+        else if (Students.Count > 0)
+        {
+            for(int i = 0; i < Students.Count; i++)
+            {
+                Students[i].Master = null;
+            }
+        }
     }
 
     //改变性格和信仰
@@ -1274,9 +1372,18 @@ public class Employee
     {
         EventTime -= 1;
         if (EventTime == 0)
+        {//事件版本2
+            //AddEvent();
+            //EventTime = Random.Range(12, 21);
+            EventTime = 8;
+            InfoDetail.Entity.AddEvent(RandomEventTarget());
+        }
+        //寻找新关系发展目标
+        NewRelationTargetTime -= 1;
+        if(NewRelationTargetTime == 0)
         {
-            AddEvent();
-            EventTime = Random.Range(12, 21);
+            FindRelationTarget();
+            NewRelationTargetTime = 192;
         }
 
         if (CurrentOffice == null)
@@ -1288,21 +1395,340 @@ public class Employee
             NoMarriageTime += 1;
         else if (FindRelation(Lover).LoveValue < 3)
             NoMarriageTime += 1;
+
+        //清除Items
+        if (CurrentItems.Count > 0)
+        {
+            List<EmpItem> DesItems = new List<EmpItem>();
+            for (int i = 0; i < CurrentItems.Count; i++)
+            {
+                if (CurrentItems[i].TimeLeft > 0)
+                    CurrentItems[i].TimeLeft -= 1;
+                if (CurrentItems[i].TimeLeft == 0)
+                    DesItems.Add(CurrentItems[i]);
+            }
+            for(int i = 0; i < DesItems.Count; i++)
+            {
+                CurrentItems.Remove(DesItems[i]);
+            }
+            DesItems.Clear();
+        }
     }
 
+    //增减情绪
     public void AddEmotion(EColor C)
     {
-
+        if (C == EColor.Yellow)
+        {
+            for (int i = 0; i < CurrentEmotions.Count; i++)
+            {
+                if (CurrentEmotions[i].color == EColor.Red)
+                {
+                    AddEmotion(EColor.Orange);
+                    AddEmotion(EColor.Orange);
+                    CurrentEmotions[i].Level -= 1;
+                    if (CurrentEmotions[i].Level == 0)
+                        CurrentEmotions.Remove(CurrentEmotions[i]);
+                    return;
+                }
+                else if (CurrentEmotions[i].color == EColor.Blue)
+                {
+                    AddEmotion(EColor.Green);
+                    AddEmotion(EColor.Green);
+                    CurrentEmotions[i].Level -= 1;
+                    if (CurrentEmotions[i].Level == 0)
+                        CurrentEmotions.Remove(CurrentEmotions[i]);
+                    return;
+                }
+                else if (CurrentEmotions[i].color == EColor.Yellow)
+                {
+                    if (CurrentEmotions[i].Level < 3)
+                        CurrentEmotions[i].Level += 1;
+                    return;
+                }
+            }
+        }
+        else if (C == EColor.Red)
+        {
+            for (int i = 0; i < CurrentEmotions.Count; i++)
+            {
+                if (CurrentEmotions[i].color == EColor.Yellow)
+                {
+                    AddEmotion(EColor.Orange);
+                    AddEmotion(EColor.Orange);
+                    CurrentEmotions[i].Level -= 1;
+                    if (CurrentEmotions[i].Level == 0)
+                        CurrentEmotions.Remove(CurrentEmotions[i]);
+                    return;
+                }
+                else if (CurrentEmotions[i].color == EColor.Blue)
+                {
+                    AddEmotion(EColor.Purple);
+                    AddEmotion(EColor.Purple);
+                    CurrentEmotions[i].Level -= 1;
+                    if (CurrentEmotions[i].Level == 0)
+                        CurrentEmotions.Remove(CurrentEmotions[i]);
+                    return;
+                }
+                else if (CurrentEmotions[i].color == EColor.Red)
+                {
+                    if (CurrentEmotions[i].Level < 3)
+                        CurrentEmotions[i].Level += 1;
+                    return;
+                }
+            }
+        }
+        else if (C == EColor.Blue)
+        {
+            for (int i = 0; i < CurrentEmotions.Count; i++)
+            {
+                if (CurrentEmotions[i].color == EColor.Yellow)
+                {
+                    AddEmotion(EColor.Green);
+                    AddEmotion(EColor.Green);
+                    CurrentEmotions[i].Level -= 1;
+                    if (CurrentEmotions[i].Level == 0)
+                        CurrentEmotions.Remove(CurrentEmotions[i]);
+                    return;
+                }
+                else if (CurrentEmotions[i].color == EColor.Red)
+                {
+                    AddEmotion(EColor.Purple);
+                    AddEmotion(EColor.Purple);
+                    CurrentEmotions[i].Level -= 1;
+                    if (CurrentEmotions[i].Level == 0)
+                        CurrentEmotions.Remove(CurrentEmotions[i]);
+                    return;
+                }
+                else if (CurrentEmotions[i].color == EColor.Blue)
+                {
+                    if (CurrentEmotions[i].Level < 3)
+                        CurrentEmotions[i].Level += 1;
+                    return;
+                }
+            }
+        }
+        else if (C == EColor.Orange)
+        {
+            for (int i = 0; i < CurrentEmotions.Count; i++)
+            {
+                if(CurrentEmotions[i].color == EColor.Orange)
+                {
+                    if (CurrentEmotions[i].Level < 3)
+                        CurrentEmotions[i].Level += 1;
+                    else
+                    {
+                        CurrentEmotions.Remove(CurrentEmotions[i]);
+                        AddEmotion(EColor.DOrange);
+                    }
+                    return;
+                }
+            }
+        }
+        else if (C == EColor.Purple)
+        {
+            for (int i = 0; i < CurrentEmotions.Count; i++)
+            {
+                if (CurrentEmotions[i].color == EColor.Purple)
+                {
+                    if (CurrentEmotions[i].Level < 3)
+                        CurrentEmotions[i].Level += 1;
+                    else
+                    {
+                        CurrentEmotions.Remove(CurrentEmotions[i]);
+                        AddEmotion(EColor.DPurple);
+                    }
+                    return;
+                }
+            }
+        }
+        else if (C == EColor.Green)
+        {
+            for (int i = 0; i < CurrentEmotions.Count; i++)
+            {
+                if (CurrentEmotions[i].color == EColor.Green)
+                {
+                    if (CurrentEmotions[i].Level < 3)
+                        CurrentEmotions[i].Level += 1;
+                    else
+                    {
+                        CurrentEmotions.Remove(CurrentEmotions[i]);
+                        AddEmotion(EColor.DGreen);
+                    }
+                    return;
+                }
+            }
+        }
+        else if (C == EColor.DYellow)
+        {
+            for (int i = 0; i < CurrentEmotions.Count; i++)
+            {
+                if (CurrentEmotions[i].color == EColor.DRed)
+                {
+                    AddEmotion(EColor.DOrange);
+                    AddEmotion(EColor.DOrange);
+                    CurrentEmotions[i].Level -= 1;
+                    if (CurrentEmotions[i].Level == 0)
+                        CurrentEmotions.Remove(CurrentEmotions[i]);
+                    return;
+                }
+                else if (CurrentEmotions[i].color == EColor.DBlue)
+                {
+                    AddEmotion(EColor.DGreen);
+                    AddEmotion(EColor.DGreen);
+                    CurrentEmotions[i].Level -= 1;
+                    if (CurrentEmotions[i].Level == 0)
+                        CurrentEmotions.Remove(CurrentEmotions[i]);
+                    return;
+                }
+                else if (CurrentEmotions[i].color == EColor.DYellow)
+                {
+                    CurrentEmotions[i].Level += 1;
+                    return;
+                }
+            }
+        }
+        else if (C == EColor.DRed)
+        {
+            for (int i = 0; i < CurrentEmotions.Count; i++)
+            {
+                if (CurrentEmotions[i].color == EColor.DYellow)
+                {
+                    AddEmotion(EColor.DOrange);
+                    AddEmotion(EColor.DOrange);
+                    CurrentEmotions[i].Level -= 1;
+                    if (CurrentEmotions[i].Level == 0)
+                        CurrentEmotions.Remove(CurrentEmotions[i]);
+                    return;
+                }
+                else if (CurrentEmotions[i].color == EColor.DBlue)
+                {
+                    AddEmotion(EColor.DPurple);
+                    AddEmotion(EColor.DPurple);
+                    CurrentEmotions[i].Level -= 1;
+                    if (CurrentEmotions[i].Level == 0)
+                        CurrentEmotions.Remove(CurrentEmotions[i]);
+                    return;
+                }
+                else if (CurrentEmotions[i].color == EColor.DRed)
+                {
+                    CurrentEmotions[i].Level += 1;
+                    return;
+                }
+            }
+        }
+        else if (C == EColor.DBlue)
+        {
+            for (int i = 0; i < CurrentEmotions.Count; i++)
+            {
+                if (CurrentEmotions[i].color == EColor.DYellow)
+                {
+                    AddEmotion(EColor.DGreen);
+                    AddEmotion(EColor.DGreen);
+                    CurrentEmotions[i].Level -= 1;
+                    if (CurrentEmotions[i].Level == 0)
+                        CurrentEmotions.Remove(CurrentEmotions[i]);
+                    return;
+                }
+                else if (CurrentEmotions[i].color == EColor.DRed)
+                {
+                    AddEmotion(EColor.DPurple);
+                    AddEmotion(EColor.DPurple);
+                    CurrentEmotions[i].Level -= 1;
+                    if (CurrentEmotions[i].Level == 0)
+                        CurrentEmotions.Remove(CurrentEmotions[i]);
+                    return;
+                }
+                else if (CurrentEmotions[i].color == EColor.DBlue)
+                {
+                    CurrentEmotions[i].Level += 1;
+                    return;
+                }
+            }
+        }
+        CurrentEmotions.Add(new Emotion(C));
     }
     public void RemoveEmotion(EColor C)
     {
-
+        for(int i = 0; i < CurrentEmotions.Count; i++)
+        {
+            if(CurrentEmotions[i].color == C)
+            {
+                CurrentEmotions[i].Level -= 1;
+                if (CurrentEmotions[i].Level == 0)
+                {
+                    CurrentEmotions.Remove(CurrentEmotions[i]);
+                    return;
+                }
+            }
+        }
     }
 
     //根据已知目标确定一个事件
     public Event RandomEvent(Employee e)
     {
         Event NewEvent = null;
+        List<Event> AddEvents = new List<Event>();
+        List<Event> PosbEvents = new List<Event>();
+        for (int i = 0; i < 4; i++)
+        {
+            if (i == 0)
+                PosbEvents = EventData.E4;
+            else if (i == 1)
+                PosbEvents = EventData.E3;
+            else if (i == 2)
+                PosbEvents = EventData.E2;
+            else
+                PosbEvents = EventData.E1;
+            for (int j = 0; j < PosbEvents.Count; j++)
+            {
+                PosbEvents[j].Self = this;
+                PosbEvents[j].Target = e;
+                if (PosbEvents[j].ConditionCheck(-1) == true)
+                    AddEvents.Add(PosbEvents[j].Clone());
+                PosbEvents[j].Self = null;
+                PosbEvents[j].Target = null;
+                if (AddEvents.Count == 5)
+                    break;
+            }
+            if (AddEvents.Count == 5)
+                break;
+        }
+        if (AddEvents.Count > 0)
+        {
+            float MaxPosb = 0, Posb = 0;
+            if (AddEvents.Count == 1)
+            {
+                NewEvent = AddEvents[0];
+                return NewEvent;
+            }
+            else if (AddEvents.Count == 2)
+                MaxPosb = 0.7f;
+            else if (AddEvents.Count == 3)
+                MaxPosb = 0.8f;
+            else if (AddEvents.Count == 4)
+                MaxPosb = 0.9f;
+            else if (AddEvents.Count == 5)
+                MaxPosb = 1.0f;
+            Posb = Random.Range(0.0f, MaxPosb);
+            if (Posb < 0.5f)
+                NewEvent = AddEvents[0];
+            else if (Posb < 0.7f)
+                NewEvent = AddEvents[1];
+            else if (Posb < 0.8f)
+                NewEvent = AddEvents[2];
+            else if (Posb < 0.9f)
+                NewEvent = AddEvents[3];
+            else if (Posb < 1.0f)
+                NewEvent = AddEvents[4];
+        }
+        //子事件检测
+        if (NewEvent != null)
+        {
+            Event TempEvent = NewEvent.SubEventCheck();
+            if (TempEvent != null)
+                NewEvent = TempEvent.Clone();
+        }
         return NewEvent;
     }
 
@@ -1310,6 +1736,23 @@ public class Employee
     public List<Employee> FindAnotherEmp(Employee e)
     {
         List<Employee> EL = new List<Employee>();
+        if(e.CurrentOffice == null && e.CurrentDep == null)
+        {
+            for(int i = 0; i < GameControl.Instance.CurrentEmployees.Count; i++)
+            {
+                if (GameControl.Instance.CurrentEmployees[i].CurrentOffice == null && 
+                    GameControl.Instance.CurrentEmployees[i].CurrentDep == null && GameControl.Instance.CurrentEmployees[i] != e)
+                    EL.Add(GameControl.Instance.CurrentEmployees[i]);
+            }
+        }
+        else if (e.CurrentDep != null)
+        {
+            for(int i = 0; i < e.CurrentDep.CurrentEmps.Count; i++)
+            {
+                if (e.CurrentDep.CurrentEmps[i] != e)
+                    EL.Add(e.CurrentDep.CurrentEmps[i]);
+            }
+        }
         return EL;
     }
 }

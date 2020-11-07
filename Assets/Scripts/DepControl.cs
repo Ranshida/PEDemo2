@@ -811,6 +811,7 @@ public class DepControl : MonoBehaviour
                     BaseSuccessRate += 0.06f;
                 else if (value > 21)
                     BaseSuccessRate += 0.1f;
+                BaseSuccessRate += CurrentEmps[i].ExtraSuccessRate;
             }
             if (CommandingOffice != null && CommandingOffice.CurrentManager != null)
             {

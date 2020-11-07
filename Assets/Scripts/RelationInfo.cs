@@ -13,9 +13,11 @@ public class Relation
     public int FriendValue = 0; //-2仇人 -1陌路 0普通 1朋友 2挚友 此处是指目标相对自身的关系(如目标是我的师傅)(此处可能造成目标方向问题)
     public int MasterValue = 0; //0无 1徒弟 2师傅
     public int LoveValue = 0;   //0无 1倾慕 2追求 3情侣 4伴侣
-    public int RPoint;
+    public int RPoint; //好感度
     public RelationInfo Info;
     public Employee Target, Self;
+
+    public int[] EventFlag = new int[200];//事件状态开关
 
     public Relation(Employee target, Employee self)
     {
