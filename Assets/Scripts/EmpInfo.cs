@@ -11,9 +11,9 @@ public class EmpInfo : MonoBehaviour
     public GameControl GC;
     public Button HireButton;
     public Text Text_Name, Text_Mentality, Text_Stamina, Text_Skill1, Text_Skill2, Text_Skill3,  Text_Ability, Text_Age;
-    public Text Text_DepName, Text_Observation, Text_Tenacity, Text_Strength, Text_Manage, Text_HR, Text_Finance, Text_Decision, 
+    public Text Text_DepName, Text_Observation, Text_Tenacity, Text_Strength, Text_Manage, Text_HR, Text_Finance, Text_Decision,
         Text_Forecast, Text_Strategy, Text_Convince, Text_Charm, Text_Gossip, Text_SName1, Text_SName2, Text_SName3,
-         Text_Motiv_Study, Text_Motiv_Recover, Text_Motive_Ambition, Text_Motiv_Social;
+         Text_Motiv_Study, Text_Motiv_Recover, Text_Motive_Ambition, Text_Motiv_Social, Text_Emotion, Text_RTarget;
     public Text[] Text_Stars = new Text[5], Text_Exps = new Text[5];
     public Scrollbar[] Scrollbar_Character = new Scrollbar[5];
     public EmpInfo DetailInfo;
@@ -477,6 +477,47 @@ public class EmpInfo : MonoBehaviour
         Text_Motiv_Recover.text = emp.CheckMotivationContent(1);
         Text_Motive_Ambition.text = emp.CheckMotivationContent(2);
         Text_Motiv_Social.text = emp.CheckMotivationContent(3);
+    }
+
+    public void UpdateEmotionPanel()
+    {
+        Text_Emotion.text = "当前情绪:";
+        for(int i = 0; i < emp.CurrentEmotions.Count; i++)
+        {
+            if (emp.CurrentEmotions[i].color == EColor.White)
+                Text_Emotion.text += "  白" + emp.CurrentEmotions[i].Level;
+            else if (emp.CurrentEmotions[i].color == EColor.Gray)
+                Text_Emotion.text += "  灰" + emp.CurrentEmotions[i].Level;
+            else if (emp.CurrentEmotions[i].color == EColor.Yellow)
+                Text_Emotion.text += "  淡黄" + emp.CurrentEmotions[i].Level;
+            else if (emp.CurrentEmotions[i].color == EColor.Red)
+                Text_Emotion.text += "  淡红" + emp.CurrentEmotions[i].Level;
+            else if (emp.CurrentEmotions[i].color == EColor.Blue)
+                Text_Emotion.text += "  淡蓝" + emp.CurrentEmotions[i].Level;
+            else if (emp.CurrentEmotions[i].color == EColor.Orange)
+                Text_Emotion.text += "  淡橙" + emp.CurrentEmotions[i].Level;
+            else if (emp.CurrentEmotions[i].color == EColor.Purple)
+                Text_Emotion.text += "  淡紫" + emp.CurrentEmotions[i].Level;
+            else if (emp.CurrentEmotions[i].color == EColor.Green)
+                Text_Emotion.text += "  淡绿" + emp.CurrentEmotions[i].Level;
+            else if (emp.CurrentEmotions[i].color == EColor.DYellow)
+                Text_Emotion.text += "  黄" + emp.CurrentEmotions[i].Level;
+            else if (emp.CurrentEmotions[i].color == EColor.DRed)
+                Text_Emotion.text += "  红" + emp.CurrentEmotions[i].Level;
+            else if (emp.CurrentEmotions[i].color == EColor.DBlue)
+                Text_Emotion.text += "  蓝" + emp.CurrentEmotions[i].Level;
+            else if (emp.CurrentEmotions[i].color == EColor.DOrange)
+                Text_Emotion.text += "  橙" + emp.CurrentEmotions[i].Level;
+            else if (emp.CurrentEmotions[i].color == EColor.DPurple)
+                Text_Emotion.text += "  紫" + emp.CurrentEmotions[i].Level;
+            else if (emp.CurrentEmotions[i].color == EColor.DGreen)
+                Text_Emotion.text += "  绿" + emp.CurrentEmotions[i].Level;
+        }
+        Text_RTarget.text = "发展目标:";
+        for(int i = 0; i < emp.RelationTargets.Count; i++)
+        {
+            Text_RTarget.text += "  " + emp.RelationTargets[i].Name;
+        }
     }
 
     //以下四个函数为战略充能相关

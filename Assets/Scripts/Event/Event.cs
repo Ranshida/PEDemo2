@@ -7202,6 +7202,8 @@ public class Event2_26 : Event
         base.Failure(Posb);
         Self.FindRelation(Target).LoveValue = 0;
         Target.FindRelation(Self).LoveValue = 0;
+        Self.Lover = null;
+        Target.Lover = null;
         ResultText += Self.Name + "向" + Target.Name + "提出分手，两人分手";
     }
 }
@@ -7734,6 +7736,8 @@ public class Event2_35 : Event
         base.Success(Posb);
         Self.FindRelation(Target).LoveValue = 1;
         Target.FindRelation(Self).LoveValue = 1;
+        Self.Lover = Target;
+        Target.Lover = Self;
         //flag编号9：前置事件35的标记
         Self.FindRelation(Target).EventFlag[9] = 1;
         ResultText += Self.Name + "希望与" + Target.Name + "结为恋人，双方结成恋人";
@@ -8790,6 +8794,7 @@ public class Event2_52 : Event
         Self.FindRelation(Target).MasterValue = 0;
         Target.FindRelation(Self).MasterValue = 0;
         Self.Master = null;
+        Target.Students.Remove(Self);
         ResultText += Self.Name + "由于" + Target.Name + "是仇人，解除了师徒关系";
     }
 }

@@ -486,7 +486,7 @@ public class Employee
                 Character[4] = Random.Range(0, 101);
         }
 
-        EventTime = 8;
+        EventTime = Random.Range(7,10);
     }
 
     //初始化CEO属性
@@ -1375,7 +1375,7 @@ public class Employee
         {//事件版本2
             //AddEvent();
             //EventTime = Random.Range(12, 21);
-            EventTime = 8;
+            EventTime = Random.Range(7, 10);
             InfoDetail.Entity.AddEvent(RandomEventTarget());
         }
         //寻找新关系发展目标
@@ -1669,6 +1669,7 @@ public class Employee
     {
         Event NewEvent = null;
         List<Event> AddEvents = new List<Event>();
+        List<Event> TempEvents = new List<Event>();
         List<Event> PosbEvents = new List<Event>();
         for (int i = 0; i < 4; i++)
         {
@@ -1686,15 +1687,24 @@ public class Employee
                 PosbEvents[j].Target = e;
                 if (PosbEvents[j].ConditionCheck(-1) == true)
                 {
-                    AddEvents.Add(PosbEvents[j].Clone());
+                    TempEvents.Add(PosbEvents[j].Clone());
                 }
                 PosbEvents[j].Self = null;
                 PosbEvents[j].Target = null;
-                if (AddEvents.Count == 5)
-                    break;
             }
-            if (AddEvents.Count == 5)
+            if (TempEvents.Count > 0)
+            {
+                int num = 5 - AddEvents.Count;
+                if (TempEvents.Count < num)
+                    num = TempEvents.Count;
+                for (int j = 0; j < num; j++)
+                {
+                    AddEvents.Add(TempEvents[Random.Range(0, num)]);
+                }
+            }
+            if (AddEvents.Count >= 5)
                 break;
+            TempEvents.Clear();
         }
         if (AddEvents.Count > 0)
         {
