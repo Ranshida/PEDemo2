@@ -108,14 +108,14 @@ public class DepControl : MonoBehaviour
     public bool canWork = false, EmpChanged = false;
 
     [HideInInspector] public Research CurrentResearch;
-    public Transform EmpContent, EmpPanel, LabPanel;
+    public Transform EmpContent, EmpPanel, LabPanel, SRateDetailPanel;
     public GameObject OfficeWarning;
     public Building building = null;
     public GameControl GC;
     public Task CurrentTask;
     public DepSelect DS;
     public OfficeControl CommandingOffice;
-    public Text Text_DepName, Text_Task, Text_Progress, Text_Quality, Text_Time, Text_Office, Text_Efficiency, Text_LevelDownTime;
+    public Text Text_DepName, Text_Task, Text_Progress, Text_Quality, Text_Time, Text_Office, Text_Efficiency, Text_LevelDownTime, Text_SRateDetail;
     public Button SurveyButton;
     public EmpType type;
 
@@ -776,6 +776,8 @@ public class DepControl : MonoBehaviour
             CommandingOffice.ControledDeps.Remove(this);
             CommandingOffice.CheckManage();
         }
+        if (SRateDetailPanel != null)
+            Destroy(SRateDetailPanel.gameObject);
         Destroy(DS.gameObject);
         Destroy(EmpPanel.gameObject);
         if (LabPanel != null)
@@ -787,12 +789,14 @@ public class DepControl : MonoBehaviour
     float CountSuccessRate(int type)
     {
         float BaseSuccessRate = 0;
+        Text_SRateDetail.text = "";
         //业务生产
         if (type == 1 && CurrentTask != null)
         {
             for (int i = 0; i < CurrentEmps.Count; i++)
             {
                 int value = 0;
+                float EValue = 0;
                 if ((int)CurrentTask.TaskType == 0)
                     value = CurrentEmps[i].Skill1;
                 else if ((int)CurrentTask.TaskType == 1)
@@ -800,22 +804,29 @@ public class DepControl : MonoBehaviour
                 else
                     value = CurrentEmps[i].Skill3;
                 if (value <= 5)
-                    BaseSuccessRate -= 0.15f;
+                    EValue -= 0.15f;
                 else if (value <= 9)
-                    BaseSuccessRate -= 0.05f;
+                    EValue -= 0.05f;
                 else if (value <= 13)
-                    BaseSuccessRate += 0;
+                    EValue += 0;
                 else if (value <= 17)
-                    BaseSuccessRate += 0.02f;
+                    EValue += 0.02f;
                 else if (value <= 21)
-                    BaseSuccessRate += 0.06f;
+                    EValue += 0.06f;
                 else if (value > 21)
                     BaseSuccessRate += 0.1f;
+                //文字显示
+                Text_SRateDetail.text += CurrentEmps[i].Name + "技能:" + (EValue * 100) + "%";
+                if (CurrentEmps[i].ExtraSuccessRate > 0.001f || CurrentEmps[i].ExtraSuccessRate < -0.001f)
+                    Text_SRateDetail.text += " +" + (CurrentEmps[i].ExtraSuccessRate * 100) + "%";
+                Text_SRateDetail.text += "\n";
+                BaseSuccessRate += EValue;
                 BaseSuccessRate += CurrentEmps[i].ExtraSuccessRate;
             }
             if (CommandingOffice != null && CommandingOffice.CurrentManager != null)
             {
                 int value = 0;
+                float EValue = 0;
                 if ((int)CurrentTask.TaskType == 0)
                     value = CommandingOffice.CurrentManager.Skill1;
                 else if ((int)CurrentTask.TaskType == 1)
@@ -823,17 +834,23 @@ public class DepControl : MonoBehaviour
                 else
                     value = CommandingOffice.CurrentManager.Skill3;
                 if (value <= 5)
-                    BaseSuccessRate -= 0.25f;
+                    EValue -= 0.25f;
                 else if (value <= 9)
-                    BaseSuccessRate -= 0.15f;
+                    EValue -= 0.15f;
                 else if (value <= 13)
-                    BaseSuccessRate -= 0.05f;
+                    EValue -= 0.05f;
                 else if (value <= 17)
-                    BaseSuccessRate += 0;
+                    EValue += 0;
                 else if (value <= 21)
-                    BaseSuccessRate += 0.05f;
+                    EValue += 0.05f;
                 else if (value > 21)
-                    BaseSuccessRate += 0.1f;
+                    EValue += 0.1f;
+                BaseSuccessRate += EValue;
+                BaseSuccessRate += CommandingOffice.CurrentManager.ExtraSuccessRate;
+                //文字显示
+                Text_SRateDetail.text += "高管" + CommandingOffice.CurrentManager.Name + "技能:" + (EValue * 100) + "%";
+                if (CommandingOffice.CurrentManager.ExtraSuccessRate > 0.001f || CommandingOffice.CurrentManager.ExtraSuccessRate < -0.001f)
+                    Text_SRateDetail.text += " +" + (CommandingOffice.CurrentManager.ExtraSuccessRate * 100) + "%";
             }
         }
         //招聘
@@ -842,34 +859,52 @@ public class DepControl : MonoBehaviour
             for (int i = 0; i < CurrentEmps.Count; i++)
             {
                 int value = CurrentEmps[i].HR;
+                float EValue = 0;
                 if (value <= 5)
-                    BaseSuccessRate -= 0.15f;
+                    EValue -= 0.15f;
                 else if (value <= 9)
-                    BaseSuccessRate -= 0.05f;
+                    EValue -= 0.05f;
                 else if (value <= 13)
-                    BaseSuccessRate += 0;
+                    EValue += 0;
                 else if (value <= 17)
-                    BaseSuccessRate += 0.02f;
+                    EValue += 0.02f;
                 else if (value <= 21)
-                    BaseSuccessRate += 0.06f;
+                    EValue += 0.06f;
                 else if (value > 21)
-                    BaseSuccessRate += 0.1f;
+                    EValue += 0.1f;
+                BaseSuccessRate += EValue;
+                BaseSuccessRate += CurrentEmps[i].ExtraSuccessRate;
+                //文字显示
+                Text_SRateDetail.text += CurrentEmps[i].Name + "技能:" + (EValue * 100) + "%";
+                if (CurrentEmps[i].ExtraSuccessRate > 0.001f || CurrentEmps[i].ExtraSuccessRate < -0.001f)
+                    Text_SRateDetail.text += " +" + (CurrentEmps[i].ExtraSuccessRate * 100) + "%";
+                Text_SRateDetail.text += "\n";
+                BaseSuccessRate += EValue;
+                BaseSuccessRate += CurrentEmps[i].ExtraSuccessRate;
             }
             if (CommandingOffice != null && CommandingOffice.CurrentManager != null)
             {
                 int value = CommandingOffice.CurrentManager.HR;
+                float EValue = 0;
                 if (value <= 5)
-                    BaseSuccessRate -= 0.25f;
+                    EValue -= 0.25f;
                 else if (value <= 9)
-                    BaseSuccessRate -= 0.15f;
+                    EValue -= 0.15f;
                 else if (value <= 13)
-                    BaseSuccessRate -= 0.05f;
+                    EValue -= 0.05f;
                 else if (value <= 17)
-                    BaseSuccessRate += 0;
+                    EValue += 0;
                 else if (value <= 21)
-                    BaseSuccessRate += 0.05f;
+                    EValue += 0.05f;
                 else if (value > 21)
-                    BaseSuccessRate += 0.1f;
+                    EValue += 0.1f;
+
+                BaseSuccessRate += EValue;
+                BaseSuccessRate += CommandingOffice.CurrentManager.ExtraSuccessRate;
+                //文字显示
+                Text_SRateDetail.text += "高管" + CommandingOffice.CurrentManager.Name + "技能:" + (EValue * 100) + "%";
+                if (CommandingOffice.CurrentManager.ExtraSuccessRate > 0.001f || CommandingOffice.CurrentManager.ExtraSuccessRate < -0.001f)
+                    Text_SRateDetail.text += " +" + (CommandingOffice.CurrentManager.ExtraSuccessRate * 100) + "%";
             }
         }
         return BaseSuccessRate;
@@ -905,5 +940,21 @@ public class DepControl : MonoBehaviour
             ExtraMajorSuccessRate = 0;
             Text_Efficiency.color = Color.red;
         }
+    }
+
+    public void ShowSRateDetailPanel()
+    {
+        if (type == EmpType.HR)
+            CountSuccessRate(2);
+        else
+            CountSuccessRate(1);
+        SRateDetailPanel.transform.position = Input.mousePosition;
+        SRateDetailPanel.gameObject.SetActive(true);
+        LayoutRebuilder.ForceRebuildLayoutImmediate(SRateDetailPanel.gameObject.GetComponent<RectTransform>());
+    }
+
+    public void CloseSRateDetailPanel()
+    {
+        SRateDetailPanel.gameObject.SetActive(false);
     }
 }

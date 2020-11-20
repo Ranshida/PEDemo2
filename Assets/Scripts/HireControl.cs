@@ -107,6 +107,8 @@ public class HireControl : MonoBehaviour
         ED.emp.InitRelation();
         GC.HourEvent.AddListener(ED.emp.TimePass);
         ED.SetSkillName();
+        //检测技能
+        ED.ST.InitSkill();
 
         //创建员工实体
         ED.Entity = EmpManager.Instance.CreateEmp(BuildingManage.Instance.ExitPos.position);
@@ -162,6 +164,8 @@ public class HireControl : MonoBehaviour
         EI2.DetailInfo = ED;
         EI1.transform.parent = GC.StandbyContent;
         emp.InitRelation();
+        //检测技能
+        ED.ST.InitSkill();
 
         //创建员工实体
         ED.Entity = EmpManager.Instance.CreateEmp(BuildingManage.Instance.ExitPos.position);

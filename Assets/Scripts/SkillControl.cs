@@ -16,10 +16,11 @@ public class SkillControl : MonoBehaviour
         }
     }
     //1发动技能后加一个1点骰子, 4下一个非基础技能消耗翻倍
-    public bool Sp1Active = false, AdvanceMobilize = false;
+    public bool AdvanceMobilize = false;
     //头脑风暴点数和无事件技能时间,2下一个基础技能获得点数倍率,3每用一个骰子头脑风暴点数+1
     //4非基础技能消耗倍率, 需要额外添加的点数1骰子数量
-    public int SelectNum = 0, CurrentPoint = 0, EventLimit = 0, Sp2Multiply = 0, Sp3Multiply = 0, Sp4Multiply = 0, Sp5Multiply = 0, BossHp = 0;
+    public int SelectNum = 0, CurrentPoint = 0, EventLimit = 0, Sp2Multiply = 0, Sp3Multiply = 0, Sp4Multiply = 0, Sp5Multiply = 0, 
+        BossHp = 0, Sp1Multiply = 0;
 
     public int DiceUseNum = 0;//用于记录每回合使用的骰子数量
     public int DotValue = 0;//每回合持续伤害(洞察)
@@ -263,7 +264,7 @@ public class SkillControl : MonoBehaviour
         CurrentPoint = 0;
         EventLimit = 0;
         TargetDep = null;
-        Sp1Active = false;
+        Sp1Multiply = 0;
         Sp2Multiply = 0;
         Sp3Multiply = 0;
         Sp4Multiply = 0;
@@ -398,8 +399,8 @@ public class SkillControl : MonoBehaviour
 
         SkillCheck();
 
-        if (Sp1Active == true)
-            CreateDice(1);
+        if (Sp1Multiply > 0)
+            CreateDice(Sp1Multiply);
         if (Sp2Multiply > 0 && CurrentSkill.skill.Type == SkillType.Basic)
         {
             //CurrentPoint += TempPoint * Sp2Multiply + TempPoint;
@@ -769,7 +770,7 @@ public class SkillControl : MonoBehaviour
             DotValue -= 1;
         ExtraDiceDamage = 0;//重置额外伤害
         SkillLockBonus = 0;//重置锁技能奖励层数
-        Sp1Active = false;//重置额外骰子奖励
+        Sp1Multiply = 0;//重置额外骰子奖励
         for(int i = 0; i < CurrentSkills.Count; i++)
         {
             //重置技能锁定时间

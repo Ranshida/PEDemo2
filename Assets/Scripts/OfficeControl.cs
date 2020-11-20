@@ -11,12 +11,13 @@ public class OfficeControl : MonoBehaviour
     public int ExpTime = 5;//每5工时加经验
 
     public GameObject OfficeWarning;
+    public Transform SRateDetailPanel;
     public Employee CurrentManager;
     public OfficeControl CommandingOffice;
     public DepSelect DS;
     public GameControl GC;
     public Building building;
-    public Text Text_OfficeName, Text_EmpName, Text_MAbility, Text_Progress, Text_OfficeMode, Text_TimeLeft, Text_SuccessRate;
+    public Text Text_OfficeName, Text_EmpName, Text_MAbility, Text_Progress, Text_OfficeMode, Text_TimeLeft, Text_SuccessRate, Text_SRateDetail;
     public Button ActiveButton, ModeChangeButton, SetCommaindgOfficeButton;
 
     public List<DepControl> ControledDeps = new List<DepControl>();
@@ -25,8 +26,11 @@ public class OfficeControl : MonoBehaviour
 
     private void Start()
     {
-        if(building.Type == BuildingType.CEO办公室)
+        if (building.Type == BuildingType.CEO办公室)
+        {
             GC.HourEvent.AddListener(TimePass);
+            SRateDetailPanel.parent = GC.SRateDetailContent;
+        }
         SetOfficeUI();
     }
 
@@ -272,7 +276,7 @@ public class OfficeControl : MonoBehaviour
         {
             if (GC.SC.TargetDep != null && building.effect.AffectedBuildings.Contains(GC.SC.TargetDep.building))
             {
-                GC.SC.Sp1Active = true;
+                GC.SC.Sp1Multiply += 1;
             }
             else
                 ActiveSuccess = false;
@@ -390,30 +394,45 @@ public class OfficeControl : MonoBehaviour
     public float CalcSuccessRate()
     {
         float BaseSRate = 0.6f;
+        Text_SRateDetail.text = "";
         if(CurrentManager != null)
         {
             int value = 0;
-
+            float EValue = 0;
             if (OfficeMode == 2 || OfficeMode == 4)
+            {
                 value = CurrentManager.HR;
+                Text_SRateDetail.text += CurrentManager.Name + "人力技能:";
+            }
             else if (OfficeMode == 3 || OfficeMode == 5)
+            { 
                 value = CurrentManager.Manage;
+                Text_SRateDetail.text += CurrentManager.Name + "管理技能:";
+            }
             else if (OfficeMode == 1)
+            { 
                 value = CurrentManager.Decision;
-
+                Text_SRateDetail.text += CurrentManager.Name + "决策技能:";
+            }
             if (value <= 5)
-                BaseSRate -= 0.15f;
+                EValue -= 0.15f;
             else if (value <= 9)
-                BaseSRate -= 0.05f;
+                EValue -= 0.05f;
             else if (value <= 13)
-                BaseSRate += 0.0f;
+                EValue += 0.0f;
             else if (value <= 17)
-                BaseSRate += 0.02f;
+                EValue += 0.02f;
             else if (value <= 21)
-                BaseSRate += 0.06f;
+                EValue += 0.06f;
             else if (value > 21)
-                BaseSRate += 0.1f;
+                EValue += 0.1f;
+            BaseSRate += EValue;
             BaseSRate += CurrentManager.ExtraSuccessRate;
+
+            //文字显示
+            Text_SRateDetail.text += (EValue * 100) + "%";
+            if (CurrentManager.ExtraSuccessRate > 0.001f || CurrentManager.ExtraSuccessRate < -0.001f)
+                Text_SRateDetail.text += " +" + (CurrentManager.ExtraSuccessRate * 100) + "%";
         }
         return BaseSRate;
     }
@@ -608,7 +627,22 @@ public class OfficeControl : MonoBehaviour
         }
         GC.HourEvent.RemoveListener(TimePass);
         GC.CurrentOffices.Remove(this);
+        if (SRateDetailPanel != null)
+            Destroy(SRateDetailPanel.gameObject);
         Destroy(DS.gameObject);
         Destroy(this.gameObject);
+    }
+
+    public void ShowSRateDetailPanel()
+    {
+        CalcSuccessRate();
+        SRateDetailPanel.transform.position = Input.mousePosition;
+        SRateDetailPanel.gameObject.SetActive(true);
+        LayoutRebuilder.ForceRebuildLayoutImmediate(SRateDetailPanel.gameObject.GetComponent<RectTransform>());
+    }
+
+    public void CloseSRateDetailPanel()
+    {
+        SRateDetailPanel.gameObject.SetActive(false);
     }
 }

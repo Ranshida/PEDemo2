@@ -77,7 +77,7 @@ public class GameControl : MonoBehaviour
     public FOEControl foeControl;
     public EventControl EC;
     public CEOControl CC;
-    public Transform HireContent, EmpPanelContent, DepContent, DepSelectContent, TotalEmpContent, StandbyContent, EmpDetailContent, MessageContent;
+    public Transform HireContent, EmpPanelContent, DepContent, DepSelectContent, TotalEmpContent, StandbyContent, EmpDetailContent, MessageContent, SRateDetailContent;
     public InfoPanel infoPanel;
     public GameObject DepSelectPanel, StandbyButton, MessagePrefab, CEOSkillPanel, EmpTrainingPanel, GameOverPanel, OfficeModeSelectPanel, OfficeModeHireOptionButton;
     public Text Text_Time, Text_TechResource, Text_MarketResource, Text_ProductResource, Text_Money, Text_Stamina, Text_Mentality, Text_Morale;
@@ -268,7 +268,9 @@ public class GameControl : MonoBehaviour
             newDep = Instantiate(HRDepPrefab, this.transform);
 
         newDep.EmpPanel.parent = EmpPanelContent;
-        if(newDep.LabPanel != null)
+        if (newDep.SRateDetailPanel != null)
+            newDep.SRateDetailPanel.parent = SRateDetailContent;
+        if (newDep.LabPanel != null)
             newDep.LabPanel.parent = EmpPanelContent;
         newDep.transform.parent = DepContent;
 
@@ -338,6 +340,8 @@ public class GameControl : MonoBehaviour
         newOffice.DS.OC = newOffice;
         newOffice.DS.GC = this;
 
+        if (newOffice.SRateDetailPanel != null)
+            newOffice.SRateDetailPanel.parent = SRateDetailContent;
         return newOffice;
     }
 

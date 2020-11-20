@@ -19,6 +19,7 @@ public class EmpInfo : MonoBehaviour
     public EmpInfo DetailInfo;
     public Transform PerkContent, SkillContent, StrategyContent, RelationContent, HistoryContent;
     public StrategyInfo CurrentStrategy;
+    public SkillTree ST;
 
     public List<PerkInfo> PerksInfo = new List<PerkInfo>();
     public List<SkillInfo> SkillsInfo = new List<SkillInfo>();
@@ -149,7 +150,6 @@ public class EmpInfo : MonoBehaviour
         HireButton.interactable = true;
         SetSkillName();
         InitSkillAndStrategy();
-        emp.NewSkillCheck();
     }
 
     //初始化头脑风暴技能和战略
@@ -162,10 +162,9 @@ public class EmpInfo : MonoBehaviour
         //    NewSkill.TargetEmp = this.emp;
         //    AddSkill(NewSkill);
         //}
-        Skill NewSkill = new Skill32();
-        NewSkill.TargetEmp = this.emp;
-        AddSkill(NewSkill);
-
+        //Skill NewSkill = new Skill32();
+        //NewSkill.TargetEmp = this.emp;
+        //AddSkill(NewSkill);
         AddThreeRandomStrategy();
     }
 
@@ -370,14 +369,44 @@ public class EmpInfo : MonoBehaviour
             newPerk.CurrentPerk.AddEffect();
     }
 
+    //增减头脑风暴技能
     public void AddSkill(Skill skill)
     {
         SkillInfo newSkill = Instantiate(GC.SkillInfoPrefab, SkillContent);
         newSkill.skill = skill;
+        newSkill.skill.TargetEmp = emp;
         newSkill.Text_Name.text = skill.Name;
         newSkill.empInfo = this;
         newSkill.info = GC.infoPanel;
         SkillsInfo.Add(newSkill);
+        print("SkillAdd");
+    }
+    public void ReplaceSkill(Skill OriginSkill, Skill NewSkill)
+    {
+        for (int i = 0; i < SkillsInfo.Count; i++)
+        {
+            if (SkillsInfo[i].skill.Name == OriginSkill.Name)
+            {
+                SkillsInfo[i].skill = NewSkill;
+                SkillsInfo[i].Text_Name.text = NewSkill.Name;
+                return;
+            }
+        }
+        //如果没找到替换技能
+        AddSkill(NewSkill);
+    }
+    public void RemoveSkill(Skill skill)
+    {
+        for(int i = 0; i < SkillsInfo.Count; i++)
+        {
+            if(SkillsInfo[i].skill == skill)
+            {
+                SkillInfo s = SkillsInfo[i];
+                SkillsInfo.RemoveAt(i);
+                Destroy(s.gameObject);
+                break;
+            }
+        }
     }
 
     public void AddStrategy(int num)
