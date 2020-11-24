@@ -313,22 +313,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fbf92dd024df3634eb7e2476cd848a6b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ID: 38
+  Name: 
+  Size: 
+  Function_A: 
+  Require_A: 
+  Description_A: 
+  Function_B: 
+  Require_B: 
+  Description_B: 
+  Function_C: 
+  Require_C: 
+  Description_C: 
+  EffectRange: 
+  Jobs: 0
   Length: 3
   Width: 2
   effectValue: 1
   StaminaRequest: 0
   Type: 22
+  ContainsGrids: []
   Department: {fileID: 0}
   Office: {fileID: 0}
   effect:
-    CurrentBuilding: {fileID: 0}
+    CurrentBuilding: {fileID: -2279394563660855739}
     AffectedBuildings: []
-  Text_DepName: {fileID: 0}
+  Text_DepName: {fileID: 9134986252420583427}
   WorkPos:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 1686117107464734877}
+  - {fileID: 3196484883794732774}
+  - {fileID: 6327154006531856258}
+  - {fileID: 2079608741687803007}
   EffectBuildings: []
 --- !u!1 &4838049746527906403
 GameObject:

@@ -347,22 +347,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fbf92dd024df3634eb7e2476cd848a6b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ID: 8
   Length: 3
   Width: 2
   effectValue: 1
   StaminaRequest: 0
   Type: 7
+  ContainsGrids: []
   Department: {fileID: 0}
   Office: {fileID: 0}
   effect:
-    CurrentBuilding: {fileID: 0}
+    CurrentBuilding: {fileID: -2279394563660855739}
     AffectedBuildings: []
-  Text_DepName: {fileID: 0}
+  Text_DepName: {fileID: 9134986252420583427}
   WorkPos:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 7378168013624461060}
+  - {fileID: 7907801573959215569}
+  - {fileID: 2643579056862754029}
+  - {fileID: 7978456098141787482}
   EffectBuildings: []
 --- !u!1 &4683177457741714469
 GameObject:

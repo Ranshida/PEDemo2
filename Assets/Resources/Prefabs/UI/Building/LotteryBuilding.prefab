@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 51541316786512624}
   - component: {fileID: 3163814644687062327}
   - component: {fileID: 6295037413544575533}
+  - component: {fileID: 1712004067263488082}
   m_Layer: 5
   m_Name: LotteryBuilding
   m_TagString: Untagged
@@ -138,6 +139,18 @@ MonoBehaviour:
       m_Calls: []
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!114 &1712004067263488082
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1828007926257772337}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 75a548468f7bd5e44af34ab3bec72360, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4533599855904271880
 GameObject:
   m_ObjectHideFlags: 0
@@ -173,7 +186,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 330.1, y: 150}
+  m_SizeDelta: {x: 250, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7020268312732033296
 CanvasRenderer:

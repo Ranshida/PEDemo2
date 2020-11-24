@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -20,11 +22,13 @@ public class BuildingManage : MonoBehaviour
     public Transform ExitPos;
 
     //初始化
-    private GameObject lotteryBuilding;    //抽卡的UI按钮图标
-    private GameObject wareBuilding;      //仓库中的临时建筑
+    private GameObject lotteryBuilding;        //抽卡的UI按钮图标
+    private BuildingDescription description;   //抽卡的建筑描述
+    private GameObject wareBuilding;       //仓库中的临时建筑
     private GameObject[] buildingPrefabs;  //建筑预制体
-    private Dictionary<BuildingType, GameObject> m_AllBuildingDict;   //<建筑类型，预制体> 的字典
-    private Dictionary<BuildingType, GameObject> m_SelectDict;   //<建筑类型，预制体> 的字典
+    private Dictionary<BuildingType, GameObject> m_AllBuildingDict;   //  <建筑类型，预制体> 的字典
+    private Dictionary<BuildingType, GameObject> m_SelectDict;        //可以抽取的建筑字典  <建筑类型，预制体> 的字典
+    public string[,] BuildingExcelValue;
 
     //准备建造的建筑
     private int m_GridX;
@@ -75,9 +79,12 @@ public class BuildingManage : MonoBehaviour
         buildingPrefabs = ResourcesLoader.LoadAll<GameObject>("Prefabs/Scene/Buildings");
         CEOBuilding = ResourcesLoader.LoadPrefab("Prefabs/Scene/Buildings/CEO办公室");
         m_EffectHalo = Instantiate(ResourcesLoader.LoadPrefab("Prefabs/Scene/EffectHalo"), transform);
+        BuildingExcelValue = ExcelTool.ReadAsString(Application.dataPath + "/StreamingAssets/Excel/BuildingFunction.xlsx");
+
         foreach (GameObject prefab in buildingPrefabs)
         {
             Building building = prefab.GetComponent<Building>();
+            building.LoadPrefab(BuildingExcelValue);
             m_AllBuildingDict.Add(building.Type, prefab);
         }
         foreach (GameObject prefab in buildingPrefabs)
@@ -102,6 +109,8 @@ public class BuildingManage : MonoBehaviour
         selectBuildingPanel = transform.Find("SelectBuilding");
         btn_EnterBuildMode = transform.Find("Btn_BuildMode").GetComponent<Button>();
         btn_FinishBuild = transform.Find("WarePanel/Btn_Finish").GetComponent<Button>();
+        description = lotteryPanel.Find("BuildingDescriptionPanel").GetComponent<BuildingDescription>();
+        description.Init();
 
         m_EffectHalo.SetActive(false);
         InitBuilding(BuildingType.CEO办公室, new Int2(13, 1));
@@ -152,11 +161,13 @@ public class BuildingManage : MonoBehaviour
         if (!GridContainer.Instance)
             return;
 
-        //if (Input.GetKeyDown(KeyCode.T))
-        //    Lottery(3);
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            Lottery(3);
+        }
 
-            //屏幕射线命中地面
-            if (CameraController.TerrainHit && !CameraController.IsPointingUI)
+        //屏幕射线命中地面
+        if (CameraController.TerrainHit && !CameraController.IsPointingUI)
                 AimingPosition = new Vector3(CameraController.TerrainRaycast.point.x, 0, CameraController.TerrainRaycast.point.z);
             else
                 AimingPosition = new Vector3(-1000, 0, 0);
@@ -327,7 +338,7 @@ public class BuildingManage : MonoBehaviour
         }
         for (int i = 0; i < count; i++)
         {
-            Building temp = buildingList[Random.Range(0, buildingList.Count)];
+            Building temp = buildingList[UnityEngine.Random.Range(0, buildingList.Count)];
             tempBuildings.Add(temp);
             buildingList.Remove(temp);
         }
@@ -335,9 +346,8 @@ public class BuildingManage : MonoBehaviour
         {
             Transform panel = GameObject.Instantiate(lotteryBuilding, lotteryList).transform;
             lotteryUI.Add(panel);
-            panel.name = building.Type.ToString();
-            panel.GetComponentInChildren<Text>().text = building.Type.ToString();
-            panel.GetComponent<Button>().onClick.AddListener(() =>
+            LotteryBuilding lottery = panel.GetComponent<LotteryBuilding>();
+            Action action = () =>
             {
                 StartBuildNew(building.Type);
                 lotteryPanel.gameObject.SetActive(false);
@@ -347,7 +357,23 @@ public class BuildingManage : MonoBehaviour
                     Destroy(ui.gameObject);
                 }
                 lotteryUI.Clear();
-            });
+            };
+
+            lottery.Init(description, building, building.Type.ToString(), action);
+                
+            //panel.name = building.Type.ToString();
+            //panel.GetComponentInChildren<Text>().text = building.Type.ToString();
+            //panel.GetComponent<Button>().onClick.AddListener(() =>
+            //{
+            //    StartBuildNew(building.Type);
+            //    lotteryPanel.gameObject.SetActive(false);
+            //    warePanel.gameObject.SetActive(true);
+            //    foreach (Transform ui in lotteryUI)
+            //    {
+            //        Destroy(ui.gameObject);
+            //    }
+            //    lotteryUI.Clear();
+            //});
         }
     }
     //放弃这次抽奖

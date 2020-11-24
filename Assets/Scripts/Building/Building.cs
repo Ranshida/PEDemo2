@@ -5,6 +5,22 @@ using UnityEngine.UI;
 
 public class Building : MonoBehaviour
 {
+    public int ID;                             //见建筑物Excel中的行数
+    public string Name;   
+    public string Size;                        //尺寸str（a×b）
+    public string Function_A;                  //建筑的功能1
+    public string Require_A;                   //技能需求
+    public string Description_A;               //建筑功能1的描述
+    public string Function_B;
+    public string Require_B;
+    public string Description_B;
+    public string Function_C;
+    public string Require_C;
+    public string Description_C;
+
+    public string EffectRange;                        //影响范围str
+    public string Jobs;                             //岗位数量
+
     public int Length;
     public int Width;
     public bool BuildingSet { get; private set; } = false;   //设置完毕不再动
@@ -13,7 +29,7 @@ public class Building : MonoBehaviour
     public BuildingType Type;    //现在是创建时赋值，需改为预制体赋值或子类构造
     private GameObject m_Decoration;   //修饰物，建造后删除
 
-    public List<Grid> ContainsGrids { get; private set; }   //所包含的格子
+    public List<Grid> ContainsGrids;   //所包含的格子
     public DepControl Department; //BM赋值
     public OfficeControl Office;  //BM赋值
     public BuildingEffect effect;
@@ -21,19 +37,41 @@ public class Building : MonoBehaviour
     public List<Transform> WorkPos;
     public List<BuildingEffect> EffectBuildings = new List<BuildingEffect>();
 
-    private void Awake()
+    //BUildingManager加载此建筑预制体
+    public void LoadPrefab(string[,] value)
     {
-        ContainsGrids = new List<Grid>();
-        effect = new BuildingEffect(this);
-        WorkPos = new List<Transform>();
         WorkPos = Function.ReturnChildList(transform.Find("WorkPosition"));
         m_Decoration = transform.Find("Decoration").gameObject;
         Text_DepName = transform.Find("Description").GetComponent<TextMesh>();
+
+        if (ID < 3)
+            return;
+        Name = value[ID, 1];
+        Size = value[ID, 5];
+        EffectRange = value[ID, 6];
+        Jobs = value[ID, 4];
+        Function_A = value[ID, 11];
+        Require_A = value[ID, 13];
+        Description_A = value[ID, 14];
+        Function_B = value[ID, 16];
+        Require_B = value[ID, 18];
+        Description_B = value[ID, 19];
+        Function_C = value[ID, 21];
+        Require_C = value[ID, 23];
+        Description_C = value[ID, 24];
+    }
+
+    private void Awake()
+    {
+   
     }
 
     //确定建造
     public void Build(List<Grid> grids)
     {
+        ContainsGrids = new List<Grid>();
+        effect = new BuildingEffect(this);
+
         BuildingSet = true;
         Moving = false;
         foreach (Grid grid in grids)
