@@ -132,10 +132,6 @@ public class GameControl : MonoBehaviour
     {
         Hour += 1;
         HourEvent.Invoke();
-        for(int i = 0; i < CurrentDeps.Count; i++)
-        {
-            CurrentDeps[i].Produce();
-        }
         if (Hour > 8)
         {
             //for(int i = 0; i < CurrentDeps.Count; i++)
@@ -314,6 +310,7 @@ public class GameControl : MonoBehaviour
         }
         newDep.Text_DepName.text = newDepName + num;
         newDep.GC = this;
+        HourEvent.AddListener(newDep.Produce);
 
         //创建对应按钮
         newDep.DS = Instantiate(DepSelectButtonPrefab, DepSelectContent);
@@ -716,20 +713,20 @@ public class GameControl : MonoBehaviour
         }
         else if (num == 3 && Stamina >= 50)
         {
-            CEOSkillNum = 3;
-            CEOSkillPanel.SetActive(false);
-            List<OfficeControl> TempOffices = new List<OfficeControl>();
-            for(int i = 0; i < CurrentOffices.Count; i++)
-            {
-                BuildingType T = CurrentOffices[i].building.Type;
-                if (T == BuildingType.目标修正小组 || T == BuildingType.档案管理室 || T == BuildingType.效能研究室 || T == BuildingType.财务部 
-                    || T == BuildingType.战略咨询部B || T == BuildingType.精确标准委员会)
-                {
-                    TempOffices.Add(CurrentOffices[i]);
-                }
-            }
-            ShowDepSelectPanel(TempOffices);
-            SelectMode = 6;
+            //CEOSkillNum = 3;
+            //CEOSkillPanel.SetActive(false);
+            //List<OfficeControl> TempOffices = new List<OfficeControl>();
+            //for(int i = 0; i < CurrentOffices.Count; i++)
+            //{
+            //    BuildingType T = CurrentOffices[i].building.Type;
+            //    if (T == BuildingType.目标修正小组 || T == BuildingType.档案管理室 || T == BuildingType.效能研究室 || T == BuildingType.财务部 
+            //        || T == BuildingType.战略咨询部B || T == BuildingType.精确标准委员会)
+            //    {
+            //        TempOffices.Add(CurrentOffices[i]);
+            //    }
+            //}
+            //ShowDepSelectPanel(TempOffices);
+            //SelectMode = 6;
         }
         else if(num == 4 && Stamina >= 20)
         {

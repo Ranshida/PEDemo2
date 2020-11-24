@@ -165,37 +165,16 @@ public class OfficeControl : MonoBehaviour
         if (extra > 0.2f)
             extra2 = extra - 0.2f;
 
-        if (building.Type == BuildingType.人力资源部A)
-        {       
-            int value = 0;
-            if (Posb < 0.2f - extra)
-                value = 20;
-            else if (Posb < 0.8f - extra2)
-                value = 10;
-            else
-                value = 5;
-            value = (int)(value * GC.HRBuildingMentalityExtra);
-            DepControl d = GC.CurrentDep;
-            for (int i = 0; i < d.CurrentEmps.Count; i++)
-            {
-                d.CurrentEmps[i].Mentality += value;
-                int StarNum = Random.Range(0, 6);
-                if (d.CurrentEmps[i].Stars[StarNum] < d.CurrentEmps[i].StarLimit[StarNum] * 5)
-                {
-                    d.CurrentEmps[i].Stars[StarNum] += 1;                   
-                }
-            }
-        }
-        else if(building.Type == BuildingType.心理咨询室)
+        if (building.Type == BuildingType.心理咨询室)
         {
             //还没写！
         }
-        else if(building.Type == BuildingType.按摩房)
+        else if (building.Type == BuildingType.按摩房)
         {
             List<DepControl> TDep = new List<DepControl>();
-            for(int i = 0; i < building.effect.AffectedBuildings.Count; i++)
+            for (int i = 0; i < building.effect.AffectedBuildings.Count; i++)
             {
-                if(building.effect.AffectedBuildings[i].Department != null)
+                if (building.effect.AffectedBuildings[i].Department != null)
                 {
                     TDep.Add(building.effect.AffectedBuildings[i].Department);
                 }
@@ -207,7 +186,7 @@ public class OfficeControl : MonoBehaviour
                 value = 30;
             else
                 value = 10;
-            for(int a = 0; a < TDep.Count; a++)
+            for (int a = 0; a < TDep.Count; a++)
             {
                 for (int i = 0; i < TDep[a].CurrentEmps.Count; i++)
                 {
@@ -217,7 +196,7 @@ public class OfficeControl : MonoBehaviour
             if (TDep.Count == 0)
                 ActiveSuccess = false;
         }
-        else if(building.Type == BuildingType.健身房)
+        else if (building.Type == BuildingType.健身房)
         {
             List<DepControl> TDep = new List<DepControl>();
             for (int i = 0; i < building.effect.AffectedBuildings.Count; i++)
@@ -247,40 +226,6 @@ public class OfficeControl : MonoBehaviour
             if (TDep.Count == 0)
                 ActiveSuccess = false;
         }
-        else if(building.Type == BuildingType.目标修正小组)
-        {
-            if (GC.SC.TargetDep != null && building.effect.AffectedBuildings.Contains(GC.SC.TargetDep.building) && GC.SC.SelectedDices.Count == 3)
-            {
-                GC.SC.TotalValue = 0;
-                for (int i = 0; i < GC.SC.SelectedDices.Count; i++)
-                {
-                    GC.SC.SelectedDices[i].RandomValue();
-                    GC.SC.TotalValue += GC.SC.SelectedDices[i].value;
-                }
-            }
-            else
-                ActiveSuccess = false;
-        }
-        else if (building.Type == BuildingType.档案管理室)
-        {
-            if (GC.SC.TargetDep != null && building.effect.AffectedBuildings.Contains(GC.SC.TargetDep.building) && GC.SC.SelectedDices.Count == 1)
-            {
-                GC.SC.SelectedDices[0].value += 1;
-                GC.SC.SelectedDices[0].Text_Value.text = GC.SC.SelectedDices[0].value.ToString();
-                GC.SC.TotalValue += 1;
-            }
-            else
-                ActiveSuccess = false;
-        }
-        else if (building.Type == BuildingType.效能研究室)
-        {
-            if (GC.SC.TargetDep != null && building.effect.AffectedBuildings.Contains(GC.SC.TargetDep.building))
-            {
-                GC.SC.Sp1Multiply += 1;
-            }
-            else
-                ActiveSuccess = false;
-        }
         else if (building.Type == BuildingType.财务部)
         {
             if (GC.SC.TargetDep != null && building.effect.AffectedBuildings.Contains(GC.SC.TargetDep.building) && GC.SC.SelectedDices.Count == 1)
@@ -292,62 +237,6 @@ public class OfficeControl : MonoBehaviour
             else
                 ActiveSuccess = false;
         }
-        else if (building.Type == BuildingType.战略咨询部B)
-        {
-            if (GC.SC.TargetDep != null && building.effect.AffectedBuildings.Contains(GC.SC.TargetDep.building) && GC.SC.SelectedDices.Count == 2)
-            {
-                GC.SC.Dices.Remove(GC.SC.SelectedDices[0]);
-                GC.SC.Dices.Remove(GC.SC.SelectedDices[1]);
-                Destroy(GC.SC.SelectedDices[0].gameObject);
-                Destroy(GC.SC.SelectedDices[1].gameObject);
-                GC.SC.SelectedDices.Clear();
-                GC.SC.TotalValue = 0;
-                GC.SC.CreateDice(2, 6);
-            }
-            else
-                ActiveSuccess = false;
-        }
-        else if (building.Type == BuildingType.精确标准委员会)
-        {
-            if (GC.SC.TargetDep != null && building.effect.AffectedBuildings.Contains(GC.SC.TargetDep.building) && GC.SC.SelectedDices.Count == 1)
-            {
-                int num = GC.SC.SelectedDices[0].value;
-                GC.SC.Dices.Remove(GC.SC.SelectedDices[0]);
-                Destroy(GC.SC.SelectedDices[0].gameObject);
-                GC.SC.SelectedDices.Clear();
-                GC.SC.CreateDice(num, 1);
-                GC.SC.TotalValue = 0;
-            }
-            else
-                ActiveSuccess = false;
-        }
-        else if (building.Type == BuildingType.高级财务部A)
-        {
-            if (GC.SC.TargetDep != null && building.effect.AffectedBuildings.Contains(GC.SC.TargetDep.building) && GC.Money > 100000)
-            {
-                GC.Money -= 100000;
-                GC.SC.CreateDice(1);
-            }
-            else
-                ActiveSuccess = false;
-        }
-        else if (building.Type == BuildingType.高级财务部B)
-        {
-            if (GC.Money > 100000)
-            {
-                GC.Money -= 100000;
-                GC.CurrentEmpInfo.emp.Mentality += 15;
-                GC.SelectMode = 1;
-                GC.TotalEmpContent.parent.parent.gameObject.SetActive(false);
-            }
-            else
-            {
-                ActiveSuccess = false;
-                GC.SelectMode = 1;
-                GC.TotalEmpContent.parent.parent.gameObject.SetActive(false);
-            }
-        }
-
         if (ActiveSuccess == true)
         {
             Progress = 0;
@@ -364,12 +253,12 @@ public class OfficeControl : MonoBehaviour
         {
             GC.CurrentOffice = this;
             GC.SelectMode = 5;
-            if (building.Type == BuildingType.人力资源部A)
-                GC.ShowDepSelectPanel(GC.CurrentDeps);
-            else if (building.Type == BuildingType.高级财务部B)
-                GC.TotalEmpContent.parent.parent.gameObject.SetActive(true);
-            else
-                BuildingActive();
+            //if (building.Type == BuildingType.人力资源部A)
+            //    GC.ShowDepSelectPanel(GC.CurrentDeps);
+            //else if (building.Type == BuildingType.高级财务部B)
+            //    GC.TotalEmpContent.parent.parent.gameObject.SetActive(true);
+            //else
+            BuildingActive();
         }
     }
 
@@ -571,25 +460,8 @@ public class OfficeControl : MonoBehaviour
                     else if (OfficeMode == 5)
                         CurrentManager.GainExp(250, 11);
                 }
-
-                else if (building.Type == BuildingType.目标修正小组)
-                    CurrentManager.GainExp(50, 13);
-                else if (building.Type == BuildingType.高级财务部A)
-                    CurrentManager.GainExp(50, 14);
-                else if (building.Type == BuildingType.精确标准委员会)
-                    CurrentManager.GainExp(50, 15);
-                else if (building.Type == BuildingType.高级财务部B)
-                    CurrentManager.GainExp(50, 10);
-                else if (building.Type == BuildingType.人力资源部A)
-                    CurrentManager.GainExp(50, 11);
-                else if (building.Type == BuildingType.效能研究室)
-                    CurrentManager.GainExp(50, 12);
-                else if (building.Type == BuildingType.人力资源部B)
-                    CurrentManager.GainExp(50, 8);
                 else if (building.Type == BuildingType.财务部)
                     CurrentManager.GainExp(50, 9);
-                else if (building.Type == BuildingType.档案管理室)
-                    CurrentManager.GainExp(50, 4);
                 else if (building.Type == BuildingType.按摩房)
                     CurrentManager.GainExp(50, 5);
                 else if (building.Type == BuildingType.健身房)

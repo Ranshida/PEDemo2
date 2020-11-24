@@ -37,14 +37,7 @@ public class BuildingEffect
 
             BuildingType T = CurrentBuilding.Type;
             BuildingType T2 = m_TargetBuildings[i].Type;
-            if (T == BuildingType.技术部门 || T == BuildingType.市场部门 || T == BuildingType.产品部门 || T == BuildingType.运营部门)
-            {
-                if ((T2 == BuildingType.技术部门 || T2 == BuildingType.市场部门 || T2 == BuildingType.产品部门 || T2 == BuildingType.运营部门) && T != T2)
-                {
-                    m_TargetBuildings[i].Department.Efficiency += 0.1f;
-                }
-            }
-            else if (T == BuildingType.高管办公室 || T == BuildingType.CEO办公室) 
+            if (T == BuildingType.高管办公室 || T == BuildingType.CEO办公室)
             {
                 if (T2 != BuildingType.高管办公室 && T2 != BuildingType.CEO办公室)
                 {
@@ -66,15 +59,7 @@ public class BuildingEffect
         {
             BuildingType T = CurrentBuilding.Type;
             BuildingType T2 = AffectedBuildings[i].Type;
-            if (T == BuildingType.技术部门 || T == BuildingType.市场部门 || T == BuildingType.产品部门 || T == BuildingType.运营部门)
-            {
-                if ((T2 == BuildingType.技术部门 || T2 == BuildingType.市场部门 || T2 == BuildingType.产品部门 || T2 == BuildingType.运营部门) && T != T2)
-                {
-                    AffectedBuildings[i].Department.Efficiency -= 0.1f;
-                    CurrentBuilding.Department.Efficiency -= 0.1f;
-                }
-            }
-            else if (T == BuildingType.高管办公室 || T == BuildingType.CEO办公室)
+            if (T == BuildingType.高管办公室 || T == BuildingType.CEO办公室)
             {
                 if (T2 != BuildingType.高管办公室 && T2 != BuildingType.CEO办公室)
                 {
