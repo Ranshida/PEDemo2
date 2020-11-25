@@ -51,7 +51,7 @@ public class BuildingManage : MonoBehaviour
     private bool m_InBuildingMode;          //建造中
 
     //默认建筑（CEO办公室）
-    private List<Building> ConstructedBuildings = new List<Building>();
+    public List<Building> ConstructedBuildings { get; private set; } = new List<Building>();
     public OfficeControl CEOOffice;
 
     //选中的建筑
@@ -166,10 +166,10 @@ public class BuildingManage : MonoBehaviour
         if (!GridContainer.Instance)
             return;
 
-        //if (Input.GetKeyDown(KeyCode.T))
-        //{
-        //    Lottery(3);
-        //}
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            Lottery(3);
+        }
 
         //屏幕射线命中地面
         if (CameraController.TerrainHit && !CameraController.IsPointingUI)
@@ -313,7 +313,7 @@ public class BuildingManage : MonoBehaviour
         {
             m_EffectHalo.SetActive(true);
             m_EffectHalo.transform.position = m_SelectBuilding.transform.position + new Vector3(m_SelectBuilding.Length * 5, 0.2f, m_SelectBuilding.Width * 5);
-            m_EffectHalo.transform.localScale = new Vector3(m_SelectBuilding.Length + 8, 1, m_SelectBuilding.Width + 8);
+            m_EffectHalo.transform.localScale = new Vector3(m_SelectBuilding.Length + m_SelectBuilding.EffectRange * 2, 1, m_SelectBuilding.Width + m_SelectBuilding.EffectRange * 2);
             if (!m_InBuildingMode)
                 btn_EnterBuildMode.gameObject.SetActive(true);
             else
@@ -551,18 +551,22 @@ public class BuildingManage : MonoBehaviour
 
         //确定建筑已摆放完毕
         building.Build(grids);
+        foreach (Building temp in ConstructedBuildings)
+        {
+            temp.effect.FindAffect();
+        }
 
         //获取建筑相互影响情况
-        building.effect.GetEffectBuilding();
+        //building.effect.GetEffectBuilding();
 
-        //对自身周围建筑造成影响
-        building.effect.Affect();
+        ////对自身周围建筑造成影响
+        //building.effect.Affect();
 
-        //周围建筑对自身造成影响 
-        for (int i = 0; i < building.effect.AffectedBuildings.Count; i++)
-        {
-            building.effect.AffectedBuildings[i].effect.Affect();
-        }
+        ////周围建筑对自身造成影响 
+        //for (int i = 0; i < building.effect.AffectedBuildings.Count; i++)
+        //{
+        //    building.effect.AffectedBuildings[i].effect.Affect();
+        //}
     }
 
     public void MoveBuilding()

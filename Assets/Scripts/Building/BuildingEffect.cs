@@ -13,77 +13,18 @@ public class BuildingEffect
     public int AffectRange { get { return CurrentBuilding.EffectRange; } }  //影响上下左右4个单位的建筑
     public Building CurrentBuilding;  //所属建筑
 
-    List<Building> m_TargetBuildings = new List<Building>();
-    public List<Building> AffectedBuildings = new List<Building>();
-  
+    public List<Building> AffectedBuildings = new List<Building>();   //自身影响到建筑
 
+    //建造建筑时直接构造
     public BuildingEffect(Building building)
     {
         CurrentBuilding = building;
+        AffectedBuildings = new List<Building>();
+        
+        FindAffect();
     }
 
-    //遍历m_TargetBuildings，对每个目标建筑设置影响
-    public void Affect()
-    {
-        Debug.Log("!!!!!" + CurrentBuilding.name);
-        foreach (var b in m_TargetBuildings)
-        {
-            Debug.Log(b + "  Affect  ");
-        }
-        for (int i = 0; i < m_TargetBuildings.Count; i++)
-        {
-            if (AffectedBuildings.Contains(m_TargetBuildings[i]))
-                continue;
-
-            BuildingType T = CurrentBuilding.Type;
-            BuildingType T2 = m_TargetBuildings[i].Type;
-            if (T == BuildingType.高管办公室 || T == BuildingType.CEO办公室)
-            {
-                if (T2 != BuildingType.高管办公室 && T2 != BuildingType.CEO办公室)
-                {
-                    if (m_TargetBuildings[i].Department != null)
-                        m_TargetBuildings[i].Department.InRangeOffices.Add(CurrentBuilding.Office);
-                    else if (m_TargetBuildings[i].Office != null)
-                        m_TargetBuildings[i].Office.InRangeOffices.Add(CurrentBuilding.Office);
-                }
-            }
-            if (!AffectedBuildings.Contains(m_TargetBuildings[i]))
-                AffectedBuildings.Add(m_TargetBuildings[i]);
-        }
-        m_TargetBuildings.Clear();
-    }
-    public void RemoveAffect()
-    {
-        //这里可能存在问题
-        for (int i = 0; i < AffectedBuildings.Count; i++)
-        {
-            BuildingType T = CurrentBuilding.Type;
-            BuildingType T2 = AffectedBuildings[i].Type;
-            if (T == BuildingType.高管办公室 || T == BuildingType.CEO办公室)
-            {
-                if (T2 != BuildingType.高管办公室 && T2 != BuildingType.CEO办公室)
-                {
-                    if (AffectedBuildings[i].Department != null)
-                        AffectedBuildings[i].Department.InRangeOffices.Remove(CurrentBuilding.Office);
-                    else if (AffectedBuildings[i].Office != null)
-                        AffectedBuildings[i].Office.InRangeOffices.Remove(CurrentBuilding.Office);
-                }
-            }
-            else if (T != BuildingType.高管办公室 && T != BuildingType.CEO办公室)
-            {
-                if (T2 == BuildingType.高管办公室 || T2 == BuildingType.CEO办公室)
-                {
-                    if (CurrentBuilding.Department != null)
-                        CurrentBuilding.Department.InRangeOffices.Remove(CurrentBuilding.Office);
-                    else if (CurrentBuilding.Office != null)
-                        CurrentBuilding.Office.InRangeOffices.Remove(CurrentBuilding.Office);
-                }
-            }
-        }
-        AffectedBuildings.Clear();
-    }
-
-    public void GetEffectBuilding()
+    public void FindAffect()
     {
         //当前建筑覆盖的角落网格
         Int2 minLocation = null;   //左下角坐标
@@ -94,9 +35,9 @@ public class BuildingEffect
                 minLocation = new Int2(temp_Grid.X, temp_Grid.Z);
             else
             {
-                if (temp_Grid.X < minLocation.X) 
+                if (temp_Grid.X < minLocation.X)
                     minLocation.X = temp_Grid.X;
-                if (temp_Grid.Z < minLocation.Y) 
+                if (temp_Grid.Z < minLocation.Y)
                     minLocation.Y = temp_Grid.Z;
             }
 
@@ -114,7 +55,7 @@ public class BuildingEffect
         //辐射到的网格
         Dictionary<int, Grid> gridDict;
         List<Grid> effectGirds = new List<Grid>();
-        for (int i = minLocation.X - AffectRange; i < maxLocation.X + AffectRange; i++) 
+        for (int i = minLocation.X - AffectRange; i < maxLocation.X + AffectRange; i++)
         {
             if (GridContainer.Instance.GridDict.TryGetValue(i, out gridDict))
             {
@@ -131,19 +72,118 @@ public class BuildingEffect
         //辐射到的建筑
         foreach (Grid tempGrid in effectGirds)
         {
-            if (tempGrid.BelongBuilding == CurrentBuilding || tempGrid.BelongBuilding == null || m_TargetBuildings.Contains(tempGrid.BelongBuilding)) 
+            if (tempGrid.BelongBuilding == CurrentBuilding || tempGrid.BelongBuilding == null)
                 continue;
 
-            m_TargetBuildings.Add(tempGrid.BelongBuilding);
-            for (int i = 0; i < m_TargetBuildings.Count; i++)
-            {
-                m_TargetBuildings[i].effect.AddBuilding(CurrentBuilding);
-            }
+            if (AffectedBuildings.Contains(tempGrid.BelongBuilding))
+                continue;
+
+            AffectedBuildings.Add(tempGrid.BelongBuilding);
+            OnAffectNew(tempGrid.BelongBuilding);
         }
     }
 
-    public void AddBuilding(Building building)
+    public void RemoveAffect()
     {
-        m_TargetBuildings.Add(building);
+        //不再影响这些
+        foreach (Building affect in AffectedBuildings)
+        {
+            OnRemoveAffect(affect);
+        }
+
+        //遍历场景中所有建筑
+        foreach (Building temp in BuildingManage.Instance.ConstructedBuildings)
+        {
+            //这个建筑曾经影响到自己
+            if (temp.effect.AffectedBuildings.Contains(CurrentBuilding))
+            {
+                temp.effect.AffectedBuildings.Remove(CurrentBuilding);
+                OnRemoveAffect(temp);
+            }
+        }
+        AffectedBuildings.Clear();
     }
+
+    //影响到了这个建筑
+    public void OnAffectNew(Building building)
+    {
+
+    }
+
+    //不在影响这个建筑
+    public void OnRemoveAffect(Building building)
+    {
+
+    }
+
+
+    //遍历m_TargetBuildings，对每个目标建筑设置影响
+    //public void Affect()
+    //{
+    //    Debug.Log("!!!!!" + CurrentBuilding.name);
+    //    foreach (var b in m_TargetBuildings)
+    //    {
+    //        Debug.Log(b + "  Affect  ");
+    //    }
+    //    for (int i = 0; i < m_TargetBuildings.Count; i++)
+    //    {
+    //        if (AffectedBuildings.Contains(m_TargetBuildings[i]))
+    //            continue;
+
+    //        BuildingType T = CurrentBuilding.Type;
+    //        BuildingType T2 = m_TargetBuildings[i].Type;
+    //        if (T == BuildingType.高管办公室 || T == BuildingType.CEO办公室)
+    //        {
+    //            if (T2 != BuildingType.高管办公室 && T2 != BuildingType.CEO办公室)
+    //            {
+    //                if (m_TargetBuildings[i].Department != null)
+    //                    m_TargetBuildings[i].Department.InRangeOffices.Add(CurrentBuilding.Office);
+    //                else if (m_TargetBuildings[i].Office != null)
+    //                    m_TargetBuildings[i].Office.InRangeOffices.Add(CurrentBuilding.Office);
+    //            }
+    //        }
+
+
+    //        if (!AffectedBuildings.Contains(m_TargetBuildings[i]))
+    //            AffectedBuildings.Add(m_TargetBuildings[i]);
+    //    }
+    //    m_TargetBuildings.Clear();
+    //}
+    //public void RemoveAffect()
+    //{
+    //    //这里可能存在问题
+    //    for (int i = 0; i < AffectedBuildings.Count; i++)
+    //    {
+    //        BuildingType T = CurrentBuilding.Type;
+    //        BuildingType T2 = AffectedBuildings[i].Type;
+    //        if (T == BuildingType.高管办公室 || T == BuildingType.CEO办公室)
+    //        {
+    //            if (T2 != BuildingType.高管办公室 && T2 != BuildingType.CEO办公室)
+    //            {
+    //                if (AffectedBuildings[i].Department != null)
+    //                    AffectedBuildings[i].Department.InRangeOffices.Remove(CurrentBuilding.Office);
+    //                else if (AffectedBuildings[i].Office != null)
+    //                    AffectedBuildings[i].Office.InRangeOffices.Remove(CurrentBuilding.Office);
+    //            }
+    //        }
+    //        else if (T != BuildingType.高管办公室 && T != BuildingType.CEO办公室)
+    //        {
+    //            if (T2 == BuildingType.高管办公室 || T2 == BuildingType.CEO办公室)
+    //            {
+    //                if (CurrentBuilding.Department != null)
+    //                    CurrentBuilding.Department.InRangeOffices.Remove(CurrentBuilding.Office);
+    //                else if (CurrentBuilding.Office != null)
+    //                    CurrentBuilding.Office.InRangeOffices.Remove(CurrentBuilding.Office);
+    //            }
+    //        }
+    //        if (AffectedBuildings[i].effect.AffectedBuildings.Contains(CurrentBuilding))
+    //            AffectedBuildings[i].effect.AffectedBuildings.Remove(CurrentBuilding);
+    //    }
+    //    AffectedBuildings.Clear();
+    //}
+
+    //public void GetEffectBuilding()
+    //{
+
+    //}
 }

@@ -81,16 +81,17 @@ public class Building : MonoBehaviour
     //确定建造
     public void Build(List<Grid> grids)
     {
-        ContainsGrids = new List<Grid>();
-        effect = new BuildingEffect(this);
-
         BuildingSet = true;
         Moving = false;
+        ContainsGrids = new List<Grid>();
         foreach (Grid grid in grids)
         {
             ContainsGrids.Add(grid);
             grid.Build(this);
         }
+
+        effect = new BuildingEffect(this);
+
         Destroy(m_Decoration);
     }
 
