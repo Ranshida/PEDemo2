@@ -160,10 +160,10 @@ public class BuildingManage : MonoBehaviour
         if (!GridContainer.Instance)
             return;
 
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            Lottery(3);
-        }
+        //if (Input.GetKeyDown(KeyCode.T))
+        //{
+        //    Lottery(3);
+        //}
 
         //屏幕射线命中地面
         if (CameraController.TerrainHit && !CameraController.IsPointingUI)
@@ -387,18 +387,8 @@ public class BuildingManage : MonoBehaviour
         lotteryUI.Clear();
     }
 
-    public void MoveBuilding()
-    {
-        m_SelectBuilding.Move();
-        temp_Building = m_SelectBuilding;
-        selectBuildingPanel.gameObject.SetActive(false);
-        btn_EnterBuildMode.gameObject.SetActive(false);
-    }
 
-    public void DismantleBuilding()
-    {
-        m_SelectBuilding.Dismantle();
-    }
+
 
     //进入建造模式
     public void EnterBuildMode()
@@ -455,90 +445,89 @@ public class BuildingManage : MonoBehaviour
     //确定建筑
     void BuildConfirm(Building building, List<Grid> grids)
     {
-        //金钱相关暂时保留
-        if (GameControl.Instance.Money < 100)
-            return;
-
         //新的建筑
-        //if (!building.Moving)
-        //{
-        //    //在链表上保存新建筑
-        //    ConstructedBuildings.Add(building);
-        //    GameControl.Instance.Money -= 100;
-        //    GameControl.Instance.BuildingPay += 50;
-        //    GameControl.Instance.Money -= 100;
+        if (!building.Moving)
+        {
+            if (GameControl.Instance.Money < 100)
+                return;
 
-        //    BuildingType T = building.Type;
-        //    //生产部门创建
-        //    if (T == BuildingType.技术部门 || T == BuildingType.市场部门 || T == BuildingType.产品部门 || T == BuildingType.运营部门)
-        //    {
-        //        //新建部门必须要保留的
-        //        building.Department = GameControl.Instance.CreateDep((int)T + 1);//根据Type创建对应的生产部门面板
-        //        building.Department.building = building;//把SelectBuilding赋值给新的部门面板
-        //    }
-        //    else if (T == BuildingType.研发部门)
-        //    {
-        //        building.Department = GameControl.Instance.CreateDep(4);
-        //        building.Department.building = building;
-        //    }
-        //    else if (T == BuildingType.人力资源部B)
-        //    {
-        //        building.Department = GameControl.Instance.CreateDep(5);
-        //        building.Department.building = building;
-        //    }
+            //在链表上保存新建筑
+            ConstructedBuildings.Add(building);
+            GameControl.Instance.Money -= 100;
+            GameControl.Instance.BuildingPay += building.Pay;
+            //GameControl.Instance.Money -= 100;  ？？
 
-        //    //办公室创建
-        //    //else if (T == BuildingType.高管办公室 || T == BuildingType.CEO办公室)
-        //    else if (T == BuildingType.高管办公室)
-        //    {
-        //        building.Office = GameControl.Instance.CreateOffice(building);
-        //        building.effectValue = 8;
-        //    }
-        //    else if (T == BuildingType.CEO办公室)
-        //    {
-        //        building.Office = CEOOffice;    //互相引用
-        //        CEOOffice.building = building;  //互相引用
-        //    }
-        //    else if (T == BuildingType.人力资源部A)
-        //    {
-        //        building.Office = GameControl.Instance.CreateOffice(building);
-        //        building.effectValue = 1;
-        //        building.StaminaRequest = 10;
-        //    }
-        //    else if (T == BuildingType.按摩房 || T == BuildingType.健身房)
-        //    {
-        //        building.Office = GameControl.Instance.CreateOffice(building);
-        //        building.effectValue = 3;
-        //        if (T == BuildingType.健身房)
-        //            building.StaminaRequest = 10;
-        //    }
-        //    else if (T == BuildingType.战略咨询部B || T == BuildingType.精确标准委员会)
-        //    {
-        //        building.Office = GameControl.Instance.CreateOffice(building);
-        //        building.effectValue = 5;
-        //        building.StaminaRequest = 20;
-        //    }
-        //    else if (T == BuildingType.目标修正小组)
-        //    {
-        //        building.Office = GameControl.Instance.CreateOffice(building);
-        //        building.effectValue = 6;
-        //        building.StaminaRequest = 20;
-        //    }
-        //    else if (T == BuildingType.财务部 || T == BuildingType.高级财务部A || T == BuildingType.高级财务部B)
-        //    {
-        //        building.Office = GameControl.Instance.CreateOffice(building);
-        //        building.effectValue = 7;
-        //        building.StaminaRequest = 10;
-        //    }
-        //    else if (T == BuildingType.档案管理室 || T == BuildingType.效能研究室)
-        //    {
-        //        building.Office = GameControl.Instance.CreateOffice(building);
-        //        building.effectValue = 8;
-        //        building.StaminaRequest = 10;
-        //        if (T == BuildingType.效能研究室)
-        //            building.StaminaRequest = 20;
-        //    }
-        //}
+            BuildingType T = building.Type;
+            ////生产部门创建
+            //if (T == BuildingType.技术部门 || T == BuildingType.市场部门 || T == BuildingType.产品部门 || T == BuildingType.运营部门)
+            //{
+            //    //新建部门必须要保留的
+            //    building.Department = GameControl.Instance.CreateDep((int)T + 1);//根据Type创建对应的生产部门面板
+            //    building.Department.building = building;//把SelectBuilding赋值给新的部门面板
+            //}
+            //else if (T == BuildingType.研发部门)
+            //{
+            //    building.Department = GameControl.Instance.CreateDep(4);
+            //    building.Department.building = building;
+            //}
+            //else if (T == BuildingType.人力资源部B)
+            //{
+            //    building.Department = GameControl.Instance.CreateDep(5);
+            //    building.Department.building = building;
+            //}
+
+            ////办公室创建
+            ////else if (T == BuildingType.高管办公室 || T == BuildingType.CEO办公室)
+            //else if (T == BuildingType.高管办公室)
+            //{
+            //    building.Office = GameControl.Instance.CreateOffice(building);
+            //    building.effectValue = 8;
+            //}
+            //else if (T == BuildingType.CEO办公室)
+            //{
+            //    building.Office = CEOOffice;    //互相引用
+            //    CEOOffice.building = building;  //互相引用
+            //}
+            //else if (T == BuildingType.人力资源部A)
+            //{
+            //    building.Office = GameControl.Instance.CreateOffice(building);
+            //    building.effectValue = 1;
+            //    building.StaminaRequest = 10;
+            //}
+            //else if (T == BuildingType.按摩房 || T == BuildingType.健身房)
+            //{
+            //    building.Office = GameControl.Instance.CreateOffice(building);
+            //    building.effectValue = 3;
+            //    if (T == BuildingType.健身房)
+            //        building.StaminaRequest = 10;
+            //}
+            //else if (T == BuildingType.战略咨询部B || T == BuildingType.精确标准委员会)
+            //{
+            //    building.Office = GameControl.Instance.CreateOffice(building);
+            //    building.effectValue = 5;
+            //    building.StaminaRequest = 20;
+            //}
+            //else if (T == BuildingType.目标修正小组)
+            //{
+            //    building.Office = GameControl.Instance.CreateOffice(building);
+            //    building.effectValue = 6;
+            //    building.StaminaRequest = 20;
+            //}
+            //else if (T == BuildingType.财务部 || T == BuildingType.高级财务部A || T == BuildingType.高级财务部B)
+            //{
+            //    building.Office = GameControl.Instance.CreateOffice(building);
+            //    building.effectValue = 7;
+            //    building.StaminaRequest = 10;
+            //}
+            //else if (T == BuildingType.档案管理室 || T == BuildingType.效能研究室)
+            //{
+            //    building.Office = GameControl.Instance.CreateOffice(building);
+            //    building.effectValue = 8;
+            //    building.StaminaRequest = 10;
+            //    if (T == BuildingType.效能研究室)
+            //        building.StaminaRequest = 20;
+            //}
+        }
 
         //确定建筑已摆放完毕
         building.Build(grids);
@@ -554,6 +543,20 @@ public class BuildingManage : MonoBehaviour
         {
             building.effect.AffectedBuildings[i].effect.Affect();
         }
+    }
+
+    public void MoveBuilding()
+    {
+        m_SelectBuilding.Move();
+        temp_Building = m_SelectBuilding;
+        selectBuildingPanel.gameObject.SetActive(false);
+        btn_EnterBuildMode.gameObject.SetActive(false);
+    }
+
+    public void DismantleBuilding()
+    {
+        GameControl.Instance.BuildingPay -= m_SelectBuilding.Pay;
+        m_SelectBuilding.Dismantle();
     }
 
     //取消摆放

@@ -45,7 +45,7 @@ public class BuildingDescription : MonoBehaviour
 
         str_BuildingName.text = building.Name;
         str_BuildingSize.text = building.Size;
-        str_BuildingRange.text = building.EffectRange;
+        str_BuildingRange.text = building.EffectRange_str;
         str_Jobs.text = building.Jobs;
         str_Func1.text = building.Function_A;
         str_Require1.text = building.Require_A;

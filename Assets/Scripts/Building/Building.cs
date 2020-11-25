@@ -18,16 +18,18 @@ public class Building : MonoBehaviour
     public string Require_C;
     public string Description_C;
 
-    public string EffectRange;                        //影响范围str
+    public string EffectRange_str;                        //影响范围str
     public string Jobs;                             //岗位数量
 
     public int Length;
     public int Width;
+    public int EffectRange;
     public bool BuildingSet { get; private set; } = false;   //设置完毕不再动
     public bool Moving { get; private set; } = false;        //移动中
     public int effectValue = 1, StaminaRequest = 0; //1人力 2八卦 3强壮 4谋略 5行业 6决策 7财务 8管理
     public BuildingType Type;    //现在是创建时赋值，需改为预制体赋值或子类构造
     private GameObject m_Decoration;   //修饰物，建造后删除
+    public int Pay;               //维护费用
 
     public List<Grid> ContainsGrids;   //所包含的格子
     public DepControl Department; //BM赋值
@@ -48,7 +50,7 @@ public class Building : MonoBehaviour
             return;
         Name = value[ID, 1];
         Size = value[ID, 5];
-        EffectRange = value[ID, 6];
+        EffectRange_str = value[ID, 6];
         Jobs = value[ID, 4];
         Function_A = value[ID, 11];
         Require_A = value[ID, 13];
@@ -59,13 +61,22 @@ public class Building : MonoBehaviour
         Function_C = value[ID, 21];
         Require_C = value[ID, 23];
         Description_C = value[ID, 24];
-    }
 
-    private void Awake()
-    {
-   
-    }
+        Type = (BuildingType)System.Enum.Parse(typeof(BuildingType), Name);
+        string[] size = Size.Split('×');
+        Length = int.Parse(size[0]);
+        Width = int.Parse(size[1]);
+        Pay = 100;
 
+        if (!int.TryParse(EffectRange_str, out EffectRange))
+        {
+            if (EffectRange_str == "/")
+                EffectRange = 0;
+            if (EffectRange_str == "全公司")
+                EffectRange = 999;
+        }
+    }
+    
     //确定建造
     public void Build(List<Grid> grids)
     {

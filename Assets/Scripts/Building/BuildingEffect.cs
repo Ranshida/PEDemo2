@@ -10,7 +10,7 @@ using UnityEngine.UI;
 [System.Serializable]
 public class BuildingEffect
 {
-    public int AffectRange { get; private set; } = 4;  //影响上下左右4个单位的建筑
+    public int AffectRange { get { return CurrentBuilding.EffectRange; } }  //影响上下左右4个单位的建筑
     public Building CurrentBuilding;  //所属建筑
 
     List<Building> m_TargetBuildings = new List<Building>();
