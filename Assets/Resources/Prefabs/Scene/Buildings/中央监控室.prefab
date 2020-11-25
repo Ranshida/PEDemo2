@@ -408,24 +408,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ID: 29
-  Name: 
-  Size: 
-  Function_A: 
-  Require_A: 
-  Description_A: 
+  Name: "\u4E2D\u592E\u76D1\u63A7\u5BA4"
+  Size: "4\xD74"
+  Function_A: "\u884C\u4E3A\u68C0\u67E5"
+  Require_A: "\u516B\u5366"
+  Description_A: "\u6709\u51E0\u7387\u589E\u52A0\u5468\u56F4\u529E\u516C\u5BA4\u5458\u5DE5\u201C\u9EBB\u6728*10\u201D\u60C5\u7EEA\u72B6\u6001\uFF08\u9EBB\u6728\u65F6\u4E0D\u4F1A\u5F62\u6210\u4EFB\u4F55\u60C5\u7EEA\u72B6\u6001\uFF0C\u53EF\u62B5\u6D88\u4E00\u5207\u60C5\u7EEA\uFF09"
   Function_B: 
-  Require_B: 
-  Description_B: 
-  Function_C: 
-  Require_C: 
-  Description_C: 
-  EffectRange: 
-  Jobs: 0
+  Require_B: "\u8BF4\u670D"
+  Description_B: "\u6709\u51E0\u7387\u589E\u52A0\u5468\u56F4\u529E\u516C\u5BA4\u5458\u5DE5\u201C\u9EBB\u6728*10\u201D\u72B6\u6001"
+  Function_C: /
+  Require_C: /
+  Description_C: /
+  EffectRange: "\u5168\u516C\u53F8"
+  Jobs: 3
   Length: 4
   Width: 4
   effectValue: 1
   StaminaRequest: 0
-  Type: 11
+  Type: 26
   ContainsGrids: []
   Department: {fileID: 0}
   Office: {fileID: 0}

@@ -374,24 +374,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ID: 13
-  Name: 
-  Size: 
-  Function_A: 
-  Require_A: 
-  Description_A: 
-  Function_B: 
-  Require_B: 
-  Description_B: 
-  Function_C: 
-  Require_C: 
-  Description_C: 
-  EffectRange: 
-  Jobs: 0
+  Name: "\u5FC3\u7406\u54A8\u8BE2\u5BA4 "
+  Size: "2\xD74"
+  Function_A: "\u5FC3\u7406\u54A8\u8BE2"
+  Require_A: "\u4EBA\u529B"
+  Description_A: "\u9009\u62E9\u4E00\u540D\u5458\u5DE5\uFF0C\u56DE\u590D\u5FC3\u529B\uFF08\u6210\u529F\u540E\u6FC0\u6D3B\u53EF\u91CA\u653E\uFF09"
+  Function_B: "\u7545\u8C08\u4EBA\u751F"
+  Require_B: "\u9B45\u529B"
+  Description_B: "\u9009\u62E9\u4E00\u540D\u5458\u5DE5\uFF0C\u56DE\u590D\u5FC3\u529B\u5E76\u6709\u51E0\u7387\u589E\u52A0\u597D\u611F\u5EA6"
+  Function_C: /
+  Require_C: /
+  Description_C: /
+  EffectRange: "\u5168\u516C\u53F8"
+  Jobs: 2
   Length: 2
   Width: 4
   effectValue: 1
   StaminaRequest: 0
-  Type: 12
+  Type: 10
   ContainsGrids: []
   Department: {fileID: 0}
   Office: {fileID: 0}

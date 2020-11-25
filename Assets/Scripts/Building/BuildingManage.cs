@@ -83,7 +83,8 @@ public class BuildingManage : MonoBehaviour
         {
             Building building = prefab.GetComponent<Building>();
             building.LoadPrefab(BuildingExcelValue);
-            m_AllBuildingDict.Add(building.Type, prefab);
+            if (building.Type != BuildingType.空)
+                m_AllBuildingDict.Add(building.Type, prefab);
         }
         foreach (GameObject prefab in buildingPrefabs)
         {

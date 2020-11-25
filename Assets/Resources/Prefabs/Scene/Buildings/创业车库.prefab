@@ -314,24 +314,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ID: 38
-  Name: 
-  Size: 
+  Name: "\u81EA\u52A8\u8D29\u5356\u673A"
+  Size: "1\xD72"
   Function_A: 
   Require_A: 
-  Description_A: 
+  Description_A: "\u53EF\u53D1\u751F\u52A0\u5173\u7CFB\u4E8B\u4EF6"
   Function_B: 
   Require_B: 
   Description_B: 
   Function_C: 
   Require_C: 
   Description_C: 
-  EffectRange: 
+  EffectRange: "\u5168\u516C\u53F8"
   Jobs: 0
   Length: 4
   Width: 4
   effectValue: 1
   StaminaRequest: 0
-  Type: 5
+  Type: 36
   ContainsGrids: []
   Department: {fileID: 0}
   Office: {fileID: 0}

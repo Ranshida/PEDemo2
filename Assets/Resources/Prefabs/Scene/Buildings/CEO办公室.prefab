@@ -348,11 +348,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ID: 8
+  Name: "CEO\u529E\u516C\u5BA4"
+  Size: "3\xD72"
+  Function_A: "\u7EC4\u7EC7\u7814\u7A76"
+  Require_A: "\u884C\u4E1A"
+  Description_A: "\u89E3\u9501\u5EFA\u7B51\u7269"
+  Function_B: "\u6218\u7565\u63D0\u6848"
+  Require_B: "\u51B3\u7B56"
+  Description_B: "\u751F\u4EA7\u4E0E\u81EA\u5DF1\u4FE1\u4EF0\u6216\u6587\u5316\u76F8\u5339\u914D\u7684\u6218\u7565\u65B9\u6848"
+  Function_C: "\u5458\u5DE5\u57F9\u517B"
+  Require_C: "\u7BA1\u7406"
+  Description_C: "\u5728\u81EA\u5DF1\u7BA1\u7406\u4E0B\u7684\u5458\u5DE5\u4E2D\u9009\u62E9\u4E00\u4EBA\uFF0C\u63D0\u5347\u70ED\u60C5\uFF0C\u6301\u7EED1m"
+  EffectRange: 4
+  Jobs: 1
   Length: 3
   Width: 2
   effectValue: 1
   StaminaRequest: 0
-  Type: 7
+  Type: 5
   ContainsGrids: []
   Department: {fileID: 0}
   Office: {fileID: 0}

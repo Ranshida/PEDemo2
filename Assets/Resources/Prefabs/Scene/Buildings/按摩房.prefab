@@ -314,24 +314,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ID: 16
-  Name: 
-  Size: 
-  Function_A: 
-  Require_A: 
-  Description_A: 
-  Function_B: 
-  Require_B: 
-  Description_B: 
-  Function_C: 
-  Require_C: 
-  Description_C: 
-  EffectRange: 
-  Jobs: 0
+  Name: "\u6309\u6469\u623F"
+  Size: "2\xD72"
+  Function_A: "\u5168\u8EAB\u6309\u6469"
+  Require_A: "\u5F3A\u58EE"
+  Description_A: "\u9009\u62E9\u4E00\u540D\u5458\u5DE5\u56DE\u590D\u4F53\u529B"
+  Function_B: ASMR
+  Require_B: "\u9B45\u529B"
+  Description_B: "\u9009\u62E9\u8303\u56F4\u5185\u4E00\u4E2A\u529E\u516C\u5BA4\u56DE\u590D\u4F53\u529B\u5E76\u589E\u52A0\u597D\u611F"
+  Function_C: /
+  Require_C: /
+  Description_C: /
+  EffectRange: "\u5168\u516C\u53F8"
+  Jobs: 1
   Length: 2
   Width: 2
   effectValue: 1
   StaminaRequest: 0
-  Type: 14
+  Type: 13
   ContainsGrids: []
   Department: {fileID: 0}
   Office: {fileID: 0}
