@@ -59,7 +59,7 @@ public class GameControl : MonoBehaviour
     }
 
     [HideInInspector] public EmpInfo CurrentEmpInfo, CurrentEmpInfo2;//2主要用于需要两个员工的动员技能
-    [HideInInspector] public DepControl CurrentDep;
+    [HideInInspector] public DepControl CurrentDep, SelectedDep;
     [HideInInspector] public OfficeControl CurrentOffice;
     public EmpEntity EmpEntityPrefab;
     public PerkInfo PerkInfoPrefab;
@@ -253,13 +253,13 @@ public class GameControl : MonoBehaviour
         //}
     }
 
-    public DepControl CreateDep(int type)
+    public DepControl CreateDep(int type, Building b)
     {
         DepControl newDep;
-        if (type < 4)
+        if (type != 10)
             newDep = Instantiate(DepPrefab, this.transform);
-        else if(type == 4)
-            newDep = Instantiate(LabPrefab, this.transform);
+        //else if(type == 4)
+        //    newDep = Instantiate(LabPrefab, this.transform);
         else
             newDep = Instantiate(HRDepPrefab, this.transform);
 
@@ -269,39 +269,187 @@ public class GameControl : MonoBehaviour
         if (newDep.LabPanel != null)
             newDep.LabPanel.parent = EmpPanelContent;
         newDep.transform.parent = DepContent;
+        newDep.building = b;
 
         //部门命名
         string newDepName = "";
         if (type == 1)
         {
-            newDep.type = EmpType.Tech;
             newDep.EmpLimit = 4;
-            newDepName = "技术部门";
+            newDepName = "技术部";
+            newDep.building.effectValue = 1;
+            newDep.ProducePointLimit = 16;
         }
         else if (type == 2)
         {
-            newDep.type = EmpType.Market;
             newDep.EmpLimit = 4;
-            newDepName = "市场部门";
+            newDepName = "市场部";
+            newDep.building.effectValue = 2;
+            newDep.ProducePointLimit = 16;
         }
         else if (type == 3)
         {
-            newDep.type = EmpType.Product;
             newDep.EmpLimit = 4;
-            newDepName = "产品部门";
+            newDepName = "产品部";
+            newDep.building.effectValue = 3;
+            newDep.ProducePointLimit = 16;
         }
         else if (type == 4)
-        {
-            newDep.type = EmpType.Science;
-            newDep.EmpLimit = 4;
-            newDepName = "研发部门";
+        {            
+            newDep.EmpLimit = 2;
+            newDepName = "公关营销部";
+            newDep.building.effectValue = 2;
+            newDep.ProducePointLimit = 16;
         }
         else if (type == 5)
         {
-            newDep.type = EmpType.HR;
+            newDep.type = EmpType.Science;
             newDep.EmpLimit = 2;
-            newDepName = "人力资源部B";
+            newDepName = "研发部";
+            newDep.building.effectValue = 1;
+            newDep.ProducePointLimit = 16;
         }
+        else if (type == 6)
+        {
+            newDep.EmpLimit = 2;
+            newDepName = "智库小组";
+            newDep.building.effectValue = 11;
+            newDep.ProducePointLimit = 48;
+        }
+        else if (type == 7)
+        {
+            newDep.EmpLimit = 2;
+            newDepName = "人力资源部";
+            newDep.building.effectValue = 8;
+            newDep.ProducePointLimit = 48;
+        }
+        else if (type == 8)
+        {
+            newDep.EmpLimit = 2;
+            newDepName = "心理咨询室";
+            newDep.building.effectValue = 8;
+            newDep.ProducePointLimit = 24;
+        }
+        else if (type == 9)
+        {
+            newDep.EmpLimit = 2;
+            newDepName = "财务部";
+            newDep.building.effectValue = 9;
+            newDep.ProducePointLimit = 24;
+        }
+        else if (type == 10)
+        {
+            newDep.EmpLimit = 4;
+            newDepName = "体能研究室";
+            newDep.building.effectValue = 10;
+            newDep.ProducePointLimit = 48;
+        }
+        else if (type == 11)
+        {
+            newDep.EmpLimit = 1;
+            newDepName = "按摩房";
+            newDep.building.effectValue = 6;
+            newDep.ProducePointLimit = 24;
+        }
+        else if (type == 12)
+        {
+            newDep.EmpLimit = 2;
+            newDepName = "健身房";
+            newDep.building.effectValue = 6;
+            newDep.ProducePointLimit = 24;
+        }
+        else if (type == 13)
+        {
+            newDep.EmpLimit = 1;
+            newDepName = "宣传中心";
+            newDep.building.effectValue = 2;
+            newDep.ProducePointLimit = 24;
+        }
+        else if (type == 14)
+        {
+            newDep.EmpLimit = 1;
+            newDepName = "科技工作坊";
+            newDep.building.effectValue = 1;
+            newDep.ProducePointLimit = 24;
+        }
+        else if (type == 15)
+        {
+            newDep.EmpLimit = 1;
+            newDepName = "绩效考评中心";
+            newDep.building.effectValue = 4;
+            newDep.ProducePointLimit = 24;
+        }
+        else if (type == 16)
+        {
+            newDep.EmpLimit = 1;
+            newDepName = "员工休息室";
+            newDep.building.effectValue = 5;
+            newDep.ProducePointLimit = 24;
+        }
+        else if (type == 17)
+        {
+            newDep.EmpLimit = 2;
+            newDepName = "人文沙龙";
+            newDep.building.effectValue = 8;
+            newDep.ProducePointLimit = 48;
+        }
+        else if (type == 18)
+        {
+            newDep.EmpLimit = 2;
+            newDepName = "兴趣社团";
+            newDep.building.effectValue = 8;
+            newDep.ProducePointLimit = 32;
+        }
+        else if (type == 19)
+        {
+            newDep.EmpLimit = 2;
+            newDepName = "电子科技展";
+            newDep.building.effectValue = 1;
+            newDep.ProducePointLimit = 48;
+        }
+        else if (type == 20)
+        {
+            newDep.EmpLimit = 1;
+            newDepName = "冥想室";
+            newDep.building.effectValue = 5;
+            newDep.ProducePointLimit = 48;
+        }
+        else if (type == 21)
+        {
+            newDep.EmpLimit = 1;
+            newDepName = "特别秘书处";
+            newDep.building.effectValue = 12;
+            newDep.ProducePointLimit = 48;
+        }
+        else if (type == 22)
+        {
+            newDep.EmpLimit = 1;
+            newDepName = "成人再教育所";
+            newDep.building.effectValue = 13;
+            newDep.ProducePointLimit = 96;
+        }
+        else if (type == 23)
+        {
+            newDep.EmpLimit = 1;
+            newDepName = "职业再发展中心";
+            newDep.building.effectValue = 12;
+            newDep.ProducePointLimit = 48;
+        }
+        else if (type == 24)
+        {
+            newDep.EmpLimit = 3;
+            newDepName = "中央监控室";
+            newDep.building.effectValue = 15;
+            newDep.ProducePointLimit = 48;
+        }
+        else if (type == 25)
+        {
+            newDep.EmpLimit = 2;
+            newDepName = "谍战中心";
+            newDep.building.effectValue = 12;
+            newDep.ProducePointLimit = 96;
+        }
+
         int num = 1;
         for(int i = 0; i < CurrentDeps.Count; i++)
         {
@@ -604,7 +752,6 @@ public class GameControl : MonoBehaviour
             CurrentEmpInfo.emp.CurrentDep = depControl;
             HC.SetInfoPanel();
             CurrentEmpInfo.emp.InfoA.transform.parent = depControl.EmpContent;
-            depControl.ChangeEmpAssignment();
         }
         else if(SelectMode == 2)
         {
@@ -619,7 +766,6 @@ public class GameControl : MonoBehaviour
             CurrentEmpInfo.transform.parent = depControl.EmpContent;
 
             ResetOldAssignment();
-            depControl.ChangeEmpAssignment();
             //修改新部门生产力显示
             CurrentEmpInfo.emp.CurrentDep = depControl;
             depControl.CurrentEmps.Add(CurrentEmpInfo.emp);
@@ -648,8 +794,6 @@ public class GameControl : MonoBehaviour
     {
         if (CurrentEmpInfo.emp.CurrentDep != null)
         {
-            CurrentEmpInfo.emp.CurrentDep.ChangeEmpAssignment();
-
             CurrentEmpInfo.ClearSkillPreset();
             CurrentEmpInfo.emp.CurrentDep.CurrentEmps.Remove(CurrentEmpInfo.emp);
             //修改生产力显示

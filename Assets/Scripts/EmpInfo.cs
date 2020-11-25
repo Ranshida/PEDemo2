@@ -439,6 +439,7 @@ public class EmpInfo : MonoBehaviour
     public int CalcSalary()
     {
         int salary = emp.Manage + emp.Skill1 + emp.Skill2 + emp.Skill3 + emp.SalaryExtra;
+        salary = (int)(salary * emp.SalaryMultiple);
         return salary;
     }
 

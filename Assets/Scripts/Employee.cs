@@ -45,7 +45,7 @@ public class Employee
     //Ch魅力 Go八卦
     public int Confidence;//信心，头脑风暴中的护盾
     public int NewRelationTargetTime = 1;
-    public float ExtraSuccessRate = 0;
+    public float ExtraSuccessRate = 0, SalaryMultiple = 1.0f;
     public int Stamina
     {
         get { return stamina; }
@@ -1298,6 +1298,14 @@ public class Employee
     //增减情绪
     public void AddEmotion(EColor C)
     {
+        for(int i = 0; i < InfoDetail.PerksInfo.Count; i++)
+        {
+            if(InfoDetail.PerksInfo[i].CurrentPerk.Num == 36)
+            {
+                InfoDetail.PerksInfo[i].RemovePerk();
+                return;
+            }
+        }
         if (C == EColor.Yellow)
         {
             for (int i = 0; i < CurrentEmotions.Count; i++)

@@ -86,9 +86,12 @@ public class BuildingEffect
     public void RemoveAffect()
     {
         //不再影响这些
-        foreach (Building affect in AffectedBuildings)
+        if (CurrentBuilding.Type == BuildingType.CEO办公室 || CurrentBuilding.Type == BuildingType.高管办公室)
         {
-            OnRemoveAffect(affect);
+            foreach (Building affect in AffectedBuildings)
+            {
+                OnRemoveAffect(affect);
+            }
         }
 
         //遍历场景中所有建筑
@@ -98,7 +101,7 @@ public class BuildingEffect
             if (temp.effect.AffectedBuildings.Contains(CurrentBuilding))
             {
                 temp.effect.AffectedBuildings.Remove(CurrentBuilding);
-                OnRemoveAffect(temp);
+                temp.effect.OnRemoveAffect(CurrentBuilding);
             }
         }
         AffectedBuildings.Clear();
@@ -107,13 +110,35 @@ public class BuildingEffect
     //影响到了这个建筑
     public void OnAffectNew(Building building)
     {
-
+        BuildingType T = CurrentBuilding.Type;
+        BuildingType T2 = building.Type;
+        if (T == BuildingType.高管办公室 || T == BuildingType.CEO办公室)
+        {
+            if (T2 != BuildingType.高管办公室 && T2 != BuildingType.CEO办公室)
+            {
+                if (building.Department != null)
+                    building.Department.InRangeOffices.Add(CurrentBuilding.Office);
+                else if (building.Office != null)
+                    building.Office.InRangeOffices.Add(CurrentBuilding.Office);
+            }
+        }
     }
 
     //不在影响这个建筑
     public void OnRemoveAffect(Building building)
     {
-
+        BuildingType T = CurrentBuilding.Type;
+        BuildingType T2 = building.Type;
+        if (T == BuildingType.高管办公室 || T == BuildingType.CEO办公室)
+        {
+            if (T2 != BuildingType.高管办公室 && T2 != BuildingType.CEO办公室)
+            {
+                if (building.Department != null)
+                    building.Department.InRangeOffices.Remove(CurrentBuilding.Office);
+                else if (building.Office != null)
+                    building.Office.InRangeOffices.Remove(CurrentBuilding.Office);
+            }
+        }
     }
 
 

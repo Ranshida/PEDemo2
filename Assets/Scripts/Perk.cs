@@ -834,3 +834,182 @@ public class Perk32 : Perk
             TargetEmp.AddEmotion(EColor.Blue);
     }
 }
+
+//精进
+public class Perk33 : Perk
+{
+    public Perk33(Employee Emp) : base(Emp)
+    {
+        Name = "精进";
+        Description = "生产和办公室技能充能成功率+5%";
+        TimeLeft = 32;
+        Num = 33;
+    }
+    public override void ImmEffect()
+    {
+        TargetEmp.ExtraSuccessRate += 0.05f;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetEmp.ExtraSuccessRate -= 0.05f;
+    }
+}
+
+//削减支出
+public class Perk34 : Perk
+{
+    public Perk34(Employee Emp) : base(Emp)
+    {
+        Name = "削减支出";
+        Description = "公司建筑维护费用-5%";
+        TimeLeft = 32;
+        Num = 34;
+    }
+    public override void ImmEffect()
+    {
+        TargetEmp.InfoA.GC.BuildingPay -= 3;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetEmp.InfoA.GC.BuildingPay += 3;
+    }
+}
+
+//强化
+public class Perk35 : Perk
+{
+    private int ReduceValue = 2;
+    public Perk35(Employee Emp) : base(Emp)
+    {
+        Name = "强化";
+        Description = "强壮+2点，但最高不超过25";
+        TimeLeft = 32;
+        Num = 35;
+    }
+    public override void ImmEffect()
+    {
+        if (TargetEmp.Strength >= 25)
+            ReduceValue = 0;
+        else
+        {
+            TargetEmp.Strength += 2;
+            if(TargetEmp.Strength > 25)
+            {
+                ReduceValue = TargetEmp.Strength - 25;
+                TargetEmp.Strength = 25;
+            }
+        }
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetEmp.Strength -= ReduceValue;
+    }
+}
+
+//麻木
+public class Perk36 : Perk
+{
+    public Perk36(Employee Emp) : base(Emp)
+    {
+        Name = "麻木";
+        Description = "抵消一次情绪添加";
+        TimeLeft = -1;
+        Num = 36;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+    }
+}
+
+//铁人
+public class Perk37 : Perk
+{
+    private int ReduceValue = 2;
+    public Perk37(Employee Emp) : base(Emp)
+    {
+        Name = "铁人";
+        Description = "坚韧+2点，但最高不超过25";
+        TimeLeft = 32;
+        Num = 37;
+    }
+    public override void ImmEffect()
+    {
+        if (TargetEmp.Tenacity >= 25)
+            ReduceValue = 0;
+        else
+        {
+            TargetEmp.Tenacity += 2;
+            if (TargetEmp.Tenacity > 25)
+            {
+                ReduceValue = TargetEmp.Tenacity - 25;
+                TargetEmp.Tenacity = 25;
+            }
+        }
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetEmp.Tenacity -= ReduceValue;
+    }
+}
+
+//自我提升
+public class Perk38 : Perk
+{
+    public Perk38(Employee Emp) : base(Emp)
+    {
+        Name = "自我提升";
+        Description = "工作成功率+5%";
+        TimeLeft = 32;
+        Num = 38;
+    }
+    public override void ImmEffect()
+    {
+        TargetEmp.ExtraSuccessRate += 0.05f;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetEmp.ExtraSuccessRate -= 0.05f;
+    }
+}
+
+//蛊惑
+public class Perk39 : Perk
+{
+    public Perk39(Employee Emp) : base(Emp)
+    {
+        Name = "蛊惑";
+        Description = "被蛊惑了";
+        TimeLeft = -1;
+        Num = 39;
+    }
+}
+
+//迷茫
+public class Perk40 : Perk
+{
+    public Perk40(Employee Emp) : base(Emp)
+    {
+        Name = "迷茫";
+        Description = "很迷茫";
+        TimeLeft = -1;
+        Num = 40;
+    }
+}
+
+//忠诚
+public class Perk41 : Perk
+{
+    public Perk41(Employee Emp) : base(Emp)
+    {
+        Name = "忠诚";
+        Description = "很忠诚";
+        TimeLeft = -1;
+        Num = 41;
+    }
+}
