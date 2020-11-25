@@ -30,6 +30,7 @@ public class Building : MonoBehaviour
     public BuildingType Type;    //现在是创建时赋值，需改为预制体赋值或子类构造
     private GameObject m_Decoration;   //修饰物，建造后删除
     public int Pay;               //维护费用
+    public bool BasicBuilding;    //基础建筑物，可以直接建造
 
     public List<Grid> ContainsGrids;   //所包含的格子
     public DepControl Department; //BM赋值
@@ -67,7 +68,7 @@ public class Building : MonoBehaviour
         Length = int.Parse(size[0]);
         Width = int.Parse(size[1]);
         Pay = 100;
-
+        BasicBuilding = value[ID, 2] == "基础建筑物";
         if (!int.TryParse(EffectRange_str, out EffectRange))
         {
             if (EffectRange_str == "/")
@@ -106,11 +107,14 @@ public class Building : MonoBehaviour
     //拆除
     public void Dismantle()
     {
-        //重置影响范围
-        effect.RemoveAffect();
-        //刷新网格
-        foreach (Grid grid in ContainsGrids)
-            grid.Dismantle();
+        if (!Moving)
+        {
+            //重置影响范围
+            effect.RemoveAffect();
+            //刷新网格
+            foreach (Grid grid in ContainsGrids)
+                grid.Dismantle();
+        }
 
         //销毁前的准备工作
         if (Department)

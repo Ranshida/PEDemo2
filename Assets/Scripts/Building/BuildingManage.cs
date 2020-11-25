@@ -39,6 +39,7 @@ public class BuildingManage : MonoBehaviour
     //建造面板
     public Button btn_FinishBuild;
     public Button btn_EnterBuildMode;
+    public Button btn_Dismantle;
     public Transform lotteryPanel;   //抽卡面板
     public Transform lotteryList;    //抽卡表
     public List<Transform> lotteryUI;   //抽卡面板
@@ -88,14 +89,12 @@ public class BuildingManage : MonoBehaviour
         }
         foreach (GameObject prefab in buildingPrefabs)
         {
-            //Building building = prefab.GetComponent<Building>();
-            //if (building.Type == BuildingType.技术部门 || building.Type == BuildingType.产品部门 || building.Type == BuildingType.市场部门 || building.Type == BuildingType.目标修正小组 ||
-            //    building.Type == BuildingType.高级财务部A || building.Type == BuildingType.高级财务部B || building.Type == BuildingType.精确标准委员会 || building.Type == BuildingType.效能研究室 ||
-            //    building.Type == BuildingType.高管办公室 || building.Type == BuildingType.人力资源部A || building.Type == BuildingType.人力资源部B ||
-            //    building.Type == BuildingType.财务部 || building.Type == BuildingType.档案管理室 || building.Type == BuildingType.按摩房 || building.Type == BuildingType.健身房)
-            //{
-            //    m_SelectDict.Add(building.Type, prefab);
-            //}
+            Building building = prefab.GetComponent<Building>();
+            //基础建筑物不能通过抽卡获取
+            if (!building.BasicBuilding)
+            {
+                m_SelectDict.Add(building.Type, prefab);
+            }
         }
     }
 
@@ -108,8 +107,15 @@ public class BuildingManage : MonoBehaviour
         selectBuildingPanel = transform.Find("SelectBuilding");
         btn_EnterBuildMode = transform.Find("Btn_BuildMode").GetComponent<Button>();
         btn_FinishBuild = transform.Find("WarePanel/Btn_Finish").GetComponent<Button>();
+        btn_Dismantle = transform.Find("WarePanel/Btn_Dismantle").GetComponent<Button>();
         description = lotteryPanel.Find("BuildingDescriptionPanel").GetComponent<BuildingDescription>();
         description.Init();
+
+        warePanel.Find("Btn_技术部门").GetComponent<Button>().onClick.AddListener(() => { BuildBasicBuilding(BuildingType.技术部门); });
+        warePanel.Find("Btn_市场部门").GetComponent<Button>().onClick.AddListener(() => { BuildBasicBuilding(BuildingType.市场部门); });
+        warePanel.Find("Btn_产品部门").GetComponent<Button>().onClick.AddListener(() => { BuildBasicBuilding(BuildingType.产品部门); });
+        warePanel.Find("Btn_公关营销部").GetComponent<Button>().onClick.AddListener(() => { BuildBasicBuilding(BuildingType.公关营销部); });
+        warePanel.Find("Btn_高管办公室").GetComponent<Button>().onClick.AddListener(() => { BuildBasicBuilding(BuildingType.高管办公室); });
 
         m_EffectHalo.SetActive(false);
         InitBuilding(BuildingType.CEO办公室, new Int2(13, 1));
@@ -180,6 +186,7 @@ public class BuildingManage : MonoBehaviour
             m_GridZ = (int)(AimingPosition.z / 10);
         else
             m_GridZ = (int)(AimingPosition.z / 10) - 1;
+        btn_Dismantle.gameObject.SetActive(false);
 
         //建造模式下
         if (m_InBuildingMode)
@@ -233,6 +240,7 @@ public class BuildingManage : MonoBehaviour
             }
             temp_Grids.Clear();
             m_CanBuild = false;
+
             //已经选择建筑，检测网格可否可以建造
             if (temp_Building)
             {
@@ -271,6 +279,9 @@ public class BuildingManage : MonoBehaviour
                 //不能覆盖全部网格 => 不能建造
                 else
                     temp_Building.transform.position = AimingPosition + new Vector3(-5, 0, -5);
+
+                btn_Dismantle.gameObject.SetActive(true);
+                btn_Dismantle.onClick.AddListener(() => { DismantleBuilding(temp_Building); });
             }
         }
         //非建筑模式下
@@ -387,7 +398,11 @@ public class BuildingManage : MonoBehaviour
         lotteryUI.Clear();
     }
 
-
+    //建造基础建筑按钮
+    public void BuildBasicBuilding(BuildingType type)
+    {
+        StartBuildNew(type);
+    }
 
 
     //进入建造模式
@@ -421,6 +436,8 @@ public class BuildingManage : MonoBehaviour
     //开始建造（按建筑类型创造新建筑）
     void StartBuildNew(BuildingType type)
     {
+        if (temp_Building)
+            BuildCancel();
         //Init
         GameObject buildingGo = Instantiate(m_AllBuildingDict[type]);
         temp_Building = buildingGo.GetComponent<Building>();
@@ -438,6 +455,9 @@ public class BuildingManage : MonoBehaviour
     //开始建造（已生成过的建筑）
     void StartBuild(Building building)
     {
+        if (temp_Building)
+            BuildCancel();
+
         temp_Building = building;
         temp_Building.gameObject.SetActive(true);
     }
@@ -547,12 +567,21 @@ public class BuildingManage : MonoBehaviour
 
     public void MoveBuilding()
     {
+        if (temp_Building)
+            BuildCancel();
+
         m_SelectBuilding.Move();
         temp_Building = m_SelectBuilding;
         selectBuildingPanel.gameObject.SetActive(false);
         btn_EnterBuildMode.gameObject.SetActive(false);
     }
 
+    //拆除建筑
+    public void DismantleBuilding(Building building)
+    {
+        GameControl.Instance.BuildingPay -= building.Pay;
+        building.Dismantle();
+    }
     public void DismantleBuilding()
     {
         GameControl.Instance.BuildingPay -= m_SelectBuilding.Pay;
