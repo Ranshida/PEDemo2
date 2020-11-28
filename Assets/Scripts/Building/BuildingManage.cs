@@ -118,8 +118,8 @@ public class BuildingManage : MonoBehaviour
         warePanel.Find("Btn_高管办公室").GetComponent<Button>().onClick.AddListener(() => { BuildBasicBuilding(BuildingType.高管办公室); });
 
         m_EffectHalo.SetActive(false);
-        InitBuilding(BuildingType.CEO办公室, new Int2(13, 1));
-        InitBuilding(BuildingType.技术部门, new Int2(16, 1));
+        InitBuilding(BuildingType.CEO办公室, new Int2(0, 8));
+        //InitBuilding(BuildingType.技术部门, new Int2(16, 1));
     }
 
     //初始化默认建筑
