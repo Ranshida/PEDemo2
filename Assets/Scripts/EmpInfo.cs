@@ -177,6 +177,7 @@ public class EmpInfo : MonoBehaviour
 
     public void StartHire()
     {
+        print("Shit");
         GC.CurrentEmpInfo = this;
         GC.SelectMode = 1;
         GC.ShowDepSelectPanel(emp.Type);
@@ -238,7 +239,7 @@ public class EmpInfo : MonoBehaviour
         else if(GC.SelectMode == 5)
         {
             GC.CurrentEmpInfo = DetailInfo;
-            GC.CurrentOffice.BuildingActive();
+            GC.CurrentDep.BuildingActive();
         }
         //发动CEO技能
         else if(GC.SelectMode == 6)

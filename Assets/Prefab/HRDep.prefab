@@ -1583,17 +1583,16 @@ MonoBehaviour:
   SpProgress: 0
   SpTotalProgress: 0
   FailProgress: 0
-  TaskChangeTime: 0
   EfficiencyLevel: 0
-  LevelDownTime: 0
   SpType: 0
   SpTime: 0
-  SurveyStart: 0
-  Failed: 0
-  TaskChange: 0
-  WorkStart: 0
   EmpLimit: 0
-  Efficiency: 1
+  ProducePointLimit: 20
+  ActiveMode: 1
+  BuildingMode: 1
+  SurveyStart: 0
+  WorkStart: 0
+  Efficiency: 0
   ExtraSuccessRate: 0
   ExtraMajorSuccessRate: 0
   canWork: 1
@@ -1618,6 +1617,7 @@ MonoBehaviour:
   Text_LevelDownTime: {fileID: 0}
   Text_SRateDetail: {fileID: 5397765392198847116}
   SurveyButton: {fileID: 0}
+  ActiveButton: {fileID: 0}
   type: 5
   Researches:
   - {fileID: 0}

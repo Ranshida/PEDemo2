@@ -100,10 +100,11 @@ public class HireType
 public class DepControl : MonoBehaviour
 {
     static public int StandardProducePoint = 50;
-    [HideInInspector] public int SpProgress = 0, SpTotalProgress, FailProgress = 0, EfficiencyLevel = 0, SpType, SpTime;//SPTime:CEO技能
+    [HideInInspector] public int SpProgress = 0, SpTotalProgress, FailProgress = 0, EfficiencyLevel = 0, SpType;
+    //BuildingMode用于区分建筑模式  ActiveMode用于区分激活方式 1直接激活 2选择员工 3选择部门
     [HideInInspector] public int EmpLimit, ProducePointLimit = 20, ActiveMode = 1, BuildingMode = 1;
-    [HideInInspector] public bool SurveyStart = false, WorkStart = false; //WorkStart专门用于特殊业务
-    public float Efficiency = 1.0f, ExtraSuccessRate = 0, ExtraMajorSuccessRate = 0;
+    [HideInInspector] public bool SurveyStart = false;
+    public float Efficiency = 0, ExtraSuccessRate = 0, ExtraMajorSuccessRate = 0;
     public bool canWork = false, EmpChanged = false;
 
     private bool MajorSuccess = false;
@@ -117,7 +118,7 @@ public class DepControl : MonoBehaviour
     public DepSelect DS;
     public OfficeControl CommandingOffice;
     public Text Text_DepName, Text_Task, Text_Progress, Text_Quality, Text_Time, Text_Office, Text_Efficiency, Text_LevelDownTime, Text_SRateDetail;
-    public Button SurveyButton, ActiveButton;
+    public Button SurveyButton, ActiveButton, ModeChangeButton;
     public EmpType type;
 
     public Research[] Researches = new Research[3];
@@ -164,74 +165,124 @@ public class DepControl : MonoBehaviour
     {
         if (canWork == true)
         {
-            if (CurrentTask != null)
+            //基础经验获取
+            EmpsGetExp(building.effectValue, 5);
+            //进度增加，部分建筑资源不足时暂停
+            int Pp = CurrentEmps.Count;
+            if (building.Type == BuildingType.技术部门)
             {
-                int Pp = CurrentEmps.Count;
-                CurrentTask.Progress += Pp;
-                if (CurrentTask.Progress >= ProducePointLimit)
+                if (GC.FinishedTask[6] > 0)
+                    SpProgress += Pp;
+            }
+            else if (building.Type == BuildingType.公关营销部)
+            {
+                if (GC.FinishedTask[4] > 4)
+                    SpProgress += Pp;
+            }
+            else
+                SpProgress += Pp;
+
+            if (SpProgress >= ProducePointLimit)
+            {
+                //完成生产
+                float BaseSuccessRate = 0.5f + CountSuccessRate(1);
+                float Posb = Random.Range(0.0f, 1.0f);
+                //成功和大成功
+                if (Posb <= BaseSuccessRate)
                 {
-                    CurrentTask.Progress = 0;
-                    float BaseSuccessRate = 0.5f + CountSuccessRate(1);
-                    float Posb = Random.Range(0.0f, 1.0f);
-                    //成功和大成功
-                    if (Posb <= BaseSuccessRate)
+                    if (Random.Range(0.0f, 1.0f) < 0.2f + ExtraMajorSuccessRate)
                     {
-                        if (Random.Range(0.0f, 1.0f) < 0.1f + ExtraMajorSuccessRate)
+                        //大成功
+                        //额外经验获取
+                        EmpsGetExp(building.effectValue, 5 * ProducePointLimit / CurrentEmps.Count);
+                        //分部门效果
+                        if (building.Type == BuildingType.技术部门)
                         {
-                            //大成功
-                            GC.CreateMessage(Text_DepName.text + " 完美完成了 " + CurrentTask.TaskName + " 的生产");
-                            GC.FinishedTask[(int)CurrentTask.TaskType * 3 + CurrentTask.Num - 1] += 2;
-                            GC.UpdateResourceInfo();
-                            EmpsGetExp(CurrentTask.Num, 100);
-                            CurrentTask.Progress = 0;
-                            if (CurrentTask.Num == 1 && (int)CurrentTask.TaskType == 2)
-                                GC.StrC.SolveStrRequest(3, 2);
-                            else if (CurrentTask.Num == 2 && (int)CurrentTask.TaskType == 1)
-                                GC.StrC.SolveStrRequest(4, 2);
-                            else if (CurrentTask.Num == 1 && (int)CurrentTask.TaskType == 0)
-                                GC.StrC.SolveStrRequest(5, 2);
+                            GC.FinishedTask[0] += 2;
+                            GC.FinishedTask[6] -= 1;
+                            SpProgress = 0;
+                            GC.CreateMessage(Text_DepName.text + " 完美完成了程序迭代的生产");
                         }
+                        else if (building.Type == BuildingType.市场部门)
+                        {
+                            GC.FinishedTask[4] += 2;
+                            SpProgress = 0;
+                            GC.CreateMessage(Text_DepName.text + " 完美完成了营销文案的生产");
+                        }
+                        else if (building.Type == BuildingType.市场部门)
+                        {
+                            GC.FinishedTask[6] += 2;
+                            SpProgress = 0;
+                            GC.CreateMessage(Text_DepName.text + " 完美完成了原型图的生产");
+                        }
+                        //其他需要激活的建筑
                         else
                         {
-                            //成功
-                            GC.CreateMessage(Text_DepName.text + " 完成了 " + CurrentTask.TaskName + " 的生产");
-                            GC.FinishedTask[(int)CurrentTask.TaskType * 3 + CurrentTask.Num - 1] += 1;
-                            GC.UpdateResourceInfo();
-                            EmpsGetExp(CurrentTask.Num, 50);
-                            CurrentTask.Progress = 0;
-                            if (CurrentTask.Num == 1 && (int)CurrentTask.TaskType == 2)
-                                GC.StrC.SolveStrRequest(3, 1);
-                            else if (CurrentTask.Num == 2 && (int)CurrentTask.TaskType == 1)
-                                GC.StrC.SolveStrRequest(4, 1);
-                            else if (CurrentTask.Num == 1 && (int)CurrentTask.TaskType == 0)
-                                GC.StrC.SolveStrRequest(5, 1);
+                            MajorSuccess = true;
+                            ActiveButton.interactable = true;
+                            GC.CreateMessage(Text_DepName.text + " 已完美充能");
                         }
+                        GC.UpdateResourceInfo();
                     }
-                    //失败和大失败
                     else
                     {
-                        EmpsGetExp(CurrentTask.Num, 50);
-                        if (Random.Range(0.0f, 1.0f) < 0.4f)
+                        //成功
+                        if (building.Type == BuildingType.技术部门)
                         {
-                            //大失败
-                            GC.CreateMessage(Text_DepName.text + " 生产 " + CurrentTask.TaskName + " 大失败，部门员工心力-20");
-                            for (int i = 0; i < CurrentEmps.Count; i++)
-                            {
-                                CurrentEmps[i].Mentality -= 20;
-                            }
+                            GC.FinishedTask[0] += 1;
+                            GC.FinishedTask[6] -= 1;
+                            SpProgress = 0;
+                            GC.CreateMessage(Text_DepName.text + " 完成了程序迭代的生产");
                         }
+                        else if (building.Type == BuildingType.市场部门)
+                        {
+                            GC.FinishedTask[4] += 1;
+                            SpProgress = 0;
+                            GC.CreateMessage(Text_DepName.text + " 完成了营销文案的生产");
+                        }
+                        else if (building.Type == BuildingType.市场部门)
+                        {
+                            GC.FinishedTask[6] += 1;
+                            SpProgress = 0;
+                            GC.CreateMessage(Text_DepName.text + " 完成了原型图的生产");
+                        }
+                        //其他需要激活的建筑
                         else
                         {
-                            //失败
-                            GC.CreateMessage(Text_DepName.text + " 生产 " + CurrentTask.TaskName + " 失败");
+                            MajorSuccess = false;
+                            ActiveButton.interactable = true;
+                            GC.CreateMessage(Text_DepName.text + " 已成功充能");
+                        }
+                        GC.UpdateResourceInfo();                       
+                    }
+
+                }
+                //失败和大失败
+                else
+                {
+                    SpProgress = 0;
+                    if (Random.Range(0.0f, 1.0f) < 0.5f)
+                    {
+                        //大失败
+                        GC.CreateMessage(Text_DepName.text + " 工作中发生重大失误,部门员工心力-20");
+                        for (int i = 0; i < CurrentEmps.Count; i++)
+                        {
+                            CurrentEmps[i].Mentality -= 20;
                         }
                     }
+                    else
+                    {
+                        //失败
+                        GC.CreateMessage(Text_DepName.text + " 工作失败");
+                    }
                 }
-                UpdateUI();
             }
-            else if (CurrentResearch != null)
+
+            UpdateUI();
+
+            //下面是要删的
+            if (CurrentResearch != null)
             {
-                int Pp = CountProducePower(6);
                 CurrentResearch.CurrentProgress += Pp;
                 CurrentResearch.UpdateUI();
                 if (CurrentResearch.CurrentProgress >= CurrentResearch.Progress)
@@ -247,7 +298,6 @@ public class DepControl : MonoBehaviour
             }
             else if (SurveyStart == true)
             {
-                int Pp = CountProducePower(6);
                 SpProgress += Pp;
                 if (SpProgress >= StandardProducePoint * 10)
                 {
@@ -260,114 +310,7 @@ public class DepControl : MonoBehaviour
                 UpdateUI();
                 GC.StrC.SolveStrRequest(7, 1);
             }
-            //大部分建筑的激活功能位置
-            else if (WorkStart == true)
-            {
-                if (type == EmpType.HR)
-                {
-                    int Pp = CurrentEmps.Count;
-                    SpProgress += Pp;
-                    if (SpProgress >= ProducePointLimit)
-                    {
-                        SpProgress = 0;
-                        WorkStart = false;
-                        float BaseSuccessRate = 0.6f + CountSuccessRate(8);
-                        float Posb = Random.Range(0.0f, 1.0f);
-                        //成功和大成功
-                        if (Posb <= BaseSuccessRate)
-                        {
-                            HireType ht = new HireType(SpType);
-                            ht.SetHeadHuntStatus();
-
-                            //此处的数组为原本的猎头相关功能
-                            //ht.SetHeadHuntStatus(DepHeadHuntStatus);
-
-                            //大成功
-                            if (Random.Range(0.0f, 1.0f) < 0.1f)
-                            {
-                                ht.MajorSuccess = true;
-                                EmpsGetExp(8, 100);
-                                GC.CreateMessage(Text_DepName.text + " 招聘 大成功");
-                            }
-                            //成功
-                            else
-                            {
-                                EmpsGetExp(8, 50);
-                                GC.CreateMessage(Text_DepName.text + " 招聘 成功");
-                            }
-
-                            GC.HC.AddHireTypes(ht);
-                        }
-                        //失败和大失败
-                        else
-                        {
-                            EmpsGetExp(8, 50);
-                            if (Random.Range(0.0f, 1.0f) < 0.4f)
-                            {
-                                //大失败
-                                for (int i = 0; i < CurrentEmps.Count; i++)
-                                {
-                                    CurrentEmps[i].Mentality -= 20;
-                                    GC.CreateMessage(Text_DepName.text + " 招聘 大失败，部门员工心力-20");
-                                }
-                            }
-                            else
-                                GC.CreateMessage(Text_DepName.text + " 招聘 失败");
-                        }
-                    }
-                    UpdateUI();
-                }
-                else if (SpProgress < ProducePointLimit)
-                {
-                    int Pp = CurrentEmps.Count;
-                    SpProgress += Pp;
-                    if (SpProgress >= ProducePointLimit)
-                    {
-                        SpProgress = 0;
-                        WorkStart = false;
-                        float BaseSuccessRate = 0.6f + CountSuccessRate(8);
-                        float Posb = Random.Range(0.0f, 1.0f);
-                        //成功和大成功
-                        if (Posb <= BaseSuccessRate)
-                        {
-                            //大成功
-                            if (Random.Range(0.0f, 1.0f) < 0.1f)
-                            {
-                                EmpsGetExp(building.effectValue, 5 * ProducePointLimit);
-                                MajorSuccess = true;
-                                GC.CreateMessage(Text_DepName.text + " 充能 大成功");
-                            }
-                            //成功
-                            else
-                            {
-                                MajorSuccess = false;
-                                GC.CreateMessage(Text_DepName.text + " 充能 成功");
-                            }
-                            ActiveButton.interactable = true;
-                        }
-                        //失败和大失败
-                        else
-                        {
-                            MajorSuccess = false;
-                            if (Random.Range(0.0f, 1.0f) < 0.4f)
-                            {
-                                //大失败
-                                for (int i = 0; i < CurrentEmps.Count; i++)
-                                {
-                                    CurrentEmps[i].Mentality -= 20;
-                                    GC.CreateMessage(Text_DepName.text + " 充能 大失败，部门员工心力-20");
-                                }
-                            }
-                            else
-                                GC.CreateMessage(Text_DepName.text + " 充能 失败");
-                        }
-                    }
-                    UpdateUI();
-                }
-            }
         }
-        if (SpTime > 0)
-            SpTime -= 1;
     }
 
     public void UpdateUI()
@@ -397,35 +340,23 @@ public class DepControl : MonoBehaviour
                 Text_Time.text = "剩余时间:----";
             }
         }
-        else if (CurrentTask != null)
+        else if (canWork == true)
         {
             //旧的生产力结算
             //int Pp = CountProducePower((int)type + 1);
             int Pp = CurrentEmps.Count;
-            Text_Task.text = "当前任务:" + CurrentTask.TaskName;
+            if (building.Type == BuildingType.技术部门 || building.Type == BuildingType.市场部门 || building.Type == BuildingType.产品部门)
+                Text_Task.text = "当前任务:基础资源生产";
+            else if (ActiveMode == 1)
+                Text_Task.text = "当前任务:" + building.Function_A;
+            else if (ActiveMode == 2)
+                Text_Task.text = "当前任务:" + building.Function_B;
             Text_Progress.text = "生产力:" + Pp + "/时";
-
-            //旧显示
-            //Text_Quality.text = "当前进度:" + CurrentTask.Progress + "/" + StandardProducePoint * 10;
-            //Text_Time.text = "剩余时间:" + calcTime(Pp, StandardProducePoint * 10 - CurrentTask.Progress) + "时";
-
             //成功率计算
             Text_Quality.text = "成功率:" + ((0.5f + CountSuccessRate(1)) * 100) + "%";
-
-            Text_Time.text = "剩余时间:" + calcTime(Pp, ProducePointLimit - CurrentTask.Progress) + "时";
+            Text_Time.text = "剩余时间:" + calcTime(Pp, ProducePointLimit - SpProgress) + "时";
         }
-        else if (WorkStart == true)
-        {
-            if (type == EmpType.HR)
-            {
-                int Pp = CurrentEmps.Count;
-                Text_Task.text = "当前任务:招聘";
-                Text_Progress.text = "生产力:" + Pp + "/时";
-                Text_Quality.text = "成功率:" + ((0.6f + CountSuccessRate(8)) * 100) + "%";
-                Text_Time.text = "剩余时间:" + calcTime(Pp, ProducePointLimit - SpProgress) + "时";
-            }
-        }
-        else
+        else 
         {
             Text_Task.text = "当前任务: 无";
             Text_Progress.text = "生产力:----";
@@ -821,15 +752,6 @@ public class DepControl : MonoBehaviour
         return BaseSuccessRate + ExtraSuccessRate + Efficiency;
     }
 
-    //开始招聘工作
-    public void StartHire()
-    {
-        //原本是StartTaskManage
-        WorkStart = true;
-        SpType = 0;
-        UpdateUI();
-    }
-
     public void ShowSRateDetailPanel()
     {
         if (type == EmpType.HR)
@@ -846,24 +768,200 @@ public class DepControl : MonoBehaviour
         SRateDetailPanel.gameObject.SetActive(false);
     }
 
+    //展开部门模式改变面板
     public void StartChangeMode()
     {
-
+        GC.DepModeSelectPanel.SetActive(true);
+        GC.CurrentDep = this;
+        GC.Text_DepMode1.text = building.Description_A;
+        GC.Text_DepMode2.text = building.Description_B;
     }
 
+    //部门模式改变
     public void ChangeBuildingMode(int num)
     {
-
+        ActiveMode = num;
+        SpProgress = 0;
+        ActiveButton.interactable = false;
+        GC.DepModeSelectPanel.SetActive(false);
+        UpdateUI();
     }
 
+    //展开确认面板并更新内容
     public void StartActive()
     {
-
+        GC.DepSkillConfirmPanel.SetActive(true);
     }
 
+    //可执行检测+后续面板展开
     public void ConfirmActive()
     {
+        //额外的消耗检测，不满足条件不继续
+        if(building.Type == BuildingType.公关营销部)
+        {
+            if (ActiveMode == 1 && GC.FinishedTask[4] < 5)
+                return;
+            else if (ActiveMode == 2 && (GC.FinishedTask[4] < 1 || GC.Money < 300))
+                return;
+        }
 
+        //关闭面板
+        GC.DepSkillConfirmPanel.SetActive(false);
+        if (ActiveMode == 1)
+        {
+            BuildingActive();
+            return;
+        }
+        else if (ActiveMode == 2)
+        {
+            GC.CurrentDep = this;
+            GC.SelectMode = 5;
+            GC.TotalEmpContent.parent.parent.gameObject.SetActive(true);
+        }
+        else if (ActiveMode == 3)
+        {
+            GC.CurrentDep = this;
+            GC.SelectMode = 5;
+            GC.ShowDepSelectPanel(AvailableDeps());
+        }
+        if (building.Type == BuildingType.按摩房 || building.Type == BuildingType.健身房 || building.Type == BuildingType.宣传中心 ||
+            building.Type == BuildingType.科技工作坊 || building.Type == BuildingType.绩效考评中心 || building.Type == BuildingType.心理咨询室
+            || building.Type == BuildingType.员工休息室 || building.Type == BuildingType.成人再教育所)
+        {
+            ShowAvailableEmps();
+        }
+        else if (building.Type == BuildingType.冥想室)
+        {
+            List<DepControl> Deps = AvailableDeps();
+            List<Employee> Emps = new List<Employee>();
+            for (int i = 0; i < Deps.Count; i++)
+            {
+                for (int j = 0; j < Deps[i].CurrentEmps.Count; j++)
+                {
+                    Emps.Add(Deps[i].CurrentEmps[j]);
+                }
+            }
+            int count = 3;
+            if (ActiveMode == 2)
+                count = 1;
+            for (int i = 0; i < GC.CurrentEmployees.Count; i++)
+            {
+                if (Emps.Contains(GC.CurrentEmployees[i]) == true)
+                {
+                    for (int j = 0; j < Emps[i].CurrentEmotions.Count; j++)
+                    {
+                        if (Emps[i].CurrentEmotions[j].color == EColor.DGreen && Emps[i].CurrentEmotions[j].Level >= count)
+                        {
+                            Emps[i].InfoB.gameObject.SetActive(true);
+                            break;
+                        }
+                    }
+                }
+                else
+                    Emps[i].InfoB.gameObject.SetActive(false);
+            }
+        }
+        else if (building.Type == BuildingType.特别秘书处)
+        {
+            List<DepControl> Deps = AvailableDeps();
+            List<Employee> Emps = new List<Employee>();
+            for (int i = 0; i < Deps.Count; i++)
+            {
+                for (int j = 0; j < Deps[i].CurrentEmps.Count; j++)
+                {
+                    Emps.Add(Deps[i].CurrentEmps[j]);
+                }
+            }
+            EColor ColorA = EColor.DRed, ColorB = EColor.Red;
+            if (ActiveMode == 2)
+            {
+                ColorA = EColor.DBlue;
+                ColorB = EColor.Blue;
+            }
+            for (int i = 0; i < GC.CurrentEmployees.Count; i++)
+            {
+                if (Emps.Contains(GC.CurrentEmployees[i]) == true)
+                {
+                    int num = 0;
+                    for (int j = 0; j < Emps[i].CurrentEmotions.Count; j++)
+                    {
+                        if ((Emps[i].CurrentEmotions[j].color == ColorA || Emps[i].CurrentEmotions[j].color == ColorB) && Emps[i].CurrentEmotions[j].Level >= 2)
+                            num += 1;
+                        if (num == 2)
+                        {
+                            Emps[i].InfoB.gameObject.SetActive(true);
+                            break;
+                        }
+                    }
+                }
+                else
+                    Emps[i].InfoB.gameObject.SetActive(false);
+            }
+        }
+        else if (building.Type == BuildingType.职业再发展中心)
+        {
+            List<DepControl> Deps = AvailableDeps();
+            List<Employee> Emps = new List<Employee>();
+            for (int i = 0; i < Deps.Count; i++)
+            {
+                for (int j = 0; j < Deps[i].CurrentEmps.Count; j++)
+                {
+                    Emps.Add(Deps[i].CurrentEmps[j]);
+                }
+            }
+            int count = 3;
+            if (ActiveMode == 2)
+                count = 1;
+            for (int i = 0; i < GC.CurrentEmployees.Count; i++)
+            {
+                if (Emps.Contains(GC.CurrentEmployees[i]) == true)
+                {
+                    for (int j = 0; j < Emps[i].CurrentEmotions.Count; j++)
+                    {
+                        if (Emps[i].CurrentEmotions[j].color == EColor.DGreen && Emps[i].CurrentEmotions[j].Level >= count)
+                        {
+                            Emps[i].InfoB.gameObject.SetActive(true);
+                            break;
+                        }
+                    }
+                }
+                else
+                    Emps[i].InfoB.gameObject.SetActive(false);
+            }
+        }
+        else if (building.Type == BuildingType.谍战中心 && GC.CurrentEmpInfo != null)
+        {
+            if (ActiveMode == 1)
+            {
+                List<DepControl> Deps = AvailableDeps();
+                List<Employee> Emps = new List<Employee>();
+                for (int i = 0; i < Deps.Count; i++)
+                {
+                    for (int j = 0; j < Deps[i].CurrentEmps.Count; j++)
+                    {
+                        Emps.Add(Deps[i].CurrentEmps[j]);
+                    }
+                }
+                for (int i = 0; i < GC.CurrentEmployees.Count; i++)
+                {
+                    if (Emps.Contains(GC.CurrentEmployees[i]) == true)
+                    {
+                        for (int j = 0; j < Emps[i].InfoDetail.PerksInfo.Count; j++)
+                        {
+                            if (Emps[i].InfoDetail.PerksInfo[j].CurrentPerk.Num == 39 || Emps[i].InfoDetail.PerksInfo[j].CurrentPerk.Num == 41)
+                            {
+                                Emps[i].InfoB.gameObject.SetActive(true);
+                                break;
+                            }
+                        }
+                    }
+                    else
+                        Emps[i].InfoB.gameObject.SetActive(false);
+                }
+            }
+            else
+                ShowAvailableEmps();
+        }
     }
 
     public void BuildingActive()
@@ -873,6 +971,41 @@ public class DepControl : MonoBehaviour
             if (MajorSuccess == true)
                 new ProduceBuff(0.05f, GC.SelectedDep);
             new ProduceBuff(0.05f, GC.SelectedDep);
+        }
+        else if (building.Type == BuildingType.人力资源部)
+        {
+            HireType ht = new HireType(0);
+            ht.SetHeadHuntStatus();
+            if (MajorSuccess == true)
+                ht.MajorSuccess = true;
+            GC.HC.AddHireTypes(ht);
+        }
+        else if (building.Type == BuildingType.公关营销部)
+        {
+            if(BuildingMode == 1)
+            {
+                GC.FinishedTask[4] -= 5;
+                if (MajorSuccess == true)
+                    GC.CreateMessage("获得了2个传播");
+                else
+                    GC.CreateMessage("获得了1个传播");
+            }
+            else if (BuildingMode == 2)
+            {
+                GC.Money -= 300;
+                GC.FinishedTask[4] -= 1;
+                if (MajorSuccess == true)
+                    GC.CreateMessage("获得了2个传播");
+                else
+                    GC.CreateMessage("获得了1个传播");
+            }
+        }
+        else if (building.Type == BuildingType.研发部门)
+        {
+            if (MajorSuccess == true)
+                GC.FinishedTask[7] += 2;
+            else if (MajorSuccess == false)
+                GC.FinishedTask[7] += 1;
         }
         else if (building.Type == BuildingType.心理咨询室 && GC.CurrentEmpInfo != null)
         {
@@ -1028,7 +1161,7 @@ public class DepControl : MonoBehaviour
             if (MajorSuccess == true)
                 GC.CurrentEmpInfo.emp.AddEmotion(EColor.Yellow);
         }
-        else if (building.Type == BuildingType.人文沙龙 && GC.SelectedDep != null)
+        else if (building.Type == BuildingType.人文沙龙)
         {
             int ValueA = 0, ValueB = 0;
             if(BuildingMode == 1)
@@ -1068,7 +1201,7 @@ public class DepControl : MonoBehaviour
                 }
             }
         }
-        else if (building.Type == BuildingType.兴趣社团 && GC.SelectedDep != null)
+        else if (building.Type == BuildingType.兴趣社团)
         {
             int Count = 0;
             for(int i = 0; i < CurrentEmps.Count; i++)
@@ -1085,7 +1218,7 @@ public class DepControl : MonoBehaviour
                 value += 0.01f;
             new ProduceBuff(value * Count, GC.SelectedDep);
         }
-        else if (building.Type == BuildingType.电子科技展 && GC.SelectedDep != null)
+        else if (building.Type == BuildingType.电子科技展)
         {
             int ValueA = 0, ValueB = 0;
             if (BuildingMode == 1)
@@ -1243,6 +1376,7 @@ public class DepControl : MonoBehaviour
                 }
             }
         }
+        //
         else if (building.Type == BuildingType.谍战中心 && GC.CurrentEmpInfo != null)
         {
 
@@ -1252,5 +1386,40 @@ public class DepControl : MonoBehaviour
         GC.SelectedDep = null;
         GC.CurrentDep = null;
         GC.CurrentEmpInfo = null;
+        GC.TotalEmpContent.parent.parent.gameObject.SetActive(true);
+        ActiveButton.interactable = false;
+        SpProgress = 0;
+        GC.ResetSelectMode();
+    }
+
+    List<DepControl> AvailableDeps()
+    {
+        List<DepControl> L = new List<DepControl>();
+        for(int i = 0; i < building.effect.AffectedBuildings.Count; i++)
+        {
+            if (building.effect.AffectedBuildings[i].Department != null)
+                L.Add(building.effect.AffectedBuildings[i].Department);
+        }
+        return L;
+    }
+
+    void ShowAvailableEmps()
+    {
+        List<DepControl> Deps = AvailableDeps();
+        List<Employee> Emps = new List<Employee>();
+        for(int i = 0; i < Deps.Count; i++)
+        {
+            for(int j = 0; j < Deps[i].CurrentEmps.Count; j++)
+            {
+                Emps.Add(Deps[i].CurrentEmps[j]);
+            }
+        }
+        for(int i = 0; i < GC.CurrentEmployees.Count; i++)
+        {
+            if (Emps.Contains(GC.CurrentEmployees[i]) == true)
+                Emps[i].InfoB.gameObject.SetActive(true);
+            else
+                Emps[i].InfoB.gameObject.SetActive(false);
+        }
     }
 }

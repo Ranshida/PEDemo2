@@ -21,13 +21,13 @@ public class ProduceControl : MonoBehaviour
     public GameControl GC;
 
     public float HireCostRate = 1.0f, HeadHuntCostRate = 1.0f;
+    public int TaskNum = 1, HireType = 1, HireLevel = 1;
 
     public int[] HeadHuntStatus = new int[15];
     public Toggle[] HeadHuntToggles = new Toggle[15];
 
     DepControl CurrentDep;
 
-    int TaskNum = 1, HireType = 1, HireLevel = 1;
     int HeadHuntSelectNum = 0;
     int HireCost = 200;
 
@@ -150,7 +150,7 @@ public class ProduceControl : MonoBehaviour
         {
             this.gameObject.SetActive(false);
             GC.Money -= HeadHuntSelectNum * 1000;
-            CurrentDep.WorkStart = true;
+            //CurrentDep.WorkStart = true;
             CurrentDep.SpType = HireType;
             if (HeadHuntSelectNum == 0)
                 CurrentDep.SpTotalProgress = (int)(HireCost * HireCostRate);

@@ -2783,23 +2783,25 @@ MonoBehaviour:
   SpProgress: 0
   SpTotalProgress: 0
   FailProgress: 0
-  TaskChangeTime: 0
   EfficiencyLevel: 0
-  LevelDownTime: 0
   SpType: 0
   SpTime: 0
-  SurveyStart: 0
-  Failed: 0
-  TaskChange: 0
-  WorkStart: 0
   EmpLimit: 0
-  Efficiency: 1
-  FailRate: 0.3
+  ProducePointLimit: 20
+  ActiveMode: 1
+  BuildingMode: 1
+  SurveyStart: 0
+  WorkStart: 0
+  Efficiency: 0
+  ExtraSuccessRate: 0
+  ExtraMajorSuccessRate: 0
   canWork: 0
+  EmpChanged: 0
   CurrentResearch: {fileID: 0}
   EmpContent: {fileID: 8823674}
   EmpPanel: {fileID: 8462709804129838565}
   LabPanel: {fileID: 221971406}
+  SRateDetailPanel: {fileID: 0}
   OfficeWarning: {fileID: 6013717149954132109}
   building: {fileID: 0}
   GC: {fileID: 0}
@@ -2813,7 +2815,9 @@ MonoBehaviour:
   Text_Office: {fileID: 1085672002010026346}
   Text_Efficiency: {fileID: 5777143765928895211}
   Text_LevelDownTime: {fileID: 1395425180040029927}
+  Text_SRateDetail: {fileID: 0}
   SurveyButton: {fileID: 6598288156057039727}
+  ActiveButton: {fileID: 0}
   type: 0
   Researches:
   - {fileID: 2074055858709380170}

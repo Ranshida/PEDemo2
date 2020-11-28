@@ -29,7 +29,6 @@ public class OfficeControl : MonoBehaviour
         if (building.Type == BuildingType.CEO办公室)
         {
             GC.HourEvent.AddListener(TimePass);
-            SRateDetailPanel.parent = GC.SRateDetailContent;
         }
         SetOfficeUI();
     }

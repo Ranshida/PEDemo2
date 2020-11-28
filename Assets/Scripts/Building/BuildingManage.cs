@@ -475,78 +475,30 @@ public class BuildingManage : MonoBehaviour
             ConstructedBuildings.Add(building);
             GameControl.Instance.Money -= 100;
             GameControl.Instance.BuildingPay += building.Pay;
-            //GameControl.Instance.Money -= 100;  ？？
 
             BuildingType T = building.Type;
-            ////生产部门创建
-            //if (T == BuildingType.技术部门 || T == BuildingType.市场部门 || T == BuildingType.产品部门 || T == BuildingType.运营部门)
-            //{
-            //    //新建部门必须要保留的
-            //    building.Department = GameControl.Instance.CreateDep((int)T + 1);//根据Type创建对应的生产部门面板
-            //    building.Department.building = building;//把SelectBuilding赋值给新的部门面板
-            //}
-            //else if (T == BuildingType.研发部门)
-            //{
-            //    building.Department = GameControl.Instance.CreateDep(4);
-            //    building.Department.building = building;
-            //}
-            //else if (T == BuildingType.人力资源部B)
-            //{
-            //    building.Department = GameControl.Instance.CreateDep(5);
-            //    building.Department.building = building;
-            //}
-
-            ////办公室创建
-            ////else if (T == BuildingType.高管办公室 || T == BuildingType.CEO办公室)
-            //else if (T == BuildingType.高管办公室)
-            //{
-            //    building.Office = GameControl.Instance.CreateOffice(building);
-            //    building.effectValue = 8;
-            //}
-            //else if (T == BuildingType.CEO办公室)
-            //{
-            //    building.Office = CEOOffice;    //互相引用
-            //    CEOOffice.building = building;  //互相引用
-            //}
-            //else if (T == BuildingType.人力资源部A)
-            //{
-            //    building.Office = GameControl.Instance.CreateOffice(building);
-            //    building.effectValue = 1;
-            //    building.StaminaRequest = 10;
-            //}
-            //else if (T == BuildingType.按摩房 || T == BuildingType.健身房)
-            //{
-            //    building.Office = GameControl.Instance.CreateOffice(building);
-            //    building.effectValue = 3;
-            //    if (T == BuildingType.健身房)
-            //        building.StaminaRequest = 10;
-            //}
-            //else if (T == BuildingType.战略咨询部B || T == BuildingType.精确标准委员会)
-            //{
-            //    building.Office = GameControl.Instance.CreateOffice(building);
-            //    building.effectValue = 5;
-            //    building.StaminaRequest = 20;
-            //}
-            //else if (T == BuildingType.目标修正小组)
-            //{
-            //    building.Office = GameControl.Instance.CreateOffice(building);
-            //    building.effectValue = 6;
-            //    building.StaminaRequest = 20;
-            //}
-            //else if (T == BuildingType.财务部 || T == BuildingType.高级财务部A || T == BuildingType.高级财务部B)
-            //{
-            //    building.Office = GameControl.Instance.CreateOffice(building);
-            //    building.effectValue = 7;
-            //    building.StaminaRequest = 10;
-            //}
-            //else if (T == BuildingType.档案管理室 || T == BuildingType.效能研究室)
-            //{
-            //    building.Office = GameControl.Instance.CreateOffice(building);
-            //    building.effectValue = 8;
-            //    building.StaminaRequest = 10;
-            //    if (T == BuildingType.效能研究室)
-            //        building.StaminaRequest = 20;
-            //}
+            //生产部门创建
+            if (T == BuildingType.技术部门 || T == BuildingType.市场部门 || T == BuildingType.产品部门 || T == BuildingType.公关营销部
+                || T == BuildingType.研发部门 || T == BuildingType.智库小组 || T == BuildingType.人力资源部
+                || T == BuildingType.心理咨询室 || T == BuildingType.财务部 || T == BuildingType.体能研究室
+                || T == BuildingType.按摩房 || T == BuildingType.健身房 || T == BuildingType.宣传中心 || T == BuildingType.科技工作坊
+                || T == BuildingType.绩效考评中心 || T == BuildingType.员工休息室 || T == BuildingType.人文沙龙 || T == BuildingType.兴趣社团
+                || T == BuildingType.电子科技展 || T == BuildingType.冥想室 || T == BuildingType.特别秘书处 || T == BuildingType.成人再教育所
+                || T == BuildingType.职业再发展中心 || T == BuildingType.中央监控室 || T == BuildingType.谍战中心)
+            {
+                building.Department = GameControl.Instance.CreateDep(building);//根据Type创建对应的生产部门面板
+            }
+            //办公室创建
+            else if (T == BuildingType.高管办公室)
+            {
+                building.Office = GameControl.Instance.CreateOffice(building);
+                building.effectValue = 8;
+            }
+            else if (T == BuildingType.CEO办公室)
+            {
+                building.Office = CEOOffice;    //互相引用
+                CEOOffice.building = building;  //互相引用
+            }
         }
 
         //确定建筑已摆放完毕

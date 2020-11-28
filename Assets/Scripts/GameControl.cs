@@ -11,7 +11,7 @@ public class GameControl : MonoBehaviour
     [HideInInspector] public float EfficiencyExtraNormal = 0, EfficiencyExtraScience = 0, ResearchSuccessRateExtra = 0, ExtrafailRate = 0, HireEfficiencyExtra = 1.0f,
         HRBuildingMentalityExtra = 1.0f, BuildingSkillSuccessExtra = 0, BuildingMaintenanceCostRate = 1.0f;
     public int SelectMode = 1; //1员工招聘时部门选择 2员工移动时部门选择 3部门的高管办公室选择 4发动动员技能时员工选择 
-    //5发动建筑技能时员工选择 6CEO技能员工/部门选择 7选择两个员工发动动员技能 8普通办公室的上级(高管办公室)选择
+    //5发动建筑技能时员工选择 6CEO技能员工/部门选择 7选择两个员工发动动员技能 8普通办公室的上级(高管办公室)选择 
     public int Money = 1000, CEOSkillNum = 0, DoubleMobilizeCost = 0, MeetingBlockTime = 0;
     public bool ForceTimePause = false;
     public int Stamina
@@ -59,7 +59,7 @@ public class GameControl : MonoBehaviour
     }
 
     [HideInInspector] public EmpInfo CurrentEmpInfo, CurrentEmpInfo2;//2主要用于需要两个员工的动员技能
-    [HideInInspector] public DepControl CurrentDep, SelectedDep;
+    public DepControl CurrentDep, SelectedDep;
     [HideInInspector] public OfficeControl CurrentOffice;
     public EmpEntity EmpEntityPrefab;
     public PerkInfo PerkInfoPrefab;
@@ -79,8 +79,10 @@ public class GameControl : MonoBehaviour
     public CEOControl CC;
     public Transform HireContent, EmpPanelContent, DepContent, DepSelectContent, TotalEmpContent, StandbyContent, EmpDetailContent, MessageContent, SRateDetailContent;
     public InfoPanel infoPanel;
-    public GameObject DepSelectPanel, StandbyButton, MessagePrefab, CEOSkillPanel, EmpTrainingPanel, GameOverPanel, OfficeModeSelectPanel, OfficeModeHireOptionButton;
-    public Text Text_Time, Text_TechResource, Text_MarketResource, Text_ProductResource, Text_Money, Text_Stamina, Text_Mentality, Text_Morale;
+    public GameObject DepSelectPanel, StandbyButton, MessagePrefab, CEOSkillPanel, EmpTrainingPanel, GameOverPanel, OfficeModeSelectPanel,
+        OfficeModeHireOptionButton, DepModeSelectPanel, DepSkillConfirmPanel;
+    public Text Text_Time, Text_TechResource, Text_MarketResource, Text_ProductResource, Text_Money, Text_Stamina, Text_Mentality, 
+        Text_Morale, Text_DepMode1, Text_DepMode2, Text_DepSkillDescribe;
     public SkillControl SC;
     [HideInInspector] public UnityEvent DailyEvent, WeeklyEvent, MonthlyEvent, HourEvent, YearEvent;
 
@@ -112,7 +114,7 @@ public class GameControl : MonoBehaviour
     }
 
     private void Update()
-    {       
+    {
         if (TimePause == false && ForceTimePause == false)
             Timer += Time.deltaTime * TimeMultiply;
         if(Timer >= 10)
@@ -253,16 +255,10 @@ public class GameControl : MonoBehaviour
         //}
     }
 
-    public DepControl CreateDep(int type, Building b)
+    public DepControl CreateDep(Building b)
     {
         DepControl newDep;
-        if (type != 10)
-            newDep = Instantiate(DepPrefab, this.transform);
-        //else if(type == 4)
-        //    newDep = Instantiate(LabPrefab, this.transform);
-        else
-            newDep = Instantiate(HRDepPrefab, this.transform);
-
+        newDep = Instantiate(DepPrefab, this.transform);
         newDep.EmpPanel.parent = EmpPanelContent;
         if (newDep.SRateDetailPanel != null)
             newDep.SRateDetailPanel.parent = SRateDetailContent;
@@ -272,188 +268,195 @@ public class GameControl : MonoBehaviour
         newDep.building = b;
 
         //部门命名
-        string newDepName = "";
-        if (type == 1)
+        string newDepName = b.Type.ToString();
+        if (b.Type == BuildingType.技术部门)
         {
+            newDep.type = EmpType.Tech;
             newDep.EmpLimit = 4;
-            newDepName = "技术部";
             newDep.building.effectValue = 1;
             newDep.ProducePointLimit = 16;
+            newDep.ModeChangeButton.gameObject.SetActive(false);
+            newDep.ActiveButton.gameObject.SetActive(false);
+            PC.SetName(newDep);
+            PC.TaskNum = 1;
+            PC.CreateTask();
         }
-        else if (type == 2)
+        else if (b.Type == BuildingType.市场部门)
         {
+            newDep.type = EmpType.Market;
             newDep.EmpLimit = 4;
-            newDepName = "市场部";
             newDep.building.effectValue = 2;
             newDep.ProducePointLimit = 16;
+            newDep.ModeChangeButton.gameObject.SetActive(false);
+            newDep.ActiveButton.gameObject.SetActive(false);
         }
-        else if (type == 3)
+        else if (b.Type == BuildingType.产品部门)
         {
+            newDep.type = EmpType.Product;
             newDep.EmpLimit = 4;
-            newDepName = "产品部";
             newDep.building.effectValue = 3;
             newDep.ProducePointLimit = 16;
+            newDep.ModeChangeButton.gameObject.SetActive(false);
+            newDep.ActiveButton.gameObject.SetActive(false);
         }
-        else if (type == 4)
+        else if (b.Type == BuildingType.公关营销部)
         {            
             newDep.EmpLimit = 2;
-            newDepName = "公关营销部";
             newDep.building.effectValue = 2;
             newDep.ProducePointLimit = 16;
         }
-        else if (type == 5)
+        else if (b.Type == BuildingType.研发部门)
         {
-            newDep.type = EmpType.Science;
             newDep.EmpLimit = 2;
-            newDepName = "研发部";
             newDep.building.effectValue = 1;
             newDep.ProducePointLimit = 16;
+            newDep.ModeChangeButton.gameObject.SetActive(false);
+            newDep.ActiveButton.gameObject.SetActive(false);
         }
-        else if (type == 6)
+        else if (b.Type == BuildingType.智库小组)
         {
             newDep.EmpLimit = 2;
-            newDepName = "智库小组";
             newDep.building.effectValue = 11;
             newDep.ProducePointLimit = 48;
+            newDep.ActiveMode = 3;
         }
-        else if (type == 7)
+        else if (b.Type == BuildingType.人力资源部)
         {
+            newDep.type = EmpType.HR;
             newDep.EmpLimit = 2;
-            newDepName = "人力资源部";
             newDep.building.effectValue = 8;
             newDep.ProducePointLimit = 48;
         }
-        else if (type == 8)
+        else if (b.Type == BuildingType.心理咨询室)
         {
             newDep.EmpLimit = 2;
-            newDepName = "心理咨询室";
             newDep.building.effectValue = 8;
             newDep.ProducePointLimit = 24;
+            newDep.ActiveMode = 2;
         }
-        else if (type == 9)
+        else if (b.Type == BuildingType.财务部)
         {
             newDep.EmpLimit = 2;
-            newDepName = "财务部";
             newDep.building.effectValue = 9;
             newDep.ProducePointLimit = 24;
+            newDep.ActiveMode = 3;
         }
-        else if (type == 10)
+        else if (b.Type == BuildingType.体能研究室)
         {
             newDep.EmpLimit = 4;
-            newDepName = "体能研究室";
             newDep.building.effectValue = 10;
             newDep.ProducePointLimit = 48;
+            newDep.ActiveMode = 3;
         }
-        else if (type == 11)
+        else if (b.Type == BuildingType.按摩房)
         {
             newDep.EmpLimit = 1;
-            newDepName = "按摩房";
             newDep.building.effectValue = 6;
             newDep.ProducePointLimit = 24;
+            newDep.ActiveMode = 2;
         }
-        else if (type == 12)
+        else if (b.Type == BuildingType.健身房)
         {
             newDep.EmpLimit = 2;
-            newDepName = "健身房";
             newDep.building.effectValue = 6;
             newDep.ProducePointLimit = 24;
+            newDep.ActiveMode = 2;
         }
-        else if (type == 13)
+        else if (b.Type == BuildingType.宣传中心)
         {
             newDep.EmpLimit = 1;
-            newDepName = "宣传中心";
             newDep.building.effectValue = 2;
             newDep.ProducePointLimit = 24;
+            newDep.ActiveMode = 2;
         }
-        else if (type == 14)
+        else if (b.Type == BuildingType.科技工作坊)
         {
             newDep.EmpLimit = 1;
-            newDepName = "科技工作坊";
             newDep.building.effectValue = 1;
             newDep.ProducePointLimit = 24;
+            newDep.ActiveMode = 2;
         }
-        else if (type == 15)
+        else if (b.Type == BuildingType.绩效考评中心)
         {
             newDep.EmpLimit = 1;
-            newDepName = "绩效考评中心";
             newDep.building.effectValue = 4;
             newDep.ProducePointLimit = 24;
+            newDep.ActiveMode = 2;
         }
-        else if (type == 16)
+        else if (b.Type == BuildingType.员工休息室)
         {
             newDep.EmpLimit = 1;
-            newDepName = "员工休息室";
             newDep.building.effectValue = 5;
             newDep.ProducePointLimit = 24;
+            newDep.ActiveMode = 2;
         }
-        else if (type == 17)
+        else if (b.Type == BuildingType.人文沙龙)
         {
             newDep.EmpLimit = 2;
-            newDepName = "人文沙龙";
             newDep.building.effectValue = 8;
             newDep.ProducePointLimit = 48;
         }
-        else if (type == 18)
+        else if (b.Type == BuildingType.兴趣社团)
         {
             newDep.EmpLimit = 2;
-            newDepName = "兴趣社团";
             newDep.building.effectValue = 8;
             newDep.ProducePointLimit = 32;
+            newDep.ActiveMode = 3;
+            newDep.ModeChangeButton.gameObject.SetActive(false);
         }
-        else if (type == 19)
+        else if (b.Type == BuildingType.电子科技展)
         {
             newDep.EmpLimit = 2;
-            newDepName = "电子科技展";
             newDep.building.effectValue = 1;
             newDep.ProducePointLimit = 48;
         }
-        else if (type == 20)
+        else if (b.Type == BuildingType.冥想室)
         {
             newDep.EmpLimit = 1;
-            newDepName = "冥想室";
             newDep.building.effectValue = 5;
             newDep.ProducePointLimit = 48;
+            newDep.ActiveMode = 2;
         }
-        else if (type == 21)
+        else if (b.Type == BuildingType.特别秘书处)
         {
             newDep.EmpLimit = 1;
-            newDepName = "特别秘书处";
             newDep.building.effectValue = 12;
             newDep.ProducePointLimit = 48;
+            newDep.ActiveMode = 2;
         }
-        else if (type == 22)
+        else if (b.Type == BuildingType.成人再教育所)
         {
             newDep.EmpLimit = 1;
-            newDepName = "成人再教育所";
             newDep.building.effectValue = 13;
             newDep.ProducePointLimit = 96;
+            newDep.ActiveMode = 2;
         }
-        else if (type == 23)
+        else if (b.Type == BuildingType.职业再发展中心)
         {
             newDep.EmpLimit = 1;
-            newDepName = "职业再发展中心";
             newDep.building.effectValue = 12;
             newDep.ProducePointLimit = 48;
+            newDep.ActiveMode = 2;
         }
-        else if (type == 24)
+        else if (b.Type == BuildingType.中央监控室)
         {
             newDep.EmpLimit = 3;
-            newDepName = "中央监控室";
             newDep.building.effectValue = 15;
             newDep.ProducePointLimit = 48;
+            newDep.ModeChangeButton.gameObject.SetActive(false);
         }
-        else if (type == 25)
+        else if (b.Type == BuildingType.谍战中心)
         {
             newDep.EmpLimit = 2;
-            newDepName = "谍战中心";
             newDep.building.effectValue = 12;
             newDep.ProducePointLimit = 96;
+            newDep.ActiveMode = 2;
         }
 
         int num = 1;
         for(int i = 0; i < CurrentDeps.Count; i++)
         {
-            if (CurrentDeps[i].type == newDep.type)
+            if (CurrentDeps[i].building.Type == newDep.building.Type)
                 num += 1;
         }
         newDep.Text_DepName.text = newDepName + num;
@@ -775,8 +778,8 @@ public class GameControl : MonoBehaviour
         //选择部门发动建筑特效
         else if(SelectMode == 5)
         {
-            CurrentDep = depControl;
-            CurrentOffice.BuildingActive();
+            SelectedDep = depControl;
+            CurrentDep.BuildingActive();
         }
         //CEO技能
         else if (SelectMode == 6)
@@ -784,7 +787,10 @@ public class GameControl : MonoBehaviour
             if (CEOSkillNum == 1)
                 new ProduceBuff(0.2f, depControl, 16);
             else if (CEOSkillNum == 2)
-                depControl.SpTime += 16;
+            {
+              //  depControl.SpTime += 16;
+
+            }
             CEOSkillConfirm();
         }
         DepSelectPanel.SetActive(false);
@@ -958,6 +964,10 @@ public class GameControl : MonoBehaviour
         SelectMode = 0;
         CEOSkillNum = 0;
         Text_EmpSelectTip.gameObject.SetActive(false);
+        for(int i = 0; i < CurrentEmployees.Count; i++)
+        {
+            CurrentEmployees[i].InfoB.gameObject.SetActive(true);
+        }
     }
 
     public void SellTask(int num)
@@ -990,6 +1000,17 @@ public class GameControl : MonoBehaviour
                 CurrentOffice.Text_OfficeMode.text = "办公室模式:部门研究";
         }
     }
+    public void SetDepMode(int num)
+    {
+        if (CurrentDep != null)
+            CurrentDep.ChangeBuildingMode(num);
+    }
+    public void ActiveDepSkill()
+    {
+        if (CurrentDep != null)
+            CurrentDep.ConfirmActive();
+    }
+
 
     public void CancelEmpSelect()
     {
