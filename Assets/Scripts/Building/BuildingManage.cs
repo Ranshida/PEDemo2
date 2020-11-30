@@ -40,6 +40,7 @@ public class BuildingManage : MonoBehaviour
     public Button btn_FinishBuild;
     public Button btn_EnterBuildMode;
     public Button btn_Dismantle;
+    public Button btn_NewArea;
     public Transform lotteryPanel;   //抽卡面板
     public Transform lotteryList;    //抽卡表
     public List<Transform> lotteryUI;   //抽卡面板
@@ -108,6 +109,7 @@ public class BuildingManage : MonoBehaviour
         btn_EnterBuildMode = transform.Find("Btn_BuildMode").GetComponent<Button>();
         btn_FinishBuild = transform.Find("WarePanel/Btn_Finish").GetComponent<Button>();
         btn_Dismantle = transform.Find("WarePanel/Btn_Dismantle").GetComponent<Button>();
+        btn_NewArea = transform.Find("Btn_NewArea").GetComponent<Button>();
         description = lotteryPanel.Find("BuildingDescriptionPanel").GetComponent<BuildingDescription>();
         description.Init();
 
@@ -116,6 +118,7 @@ public class BuildingManage : MonoBehaviour
         warePanel.Find("Btn_产品部门").GetComponent<Button>().onClick.AddListener(() => { BuildBasicBuilding(BuildingType.产品部门); });
         warePanel.Find("Btn_公关营销部").GetComponent<Button>().onClick.AddListener(() => { BuildBasicBuilding(BuildingType.公关营销部); });
         warePanel.Find("Btn_高管办公室").GetComponent<Button>().onClick.AddListener(() => { BuildBasicBuilding(BuildingType.高管办公室); });
+        btn_NewArea.onClick.AddListener(() => { UnlockNewArea(); });
 
         m_EffectHalo.SetActive(false);
         InitBuilding(BuildingType.CEO办公室, new Int2(0, 8));
@@ -562,5 +565,16 @@ public class BuildingManage : MonoBehaviour
         //temp设为空
         temp_Building.gameObject.SetActive(false);
         temp_Building = null;
+    }
+
+    private int m_Area = 0;
+    public void UnlockNewArea()
+    {
+        GridContainer.Instance.UnlockGrids(m_Area);
+        m_Area++;
+        if (m_Area >= 3) 
+        {
+            btn_NewArea.gameObject.SetActive(false);
+        }
     }
 }

@@ -37,6 +37,7 @@ public class GridContainer : MonoBehaviour
                 GridDict.Add(grid.X, new Dictionary<int, Grid>());
                 GridDict[grid.X].Add(grid.Z, grid);
             }
+            grid.RefreshGrid();
         }
     }
     
