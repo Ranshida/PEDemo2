@@ -1427,7 +1427,7 @@ public class Employee
             //AddEvent();
             //EventTime = Random.Range(12, 21);
             EventTime = Random.Range(7, 10);
-            InfoDetail.Entity.AddEvent(RandomEventTarget());
+            InfoDetail.Entity.AddEvent(EmpManager.Instance.RandomEventTarget(this));
         }
         //寻找新关系发展目标
         NewRelationTargetTime -= 1;

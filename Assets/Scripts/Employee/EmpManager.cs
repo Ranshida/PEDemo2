@@ -45,4 +45,9 @@ public class EmpManager : MonoBehaviour
         emp.Renderer.material = empMaterials[Random.Range(0, empMaterials.Length)];
         return emp;
     }
+
+    public EmpEntity RandomEventTarget(Employee employee)
+    {
+        return null;
+    }
 }
