@@ -270,7 +270,7 @@ public class StrategyControl : MonoBehaviour
             VoteStrs[i].Active = false;//先重置状态
             VoteStrs[i].ActiveMarker.SetActive(false);
         }
-
+        print(VoteSeqNum);
         for (int i = 0; i < StrLimitNum[VoteSeqNum]; i++)
         {
             if (VoteStrs.Count > 0)

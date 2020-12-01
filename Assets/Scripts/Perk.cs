@@ -9,8 +9,8 @@ public enum EffectType
 //基类
 public class Perk
 {
-    public int TimeLeft, Num = 0;  //单位周
-    public bool Positive = true;
+    public int TimeLeft, Num = 0, Level = 1, BaseTime;  //Time单位时,BaseTime用于可叠加Perk清除层数时重置时间
+    public bool Positive = true, canStack = false;
     public string Name, Description;
     public EffectType effectType;
 
@@ -64,7 +64,14 @@ public class Perk
         }
         TargetEmp.InfoA.GC.HourEvent.RemoveListener(TimePass);
 
-        Info.RemovePerk();
+        //可叠加的时间清零后直接重置
+        if (canStack == true)
+        {
+            Level -= 1;
+            TimeLeft = BaseTime;
+        }
+        if (canStack == false || Level == 0)
+            Info.RemovePerk();
         //else if (EType == EffectType.Weekly)
         //{
         //    TargetEmp.InfoA.GC.WeeklyEvent.RemoveListener(ContinuousEffect);
@@ -865,6 +872,7 @@ public class Perk34 : Perk
         Description = "公司建筑维护费用-5%";
         TimeLeft = 32;
         Num = 34;
+        canStack = true;
     }
     public override void ImmEffect()
     {
@@ -887,6 +895,7 @@ public class Perk35 : Perk
         Description = "强壮+2点，但最高不超过25";
         TimeLeft = 32;
         Num = 35;
+        canStack = true;
     }
     public override void ImmEffect()
     {
@@ -918,6 +927,7 @@ public class Perk36 : Perk
         Description = "抵消一次情绪添加";
         TimeLeft = -1;
         Num = 36;
+        canStack = true;
     }
     public override void RemoveEffect()
     {
@@ -935,6 +945,7 @@ public class Perk37 : Perk
         Description = "坚韧+2点，但最高不超过25";
         TimeLeft = 32;
         Num = 37;
+        canStack = true;
     }
     public override void ImmEffect()
     {

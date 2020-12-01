@@ -358,8 +358,30 @@ public class EmpInfo : MonoBehaviour
 
     public void AddPerk(Perk perk, bool AddEffect = false)
     {
+        //同类Perk检测
+        foreach (PerkInfo p in PerksInfo)
+        {
+            if (p.CurrentPerk.Num == perk.Num)
+            {
+                //可叠加的进行累加
+                if (perk.canStack == true)
+                {
+                    p.CurrentPerk.Level += 1;
+                    if (AddEffect == true)
+                        p.CurrentPerk.AddEffect();
+                    return;
+                }
+                //不可叠加的清除
+                else
+                {
+                    p.CurrentPerk.RemoveEffect();
+                    break;
+                }
+            }
+        }
         PerkInfo newPerk = Instantiate(GC.PerkInfoPrefab, PerkContent);
         newPerk.CurrentPerk = perk;
+        newPerk.CurrentPerk.BaseTime = perk.TimeLeft; 
         newPerk.CurrentPerk.Info = newPerk;
         newPerk.Text_Name.text = perk.Name;
         newPerk.empInfo = this;

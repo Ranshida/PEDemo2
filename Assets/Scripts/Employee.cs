@@ -37,15 +37,177 @@ public class EmpItem
 
 public class Employee
 {
-    static public int HeadHuntLevel = 11;
-    public int Skill1, Skill2, Skill3, SkillExtra1, SkillExtra2, SkillExtra3, 
-        Observation, Tenacity, Strength, Manage, HR, Finance, Decision, 
-        Forecast, Strategy, Convince, Charm, Gossip, SalaryExtra = 0, Age, EventTime, ObeyTime, NoPromotionTime = 0, NoMarriageTime = 0;
-    //1技术 2市场 3产品 Ob观察 Te坚韧 Str强壮 Ma管理 HR人力 Fi财务 De决策 Fo行业 St谋略 Co说服 
-    //Ch魅力 Go八卦
-    public int Confidence;//信心，头脑风暴中的护盾
-    public int NewRelationTargetTime = 1;
-    public float ExtraSuccessRate = 0, SalaryMultiple = 1.0f;
+    static public int HeadHuntLevel = 11, AttributeLimit = 25;
+
+    //1技术 2市场 3产品 Ob观察 Te坚韧 Str强壮 Ma管理 HR人力 Fi财务 De决策 Fo行业 St谋略 Co说服 Ch魅力 Go八卦
+    #region 所有属性
+
+    public int Skill1
+    {
+        get
+        {
+            int Num = BaseAttributes[0] + ExtraAttributes[0];
+            if (Num > AttributeLimit)
+                Num = AttributeLimit;
+            return Num;
+        }
+        set { BaseAttributes[0] = value; }
+    }
+    public int Skill2
+    {
+        get
+        {
+            int Num = BaseAttributes[1] + ExtraAttributes[1];
+            if (Num > AttributeLimit)
+                Num = AttributeLimit;
+            return Num;
+        }
+        set { BaseAttributes[1] = value; }
+    }
+    public int Skill3
+    {
+        get
+        {
+            int Num = BaseAttributes[2] + ExtraAttributes[2];
+            if (Num > AttributeLimit)
+                Num = AttributeLimit;
+            return Num;
+        }
+        set { BaseAttributes[2] = value; }
+    }
+    public int Observation
+    {
+        get
+        {
+            int Num = BaseAttributes[3] + ExtraAttributes[3];
+            if (Num > AttributeLimit)
+                Num = AttributeLimit;
+            return Num;
+        }
+        set { BaseAttributes[3] = value; }
+    }
+    public int Tenacity
+    {
+        get
+        {
+            int Num = BaseAttributes[4] + ExtraAttributes[4];
+            if (Num > AttributeLimit)
+                Num = AttributeLimit;
+            return Num;
+        }
+        set { BaseAttributes[4] = value; }
+    }
+    public int Strength
+    {
+        get
+        {
+            int Num = BaseAttributes[5] + ExtraAttributes[5];
+            if (Num > AttributeLimit)
+                Num = AttributeLimit;
+            return Num;
+        }
+        set { BaseAttributes[5] = value; }
+    }
+    public int Manage
+    {
+        get
+        {
+            int Num = BaseAttributes[6] + ExtraAttributes[6];
+            if (Num > AttributeLimit)
+                Num = AttributeLimit;
+            return Num;
+        }
+        set { BaseAttributes[6] = value; }
+    }
+    public int HR
+    {
+        get
+        {
+            int Num = BaseAttributes[7] + ExtraAttributes[7];
+            if (Num > AttributeLimit)
+                Num = AttributeLimit;
+            return Num;
+        }
+        set { BaseAttributes[7] = value; }
+    }
+    public int Finance
+    {
+        get
+        {
+            int Num = BaseAttributes[8] + ExtraAttributes[8];
+            if (Num > AttributeLimit)
+                Num = AttributeLimit;
+            return Num;
+        }
+        set { BaseAttributes[8] = value; }
+    }
+    public int Decision
+    {
+        get
+        {
+            int Num = BaseAttributes[9] + ExtraAttributes[9];
+            if (Num > AttributeLimit)
+                Num = AttributeLimit;
+            return Num;
+        }
+        set { BaseAttributes[9] = value; }
+    }
+    public int Forecast
+    {
+        get
+        {
+            int Num = BaseAttributes[10] + ExtraAttributes[10];
+            if (Num > AttributeLimit)
+                Num = AttributeLimit;
+            return Num;
+        }
+        set { BaseAttributes[10] = value; }
+    }
+    public int Strategy
+    {
+        get
+        {
+            int Num = BaseAttributes[11] + ExtraAttributes[11];
+            if (Num > AttributeLimit)
+                Num = AttributeLimit;
+            return Num;
+        }
+        set { BaseAttributes[11] = value; }
+    }
+    public int Convince
+    {
+        get
+        {
+            int Num = BaseAttributes[12] + ExtraAttributes[12];
+            if (Num > AttributeLimit)
+                Num = AttributeLimit;
+            return Num;
+        }
+        set { BaseAttributes[12] = value; }
+    }
+    public int Charm
+    {
+        get
+        {
+            int Num = BaseAttributes[13] + ExtraAttributes[13];
+            if (Num > AttributeLimit)
+                Num = AttributeLimit;
+            return Num;
+        }
+        set { BaseAttributes[13] = value; }
+    }
+    public int Gossip
+    {
+        get
+        {
+            int Num = BaseAttributes[14] + ExtraAttributes[14];
+            if (Num > AttributeLimit)
+                Num = AttributeLimit;
+            return Num;
+        }
+        set { BaseAttributes[14] = value; }
+    }
+    //体力  心力
     public int Stamina
     {
         get { return stamina; }
@@ -63,7 +225,7 @@ public class Employee
         get { return mentality; }
         set
         {
-            if(mentality - value < 0)
+            if (mentality - value < 0)
             {
                 InfoDetail.GC.StrC.SolveStrRequest(1, 1);
             }
@@ -76,7 +238,16 @@ public class Employee
                 InfoA.Fire();
         }
     }
+    #endregion
 
+    public int SkillExtra1, SkillExtra2, SkillExtra3, SalaryExtra = 0, Age, EventTime, ObeyTime, NoPromotionTime = 0, NoMarriageTime = 0;
+    public int Confidence;//信心，头脑风暴中的护盾
+    public int NewRelationTargetTime = 1;
+    public float ExtraSuccessRate = 0, SalaryMultiple = 1.0f;
+
+
+    public int[] BaseAttributes = new int[15];
+    public int[] ExtraAttributes = new int[15];
     public int[] Stars = new int[5];
     public int[] StarLimit = new int[5];
     public int[] SkillExp = new int[15];
@@ -1302,7 +1473,7 @@ public class Employee
         {
             if(InfoDetail.PerksInfo[i].CurrentPerk.Num == 36)
             {
-                InfoDetail.PerksInfo[i].RemovePerk();
+                InfoDetail.PerksInfo[i].CurrentPerk.RemoveEffect();
                 return;
             }
         }
