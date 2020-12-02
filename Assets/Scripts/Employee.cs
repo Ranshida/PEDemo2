@@ -892,34 +892,88 @@ public class Employee
     //找到发展目标
     public void FindRelationTarget()
     {
-        List<Employee> EL = new List<Employee>();
         RelationTargets.Clear();
-        for(int i = 0; i < InfoDetail.GC.CurrentEmployees.Count; i++)
+
+        List<Relation> tempRelation = new List<Relation>();
+        foreach (Relation r in Relations)
         {
-            if (InfoDetail.GC.CurrentEmployees[i] != this)
-                EL.Add(InfoDetail.GC.CurrentEmployees[i]);
+            tempRelation.Add(r);
         }
-        if (CurrentDep != null)
+        for (int i = 0; i < 3; i++)
         {
-            for (int i = 0; i < CurrentDep.CurrentEmps.Count; i++)
+            Relation relation = FindRelationTarget(tempRelation);
+            if (relation == null)
             {
-                if (CurrentDep.CurrentEmps[i] != this)
-                    EL.Remove(CurrentDep.CurrentEmps[i]);
+                Debug.LogError(Relations.Count + "   " + RelationTargets.Count);
+                return;
             }
-            if (CurrentDep.CommandingOffice != null && CurrentDep.CommandingOffice.CurrentManager != null)
-                EL.Remove(CurrentDep.CommandingOffice.CurrentManager);
+            tempRelation.Remove(relation);
+            RelationTargets.Add(relation.Target);
         }
-        else if (CurrentOffice != null && CurrentOffice.CommandingOffice != null && CurrentOffice.CommandingOffice.CurrentManager != null)
-            EL.Remove(CurrentOffice.CommandingOffice.CurrentManager);
-        for(int i = 0; i < 3; i++)
+        //旧版发展对象
+        //List<Employee> EL = new List<Employee>();
+        //for (int i = 0; i < InfoDetail.GC.CurrentEmployees.Count; i++)
+        //{
+        //    if (InfoDetail.GC.CurrentEmployees[i] != this)
+        //        EL.Add(InfoDetail.GC.CurrentEmployees[i]);
+        //}
+        //if (CurrentDep != null)
+        //{
+        //    for (int i = 0; i < CurrentDep.CurrentEmps.Count; i++)
+        //    {
+        //        if (CurrentDep.CurrentEmps[i] != this)
+        //            EL.Remove(CurrentDep.CurrentEmps[i]);
+        //    }
+        //    if (CurrentDep.CommandingOffice != null && CurrentDep.CommandingOffice.CurrentManager != null)
+        //        EL.Remove(CurrentDep.CommandingOffice.CurrentManager);
+        //}
+        //else if (CurrentOffice != null && CurrentOffice.CommandingOffice != null && CurrentOffice.CommandingOffice.CurrentManager != null)
+        //    EL.Remove(CurrentOffice.CommandingOffice.CurrentManager);
+        //for(int i = 0; i < 3; i++)
+        //{
+        //    if(EL.Count > 1)
+        //    {
+        //        Employee NE = EL[Random.Range(0, EL.Count)];
+        //        RelationTargets.Add(NE);
+        //        EL.Remove(NE);
+        //    }
+        //}
+    }
+
+    //返回一个加权后的随机发展对象
+    private Relation FindRelationTarget(List<Relation> relations)
+    {
+        if (relations.Count == 0)
+            return null;
+        
+        int lastValue = 0;
+        List<int> valueList = new List<int>();
+        List<Relation> Targets = new List<Relation>();
+        foreach (Relation relation in relations)
         {
-            if(EL.Count > 1)
+            int value = 1;  //计算权重
+            if (Mathf.Abs(relation.FriendValue) == 1)
+                value += 2;
+            if (Mathf.Abs(relation.FriendValue) == 2)
+                value += 5;
+            if (relation.LoveValue == 3)
+                value += 3;
+            if (relation.LoveValue == 4)
+                value += 6;
+
+            lastValue += value;
+            valueList.Add(lastValue);
+            Targets.Add(relation);
+        }
+        int posb = Random.Range(0, valueList[valueList.Count - 1] + 1);
+        for (int i = 0; i < valueList.Count; i++)
+        {
+            if (posb <= valueList[i])
             {
-                Employee NE = EL[Random.Range(0, EL.Count)];
-                RelationTargets.Add(NE);
-                EL.Remove(NE);
+                return (Targets[i]);
             }
         }
+        return null;
     }
 
     EmpEntity RandomEventTarget()

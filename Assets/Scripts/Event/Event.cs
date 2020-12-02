@@ -11368,6 +11368,24 @@ static public class EventData
     }
     #endregion
 
+    //初始序列
+    public static List<Event> InitialList = new List<Event>()
+    {
+
+    };
+
+    //公司序列
+    public static List<Event> CompanyList = new List<Event>()
+    {
+        
+    };
+
+    //个人关系序列
+    public static List<Event> RelationList = new List<Event>()
+    {
+        
+    };
+
     //权重1-4事件链表
     static public List<Event> E1 = new List<Event>()
     {

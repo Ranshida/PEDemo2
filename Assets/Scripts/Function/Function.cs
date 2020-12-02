@@ -63,6 +63,8 @@ public static class Function
     {
         return transB.position - new Vector3(transA.position.x, transB.position.y, transA.position.z);
     }
+
+
 }
 
 public class Int2

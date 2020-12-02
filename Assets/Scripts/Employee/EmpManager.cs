@@ -38,6 +38,17 @@ public class EmpManager : MonoBehaviour
             pointEmp.ShowDetailPanel();
     }
 
+    public Employee FindBoss()
+    {
+        return null;
+    }
+
+    public List<Employee> FindColleague()
+    {
+        return null;
+    }
+
+
     public EmpEntity CreateEmp(Vector3 position)
     {
         EmpEntity emp = GameObject.Instantiate(empPrefabs, position, Quaternion.identity).GetComponentInChildren<EmpEntity>();
@@ -46,8 +57,28 @@ public class EmpManager : MonoBehaviour
         return emp;
     }
 
-    public EmpEntity RandomEventTarget(Employee employee)
+    public EmpEntity RandomEventTarget(Employee self)
     {
+        List<Event> eventList = RandomEventList(out int index);
+
+
         return null;
+    }
+
+    private List<Event> RandomEventList(out int listIndex)
+    {
+        float value = Random.Range(0f, 1f);
+        if (value < 0.3f) 
+        {
+            listIndex = 0;
+            return EventData.InitialList;
+        }
+        if (value < 0.6f)
+        {
+            listIndex = 1;
+            return EventData.CompanyList;
+        }
+        listIndex = 2;
+        return EventData.RelationList;
     }
 }
