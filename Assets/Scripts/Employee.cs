@@ -897,7 +897,11 @@ public class Employee
         List<Relation> tempRelation = new List<Relation>();
         foreach (Relation r in Relations)
         {
-            tempRelation.Add(r);
+            //相互认识
+            if (r.KnowEachOther)
+            {
+                tempRelation.Add(r);
+            }
         }
         for (int i = 0; i < 3; i++)
         {
