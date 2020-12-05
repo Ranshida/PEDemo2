@@ -365,13 +365,13 @@ public class Strategy3_2 : Strategy
     public override void Effect(GameControl GC)
     {
         base.Effect(GC);
-        GC.foeControl.NegotiateEfficiency += 0.5f;
+        //GC.foeControl.NegotiateEfficiency += 0.5f;
     }
 
     public override void EffectRemove(GameControl GC)
     {
         base.EffectRemove(GC);
-        GC.foeControl.NegotiateEfficiency -= 0.5f;
+        //GC.foeControl.NegotiateEfficiency -= 0.5f;
     }
 }
 
@@ -396,7 +396,7 @@ public class Strategy3_3 : Strategy
     public override void Effect(GameControl GC)
     {
         base.Effect(GC);
-        GC.foeControl.FOEEventProtection += 2;
+        //GC.foeControl.FOEEventProtection += 2;
     }
 
     public override void EffectRemove(GameControl GC)

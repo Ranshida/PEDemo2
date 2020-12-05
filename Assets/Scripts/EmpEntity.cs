@@ -391,9 +391,9 @@ public class EmpEntity : MonoBehaviour
         Posb += (int)(InfoDetail.GC.CurrentEmpInfo.emp.Strategy * 0.2f);
         if (Posb >= 4)
         {
-            SpyTarget.Text_Target.gameObject.SetActive(true);
-            SpyTarget.Text_SkillName.gameObject.SetActive(true);
-            InfoDetail.GC.CreateMessage("内鬼行动成功,获得了" + SpyTarget.Text_CompanyName.text + "的信息");
+            //SpyTarget.Text_Target.gameObject.SetActive(true);
+            //SpyTarget.Text_SkillName.gameObject.SetActive(true);
+            //InfoDetail.GC.CreateMessage("内鬼行动成功,获得了" + SpyTarget.Text_CompanyName.text + "的信息");
         }
         else
             InfoDetail.GC.CreateMessage("内鬼行动失败");

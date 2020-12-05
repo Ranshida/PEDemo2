@@ -258,24 +258,20 @@ public class Event
         }
     }
     //根据特质设置事件权重
-    public void SetWeight()
+    protected void SetWeight(int num, int value)
     {
-        List<Perk> perkList = new List<Perk>();
-        foreach (PerkInfo perkInfo in Self.InfoDetail.PerksInfo)
+        foreach (PerkInfo perk in Self.InfoDetail.PerksInfo)
         {
-            perkList.Add(perkInfo.CurrentPerk);
+            if (perk.CurrentPerk.Num == num)
+            {
+                Weight += value;
+                return;
+            }
         }
-        SetWeight(perkList);
     }
-    protected virtual void SetWeight(List<Perk> perkList)
+    public virtual void SetWeight()
     {
-        //foreach (Perk perk in perkList)
-        //{
-        //    if (perk.Num == 1) 
-        //    {
-        //        Weight += 1;
-        //    }
-        //}
+        
     }
 
     public virtual void PerkRemoveCheck()

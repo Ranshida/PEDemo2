@@ -435,15 +435,15 @@ public class CEOControl : MonoBehaviour
         //17获取支持 18调查 19当间谍 20解除内鬼
         if (num == 18 || num == 19)
         {
-            GC.CEOSkillNum = num;
-            GC.CurrentEmpInfo = Target.InfoDetail;
-            if (num == 18)
-                EmpSelectWarning.SetActive(true);
-            else if (num == 19 && Target.InfoDetail.Entity.SpyTarget == null)
-            {
-                GC.foeControl.TargetSelectPanel.SetActive(true);
-                GC.TotalEmpContent.parent.parent.gameObject.SetActive(false);
-            }
+            //GC.CEOSkillNum = num;
+            //GC.CurrentEmpInfo = Target.InfoDetail;
+            //if (num == 18)
+            //    EmpSelectWarning.SetActive(true);
+            //else if (num == 19 && Target.InfoDetail.Entity.SpyTarget == null)
+            //{
+            //    GC.foeControl.TargetSelectPanel.SetActive(true);
+            //    GC.TotalEmpContent.parent.parent.gameObject.SetActive(false);
+            //}
         }
         else if (num == 17)
         {
