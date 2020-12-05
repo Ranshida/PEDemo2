@@ -1025,3 +1025,30 @@ public class Perk41 : Perk
         Num = 41;
     }
 }
+
+#region 部分初始随机特质
+//打工人
+public class Perk42 : Perk
+{
+    public Perk42(Employee Emp) : base(Emp)
+    {
+        Name = "打工人";
+        Description = "增加初始及公司场景随机比例各10%";
+        TimeLeft = -1;
+        Num = 42;
+    }
+}
+
+//社交狂热
+public class Perk43 : Perk
+{
+    public Perk43(Employee Emp) : base(Emp)
+    {
+        Name = "社交狂热";
+        Description = "增加个人场景随机比例10%，减少公司场景10%";
+        TimeLeft = -1;
+        Num = 43;
+    }
+}
+
+#endregion
