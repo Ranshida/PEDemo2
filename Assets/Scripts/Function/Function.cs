@@ -38,6 +38,118 @@ public static class Function
         return list;
     }
 
+    //随机排列列表
+    public static List<T> RandomSortList<T>(List<T> ListT)
+    {
+        System.Random random = new System.Random();
+        List<T> newList = new List<T>();
+        foreach (T item in ListT)
+        {
+            newList.Insert(random.Next(newList.Count + 1), item);
+        }
+        return newList;
+    }
+
+    //合并数组
+    public static List<T> MergerList<T> (List<T> t1,List<T> t2)
+    {
+        if (t1 == null || t2 == null)
+        {
+            Debug.LogError("不能使用空列表");
+        }
+
+        List<T> newList = new List<T>();
+        foreach (T item in t1)
+        {
+            newList.Add(item);
+        }
+        foreach (T item in t2)
+        {
+            newList.Add(item);
+        }
+        return newList;
+    }  
+    public static List<T> MergerList<T> (List<T> t1, List<T> t2, List<T> t3)
+    {
+        if (t1 == null || t2 == null || t3 == null)
+        {
+            Debug.LogError("不能使用空列表");
+        }
+
+        List<T> newList = new List<T>();
+        foreach (T item in t1)
+        {
+            newList.Add(item);
+        }
+        foreach (T item in t2)
+        {
+            newList.Add(item);
+        }    
+        foreach (T item in t3)
+        {
+            newList.Add(item);
+        }
+        return newList;
+    } 
+    public static List<T> MergerList<T> (List<T> t1, List<T> t2, List<T> t3, List<T> t4)
+    {
+        if (t1 == null || t2 == null || t3 == null || t4 == null)
+        {
+            Debug.LogError("不能使用空列表");
+        }
+
+        List<T> newList = new List<T>();
+        foreach (T item in t1)
+        {
+            newList.Add(item);
+        }
+        foreach (T item in t2)
+        {
+            newList.Add(item);
+        }    
+        foreach (T item in t3)
+        {
+            newList.Add(item);
+        }
+        foreach (T item in t4)
+        {
+            newList.Add(item);
+        }
+        return newList;
+    }  
+
+    //数组合并
+    public static T[] MergerArray<T>(T[] First, T[] Second)
+    {
+        T[] result = new T[First.Length + Second.Length];
+        First.CopyTo(result, 0);
+        Second.CopyTo(result, First.Length);
+        return result;
+    }
+    public static T[] MergerArray<T>(T[] First, T[] Second, T[] Third)
+    {
+        T[] result = new T[First.Length + Second.Length + Third.Length];
+        First.CopyTo(result, 0);
+        Second.CopyTo(result, First.Length);
+        Third.CopyTo(result, First.Length + Second.Length);
+        return result;
+    }
+    public static T[] MergerArray<T>(T[] First, T[] Second, T[] Third, T[] Forth)
+    {
+        T[] result = new T[First.Length + Second.Length + Third.Length + Forth.Length];
+        First.CopyTo(result, 0);
+        Second.CopyTo(result, First.Length);
+        Third.CopyTo(result, First.Length + Second.Length);
+        Forth.CopyTo(result, First.Length + Second.Length + Third.Length);
+        return result;
+    }
+
+    public static T StringToEnum<T>(string str)
+    {
+        T aEnum = (T)System.Enum.Parse(typeof(T), str);
+        return aEnum;
+    }
+
     //世界坐标转屏幕坐标
     public static Vector3 World2ScreenPoint(Vector3 worldPos)
     {

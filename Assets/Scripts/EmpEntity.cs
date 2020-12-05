@@ -74,7 +74,7 @@ public class EmpEntity : MonoBehaviour
     public bool SolvingEvent { get { return CurrentEvent != null && CurrentEvent.isSolving; } }     //事件正在执行中
     public Event CurrentEvent { get; private set; } = null;  //当前正在执行的事件
     public EmpEntity EventTarget { get; private set; }       //事件发生的对象
-    public int EventStage { get; private set; } = 0;              //事件发生的阶段   0：无事件  1：刚刚接受  2：确定目标  3：发生
+    public int EventStage { get; private set; } = 0;         //事件发生的阶段   0：无事件  1：确定目标  2：发生中
 
     //上下班
     public bool OffWork { get; private set; }                //下班
@@ -98,6 +98,7 @@ public class EmpEntity : MonoBehaviour
         selfTree.ExternalBehavior = Resources.Load<ExternalBehavior>("BehaviourTree/Emp");
         selfTree.SetVariableValue("EmpEntity", this);
         selfTree.Start();
+        EventStage = 0;
         CurrentEvent = null;
         NextWP = GridContainer.Instance.AllWayPoint[Random.Range(0, GridContainer.Instance.AllWayPoint.Count)];
     }
@@ -166,6 +167,7 @@ public class EmpEntity : MonoBehaviour
         //if (Available)
         //    CheckEvents();
     }
+
     void EventFinish()
     {
         CurrentEvent.EventFinish();
@@ -173,8 +175,9 @@ public class EmpEntity : MonoBehaviour
         EventTarget = null;
         if (CurrentEvent.HaveTarget)
         {
-            CurrentEvent.TargetEntity.CurrentEvent = null;
             CurrentEvent.TargetEntity.EventStage = 0;
+            CurrentEvent.TargetEntity.EventTarget = null;
+            CurrentEvent.TargetEntity.CurrentEvent = null;
         }
         CurrentEvent = null;
     }
@@ -182,18 +185,14 @@ public class EmpEntity : MonoBehaviour
     //员工主动发起的执行事件的指令
     public void SolveEvent()
     {
-        if (!EventTarget.Available)
-        {
-            Debug.Log(EmpName + "：对方不可用");
-            EventAbandon();
-            return;
-        }
-
-        Debug.Log(EmpName + "：开始处理事件");
-        EventStage = 3;
-        EventTarget.CurrentEvent = CurrentEvent;
-        EventTarget.EventStage = 3;
         CurrentEvent.isSolving = true;
+        EventStage = 2;
+
+        //对方也开始处理
+        if (CurrentEvent.HaveTarget)
+        {
+            EventTarget.EventStage = 2;
+        }
     }
 
     //遍历事件，找下一个可执行的事件
@@ -236,144 +235,126 @@ public class EmpEntity : MonoBehaviour
     public void WorkEnd()
     {
         //Debug.Log("下");
-        //OffWork = true;
+        OffWork = true;
 
-        ////放弃当前执行的事件，插到第一位
-        //if (CurrentEvent != null)
-        //{
-        //    if (CurrentEvent.SelfEntity == this)
-        //        CurrentEvent.isSolving = false;
-        //    EventList.Insert(0, CurrentEvent);
-        //    CurrentEvent = null;
-        //}
+        //事件直接判定为完成
+        if (CurrentEvent != null)
+        {
+            EventFinish();
+        }
     }
 
     //上班
     public void WorkStart()
     {
         //Debug.Log("上");
-        //OffWork = false;
+        OffWork = false;
         //FindWorkPos();
     }
 
-    //添加事件
-    public void AddEvent(Event e)
-    {
-        Debug.LogError("这是废弃的方法了");
-        //独立事件
-        //if (!e.HaveTarget)
-        //    Debug.Log(EmpName + "独立事件");
-        ////主动事件
-        //else
-        //    Debug.Log(EmpName + "主动事件");
-
-        ////当前有待执行事件，先加入列表
-        //if (CurrentEvent != null)
-        //    EventList.Add(e);
-        //else
-        //{
-        //    //有目标的事件
-        //    if (e.HaveTarget)
-        //    {
-        //        if (Available && e.Target.InfoDetail.Entity.Available)
-        //        {
-        //            CurrentEvent = e;
-        //            e.Target.InfoDetail.Entity.CurrentEvent = e;
-        //        }
-        //        else
-        //        {
-        //            EventList.Add(e);
-        //        }
-        //    }
-        //    //独立事件
-        //    else
-        //    {
-        //        if (Available)
-        //        {
-        //            CurrentEvent = e;
-        //        }
-        //        else
-        //        {
-        //            EventList.Add(e);
-        //        }
-        //    }
-        //}
-    }
-
     ///寻找目标（事件版本2）
-    public void AddEvent(EmpEntity Ee)
+    public void AddEvent(EmpEntity Ee, int index)  //场景序列
     {
         if (Ee != null)
         {
-            EventStage = 1;
-            EventTarget = Ee;
+            if (!EventTarget || !EventTarget.Available)
+            {
+                CurrentEvent = EmpManager.Instance.RandomEvent(ThisEmp, null, index);
+                if (CurrentEvent!=null)
+                {
+                    EventStage = 1;
+                    EventTarget = Ee;
+                }
+            }
+            else
+            {
+                CurrentEvent = EmpManager.Instance.RandomEvent(ThisEmp, EventTarget.ThisEmp, index);
+                if (CurrentEvent != null)
+                {
+                    EventStage = 1;
+                    EventTarget = Ee;
+                    EventTarget.EventStage = 1;
+                    EventTarget.EventTarget = this;
+                    EventTarget.CurrentEvent = CurrentEvent;
+                }
+            }
+            if (CurrentEvent != null) 
+            {
+                CurrentEvent.PerkRemoveCheck();
+            }
         }
+    }
+
+    public void AddEvent(Event e)  //废弃
+    {
+        return;
     }
 
     //检查自己和事件对象的位置，是否可以进行事件
-    public bool CheckEventTarget()
-    {
-        if (EventTarget == null) 
-        {
-            Debug.LogError("没有事件对象");
-            return false;
-        }
+    //public bool CheckEventTarget()
+    //{
+    //    if (EventTarget == null) 
+    //    {
+    //        Debug.LogError("没有事件对象");
+    //        return false;
+    //    }
 
-        //对方在游荡
-        if (!EventTarget.WorkBuilding)
-        {
-            //进走廊时为true
-            if (StandGrid.Type == Grid.GridType.道路)
-            {
-                return true;
-            }
-        }
-        //对方在工作
-        else
-        {
-            //进入对方建筑时为true
-            if (StandGrid.BelongBuilding == EventTarget.StandGrid.BelongBuilding)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
+    //    //对方在游荡
+    //    if (!EventTarget.WorkBuilding)
+    //    {
+    //        //进走廊时为true
+    //        if (StandGrid.Type == Grid.GridType.道路)
+    //        {
+    //            return true;
+    //        }
+    //    }
+    //    //对方在工作
+    //    else
+    //    {
+    //        //进入对方建筑时为true
+    //        if (StandGrid.BelongBuilding == EventTarget.StandGrid.BelongBuilding)
+    //        {
+    //            return true;
+    //        }
+    //    }
+    //    return false;
+    //}
 
-    public void EventConfirm()
-    {
-        //当前对象不可用
-        if (!EventTarget.Available)
-        {
-            List<Employee> tempEmployees = ThisEmp.FindAnotherEmp();
-            List<Employee> AvailableEmps = new List<Employee>();
-            foreach (Employee temp in tempEmployees)
-            {
-                if (temp.InfoDetail.Entity.Available)
-                    AvailableEmps.Add(temp);
-            }
-            if (AvailableEmps.Count == 0)
-            {
-                Debug.Log(EmpName + "：没有任何可用对象");
-                EventAbandon();
-                return;
-            }
-            EventTarget = AvailableEmps[Random.Range(0, AvailableEmps.Count)].InfoDetail.Entity;
-        }
+    //public void EventConfirm()
+    //{
+    //    //当前对象不可用
+    //    if (!EventTarget.Available)
+    //    {
+    //        List<Employee> tempEmployees = ThisEmp.FindAnotherEmp();
+    //        List<Employee> AvailableEmps = new List<Employee>();
+    //        foreach (Employee temp in tempEmployees)
+    //        {
+    //            if (temp.InfoDetail.Entity.Available)
+    //                AvailableEmps.Add(temp);
+    //        }
+    //        if (AvailableEmps.Count == 0)
+    //        {
+    //            Debug.Log(EmpName + "：没有任何可用对象");
+    //            EventAbandon();
+    //            return;
+    //        }
+    //        EventTarget = AvailableEmps[Random.Range(0, AvailableEmps.Count)].InfoDetail.Entity;
+    //    }
 
-        if(EventTarget == null)
-        {
-            Debug.Log(EmpName + "：没有任何可用对象");
-            EventAbandon();
-            return;
-        }
+    //    if(EventTarget == null)
+    //    {
+    //        Debug.Log(EmpName + "：没有任何可用对象");
+    //        EventAbandon();
+    //        return;
+    //    }
 
-        //只给自己添加事件，去找对方
-        if (ThisEmp == EventTarget.ThisEmp)
-            print("FalseB");
-        CurrentEvent = ThisEmp.RandomEvent(EventTarget.InfoDetail.emp);
-        EventStage = 2;
-    }
+    //    //只给自己添加事件，去找对方
+    //    if (ThisEmp == EventTarget.ThisEmp)
+    //        print("FalseB");
+    //    //CurrentEvent = ThisEmp.RandomEvent(EventTarget.InfoDetail.emp);
+    //    EventStage = 2;
+    //}
+
     void EventAbandon()
     {
         CurrentEvent = null;

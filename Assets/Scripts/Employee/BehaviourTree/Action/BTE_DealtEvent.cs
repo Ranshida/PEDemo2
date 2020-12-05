@@ -12,14 +12,15 @@ public class BTE_DealtEvent : BTE_Action
 {
     public SharedBool MoveFlag;
 
+    protected override void AfterOnStart()
+    {
+        MoveFlag.Value = false;
+    }
+
     public override TaskStatus OnUpdate()
     {
         if (ThisEntity.CurrentEvent == null) 
             return TaskStatus.Failure;
-
-        MoveFlag.Value = false;
-        if (!ThisEntity.CurrentEvent.isSolving)
-            ThisEntity.SolveEvent();
 
         //没有当前事件，返回工作
         return TaskStatus.Running;

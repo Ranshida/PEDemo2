@@ -15,12 +15,14 @@ public class Event
     public int MoralRequire = 0; // 0无 1功利主义 2中庸 3绝对律令
     public int ReligionRequire = 0; // 0无 1机械 2中庸 3人文
     public int RelationRequire = 0; //0无 1朋友 2挚友 3徒弟  4师傅 5倾慕 6追求 7情侣 8伴侣 -1陌路 -2仇人
-    public int PerkRequire = 0; //特质需求(Perk编号)
+    public int PerkRequire = 0;     //特质需求(Perk编号)
+    public int PerkRemoveNumber;    //要移除的特质 （20.12.5新增）
     public int TimeLeft = 2;
     public bool HaveTarget = true;  //是否有目标
     public bool isSolving = false;
     public string EventName = "无";
     public string ResultText = "无";
+    public int Weight = 1;          //事件权重
 
     public GameControl GC;
     public Employee Self, Target;
@@ -255,6 +257,24 @@ public class Event
             return false;
         }
     }
+
+    public virtual void PerkRemoveCheck()
+    {
+        if (PerkRemoveNumber == 0)
+            return;
+        else
+        {
+            for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
+            {
+                if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == PerkRemoveNumber)
+                {
+                    Self.InfoDetail.PerksInfo[i].CurrentPerk.RemoveEffect();
+                    return;
+                }
+            }
+        }
+    }
+
     //其他要求
     public virtual bool SpecialCheck()
     {
@@ -11403,4 +11423,21 @@ static public class EventData
     {
         new Event2_19(),new Event2_20(),new Event2_21(),new Event2_22(),new Event2_23(),new Event2_24(),new Event2_25(),new Event2_26(),new Event2_37(),new Event2_52(),new Event2_72()
     };
+}
+
+public class EventGroup
+{
+    public bool Lock = false;
+    public List<Event> eventList;
+
+    /// <summary>
+    /// 构造事件组
+    /// </summary>
+    /// <param name="list">包含的事件列表</param>
+    /// <param name="lockGroup">锁定状态</param>
+    public EventGroup(List<Event> list, bool lockGroup = false)
+    {
+        eventList = list;
+        Lock = lockGroup;
+    }
 }
