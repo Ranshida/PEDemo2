@@ -284,11 +284,11 @@ public class Event
     {
         if (MoralRequire == 0)
             return true;
-        else if (MoralRequire == 1 && Self.Character[2] <= -50)
+        else if (MoralRequire == 1 && Self.CharacterTendency[2] == -1)
             return true;
-        else if (MoralRequire == 2 && Self.Character[2] > -50 && Self.Character[2] < 50)
+        else if (MoralRequire == 2 && Self.CharacterTendency[2] == 0)
             return true;
-        else if (MoralRequire == 3 && Self.Character[2] >= 50)
+        else if (MoralRequire == 3 && Self.CharacterTendency[2] == 1)
             return true;
 
         return false;
@@ -297,11 +297,11 @@ public class Event
     {
         if (ReligionRequire == 0)
             return true;
-        else if (ReligionRequire == 1 && Self.Character[1] <= -50)
+        else if (ReligionRequire == 1 && Self.CharacterTendency[1] == -1)
             return true;
-        else if (ReligionRequire == 2 && Self.Character[1] > -50 && Self.Character[1] < 50)
+        else if (ReligionRequire == 2 && Self.CharacterTendency[1] == 0)
             return true;
-        else if (ReligionRequire == 3 && Self.Character[1] >= 50)
+        else if (ReligionRequire == 3 && Self.CharacterTendency[1] == 1)
             return true;
 
         return false;
@@ -496,26 +496,26 @@ public class Event
         int Value = 0;
         if (Reverse == false && Target != null)
         {
-            if ((Self.Character[0] >= 50 && Target.Character[0] >= 50) || (Self.Character[0] <= -50 && Target.Character[0] <= -50))
+            if (Self.CharacterTendency[0] * Target.CharacterTendency[0] == 1)
                 Value += 1;
-            else if ((Self.Character[0] >= 50 && Target.Character[0] <= -50) || (Self.Character[0] <= -50 && Target.Character[0] >= 50))
+            else if (Self.CharacterTendency[0] * Target.CharacterTendency[0] == -1)
                 Value -= 2;
 
-            if ((Self.Character[1] >= 50 && Target.Character[1] >= 50) || (Self.Character[1] <= -50 && Target.Character[1] <= -50))
+            if (Self.CharacterTendency[1] * Target.CharacterTendency[1] == 1)
                 Value += 1;
-            else if ((Self.Character[1] >= 50 && Target.Character[1] <= -50) || (Self.Character[1] <= -50 && Target.Character[1] >= 50))
+            else if (Self.CharacterTendency[1] * Target.CharacterTendency[1] == -1)
                 Value -= 2;
         }
         else if (Reverse == true && Target != null)
         {
-            if ((Self.Character[0] >= 50 && Target.Character[0] >= 50) || (Self.Character[0] <= -50 && Target.Character[0] <= -50))
+            if (Self.CharacterTendency[0] * Target.CharacterTendency[0] == 1)
                 Value -= 1;
-            else if ((Self.Character[0] >= 50 && Target.Character[0] <= -50) || (Self.Character[0] <= -50 && Target.Character[0] >= 50))
+            else if (Self.CharacterTendency[0] * Target.CharacterTendency[0] == -1)
                 Value += 2;
 
-            if ((Self.Character[1] >= 50 && Target.Character[1] >= 50) || (Self.Character[1] <= -50 && Target.Character[1] <= -50))
+            if (Self.CharacterTendency[1] * Target.CharacterTendency[1] == 1)
                 Value -= 1;
-            else if ((Self.Character[1] >= 50 && Target.Character[1] <= -50) || (Self.Character[1] <= -50 && Target.Character[1] >= 50))
+            else if (Self.CharacterTendency[1] * Target.CharacterTendency[1] == -1)
                 Value += 2;
         }
         return Value;

@@ -9,7 +9,7 @@ public class EmpInfo : MonoBehaviour
 
     public Employee emp;
     public GameControl GC;
-    public Button HireButton;
+    public Button HireButton, MoveButton;
     public Text Text_Name, Text_Mentality, Text_Stamina, Text_Skill1, Text_Skill2, Text_Skill3,  Text_Ability, Text_Age;
     public Text Text_DepName, Text_Observation, Text_Tenacity, Text_Strength, Text_Manage, Text_HR, Text_Finance, Text_Decision,
         Text_Forecast, Text_Strategy, Text_Convince, Text_Charm, Text_Gossip, Text_SName1, Text_SName2, Text_SName3,
@@ -268,18 +268,19 @@ public class EmpInfo : MonoBehaviour
             if (GC.CEOSkillNum == 4)
             {
                 emp.Mentality += 10;
+                GC.TotalEmpContent.parent.parent.gameObject.SetActive(false);
             }
             else if (GC.CEOSkillNum == 5)
             {
                 GC.CurrentEmpInfo = this;
-                GC.EmpTrainingPanel.SetActive(true);
+                GC.VacationPanel.SetActive(true);
             }
             else if (GC.CEOSkillNum > 5 && emp.isCEO == false)
             {
                 GC.CC.SetPanelContent(emp);
             }
-            if (GC.CEOSkillNum < 6)
-                GC.CEOSkillConfirm();
+            if (GC.CEOSkillNum < 5)
+                GC.CC.CEOSkillConfirm();
         }
         //选两个员工的动员技能
         else if(GC.SelectMode == 7)
@@ -402,7 +403,6 @@ public class EmpInfo : MonoBehaviour
         newSkill.empInfo = this;
         newSkill.info = GC.infoPanel;
         SkillsInfo.Add(newSkill);
-        print("SkillAdd");
     }
     public void ReplaceSkill(Skill OriginSkill, Skill NewSkill)
     {
@@ -576,15 +576,36 @@ public class EmpInfo : MonoBehaviour
     //以下四个函数为战略充能相关
     public void DirectAddStrategy()
     {
-        RechargeStrategyNum = Random.Range(0, StrategiesInfo.Count);
-        StrategyInfo NewStr = Instantiate(GC.StrC.ChargePrefab, GC.StrC.StrategyContent);
-        CurrentStrategy = NewStr;
-        NewStr.SC = GC.StrC;
-        GC.StrC.StrInfos.Add(NewStr);
-        NewStr.Str = StrategiesInfo[RechargeStrategyNum].Str;
-        CurrentStrategy.Text_Progress.text = "充能完毕";
-        CurrentStrategy.RechargeComplete = true;
-        NewStr.UpdateUI();
+        //只能充能和自己信仰或文化相符的战略
+        Strategy S = null;
+        List<Strategy> LS = new List<Strategy>();
+        foreach(StrategyInfo si in StrategiesInfo)
+        {
+            if (si.Str.Type == StrategyType.人力 && emp.CharacterTendency[1] == 1)
+                LS.Add(si.Str);
+            if (si.Str.Type == StrategyType.研发 && emp.CharacterTendency[1] == -1)
+                LS.Add(si.Str);
+            if (si.Str.Type == StrategyType.管理 && emp.CharacterTendency[0] == 1)
+                LS.Add(si.Str);
+            if (si.Str.Type == StrategyType.执行 && emp.CharacterTendency[0] == -1)
+                LS.Add(si.Str);
+        }
+        if (LS.Count > 0)
+            S = LS[Random.Range(0, LS.Count)];
+        else
+            print(emp.Name + "没有符合的战略");
+        if (S != null)
+        {
+            StrategyInfo NewStr = Instantiate(GC.StrC.ChargePrefab, GC.StrC.StrategyContent);
+            NewStr.Owner = emp;
+            CurrentStrategy = NewStr;
+            NewStr.SC = GC.StrC;
+            GC.StrC.StrInfos.Add(NewStr);
+            NewStr.Str = S;
+            CurrentStrategy.Text_Progress.text = "充能完毕";
+            CurrentStrategy.RechargeComplete = true;
+            NewStr.UpdateUI();
+        }
     }
 
     public void CreateStrategy()

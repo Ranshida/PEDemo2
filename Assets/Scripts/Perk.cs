@@ -695,6 +695,7 @@ public class Perk26 : Perk
     {
         base.TimePass();
         TargetEmp.Character[1] = 0;
+        TargetEmp.CharacterTendency[1] = 0;
     }
     public override void ImmEffect()
     {

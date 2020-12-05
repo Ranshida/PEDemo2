@@ -26,7 +26,6 @@ public class GameControl : MonoBehaviour
         set
         {
             CurrentEmployees[0].Stamina = value;
-            Text_Stamina.text = "体力:" + CurrentEmployees[0].Stamina;
         }
     }
     public int Mentality
@@ -79,7 +78,7 @@ public class GameControl : MonoBehaviour
     public CEOControl CC;
     public Transform HireContent, EmpPanelContent, DepContent, DepSelectContent, TotalEmpContent, StandbyContent, EmpDetailContent, MessageContent, SRateDetailContent;
     public InfoPanel infoPanel;
-    public GameObject DepSelectPanel, StandbyButton, MessagePrefab, CEOSkillPanel, EmpTrainingPanel, GameOverPanel, OfficeModeSelectPanel,
+    public GameObject DepSelectPanel, StandbyButton, MessagePrefab, CEOSkillPanel, VacationPanel, GameOverPanel, OfficeModeSelectPanel,
         OfficeModeHireOptionButton, DepModeSelectPanel, DepSkillConfirmPanel;
     public Text Text_Time, Text_TechResource, Text_MarketResource, Text_ProductResource, Text_Money, Text_Stamina, Text_Mentality, 
         Text_Morale, Text_DepMode1, Text_DepMode2, Text_DepSkillDescribe;
@@ -92,6 +91,7 @@ public class GameControl : MonoBehaviour
     public List<OfficeControl> CurrentOffices = new List<OfficeControl>();
     public List<Employee> CurrentEmployees = new List<Employee>();
     public int[] FinishedTask = new int[10];//0程序迭代 1技术研发 2可行性调研 3公关谈判 4营销文案 5资源拓展 6原型图 7产品研究 8用户访谈 9已删除
+    public int[] CEOSkillCD = new int[5];
 
     Animator Anim;
 
@@ -99,7 +99,7 @@ public class GameControl : MonoBehaviour
     float Timer;
     bool TimePause = false; //现在仅用来判断是否处于下班状态，用于其他功能时需检查WorkEndCheck()和WeekStart
 
-    int[] CEOSkillCD = new int[5];
+
 
     private void Awake()
     {
@@ -128,6 +128,8 @@ public class GameControl : MonoBehaviour
             GameOverPanel.SetActive(true);
         Text_Money.text = "金钱:" + Money +"\n" 
                         + "    " + (Income - Salary - (int)(BuildingPay * BuildingMaintenanceCostRate)) + "/月";
+        if (CurrentEmployees.Count > 0)
+            Text_Stamina.text = "体力:" + CurrentEmployees[0].Stamina;
     }
 
     void HourPass()
@@ -739,7 +741,7 @@ public class GameControl : MonoBehaviour
                 office.ActiveButton.interactable = true;
                 office.Text_Progress.text = "激活进度:" + office.Progress + "%";
             }
-            CEOSkillConfirm();
+            CC.CEOSkillConfirm();
         }
     }
 
@@ -791,7 +793,7 @@ public class GameControl : MonoBehaviour
               //  depControl.SpTime += 16;
 
             }
-            CEOSkillConfirm();
+            CC.CEOSkillConfirm();
         }
         DepSelectPanel.SetActive(false);
     }
@@ -847,21 +849,27 @@ public class GameControl : MonoBehaviour
 
     public void SetCEOSkill(int num)
     {
-        if(num == 1 && Stamina >= 20)
+        if (num == 1)
         {
-            CEOSkillNum = 1;
-            CEOSkillPanel.SetActive(false);
-            ShowDepSelectPanel(CurrentDeps);
-            SelectMode = 6;
+            if (Stamina >= 20)
+            {
+                CEOSkillNum = 1;
+                CEOSkillPanel.SetActive(false);
+                ShowDepSelectPanel(CurrentDeps);
+                SelectMode = 6;
+            }
         }
-        else if (num == 2 && Stamina >= 30)
+        else if (num == 2)
         {
-            CEOSkillNum = 2;
-            CEOSkillPanel.SetActive(false);
-            ShowDepSelectPanel(CurrentDeps);
-            SelectMode = 6;
+            if (Stamina >= 30)
+            {
+                CEOSkillNum = 2;
+                CEOSkillPanel.SetActive(false);
+                ShowDepSelectPanel(CurrentDeps);
+                SelectMode = 6;
+            }
         }
-        else if (num == 3 && Stamina >= 50)
+        else if (num == 3)
         {
             //CEOSkillNum = 3;
             //CEOSkillPanel.SetActive(false);
@@ -878,19 +886,22 @@ public class GameControl : MonoBehaviour
             //ShowDepSelectPanel(TempOffices);
             //SelectMode = 6;
         }
-        else if(num == 4 && Stamina >= 20)
+        else if (num == 4)
         {
-            SelectMode = 6;
-            CEOSkillNum = 4;
-            CEOSkillPanel.SetActive(false);
-            TotalEmpContent.parent.parent.gameObject.SetActive(true);
+            if (Stamina >= 20)
+            {
+                SelectMode = 6;
+                CEOSkillNum = 4;
+                CEOSkillPanel.SetActive(false);
+                TotalEmpContent.parent.parent.gameObject.SetActive(true);
+            }
         }
-        else if (num == 5 && Stamina >= 50)
+        else if (num == 5)
         {
             SelectMode = 6;
             CEOSkillNum = 5;
             CEOSkillPanel.SetActive(false);
-            TotalEmpContent.parent.parent.gameObject.SetActive(true);            
+            TotalEmpContent.parent.parent.gameObject.SetActive(true);
         }
         else
         {
@@ -900,43 +911,18 @@ public class GameControl : MonoBehaviour
             TotalEmpContent.parent.parent.gameObject.SetActive(true);
         }
     }
-    public void CEOSkillConfirm()
-    {       
-        if (CEOSkillNum == 1)
-        {
-            Stamina -= 20;
-            CEOSkillCD[0] = 16;
-        }
-        else if (CEOSkillNum == 2)
-        {
-            Stamina -= 30;
-            CEOSkillCD[1] = 24;
-        }
-        else if (CEOSkillNum == 3)
-        {
-            Stamina -= 50;
-            CEOSkillCD[2] = 32;
-        }
-        else if (CEOSkillNum == 4)
-        {
-            Stamina -= 20;
-            CEOSkillCD[3] = 8;
-        }
-        else if (CEOSkillNum == 5)
-        {
-            Stamina -= 50;
-            CEOSkillCD[4] = 32;
-        }
-        CEOSkillButton[CEOSkillNum - 1].interactable = false;
-        Text_CEOSkillCD[CEOSkillNum - 1].gameObject.SetActive(true);
-        Text_CEOSkillCD[CEOSkillNum - 1].text = "CD:" + CEOSkillCD[CEOSkillNum - 1] + "时";
-        CEOSkillNum = 0;
-        SelectMode = 0;
-    }
 
+    //TrainEmp函数目前实际为放假功能
     public void TrainEmp(int type)
     {
-        CurrentEmpInfo.emp.GainExp(300, type);
+        CurrentEmpInfo = CurrentEmpInfo.emp.InfoA;//这里可能写重了，但是为了确保为InfoA所以再进行一次赋值
+        CurrentEmpInfo.emp.VacationTime = type;
+        CurrentEmpInfo.transform.parent = StandbyContent;
+        ResetOldAssignment();
+        CurrentEmpInfo.MoveButton.interactable = false;
+        CurrentEmpInfo.emp.InfoB.MoveButton.interactable = false;
+        if (CurrentEmpInfo.emp.isCEO == true)
+            CC.SkillButton.interactable = false;
     }
     void GCTimePass()
     {

@@ -549,6 +549,7 @@ MonoBehaviour:
   Entity: {fileID: 0}
   GC: {fileID: 0}
   HireButton: {fileID: 0}
+  MoveButton: {fileID: 7304820795017196092}
   Text_Name: {fileID: 7304820794338048668}
   Text_Mentality: {fileID: 7304820794304870686}
   Text_Stamina: {fileID: 7304820793050914309}
@@ -577,6 +578,8 @@ MonoBehaviour:
   Text_Motiv_Recover: {fileID: 0}
   Text_Motive_Ambition: {fileID: 0}
   Text_Motiv_Social: {fileID: 0}
+  Text_Emotion: {fileID: 0}
+  Text_RTarget: {fileID: 0}
   Text_Stars:
   - {fileID: 0}
   - {fileID: 0}
@@ -602,11 +605,11 @@ MonoBehaviour:
   RelationContent: {fileID: 0}
   HistoryContent: {fileID: 0}
   CurrentStrategy: {fileID: 0}
+  ST: {fileID: 0}
   PerksInfo: []
   SkillsInfo: []
   StrategiesInfo: []
   InfoType: 1
-  Confidence: 0
 --- !u!114 &1923080826609381477
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -16,9 +16,10 @@ public class StrategyInfo : MonoBehaviour
     public StrategyControl SC;
     public InfoPanel info;
     public Text Text_Name, Text_Time, Text_Type, Text_EffectDescription, Text_RequestDescription, Text_Complete, Text_Progress;
-    public Button UseButton, AbolishButton;
+    public Button UseButton, AbolishButton, VoteButton, UnVoteButton;
     public Toggle StrSelectToggle;
     public GameObject ActiveMarker;
+    public Employee Owner = null;
 
     float Timer = 0;
     bool ShowPanel = false;
@@ -217,5 +218,27 @@ public class StrategyInfo : MonoBehaviour
     public void DeleteStrategy()
     {
         Destroy(this.gameObject);
+    }
+
+    public void CEOVote()
+    {
+        if(SC.CEOVote > 0)
+        {
+            SC.CEOVote = 0;
+            VoteNum += 1;
+            UpdateUI();
+            SC.CheckVoteStatus();
+            VoteButton.gameObject.SetActive(false);
+            UnVoteButton.gameObject.SetActive(true);
+        }
+    }
+    public void CEOUnVote()
+    {
+        SC.CEOVote += 1;
+        VoteNum -= 1;
+        UpdateUI();
+        SC.CheckVoteStatus();
+        VoteButton.gameObject.SetActive(true);
+        UnVoteButton.gameObject.SetActive(false);
     }
 }

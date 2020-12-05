@@ -10,7 +10,7 @@ public enum StrategyType
 public class Strategy
 {
     //Type:1提升n人心力 2增加产品分 3生产产品原型图 4生产营销文案 5生产程序迭代 6发生n次文化事件 7完成n次研究或调研
-    public int RequestType, RequestValue;
+    public int RequestType, RequestValue, CultureRequire = 0, FaithRequire = 0;// 文化 -独裁 +开源 ;信仰 -机械 +人文
     public string Name, EffectDescription, RequestDescription;
     public StrategyType Type;
 
@@ -452,25 +452,13 @@ public class Strategy4_1 : Strategy
         RequestDescription = "发生5次文化事件";
         RequestType = 6;
         RequestValue = 5;
-        //EffectDescription = "人力栏位+1 \n 执行栏位+1 \n 管理栏位+1";
-        //RequestDescription = "1个低劣及以上公关谈判 \n 1个低劣及以上可行性调研 \n 1个低劣及以上用户访谈";
-
-        //RequestTasks.Add(3);
-
-        //RequestTasks.Add(2);
-
-        //RequestTasks.Add(8);
-
-        //RequestNum = new List<int> { 1, 1, 1 };
     }
 
     public override void Effect(GameControl GC)
     {
         base.Effect(GC);
         //旧插槽版策略树检查
-         GC.StrC.StrLimitNum[0] += 1;
-        //GC.StrC.StrLimitNum[1] += 1;
-        //GC.StrC.StrLimitNum[2] += 1;
+        GC.StrC.StrLimitNum[0] += 1;
         GC.StrC.UpdateUI();
     }
 
@@ -478,9 +466,6 @@ public class Strategy4_1 : Strategy
     {
         base.EffectRemove(GC);
         GC.StrC.StrLimitNum[0] -= 1;
-        //GC.StrC.StrLimitNum[1] -= 1;
-        //GC.StrC.StrLimitNum[2] -= 1;
-        //GC.StrC.CheckStrNum();
         GC.StrC.UpdateUI();
     }
 }
@@ -534,7 +519,7 @@ public class Strategy4_3 : Strategy
     {
         Type = StrategyType.文化;
         Name = "多元文化";
-        EffectDescription = "人力栏位+2 \n 管理栏位+1";
+        EffectDescription = "人力栏位+3 \n 管理栏位+1";
         RequestDescription = "发生10次文化事件";
         RequestType = 6;
         RequestValue = 10;
@@ -551,7 +536,7 @@ public class Strategy4_3 : Strategy
     public override void Effect(GameControl GC)
     {
         base.Effect(GC);
-        GC.StrC.StrLimitNum[0] += 2;
+        GC.StrC.StrLimitNum[0] += 3;
         GC.StrC.StrLimitNum[1] += 1;
         GC.StrC.UpdateUI();
     }
@@ -559,7 +544,7 @@ public class Strategy4_3 : Strategy
     public override void EffectRemove(GameControl GC)
     {
         base.EffectRemove(GC);
-        GC.StrC.StrLimitNum[0] -= 2;
+        GC.StrC.StrLimitNum[0] -= 3;
         GC.StrC.StrLimitNum[1] -= 1;
         GC.StrC.UpdateUI();
     }
@@ -573,7 +558,7 @@ public class Strategy4_4 : Strategy
         Type = StrategyType.文化;
 
         Name = "技术主义";
-        EffectDescription = "执行栏位+2 士气-10";
+        EffectDescription = "执行栏位+3";
         RequestDescription = "发生10次文化事件";
         RequestType = 6;
         RequestValue = 10;
@@ -611,7 +596,7 @@ public class Strategy4_5 : Strategy
         Type = StrategyType.文化;
 
         Name = "官僚主义";
-        EffectDescription = "管理栏位+2 \n 执行栏位+1";
+        EffectDescription = "管理栏位+1 \n 执行栏位+1";
         RequestDescription = "发生10次文化事件";
         RequestType = 6;
         RequestValue = 10;       
@@ -620,7 +605,7 @@ public class Strategy4_5 : Strategy
     public override void Effect(GameControl GC)
     {
         base.Effect(GC);
-        GC.StrC.StrLimitNum[1] += 2;
+        GC.StrC.StrLimitNum[1] += 1;
         GC.StrC.StrLimitNum[2] += 1;
         GC.StrC.UpdateUI();
     }
@@ -628,8 +613,95 @@ public class Strategy4_5 : Strategy
     public override void EffectRemove(GameControl GC)
     {
         base.EffectRemove(GC);
-        GC.StrC.StrLimitNum[1] -= 2;
+        GC.StrC.StrLimitNum[1] -= 1;
         GC.StrC.StrLimitNum[2] -= 1;
+        GC.StrC.UpdateUI();
+    }
+}
+
+//科学传统
+public class Strategy4_6 : Strategy
+{
+    public Strategy4_6() : base()
+    {
+        Type = StrategyType.文化;
+
+        Name = "科学传统";
+        EffectDescription = "研发栏位+1";
+        RequestDescription = "发生10次文化事件";
+        RequestType = 6;
+        RequestValue = 10;
+    }
+
+    public override void Effect(GameControl GC)
+    {
+        base.Effect(GC);
+        GC.StrC.StrLimitNum[4] += 1;
+        GC.StrC.UpdateUI();
+    }
+
+    public override void EffectRemove(GameControl GC)
+    {
+        base.EffectRemove(GC);
+        GC.StrC.StrLimitNum[4] -= 1;
+        GC.StrC.UpdateUI();
+    }
+}
+
+//分权
+public class Strategy4_7 : Strategy
+{
+    public Strategy4_7() : base()
+    {
+        Type = StrategyType.文化;
+
+        Name = "分权";
+        EffectDescription = "管理栏位+1";
+        RequestDescription = "发生10次文化事件";
+        RequestType = 6;
+        RequestValue = 10;
+    }
+
+    public override void Effect(GameControl GC)
+    {
+        base.Effect(GC);
+        GC.StrC.StrLimitNum[1] += 1;
+        GC.StrC.UpdateUI();
+    }
+
+    public override void EffectRemove(GameControl GC)
+    {
+        base.EffectRemove(GC);
+        GC.StrC.StrLimitNum[1] -= 1;
+        GC.StrC.UpdateUI();
+    }
+}
+
+//分布式协作
+public class Strategy4_8 : Strategy
+{
+    public Strategy4_8() : base()
+    {
+        Type = StrategyType.文化;
+
+        Name = "分布式协作";
+        EffectDescription = "管理栏位+3";
+        RequestDescription = "发生10次文化事件";
+        RequestType = 6;
+        RequestValue = 10;
+    }
+
+    public override void Effect(GameControl GC)
+    {
+        base.Effect(GC);
+        GC.StrC.StrLimitNum[1] += 3;
+        GC.StrC.UpdateUI();
+    }
+
+    public override void EffectRemove(GameControl GC)
+    {
+        base.EffectRemove(GC);
+        GC.StrC.StrLimitNum[1] -= 3;
         GC.StrC.UpdateUI();
     }
 }
@@ -776,11 +848,6 @@ public static class StrategyData
         new Strategy3_2(),
         //new Strategy3_3(),
         new Strategy3_4(),
-        new Strategy4_1(),
-        new Strategy4_2(),
-        new Strategy4_3(),
-        new Strategy4_4(),
-        new Strategy4_5(),
         new Strategy5_1(),
         new Strategy5_2(),
         new Strategy5_3(),

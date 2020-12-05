@@ -6,8 +6,10 @@ using UnityEngine.UI;
 public class CEOControl : MonoBehaviour
 {
     public GameControl GC;
+    public Button SkillButton;
     public Text Text_Name, Text_Name2, Text_FailContent, Text_SuccessContent, Text_OptionContent, Text_Result, Text_Requirement;
-    public GameObject SelectPanel, ResultPanel, WarningPanel, SuccessText, FailText, ResultCheckButton, ConvinceButtons, EmpSelectWarning, SpyButton;
+    public GameObject SelectPanel, ResultPanel, WarningPanel, SuccessText, FailText, ResultCheckButton, ConvinceButtons, 
+        EmpSelectWarning, SpyButton;
     public Employee Target, CEO;
 
     private void Start()
@@ -15,7 +17,7 @@ public class CEOControl : MonoBehaviour
         if (GC == null)
             GC = GameControl.Instance;
     }
-
+    //更新面板
     public void SetPanelContent(Employee T)
     {
         Target = T;
@@ -99,11 +101,70 @@ public class CEOControl : MonoBehaviour
             Text_Requirement.text = "体力20";
             Text_OptionContent.text = "执行，成功率:" + CalcPosb() + "%";
         }
+        else if (GC.CEOSkillNum == 16)
+        {
+            Text_Name.text = "劝说" + Target.Name + "改变信仰";
+            Text_SuccessContent.text = "增加对方CEO所倾向的信仰及文化各15点";
+            Text_FailContent.text = "这技能失败居然没有Debuff";
+            Text_Requirement.text = "体力30";
+            Text_OptionContent.text = "执行，成功率:" + CalcPosb() + "%";
+        }
+        else if (GC.CEOSkillNum == 17)
+        {
+            Text_Name.text = "劝说" + Target.Name + "保持忠诚";
+            Text_SuccessContent.text = "员工添加“忠诚”状态";
+            Text_FailContent.text = "这技能失败居然没有Debuff";
+            Text_Requirement.text = "体力30";
+            Text_OptionContent.text = "执行，成功率:" + CalcPosb() + "%";
+        }
+        else if (GC.CEOSkillNum == 18)
+        {
+            Text_Name.text = "提升" + Target.Name + "信念";
+            Text_SuccessContent.text = "员工增加10点信念";
+            Text_FailContent.text = "这技能失败居然没有Debuff";
+            Text_Requirement.text = "体力30, 金钱300";
+            Text_OptionContent.text = "执行，成功率:" + CalcPosb() + "%";
+        }
         Text_Name2.text = Text_Name.text;
         SelectPanel.SetActive(true);
         ResultPanel.SetActive(false);
     }
+    //（旧）技能CD设置
+    public void CEOSkillConfirm()
+    {
+        if (GC.CEOSkillNum == 1)
+        {
+            GC.Stamina -= 20;
+            GC.CEOSkillCD[0] = 16;
+        }
+        else if (GC.CEOSkillNum == 2)
+        {
+            GC.Stamina -= 30;
+            GC.CEOSkillCD[1] = 24;
+        }
+        else if (GC.CEOSkillNum == 3)
+        {
+            GC.Stamina -= 50;
+            GC.CEOSkillCD[2] = 32;
+        }
+        else if (GC.CEOSkillNum == 4)
+        {
+            GC.Stamina -= 20;
+            GC.CEOSkillCD[3] = 8;
+        }
+        else if (GC.CEOSkillNum == 5)
+        {
+            //GC.Stamina -= 50;
+            //GC.CEOSkillCD[4] = 32;
+        }
+        GC.CEOSkillButton[GC.CEOSkillNum - 1].interactable = false;
+        GC.Text_CEOSkillCD[GC.CEOSkillNum - 1].gameObject.SetActive(true);
+        GC.Text_CEOSkillCD[GC.CEOSkillNum - 1].text = "CD:" + GC.CEOSkillCD[GC.CEOSkillNum - 1] + "时";
+        GC.CEOSkillNum = 0;
+        GC.SelectMode = 0;
+    }
 
+    //确认发动技能时的条件检测
     public void ConfirmSkill()
     {
         if (GC.CEOSkillNum == 6)
@@ -187,6 +248,37 @@ public class CEOControl : MonoBehaviour
             else
                 WarningPanel.SetActive(true);
         }
+        else if (GC.CEOSkillNum == 16)
+        {
+            if (GC.Stamina >= 30)
+            {
+                GC.Stamina -= 30;
+                ActiveSkill();
+            }
+            else
+                WarningPanel.SetActive(true);
+        }
+        else if (GC.CEOSkillNum == 17)
+        {
+            if (GC.Stamina >= 30)
+            {
+                GC.Stamina -= 30;
+                ActiveSkill();
+            }
+            else
+                WarningPanel.SetActive(true);
+        }
+        else if (GC.CEOSkillNum == 18)
+        {
+            if (GC.Stamina >= 30 && GC.Money >= 300)
+            {
+                GC.Stamina -= 30;
+                GC.Money -= 300;
+                ActiveSkill();
+            }
+            else
+                WarningPanel.SetActive(true);
+        }
     }
 
     void ActiveSkill()
@@ -257,6 +349,26 @@ public class CEOControl : MonoBehaviour
                         break;
                     }
                 }
+            }
+            else if (GC.CEOSkillNum == 16)
+            {
+                if (CEO.Character[0] >= 0)
+                    Target.ChangeCharacter(0, 15);
+                else if (CEO.Character[0] < 0)
+                    Target.ChangeCharacter(0, -15);
+
+                if (CEO.Character[1] >= 0)
+                    Target.ChangeCharacter(1, 15);
+                else if (CEO.Character[1] < 0)
+                    Target.ChangeCharacter(1, -15);
+            }
+            else if (GC.CEOSkillNum == 17)
+            {
+                Target.InfoDetail.AddPerk(new Perk41(Target), true);
+            }
+            else if (GC.CEOSkillNum == 18)
+            {
+                Target.ChangeCharacter(4, 10);
             }
         }
         else
@@ -424,14 +536,14 @@ public class CEOControl : MonoBehaviour
         {
             value += (int)(CEO.Charm * 0.2f);
             value += (int)(CEO.Convince * 0.2f);
-            if ((CEO.Character[0] >= 50 && Target.Character[0] >= 50) || (CEO.Character[0] <= -50 && Target.Character[0] <= -50))
+            if ((CEO.Character[0] >= 20 && Target.Character[0] >= 20) || (CEO.Character[0] <= -20 && Target.Character[0] <= -20))
                 value += 1;
-            else if ((CEO.Character[0] >= 50 && Target.Character[0] <= -50) || (CEO.Character[0] <= -50 && Target.Character[0] >= 50))
+            else if ((CEO.Character[0] >= 20 && Target.Character[0] <= -20) || (CEO.Character[0] <= -20 && Target.Character[0] >= 20))
                 value -= 2;
 
-            if ((CEO.Character[1] >= 50 && Target.Character[1] >= 50) || (CEO.Character[1] <= -50 && Target.Character[1] <= -50))
+            if ((CEO.Character[1] >= 20 && Target.Character[1] >= 20) || (CEO.Character[1] <= -20 && Target.Character[1] <= -20))
                 value += 1;
-            else if ((CEO.Character[1] >= 50 && Target.Character[1] <= -50) || (CEO.Character[1] <= -50 && Target.Character[1] >= 50))
+            else if ((CEO.Character[1] >= 20 && Target.Character[1] <= -20) || (CEO.Character[1] <= -20 && Target.Character[1] >= 20))
                 value -= 2;
         }
         //挚友
@@ -439,40 +551,40 @@ public class CEOControl : MonoBehaviour
         {
             value += (int)(CEO.Charm * 0.1f);
             value += (int)(CEO.Convince * 0.1f);
-            if ((CEO.Character[0] >= 50 && Target.Character[0] >= 50) || (CEO.Character[0] <= -50 && Target.Character[0] <= -50))
+            if ((CEO.Character[0] >= 20 && Target.Character[0] >= 20) || (CEO.Character[0] <= -20 && Target.Character[0] <= -20))
                 value += 1;
-            else if ((CEO.Character[0] >= 50 && Target.Character[0] <= -50) || (CEO.Character[0] <= -50 && Target.Character[0] >= 50))
+            else if ((CEO.Character[0] >= 20 && Target.Character[0] <= -20) || (CEO.Character[0] <= -20 && Target.Character[0] >= 20))
                 value -= 2;
 
-            if ((CEO.Character[1] >= 50 && Target.Character[1] >= 50) || (CEO.Character[1] <= -50 && Target.Character[1] <= -50))
+            if ((CEO.Character[1] >= 20 && Target.Character[1] >= 20) || (CEO.Character[1] <= -20 && Target.Character[1] <= -20))
                 value += 1;
-            else if ((CEO.Character[1] >= 50 && Target.Character[1] <= -50) || (CEO.Character[1] <= -50 && Target.Character[1] >= 50))
+            else if ((CEO.Character[1] >= 20 && Target.Character[1] <= -20) || (CEO.Character[1] <= -20 && Target.Character[1] >= 20))
                 value -= 2;
         }
         //陌路
         else if (GC.CEOSkillNum == 11)
         {
-            if ((CEO.Character[0] >= 50 && Target.Character[0] >= 50) || (CEO.Character[0] <= -50 && Target.Character[0] <= -50))
+            if ((CEO.Character[0] >= 20 && Target.Character[0] >= 20) || (CEO.Character[0] <= -20 && Target.Character[0] <= -20))
                 value -= 1;
-            else if ((CEO.Character[0] >= 50 && Target.Character[0] <= -50) || (CEO.Character[0] <= -50 && Target.Character[0] >= 50))
+            else if ((CEO.Character[0] >= 20 && Target.Character[0] <= -20) || (CEO.Character[0] <= -20 && Target.Character[0] >= 20))
                 value += 2;
 
-            if ((CEO.Character[1] >= 50 && Target.Character[1] >= 50) || (CEO.Character[1] <= -50 && Target.Character[1] <= -50))
+            if ((CEO.Character[1] >= 20 && Target.Character[1] >= 20) || (CEO.Character[1] <= -20 && Target.Character[1] <= -20))
                 value -= 1;
-            else if ((CEO.Character[1] >= 50 && Target.Character[1] <= -50) || (CEO.Character[1] <= -50 && Target.Character[1] >= 50))
+            else if ((CEO.Character[1] >= 20 && Target.Character[1] <= -20) || (CEO.Character[1] <= -20 && Target.Character[1] >= 20))
                 value += 2;
         }
         //仇人
         else if (GC.CEOSkillNum == 12)
         {
-            if ((CEO.Character[0] >= 50 && Target.Character[0] >= 50) || (CEO.Character[0] <= -50 && Target.Character[0] <= -50))
+            if ((CEO.Character[0] >= 20 && Target.Character[0] >= 20) || (CEO.Character[0] <= -20 && Target.Character[0] <= -20))
                 value -= 1;
-            else if ((CEO.Character[0] >= 50 && Target.Character[0] <= -50) || (CEO.Character[0] <= -50 && Target.Character[0] >= 50))
+            else if ((CEO.Character[0] >= 20 && Target.Character[0] <= -20) || (CEO.Character[0] <= -20 && Target.Character[0] >= 20))
                 value += 2;
 
-            if ((CEO.Character[1] >= 50 && Target.Character[1] >= 50) || (CEO.Character[1] <= -50 && Target.Character[1] <= -50))
+            if ((CEO.Character[1] >= 20 && Target.Character[1] >= 20) || (CEO.Character[1] <= -20 && Target.Character[1] <= -20))
                 value -= 1;
-            else if ((CEO.Character[1] >= 50 && Target.Character[1] <= -50) || (CEO.Character[1] <= -50 && Target.Character[1] >= 50))
+            else if ((CEO.Character[1] >= 20 && Target.Character[1] <= -20) || (CEO.Character[1] <= -20 && Target.Character[1] >= 20))
                 value += 2;
         }
         //创建派系
@@ -487,14 +599,14 @@ public class CEOControl : MonoBehaviour
             else if (r.FriendValue == -2)
                 value -= 4;
 
-            if ((CEO.Character[0] >= 50 && Target.Character[0] >= 50) || (CEO.Character[0] <= -50 && Target.Character[0] <= -50))
+            if ((CEO.Character[0] >= 20 && Target.Character[0] >= 20) || (CEO.Character[0] <= -20 && Target.Character[0] <= -20))
                 value += 1;
-            else if ((CEO.Character[0] >= 50 && Target.Character[0] <= -50) || (CEO.Character[0] <= -50 && Target.Character[0] >= 50))
+            else if ((CEO.Character[0] >= 20 && Target.Character[0] <= -20) || (CEO.Character[0] <= -20 && Target.Character[0] >= 20))
                 value -= 2;
 
-            if ((CEO.Character[1] >= 50 && Target.Character[1] >= 50) || (CEO.Character[1] <= -50 && Target.Character[1] <= -50))
+            if ((CEO.Character[1] >= 20 && Target.Character[1] >= 20) || (CEO.Character[1] <= -20 && Target.Character[1] <= -20))
                 value += 1;
-            else if ((CEO.Character[1] >= 50 && Target.Character[1] <= -50) || (CEO.Character[1] <= -50 && Target.Character[1] >= 50))
+            else if ((CEO.Character[1] >= 20 && Target.Character[1] <= -20) || (CEO.Character[1] <= -20 && Target.Character[1] >= 20))
                 value -= 2;
 
             value += (int)(CEO.Charm * 0.2f);
@@ -512,14 +624,14 @@ public class CEOControl : MonoBehaviour
             else if (r.FriendValue == -2)
                 value -= 4;
 
-            if ((CEO.Character[0] >= 50 && Target.Character[0] >= 50) || (CEO.Character[0] <= -50 && Target.Character[0] <= -50))
+            if ((CEO.Character[0] >= 20 && Target.Character[0] >= 20) || (CEO.Character[0] <= -20 && Target.Character[0] <= -20))
                 value += 1;
-            else if ((CEO.Character[0] >= 50 && Target.Character[0] <= -50) || (CEO.Character[0] <= -50 && Target.Character[0] >= 50))
+            else if ((CEO.Character[0] >= 20 && Target.Character[0] <= -20) || (CEO.Character[0] <= -20 && Target.Character[0] >= 20))
                 value -= 2;
 
-            if ((CEO.Character[1] >= 50 && Target.Character[1] >= 50) || (CEO.Character[1] <= -50 && Target.Character[1] <= -50))
+            if ((CEO.Character[1] >= 20 && Target.Character[1] >= 20) || (CEO.Character[1] <= -20 && Target.Character[1] <= -20))
                 value += 1;
-            else if ((CEO.Character[1] >= 50 && Target.Character[1] <= -50) || (CEO.Character[1] <= -50 && Target.Character[1] >= 50))
+            else if ((CEO.Character[1] >= 20 && Target.Character[1] <= -20) || (CEO.Character[1] <= -20 && Target.Character[1] >= 20))
                 value -= 2;
 
             value += (int)(CEO.Charm * 0.2f);
@@ -541,6 +653,25 @@ public class CEOControl : MonoBehaviour
                 value += 3;
 
             value += (int)(CEO.Convince * 0.2f);
+        }
+        //改变信仰
+        else if (GC.CEOSkillNum == 16)
+        {
+            if (CEO.CharacterTendency[0] * Target.CharacterTendency[0] == 1)
+                value += 1;
+            if (CEO.CharacterTendency[1] * Target.CharacterTendency[1] == 1)
+                value += 1;
+            value += (int)(CEO.Charm * 0.2f);
+        }
+        //保持忠诚
+        else if (GC.CEOSkillNum == 17)
+        {
+            value += (int)(CEO.Convince * 0.2f + (Target.Character[4] * 0.02f));
+        }
+        //提升信念
+        else if (GC.CEOSkillNum == 18)
+        {
+            value += (int)(CEO.Convince * 0.1f);
         }
         return value;
     }

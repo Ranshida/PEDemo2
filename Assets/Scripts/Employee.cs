@@ -240,7 +240,7 @@ public class Employee
     }
     #endregion
 
-    public int SkillExtra1, SkillExtra2, SkillExtra3, SalaryExtra = 0, Age, EventTime, ObeyTime, NoPromotionTime = 0, NoMarriageTime = 0;
+    public int SkillExtra1, SkillExtra2, SkillExtra3, SalaryExtra = 0, Age, EventTime, ObeyTime, NoPromotionTime = 0, NoMarriageTime = 0, VacationTime = 0;
     public int Confidence;//信心，头脑风暴中的护盾
     public int NewRelationTargetTime = 1;
     public float ExtraSuccessRate = 0, SalaryMultiple = 1.0f;
@@ -252,6 +252,7 @@ public class Employee
     public int[] StarLimit = new int[5];
     public int[] SkillExp = new int[15];
     public int[] Levels = new int[5]; //0职业(业务) 1基础 2经营 3战略 4社交
+    public int[] CharacterTendency = new int[4];//(0文化 -独裁 +开源) (1信仰-机械 +人文) (2道德-功利主义 +绝对律令) (3行事-随心所欲 +严格守序)
     public float[] Character = new float[5]; //0文化 1信仰 2道德 3行事 4信念
     public float[] Request = new float[4];
     public int[] BaseMotivation = new int[4];//0工作学习 1心体恢复 2谋划野心 3关系交往
@@ -345,164 +346,6 @@ public class Employee
 
         stamina = 100;
         mentality = 100;
-
-        #region 旧招聘
-        ////职业技能
-        //if (Hst[0] == 0)
-        //{
-        //    if (AgeRange == 0)
-        //        Skill1 = Random.Range(1, 6);
-        //    else
-        //        Skill1 = Random.Range(1, 4);
-        //}
-        //else
-        //    Skill1 = HeadHuntLevel;
-
-        //if (Hst[1] == 0)
-        //{
-        //    if (AgeRange == 0)
-        //        Skill2 = Random.Range(1, 6);
-        //    else
-        //        Skill2 = Random.Range(1, 4);
-        //}
-        //else
-        //    Skill2 = HeadHuntLevel;
-
-        //if (Hst[2] == 0)
-        //{
-        //    if (AgeRange == 0)
-        //        Skill3 = Random.Range(1, 6);
-        //    else
-        //        Skill3 = Random.Range(1, 4);
-        //}
-        //else
-        //    Skill3 = HeadHuntLevel;
-        //Levels[0] = Skill1 + Skill2 + Skill3;
-        ////基础技能
-        //if (Hst[3] == 0)
-        //{
-        //    if (AgeRange == 0)
-        //        Observation = Random.Range(1, 6);
-        //    else
-        //        Observation = Random.Range(1, 4);
-        //}
-        //else
-        //    Observation = HeadHuntLevel;
-
-        //if (Hst[4] == 0)
-        //{
-        //    if (AgeRange == 0)
-        //        Tenacity = Random.Range(1, 6);
-        //    else
-        //        Tenacity = Random.Range(1, 4);
-        //}
-        //else
-        //    Tenacity = HeadHuntLevel;
-
-        //if (Hst[5] == 0)
-        //{
-        //    if (AgeRange == 0)
-        //        Strength = Random.Range(1, 6);
-        //    else
-        //        Strength = Random.Range(1, 4);
-        //}
-        //else
-        //    Strength = HeadHuntLevel;
-        //Levels[1] = Observation + Tenacity + Strength;
-        ////经营技能
-        //if (Hst[6] == 0)
-        //{
-        //    if (AgeRange == 0)
-        //        Manage = Random.Range(1, 6);
-        //    else
-        //        Manage = Random.Range(1, 4);
-        //}
-        //else
-        //    Manage = HeadHuntLevel;
-
-        //if (Hst[7] == 0)
-        //{
-        //    if (AgeRange == 0)
-        //        HR = Random.Range(1, 6);
-        //    else
-        //        HR = Random.Range(1, 4);
-        //}
-        //else
-        //    HR = HeadHuntLevel;
-
-        //if (Hst[8] == 0)
-        //{
-        //    if (AgeRange == 0)
-        //        Finance = Random.Range(1, 6);
-        //    else
-        //        Finance = Random.Range(1, 4);
-        //}
-        //else
-        //    Finance = HeadHuntLevel;
-        //Levels[2] = Manage + HR + Finance;
-        ////战略技能
-        //if (Hst[9] == 0)
-        //{
-        //    if (AgeRange == 0)
-        //        Decision = Random.Range(1, 6);
-        //    else
-        //        Decision = Random.Range(1, 4);
-        //}
-        //else
-        //    Decision = HeadHuntLevel;
-
-        //if (Hst[10] == 0)
-        //{
-        //    if (AgeRange == 0)
-        //        Forecast = Random.Range(1, 6);
-        //    else
-        //        Forecast = Random.Range(1, 4);
-        //}
-        //else
-        //    Forecast = HeadHuntLevel;
-
-        //if (Hst[11] == 0)
-        //{
-        //    if (AgeRange == 0)
-        //        Strategy = Random.Range(1, 6);
-        //    else
-        //        Strategy = Random.Range(1, 4);
-        //}
-        //else
-        //    Strategy = HeadHuntLevel;
-        //Levels[3] = Decision + Forecast + Strategy;
-        ////社交技能        
-        //if (Hst[12] == 0)
-        //{
-        //    if (AgeRange == 0)
-        //        Convince = Random.Range(1, 6);
-        //    else
-        //        Convince = Random.Range(1, 4);
-        //}
-        //else
-        //    Convince = HeadHuntLevel;
-
-        //if (Hst[13] == 0)
-        //{
-        //    if (AgeRange == 0)
-        //        Charm = Random.Range(1, 6);
-        //    else
-        //        Charm = Random.Range(1, 4);
-        //}
-        //else
-        //    Charm = HeadHuntLevel;
-
-        //if (Hst[14] == 0)
-        //{
-        //    if (AgeRange == 0)
-        //        Gossip = Random.Range(1, 6);
-        //    else
-        //        Gossip = Random.Range(1, 4);
-        //}
-        //else
-        //    Gossip = HeadHuntLevel;
-        //Levels[4] = Convince + Charm + Gossip;
-        #endregion
 
         //职业技能
         if (Nst[0] == 0)
@@ -633,12 +476,6 @@ public class Employee
         }
         for (int i = 0; i < 5; i++)
         {
-            //旧的天赋随机值
-            //if (i == TopStartNum)
-            //    StarLimit[i] = Random.Range(1, 6);
-            //else
-            //    StarLimit[i] = Random.Range(0, 3);
-
             if (i == TopStartNum || i == TopStartNum2)
                 StarLimit[i] = Random.Range(1, 5);
             else
@@ -656,6 +493,7 @@ public class Employee
             if (i == 4)
                 Character[4] = Random.Range(0, 101);
         }
+        CheckCharacter();
 
         EventTime = Random.Range(7,10);
     }
@@ -693,6 +531,7 @@ public class Employee
             if (i == 4)
                 Character[4] = Random.Range(0, 101);
         }
+        CheckCharacter();
         EventTime = 8;
     }
 
@@ -1073,6 +912,7 @@ public class Employee
                 Character[type] = 100;
             else if (Character[type] < -100)
                 Character[type] = -100;
+            CheckCharacter();
         }
         else
         {
@@ -1082,6 +922,36 @@ public class Employee
             else if (Character[4] < 0)
                 Character[4] = 0;
         }
+    }
+    void CheckCharacter()
+    {
+        if (Character[0] >= 20)
+            CharacterTendency[0] = 1;
+        else if (Character[0] <= -20)
+            CharacterTendency[0] = -1;
+        else
+            CharacterTendency[0] = 0;
+
+        if (Character[1] >= 20)
+            CharacterTendency[1] = 1;
+        else if (Character[1] <= -20)
+            CharacterTendency[1] = -1;
+        else
+            CharacterTendency[1] = 0;
+
+        if (Character[2] >= 20)
+            CharacterTendency[2] = 1;
+        else if (Character[2] <= -20)
+            CharacterTendency[2] = -1;
+        else
+            CharacterTendency[2] = 0;
+
+        if (Character[3] >= 20)
+            CharacterTendency[3] = 1;
+        else if (Character[3] <= -20)
+            CharacterTendency[3] = -1;
+        else
+            CharacterTendency[3] = 0;
     }
 
     public int CheckMotivation(int type)
@@ -1485,7 +1355,7 @@ public class Employee
             //AddEvent();
             //EventTime = Random.Range(12, 21);
             EventTime = Random.Range(7, 10);
-            InfoDetail.Entity.AddEvent(EmpManager.Instance.RandomEventTarget(this));
+            InfoDetail.Entity.AddEvent(EmpManager.Instance.RandomEventTarget(this, out int index), index);
         }
         //寻找新关系发展目标
         NewRelationTargetTime -= 1;
@@ -1493,6 +1363,14 @@ public class Employee
         {
             FindRelationTarget();
             NewRelationTargetTime = 192;
+        }
+        //假期计时
+        if (VacationTime > 0)
+        {
+            VacationTime -= 1;
+            Stamina += 5;
+            if (VacationTime == 0)
+                EndVacation();
         }
 
         if (CurrentOffice == null)
@@ -1522,6 +1400,15 @@ public class Employee
             }
             DesItems.Clear();
         }
+    }
+
+    void EndVacation()
+    {
+        VacationTime = 0;
+        InfoA.MoveButton.interactable = true;
+        InfoB.MoveButton.interactable = true;
+        if (isCEO == true)
+            InfoDetail.GC.CC.SkillButton.interactable = true;
     }
 
     //增减情绪

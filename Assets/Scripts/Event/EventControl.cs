@@ -213,7 +213,7 @@ public class EventControl : MonoBehaviour
                     }
                 }
                 //文化检测
-                if((E.Character[0] >= 50 && emp.Character[0] >= 50) ||(E.Character[0] <= -50 && emp.Character[0] <= -50))
+                if(E.CharacterTendency[0] * emp.CharacterTendency[0] == 1)
                 {
                     if (Dismissal == false)
                     {
@@ -226,7 +226,7 @@ public class EventControl : MonoBehaviour
                         Description += "\n文化一致-1";
                     }
                 }
-                else if ((E.Character[0] >= 50 && emp.Character[0] <= -50) || (E.Character[0] <= -50 && emp.Character[0] >= 50))
+                else if (E.CharacterTendency[0] * emp.CharacterTendency[0] == -1)
                 {
                     if (Dismissal == false)
                     {
@@ -240,7 +240,7 @@ public class EventControl : MonoBehaviour
                     }
                 }
                 //信仰检测
-                if ((E.Character[1] >= 50 && emp.Character[1] >= 50) || (E.Character[1] <= -50 && emp.Character[1] <= -50))
+                if (E.CharacterTendency[1] * emp.CharacterTendency[1] == 1)
                 {
                     if (Dismissal == false)
                     {
@@ -253,7 +253,7 @@ public class EventControl : MonoBehaviour
                         Description += "\n信仰一致-1";
                     }
                 }
-                else if ((E.Character[1] >= 50 && emp.Character[1] <= -50) || (E.Character[1] <= -50 && emp.Character[1] >= 50))
+                else if (E.CharacterTendency[1] * emp.CharacterTendency[1] == -1)
                 {
                     if (Dismissal == false)
                     {
@@ -329,23 +329,23 @@ public class EventControl : MonoBehaviour
                     Description2 += "\n同派系+3";
                 }
                 //文化检测
-                if ((E.Character[0] >= 50 && CEO.Character[0] >= 50) || (E.Character[0] <= -50 && CEO.Character[0] <= -50))
+                if (E.CharacterTendency[0] * emp.CharacterTendency[0] == 1)
                 {
                     VoteValue += 1;
                     Description2 += "\n文化一致+1";
                 }
-                else if ((E.Character[0] >= 50 && CEO.Character[0] <= -50) || (E.Character[0] <= -50 && CEO.Character[0] >= 50))
+                else if (E.CharacterTendency[0] * emp.CharacterTendency[0] == -1)
                 {
                     VoteValue -= 2;
                     Description2 += "\n文化相反-2";
                 }
                 //信仰检测
-                if ((E.Character[1] >= 50 && CEO.Character[1] >= 50) || (E.Character[1] <= -50 && CEO.Character[1] <= -50))
+                if (E.CharacterTendency[1] * emp.CharacterTendency[1] == 1)
                 {
                     VoteValue += 1;
                     Description2 += "\n信仰一致+1";
                 }
-                else if ((E.Character[1] >= 50 && CEO.Character[1] <= -50) || (E.Character[1] <= -50 && CEO.Character[1] >= 50))
+                else if (E.CharacterTendency[0] * emp.CharacterTendency[0] == -1)
                 {
                     VoteValue -= 2;
                     Description2 += "\n信仰相反-2";
