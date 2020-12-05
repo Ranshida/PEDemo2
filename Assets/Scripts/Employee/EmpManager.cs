@@ -100,7 +100,7 @@ public class EmpManager : MonoBehaviour
 
     public EmpEntity RandomEventTarget(Employee self, out int index)
     {
-        List<Event> eventList = RandomEventList(out index);
+        List<Event> eventList = RandomEventList(self, out index);
         List<Employee> posbTargets = new List<Employee>();     //可能的对象（随机其一）
 
         //从上下级同事之间选择
@@ -135,21 +135,41 @@ public class EmpManager : MonoBehaviour
         return null;
     }
 
-    private List<Event> RandomEventList(out int listIndex)
+    private List<Event> RandomEventList(Employee self, out int listIndex)
     {
-        float value = Random.Range(0f, 1f);
-        if (value < 0.3f) 
+        float initalValue = 0.3f;
+        float companyValue = 0.3f;
+        float relationValue = 0.4f;
+        for (int i = 0; i < self.InfoDetail.PerksInfo.Count; i++)
+        {
+            if (self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 42)
+            {
+                initalValue += 0.1f;
+                companyValue += 0.1f;
+            }
+            if (self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 43)
+            {
+                companyValue -= 0.1f;
+                relationValue += 0.1f;
+            }
+        }
+
+        float value = Random.Range(0f, initalValue + companyValue + relationValue) ;
+        if (value < initalValue)
         {
             listIndex = 0;
             return EventData.InitialList;
         }
-        if (value < 0.6f)
+        else if (value < initalValue + companyValue)
         {
             listIndex = 1;
             return EventData.CompanyList;
         }
-        listIndex = 2;
-        return EventData.RelationList;
+        else 
+        {
+            listIndex = 2;
+            return EventData.RelationList;
+        }
     }
     public Event RandomEvent(Employee self, Employee target,int index)
     {
@@ -179,10 +199,12 @@ public class EmpManager : MonoBehaviour
                 {
                     continue;
                 }
+                int weight = item.Weight;
                 item.Self = self;
                 item.Target = null;
                 if (item.ConditionCheck(-1) == true)
                 {
+                    item.SetWeight();
                     if (item.Weight >= 5)
                         weight_5.Add(item.Clone());
                     if (item.Weight == 4)
@@ -194,6 +216,7 @@ public class EmpManager : MonoBehaviour
                     if (item.Weight == 1)
                         weight_1.Add(item.Clone());
                 }
+                item.Weight = weight;
                 item.Self = null;
                 item.Target = null;
             }
@@ -207,10 +230,12 @@ public class EmpManager : MonoBehaviour
                 {
                     continue;
                 }
+                int weight = item.Weight;
                 item.Self = self;
                 item.Target = target;
                 if (item.ConditionCheck(-1) == true)
                 {
+                    item.SetWeight();
                     if (item.Weight >= 5)
                         weight_5.Add(item.Clone());
                     if (item.Weight == 4)
@@ -222,6 +247,7 @@ public class EmpManager : MonoBehaviour
                     if (item.Weight == 1)
                         weight_1.Add(item.Clone());
                 }
+                item.Weight = weight;
                 item.Self = null;
                 item.Target = null;
             }
