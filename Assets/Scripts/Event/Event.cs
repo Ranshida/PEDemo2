@@ -29,7 +29,8 @@ public class Event
     public EmpEntity SelfEntity { get { return Self.InfoDetail.Entity; } }
     public EmpEntity TargetEntity { get { return Target.InfoDetail.Entity; } }
     public Building TargetBuilding;
-    public BuildingType BuildingRequire = BuildingType.空; //暂时用空表示没有需求
+    //public BuildingType BuildingRequire = BuildingType.空; //暂时用空表示没有需求
+    public List<BuildingType> BuildingRequires = new List<BuildingType>(); //暂时用空表示没有需求
     public List<EColor> SelfEmotionRequire = new List<EColor>(); //自身颜色需求
     public List<EColor> TargetEmotionRequire = new List<EColor>(); //对方颜色需求
     public List<Event> SubEvents = new List<Event>(); //可能的子事件
@@ -94,28 +95,54 @@ public class Event
     //建筑要求
     public virtual bool BuildingCheck()
     {
-        if (BuildingRequire == BuildingType.空)
+        if (BuildingRequires.Count == 0)
             return true;
-        else
+
+        for (int i = 0; i < GC.CurrentDeps.Count; i++)
         {
-            for (int i = 0; i < GC.CurrentDeps.Count; i++)
+            foreach (BuildingType type in BuildingRequires)
             {
-                if (GC.CurrentDeps[i].building.Type == BuildingRequire)
+                if (GC.CurrentDeps[i].building.Type == type)
                 {
-                    TargetBuilding = GC.CurrentDeps[i].building;
                     return true;
                 }
             }
-            for (int i = 0; i < GC.CurrentOffices.Count; i++)
-            {
-                if (GC.CurrentOffices[i].building.Type == BuildingRequire)
-                {
-                    TargetBuilding = GC.CurrentOffices[i].building;
-                    return true;
-                }
-            }
-            return false;
         }
+        for (int i = 0; i < GC.CurrentOffices.Count; i++)
+        {
+            foreach (BuildingType type in BuildingRequires)
+            {
+                if (GC.CurrentOffices[i].building.Type == type)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+
+
+        //if (BuildingRequire == BuildingType.空)
+        //    return true;
+        //else
+        //{
+        //    for (int i = 0; i < GC.CurrentDeps.Count; i++)
+        //    {
+        //        if (GC.CurrentDeps[i].building.Type == BuildingRequire)
+        //        {
+        //            TargetBuilding = GC.CurrentDeps[i].building;
+        //            return true;
+        //        }
+        //    }
+        //    for (int i = 0; i < GC.CurrentOffices.Count; i++)
+        //    {
+        //        if (GC.CurrentOffices[i].building.Type == BuildingRequire)
+        //        {
+        //            TargetBuilding = GC.CurrentOffices[i].building;
+        //            return true;
+        //        }
+        //    }
+        //    return false;
+        //}
     }
     //关系要求
     public virtual bool RelationCheck()
@@ -614,6 +641,29 @@ public class Event
         return (Event)this.MemberwiseClone();
     }
 }
+
+//20.12.7新增需要策划写的内容
+public class EventTest : Event
+{
+    public EventTest() : base()
+    {
+        EventName = "测试用";
+        //需求的建筑Add到BuildingRequires即可，如果没有需求什么都不写就行了
+        BuildingRequires.Add(BuildingType.中央监控室);
+        BuildingRequires.Add(BuildingType.产品部门);
+
+        Weight = 3;               //设置事件默认权重
+        PerkRemoveNumber = 5;     //要移除的特质
+    }
+
+    //假如有特质会影响事件发生的权重
+    public override void SetWeight()
+    {
+        SetWeight(1, -1);  //员工有第1种特质，则权值-1
+        SetWeight(5, 2);   //员工有第5种特质，则权值+2
+    }
+}
+
 #region 事件版本2
 
 //要求涨工资
@@ -622,7 +672,7 @@ public class Event1: Event
     public Event1() : base()
     {
         EventName = "要求涨工资";
-        BuildingRequire = BuildingType.高管办公室;
+        //BuildingRequire = BuildingType.高管办公室;
         MinFaith = 80;
         MotivationRequire = 1;
     }
@@ -706,7 +756,7 @@ public class Event2 : Event
     public Event2() : base()
     {
         EventName = "谋求高位";
-        BuildingRequire = BuildingType.CEO办公室;
+        //BuildingRequire = BuildingType.CEO办公室;
         MinFaith = 80;
         MotivationRequire = 4;
     }
@@ -798,7 +848,7 @@ public class Event3 : Event
     public Event3() : base()
     {
         EventName = "加入派系";
-        BuildingRequire = BuildingType.空;
+        //BuildingRequire = BuildingType.空;
         MinFaith = 60;
         MotivationRequire = 4;
     }
@@ -891,7 +941,7 @@ public class Event4 : Event
     public Event4() : base()
     {
         EventName = "搞破坏";
-        BuildingRequire = BuildingType.空;
+        //BuildingRequire = BuildingType.空;
         MinFaith = 40;
         MotivationRequire = 5;
         MoralRequire = 1;
@@ -992,7 +1042,7 @@ public class Event5 : Event
     public Event5() : base()
     {
         EventName = "罢工";
-        BuildingRequire = BuildingType.空;
+        //BuildingRequire = BuildingType.空;
         MinFaith = 40;
         MotivationRequire = 5;
         MoralRequire = 3;
@@ -1093,7 +1143,7 @@ public class Event6 : Event
     public Event6() : base()
     {
         EventName = "建立派系";
-        BuildingRequire = BuildingType.空;
+        //BuildingRequire = BuildingType.空;
         MinFaith = 60;
         MotivationRequire = 6;
     }
@@ -1195,7 +1245,7 @@ public class Event7 : Event
     public Event7() : base()
     {
         EventName = "篡权";
-        BuildingRequire = BuildingType.空;
+        //BuildingRequire = BuildingType.空;
         MinFaith = 60;
         MotivationRequire = 6;
         MoralRequire = 1;
@@ -1296,7 +1346,7 @@ public class Event8 : Event
     public Event8() : base()
     {
         EventName = "健身房";
-        BuildingRequire = BuildingType.健身房;
+        //BuildingRequire = BuildingType.健身房;
         MotivationRequire = 2;
     }
     public override bool RelationCheck()
@@ -1384,7 +1434,7 @@ public class Event10 : Event
     public Event10() : base()
     {
         EventName = "健身房";
-        BuildingRequire = BuildingType.按摩房;
+        //BuildingRequire = BuildingType.按摩房;
         MotivationRequire = 2;
     }
     public override bool RelationCheck()
@@ -1473,7 +1523,7 @@ public class Event11 : Event
     public Event11() : base()
     {
         EventName = "倾诉";
-        BuildingRequire = BuildingType.空;
+        //BuildingRequire = BuildingType.空;
         MotivationRequire = 6;
     }
     public override bool RelationCheck()
@@ -1673,7 +1723,7 @@ public class Event14 : Event
     public Event14() : base()
     {
         EventName = "心力爆炸归零事件1";
-        BuildingRequire = BuildingType.空;
+        //BuildingRequire = BuildingType.空;
         MotivationRequire = 3;
         HaveTarget = false;
     }
@@ -1759,7 +1809,7 @@ public class Event15 : Event
     public Event15() : base()
     {
         EventName = "心力爆炸归零事件2";
-        BuildingRequire = BuildingType.空;
+        //BuildingRequire = BuildingType.空;
         MotivationRequire = 3;
         HaveTarget = false;
     }
@@ -1830,7 +1880,7 @@ public class Event16 : Event
     public Event16() : base()
     {
         EventName = "心力爆炸归零事件3";
-        BuildingRequire = BuildingType.空;
+        //BuildingRequire = BuildingType.空;
         MotivationRequire = 3;
         HaveTarget = false;
         ReligionRequire = 2;
@@ -1902,7 +1952,7 @@ public class Event17 : Event
     public Event17() : base()
     {
         EventName = "心力爆炸归零事件4";
-        BuildingRequire = BuildingType.空;
+        //BuildingRequire = BuildingType.空;
         MotivationRequire = 3;
         HaveTarget = false;
     }
@@ -1983,7 +2033,7 @@ public class Event18 : Event
     public Event18() : base()
     {
         EventName = "派系交谈";
-        BuildingRequire = BuildingType.空;
+        //BuildingRequire = BuildingType.空;
         MotivationRequire = 2;
     }
     public override bool RelationCheck()
@@ -2073,7 +2123,7 @@ public class Event19 : Event
     public Event19() : base()
     {
         EventName = "理念交谈";
-        BuildingRequire = BuildingType.空;
+        //BuildingRequire = BuildingType.空;
         MotivationRequire = 3;
         MoralRequire = 3;
     }
@@ -2286,7 +2336,7 @@ public class Event20 : Event
     public Event20() : base()
     {
         EventName = "友善交谈1";
-        BuildingRequire = BuildingType.空;
+        //BuildingRequire = BuildingType.空;
         MotivationRequire = 3;
         MoralRequire = 2;
     }
@@ -2356,7 +2406,7 @@ public class Event21 : Event
     public Event21() : base()
     {
         EventName = "友善交谈2";
-        BuildingRequire = BuildingType.空;
+        //BuildingRequire = BuildingType.空;
         MotivationRequire = 3;
         MoralRequire = 2;
     }
@@ -2560,7 +2610,7 @@ public class Event22 : Event
     public Event22() : base()
     {
         EventName = "友善交谈3";
-        BuildingRequire = BuildingType.空;
+        //BuildingRequire = BuildingType.空;
         MotivationRequire = 5;
         MoralRequire = 2;
     }
@@ -2648,7 +2698,7 @@ public class Event23 : Event
     public Event23() : base()
     {
         EventName = "炫耀交谈";
-        BuildingRequire = BuildingType.空;
+        //BuildingRequire = BuildingType.空;
         MotivationRequire = 3;
         MoralRequire = 1;
     }
@@ -2859,7 +2909,7 @@ public class Event24 : Event
     public Event24() : base()
     {
         EventName = "道德思考";
-        BuildingRequire = BuildingType.空;
+        //BuildingRequire = BuildingType.空;
         MotivationRequire = 4;
         HaveTarget = false;
         MoralRequire = 2;
@@ -2917,7 +2967,7 @@ public class Event25 : Event
     public Event25() : base()
     {
         EventName = "交流人的价值";
-        BuildingRequire = BuildingType.空;
+        //BuildingRequire = BuildingType.空;
         MotivationRequire = 3;
         ReligionRequire = 3;
     }
@@ -2985,7 +3035,7 @@ public class Event26 : Event
     public Event26() : base()
     {
         EventName = "交流机械的价值";
-        BuildingRequire = BuildingType.空;
+        //BuildingRequire = BuildingType.空;
         MotivationRequire = 3;
         ReligionRequire = 1;
     }
@@ -3053,7 +3103,7 @@ public class Event27 : Event
     public Event27() : base()
     {
         EventName = "信仰怀疑";
-        BuildingRequire = BuildingType.空;
+        //BuildingRequire = BuildingType.空;
         MotivationRequire = 4;
         HaveTarget = false;
         ReligionRequire = 2;
@@ -3111,7 +3161,7 @@ public class Event28 : Event
     public Event28() : base()
     {
         EventName = "狂热传教1";
-        BuildingRequire = BuildingType.空;
+        //BuildingRequire = BuildingType.空;
         MotivationRequire = 5;
         ReligionRequire = 1;
     }
@@ -3328,7 +3378,7 @@ public class Event29 : Event
     public Event29() : base()
     {
         EventName = "狂热传教2";
-        BuildingRequire = BuildingType.空;
+        //BuildingRequire = BuildingType.空;
         MotivationRequire = 5;
         ReligionRequire = 3;
     }
@@ -3548,7 +3598,7 @@ public class Event30 : Event
     public Event30() : base()
     {
         EventName = "恋爱狂热";
-        BuildingRequire = BuildingType.空;
+        //BuildingRequire = BuildingType.空;
         MotivationRequire = 2;
     }
 
@@ -3641,7 +3691,7 @@ public class Event31 : Event
     public Event31() : base()
     {
         EventName = "挚友搞基互动";
-        BuildingRequire = BuildingType.空;
+        //BuildingRequire = BuildingType.空;
         MotivationRequire = 2;
     }
 
@@ -3733,7 +3783,7 @@ public class Event32 : Event
     public Event32() : base()
     {
         EventName = "潜在发展对象";
-        BuildingRequire = BuildingType.空;
+        //BuildingRequire = BuildingType.空;
         MotivationRequire = 3;
     }
 
@@ -3822,7 +3872,7 @@ public class Event33 : Event
     public Event33() : base()
     {
         EventName = "拜师";
-        BuildingRequire = BuildingType.空;
+        //BuildingRequire = BuildingType.空;
         MotivationRequire = 5;
     }
 
@@ -3940,7 +3990,7 @@ public class Event34 : Event
     public Event34() : base()
     {
         EventName = "邂逅变为追求或倾慕";
-        BuildingRequire = BuildingType.空;
+        //BuildingRequire = BuildingType.空;
         MotivationRequire = 1;
     }
 
@@ -4056,7 +4106,7 @@ public class Event35 : Event
     public Event35() : base()
     {
         EventName = "情侣";
-        BuildingRequire = BuildingType.空;
+        //BuildingRequire = BuildingType.空;
         MotivationRequire = 5;
     }
 
@@ -4154,7 +4204,7 @@ public class Event36 : Event
     public Event36() : base()
     {
         EventName = "伴侣";
-        BuildingRequire = BuildingType.空;
+        //BuildingRequire = BuildingType.空;
         MotivationRequire = 5;
     }
 
@@ -4247,7 +4297,7 @@ public class Event37 : Event
     public Event37() : base()
     {
         EventName = "朋友";
-        BuildingRequire = BuildingType.空;
+        //BuildingRequire = BuildingType.空;
         MotivationRequire = 5;
     }
 
@@ -4345,7 +4395,7 @@ public class Event38 : Event
     public Event38() : base()
     {
         EventName = "挚友";
-        BuildingRequire = BuildingType.空;
+        //BuildingRequire = BuildingType.空;
         MotivationRequire = 5;
     }
 
@@ -4443,7 +4493,7 @@ public class Event39 : Event
     public Event39() : base()
     {
         EventName = "陌路";
-        BuildingRequire = BuildingType.空;
+        //BuildingRequire = BuildingType.空;
         MotivationRequire = 5;
     }
 
@@ -4532,7 +4582,7 @@ public class Event40 : Event
     public Event40() : base()
     {
         EventName = "仇敌";
-        BuildingRequire = BuildingType.空;
+        //BuildingRequire = BuildingType.空;
         MotivationRequire = 5;
     }
 
@@ -4623,7 +4673,7 @@ public class Event41 : Event
     public Event41() : base()
     {
         EventName = "解除关系";
-        BuildingRequire = BuildingType.空;
+        //BuildingRequire = BuildingType.空;
         MotivationRequire = 5;
     }
 
@@ -4765,7 +4815,7 @@ public class Event42 : Event
     public Event42() : base()
     {
         EventName = "离职";
-        BuildingRequire = BuildingType.空;
+        //BuildingRequire = BuildingType.空;
         MotivationRequire = 3;
         HaveTarget = false;
         MinFaith = 20;
@@ -4843,7 +4893,7 @@ public class Event43 : Event
     public Event43() : base()
     {
         EventName = "寻求建议";
-        BuildingRequire = BuildingType.空;
+        //BuildingRequire = BuildingType.空;
         MotivationRequire = 1;
     }
 
@@ -4939,7 +4989,7 @@ public class Event44 : Event
     public Event44() : base()
     {
         EventName = "交流工作";
-        BuildingRequire = BuildingType.空;
+        //BuildingRequire = BuildingType.空;
         MotivationRequire = 4;
     }
 
@@ -5042,7 +5092,7 @@ public class Event45 : Event
     public Event45() : base()
     {
         EventName = "头脑风暴";
-        BuildingRequire = BuildingType.空;
+        //BuildingRequire = BuildingType.空;
         MotivationRequire = 6;
     }
 
@@ -5144,7 +5194,7 @@ public class Event46 : Event
     public Event46() : base()
     {
         EventName = "师承授业";
-        BuildingRequire = BuildingType.空;
+        //BuildingRequire = BuildingType.空;
         MotivationRequire = 3;
     }
 
@@ -5244,7 +5294,7 @@ public class Event47 : Event
     public Event47() : base()
     {
         EventName = "摸鱼";
-        BuildingRequire = BuildingType.空;
+        //BuildingRequire = BuildingType.空;
         MotivationRequire = 3;
     }
     public override int ExtraValue()
@@ -5305,7 +5355,7 @@ public class Event48 : Event
     public Event48() : base()
     {
         EventName = "抱怨";
-        BuildingRequire = BuildingType.空;
+        //BuildingRequire = BuildingType.空;
         MotivationRequire = 2;
     }
 
@@ -5528,7 +5578,7 @@ public class Event2_3 : Event
         ReligionRequire = 0;
         PerkRequire = 0;
         RelationRequire = 0;
-        BuildingRequire = BuildingType.空;
+        //BuildingRequire = BuildingType.空;
     }
     public override bool RelationCheck()
     {
