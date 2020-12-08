@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 /// <summary>
 /// 员工类的临时管理器
@@ -12,6 +13,10 @@ public class EmpManager : MonoBehaviour
     private GameObject empPrefabs;
     private Material[] empMaterials;
     private EmpEntity pointEmp;
+
+    public Transform EventPanel;
+
+    public bool SystemPause = false;
 
     private void Awake()
     {
@@ -37,6 +42,37 @@ public class EmpManager : MonoBehaviour
         if (pointEmp && Input.GetMouseButtonDown(1))
             pointEmp.ShowDetailPanel();
     }
+
+    public void EventFinish(Event currentEvent)
+    {
+        if (currentEvent.IsJudgeEvent)
+        {
+            SystemPause = true;
+            EventPanel.gameObject.SetActive(true);
+            Transform childPanel = EventPanel.Find("Panel");
+            childPanel.Find("Txt_Title").GetComponent<Text>().text = currentEvent.EventName;
+            childPanel.Find("Txt_Description").GetComponent<Text>().text = currentEvent.Self + "发生了事件" + currentEvent.EventName;
+            childPanel.Find("Btn_Refuse").GetComponent<Button>().onClick.AddListener(() =>
+            {
+                SystemPause = false;
+                EventPanel.gameObject.SetActive(false);
+                (currentEvent as JudgeEvent).Accept = false;
+                currentEvent.EventFinish(); 
+            });
+            childPanel.Find("Btn_Accept").GetComponent<Button>().onClick.AddListener(() =>
+            {
+                SystemPause = false;
+                EventPanel.gameObject.SetActive(false);
+                (currentEvent as JudgeEvent).Accept = true;
+                currentEvent.EventFinish(); 
+            });
+        }
+        else
+        {
+            currentEvent.EventFinish();
+        }
+    }
+
     public EmpEntity CreateEmp(Vector3 position)
     {
         EmpEntity emp = GameObject.Instantiate(empPrefabs, position, Quaternion.identity).GetComponentInChildren<EmpEntity>();

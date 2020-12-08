@@ -170,7 +170,8 @@ public class EmpEntity : MonoBehaviour
 
     void EventFinish()
     {
-        CurrentEvent.EventFinish();
+        EmpManager.Instance.EventFinish(CurrentEvent);
+
         EventStage = 0;
         EventTarget = null;
         if (CurrentEvent.HaveTarget)

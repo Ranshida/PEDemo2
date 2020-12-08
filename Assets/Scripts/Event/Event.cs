@@ -7,8 +7,10 @@ public enum EventType
     工作学习, 心体恢复, 谋划野心, 关系交往
 }
 //基类
-public class Event
+public abstract class Event
 {
+    public virtual bool IsJudgeEvent { get { return false; } }
+
     public int FailureNum = 0;//用来检测干预事件发生前是大失败还是失败
     public int MinFaith = 101;
     public int MotivationRequire = 3; //1弱 2弱中 3弱中强 4中 5中强 6强
@@ -642,10 +644,71 @@ public class Event
     }
 }
 
-//20.12.7新增需要策划写的内容
-public class EventTest : Event
+/// <summary>
+/// 矛盾事件的基类，其他矛盾事件需要继承这个类
+/// </summary>
+public abstract class JudgeEvent : Event
 {
-    public EventTest() : base()
+    public override bool IsJudgeEvent { get { return true; } }
+    public bool Accept = true;
+
+    public abstract void OnAccept();
+
+    public abstract void OnRefuse();
+
+    public override void EventFinish()
+    {
+        isSolving = false;
+        //再检测一下事件是否还有效
+        if (HaveTarget == true && Target == null)
+        {
+            return;
+        }
+
+        if (Accept)
+        {
+            OnAccept();
+        }
+        else
+        {
+            OnRefuse();
+        }
+        AddHistory();
+        MonoBehaviour.print(Self.Name + "发生了事件" + EventName);
+    }
+}
+
+/// <summary>
+/// 判定事件（要求转岗）
+/// 命名随意，但要继承JudgeEvent
+/// </summary>
+public class JudgeEvent_01 : JudgeEvent
+{
+    public JudgeEvent_01() : base()
+    {
+        EventName = "要求转岗";
+
+        //需求的建筑Add到BuildingRequires即可，如果没有需求什么都不写就行了
+        BuildingRequires.Add(BuildingType.高管办公室);
+
+        Weight = 3;               //设置事件默认权重
+    }
+
+    public override void OnAccept()
+    {
+        //持续转岗Buff
+    }
+
+    public override void OnRefuse()
+    {
+        //信念-10
+    }
+}
+
+//20.12.7新增需要策划写的内容
+public class Event_Test : Event
+{
+    public Event_Test() : base()
     {
         EventName = "测试用";
         //需求的建筑Add到BuildingRequires即可，如果没有需求什么都不写就行了
