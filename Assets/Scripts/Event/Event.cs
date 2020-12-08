@@ -650,32 +650,23 @@ public abstract class Event
 public abstract class JudgeEvent : Event
 {
     public override bool IsJudgeEvent { get { return true; } }
-    public bool Accept = true;
 
-    public abstract void OnAccept();
+    public abstract void OnAccept();       //当玩家选择接受矛盾结果
 
-    public abstract void OnRefuse();
+    public abstract void OnRefuse();       //当玩家选择拒绝矛盾结果
 
-    public override void EventFinish()
+    public override void Success(float Posb)
     {
-        isSolving = false;
-        //再检测一下事件是否还有效
-        if (HaveTarget == true && Target == null)
-        {
-            return;
-        }
-
-        if (Accept)
-        {
-            OnAccept();
-        }
-        else
-        {
-            OnRefuse();
-        }
-        AddHistory();
-        MonoBehaviour.print(Self.Name + "发生了事件" + EventName);
+        //子类如果重写，这里要保留（会弹出面板）
+        EmpManager.Instance.JudgeEvent(this);
     }
+
+    public override void MajorSuccess(float Posb)
+    {
+        //子类如果重写，这里要保留（会弹出面板）
+        EmpManager.Instance.JudgeEvent(this);
+    }
+
 }
 
 /// <summary>

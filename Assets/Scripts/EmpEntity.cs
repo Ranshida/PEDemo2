@@ -63,14 +63,13 @@ public class EmpEntity : MonoBehaviour
     }    //员工工作的位置（如果没有工作建筑则没有值）
 
 
-    //间谍任务
-    private int m_SpyTimer = 4;
-    public bool IsSpying { get; private set; } = false;      //间谍任务中
-    public FOECompany SpyTarget;                             //间谍任务目标
-  
+    //忙碌任务
+    public bool OutCompany { get; private set; } = false;      //间谍任务中
+    public bool IsSpying { get; private set; }
+
     //事件
     public bool NewEventFlag;       //接受到新事件，但还没有开始执行
-    public bool Available { get { return CurrentEvent == null && !IsSpying; } }      //员工为可用状态
+    public bool Available { get { return CurrentEvent == null && !OutCompany; } }      //员工为可用状态
     public bool SolvingEvent { get { return CurrentEvent != null && CurrentEvent.isSolving; } }     //事件正在执行中
     public Event CurrentEvent { get; private set; } = null;  //当前正在执行的事件
     public EmpEntity EventTarget { get; private set; }       //事件发生的对象
@@ -131,15 +130,6 @@ public class EmpEntity : MonoBehaviour
     }
     private void TimePass()
     {
-        if (IsSpying)
-        {
-            m_SpyTimer--;
-            if (m_SpyTimer <= 0) 
-            {
-                SpyResult();
-            }
-        }
-
         //事件处理中
         if (SolvingEvent)
         {
@@ -170,8 +160,7 @@ public class EmpEntity : MonoBehaviour
 
     void EventFinish()
     {
-        EmpManager.Instance.EventFinish(CurrentEvent);
-
+        CurrentEvent.EventFinish();
         EventStage = 0;
         EventTarget = null;
         if (CurrentEvent.HaveTarget)
@@ -195,42 +184,6 @@ public class EmpEntity : MonoBehaviour
             EventTarget.EventStage = 2;
         }
     }
-
-    //遍历事件，找下一个可执行的事件
-    //public void CheckEvents()
-    //{
-    //    if (!Available) 
-    //    {
-    //        Debug.LogWarning("当然仍有在执行的事件");
-    //        return;
-    //    }
-
-    //    foreach (Event e in EventList)
-    //    {
-    //        //独立事件
-    //        if (!e.HaveTarget)
-    //        {
-    //            CurrentEvent = e;
-    //            CurrentEvent.isSolving = true;
-    //            EventList.Remove(CurrentEvent);
-    //            break;
-    //        }
-    //        //有目标的事件，并且是主动发起
-    //        else if (e.SelfEntity == this)
-    //        {
-    //            //对方空闲
-    //            if (e.TargetEntity.Available)
-    //            {  
-    //                //双方做这个事件
-    //                CurrentEvent = e;
-    //                EventList.Remove(CurrentEvent);
-    //                e.TargetEntity.CurrentEvent = e;
-    //                e.TargetEntity.EventList.Remove(CurrentEvent);
-    //                break;
-    //            }
-    //        }
-    //    }
-    //}
 
     //下班
     public void WorkEnd()
@@ -291,71 +244,6 @@ public class EmpEntity : MonoBehaviour
         return;
     }
 
-    //检查自己和事件对象的位置，是否可以进行事件
-    //public bool CheckEventTarget()
-    //{
-    //    if (EventTarget == null) 
-    //    {
-    //        Debug.LogError("没有事件对象");
-    //        return false;
-    //    }
-
-    //    //对方在游荡
-    //    if (!EventTarget.WorkBuilding)
-    //    {
-    //        //进走廊时为true
-    //        if (StandGrid.Type == Grid.GridType.道路)
-    //        {
-    //            return true;
-    //        }
-    //    }
-    //    //对方在工作
-    //    else
-    //    {
-    //        //进入对方建筑时为true
-    //        if (StandGrid.BelongBuilding == EventTarget.StandGrid.BelongBuilding)
-    //        {
-    //            return true;
-    //        }
-    //    }
-    //    return false;
-    //}
-
-    //public void EventConfirm()
-    //{
-    //    //当前对象不可用
-    //    if (!EventTarget.Available)
-    //    {
-    //        List<Employee> tempEmployees = ThisEmp.FindAnotherEmp();
-    //        List<Employee> AvailableEmps = new List<Employee>();
-    //        foreach (Employee temp in tempEmployees)
-    //        {
-    //            if (temp.InfoDetail.Entity.Available)
-    //                AvailableEmps.Add(temp);
-    //        }
-    //        if (AvailableEmps.Count == 0)
-    //        {
-    //            Debug.Log(EmpName + "：没有任何可用对象");
-    //            EventAbandon();
-    //            return;
-    //        }
-    //        EventTarget = AvailableEmps[Random.Range(0, AvailableEmps.Count)].InfoDetail.Entity;
-    //    }
-
-    //    if(EventTarget == null)
-    //    {
-    //        Debug.Log(EmpName + "：没有任何可用对象");
-    //        EventAbandon();
-    //        return;
-    //    }
-
-    //    //只给自己添加事件，去找对方
-    //    if (ThisEmp == EventTarget.ThisEmp)
-    //        print("FalseB");
-    //    //CurrentEvent = ThisEmp.RandomEvent(EventTarget.InfoDetail.emp);
-    //    EventStage = 2;
-    //}
-
     void EventAbandon()
     {
         CurrentEvent = null;
@@ -363,42 +251,22 @@ public class EmpEntity : MonoBehaviour
         EventTarget = null;
     }
 
-    //去当间谍
-    public void BecomeSpy(FOECompany Target)
+    //进入忙碌状态
+    public void SetBusy()
     {
-        //放弃当前执行的事件，插到第一位
+        OutCompany = true;
+        //当前事件直接成功
         if (CurrentEvent != null)
         {
-            if (CurrentEvent.SelfEntity == this)
-                CurrentEvent.isSolving = false;
-            //EventList.Insert(0, CurrentEvent);
-            CurrentEvent = null;
+            EventFinish();
         }
 
-        IsSpying = true;
-        m_SpyTimer = 4;
-
-        //设置目标
-        SpyTarget = Target;
     }
 
-    //间谍行动结果
-    public void SpyResult()
+    //解除忙碌状态
+    public void SetFree()
     {
-        IsSpying = false;
-
-        //间谍结果判定
-        int Posb = Random.Range(1, 7);
-        Posb += (int)(InfoDetail.GC.CurrentEmpInfo.emp.Strategy * 0.2f);
-        if (Posb >= 4)
-        {
-            //SpyTarget.Text_Target.gameObject.SetActive(true);
-            //SpyTarget.Text_SkillName.gameObject.SetActive(true);
-            //InfoDetail.GC.CreateMessage("内鬼行动成功,获得了" + SpyTarget.Text_CompanyName.text + "的信息");
-        }
-        else
-            InfoDetail.GC.CreateMessage("内鬼行动失败");
-        SpyTarget = null;
+        OutCompany = false;
     }
 
     //移除员工，清除全部事件

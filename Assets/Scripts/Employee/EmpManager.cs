@@ -43,34 +43,26 @@ public class EmpManager : MonoBehaviour
             pointEmp.ShowDetailPanel();
     }
 
-    public void EventFinish(Event currentEvent)
+    public void JudgeEvent(Event currentEvent)
     {
-        if (currentEvent.IsJudgeEvent)
+        //这个方法应当会导致游戏暂停
+        SystemPause = true;
+        EventPanel.gameObject.SetActive(true);
+        Transform childPanel = EventPanel.Find("Panel");
+        childPanel.Find("Txt_Title").GetComponent<Text>().text = currentEvent.EventName;
+        childPanel.Find("Txt_Description").GetComponent<Text>().text = currentEvent.Self + "发生了事件" + currentEvent.EventName;
+        childPanel.Find("Btn_Refuse").GetComponent<Button>().onClick.AddListener(() =>
         {
-            SystemPause = true;
-            EventPanel.gameObject.SetActive(true);
-            Transform childPanel = EventPanel.Find("Panel");
-            childPanel.Find("Txt_Title").GetComponent<Text>().text = currentEvent.EventName;
-            childPanel.Find("Txt_Description").GetComponent<Text>().text = currentEvent.Self + "发生了事件" + currentEvent.EventName;
-            childPanel.Find("Btn_Refuse").GetComponent<Button>().onClick.AddListener(() =>
-            {
-                SystemPause = false;
-                EventPanel.gameObject.SetActive(false);
-                (currentEvent as JudgeEvent).Accept = false;
-                currentEvent.EventFinish(); 
-            });
-            childPanel.Find("Btn_Accept").GetComponent<Button>().onClick.AddListener(() =>
-            {
-                SystemPause = false;
-                EventPanel.gameObject.SetActive(false);
-                (currentEvent as JudgeEvent).Accept = true;
-                currentEvent.EventFinish(); 
-            });
-        }
-        else
+            SystemPause = false;
+            EventPanel.gameObject.SetActive(false);
+            (currentEvent as JudgeEvent).OnAccept();
+        });
+        childPanel.Find("Btn_Accept").GetComponent<Button>().onClick.AddListener(() =>
         {
-            currentEvent.EventFinish();
-        }
+            SystemPause = false;
+            EventPanel.gameObject.SetActive(false);
+            (currentEvent as JudgeEvent).OnRefuse();
+        });
     }
 
     public EmpEntity CreateEmp(Vector3 position)

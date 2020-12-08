@@ -16,7 +16,7 @@ public class BTE_SpecialWork : BTE_Action
 
     public override TaskStatus OnUpdate()
     {
-        if (!ThisEntity.IsSpying)
+        if (!ThisEntity.OutCompany)
             return TaskStatus.Failure;
 
         //可以移动，精确寻找位置
@@ -24,7 +24,7 @@ public class BTE_SpecialWork : BTE_Action
         StopDistance.Value = 1f;
 
         //设置寻路点至公司出口
-        if (ThisEntity.IsSpying)
+        if (ThisEntity.OutCompany)
             Destination.Value = BuildingManage.Instance.ExitPos.position;
 
         
