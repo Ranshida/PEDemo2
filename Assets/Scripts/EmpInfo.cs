@@ -208,7 +208,6 @@ public class EmpInfo : MonoBehaviour
         GC.HourEvent.RemoveListener(emp.TimePass);
         GC.Salary -= CalcSalary();        //重新计算工资
         GC.CurrentEmployees.Remove(emp);
-        GC.WorkEndCheck();
         if(emp.CurrentDep != null)
         {
             emp.CurrentDep.CurrentEmps.Remove(emp);

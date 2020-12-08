@@ -93,9 +93,7 @@ public class GameControl : MonoBehaviour
     public int[] FinishedTask = new int[10];//0程序迭代 1技术研发 2可行性调研 3公关谈判 4营销文案 5资源拓展 6原型图 7产品研究 8用户访谈 9已删除
     public int[] CEOSkillCD = new int[5];
 
-    Animator Anim;
-
-    int Year = 1, Month = 1, Week = 1, Day = 1, Hour = 1, morale = 50, SpecialEventCount = 0;
+    int Year = 1, Month = 1, Week = 1, Day = 1, Hour = 1, morale = 50;
     float Timer;
     bool TimePause = false; //现在仅用来判断是否处于下班状态，用于其他功能时需检查WorkEndCheck()和WeekStart
 
@@ -108,8 +106,6 @@ public class GameControl : MonoBehaviour
 
     private void Start()
     {
-        Anim = this.gameObject.GetComponent<Animator>();
-        SpecialEventCount = Random.Range(1, 6);//随机一段时间发生影响产品的事件
         HourEvent.AddListener(GCTimePass);
     }
 
@@ -138,37 +134,9 @@ public class GameControl : MonoBehaviour
         HourEvent.Invoke();
         if (Hour > 8)
         {
-            //for(int i = 0; i < CurrentDeps.Count; i++)
-            //{
-            //    CurrentDeps[i].OneHourPass();
-            //}
             Hour = 8;
             StartWorkEnd();
         }
-        //if (Day > 5) //旧的5日1周时间流
-        //{
-        //    Week += 1;
-        //    Day = 1;
-        //    WeeklyEvent.Invoke();
-        //}
-        //if(Week > 4)
-        //{
-        //    Month += 1;
-        //    Week = 1;
-        //    PrC.UserChange();
-        //    Money = Money + Income - Salary;
-        //    MonthlyEvent.Invoke();
-        //    for (int i = 0; i < CurrentDeps.Count; i++)
-        //    {
-        //        CurrentDeps[i].FailCheck();
-        //    }
-        //}
-        //if(Month > 12)
-        //{
-        //    Year += 1;
-        //    Month = 1;
-        //}
-        //Text_Time.text = "年" + Year + " 月" + Month + " 周" + Week + " 日" + Day + " 时" + Hour;
         Text_Time.text = "年" + Year + " 月" + Month + " 周" + Week + " 时" + Hour;
     }
     public void WeekPass()
@@ -196,20 +164,12 @@ public class GameControl : MonoBehaviour
             {
                 CurrentDeps[i].FailCheck();
             }
-
-
         }
         if (Month > 12)
         {
             YearEvent.Invoke();
             Year += 1;
             Month = 1;
-            SpecialEventCount -= 1;
-            if(SpecialEventCount == 0)
-            {
-                SpecialEventCount = Random.Range(1, 6);
-                PrC.StartSpecialEvent();
-            }
             for (int i = 0; i < CurrentEmployees.Count; i++)
                 CurrentEmployees[i].Age += 1;
         }
@@ -218,7 +178,6 @@ public class GameControl : MonoBehaviour
 
     void StartWorkEnd()
     {
-        Anim.SetTrigger("FadeIn");
         if (CurrentEmployees.Count > 0)
         {
             TimePause = true;
@@ -236,25 +195,6 @@ public class GameControl : MonoBehaviour
         {
             CurrentEmployees[i].InfoDetail.Entity.WorkStart();
         }
-    }
-
-    public void WorkEndCheck()
-    {
-        //WorkEndEmpCount -= 1;
-        //if(WorkEndEmpCount <= 0 && TimePause == true)
-        //{
-        //    Anim.SetTrigger("FadeIn");
-        //}
-        Anim.SetTrigger("FadeIn");
-    }
-
-    public void WorkStart()
-    {
-        //TimePause = false;
-        //for (int i = 0; i < CurrentEmployees.Count; i++)
-        //{
-        //    CurrentEmployees[i].InfoDetail.Entity.WorkStart();
-        //}
     }
 
     public DepControl CreateDep(Building b)
@@ -827,7 +767,7 @@ public class GameControl : MonoBehaviour
             "技术研发: " + C[1] + "\n" +
             "可行性调研: " + C[2] + "\n";
 
-        Text_MarketResource.text = "公关谈判: " + C[3] + "\n" +
+        Text_MarketResource.text = "传播: " + C[3] + "\n" +
             "营销文案: " + C[4] + "\n" +
             "资源拓展: " + C[5] + "\n";
 

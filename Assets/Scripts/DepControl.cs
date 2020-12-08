@@ -209,7 +209,7 @@ public class DepControl : MonoBehaviour
                             SpProgress = 0;
                             GC.CreateMessage(Text_DepName.text + " 完美完成了营销文案的生产");
                         }
-                        else if (building.Type == BuildingType.市场部门)
+                        else if (building.Type == BuildingType.产品部门)
                         {
                             GC.FinishedTask[6] += 2;
                             SpProgress = 0;
@@ -240,7 +240,7 @@ public class DepControl : MonoBehaviour
                             SpProgress = 0;
                             GC.CreateMessage(Text_DepName.text + " 完成了营销文案的生产");
                         }
-                        else if (building.Type == BuildingType.市场部门)
+                        else if (building.Type == BuildingType.产品部门)
                         {
                             GC.FinishedTask[6] += 1;
                             SpProgress = 0;
