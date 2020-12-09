@@ -1051,6 +1051,148 @@ public class Perk43 : Perk
     }
 }
 
+//孤僻
+public class Perk82 : Perk
+{
+    public Perk82(Employee Emp) : base(Emp)
+    {
+        Name = "孤僻";
+        Description = "降低认识新人事件组发生权重1";
+        TimeLeft = -1;//特质
+        Num = 82;
+        canStack = false;
+    }
+}
+
+//野心家
+public class Perk83 : Perk
+{
+    public Perk83(Employee Emp) : base(Emp)
+    {
+        Name = "野心家";
+        Description = "提高野心事件组发生权重1";
+        TimeLeft = -1;//特质
+        Num = 83;
+        canStack = false;
+    }
+}
+
+//梦想家
+public class Perk84 : Perk
+{
+    public Perk84(Employee Emp) : base(Emp)
+    {
+        Name = "梦想家";
+        Description = "提高愿望事件组发生权重1";
+        TimeLeft = -1;//特质
+        Num = 80;
+        canStack = false;
+    }
+}
+
+//革命者
+public class Perk85 : Perk
+{
+    public Perk85(Employee Emp) : base(Emp)
+    {
+        Name = "革命者";
+        Description = "提高诉求不满事件组发生权重1";
+        TimeLeft = -1;//特质
+        Num = 85;
+        canStack = false;
+    }
+}
+
+//虚荣者
+public class Perk86 : Perk
+{
+    public Perk86(Employee Emp) : base(Emp)
+    {
+        Name = "虚荣者";
+        Description = "提高认可交谈事件组发生权重1";
+        TimeLeft = -1;//特质
+        Num = 86;
+        canStack = false;
+    }
+}
+
+//社交达人
+public class Perk87 : Perk
+{
+    public Perk87(Employee Emp) : base(Emp)
+    {
+        Name = "社交达人";
+        Description = "提高分享日常、分享快乐事件组发生权重1";
+        TimeLeft = -1;//特质
+        Num = 87;
+        canStack = false;
+    }
+}
+
+//倾诉者
+public class Perk88 : Perk
+{
+    public Perk88(Employee Emp) : base(Emp)
+    {
+        Name = "倾诉者";
+        Description = "提高寻求安慰事件组发生权重1";
+        TimeLeft = -1;//特质
+        Num = 88;
+        canStack = false;
+    }
+}
+
+//躁狂
+public class Perk89 : Perk
+{
+    public Perk89(Employee Emp) : base(Emp)
+    {
+        Name = "躁狂";
+        Description = "提高无聊事件组发生权重1";
+        TimeLeft = -1;//特质
+        Num = 89;
+        canStack = false;
+    }
+}
+
+//思想家
+public class Perk90 : Perk
+{
+    public Perk90(Employee Emp) : base(Emp)
+    {
+        Name = "思想家";
+        Description = "提高深刻交谈事件组发生权重1";
+        TimeLeft = -1;//特质
+        Num = 90;
+        canStack = false;
+    }
+}
+
+//谦逊
+public class Perk91 : Perk
+{
+    public Perk91(Employee Emp) : base(Emp)
+    {
+        Name = "谦逊";
+        Description = "不会出现骄傲事件组";
+        TimeLeft = -1;//特质
+        Num = 91;
+        canStack = false;
+    }
+}
+
+//冷静
+public class Perk92 : Perk
+{
+    public Perk92(Employee Emp) : base(Emp)
+    {
+        Name = "冷静";
+        Description = "不会出现狂想事件组";
+        TimeLeft = -1;//特质
+        Num = 92;
+        canStack = false;
+    }
+}
 #endregion
 
 //结构优化
@@ -1530,6 +1672,72 @@ public class Perk80 : Perk
         Description = "加事件判定正面修正+3";
         TimeLeft = -1;//特质
         Num = 80;
+        canStack = false;
+    }
+}
+
+//认识新人
+public class Perk81 : Perk
+{
+    public Perk81(Employee Emp) : base(Emp)
+    {
+        Name = "认识新人";
+        Description = "认识新人的次数，作为标记使用";
+        TimeLeft = -1;
+        Num = 81;
+        canStack = true;
+    }
+}
+
+
+//被害妄想症
+public class Perk93 : Perk
+{
+    public Perk93(Employee Emp) : base(Emp)
+    {
+        Name = "被害妄想症";
+        Description = "所有公司日常类的事件正面修正-2";
+        TimeLeft = -1;//特质
+        Num = 93;
+        canStack = false;
+    }
+}
+
+//刚愎自用
+public class Perk94: Perk
+{
+    public Perk94(Employee Emp) : base(Emp)
+    {
+        Name = "刚愎自用";
+        Description = "所在部门成功率-10%";
+        TimeLeft = -1;//特质
+        Num = 94;
+        canStack = false;
+    }
+}
+
+//重度抑郁
+public class Perk95 : Perk
+{
+    public Perk95(Employee Emp) : base(Emp)
+    {
+        Name = "重度抑郁";
+        Description = "心力每周下降20点";
+        TimeLeft = -1;//特质
+        Num = 95;
+        canStack = false;
+    }
+}
+
+//开悟
+public class Perk96 : Perk
+{
+    public Perk96(Employee Emp) : base(Emp)
+    {
+        Name = "开悟";
+        Description = "不产生红色系情绪，愤怒、反感、侮辱等";
+        TimeLeft = -1;//特质
+        Num = 96;
         canStack = false;
     }
 }
