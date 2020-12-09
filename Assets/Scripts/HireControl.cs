@@ -19,7 +19,20 @@ public class HireControl : MonoBehaviour
         RefreshHire();
         for(int i = 0; i < 5; i++)
         {
-            if (i < 3)
+            if (i < 5)
+            {
+                GC.CurrentEmpInfo = HireInfos[i];
+                GC.Salary += GC.CurrentEmpInfo.CalcSalary();
+                SetInfoPanel();
+                GC.CurrentEmpInfo.emp.InfoA.transform.parent = GC.StandbyContent;
+            }
+            HireInfos[i].gameObject.SetActive(false);
+        }
+        AddHireTypes(new HireType(1));
+        RefreshHire();
+        for (int i = 0; i < 5; i++)
+        {
+            if (i < 5)
             {
                 GC.CurrentEmpInfo = HireInfos[i];
                 GC.Salary += GC.CurrentEmpInfo.CalcSalary();
@@ -123,12 +136,13 @@ public class HireControl : MonoBehaviour
             GC.CurrentEmpInfo.PerksInfo[i].transform.parent = ED.PerkContent;
         }
         ED.PerksInfo = GC.CurrentEmpInfo.PerksInfo;
+        //(目前能力不会在招聘刷新时添加，而是在招聘之后检测并添加)
         //复制能力
-        for (int i = 0; i < GC.CurrentEmpInfo.SkillsInfo.Count; i++)
-        {
-            GC.CurrentEmpInfo.SkillsInfo[i].transform.parent = ED.SkillContent;
-        }
-        ED.SkillsInfo = GC.CurrentEmpInfo.SkillsInfo;
+        //for (int i = 0; i < GC.CurrentEmpInfo.SkillsInfo.Count; i++)
+        //{
+        //    GC.CurrentEmpInfo.SkillsInfo[i].transform.parent = ED.SkillContent;
+        //}
+        //ED.SkillsInfo = GC.CurrentEmpInfo.SkillsInfo;
         //复制战略
         for (int i = 0; i < GC.CurrentEmpInfo.StrategiesInfo.Count; i++)
         {

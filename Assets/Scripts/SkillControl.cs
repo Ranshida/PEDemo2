@@ -19,9 +19,10 @@ public class SkillControl : MonoBehaviour
     public bool AdvanceMobilize = false;
     //头脑风暴点数和无事件技能时间,2下一个基础技能获得点数倍率,3每用一个骰子头脑风暴点数+1
     //4非基础技能消耗倍率, 需要额外添加的点数1骰子数量
-    public int SelectNum = 0, CurrentPoint = 0, EventLimit = 0, Sp2Multiply = 0, Sp3Multiply = 0, Sp4Multiply = 0, Sp5Multiply = 0, 
+    public int SelectNum = 0, CurrentPoint = 0, Sp2Multiply = 0, Sp3Multiply = 0, Sp4Multiply = 0, Sp5Multiply = 0, 
         BossHp = 0, Sp1Multiply = 0;
 
+    public float ExtraSuccessRate = 0.0f, ExtraMajorSuccessRate;//各部门的额外成功率加成
     public int DiceUseNum = 0;//用于记录每回合使用的骰子数量
     public int DotValue = 0;//每回合持续伤害(洞察)
     public int ExtraDamage = 0;//每回合附加伤害(想象力)
@@ -35,21 +36,24 @@ public class SkillControl : MonoBehaviour
     public bool DoubleCost = false; //下一个技能消耗翻倍buff
 
     public SkillInfo CurrentSkill, SkillInfoPrefab, SkillInfoPrefab2, TargetSkill;
-    public GameObject ConfirmPanel, EventPanel, SkillSelectPanel, BossPanel, VictoryPanel;
+    public GameObject ConfirmPanel, EventPanel, SkillSelectPanel, BossPanel, VictoryPanel, SelectConfirmButton, PresetPanel;
     public GameControl GC;
     public DiceControl DicePrefab, TargetDice;
-    public Transform DiceContent, SkillContent, SkillSelectContent;
+    public Transform DiceContent, SkillContent, SkillSelectContent, EmpContent;
     public Text Text_TotalValue, Text_CurrentSkillName, Text_EventDescription, Text_Point, Text_Tip, Text_BossHp, Text_BossLevel, 
         Text_BossAction, Text_TurnLeft, Text_DotValue, Text_ExtraDamage;
-    public Button RollButton, EndButton;
+    public Button RollButton, EndButton, SkillSetButton;
     public DepControl TargetDep = null;
+    public EmpInfo EmpInfoPrefab;
 
+    public List<EmpInfo> SelectedEmps = new List<EmpInfo>();
     public List<SkillInfo> CurrentSkills = new List<SkillInfo>(), TotalSkills = new List<SkillInfo>();
     public List<DiceControl> Dices = new List<DiceControl>();
     public List<DiceControl> SelectedDices = new List<DiceControl>();
     public SkillInfo[] CSkillSetA = new SkillInfo[6], CSkillSetB = new SkillInfo[6], CSkillSetC = new SkillInfo[6];
 
-    int DiceNum, totalValue, RequirePoint, BossLevel, NextBossSkill;
+    int DiceNum, totalValue, RequirePoint, BossLevel, NextBossSkill, SetNum;
+    bool FightStart = false;
 
     Employee TargetEmployee; //Boss目标员工
 
@@ -62,44 +66,19 @@ public class SkillControl : MonoBehaviour
     }
 
     //初始化面板
-    public void SetDice(DepControl dep)
+    public void SetStatus()
     {
-        //头脑风暴版本1的点数需求设置
-        //CurrentPoint = 0;
-        //if (dep.SpTime > 0)
-        //    CurrentPoint += 5;
-        //if (dep.EfficiencyLevel == 0)
-        //    RequirePoint = 20;
-        //else if (dep.EfficiencyLevel == 1)
-        //    RequirePoint = 40;
-        //else if (dep.EfficiencyLevel == 2)
-        //    RequirePoint = 80;
-        //else if (dep.EfficiencyLevel == 3)
-        //    RequirePoint = 160;
-        //else if (dep.EfficiencyLevel == 4)
-        //    RequirePoint = 320;
-        //else if (dep.EfficiencyLevel == 5)
-        //    RequirePoint = 640;
-        //if (GC.DoubleMobilizeCost > 0)
-        //    RequirePoint *= 2;
-        //Text_Point.text = "当前点数:" + CurrentPoint + "\n下一级所需点数:" + RequirePoint;
-
-        //头脑风暴版本2 设定Boss等级
-        BossLevel = dep.EfficiencyLevel + 1;
-        GC.ForceTimePause = true;
-        if (dep.EmpChanged == true && BossLevel > 1)
-            BossLevel -= 1;
         if (BossLevel == 1)
-            BossHp = 50;
+            BossHp = 25;
         else if (BossLevel == 2)
-            BossHp = 100;
+            BossHp = 50;
         else if (BossLevel == 3)
-            BossHp = 200;
+            BossHp = 100;
         else if (BossLevel == 4)
-            BossHp = 300;
+            BossHp = 150;
         else if (BossLevel >= 5)
         {
-            BossHp = 500;
+            BossHp = 250;
             BossLevel = 5;
         }
         TurnLeft = 6;
@@ -108,72 +87,59 @@ public class SkillControl : MonoBehaviour
         Text_BossLevel.text = "等级:" + BossLevel;
         Text_TurnLeft.text = "剩余回合:" + TurnLeft;
 
-        TargetDep = dep;
-        ShowSkill();
-
-        //确认所有技能
-        for(int i = 0; i < dep.CurrentEmps.Count; i++)
-        {
-            for(int j = 0; j < dep.CurrentEmps[i].InfoDetail.SkillsInfo.Count; j++)
-            {
-                SkillInfo newSkill = Instantiate(SkillInfoPrefab, SkillSelectContent);
-                newSkill.skill = dep.CurrentEmps[i].InfoDetail.SkillsInfo[j].skill;
-                newSkill.SC = this;
-                newSkill.empInfo = dep.CurrentEmps[i].InfoDetail;
-                newSkill.UpdateUI();
-                newSkill.info = GC.infoPanel;
-                TotalSkills.Add(newSkill);
-            }
-            //重置信心
-            dep.CurrentEmps[i].InfoDetail.emp.Confidence = 0;
-        }
-        //确定管理人员技能
-        if(dep.CommandingOffice != null && dep.CommandingOffice.CurrentManager != null)
-        {
-            for(int i = 0; i < dep.CommandingOffice.CurrentManager.InfoDetail.SkillsInfo.Count; i++)
-            {
-                if(dep.CommandingOffice.CurrentManager.InfoDetail.SkillsInfo[i].skill.ManageSkill == true)
-                {
-                    SkillInfo newSkill = Instantiate(SkillInfoPrefab, SkillSelectContent);
-                    newSkill.skill = dep.CommandingOffice.CurrentManager.InfoDetail.SkillsInfo[i].skill;
-                    newSkill.SC = this;
-                    newSkill.empInfo = dep.CommandingOffice.CurrentManager.InfoDetail;
-                    newSkill.UpdateUI();
-                    newSkill.info = GC.infoPanel;
-                    TotalSkills.Add(newSkill);
-                }
-            }
-        }
         TotalValue = 0;
-        RollButton.interactable = true;
     }
 
-    //投掷
-    public void StartRoll(int num)
+    public void SetPreSetNum(int num)
     {
-        //清空之前参与头脑风暴的员工列表
-        InvolvedEmps.Clear();
-        //通过几个return设置开始头脑风暴的条件，可能以后无法开始需要提示面板
-        if (TargetDep.CommandingOffice != null)
-        {
-            if (TargetDep.CommandingOffice.CurrentManager == null)
-                return;
-            DiceNum = (TargetDep.CommandingOffice.ManageValue - TargetDep.CommandingOffice.ControledDeps.Count + GC.ManageExtra) / 2;
-            GC.UpdateResourceInfo();
-            InvolvedEmps.Add(TargetDep.CommandingOffice.CurrentManager);
-        }
-        else
-            return;
-
+        SetNum = num;
+    }
+    //投掷
+    public void StartRoll()
+    {
         //确定并生成预设技能
         SkillInfo[] s;
-        if (num == 1)
+        if (SetNum == 1)
             s = CSkillSetA;
-        else if (num == 2)
+        else if (SetNum == 2)
             s = CSkillSetB;
         else
             s = CSkillSetC;
 
+        Employee CurrentManager = null;
+        foreach(SkillInfo i in s)
+        {
+            if(i.skill != null && i.skill.TargetEmp.CurrentOffice != null)
+            {
+                if(i.skill.TargetEmp.CurrentOffice.building.Type == BuildingType.CEO办公室 || i.skill.TargetEmp.CurrentOffice.building.Type == BuildingType.高管办公室)
+                {
+                    if (CurrentManager == null)
+                        CurrentManager = i.skill.TargetEmp;
+                    else if (i.skill.TargetEmp.Manage > CurrentManager.Manage)
+                        CurrentManager = i.skill.TargetEmp; 
+                }
+            }
+        }
+        if (CurrentManager == null)
+        {
+            GC.CreateMessage("必须有一个高管上场");
+            return;
+        }
+
+        //中途换技能时清空已有技能
+        if (CurrentSkills.Count > 0)
+        {
+            for (int i = 0; i < CurrentSkills.Count; i++)
+            {
+                CurrentSkills[i].skill.DiceExtra = 0;
+                CurrentSkills[i].skill.StaminaExtra = 0;
+                Destroy(CurrentSkills[i].gameObject);
+            }
+            CurrentSkills.Clear();
+        }
+        PresetPanel.gameObject.SetActive(false);
+        //清空之前参与头脑风暴的员工列表
+        InvolvedEmps.Clear();
         for (int j = 0; j < 6; j++)
         {
             if (s[j].skill != null)
@@ -190,13 +156,24 @@ public class SkillControl : MonoBehaviour
             }
         }
         if (CurrentSkills.Count == 0)
+        {
+            GC.CreateMessage("没有技能");
             return;
-
-        CreateDice(DiceNum);
+        }
+        //初始时创建第一批骰子
+        if (FightStart == false)
+        {
+            BossLevel = 1;
+            SetStatus();
+            DiceNum = CurrentManager.Manage / 2;
+            CreateDice(DiceNum);
+            FightStart = true;
+            RollButton.interactable = false;
+        }
         BossPanel.SetActive(true);
         RandomBossSkill();
-        RollButton.interactable = false;
         EndButton.interactable = false;
+        SkillSetButton.interactable = false;
 
         if (AdvanceMobilize == true)
             Sp2Multiply += 1;
@@ -224,9 +201,17 @@ public class SkillControl : MonoBehaviour
     //清空面板，重置各项数值
     public void ClearPanel()
     {
+        //直接退出的Debuff
+        if(FightStart == false)
+        {
+            GC.Morale -= 50;
+            GC.CreateMessage("直接放弃头脑风暴,士气-50");
+            ExtraMajorSuccessRate = 0;
+            ExtraSuccessRate = 0;
+        }
+
+        FightStart = false;
         GC.ForceTimePause = false;
-        if (TargetDep != null && TargetDep.EmpPanel != null)
-            TargetDep.EmpPanel.gameObject.SetActive(false);
         for(int i = 0; i < Dices.Count; i++)
         {
             Destroy(Dices[i].gameObject);
@@ -243,9 +228,11 @@ public class SkillControl : MonoBehaviour
             TotalSkills[i].skill.StaminaExtra = 0;
             Destroy(TotalSkills[i].gameObject);
         }
-        for (int i = 0; i < TargetDep.CurrentEmps.Count; i++)//重置信心
+        //重置信心
+        foreach(EmpInfo e in SelectedEmps)
         {
-            TargetDep.CurrentEmps[i].Confidence = 0;
+            if (e.emp != null)
+                e.emp.Confidence = 0;
         }
         if (CurrentPoint >= RequirePoint)
         {
@@ -262,8 +249,6 @@ public class SkillControl : MonoBehaviour
         CurrentSkills.Clear();
         TotalSkills.Clear();
         CurrentPoint = 0;
-        EventLimit = 0;
-        TargetDep = null;
         Sp1Multiply = 0;
         Sp2Multiply = 0;
         Sp3Multiply = 0;
@@ -282,6 +267,9 @@ public class SkillControl : MonoBehaviour
         EndButton.interactable = true;
         BossPanel.SetActive(false);
         VictoryPanel.SetActive(false);
+        PresetPanel.SetActive(false);
+        GC.MobTime = 192;
+        GC.ForceTimePause = false;
         this.gameObject.SetActive(false);
     }
 
@@ -313,49 +301,6 @@ public class SkillControl : MonoBehaviour
                 else
                     CurrentSkills[i].button.interactable = false;
             }
-        }
-    }
-
-    //显示预设
-    public void ShowSkill()
-    {
-        for(int i = 0; i < 6; i++)
-        {
-            if (TargetDep.DSkillSetA[i] != null)
-            {
-                CSkillSetA[i].skill = TargetDep.DSkillSetA[i];
-                CSkillSetA[i].empInfo = TargetDep.DSkillSetA[i].TargetEmp.InfoDetail;
-            }
-            else
-            {
-                CSkillSetA[i].skill = null;
-                CSkillSetA[i].empInfo = null;
-            }
-            CSkillSetA[i].UpdateUI();
-
-            if (TargetDep.DSkillSetB[i] != null)
-            {
-                CSkillSetB[i].skill = TargetDep.DSkillSetB[i];
-                CSkillSetB[i].empInfo = TargetDep.DSkillSetB[i].TargetEmp.InfoDetail;
-            }
-            else
-            {
-                CSkillSetB[i].skill = null;
-                CSkillSetB[i].empInfo = null;
-            }
-            CSkillSetB[i].UpdateUI();
-
-            if (TargetDep.DSkillSetC[i] != null)
-            {
-                CSkillSetC[i].skill = TargetDep.DSkillSetC[i];
-                CSkillSetC[i].empInfo = TargetDep.DSkillSetC[i].TargetEmp.InfoDetail;
-            }
-            else
-            {
-                CSkillSetC[i].skill = null;
-                CSkillSetC[i].empInfo = null;
-            }
-            CSkillSetC[i].UpdateUI();
         }
     }
 
@@ -406,10 +351,6 @@ public class SkillControl : MonoBehaviour
             //CurrentPoint += TempPoint * Sp2Multiply + TempPoint;
             //Sp2Multiply = 0;
         }
-        if (EventLimit > 0)
-            EventLimit -= 1;
-        else
-            RandomEvent();
 
         //重置部分属性
         SCSelectMode = 0;
@@ -421,97 +362,6 @@ public class SkillControl : MonoBehaviour
 
         Text_Point.text = "当前点数:" + CurrentPoint + "\n下一级所需点数:" + RequirePoint; 
     }  
-
-    //第一版头脑风暴随机事件(已弃用)
-    public void RandomEvent()
-    {
-        //int type = Random.Range(1, 8);
-        //string Description = "";
-        //if(type == 1)
-        //{
-        //    Description = "全体恢复10点心力";
-        //    for(int i = 0; i < TargetDep.CurrentEmps.Count; i++)
-        //    {
-        //        TargetDep.CurrentEmps[i].Mentality += 10;
-        //    }
-        //}
-        //else if (type == 2)
-        //{
-        //    Description = "全体员工降低20点心力";
-        //    for (int i = 0; i < TargetDep.CurrentEmps.Count; i++)
-        //    {
-        //        TargetDep.CurrentEmps[i].Mentality -= 20;
-        //    }
-        //}
-        //else if (type == 3)
-        //{
-        //    Description = "随机一个非基础技能不可用";
-        //    List<SkillInfo> S = new List<SkillInfo>();
-        //    for(int i = 0; i < CurrentSkills.Count; i++)
-        //    {
-        //        if (CurrentSkills[i].Active == true && CurrentSkills[i].skill.Type != SkillType.Basic)
-        //            S.Add(CurrentSkills[i]);
-        //    }
-        //    if (S.Count > 0)
-        //    {
-        //        int num = Random.Range(0, S.Count);
-        //        S[num].Active = false;
-        //        S[num].gameObject.SetActive(false);
-        //    }
-        //}
-        //else if (type == 4)
-        //{
-        //    Description = "一名员工退场（技能不可用）";
-        //    Employee E = TargetDep.CurrentEmps[Random.Range(0, TargetDep.CurrentEmps.Count)];
-        //    for(int i = 0; i < CurrentSkills.Count; i++)
-        //    {
-        //        if (CurrentSkills[i].skill.TargetEmp == E)
-        //            CurrentSkills[i].gameObject.SetActive(false);
-        //    }
-        //}
-        //else if (type == 5)
-        //{
-        //    Description = "下一次使用非基础技能的消耗翻倍";
-        //    if (Sp4Multiply == 0)
-        //    {
-        //        for (int i = 0; i < CurrentSkills.Count; i++)
-        //        {
-        //            if (CurrentSkills[i].skill.Type != SkillType.Basic)
-        //                CurrentSkills[i].skill.StaminaExtra = CurrentSkills[i].skill.StaminaCost;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        for (int i = 0; i < CurrentSkills.Count; i++)
-        //        {
-        //            if (CurrentSkills[i].skill.Type != SkillType.Basic)
-        //                CurrentSkills[i].skill.StaminaExtra *= 2;
-        //        }
-        //    }
-        //    Sp4Multiply += 1;
-        //}
-        //else if (type == 6)
-        //{
-        //    Description = "所有基础技能消耗翻倍";
-        //    for (int i = 0; i < CurrentSkills.Count; i++)
-        //    {
-        //        if (CurrentSkills[i].skill.Type == SkillType.Basic)
-        //        {
-        //            if (CurrentSkills[i].skill.StaminaExtra == 0)
-        //                CurrentSkills[i].skill.StaminaExtra = CurrentSkills[i].skill.StaminaCost * -1;
-        //            else
-        //                CurrentSkills[i].skill.StaminaExtra *= 2;
-        //        }
-        //    }
-        //}
-        //else if (type == 7)
-        //{
-        //    Description = "所有技能必须额外使用一枚点数为1的骰子才可以使用";
-        //    Sp5Multiply += 1;
-        //}
-        //Text_EventDescription.text = Description;
-        //EventPanel.SetActive(true);
-    }
 
     public bool ExtraDiceCheck(SkillInfo s)
     {
@@ -789,18 +639,22 @@ public class SkillControl : MonoBehaviour
         Text_TurnLeft.text = "剩余回合:" + TurnLeft;
 
         if (TurnLeft == 0)
+        {
             EndButton.interactable = true;
+            SkillSetButton.interactable = true;
+        }
         else
+        { 
             EndButton.interactable = false;
-
+            SkillSetButton.interactable = false;
+        }
         for (int i = 0; i < Dices.Count; i++)
         {
             Destroy(Dices[i].gameObject);
         }
         Dices.Clear();
         SelectedDices.Clear();
-        int dicenum = (TargetDep.CommandingOffice.ManageValue - TargetDep.CommandingOffice.ControledDeps.Count + GC.ManageExtra) / 2 + ExtraDiceNum;
-        CreateDice(dicenum);
+        CreateDice(DiceNum + ExtraDiceNum);
         ExtraDiceNum = 0;
         RandomBossSkill();
     }
@@ -808,32 +662,152 @@ public class SkillControl : MonoBehaviour
     //Boss战胜利
     public void Victory()
     {
-        if (TargetDep.EmpChanged == true)
+        //重置骰子
+        for (int i = 0; i < Dices.Count; i++)
         {
-            TargetDep.EmpChanged = false;
-            TargetDep.Text_Efficiency.color = Color.black;
+            Destroy(Dices[i].gameObject);
         }
-        else
-            TargetDep.EfficiencyLevel += 1;
-        if (TargetDep.EfficiencyLevel == 1)
-            TargetDep.ExtraSuccessRate = 0.1f;
-        else if (TargetDep.EfficiencyLevel == 2)
-            TargetDep.ExtraSuccessRate = 0.2f;
-        else if (TargetDep.EfficiencyLevel == 3)
+        Dices.Clear();
+        SelectedDices.Clear();
+        CreateDice(DiceNum);
+        ExtraDiceNum = 0;
+
+        if (BossLevel == 1)
+            ExtraSuccessRate = 0.1f;
+        else if (BossLevel == 2)
+            ExtraSuccessRate = 0.2f;
+        else if (BossLevel == 3)
         {
-            TargetDep.ExtraSuccessRate = 0.2f;
-            TargetDep.ExtraMajorSuccessRate = 0.2f;
+            ExtraSuccessRate = 0.2f;
+            ExtraMajorSuccessRate = 0.2f;
         }
-        else if (TargetDep.EfficiencyLevel == 4)
+        else if (BossLevel == 4)
         {
-            TargetDep.ExtraSuccessRate = 0.2f;
-            TargetDep.ExtraMajorSuccessRate = 0.4f;
+            ExtraSuccessRate = 0.2f;
+            ExtraMajorSuccessRate = 0.4f;
         }
-        else if (TargetDep.EfficiencyLevel == 5)
+        else if (BossLevel == 5)
         {
-            TargetDep.ExtraSuccessRate = 0.3f;
-            TargetDep.ExtraMajorSuccessRate = 0.5f;
+            ExtraSuccessRate = 0.3f;
+            ExtraMajorSuccessRate = 0.5f;
         }
-        ClearPanel();       
+
+        BossLevel += 1;
+        SetStatus();
+        SkillSetButton.interactable = true;
+        EndButton.interactable = true;
+        VictoryPanel.SetActive(false);
+        BossPanel.SetActive(true);
     }
+
+    //以下为全公司头脑风暴版本相关
+    public void ShowEmpSelectPanel()
+    {
+        GC.TotalEmpContent.parent.parent.gameObject.SetActive(true);
+        GC.ResetSelectMode();
+        foreach(EmpInfo info in SelectedEmps)
+        {
+            //移除不存在的部分
+            if (info.emp.InfoB == null)
+            {
+                SelectedEmps.Remove(info);
+                Destroy(info.gameObject);
+                print("Check");
+                continue;
+            }
+            info.emp.InfoB.gameObject.SetActive(false);
+            info.MoveButton.gameObject.SetActive(true);
+        }
+        GC.SelectMode = 9;
+        SelectConfirmButton.SetActive(true);
+    }
+    public void InitEmpInfo(Employee emp)
+    {
+        if (SelectedEmps.Count >= 8)
+        {
+            GC.CreateMessage("最多选择8人");
+            return;
+        }
+        EmpInfo info = Instantiate(EmpInfoPrefab, EmpContent);
+        info.emp = emp;
+        emp.InfoB.gameObject.SetActive(false);
+        info.Text_Name.text = emp.Name;
+        SelectedEmps.Add(info);
+    }
+    public void RemoveEmpInfo(EmpInfo info)
+    {
+        //重置技能
+        foreach (SkillInfo s in CSkillSetA)
+        {
+            if (s.empInfo == info)
+            {
+                s.skill = null;
+                s.empInfo = null;
+                s.UpdateUI();
+            }
+        }
+        foreach (SkillInfo s in CSkillSetB)
+        {
+            if (s.empInfo == info)
+            {
+                s.skill = null;
+                s.empInfo = null;
+                s.UpdateUI();
+            }
+        }
+        foreach (SkillInfo s in CSkillSetC)
+        {
+            if (s.empInfo == info)
+            {
+                s.skill = null;
+                s.empInfo = null;
+                s.UpdateUI();
+            }
+        }
+        info.emp.InfoB.gameObject.SetActive(true);
+        SelectedEmps.Remove(info);
+        Destroy(info.gameObject);
+    }
+    public void ConfirmEmpSelect()
+    {
+        bool HaveManager = false;
+        foreach(EmpInfo info in SelectedEmps)
+        {
+            if(info.emp.CurrentOffice != null)
+            {
+                if(info.emp.CurrentOffice.building.Type == BuildingType.CEO办公室 || info.emp.CurrentOffice.building.Type == BuildingType.高管办公室)
+                {
+                    HaveManager = true;
+                    break;
+                }
+            }
+        }
+        if (HaveManager == false)
+        {
+            GC.CreateMessage("需要至少一名高管");
+            return;
+        }
+        GC.ResetSelectMode();
+        GC.TotalEmpContent.parent.parent.gameObject.SetActive(false);
+        SelectConfirmButton.SetActive(false);
+        foreach (EmpInfo info in SelectedEmps)
+        {
+            //确认技能，关闭按钮
+            info.MoveButton.gameObject.SetActive(false);
+            for (int j = 0; j < info.emp.InfoDetail.SkillsInfo.Count; j++)
+            {
+                SkillInfo newSkill = Instantiate(SkillInfoPrefab, SkillSelectContent);
+                newSkill.skill = info.emp.InfoDetail.SkillsInfo[j].skill;
+                newSkill.SC = this;
+                newSkill.empInfo = info.emp.InfoDetail;
+                newSkill.UpdateUI();
+                newSkill.info = GC.infoPanel;
+                TotalSkills.Add(newSkill);
+            }
+            //重置信心
+            info.emp.InfoDetail.emp.Confidence = 0;
+        }
+        PresetPanel.SetActive(true);
+    }
+
 }

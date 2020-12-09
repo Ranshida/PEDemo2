@@ -11,8 +11,8 @@ public class GameControl : MonoBehaviour
     [HideInInspector] public float EfficiencyExtraNormal = 0, EfficiencyExtraScience = 0, ResearchSuccessRateExtra = 0, ExtrafailRate = 0, HireEfficiencyExtra = 1.0f,
         HRBuildingMentalityExtra = 1.0f, BuildingSkillSuccessExtra = 0, BuildingMaintenanceCostRate = 1.0f;
     public int SelectMode = 1; //1员工招聘时部门选择 2员工移动时部门选择 3部门的高管办公室选择 4发动动员技能时员工选择 
-    //5发动建筑技能时员工选择 6CEO技能员工/部门选择 7选择两个员工发动动员技能 8普通办公室的上级(高管办公室)选择 
-    public int Money = 1000, CEOSkillNum = 0, DoubleMobilizeCost = 0, MeetingBlockTime = 0;
+    //5发动建筑技能时员工选择 6CEO技能员工/部门选择 7选择两个员工发动动员技能 8普通办公室的上级(高管办公室)选择  9头脑风暴的员工选择
+    public int Money = 1000, CEOSkillNum = 0, DoubleMobilizeCost = 0, MeetingBlockTime = 0, MobTime = 192;
     public bool ForceTimePause = false;
     public int Stamina
     {
@@ -53,7 +53,7 @@ public class GameControl : MonoBehaviour
                 morale = 100;
             else if (morale < 0)
                 morale = 0;
-            Text_Morale.text = "士气:" + Morale;
+            Text_Morale.text = "士气:" + morale;
         }
     }
 
@@ -102,6 +102,7 @@ public class GameControl : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+        Morale = 100;
     }
 
     private void Start()
@@ -137,6 +138,21 @@ public class GameControl : MonoBehaviour
             Hour = 8;
             StartWorkEnd();
         }
+
+        //开会封锁时间
+        if (MeetingBlockTime > 0)
+            MeetingBlockTime -= 1;
+        if(MobTime > 0)
+        {
+            MobTime -= 1;
+            if(MobTime == 0)
+            {
+                SC.gameObject.SetActive(true);
+                SC.SkillSetButton.interactable = false;
+                ForceTimePause = true;
+            }
+        }
+
         Text_Time.text = "年" + Year + " 月" + Month + " 周" + Week + " 时" + Hour;
     }
     public void WeekPass()
@@ -742,7 +758,6 @@ public class GameControl : MonoBehaviour
     {
         if (CurrentEmpInfo.emp.CurrentDep != null)
         {
-            CurrentEmpInfo.ClearSkillPreset();
             CurrentEmpInfo.emp.CurrentDep.CurrentEmps.Remove(CurrentEmpInfo.emp);
             //修改生产力显示
             CurrentEmpInfo.emp.CurrentDep.UpdateUI();
@@ -750,7 +765,6 @@ public class GameControl : MonoBehaviour
         }
         if (CurrentEmpInfo.emp.CurrentOffice != null)
         {
-            CurrentEmpInfo.ClearSkillPreset();
             if (CurrentEmpInfo.emp.CurrentOffice.building.Type == BuildingType.高管办公室 || CurrentEmpInfo.emp.CurrentOffice.building.Type == BuildingType.CEO办公室)
                 CurrentEmpInfo.emp.InfoDetail.TempDestroyStrategy();
             CurrentEmpInfo.emp.CurrentOffice.CurrentManager = null;
@@ -880,9 +894,6 @@ public class GameControl : MonoBehaviour
             }
             Text_CEOSkillCD[i].text = "CD:" + CEOSkillCD[i] + "时";
         }
-        //开会封锁时间
-        if (MeetingBlockTime > 0)
-            MeetingBlockTime -= 1;
     }
 
     public void ResetSelectMode()
@@ -890,6 +901,7 @@ public class GameControl : MonoBehaviour
         SelectMode = 0;
         CEOSkillNum = 0;
         Text_EmpSelectTip.gameObject.SetActive(false);
+        SC.SelectConfirmButton.SetActive(false);
         for(int i = 0; i < CurrentEmployees.Count; i++)
         {
             CurrentEmployees[i].InfoB.gameObject.SetActive(true);

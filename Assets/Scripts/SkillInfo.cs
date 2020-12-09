@@ -86,6 +86,7 @@ public class SkillInfo : MonoBehaviour
         }
     }
 
+    //不显示已进入预设的技能？
     public void SetSCNum(int num)
     {
         SC.SelectNum = num;
@@ -119,27 +120,51 @@ public class SkillInfo : MonoBehaviour
         int num = SC.SelectNum;
         int SetNum1 = num / 6;
         int SetNum2 = num % 6;
-        if(SetNum1 == 0)
-        {
-            SC.CSkillSetA[SetNum2].skill = skill;
-            SC.CSkillSetA[SetNum2].empInfo = empInfo;
-            SC.CSkillSetA[SetNum2].UpdateUI();
-            SC.TargetDep.DSkillSetA[SetNum2] = skill;
-        }
+        SkillInfo[] s;
+        if (SetNum1 == 0)
+            s = SC.CSkillSetA;
         else if (SetNum1 == 1)
+            s = SC.CSkillSetB;
+        else
+            s = SC.CSkillSetC;
+
+        //确认人数不超过5人
+        List<Employee> emps = new List<Employee>();
+        foreach(SkillInfo info in s)
         {
-            SC.CSkillSetB[SetNum2].skill = skill;
-            SC.CSkillSetB[SetNum2].empInfo = empInfo;
-            SC.CSkillSetB[SetNum2].UpdateUI();
-            SC.TargetDep.DSkillSetB[SetNum2] = skill;
+            if (info.skill != null && emps.Contains(info.skill.TargetEmp) == false && info != s[SetNum2])
+                emps.Add(info.skill.TargetEmp);
         }
-        else if (SetNum1 == 2)
+        if (emps.Contains(skill.TargetEmp) == false)
+            emps.Add(skill.TargetEmp);
+        if(emps.Count > 5)
         {
-            SC.CSkillSetC[SetNum2].skill = skill;
-            SC.CSkillSetC[SetNum2].empInfo = empInfo;
-            SC.CSkillSetC[SetNum2].UpdateUI();
-            SC.TargetDep.DSkillSetC[SetNum2] = skill;
+            GameControl.Instance.CreateMessage("最多编入5人");
+            return;
         }
+
+        s[SetNum2].skill = skill;
+        s[SetNum2].empInfo = empInfo;
+        s[SetNum2].UpdateUI();
+        SC.SkillSelectPanel.SetActive(false);
+    }
+
+    public void SkillRemove()
+    {
+        int num = SC.SelectNum;
+        int SetNum1 = num / 6;
+        int SetNum2 = num % 6;
+        SkillInfo[] s;
+        if (SetNum1 == 0)
+            s = SC.CSkillSetA;
+        else if (SetNum1 == 1)
+            s = SC.CSkillSetB;
+        else
+            s = SC.CSkillSetC;
+
+        s[SetNum2].skill = null;
+        s[SetNum2].empInfo = null;
+        s[SetNum2].UpdateUI();
         SC.SkillSelectPanel.SetActive(false);
     }
 

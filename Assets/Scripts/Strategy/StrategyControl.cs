@@ -17,7 +17,7 @@ public class StrategyControl : MonoBehaviour
     public Transform StrategyContent, UnfinishedStrategyContent, VoteContent, ActiveStrsContent;
     public GameControl GC;
     public Button NewStrButton, MeetingButton;
-    public Text Text_Time, Text_StrategyStatus;
+    public Text Text_Time;
 
     public List<StrategyInfo> StrInfos = new List<StrategyInfo>(), VoteStrs = new List<StrategyInfo>(), ActiveStrs = new List<StrategyInfo>()
         , VoteSelectStrs = new List<StrategyInfo>();
@@ -61,7 +61,6 @@ public class StrategyControl : MonoBehaviour
             Texts_Strnum[i].text = "槽位:" + StrLimitNum[i];
         }
         Text_Time.text = "距离下次会议召开还剩:" + TimeLeft + "时";
-        Text_StrategyStatus.text = "未完成战略:" + ActiveStrs.Count + "\n剩余时间:" + TimeLeft;
     }
 
     public void CheckStrNum()
@@ -210,9 +209,6 @@ public class StrategyControl : MonoBehaviour
             MeetingButton.interactable = false;
             TempStrs.Clear();
             TimeLeft = 384;
-            FinishedStrNum = 0;
-            if (ActiveStrs.Count > 0)
-                Text_StrategyStatus.gameObject.SetActive(true);
             UpdateUI();
             VotePanel.gameObject.SetActive(false);
         }
@@ -574,52 +570,6 @@ public class StrategyControl : MonoBehaviour
 
     public void TimePass()
     {
-        //旧时限部分
-        #region
-        //for(int i = 0; i < BlockTime.Length; i++)
-        //{
-        //    if(BlockTime[i] > 0)
-        //    {
-        //        BlockTime[i] -= 1;
-        //        if (BlockTime[i] == 0)
-        //        {
-        //            Texts_BlockTime[i].gameObject.SetActive(false);
-        //            NewStrs[i].gameObject.SetActive(true);
-        //            NewStrs[i].Active = false;
-        //            GC.Morale += 10;
-        //        }
-        //        else
-        //            Texts_BlockTime[i].text = "剩余封锁时间:" + BlockTime[i] + "时";
-        //    }
-        //}
-
-        //if(TimeLeft > 0)
-        //{
-        //    TimeLeft -= 1;
-        //    if(TimeLeft == 0)
-        //    {
-        //        NewStrButton.interactable = true;
-        //        for(int i = 0; i < CurrentStrs.Length; i++)
-        //        {
-        //            if (CurrentStrs[i].Used == false)
-        //            {
-        //                CurrentStrs[i].Str.EffectRemove(GC);
-        //                CurrentStrs[i].Used = true;
-        //                CurrentStrs[i].UseButton.interactable = false;
-        //                GC.HourEvent.RemoveListener(CurrentStrs[i].TimePass);
-        //                if (CurrentStrs[i].Active == false)
-        //                {
-        //                    GC.Morale -= 10;
-        //                    BlockTime[CurrentStrs[i].StrNum] = 96;
-        //                    NewStrs[CurrentStrs[i].StrNum].Active = true;
-        //                    NewStrs[CurrentStrs[i].StrNum].gameObject.SetActive(false);
-        //                    Texts_BlockTime[CurrentStrs[i].StrNum].gameObject.SetActive(true);
-        //                }
-        //            }
-        //        }
-        //    }
-        //}
-        #endregion
         if(TimeLeft > 0)
         {
             TimeLeft -= 1;
@@ -627,8 +577,7 @@ public class StrategyControl : MonoBehaviour
             {
                 MeetingButton.interactable = true;
                 for(int i = 0; i < ActiveStrs.Count; i++)
-                {
-                    
+                {             
                     ActiveStrs[i].Str.EffectRemove(GC);
                     Destroy(ActiveStrs[i].gameObject);
                 }
@@ -636,27 +585,5 @@ public class StrategyControl : MonoBehaviour
             }
         }
         UpdateUI();
-    }
-
-    //战略任务
-    public void SolveStrRequest(int type, int value)
-    {
-        for(int i = 0; i < ActiveStrs.Count; i++)
-        {
-            if(ActiveStrs[i].Str.RequestType == type && ActiveStrs[i].Active == false)
-            {
-                ActiveStrs[i].CurrentRequestValue += value;
-                if (ActiveStrs[i].CurrentRequestValue >= ActiveStrs[i].Str.RequestValue)
-                {
-                    ActiveStrs[i].Active = true;
-                    FinishedStrNum += 1;
-                    if (FinishedStrNum == ActiveStrs.Count)
-                        Text_StrategyStatus.gameObject.SetActive(false);
-                }
-                ActiveStrs[i].UpdateUI();
-                
-                break;
-            }
-        }
     }
 }
