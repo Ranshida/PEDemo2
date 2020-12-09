@@ -452,7 +452,6 @@ public class BuildingManage : MonoBehaviour
             if (ConstructedBuildings[i].Type == type)
                 DepNum += 1;
         }
-        temp_Building.Text_DepName.text = temp_Building.Type.ToString() + DepNum;
     }
 
     //开始建造（已生成过的建筑）
