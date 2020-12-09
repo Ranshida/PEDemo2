@@ -442,6 +442,68 @@ public abstract class Event
     {
         return 0;
     }
+    //情绪点数判定
+    public int EmotionBonus()
+    {
+        int dRed = 0, dYellow = 0, dPurple = 0, dGreen = 0, red = 0, yellow = 0, purple = 0, green = 0;
+        foreach (Emotion e in Self.CurrentEmotions)
+        {
+            if (e.color == EColor.DRed)
+            {
+                dRed += e.Level;
+            }
+            else if (e.color == EColor.DYellow)
+            {
+                dYellow += e.Level;
+            }
+            else if (e.color == EColor.DPurple)
+            {
+                dPurple += e.Level;
+            }
+            else if (e.color == EColor.DGreen)
+            {
+                dGreen += e.Level;
+            }
+            else if (e.color == EColor.Red)
+            {
+                red += e.Level;
+            }
+            else if (e.color == EColor.Yellow)
+            {
+                yellow += e.Level;
+            }
+            else if (e.color == EColor.Purple)
+            {
+                purple += e.Level;
+            }
+            else if (e.color == EColor.Green)
+            {
+                green += e.Level;
+            }
+        }
+        return dYellow * 2 - dRed * 2 - dPurple * 2 + dGreen * 2 + yellow - red - purple + green;
+    }
+    //特质点数判定
+    public int PerksBonus()
+    {
+        int Extra = 0;
+        foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
+        {
+            if (p.CurrentPerk.Num == 75 | p.CurrentPerk.Num == 78)
+            {
+                Extra += 1;
+            }
+            else if (p.CurrentPerk.Num == 76 | p.CurrentPerk.Num == 79)
+            {
+                Extra += 2;
+            }
+            else if (p.CurrentPerk.Num == 77 | p.CurrentPerk.Num == 80)
+            {
+                Extra += 3;
+            }
+        }
+        return Extra;
+    }
     //关系点数判定
     public int RelationBonus(bool Reverse = false)
     {
@@ -621,8 +683,8 @@ public abstract class Event
     {
         if (Target != null)
         {
-            Self.InfoDetail.AddHistory("自己和" + Target.Name + "发生了" + EventName + "事件" + ResultText);
-            Target.InfoDetail.AddHistory("参与了" + Self.Name + "的" + EventName + "事件" + ResultText);
+            Self.InfoDetail.AddHistory(ResultText);
+            Target.InfoDetail.AddHistory(ResultText);
         }
         else if (Targets.Count > 0)
         {
@@ -11459,7 +11521,204 @@ public class Event2_85 : Event
     }
 }
 #endregion
+public class Event3_1 : Event
+{
+    public Event3_1() : base()
+    {
+        EventName = "扯皮";
+        HaveTarget = true;
+        Weight = 2;
+        RelationRequire = 0;
+        ResultText = "在ww place，" + Self.Name + "与同事" + Target.Name + "对于某个工作细节产生分歧，";
+    }
+    public override bool SpecialCheck()
+    {
+        if (Self.Character[4] <= 30)
+        {
+            if (EmpManager.Instance.FindColleague(Self).Contains(Target) == true)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    public override int ExtraValue()
+    {
+        int Extra = 0;
+        Extra += RelationBonus() + MoraleBonus() + EmotionBonus() + PerksBonus();
+        return Extra;
+    }
+    public override int FindResult()
+    {
+        int value = Random.Range(2, 13);
+        value += ExtraValue();
+        if (value <= 10)
+        {
+            return 2;
+        }
+        else
+        {
+            return 3;
+        }
+        //1大失败 2失败 3成功 4大成功
+    }
 
+    public override void Failure(float Posb)
+    {
+        base.Failure(Posb);
+        Self.InfoDetail.AddPerk(new Perk52(Self),true);
+        Target.InfoDetail.AddPerk(new Perk52(Target), true);
+        ResultText += "双方感到一丝烦恼";
+    }
+    public override void Success(float Posb)
+    {
+        base.Success(Posb);
+        Self.Mentality -= 15;
+        Target.Mentality -= 15;
+        for(int i = 0; i < 4; i++)
+        {
+            Self.InfoDetail.AddPerk(new Perk49(Self), true);
+            Target.InfoDetail.AddPerk(new Perk49(Target), true);
+        }
+        ResultText += "双方互相不停指责";
+    }
+}
+public class Event3_2 : Event
+{
+    public Event3_2() : base()
+    {
+        EventName = "甩锅三连";
+        HaveTarget = true;
+        Weight = 2;
+        RelationRequire = 0;
+        if(EmpManager.Instance.FindBoss(Self) == Target)
+        {
+            ResultText = "在ww place，下级" + Self.Name + "向上司" + Target.Name + "反应当前工作问题，";
+        }
+        else if (EmpManager.Instance.FindBoss(Target) == Self)
+        {
+            ResultText = "在ww place，下级" + Target.Name + "向上司" + Self.Name + "反应当前工作问题，";
+        }
+    }
+    public override bool SpecialCheck()
+    {
+        if (Self.Character[4] <= 30)
+        {
+            if (EmpManager.Instance.FindBoss(Self) == Target| EmpManager.Instance.FindBoss(Target)==Self)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+    public override int ExtraValue()
+    {
+        int Extra = 0;
+        Extra += RelationBonus() + MoraleBonus() + EmotionBonus() + PerksBonus();
+        return Extra;
+    }
+    public override int FindResult()
+    {
+        int value = Random.Range(2, 13);
+        value += ExtraValue();
+        if (value <= 10)
+        {
+            return 2;
+        }
+        else
+        {
+            return 3;
+        }
+        //1大失败 2失败 3成功 4大成功
+    }
+
+    public override void Failure(float Posb)
+    {
+        base.Failure(Posb);
+        Self.InfoDetail.AddPerk(new Perk52(Self), true);
+        Target.InfoDetail.AddPerk(new Perk52(Target), true);
+        ResultText += "上司表示自己负次要责任";
+    }
+    public override void Success(float Posb)
+    {
+        base.Success(Posb);
+        Self.Mentality -= 15;
+        Target.Mentality -= 15;
+        for (int i = 0; i < 4; i++)
+        {
+            Self.InfoDetail.AddPerk(new Perk49(Self), true);
+            Target.InfoDetail.AddPerk(new Perk49(Target), true);
+        }
+        ResultText += "上司将责任完全推给下级";
+    }
+}
+public class Event3_3 : Event
+{
+    public Event3_3() : base()
+    {
+        EventName = "骄傲";
+        HaveTarget = true;
+        Weight = 3;
+        RelationRequire = 0;
+        PerkRequire = 43;
+        if (EmpManager.Instance.FindBoss(Self) == Target)
+        {
+            ResultText = "在ww place，下级" + Self.Name + "向上司" + Target.Name + "反应当前工作问题，";
+        }
+        else if (EmpManager.Instance.FindBoss(Target) == Self)
+        {
+            ResultText = "在ww place，下级" + Target.Name + "向上司" + Self.Name + "反应当前工作问题，";
+        }
+    }
+    public override bool SpecialCheck()
+    {
+        if (Self.Character[4] <= 30)
+        {
+            return true;
+        }
+        return false;
+    }
+    public override int ExtraValue()
+    {
+        int Extra = 0;
+        Extra += RelationBonus() + MoraleBonus() + EmotionBonus() + PerksBonus();
+        return Extra;
+    }
+    public override int FindResult()
+    {
+        int value = Random.Range(2, 13);
+        value += ExtraValue();
+        if (value <= 10)
+        {
+            return 2;
+        }
+        else
+        {
+            return 3;
+        }
+        //1大失败 2失败 3成功 4大成功
+    }
+
+    public override void Failure(float Posb)
+    {
+        base.Failure(Posb);
+        Self.InfoDetail.AddPerk(new Perk52(Self), true);
+        Target.InfoDetail.AddPerk(new Perk52(Target), true);
+        ResultText += "上司表示自己负次要责任";
+    }
+    public override void Success(float Posb)
+    {
+        base.Success(Posb);
+        Self.Mentality -= 15;
+        Target.Mentality -= 15;
+        for (int i = 0; i < 4; i++)
+        {
+            Self.InfoDetail.AddPerk(new Perk49(Self), true);
+            Target.InfoDetail.AddPerk(new Perk49(Target), true);
+        }
+        ResultText += "上司将责任完全推给下级";
+    }
+}
 static public class EventData
 {
     #region 事件版本2内容

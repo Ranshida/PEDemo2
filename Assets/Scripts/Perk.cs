@@ -1052,3 +1052,484 @@ public class Perk43 : Perk
 }
 
 #endregion
+
+//结构优化
+public class Perk44 : Perk
+{
+    public Perk44(Employee Emp) : base(Emp)
+    {
+        Name = "结构优化";
+        Description = "员工工资-5%";
+        TimeLeft = 64;
+        Num = 44;
+        canStack = true;
+    }
+}
+
+//团结
+public class Perk45 : Perk
+{
+    public Perk45(Employee Emp) : base(Emp)
+    {
+        Name = "团结";
+        Description = "办公室成功率+1%";
+        TimeLeft = 64;
+        Num = 45;
+        canStack = true;
+    }
+}
+
+//受到启发
+public class Perk46 : Perk
+{
+    public Perk46(Employee Emp) : base(Emp)
+    {
+        Name = "受到启发";
+        Description = "获得一个当前工作领域的热情，解锁事件";
+        TimeLeft = 64;
+        Num = 46;
+        canStack = false;
+    }
+}
+
+//顺利
+public class Perk47 : Perk
+{
+    public Perk47(Employee Emp) : base(Emp)
+    {
+        Name = "顺利";
+        Description = "解锁事件，并为所在部门附着进步状态，每个顺利+1进步";
+        TimeLeft = 64;
+        Num = 47;
+        canStack = true;
+    }
+}
+
+//顺利-进步
+public class Perk48 : Perk
+{
+    public Perk48(Employee Emp) : base(Emp)
+    {
+        Name = "顺利-进步";
+        Description = "每个进步+1% 部门成功率";
+        TimeLeft = -1;//持续到当前业务结束
+        Num = 48;
+        canStack = true;
+    }
+}
+
+//悔恨
+public class Perk49 : Perk
+{
+    public Perk49(Employee Emp) : base(Emp)
+    {
+        Name = "悔恨";
+        Description = "解锁事件，并为所在部门附着混乱状态，每个悔恨+1混乱";
+        TimeLeft = 64;
+        Num = 49;
+        canStack = true;
+    }
+}
+
+//悔恨-混乱
+public class Perk50 : Perk
+{
+    public Perk50(Employee Emp) : base(Emp)
+    {
+        Name = "悔恨-混乱";
+        Description = "每个混乱-1% 部门成功率";
+        TimeLeft = -1;//持续到当前业务结束
+        Num = 50;
+        canStack = true;
+    }
+}
+
+//困惑
+public class Perk51 : Perk
+{
+    public Perk51(Employee Emp) : base(Emp)
+    {
+        Name = "困惑";
+        Description = "解锁事件，公司日常";
+        TimeLeft = 64;
+        Num = 51;
+        canStack = true;
+    }
+}
+
+//烦恼
+public class Perk52 : Perk
+{
+    public Perk52(Employee Emp) : base(Emp)
+    {
+        Name = "烦恼";
+        Description = "解锁事件，公司日常";
+        TimeLeft = 64;
+        Num = 52;
+        canStack = true;
+    }
+}
+
+//炫耀
+public class Perk53 : Perk
+{
+    public Perk53(Employee Emp) : base(Emp)
+    {
+        Name = "炫耀";
+        Description = "解锁事件，公司日常";
+        TimeLeft = 64;
+        Num = 53;
+        canStack = true;
+    }
+}
+
+//尴尬
+public class Perk54 : Perk
+{
+    public Perk54(Employee Emp) : base(Emp)
+    {
+        Name = "尴尬";
+        Description = "解锁事件，公司日常";
+        TimeLeft = 64;
+        Num = 54;
+        canStack = true;
+    }
+}
+
+//愿望
+public class Perk55 : Perk
+{
+    public Perk55(Employee Emp) : base(Emp)
+    {
+        Name = "愿望";
+        Description = "解锁事件，公司港口行为树";
+        TimeLeft = 64;
+        Num = 55;
+        canStack = true;
+    }
+}
+
+//野心
+public class Perk56 : Perk
+{
+    public Perk56(Employee Emp) : base(Emp)
+    {
+        Name = "野心";
+        Description = "解锁事件，公司港口行为树";
+        TimeLeft = 64;
+        Num = 56;
+        canStack = true;
+    }
+}
+
+//不满
+public class Perk57 : Perk
+{
+    public Perk57(Employee Emp) : base(Emp)
+    {
+        Name = "不满";
+        Description = "解锁事件，公司港口行为树";
+        TimeLeft = 64;
+        Num = 57;
+        canStack = true;
+    }
+}
+
+//成长
+public class Perk58 : Perk
+{
+    public Perk58(Employee Emp) : base(Emp)
+    {
+        Name = "成长";
+        Description = "解锁事件，1年内每升一级获取1个，下年清空";
+        TimeLeft = -1; //到年底
+        Num = 58;
+        canStack = true;
+    }
+}
+
+//深刻交谈
+public class Perk59 : Perk
+{
+    public Perk59(Employee Emp) : base(Emp)
+    {
+        Name = "深刻交谈";
+        Description = "解锁事件，个人港口行为树";
+        TimeLeft = 64;
+        Num = 59;
+        canStack = true;
+    }
+}
+
+//分享乐事
+public class Perk60 : Perk
+{
+    public Perk60(Employee Emp) : base(Emp)
+    {
+        Name = "分享乐事";
+        Description = "解锁事件，个人港口行为树";
+        TimeLeft = 64;
+        Num = 60;
+        canStack = true;
+    }
+}
+
+//认可交谈
+public class Perk61 : Perk
+{
+    public Perk61(Employee Emp) : base(Emp)
+    {
+        Name = "认可交谈";
+        Description = "解锁事件，个人港口行为树";
+        TimeLeft = 64;
+        Num = 61;
+        canStack = true;
+    }
+}
+
+//分享日常
+public class Perk62 : Perk
+{
+    public Perk62(Employee Emp) : base(Emp)
+    {
+        Name = "分享日常";
+        Description = "解锁事件，个人港口行为树";
+        TimeLeft = 64;
+        Num = 62;
+        canStack = true;
+    }
+}
+
+//寻求安慰
+public class Perk63 : Perk
+{
+    public Perk63(Employee Emp) : base(Emp)
+    {
+        Name = "寻求安慰";
+        Description = "解锁事件，个人港口行为树";
+        TimeLeft = 64;
+        Num = 63;
+        canStack = true;
+    }
+}
+
+//无聊
+public class Perk64 : Perk
+{
+    public Perk64(Employee Emp) : base(Emp)
+    {
+        Name = "无聊";
+        Description = "解锁事件，个人港口行为树";
+        TimeLeft = 64;
+        Num = 64;
+        canStack = true;
+    }
+}
+
+//受到信任
+public class Perk65 : Perk
+{
+    public Perk65(Employee Emp) : base(Emp)
+    {
+        Name = "受到信任";
+        Description = "解锁事件，公司普通行为树";
+        TimeLeft = 64;
+        Num = 65;
+        canStack = true;
+    }
+}
+
+//受到质疑
+public class Perk66 : Perk
+{
+    public Perk66(Employee Emp) : base(Emp)
+    {
+        Name = "受到质疑";
+        Description = "解锁事件，公司普通行为树";
+        TimeLeft = 64;
+        Num = 66;
+        canStack = true;
+    }
+}
+
+//受到赞扬
+public class Perk67 : Perk
+{
+    public Perk67(Employee Emp) : base(Emp)
+    {
+        Name = "受到赞扬";
+        Description = "解锁事件，公司普通行为树";
+        TimeLeft = 64;
+        Num = 67;
+        canStack = true;
+    }
+}
+
+//受到批评
+public class Perk68 : Perk
+{
+    public Perk68(Employee Emp) : base(Emp)
+    {
+        Name = "受到批评";
+        Description = "解锁事件，公司普通行为树";
+        TimeLeft = 64;
+        Num = 68;
+        canStack = true;
+    }
+}
+
+//遭到敌意
+public class Perk69 : Perk
+{
+    public Perk69(Employee Emp) : base(Emp)
+    {
+        Name = "遭到敌意";
+        Description = "解锁事件，公司普通行为树";
+        TimeLeft = 64;
+        Num = 69;
+        canStack = true;
+    }
+}
+
+//理想
+public class Perk70 : Perk
+{
+    public Perk70(Employee Emp) : base(Emp)
+    {
+        Name = "理想";
+        Description = "解锁事件，公司普通行为树";
+        TimeLeft = 64;
+        Num = 70;
+        canStack = true;
+    }
+}
+
+//充分讨论
+public class Perk71 : Perk
+{
+    public Perk71(Employee Emp) : base(Emp)
+    {
+        Name = "充分讨论";
+        Description = "部门成功率上升5%";
+        TimeLeft = -1;//持续到当前业务结束
+        Num = 71;
+        canStack = true;
+    }
+}
+
+//期待转岗
+public class Perk72 : Perk
+{
+    public Perk72(Employee Emp) : base(Emp)
+    {
+        Name = "期待转岗";
+        Description = "持续时间结束时没有消除则员工信念-10";
+        TimeLeft = 64;
+        Num = 72;
+        canStack = false;
+    }
+}
+
+//期待升职
+public class Perk73 : Perk
+{
+    public Perk73(Employee Emp) : base(Emp)
+    {
+        Name = "期待升职";
+        Description = "持续时间结束时没有消除则员工信念-8";
+        TimeLeft = 64;
+        Num = 73;
+        canStack = false;
+    }
+}
+
+//精神恍惚
+public class Perk74 : Perk
+{
+    public Perk74(Employee Emp) : base(Emp)
+    {
+        Name = "精神恍惚";
+        Description = "心力爆炸获得，失误率+50%";
+        TimeLeft = 96;
+        Num = 74;
+        canStack = false;
+    }
+}
+
+//善辩
+public class Perk75 : Perk
+{
+    public Perk75(Employee Emp) : base(Emp)
+    {
+        Name = "善辩";
+        Description = "加事件判定正面修正+1";
+        TimeLeft = -1;//特质
+        Num = 75;
+        canStack = false;
+    }
+}
+
+//说客
+public class Perk76 : Perk
+{
+    public Perk76(Employee Emp) : base(Emp)
+    {
+        Name = "说客";
+        Description = "加事件判定正面修正+2";
+        TimeLeft = -1;//特质
+        Num = 76;
+        canStack = false;
+    }
+}
+
+//雄辩家
+public class Perk77 : Perk
+{
+    public Perk77(Employee Emp) : base(Emp)
+    {
+        Name = "雄辩家";
+        Description = "加事件判定正面修正+3";
+        TimeLeft = -1;//特质
+        Num = 77;
+        canStack = false;
+    }
+}
+
+//出众
+public class Perk78 : Perk
+{
+    public Perk78(Employee Emp) : base(Emp)
+    {
+        Name = "出众";
+        Description = "加事件判定正面修正+1";
+        TimeLeft = -1;//特质
+        Num = 78;
+        canStack = false;
+    }
+}
+
+//领袖气质
+public class Perk79 : Perk
+{
+    public Perk79(Employee Emp) : base(Emp)
+    {
+        Name = "领袖气质";
+        Description = "加事件判定正面修正+2";
+        TimeLeft = -1;//特质
+        Num = 79;
+        canStack = false;
+    }
+}
+
+//传奇
+public class Perk80 : Perk
+{
+    public Perk80(Employee Emp) : base(Emp)
+    {
+        Name = "传奇";
+        Description = "加事件判定正面修正+3";
+        TimeLeft = -1;//特质
+        Num = 80;
+        canStack = false;
+    }
+}
