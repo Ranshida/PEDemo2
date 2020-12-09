@@ -104,8 +104,8 @@ public class DepControl : MonoBehaviour
     //BuildingMode用于区分建筑模式  ActiveMode用于区分激活方式 1直接激活 2选择员工 3选择部门
     [HideInInspector] public int EmpLimit, ProducePointLimit = 20, ActiveMode = 1, BuildingMode = 1;
     [HideInInspector] public bool SurveyStart = false;
-    public float Efficiency = 0, ExtraSuccessRate = 0, ExtraMajorSuccessRate = 0;
-    public bool canWork = false, EmpChanged = false;
+    public float Efficiency = 0;
+    public bool canWork = false;
 
     private bool MajorSuccess = false;
 
@@ -185,12 +185,12 @@ public class DepControl : MonoBehaviour
             if (SpProgress >= ProducePointLimit)
             {
                 //完成生产
-                float BaseSuccessRate = 0.5f + CountSuccessRate(1);
+                float BaseSuccessRate = 0.5f + CountSuccessRate(building.effectValue);
                 float Posb = Random.Range(0.0f, 1.0f);
                 //成功和大成功
                 if (Posb <= BaseSuccessRate)
                 {
-                    if (Random.Range(0.0f, 1.0f) < 0.2f + ExtraMajorSuccessRate)
+                    if (Random.Range(0.0f, 1.0f) < 0.2f + GC.SC.ExtraMajorSuccessRate)
                     {
                         //大成功
                         //额外经验获取
@@ -292,7 +292,6 @@ public class DepControl : MonoBehaviour
                     CurrentResearch.ResearchFinish();
                     CurrentResearch.ExtraButton.gameObject.SetActive(false);
                     CurrentResearch = null;
-                    GC.StrC.SolveStrRequest(7, 1);
                 }
                 UpdateUI();
             }
@@ -308,7 +307,6 @@ public class DepControl : MonoBehaviour
                     EmpsGetExp(2);
                 }
                 UpdateUI();
-                GC.StrC.SolveStrRequest(7, 1);
             }
         }
     }
@@ -353,7 +351,7 @@ public class DepControl : MonoBehaviour
                 Text_Task.text = "当前任务:" + building.Function_B;
             Text_Progress.text = "生产力:" + Pp + "/时";
             //成功率计算
-            Text_Quality.text = "成功率:" + ((0.5f + CountSuccessRate(1)) * 100) + "%";
+            Text_Quality.text = "成功率:" + ((0.5f + CountSuccessRate(building.effectValue)) * 100) + "%";
             Text_Time.text = "剩余时间:" + calcTime(Pp, ProducePointLimit - SpProgress) + "时";
         }
         else 
@@ -454,14 +452,6 @@ public class DepControl : MonoBehaviour
                 time += 1;
         }
         return time;
-    }
-
-    //开始动员
-    public void StartMobilize()
-    {
-        GC.SC.gameObject.SetActive(true);
-        GC.SC.SetDice(this);
-        ShowEmpInfoPanel();
     }
 
     //显示员工面板并关闭其他部门面板
@@ -581,15 +571,15 @@ public class DepControl : MonoBehaviour
         float BaseSuccessRate = 0;
         Text_SRateDetail.text = "";
         //业务生产
-        if (type < 4 && CurrentTask != null)
+        if (type < 4)
         {
             for (int i = 0; i < CurrentEmps.Count; i++)
             {
                 int value = 0;
                 float EValue = 0;
-                if ((int)CurrentTask.TaskType == 0)
+                if (building.effectValue == 1)
                     value = CurrentEmps[i].Skill1;
-                else if ((int)CurrentTask.TaskType == 1)
+                else if (building.effectValue == 2)
                     value = CurrentEmps[i].Skill2;
                 else
                     value = CurrentEmps[i].Skill3;
@@ -612,14 +602,15 @@ public class DepControl : MonoBehaviour
                 Text_SRateDetail.text += "\n";
                 BaseSuccessRate += EValue;
                 BaseSuccessRate += CurrentEmps[i].ExtraSuccessRate;
+                print(value);
             }
             if (CommandingOffice != null && CommandingOffice.CurrentManager != null)
             {
                 int value = 0;
                 float EValue = 0;
-                if ((int)CurrentTask.TaskType == 0)
+                if (building.effectValue == 1)
                     value = CommandingOffice.CurrentManager.Skill1;
-                else if ((int)CurrentTask.TaskType == 1)
+                else if (building.effectValue == 2)
                     value = CommandingOffice.CurrentManager.Skill2;
                 else
                     value = CommandingOffice.CurrentManager.Skill3;
@@ -643,7 +634,6 @@ public class DepControl : MonoBehaviour
                     Text_SRateDetail.text += " +" + (CommandingOffice.CurrentManager.ExtraSuccessRate * 100) + "%";
             }
         }
-        //招聘
         else
         {
             for (int i = 0; i < CurrentEmps.Count; i++)
@@ -745,11 +735,11 @@ public class DepControl : MonoBehaviour
                     Text_SRateDetail.text += " +" + (CommandingOffice.CurrentManager.ExtraSuccessRate * 100) + "%";
             }
         }
-        if (ExtraSuccessRate > 0)
-            Text_SRateDetail.text += "\n动员效果:" + (ExtraSuccessRate * 100) + "%";
+        if (GC.SC.ExtraSuccessRate > 0.001f)
+            Text_SRateDetail.text += "\n动员效果:" + (GC.SC.ExtraSuccessRate * 100) + "%";
         if (Efficiency > 0)
             Text_SRateDetail.text += "\n额外效果:" + (Efficiency * 100) + "%";
-        return BaseSuccessRate + ExtraSuccessRate + Efficiency;
+        return BaseSuccessRate + GC.SC.ExtraSuccessRate + Efficiency;
     }
 
     public void ShowSRateDetailPanel()
@@ -757,7 +747,7 @@ public class DepControl : MonoBehaviour
         if (type == EmpType.HR)
             CountSuccessRate(8);
         else
-            CountSuccessRate(1);
+            CountSuccessRate(building.effectValue);
         SRateDetailPanel.transform.position = Input.mousePosition;
         SRateDetailPanel.gameObject.SetActive(true);
         LayoutRebuilder.ForceRebuildLayoutImmediate(SRateDetailPanel.gameObject.GetComponent<RectTransform>());

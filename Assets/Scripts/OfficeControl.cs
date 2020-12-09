@@ -225,17 +225,6 @@ public class OfficeControl : MonoBehaviour
             if (TDep.Count == 0)
                 ActiveSuccess = false;
         }
-        else if (building.Type == BuildingType.财务部)
-        {
-            if (GC.SC.TargetDep != null && building.effect.AffectedBuildings.Contains(GC.SC.TargetDep.building) && GC.SC.SelectedDices.Count == 1)
-            {
-                GC.SC.SelectedDices[0].value -= 1;
-                GC.SC.SelectedDices[0].Text_Value.text = GC.SC.SelectedDices[0].value.ToString();
-                GC.SC.TotalValue -= 1;
-            }
-            else
-                ActiveSuccess = false;
-        }
         if (ActiveSuccess == true)
         {
             Progress = 0;

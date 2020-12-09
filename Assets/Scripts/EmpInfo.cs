@@ -184,9 +184,15 @@ public class EmpInfo : MonoBehaviour
     }
     public void StartMove()
     {
-        GC.CurrentEmpInfo = this;
-        GC.SelectMode = 2;
-        GC.ShowDepSelectPanel(emp);
+        if (GC.SelectMode != 9)
+        {
+            GC.CurrentEmpInfo = this;
+            GC.SelectMode = 2;
+            GC.ShowDepSelectPanel(emp);
+        }
+        //头脑风暴初始
+        else
+            GC.SC.InitEmpInfo(emp);
     }
 
     public void Fire()
@@ -295,6 +301,7 @@ public class EmpInfo : MonoBehaviour
                 GC.SC.ConfirmPanel.SetActive(true);
             }
         }
+
         //显示员工详细信息
         else
         {
@@ -319,30 +326,6 @@ public class EmpInfo : MonoBehaviour
     public void SetSkillName()
     {
         Text_Name.text = emp.Name;
-        //if (emp.Type == EmpType.Tech)
-        //{
-        //    Text_SName1.text = "程序迭代";
-        //    Text_SName2.text = "技术研发";
-        //    Text_SName3.text = "可行性调研";
-        //}
-        //else if (emp.Type == EmpType.Market)
-        //{
-        //    Text_SName1.text = "公关谈判";
-        //    Text_SName2.text = "营销文案";
-        //    Text_SName3.text = "资源拓展";
-        //}
-        //else if (emp.Type == EmpType.Product)
-        //{
-        //    Text_SName1.text = "原型图";
-        //    Text_SName2.text = "产品研究";
-        //    Text_SName3.text = "用户访谈";
-        //}
-        //else if (emp.Type == EmpType.Operate)
-        //{
-        //    Text_SName1.text = "技术维护";
-        //    Text_SName2.text = "增长运营";
-        //    Text_SName3.text = "产品运营";
-        //}
     }
 
     public void AddHistory(string Content)
@@ -410,6 +393,7 @@ public class EmpInfo : MonoBehaviour
             if (SkillsInfo[i].skill.Name == OriginSkill.Name)
             {
                 SkillsInfo[i].skill = NewSkill;
+                SkillsInfo[i].skill.TargetEmp = emp;
                 SkillsInfo[i].Text_Name.text = NewSkill.Name;
                 return;
             }
@@ -478,48 +462,35 @@ public class EmpInfo : MonoBehaviour
 
     public void ClearSkillPreset()
     {
-        //清除技能预设
-        if (emp.CurrentDep != null)
+        for(int i = 0; i < 6; i++)
         {
-            for (int i = 0; i < DetailInfo.SkillsInfo.Count; i++)
+            if (GC.SC.CSkillSetA[i].skill != null && GC.SC.CSkillSetA[i].skill.TargetEmp == emp)
             {
-                for (int j = 0; j < 6; j++)
-                {
-                    if (emp.CurrentDep.DSkillSetA[j] == DetailInfo.SkillsInfo[i].skill)
-                        emp.CurrentDep.DSkillSetA[j] = null;
-
-                    if (emp.CurrentDep.DSkillSetB[j] == DetailInfo.SkillsInfo[i].skill)
-                        emp.CurrentDep.DSkillSetB[j] = null;
-
-                    if (emp.CurrentDep.DSkillSetB[j] == DetailInfo.SkillsInfo[i].skill)
-                        emp.CurrentDep.DSkillSetB[j] = null;
-                }
+                GC.SC.CSkillSetA[i].skill = null;
+                GC.SC.CSkillSetA[i].empInfo = null;
+                GC.SC.CSkillSetA[i].UpdateUI();
+            }
+            if (GC.SC.CSkillSetB[i].skill != null && GC.SC.CSkillSetB[i].skill.TargetEmp == emp)
+            {
+                GC.SC.CSkillSetB[i].skill = null;
+                GC.SC.CSkillSetB[i].empInfo = null;
+                GC.SC.CSkillSetB[i].UpdateUI();
+            }
+            if (GC.SC.CSkillSetC[i].skill != null && GC.SC.CSkillSetC[i].skill.TargetEmp == emp)
+            {
+                GC.SC.CSkillSetC[i].skill = null;
+                GC.SC.CSkillSetC[i].empInfo = null;
+                GC.SC.CSkillSetC[i].UpdateUI();
             }
         }
-        //检测并清除管理技能
-        else if (emp.CurrentOffice != null && (emp.CurrentOffice.building.Type == BuildingType.CEO办公室 || emp.CurrentOffice.building.Type == BuildingType.高管办公室))
+        foreach(EmpInfo i in GC.SC.SelectedEmps)
         {
-            for (int i = 0; i < DetailInfo.SkillsInfo.Count; i++)
+            if(i.emp == emp)
             {
-                if (DetailInfo.SkillsInfo[i].skill.ManageSkill == false)
-                    continue;
-                for (int k = 0; k < emp.CurrentOffice.ControledDeps.Count; k++)
-                {
-                    for (int j = 0; j < 6; j++)
-                    {
-
-                        if (emp.CurrentOffice.ControledDeps[k].DSkillSetA[j] == DetailInfo.SkillsInfo[i].skill)
-                            emp.CurrentOffice.ControledDeps[k].DSkillSetA[j] = null;
-
-                        if (emp.CurrentOffice.ControledDeps[k].DSkillSetB[j] == DetailInfo.SkillsInfo[i].skill)
-                            emp.CurrentOffice.ControledDeps[k].DSkillSetB[j] = null;
-
-                        if (emp.CurrentOffice.ControledDeps[k].DSkillSetB[j] == DetailInfo.SkillsInfo[i].skill)
-                            emp.CurrentOffice.ControledDeps[k].DSkillSetB[j] = null;
-                    }
-                }
+                GC.SC.SelectedEmps.Remove(i);
+                Destroy(i.gameObject);
+                break;
             }
-
         }
     }
 
@@ -570,6 +541,13 @@ public class EmpInfo : MonoBehaviour
         {
             Text_RTarget.text += "  " + emp.RelationTargets[i].Name;
         }
+    }
+
+    //从头脑风暴员工列表中移除
+    public void MobInfoRemove()
+    {
+
+        GameControl.Instance.SC.RemoveEmpInfo(this);
     }
 
     //以下四个函数为战略充能相关

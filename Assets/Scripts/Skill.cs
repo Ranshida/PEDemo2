@@ -613,7 +613,6 @@ public class Skill23 : Skill
     public override void StartEffect()
     {
         base.StartEffect();
-        TargetEmp.InfoA.GC.SC.EventLimit += 2;
     }
 }
 

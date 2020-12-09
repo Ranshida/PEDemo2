@@ -225,10 +225,6 @@ public class Employee
         get { return mentality; }
         set
         {
-            if (mentality - value < 0)
-            {
-                InfoDetail.GC.StrC.SolveStrRequest(1, 1);
-            }
             mentality = value;
             if (mentality > 100)
                 mentality = 100;
@@ -349,16 +345,16 @@ public class Employee
 
         //职业技能
         if (Nst[0] == 0)
-            Skill1 = Random.Range(0, 4);
+            Skill1 = Random.Range(10, 24);
         else if (Nst[0] == 1)
-            Skill1 = Random.Range(0, 3);
+            Skill1 = Random.Range(10, 23);
         else if (Nst[0] == 2)
             Skill1 = Random.Range(5, 10);
 
         if (Nst[1] == 0)
-            Skill2 = Random.Range(0, 4);
+            Skill2 = Random.Range(10, 24);
         else if (Nst[1] == 1)
-            Skill2 = Random.Range(0, 3);
+            Skill2 = Random.Range(10, 23);
         else if (Nst[1] == 2)
             Skill2 = Random.Range(5, 10);
 
@@ -503,7 +499,7 @@ public class Employee
     {
         isCEO = true;
         Skill1 = 5; Skill2 = 5; Skill3 = 5;
-        Observation = 5; Tenacity = 5; Strength = 5; Manage = 5; HR = 5; Finance = 5; Decision = 5;
+        Observation = 5; Tenacity = 5; Strength = 5; Manage = 25; HR = 5; Finance = 5; Decision = 5;
         Forecast = 5; Strategy = 5; Convince = 5; Charm = 5; Gossip = 5; Age = 25;
         stamina = 100;
         mentality = 100;
