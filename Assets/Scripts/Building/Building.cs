@@ -28,7 +28,7 @@ public class Building : MonoBehaviour
     public bool Moving { get; private set; } = false;        //移动中
     public int effectValue = 1, StaminaRequest = 0; //1人力 2八卦 3强壮 4谋略 5行业 6决策 7财务 8管理
     public BuildingType Type;    //现在是创建时赋值，需改为预制体赋值或子类构造
-    private Transform m_Decoration;   //修饰物，建造后删除
+    private GameObject m_Decoration;   //修饰物，建造后删除
     public int Pay;               //维护费用
     public bool BasicBuilding;    //基础建筑物，可以直接建造
 
@@ -36,6 +36,7 @@ public class Building : MonoBehaviour
     public DepControl Department; //BM赋值
     public OfficeControl Office;  //BM赋值
     public BuildingEffect effect;
+    public TextMesh Text_DepName;
     public List<Transform> WorkPos;
     public List<BuildingEffect> EffectBuildings = new List<BuildingEffect>();
 
@@ -43,8 +44,8 @@ public class Building : MonoBehaviour
     public void LoadPrefab(string[,] value)
     {
         WorkPos = Function.ReturnChildList(transform.Find("WorkPosition"));
-
-        m_Decoration = transform.Find("Decoration");
+        m_Decoration = transform.Find("Decoration").gameObject;
+        Text_DepName = transform.Find("Description").GetComponent<TextMesh>();
 
         if (ID < 3)
             return;
