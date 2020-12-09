@@ -7118,7 +7118,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &223842584
 RectTransform:
   m_ObjectHideFlags: 0
@@ -18791,7 +18791,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &641889727
 RectTransform:
   m_ObjectHideFlags: 0
@@ -53133,7 +53133,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1650969408
 RectTransform:
   m_ObjectHideFlags: 0
@@ -58043,7 +58043,6 @@ MonoBehaviour:
   WorkEndEmpCount: 0
   EfficiencyExtraNormal: 0
   EfficiencyExtraScience: 0
-  ResearchSuccessRateExtra: 0
   ExtrafailRate: 0
   HireEfficiencyExtra: 1
   HRBuildingMentalityExtra: 1
@@ -58069,8 +58068,6 @@ MonoBehaviour:
     type: 3}
   DepPrefab: {fileID: 8290254732809842710, guid: c20ba0b26ce89bb49bd197453dcf791e,
     type: 3}
-  LabPrefab: {fileID: 8290254732809842710, guid: 68450e5e3db36074bb4ff5b9ce289798,
-    type: 3}
   HRDepPrefab: {fileID: 8290254732809842710, guid: edce7cfc11b53044b9216f3d65436267,
     type: 3}
   OfficePrefab: {fileID: 5815906006951344470, guid: ff3a64471eade99488c2a6f3fcd321f4,
@@ -58090,7 +58087,7 @@ MonoBehaviour:
   PC2: {fileID: 3297569861405539000}
   PrC: {fileID: 1839596925}
   StrC: {fileID: 643037759}
-  foeControl: {fileID: 0}
+  foeControl: {fileID: 1597523469082120015}
   EC: {fileID: 8462698393543092060}
   CC: {fileID: 716543167}
   HireContent: {fileID: 7006581084604423459}
@@ -67873,8 +67870,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: SetTarget
+      - m_Target: {fileID: 1597523469082120015}
+        m_MethodName: SetSpy
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -69633,6 +69630,17 @@ MonoBehaviour:
       - m_Target: {fileID: 1815467296}
         m_MethodName: ResetSelectMode
         m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1190395351}
+        m_MethodName: SetActive
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -72098,7 +72106,7 @@ MonoBehaviour:
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 15
+          m_IntArgument: 19
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -74219,8 +74227,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: SetTarget
+      - m_Target: {fileID: 1597523469082120015}
+        m_MethodName: SetSpy
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -76017,7 +76025,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 170.90012, y: 60.000015}
+  m_AnchoredPosition: {x: -34, y: -12}
   m_SizeDelta: {x: 264.9037, y: 77.96002}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &500598437336270089
@@ -78534,8 +78542,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: SetTarget
+      - m_Target: {fileID: 1597523469082120015}
+        m_MethodName: SetSpy
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -79017,7 +79025,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u8BF4\u670D"
+  m_Text: "\u95F4\u8C0D"
 --- !u!1 &500598437839365449
 GameObject:
   m_ObjectHideFlags: 0
@@ -80491,6 +80499,7 @@ MonoBehaviour:
   EndButton: {fileID: 1883508474}
   ActionPanel: {fileID: 1778791478}
   CloseButton2: {fileID: 1190395351}
+  SpyPanel: {fileID: 500598437336270103}
   Text_Info: {fileID: 593125905}
   Text_FightTime: {fileID: 1198053384}
   canvasGroup: {fileID: 1778791482}

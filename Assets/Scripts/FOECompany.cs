@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class FOECompany : MonoBehaviour
 {
-    public int NeutralMarket = 60, ControledMarket = 0, TotalActionPoint = 18, CurrentActionPoint = 0, StoredActionPoint = 0;
+    public int NeutralMarket = 60, ControledMarket = 0, TotalActionPoint = 18, CurrentActionPoint = 0, StoredActionPoint = 0, ExtraActionPoint;
     public int SelfMarketAttackLimit = 0, FoeMarketAttackLimit = 0, NeutralSkillNum = -1, FOESkillNum = -1;//两种技能的释放数量;
 
     public Text Text_Status;
@@ -24,7 +24,8 @@ public class FOECompany : MonoBehaviour
     {
         FOECompany Target = null;
         ResetStatus();
-        CurrentActionPoint = TotalActionPoint;
+        CurrentActionPoint = TotalActionPoint - ExtraActionPoint;
+        ExtraActionPoint = 0;
         //研发科技
         while (StoredActionPoint >= 10)
         {

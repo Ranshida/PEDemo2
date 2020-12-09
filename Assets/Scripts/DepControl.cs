@@ -109,7 +109,6 @@ public class DepControl : MonoBehaviour
 
     private bool MajorSuccess = false;
 
-    [HideInInspector] public Research CurrentResearch;
     public Transform EmpContent, EmpPanel, LabPanel, SRateDetailPanel;
     public GameObject OfficeWarning;
     public Building building = null;
@@ -121,7 +120,6 @@ public class DepControl : MonoBehaviour
     public Button SurveyButton, ActiveButton, ModeChangeButton;
     public EmpType type;
 
-    public Research[] Researches = new Research[3];
     public Skill[] DSkillSetA = new Skill[6], DSkillSetB = new Skill[6], DSkillSetC = new Skill[6];
     public List<ProduceBuff> produceBuffs = new List<ProduceBuff>();
     public List<Employee> CurrentEmps = new List<Employee>();
@@ -168,7 +166,12 @@ public class DepControl : MonoBehaviour
             //基础经验获取
             EmpsGetExp(building.effectValue, 5);
             //进度增加，部分建筑资源不足时暂停
-            int Pp = CurrentEmps.Count;
+            int Pp = 0;
+            foreach(Employee e in CurrentEmps)
+            {
+                if (e.InfoDetail.Entity.OutCompany == false)
+                    Pp++;
+            }
             if (building.Type == BuildingType.技术部门)
             {
                 if (GC.FinishedTask[6] > 0)
@@ -279,70 +282,21 @@ public class DepControl : MonoBehaviour
             }
 
             UpdateUI();
-
-            //下面是要删的
-            if (CurrentResearch != null)
-            {
-                CurrentResearch.CurrentProgress += Pp;
-                CurrentResearch.UpdateUI();
-                if (CurrentResearch.CurrentProgress >= CurrentResearch.Progress)
-                {
-                    GC.CreateMessage(Text_DepName.text + " 完成了 " + CurrentResearch.Text_Name.text + " 的研究");
-                    EmpsGetExp(2, CurrentResearch.Progress / 2);
-                    CurrentResearch.ResearchFinish();
-                    CurrentResearch.ExtraButton.gameObject.SetActive(false);
-                    CurrentResearch = null;
-                }
-                UpdateUI();
-            }
-            else if (SurveyStart == true)
-            {
-                SpProgress += Pp;
-                if (SpProgress >= StandardProducePoint * 10)
-                {
-                    GC.CreateMessage(Text_DepName.text + " 完成了调研");
-                    RandomResearch();
-                    SurveyButton.interactable = true;
-                    SurveyStart = false;
-                    EmpsGetExp(2);
-                }
-                UpdateUI();
-            }
         }
     }
 
     public void UpdateUI()
     {
-        if (type == EmpType.Science)
-        {
-            int Pp = CountProducePower(6);
-            if (CurrentResearch != null)
-            {
-                Text_Task.text = "当前任务:" + CurrentResearch.Text_Name.text;
-                Text_Progress.text = "研究速度:" + Pp + "/时";
-                Text_Quality.text = "研究进度: " + CurrentResearch.CurrentProgress + "/" + CurrentResearch.Progress;
-                Text_Time.text = "剩余时间:" + calcTime(Pp, CurrentResearch.Progress - CurrentResearch.CurrentProgress) + "时";
-            }
-            else if (SurveyStart == true)
-            {
-                Text_Task.text = "当前任务: 调研";
-                Text_Progress.text = "研究速度:" + Pp + "/时";
-                Text_Quality.text = "研究进度: " + SpProgress + "/" + (StandardProducePoint * 10);
-                Text_Time.text = "剩余时间:" + calcTime(Pp, StandardProducePoint * 10 - SpProgress) + "时";
-            }
-            else
-            {
-                Text_Task.text = "当前任务: 无";
-                Text_Progress.text = "研究速度:" + Pp + "/时";
-                Text_Quality.text = "研究进度:----";
-                Text_Time.text = "剩余时间:----";
-            }
-        }
-        else if (canWork == true)
+        if (canWork == true)
         {
             //旧的生产力结算
             //int Pp = CountProducePower((int)type + 1);
-            int Pp = CurrentEmps.Count;
+            int Pp = 0;
+            foreach (Employee e in CurrentEmps)
+            {
+                if (e.InfoDetail.Entity.OutCompany == false)
+                    Pp++;
+            }
             if (building.Type == BuildingType.技术部门 || building.Type == BuildingType.市场部门 || building.Type == BuildingType.产品部门)
                 Text_Task.text = "当前任务:基础资源生产";
             else if (ActiveMode == 1)
@@ -354,7 +308,7 @@ public class DepControl : MonoBehaviour
             Text_Quality.text = "成功率:" + ((0.5f + CountSuccessRate(building.effectValue)) * 100) + "%";
             Text_Time.text = "剩余时间:" + calcTime(Pp, ProducePointLimit - SpProgress) + "时";
         }
-        else 
+        else
         {
             Text_Task.text = "当前任务: 无";
             Text_Progress.text = "生产力:----";
@@ -369,77 +323,6 @@ public class DepControl : MonoBehaviour
         GC.SelectMode = 3;
         GC.ShowDepSelectPanel(this);
         GC.CurrentDep = this;
-    }
-
-    public int CountProducePower(int num)
-    {
-        int power = 0;
-        //1-3对应3个生产技能
-        if (num == 1)
-        {
-            for (int i = 0; i < CurrentEmps.Count; i++)
-            {
-                if (CurrentEmps[i].canWork == true)
-                    power += CurrentEmps[i].Skill1 + CurrentEmps[i].SkillExtra1;
-            }
-        }
-        else if (num == 2)
-        {
-            for (int i = 0; i < CurrentEmps.Count; i++)
-            {
-                if (CurrentEmps[i].canWork == true)
-                    power += CurrentEmps[i].Skill2 + CurrentEmps[i].SkillExtra2;
-            }
-        }
-        else if (num == 3)
-        {
-            for (int i = 0; i < CurrentEmps.Count; i++)
-            {
-                if (CurrentEmps[i].canWork == true)
-                    power += CurrentEmps[i].Skill3 + CurrentEmps[i].SkillExtra3;
-            }
-        }
-        //取最高
-        else if (num == 4)
-        {
-            for (int i = 0; i < CurrentEmps.Count; i++)
-            {
-                if (CurrentEmps[i].canWork == true)
-                {
-                    int temp = CurrentEmps[i].Skill1;
-                    if (CurrentEmps[i].Skill2 > temp)
-                        temp = CurrentEmps[i].Skill2;
-                    if (CurrentEmps[i].Skill3 > temp)
-                        temp = CurrentEmps[i].Skill3;
-                    power += temp;
-                }
-            }
-        }
-        else if (num == 5)
-        {
-            //人力资源部B计算
-            for (int i = 0; i < CurrentEmps.Count; i++)
-            {
-                if (CurrentEmps[i].canWork == true)
-                    power += CurrentEmps[i].HR;
-            }
-        }
-        //技术和产品里取最高（科研用）
-        else if (num == 6)
-        {
-            for (int i = 0; i < CurrentEmps.Count; i++)
-            {
-                if (CurrentEmps[i].canWork == true)
-                {
-                    int temp = CurrentEmps[i].Skill1;
-                    if (CurrentEmps[i].Skill3 > temp)
-                        temp = CurrentEmps[i].Skill3;
-                    power += temp;
-                }
-            }
-        }
-        float FinalEfficiency = 1;
-        return (int)(power * FinalEfficiency);
     }
 
     int calcTime(int pp, int total)
@@ -470,41 +353,6 @@ public class DepControl : MonoBehaviour
             return true;
         else
             return false;
-    }
-
-    public void StartSurvey()
-    {
-        //开始调研
-        SurveyStart = true;
-        SpProgress = 0;
-        CurrentResearch = null;
-        for (int i = 0; i < 3; i++)
-        {
-            Researches[i].ResetUI();
-            Researches[i].ExtraButton.gameObject.SetActive(false);
-            Researches[i].SelectButton.gameObject.SetActive(false);
-        }
-        UpdateUI();
-    }
-
-    public void RandomResearch()
-    {
-        for (int i = 0; i < 3; i++)
-        {
-            Researches[i].SetResearch(Random.Range(1, 15));
-            Researches[i].GC = GC;
-        }
-    }
-
-    public void ResearchExtra()
-    {
-        if (CurrentResearch != null)
-        {
-            CurrentResearch.Progress += CurrentResearch.ExtraProgress;
-            CurrentResearch.SuccessRate += CurrentResearch.ExtraRate;
-            CurrentResearch.UpdateUI();
-            CurrentResearch.ExtraButton.gameObject.SetActive(false);
-        }
     }
 
     public void FailCheck(bool ForceFail = false)
@@ -602,7 +450,6 @@ public class DepControl : MonoBehaviour
                 Text_SRateDetail.text += "\n";
                 BaseSuccessRate += EValue;
                 BaseSuccessRate += CurrentEmps[i].ExtraSuccessRate;
-                print(value);
             }
             if (CommandingOffice != null && CommandingOffice.CurrentManager != null)
             {

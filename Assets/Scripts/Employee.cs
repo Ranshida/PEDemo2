@@ -236,7 +236,8 @@ public class Employee
     }
     #endregion
 
-    public int SkillExtra1, SkillExtra2, SkillExtra3, SalaryExtra = 0, Age, EventTime, ObeyTime, NoPromotionTime = 0, NoMarriageTime = 0, VacationTime = 0;
+    public int SkillExtra1, SkillExtra2, SkillExtra3, SalaryExtra = 0, Age, EventTime, ObeyTime, NoPromotionTime = 0, NoMarriageTime = 0,
+        VacationTime = 0, SpyTime = 0;
     public int Confidence;//信心，头脑风暴中的护盾
     public int NewRelationTargetTime = 1;
     public float ExtraSuccessRate = 0, SalaryMultiple = 1.0f;
@@ -345,16 +346,16 @@ public class Employee
 
         //职业技能
         if (Nst[0] == 0)
-            Skill1 = Random.Range(10, 24);
+            Skill1 = Random.Range(0, 4);
         else if (Nst[0] == 1)
-            Skill1 = Random.Range(10, 23);
+            Skill1 = Random.Range(0, 3);
         else if (Nst[0] == 2)
             Skill1 = Random.Range(5, 10);
 
         if (Nst[1] == 0)
-            Skill2 = Random.Range(10, 24);
+            Skill2 = Random.Range(0, 4);
         else if (Nst[1] == 1)
-            Skill2 = Random.Range(10, 23);
+            Skill2 = Random.Range(0, 3);
         else if (Nst[1] == 2)
             Skill2 = Random.Range(5, 10);
 
@@ -499,7 +500,7 @@ public class Employee
     {
         isCEO = true;
         Skill1 = 5; Skill2 = 5; Skill3 = 5;
-        Observation = 5; Tenacity = 5; Strength = 5; Manage = 25; HR = 5; Finance = 5; Decision = 5;
+        Observation = 5; Tenacity = 5; Strength = 5; Manage = 5; HR = 5; Finance = 5; Decision = 5;
         Forecast = 5; Strategy = 5; Convince = 5; Charm = 5; Gossip = 5; Age = 25;
         stamina = 100;
         mentality = 100;
@@ -1368,6 +1369,12 @@ public class Employee
             if (VacationTime == 0)
                 EndVacation();
         }
+        if (SpyTime > 0)
+        {
+            SpyTime -= 1;
+            if (SpyTime == 0)
+                InfoDetail.Entity.SetFree();
+        }
 
         if (CurrentOffice == null)
             NoPromotionTime += 1;
@@ -1401,8 +1408,7 @@ public class Employee
     void EndVacation()
     {
         VacationTime = 0;
-        InfoA.MoveButton.interactable = true;
-        InfoB.MoveButton.interactable = true;
+        InfoDetail.Entity.SetFree();
         if (isCEO == true)
             InfoDetail.GC.CC.SkillButton.interactable = true;
     }

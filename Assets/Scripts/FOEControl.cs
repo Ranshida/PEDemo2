@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class FOEControl : MonoBehaviour
 {
     public GameControl GC;
-    public GameObject CloseButton, EndButton, ActionPanel, CloseButton2;
+    public GameObject CloseButton, EndButton, ActionPanel, CloseButton2, SpyPanel;
     public Text Text_Info, Text_FightTime;
     public CanvasGroup canvasGroup;
 
@@ -200,5 +200,22 @@ public class FOEControl : MonoBehaviour
         }
         else
             GC.CreateMessage("资源不足");
+    }
+
+    public void ShowSpyPanel()
+    {
+        SpyPanel.SetActive(true);
+        ActionPanel.SetActive(true);
+        if (FightTime > 0)
+            CloseButton2.SetActive(true);
+    }
+    public void SetSpy(int num)
+    {
+        if (GC.CurrentEmpInfo == null)
+            return;
+        Companies[num].ExtraActionPoint += 8;
+        GC.CurrentEmpInfo.emp.SpyTime += 32;
+        GC.CurrentEmpInfo.emp.InfoDetail.Entity.SetBusy();
+        GC.ResetSelectMode();
     }
 }

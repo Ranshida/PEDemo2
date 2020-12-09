@@ -125,6 +125,14 @@ public class CEOControl : MonoBehaviour
             Text_Requirement.text = "体力30, 金钱300";
             Text_OptionContent.text = "执行，成功率:" + CalcPosb() + "%";
         }
+        else if (GC.CEOSkillNum == 19)
+        {
+            Text_Name.text = "说服" + Target.Name + "成为间谍";
+            Text_SuccessContent.text = "成功后对方会成为商业间谍潜入他人公司";
+            Text_FailContent.text = "这技能失败居然没有Debuff";
+            Text_Requirement.text = "体力30";
+            Text_OptionContent.text = "执行，成功率:" + CalcPosb() + "%";
+        }
         Text_Name2.text = Text_Name.text;
         SelectPanel.SetActive(true);
         ResultPanel.SetActive(false);
@@ -279,6 +287,16 @@ public class CEOControl : MonoBehaviour
             else
                 WarningPanel.SetActive(true);
         }
+        else if (GC.CEOSkillNum == 19)
+        {
+            if (GC.Stamina >= 30)
+            {
+                GC.Stamina -= 30;
+                ActiveSkill();
+            }
+            else
+                WarningPanel.SetActive(true);
+        }
     }
 
     void ActiveSkill()
@@ -369,6 +387,11 @@ public class CEOControl : MonoBehaviour
             else if (GC.CEOSkillNum == 18)
             {
                 Target.ChangeCharacter(4, 10);
+            }
+            else if (GC.CEOSkillNum == 19)
+            {
+                GC.CurrentEmpInfo = Target.InfoDetail;
+                GC.foeControl.ShowSpyPanel();
             }
         }
         else
@@ -671,6 +694,18 @@ public class CEOControl : MonoBehaviour
         //提升信念
         else if (GC.CEOSkillNum == 18)
         {
+            value += (int)(CEO.Convince * 0.1f);
+        }
+        else if (GC.CEOSkillNum == 19)
+        {
+            foreach(PerkInfo info in Target.InfoDetail.PerksInfo)
+            {
+                if(info.CurrentPerk.Num == 41)
+                {
+                    value += 2;
+                    break;
+                }
+            }
             value += (int)(CEO.Convince * 0.1f);
         }
         return value;

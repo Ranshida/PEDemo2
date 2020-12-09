@@ -28,19 +28,6 @@ public class HireControl : MonoBehaviour
             }
             HireInfos[i].gameObject.SetActive(false);
         }
-        AddHireTypes(new HireType(1));
-        RefreshHire();
-        for (int i = 0; i < 5; i++)
-        {
-            if (i < 5)
-            {
-                GC.CurrentEmpInfo = HireInfos[i];
-                GC.Salary += GC.CurrentEmpInfo.CalcSalary();
-                SetInfoPanel();
-                GC.CurrentEmpInfo.emp.InfoA.transform.parent = GC.StandbyContent;
-            }
-            HireInfos[i].gameObject.SetActive(false);
-        }
         GC.CurrentEmpInfo = null;
     }
 

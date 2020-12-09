@@ -728,13 +728,11 @@ public class Strategy5_1 : Strategy
     public override void Effect(GameControl GC)
     {
         base.Effect(GC);
-        GC.ResearchSuccessRateExtra += 0.1f;
     }
 
     public override void EffectRemove(GameControl GC)
     {
         base.EffectRemove(GC);
-        GC.ResearchSuccessRateExtra -= 0.1f;
     }
 }
 
@@ -790,13 +788,11 @@ public class Strategy5_3 : Strategy
     public override void Effect(GameControl GC)
     {
         base.Effect(GC);
-        GC.ResearchSuccessRateExtra += 0.2f;
     }
 
     public override void EffectRemove(GameControl GC)
     {
         base.EffectRemove(GC);
-        GC.ResearchSuccessRateExtra -= 0.2f;
     }
 }
 

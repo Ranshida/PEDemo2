@@ -8,7 +8,7 @@ public class GameControl : MonoBehaviour
 {
     public static GameControl Instance;
     [HideInInspector] public int Salary, Income, BuildingPay, MobilizeExtraMent = 0, ManageExtra, TimeMultiply = 1, WorkEndEmpCount = 0;
-    [HideInInspector] public float EfficiencyExtraNormal = 0, EfficiencyExtraScience = 0, ResearchSuccessRateExtra = 0, ExtrafailRate = 0, HireEfficiencyExtra = 1.0f,
+    [HideInInspector] public float EfficiencyExtraNormal = 0, EfficiencyExtraScience = 0, ExtrafailRate = 0, HireEfficiencyExtra = 1.0f,
         HRBuildingMentalityExtra = 1.0f, BuildingSkillSuccessExtra = 0, BuildingMaintenanceCostRate = 1.0f;
     public int SelectMode = 1; //1员工招聘时部门选择 2员工移动时部门选择 3部门的高管办公室选择 4发动动员技能时员工选择 
     //5发动建筑技能时员工选择 6CEO技能员工/部门选择 7选择两个员工发动动员技能 8普通办公室的上级(高管办公室)选择  9头脑风暴的员工选择
@@ -63,7 +63,7 @@ public class GameControl : MonoBehaviour
     public EmpEntity EmpEntityPrefab;
     public PerkInfo PerkInfoPrefab;
     public SkillInfo SkillInfoPrefab;
-    public DepControl DepPrefab, LabPrefab, HRDepPrefab;
+    public DepControl DepPrefab, HRDepPrefab;
     public OfficeControl OfficePrefab;
     public DepSelect DepSelectButtonPrefab, OfficeSelectButtonPrefab;
     public RelationInfo RelationInfoPrefab;
@@ -850,31 +850,28 @@ public class GameControl : MonoBehaviour
                 TotalEmpContent.parent.parent.gameObject.SetActive(true);
             }
         }
-        else if (num == 5)
-        {
-            SelectMode = 6;
-            CEOSkillNum = 5;
-            CEOSkillPanel.SetActive(false);
-            TotalEmpContent.parent.parent.gameObject.SetActive(true);
-        }
         else
         {
             SelectMode = 6;
             CEOSkillNum = num;
             CEOSkillPanel.SetActive(false);
             TotalEmpContent.parent.parent.gameObject.SetActive(true);
+            if (num == 5 || num == 19)
+            {
+                foreach (Employee e in CurrentEmployees)
+                {
+                    if (e.InfoDetail.Entity.OutCompany == true)
+                        e.InfoB.gameObject.SetActive(false);
+                }
+            }
         }
     }
 
     //TrainEmp函数目前实际为放假功能
     public void TrainEmp(int type)
     {
-        CurrentEmpInfo = CurrentEmpInfo.emp.InfoA;//这里可能写重了，但是为了确保为InfoA所以再进行一次赋值
         CurrentEmpInfo.emp.VacationTime = type;
-        CurrentEmpInfo.transform.parent = StandbyContent;
-        ResetOldAssignment();
-        CurrentEmpInfo.MoveButton.interactable = false;
-        CurrentEmpInfo.emp.InfoB.MoveButton.interactable = false;
+        CurrentEmpInfo.emp.InfoDetail.Entity.SetBusy();
         if (CurrentEmpInfo.emp.isCEO == true)
             CC.SkillButton.interactable = false;
     }
