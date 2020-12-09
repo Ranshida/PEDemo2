@@ -357,13 +357,16 @@ MonoBehaviour:
   Function_C: 
   Require_C: 
   Description_C: 
-  EffectRange: 
+  EffectRange_str: 
   Jobs: 0
   Length: 3
   Width: 2
+  EffectRange: 0
   effectValue: 1
   StaminaRequest: 0
   Type: 9
+  Pay: 0
+  BasicBuilding: 0
   ContainsGrids: []
   Department: {fileID: 0}
   Office: {fileID: 0}

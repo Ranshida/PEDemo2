@@ -84,6 +84,18 @@ public class EmpEntity : MonoBehaviour
     private bool m_ArriveWP;    //到达目标路点
     private float m_WPTimer;    //到达后计时
 
+    public string StandGridName()
+    {
+        if (StandGrid != null) 
+        {
+            if (StandGrid.BelongBuilding != null) 
+            {
+                return StandGrid.BelongBuilding.Type.ToString();
+            }
+        }
+        return "走廊";
+    }
+
     //public List<Event> EventList = new List<Event>();        //存储的待执行事件列表
     //public bool HasEvent { get { return EventList.Count > 0; } }        //事件列表不为空
     //public bool Available { get { return CurrentEvent == null && !IsSpying; } }      //员工为可用状态
