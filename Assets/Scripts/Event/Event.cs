@@ -12531,7 +12531,7 @@ public class Event3_15 : Event
         ResultText += Target.Name + "认为"+Self.Name+"只管赚钱就好，获得事件状态 受到批评*1，己方信念下降5，消除事件状态：愿望*1 成长*2 ";
     }
 }
-public class Event3_16 : Event
+public class Event3_16 : JudgeEvent
 {
     public Event3_16() : base()
     {
@@ -12606,8 +12606,27 @@ public class Event3_16 : Event
             }
         }
         //弹出窗口询问玩家
+        foreach(PerkInfo p in Self.InfoDetail.PerksInfo)
+        {
+            if(p.CurrentPerk.Num == 72)
+            {
+                //这种情况下不能接受
+            }
+        }
         ResultText += "上司"+Target.Name+"表示赞许和支持，并上报CEO，获得事件状态 受到赞扬*1，消除事件状态：愿望*1 成长*1 ";
         GC.CreateMessage(ResultText);
+        EmpManager.Instance.JudgeEvent(this);
+    }
+    public override void OnAccept()
+    {
+        Self.InfoDetail.AddPerk(new Perk72(Self), true);
+        Self.InfoDetail.AddHistory("CEO答应了 " + Self.Name + " 的转岗请求，员工获得状态“期待转岗”，限时2个月");
+    }
+    public override void OnRefuse()
+    {
+        Self.ChangeCharacter(4, -10);
+        GC.CreateMessage(Self.Name + "请求转岗被CEO拒绝，信念-8");
+        Self.InfoDetail.AddHistory(Self.Name + "请求转岗被CEO拒绝，信念-8");
     }
     public override void Failure(float Posb)
     {
@@ -12699,7 +12718,6 @@ public class Event3_17 : Event
                 Self.InfoDetail.PerksInfo[i].CurrentPerk.RemoveEffect();
             }
         }
-        //弹出窗口询问玩家
         ResultText += "同事"+Target.Name+"赞许"+Self.Name+"的勇气，获得事件状态 受到启发*1，愿望*1，消除事件状态：愿望*1 成长*1 ";
     }
     public override void Failure(float Posb)
@@ -12721,7 +12739,7 @@ public class Event3_17 : Event
         ResultText += "同事"+Target.Name+"取笑"+Self.Name+"的鲁莽，获得事件状态 遭到敌意*1，己方信念下降8，消除事件状态：愿望*1 成长*1 ";
     }
 }
-public class Event3_18 : Event
+public class Event3_18 : JudgeEvent
 {
     public Event3_18() : base()
     {
@@ -12794,8 +12812,27 @@ public class Event3_18 : Event
             }
         }
         //弹出窗口询问玩家
+        foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
+        {
+            if (p.CurrentPerk.Num == 72)
+            {
+                //这种情况下不能接受
+            }
+        }
         ResultText += "上司肯定其成长，并上报CEO，获得事件状态 受到信任*1，消除事件状态：愿望*1 成长*4 ";
         GC.CreateMessage(ResultText);
+        EmpManager.Instance.JudgeEvent(this);
+    }
+    public override void OnAccept()
+    {
+        Self.InfoDetail.AddPerk(new Perk73(Self), true);
+        Self.InfoDetail.AddHistory("CEO答应了 "+Self.Name + " 的升职请求，员工获得状态“期待升职”，限时2个月");
+    }
+    public override void OnRefuse()
+    {
+        Self.ChangeCharacter(4, -8);
+        GC.CreateMessage(Self.Name + "请求升职被CEO拒绝，信念-8");
+        Self.InfoDetail.AddHistory(Self.Name + "请求升职被CEO拒绝，信念-8");
     }
     public override void Failure(float Posb)
     {
@@ -12820,7 +12857,7 @@ public class Event3_18 : Event
         GC.CreateMessage(ResultText);
     }
 }
-public class Event3_19 : Event
+public class Event3_19 : JudgeEvent
 {
     public Event3_19() : base()
     {
@@ -12893,6 +12930,19 @@ public class Event3_19 : Event
         //弹出窗口询问玩家
         ResultText += "上司表示早有此意，并上报CEO，获得事件状态 受到信任*1，消除事件状态： 愿望*1 成长*2";
         GC.CreateMessage(ResultText);
+        EmpManager.Instance.JudgeEvent(this);
+    }
+    public override void OnAccept()
+    {
+        Self.SalaryMultiple += 0.2f;//工资上涨1.2倍
+        GC.CreateMessage(Self.Name + "涨工资成功，工资上涨20%");
+        Self.InfoDetail.AddHistory(Self.Name + "涨工资成功，工资上涨20%");
+    }
+    public override void OnRefuse()
+    {
+        Self.ChangeCharacter(4, -8);
+        GC.CreateMessage(Self.Name+"涨工资被拒，信念-8");
+        Self.InfoDetail.AddHistory(Self.Name + "涨工资被拒，信念-8");
     }
     public override void Failure(float Posb)
     {
@@ -14447,7 +14497,7 @@ public class Event3_41 : Event
         ResultText += "觉得挺别扭的，双方好感度-5，获得情绪状态：反感×1，消除事件状态：无聊×1";
     }
 }
-public class Event3_42 : Event
+public class Event3_42 : JudgeEvent
 {
     public Event3_42() : base()
     {
@@ -14504,6 +14554,22 @@ public class Event3_42 : Event
         Self.AddEmotion(EColor.DYellow);
         ResultText += "上司准许"+Self.Name+"请假，并上报CEO，获得情绪状态：愉悦×1，消除事件状态：无聊×1";
         //此时应弹出对话框询问玩家
+        EmpManager.Instance.JudgeEvent(this);
+    }
+    public override void OnAccept()
+    {
+        //放假8工时
+        GC.CurrentEmpInfo = Self.InfoDetail;
+        GC.TrainEmp(8);
+        GC.CurrentEmpInfo = null;
+        GC.CreateMessage(Self.Name + "请假成功，放假8个工时");
+        Self.InfoDetail.AddHistory(Self.Name + "请假成功，放假8个工时");
+    }
+    public override void OnRefuse()
+    {
+        Self.AddEmotion(EColor.DBlue);
+        GC.CreateMessage(Self.Name + "请假被CEO拒绝，获得悲伤情绪×1");
+        Self.InfoDetail.AddHistory(Self.Name + "请假被CEO拒绝，获得悲伤情绪×1");
     }
     public override void Failure(float Posb)
     {
