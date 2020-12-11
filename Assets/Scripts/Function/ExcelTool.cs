@@ -20,7 +20,7 @@ public class ExcelTool : MonoBehaviour
     /// <returns></returns>
     public static DataRowCollection ReadExcel(string filePath, ref int columnNum, ref int rowNum, int table = 0)
     {
-        FileStream stream = File.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
+        FileStream stream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
         IExcelDataReader excelReader = ExcelReaderFactory.CreateOpenXmlReader(stream);
 
         DataSet result = excelReader.AsDataSet();
