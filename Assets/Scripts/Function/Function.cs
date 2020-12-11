@@ -176,6 +176,15 @@ public static class Function
         return transB.position - new Vector3(transA.position.x, transB.position.y, transA.position.z);
     }
 
+    public static List<T> CopyList<T>(List<T> list)
+    {
+        List<T> newList = new List<T>();
+        foreach (T item in list)
+        {
+            newList.Add(item);
+        }
+        return newList;
+    } 
 
 }
 

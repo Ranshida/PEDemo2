@@ -25,11 +25,6 @@ public class EmpManager : MonoBehaviour
         empMaterials = ResourcesLoader.LoadAll<Material>("Image/Employee/Materials");
     }
 
-    private void Start()
-    {
-    
-    }
-
     private void Update()
     {
         pointEmp = null;
@@ -43,7 +38,7 @@ public class EmpManager : MonoBehaviour
             pointEmp.ShowDetailPanel();
     }
 
-    public void JudgeEvent(Event currentEvent)
+    public void JudgeEvent(Event currentEvent, bool canAccept)
     {
         //这个方法应当会导致游戏暂停
         SystemPause = true;
@@ -57,12 +52,25 @@ public class EmpManager : MonoBehaviour
             EventPanel.gameObject.SetActive(false);
             (currentEvent as JudgeEvent).OnAccept();
         });
-        childPanel.Find("Btn_Accept").GetComponent<Button>().onClick.AddListener(() =>
+
+        Transform acceptBtn = childPanel.Find("Btn_Accept");
+        Transform cantAccept = childPanel.Find("Txt_CantAccept");
+        if (canAccept)     //可以接受
         {
-            SystemPause = false;
-            EventPanel.gameObject.SetActive(false);
-            (currentEvent as JudgeEvent).OnRefuse();
-        });
+            acceptBtn.gameObject.SetActive(true);
+            cantAccept.gameObject.SetActive(false);
+            acceptBtn.GetComponent<Button>().onClick.AddListener(() =>
+            {
+                SystemPause = false;
+                EventPanel.gameObject.SetActive(false);
+                (currentEvent as JudgeEvent).OnRefuse();
+            });
+        }
+        else
+        {
+            acceptBtn.gameObject.SetActive(false);
+            cantAccept.gameObject.SetActive(true);
+        }
     }
 
     public EmpEntity CreateEmp(Vector3 position)
@@ -143,7 +151,7 @@ public class EmpManager : MonoBehaviour
         }
         if (index == 2)
         {
-            posbTargets = self.RelationTargets;
+            posbTargets = Function.CopyList(self.RelationTargets);
         }
 
         //乱序排列可用目标，随机找到一个可用的
@@ -211,12 +219,12 @@ public class EmpManager : MonoBehaviour
         List<Event> weight_2 = new List<Event>();
         List<Event> weight_1 = new List<Event>();
 
-        if (index == 0) 
-            PosbEvents = EventData.InitialList;
+        if (index == 0)
+            PosbEvents = Function.CopyList(EventData.InitialList);
         else if (index == 1)
-            PosbEvents = EventData.CompanyList;
+            PosbEvents = Function.CopyList(EventData.CompanyList);
         else if (index == 2)
-            PosbEvents = EventData.RelationList;
+            PosbEvents = Function.CopyList(EventData.RelationList);
 
         //没有目标
         if (target == null)

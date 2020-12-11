@@ -729,13 +729,13 @@ public abstract class JudgeEvent : Event
     public override void Success(float Posb)
     {
         //子类如果重写，这里要保留（会弹出面板）
-        EmpManager.Instance.JudgeEvent(this);
+        EmpManager.Instance.JudgeEvent(this, true);
     }
 
     public override void MajorSuccess(float Posb)
     {
         //子类如果重写，这里要保留（会弹出面板）
-        EmpManager.Instance.JudgeEvent(this);
+        EmpManager.Instance.JudgeEvent(this, true);
     }
 
 }
@@ -12606,16 +12606,18 @@ public class Event3_16 : JudgeEvent
             }
         }
         //弹出窗口询问玩家
+        bool canAccept = true;
         foreach(PerkInfo p in Self.InfoDetail.PerksInfo)
         {
             if(p.CurrentPerk.Num == 72)
             {
+                canAccept = false;
                 //这种情况下不能接受
             }
         }
         ResultText += "上司"+Target.Name+"表示赞许和支持，并上报CEO，获得事件状态 受到赞扬*1，消除事件状态：愿望*1 成长*1 ";
         GC.CreateMessage(ResultText);
-        EmpManager.Instance.JudgeEvent(this);
+        EmpManager.Instance.JudgeEvent(this, canAccept);
     }
     public override void OnAccept()
     {
@@ -12812,16 +12814,18 @@ public class Event3_18 : JudgeEvent
             }
         }
         //弹出窗口询问玩家
+        bool canAccept = true;
         foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
         {
             if (p.CurrentPerk.Num == 72)
             {
+                canAccept = false;
                 //这种情况下不能接受
             }
         }
         ResultText += "上司肯定其成长，并上报CEO，获得事件状态 受到信任*1，消除事件状态：愿望*1 成长*4 ";
         GC.CreateMessage(ResultText);
-        EmpManager.Instance.JudgeEvent(this);
+        EmpManager.Instance.JudgeEvent(this, canAccept);
     }
     public override void OnAccept()
     {
@@ -12930,7 +12934,7 @@ public class Event3_19 : JudgeEvent
         //弹出窗口询问玩家
         ResultText += "上司表示早有此意，并上报CEO，获得事件状态 受到信任*1，消除事件状态： 愿望*1 成长*2";
         GC.CreateMessage(ResultText);
-        EmpManager.Instance.JudgeEvent(this);
+        EmpManager.Instance.JudgeEvent(this, true);
     }
     public override void OnAccept()
     {
@@ -14170,7 +14174,7 @@ public class Event3_38 : Event
     public Event3_38() : base()
     {
         EventName = "认识新人";
-        HaveTarget = false;
+        HaveTarget = true;
         Weight = 4;
         RelationRequire = 0;
         ResultText = Self.Name+"因无聊闲逛，在"+SelfEntity.StandGridName()+"认识"+Target.Name+"，";
@@ -14202,8 +14206,19 @@ public class Event3_38 : Event
     }
     public override bool SpecialCheck()
     {
-        //这个事件需要在开始执行以后重新随机一个不认识的人作为Target
-        if (Self.FindRelation(Target).EventFlag[0] != 1) {
+        //重新随机一个不认识的人作为Target
+        List<Relation> allRelation = Function.CopyList(Self.Relations);
+        allRelation = Function.RandomSortList(allRelation);
+        foreach (Relation relation in allRelation)
+        {
+            if (Self.FindRelation(relation.Self).EventFlag[0] == 0)
+            {
+                Target = relation.Self;
+                break;
+            }
+        }
+        if (Target != null)
+        {
             foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
             {
                 if (p.CurrentPerk.Num == 64 & p.CurrentPerk.Level >= 1)
@@ -14212,6 +14227,7 @@ public class Event3_38 : Event
                 }
             }
         }
+       
         return false;
     }
     public override int ExtraValue()
@@ -14554,7 +14570,7 @@ public class Event3_42 : JudgeEvent
         Self.AddEmotion(EColor.DYellow);
         ResultText += "上司准许"+Self.Name+"请假，并上报CEO，获得情绪状态：愉悦×1，消除事件状态：无聊×1";
         //此时应弹出对话框询问玩家
-        EmpManager.Instance.JudgeEvent(this);
+        EmpManager.Instance.JudgeEvent(this, true);
     }
     public override void OnAccept()
     {
