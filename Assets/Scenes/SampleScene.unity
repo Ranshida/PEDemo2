@@ -58038,16 +58038,18 @@ MonoBehaviour:
   Income: 0
   BuildingPay: 0
   MobilizeExtraMent: 0
-  ManageExtra: 0
+  ExtraDice: 0
   TimeMultiply: 1
   WorkEndEmpCount: 0
   EfficiencyExtraNormal: 0
   EfficiencyExtraScience: 0
   ExtrafailRate: 0
-  HireEfficiencyExtra: 1
+  SalaryMultiple: 1
   HRBuildingMentalityExtra: 1
   BuildingSkillSuccessExtra: 0
   BuildingMaintenanceCostRate: 1
+  HireSuccessExtra: 0
+  BaseDepExtraSuccessRate: 0
   SelectMode: 1
   Money: 6000
   CEOSkillNum: 0
@@ -129582,6 +129584,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8618da236c622fc4688243d4c595e609, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  MaxHireNum: 0
   GC: {fileID: 1815467296}
   HireRefreshButton: {fileID: 1542161092}
   EmpInfoPrefab: {fileID: 7304820793347005819, guid: 671384b74ac3e7347a313249295ab128,
@@ -133214,7 +133217,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 129.7, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 141.41, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!1 &8580098923768609244
@@ -133420,7 +133423,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 129.7, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 257.1, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!1 &8580098924407679216

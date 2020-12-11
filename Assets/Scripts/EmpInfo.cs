@@ -212,7 +212,6 @@ public class EmpInfo : MonoBehaviour
 
         ClearSkillPreset();
         GC.HourEvent.RemoveListener(emp.TimePass);
-        GC.Salary -= CalcSalary();        //重新计算工资
         GC.CurrentEmployees.Remove(emp);
         if(emp.CurrentDep != null)
         {
@@ -272,7 +271,7 @@ public class EmpInfo : MonoBehaviour
             }
             if (GC.CEOSkillNum == 4)
             {
-                emp.Mentality += 10;
+                emp.Mentality += (int)(10 * GC.HRBuildingMentalityExtra);
                 GC.TotalEmpContent.parent.parent.gameObject.SetActive(false);
             }
             else if (GC.CEOSkillNum == 5)
@@ -444,7 +443,31 @@ public class EmpInfo : MonoBehaviour
 
     public int CalcSalary()
     {
-        int salary = emp.Manage + emp.Skill1 + emp.Skill2 + emp.Skill3 + emp.SalaryExtra;
+        int type = emp.InfoDetail.ST.SkillType;
+        int salary = emp.SalaryExtra + emp.Manage + emp.Skill1 + emp.Skill2 + emp.Skill3 + emp.Observation + emp.Tenacity + emp.Strength
+             + emp.HR + emp.Finance + emp.Decision + emp.Forecast + emp.Strategy + emp.Convince + emp.Charm + emp.Gossip;
+        if (type == 1)
+            salary = emp.Observation;
+        else if (type == 2)
+            salary += emp.Skill1;
+        else if (type == 3)
+            salary += emp.Skill3;
+        else if (type == 4)
+            salary += emp.Skill2;
+        else if (type == 5)
+            salary += emp.Finance;
+        else if (type == 6)
+            salary += emp.HR;
+        else if (type == 7)
+            salary += emp.Strength;
+        else if (type == 8)
+            salary += emp.Tenacity;
+        else if (type == 9)
+            salary += emp.Forecast;
+        else if (type == 10)
+            salary += emp.Strategy;
+        else
+            salary += emp.Manage;
         salary = (int)(salary * emp.SalaryMultiple);
         return salary;
     }
@@ -546,7 +569,7 @@ public class EmpInfo : MonoBehaviour
     //从头脑风暴员工列表中移除
     public void MobInfoRemove()
     {
-
+        emp.InfoDetail.ClearSkillPreset();
         GameControl.Instance.SC.RemoveEmpInfo(this);
     }
 

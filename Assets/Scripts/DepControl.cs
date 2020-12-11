@@ -104,7 +104,7 @@ public class DepControl : MonoBehaviour
     //BuildingMode用于区分建筑模式  ActiveMode用于区分激活方式 1直接激活 2选择员工 3选择部门
     [HideInInspector] public int EmpLimit, ProducePointLimit = 20, ActiveMode = 1, BuildingMode = 1;
     [HideInInspector] public bool SurveyStart = false;
-    public float Efficiency = 0;
+    public float Efficiency = 0, SalaryMultiply = 1.0f;
     public bool canWork = false;
 
     private bool MajorSuccess = false;
@@ -584,8 +584,21 @@ public class DepControl : MonoBehaviour
         }
         if (GC.SC.ExtraSuccessRate > 0.001f)
             Text_SRateDetail.text += "\n动员效果:" + (GC.SC.ExtraSuccessRate * 100) + "%";
-        if (Efficiency > 0)
+        if (Efficiency > 0.001f)
             Text_SRateDetail.text += "\n额外效果:" + (Efficiency * 100) + "%";
+        if (building.Type == BuildingType.人力资源部 && GC.HireSuccessExtra > 0.001f)
+        {
+            Text_SRateDetail.text += "\n额外招聘成功率:" + (GC.HireSuccessExtra * 100) + "%";
+            BaseSuccessRate += GC.HireSuccessExtra;
+        }
+        if (GC.BaseDepExtraSuccessRate > 0.001f)
+        {
+            if (building.Type == BuildingType.技术部门 || building.Type == BuildingType.市场部门 || building.Type == BuildingType.产品部门 || building.Type == BuildingType.公关营销部)
+            {
+                Text_SRateDetail.text += "\n额外业务成功率:" + (GC.BaseDepExtraSuccessRate * 100) + "%";
+                BaseSuccessRate += GC.BaseDepExtraSuccessRate;
+            }
+        }
         return BaseSuccessRate + GC.SC.ExtraSuccessRate + Efficiency;
     }
 
@@ -805,9 +818,12 @@ public class DepControl : MonoBehaviour
     {
         if (building.Type == BuildingType.智库小组 && GC.SelectedDep != null)
         {
+            int PTime = 32;
+            if (GC.ProduceBuffBonus == true)
+                PTime = 128;
             if (MajorSuccess == true)
-                new ProduceBuff(0.05f, GC.SelectedDep);
-            new ProduceBuff(0.05f, GC.SelectedDep);
+                new ProduceBuff(0.05f, GC.SelectedDep, PTime);
+            new ProduceBuff(0.05f, GC.SelectedDep, PTime);
         }
         else if (building.Type == BuildingType.人力资源部)
         {
@@ -934,12 +950,15 @@ public class DepControl : MonoBehaviour
         }
         else if (building.Type == BuildingType.健身房 && GC.CurrentEmpInfo != null)
         {
+            float BuffPosb = 0.4f;
+            if (GC.GymBuffBonus == true)
+                BuffPosb = 0.8f;
             if (BuildingMode == 1)
             {
                 if (MajorSuccess == true)
                 {
                     GC.CurrentEmpInfo.emp.Mentality += (int)(GC.CurrentEmpInfo.emp.Stamina * 0.15f);
-                    if (Random.Range(0.0f, 1.0f) < 0.4f)
+                    if (Random.Range(0.0f, 1.0f) < BuffPosb)
                         GC.CurrentEmpInfo.DetailInfo.AddPerk(new Perk35(GC.CurrentEmpInfo.emp), true);
                 }
                 else
@@ -950,7 +969,7 @@ public class DepControl : MonoBehaviour
                 if (MajorSuccess == true)
                 {
                     GC.CurrentEmpInfo.emp.Mentality += (int)(GC.CurrentEmpInfo.emp.Stamina * 0.15f);
-                    if (Random.Range(0.0f, 1.0f) < 0.4f)
+                    if (Random.Range(0.0f, 1.0f) < BuffPosb)
                         GC.CurrentEmpInfo.DetailInfo.AddPerk(new Perk37(GC.CurrentEmpInfo.emp), true);
                 }
                 else
@@ -1040,7 +1059,9 @@ public class DepControl : MonoBehaviour
         }
         else if (building.Type == BuildingType.兴趣社团)
         {
-            int Count = 0;
+            int Count = 0, PTime = 32;
+            if (GC.ProduceBuffBonus == true)
+                PTime = 128;
             for(int i = 0; i < CurrentEmps.Count; i++)
             {
                 for(int j = 0; j < GC.SelectedDep.CurrentEmps.Count; j++)
@@ -1053,7 +1074,7 @@ public class DepControl : MonoBehaviour
             float value = 0.02f;
             if (MajorSuccess == true)
                 value += 0.01f;
-            new ProduceBuff(value * Count, GC.SelectedDep);
+            new ProduceBuff(value * Count, GC.SelectedDep, PTime);
         }
         else if (building.Type == BuildingType.电子科技展)
         {
@@ -1213,11 +1234,11 @@ public class DepControl : MonoBehaviour
                 }
             }
         }
-        //
         else if (building.Type == BuildingType.谍战中心 && GC.CurrentEmpInfo != null)
         {
-
-
+            GC.foeControl.ShowSpyPanel();
+            if (MajorSuccess == false)
+                GC.CurrentEmpInfo.emp.Mentality -= 30;
         }
 
         GC.SelectedDep = null;

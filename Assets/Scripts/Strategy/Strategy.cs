@@ -11,7 +11,7 @@ public class Strategy
 {
     //Type:1提升n人心力 2增加产品分 3生产产品原型图 4生产营销文案 5生产程序迭代 6发生n次文化事件 7完成n次研究或调研
     public int RequestType, RequestValue, CultureRequire = 0, FaithRequire = 0;// 文化 -独裁 +开源 ;信仰 -机械 +人文
-    public string Name, EffectDescription, RequestDescription;
+    public string Name = "", EffectDescription = "", RequestDescription = "";
     public StrategyType Type;
 
     public List<int> RequestTasks = new List<int>();
@@ -40,27 +40,19 @@ public class Strategy1_1 : Strategy
     {
         Type = StrategyType.人力;
         Name = "人才数据库";
-        //EffectDescription = "招募高级人才的概率+10% \n \n \n威信+5";
-        //RequestDescription = "2个低劣及以上用户访谈";
-        EffectDescription = "普通招聘消耗-30%";
-        RequestDescription = "提升10人心力";
-        RequestType = 1;
-        RequestValue = 10;
-
-        //RequestTasks.Add(8);
-        //RequestNum = new List<int> { 2 };
+        EffectDescription = "招聘成功率+30%";
     }
 
     public override void Effect(GameControl GC)
     {
         base.Effect(GC);
-        GC.PC2.HireCostRate = 0.7f;
+        GC.HireSuccessExtra += 0.3f;
     }
 
     public override void EffectRemove(GameControl GC)
     {
         base.EffectRemove(GC);
-        GC.PC2.HireCostRate = 1.0f;
+        GC.PC2.HireCostRate -= 0.3f;
     }
 }
 
@@ -71,15 +63,7 @@ public class Strategy1_2 : Strategy
     {
         Type = StrategyType.人力;
         Name = "成长型思维";
-        EffectDescription = "HR部门心力加成效果提高100%";
-        RequestDescription = "提升10人心力";
-        RequestType = 1;
-        RequestValue = 10;
-        //RequestDescription = "3个平庸及以上用户访谈";
-
-        //RequestTasks.Add(8);
-
-        //RequestNum = new List<int> { 3 };
+        EffectDescription = "高管部门、人力部门心力加成效果提高100%";
     }
 
     public override void Effect(GameControl GC)
@@ -91,21 +75,19 @@ public class Strategy1_2 : Strategy
     public override void EffectRemove(GameControl GC)
     {
         base.EffectRemove(GC);
-        GC.HRBuildingMentalityExtra += 1.0f;
+        GC.HRBuildingMentalityExtra -= 1.0f;
     }
 }
 
 //积极心理学
 public class Strategy1_3 : Strategy
 {
+    int TempValue;
     public Strategy1_3() : base()
     {
         Type = StrategyType.人力;
         Name = "积极心理学";
         EffectDescription = "士气+20";
-        RequestDescription = "提升10人心力";
-        RequestType = 1;
-        RequestValue = 10;
 
         //RequestTasks.Add(8);
 
@@ -115,13 +97,16 @@ public class Strategy1_3 : Strategy
     public override void Effect(GameControl GC)
     {
         base.Effect(GC);
-        GC.Morale += 20;
+        TempValue = 100 - GC.Morale;
+        if (TempValue > 20)
+            TempValue = 20;
+        GC.Morale += TempValue;
     }
 
     public override void EffectRemove(GameControl GC)
     {
         base.EffectRemove(GC);
-        GC.Morale -= 20;
+        GC.Morale -= TempValue;
     }
 }
 
@@ -132,26 +117,42 @@ public class Strategy1_4 : Strategy
     {
         Type = StrategyType.人力;
         Name = "首席人力官";
-        EffectDescription = "降低猎头生产力需求30%";
-        RequestDescription = "提升10人心力";
-        RequestType = 1;
-        RequestValue = 10;
-
-        //RequestTasks.Add(8);
-
-        //RequestNum = new List<int> { 3 };
+        EffectDescription = "招募时可招募2人";
     }
 
     public override void Effect(GameControl GC)
     {
         base.Effect(GC);
-        GC.PC2.HeadHuntCostRate = 0.7f;
+        GC.HC.MaxHireNum += 1;
     }
 
     public override void EffectRemove(GameControl GC)
     {
         base.EffectRemove(GC);
-        GC.PC2.HeadHuntCostRate = 1.0f;
+        GC.HC.MaxHireNum -= 1;
+    }
+}
+
+//结构优化
+public class Strategy1_5 : Strategy
+{
+    public Strategy1_5() : base()
+    {
+        Type = StrategyType.人力;
+        Name = "结构优化";
+        EffectDescription = "所有员工工资减少50%";
+    }
+
+    public override void Effect(GameControl GC)
+    {
+        base.Effect(GC);
+        GC.SalaryMultiple -= 0.5f;
+    }
+
+    public override void EffectRemove(GameControl GC)
+    {
+        base.EffectRemove(GC);
+        GC.SalaryMultiple += 0.5f;
     }
 }
 
@@ -163,17 +164,6 @@ public class Strategy2_1 : Strategy
         Type = StrategyType.管理;
         Name = "晨会制度";
         EffectDescription = "每次动员时使用的第一个基础技能效果翻倍";
-        RequestDescription = "产品分累计增加30分";
-        RequestType = 2;
-        RequestValue = 30;
-        //EffectDescription = "每次动员时心力损耗减少10点 \n 威信+5";
-        //RequestDescription = "1个低劣及以上可行性调研 \n 1个低劣以上用户访谈";
-
-        //RequestTasks.Add(2);
-
-        //RequestTasks.Add(8);
-
-        //RequestNum = new List<int> { 1, 1 };
     }
 
     public override void Effect(GameControl GC)
@@ -214,43 +204,57 @@ public class Strategy2_2 : Strategy
     public override void Effect(GameControl GC)
     {
         base.Effect(GC);
-        GC.ManageExtra += 2;
+        GC.ExtraDice += 1;
     }
 
     public override void EffectRemove(GameControl GC)
     {
         base.EffectRemove(GC);
-        GC.ManageExtra -= 2;
+        GC.ExtraDice -= 1;
     }
 }
 
-//组织研究!!
+//特别小组
 public class Strategy2_3 : Strategy
 {
+    DepControl dep1, dep2;
     public Strategy2_3() : base()
     {
         Type = StrategyType.管理;
-        Name = "组织研究!!";
-        EffectDescription = "解锁新型办公室(这个战略可没法做时长限制)";
-        RequestDescription = "2个平庸及以上可行性调研 \n 1个平庸及以上用户访谈 ";
-
-        RequestTasks.Add(2);
-
-        RequestTasks.Add(8);
-
-        RequestNum = new List<int> { 2, 1 };
+        Name = "特别小组";
+        EffectDescription = "随机选择2个非业务部门，增加其成功率20%";
     }
 
     public override void Effect(GameControl GC)
     {
         base.Effect(GC);
-        MonoBehaviour.print("2_3Use");
+        List<DepControl> deps = new List<DepControl>();
+        foreach(DepControl dep in GC.CurrentDeps)
+        {
+            if (dep.building.Type != BuildingType.技术部门 && dep.building.Type != BuildingType.市场部门
+                && dep.building.Type != BuildingType.产品部门 && dep.building.Type != BuildingType.公关营销部)
+                deps.Add(dep);
+        }
+        if (deps.Count > 0)
+        {
+            dep1 = deps[Random.Range(0, deps.Count)];
+            deps.Remove(dep1);
+            dep1.Efficiency += 0.2f;
+            if (deps.Count > 0)
+            {
+                dep2 = deps[Random.Range(0, deps.Count)];
+                dep2.Efficiency += 0.2f;
+            }
+        }
     }
 
     public override void EffectRemove(GameControl GC)
     {
         base.EffectRemove(GC);
-        MonoBehaviour.print("2_3Remove");
+        if (dep1 != null)
+            dep1.Efficiency -= 0.2f;
+        if (dep2 != null)
+            dep2.Efficiency -= 0.2f;
     }
 }
 
@@ -261,34 +265,23 @@ public class Strategy2_4 : Strategy
     {
         Type = StrategyType.管理;
         Name = "扁平管理";
-        EffectDescription = "一般部门技能成功率+20%";
-        RequestDescription = "产品分累计增加30分";
-        RequestType = 2;
-        RequestValue = 30;
-        //RequestDescription = "2个平庸及以上用户访谈 \n 2个平庸及以上公关谈判 ";
-
-        //RequestTasks.Add(8);
-
-        //RequestTasks.Add(3);
-
-
-        //RequestNum = new List<int> { 2, 2 };
+        EffectDescription = " 所有基础业务部门技能成功率+15%";
     }
 
     public override void Effect(GameControl GC)
     {
         base.Effect(GC);
-        GC.BuildingSkillSuccessExtra += 0.2f;
+        GC.BaseDepExtraSuccessRate += 0.15f;
     }
 
     public override void EffectRemove(GameControl GC)
     {
         base.EffectRemove(GC);
-        GC.BuildingSkillSuccessExtra -= 0.2f;
+        GC.BaseDepExtraSuccessRate -= 0.15f;
     }
 }
 
-//扁平管理
+//财务审核
 public class Strategy2_5 : Strategy
 {
     public Strategy2_5() : base()
@@ -296,9 +289,6 @@ public class Strategy2_5 : Strategy
         Type = StrategyType.管理;
         Name = "财务审核";
         EffectDescription = "所有建筑维护费减少50%";
-        RequestDescription = "产品分累计增加30分";
-        RequestType = 2;
-        RequestValue = 30;
     }
 
     public override void Effect(GameControl GC)
@@ -311,6 +301,52 @@ public class Strategy2_5 : Strategy
     {
         base.EffectRemove(GC);
         GC.BuildingMaintenanceCostRate *= 2;
+    }
+}
+
+//自发机制
+public class Strategy2_6 : Strategy
+{
+    public Strategy2_6() : base()
+    {
+        Type = StrategyType.管理;
+        Name = "自发机制";
+        EffectDescription = "“精进”和“团结”状态的持续时间提高至4m";
+    }
+
+    public override void Effect(GameControl GC)
+    {
+        base.Effect(GC);
+        GC.ProduceBuffBonus = true;
+    }
+
+    public override void EffectRemove(GameControl GC)
+    {
+        base.EffectRemove(GC);
+        GC.ProduceBuffBonus = false;
+    }
+}
+
+//可持续发展
+public class Strategy2_7 : Strategy
+{
+    public Strategy2_7() : base()
+    {
+        Type = StrategyType.管理;
+        Name = "可持续发展";
+        EffectDescription = "健身房”大成功时获得“强化”或“铁人”状态的概率上升为80%";
+    }
+
+    public override void Effect(GameControl GC)
+    {
+        base.Effect(GC);
+        GC.GymBuffBonus = true;
+    }
+
+    public override void EffectRemove(GameControl GC)
+    {
+        base.EffectRemove(GC);
+        GC.GymBuffBonus= false;
     }
 }
 
@@ -417,15 +453,6 @@ public class Strategy3_4 : Strategy
         RequestDescription = "生产15次程序迭代";
         RequestType = 5;
         RequestValue = 15;
-        //RequestDescription = "1个平庸及以上公关谈判 \n 1个平庸及以上可行性调研 \n 1个平庸及以上用户访谈";
-
-        //RequestTasks.Add(3);
-
-        //RequestTasks.Add(2);
-
-        //RequestTasks.Add(8);
-
-        //RequestNum = new List<int> { 1, 1, 1 };
     }
 
     public override void Effect(GameControl GC)

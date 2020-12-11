@@ -42,7 +42,7 @@ public class OfficeControl : MonoBehaviour
             if (building.Type == BuildingType.高管办公室 || building.Type == BuildingType.CEO办公室)
             {
                 Text_MAbility.text = "管理:" + CurrentManager.Manage;
-                ManageValue = CurrentManager.Manage + GC.ManageExtra;
+                ManageValue = CurrentManager.Manage;
                 CurrentManager.InfoDetail.CreateStrategy();
                 CurrentManager.NoPromotionTime = 0;
                 for(int i = 0; i < CurrentManager.InfoDetail.PerksInfo.Count; i++)
@@ -101,7 +101,7 @@ public class OfficeControl : MonoBehaviour
     public void CheckManage()
     {
         if (CurrentManager != null)
-            ManageValue = CurrentManager.Manage + GC.ManageExtra;
+            ManageValue = CurrentManager.Manage;
         for(int i = 0; i < ControledDeps.Count; i++)
         {
             if (i < ManageValue)
@@ -385,7 +385,7 @@ public class OfficeControl : MonoBehaviour
                         }
                         if (E != null)
                         {
-                            E.Mentality += 20;
+                            E.Mentality += (int)(20 * GC.HRBuildingMentalityExtra);
                             GC.CreateMessage("(" + Text_OfficeName.text + ")" + E.Name + "回复了20点心力");
                         }
 

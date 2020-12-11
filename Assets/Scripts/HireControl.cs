@@ -5,12 +5,16 @@ using UnityEngine.UI;
 
 public class HireControl : MonoBehaviour
 {
+    public int MaxHireNum;
+
     public GameControl GC;
     public Button HireRefreshButton;
     public EmpInfo EmpInfoPrefab, EmpDetailPrefab, CEOInfoPrefab;
 
     public EmpInfo[] HireInfos = new EmpInfo[5];
     List<HireType> HireTypes = new List<HireType>();
+
+    int CurrentHireNum;
 
     private void Start()
     {
@@ -22,7 +26,6 @@ public class HireControl : MonoBehaviour
             if (i < 5)
             {
                 GC.CurrentEmpInfo = HireInfos[i];
-                GC.Salary += GC.CurrentEmpInfo.CalcSalary();
                 SetInfoPanel();
                 GC.CurrentEmpInfo.emp.InfoA.transform.parent = GC.StandbyContent;
             }
@@ -43,6 +46,7 @@ public class HireControl : MonoBehaviour
     {
         if (HireTypes.Count > 0)
         {
+            CurrentHireNum = 0;
             EmpType EType;
             if (HireTypes[0].Type == 1)
                 EType = EmpType.Tech;
@@ -183,9 +187,13 @@ public class HireControl : MonoBehaviour
     //招聘后隐藏其它选项
     public void HideOptions()
     {
-        for(int i = 0; i < 5; i++)
+        CurrentHireNum += 1;
+        if (CurrentHireNum >= MaxHireNum)
         {
-            HireInfos[i].gameObject.SetActive(false);
+            for (int i = 0; i < 5; i++)
+            {
+                HireInfos[i].gameObject.SetActive(false);
+            }
         }
     }
 }

@@ -165,7 +165,7 @@ public class SkillControl : MonoBehaviour
         {
             BossLevel = 1;
             SetStatus();
-            DiceNum = CurrentManager.Manage / 2;
+            DiceNum = CurrentManager.Manage / 2 + GC.ExtraDice;
             CreateDice(DiceNum);
             FightStart = true;
             RollButton.interactable = false;
@@ -579,7 +579,7 @@ public class SkillControl : MonoBehaviour
         //下回合少获得n个骰子
         else if (NextBossSkill == 11)
         {
-            int maxValue = (TargetDep.CommandingOffice.ManageValue - TargetDep.CommandingOffice.ControledDeps.Count + GC.ManageExtra) / 2;
+            int maxValue = (TargetDep.CommandingOffice.ManageValue - TargetDep.CommandingOffice.ControledDeps.Count + GC.ExtraDice) / 2;
             if (maxValue <= 0)
                 maxValue = 2;
             ExtraDiceNum = Random.Range(1, maxValue) * -1;

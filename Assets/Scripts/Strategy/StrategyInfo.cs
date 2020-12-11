@@ -36,7 +36,8 @@ public class StrategyInfo : MonoBehaviour
                 {
                     info.Text_Name.text = Str.Name;
                     info.Text_Description.text = Str.EffectDescription;
-                    info.Text_ExtraInfo.text = Str.RequestDescription;
+                    info.Text_ExtraInfo.text = "";
+                    //info.Text_ExtraInfo.text = Str.RequestDescription;
                 }
                 if (info.Visible == false)
                     info.ShowPanel();
@@ -65,32 +66,33 @@ public class StrategyInfo : MonoBehaviour
             Text_Type.text = Str.Type.ToString();
             Text_EffectDescription.text = Str.EffectDescription;
             if (Text_RequestDescription != null)
-                Text_RequestDescription.text = Str.RequestDescription;
+                Text_RequestDescription.text = "";
+            //Text_RequestDescription.text = Str.RequestDescription;
             if (Text_Time != null)
                 Text_Time.text = "剩余" + TimeLeft + "时";
             if (Type == 6)
                 Text_Progress.text = "得票数:" + VoteNum;
             else if (Type == 7)
             {
-                if (Active == false)
-                {
-                    if (Str.RequestType == 1)
-                        Text_Progress.text = "提升 " + CurrentRequestValue + "/" + Str.RequestValue + " 人心力";
-                    else if (Str.RequestType == 2)
-                        Text_Progress.text = "增加产品分 " + CurrentRequestValue + "/" + Str.RequestValue;
-                    else if (Str.RequestType == 3)
-                        Text_Progress.text = "生产产品原型图 " + CurrentRequestValue + "/" + Str.RequestValue;
-                    else if (Str.RequestType == 4)
-                        Text_Progress.text = "生产产品营销文案 " + CurrentRequestValue + "/" + Str.RequestValue;
-                    else if (Str.RequestType == 5)
-                        Text_Progress.text = "生产产品程序迭代 " + CurrentRequestValue + "/" + Str.RequestValue;
-                    else if (Str.RequestType == 6)
-                        Text_Progress.text = "发生 " + CurrentRequestValue + "/" + Str.RequestValue + " 次事件";
-                    else if (Str.RequestType == 7)
-                        Text_Progress.text = "完成 " + CurrentRequestValue + "/" + Str.RequestValue + " 次研究或调研";
-                }
-                else
-                    Text_Progress.text = "已完成";
+                //if (Active == false)
+                //{
+                //    if (Str.RequestType == 1)
+                //        Text_Progress.text = "提升 " + CurrentRequestValue + "/" + Str.RequestValue + " 人心力";
+                //    else if (Str.RequestType == 2)
+                //        Text_Progress.text = "增加产品分 " + CurrentRequestValue + "/" + Str.RequestValue;
+                //    else if (Str.RequestType == 3)
+                //        Text_Progress.text = "生产产品原型图 " + CurrentRequestValue + "/" + Str.RequestValue;
+                //    else if (Str.RequestType == 4)
+                //        Text_Progress.text = "生产产品营销文案 " + CurrentRequestValue + "/" + Str.RequestValue;
+                //    else if (Str.RequestType == 5)
+                //        Text_Progress.text = "生产产品程序迭代 " + CurrentRequestValue + "/" + Str.RequestValue;
+                //    else if (Str.RequestType == 6)
+                //        Text_Progress.text = "发生 " + CurrentRequestValue + "/" + Str.RequestValue + " 次事件";
+                //    else if (Str.RequestType == 7)
+                //        Text_Progress.text = "完成 " + CurrentRequestValue + "/" + Str.RequestValue + " 次研究或调研";
+                //}
+                //else
+                Text_Progress.text = "已完成";
             }
         }
         else

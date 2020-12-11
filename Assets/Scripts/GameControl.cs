@@ -7,9 +7,10 @@ using UnityEngine.Events;
 public class GameControl : MonoBehaviour
 {
     public static GameControl Instance;
-    [HideInInspector] public int Salary, Income, BuildingPay, MobilizeExtraMent = 0, ManageExtra, TimeMultiply = 1, WorkEndEmpCount = 0;
-    [HideInInspector] public float EfficiencyExtraNormal = 0, EfficiencyExtraScience = 0, ExtrafailRate = 0, HireEfficiencyExtra = 1.0f,
-        HRBuildingMentalityExtra = 1.0f, BuildingSkillSuccessExtra = 0, BuildingMaintenanceCostRate = 1.0f;
+    [HideInInspector] public int Salary, Income, BuildingPay, MobilizeExtraMent = 0, ExtraDice = 0, TimeMultiply = 1, WorkEndEmpCount = 0;
+    [HideInInspector] public float EfficiencyExtraNormal = 0, EfficiencyExtraScience = 0, ExtrafailRate = 0, SalaryMultiple = 1.0f,
+        HRBuildingMentalityExtra = 1.0f, BuildingSkillSuccessExtra = 0, BuildingMaintenanceCostRate = 1.0f, HireSuccessExtra = 0, 
+        BaseDepExtraSuccessRate = 0;
     public int SelectMode = 1; //1员工招聘时部门选择 2员工移动时部门选择 3部门的高管办公室选择 4发动动员技能时员工选择 
     //5发动建筑技能时员工选择 6CEO技能员工/部门选择 7选择两个员工发动动员技能 8普通办公室的上级(高管办公室)选择  9头脑风暴的员工选择
     public int Money = 1000, CEOSkillNum = 0, DoubleMobilizeCost = 0, MeetingBlockTime = 0, MobTime = 192;
@@ -56,6 +57,11 @@ public class GameControl : MonoBehaviour
             Text_Morale.text = "士气:" + morale;
         }
     }
+
+    #region 杂项变量
+    [HideInInspector] public bool ProduceBuffBonus = false;//“精进”和“团结”状态的持续时间提高至4m战略效果
+    [HideInInspector] public bool GymBuffBonus = false;//“健身房”大成功时获得“强化”或“铁人”状态的概率上升为80%战略效果
+    #endregion
 
     [HideInInspector] public EmpInfo CurrentEmpInfo, CurrentEmpInfo2;//2主要用于需要两个员工的动员技能
     public DepControl CurrentDep, SelectedDep;
@@ -132,11 +138,13 @@ public class GameControl : MonoBehaviour
     void HourPass()
     {
         Hour += 1;
+        CalcTotalSalary();
         HourEvent.Invoke();
         if (Hour > 8)
         {
-            Hour = 8;
-            StartWorkEnd();
+            Hour = 1;
+            WeekPass();
+            //StartWorkEnd();
         }
 
         //开会封锁时间
@@ -192,6 +200,18 @@ public class GameControl : MonoBehaviour
         Text_Time.text = "年" + Year + " 月" + Month + " 周" + Week + " 时" + Hour;
     }
 
+    void CalcTotalSalary()
+    {
+        Salary = 0;
+        foreach(Employee e in CurrentEmployees)
+        {
+            int value = e.InfoDetail.CalcSalary();
+            if (e.CurrentDep != null)
+                value = (int)(value * CurrentDep.SalaryMultiply);
+            value = (int)(value * SalaryMultiple);
+            Salary += value;
+        }
+    }
     void StartWorkEnd()
     {
         if (CurrentEmployees.Count > 0)
@@ -574,8 +594,6 @@ public class GameControl : MonoBehaviour
         DepSelectPanel.SetActive(false);
         if (SelectMode == 1)
         {
-            //还需要重新计算工资
-            Salary += CurrentEmpInfo.CalcSalary();
             HC.SetInfoPanel();
             CurrentEmpInfo.emp.InfoA.transform.parent = StandbyContent;
         }
@@ -608,8 +626,6 @@ public class GameControl : MonoBehaviour
         }
         if (SelectMode == 1)
         {
-            //还需要重新计算工资
-            Salary += CurrentEmpInfo.CalcSalary();
             HC.SetInfoPanel();
             CurrentEmpInfo.emp.InfoA.transform.parent = StandbyContent;
             if (office.building.Type == BuildingType.CEO办公室 || office.building.Type == BuildingType.高管办公室)
@@ -706,8 +722,6 @@ public class GameControl : MonoBehaviour
     {
         if(SelectMode == 1)
         {
-            //还需要重新计算工资
-            Salary += CurrentEmpInfo.CalcSalary();
             depControl.CurrentEmps.Add(CurrentEmpInfo.emp);
             depControl.UpdateUI();
             CurrentEmpInfo.emp.CurrentDep = depControl;
