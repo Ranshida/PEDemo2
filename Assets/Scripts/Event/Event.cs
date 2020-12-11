@@ -704,7 +704,7 @@ public abstract class Event
             }
         }
         else
-            Self.InfoDetail.AddHistory("自己发生了" + EventName + "事件" + ResultText);
+            Self.InfoDetail.AddHistory(ResultText);
 
     }
 
@@ -12182,11 +12182,11 @@ public class Event3_10 : Event
             perkUsed = pList[Random.Range(0, pList.Count)];
             return true;
         }
-        return base.SpecialCheck();
+        return false;
     }
     public override int FindResult()
     {
-        return 2;
+        return 3;
         //1大失败 2失败 3成功 4大成功
     }
     public override void Success(float Posb)
@@ -12213,7 +12213,7 @@ public class Event3_11 : Event
         {
             return true;
         }
-        return base.SpecialCheck();
+        return false;
     }
     public override int FindResult()
     {
@@ -12282,11 +12282,11 @@ public class Event3_12 : Event
             perkUsed = pList[Random.Range(0, pList.Count)];
             return true;
         }
-        return base.SpecialCheck();
+        return false;
     }
     public override int FindResult()
     {
-        return 2;
+        return 3;
         //1大失败 2失败 3成功 4大成功
     }
     public override void Success(float Posb)
@@ -12350,11 +12350,11 @@ public class Event3_13 : Event
             perkUsed = pList[Random.Range(0, pList.Count)];
             return true;
         }
-        return base.SpecialCheck();
+        return false;
     }
     public override int FindResult()
     {
-        return 2;
+        return 3;
         //1大失败 2失败 3成功 4大成功
     }
     public override void Success(float Posb)
@@ -13022,13 +13022,13 @@ public class Event3_20 : Event
     }
     public override int FindResult()
     {
-            return 2;
+            return 3;
     }
     public override void Success(float Posb)
     {
         base.Success(Posb);
         Self.InfoDetail.AddPerk(new Perk64(Self), true);
-        ResultText += "获得事件状态 无聊*1";
+        ResultText += "在"+SelfEntity.StandGridName()+"，"+Self.Name+"感到百无聊赖，获得事件状态 无聊*1";
     }
 }
 public class Event3_21 : Event
@@ -13080,11 +13080,11 @@ public class Event3_21 : Event
             perkUsed = pList[Random.Range(0, pList.Count)];
             return true;
         }
-        return base.SpecialCheck();
+        return false;
     }
     public override int FindResult()
     {
-        return 2;
+        return 3;
         //1大失败 2失败 3成功 4大成功
     }
     public override void Success(float Posb)
@@ -13146,11 +13146,11 @@ public class Event3_22 : Event
             perkUsed = pList[Random.Range(0, pList.Count)];
             return true;
         }
-        return base.SpecialCheck();
+        return false;
     }
     public override int FindResult()
     {
-        return 2;
+        return 3;
         //1大失败 2失败 3成功 4大成功
     }
     public override void Success(float Posb)
@@ -13202,11 +13202,11 @@ public class Event3_23 : Event
             perkUsed = pList[Random.Range(0, pList.Count)];
             return true;
         }
-        return base.SpecialCheck();
+        return false;
     }
     public override int FindResult()
     {
-        return 2;
+        return 3;
         //1大失败 2失败 3成功 4大成功
     }
     public override void Success(float Posb)
@@ -13262,11 +13262,11 @@ public class Event3_24 : Event
             perkUsed = pList[Random.Range(0, pList.Count)];
             return true;
         }
-        return base.SpecialCheck();
+        return false;
     }
     public override int FindResult()
     {
-        return 2;
+        return 3;
         //1大失败 2失败 3成功 4大成功
     }
     public override void Success(float Posb)
@@ -13327,11 +13327,11 @@ public class Event3_25 : Event
             perkUsed = pList[Random.Range(0, pList.Count)];
             return true;
         }
-        return base.SpecialCheck();
+        return false;
     }
     public override int FindResult()
     {
-        return 2;
+        return 3;
         //1大失败 2失败 3成功 4大成功
     }
     public override void Success(float Posb)
@@ -14259,11 +14259,11 @@ public class Event3_38 : Event
         allRelation = Function.RandomSortList(allRelation);
         foreach (Relation relation in allRelation)
         {
-            if (Self.FindRelation(relation.Self).EventFlag[0] == 0)
-            {
-                Target = relation.Self;
-                break;
-            }
+             if (Self.FindRelation(relation.Self).EventFlag[0] == 0)
+             {
+                 Target = relation.Self;
+                 break;
+             }
         }
         if (Target != null)
         {
@@ -15037,7 +15037,7 @@ public class Event3_49 : Event
     }
     public override int FindResult()
     {
-        return 2;
+        return 3;
         //1大失败 2失败 3成功 4大成功
     }
     public override void Success(float Posb)
