@@ -29,7 +29,9 @@ public class BTE_WaitEvent : BTE_Action
             //独立事件 => 直接执行
             if (!ThisEntity.CurrentEvent.HaveTarget)
             {
+                Debug.LogError(ThisEntity.name + "Self");
                 ThisEntity.SolveEvent();
+                return TaskStatus.Running;
             }
 
             //主动发起方去寻找被动方 => 找到后执行
@@ -41,7 +43,11 @@ public class BTE_WaitEvent : BTE_Action
 
                 //满足开始执行事件的条件（TODO）
                 if (Function.XZDistance(ThisEntity.transform.position, Destination.Value) < 8)
+                {
+                    Debug.LogError(ThisEntity.name + "Target");
                     ThisEntity.SolveEvent();
+                    return TaskStatus.Running;
+                }
             }
         }
 
