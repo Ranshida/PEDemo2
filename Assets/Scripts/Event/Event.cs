@@ -12193,8 +12193,8 @@ public class Event3_10 : Event
     {
         base.Success(Posb);
         Self.InfoDetail.AddPerk(new Perk51(Self), true);
+        ResultText = "由于" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "的情绪在" + Self.Name + "心中的持续酝酿，" + Self.Name + "渐渐感到对公司不满，获得事件状态 不满*1，消除事件状态" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "×1";
         Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.RemoveEffect();
-        ResultText += "由于"+ Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "的情绪在"+Self.Name+"心中的持续酝酿，"+Self.Name+"渐渐感到对公司不满，获得事件状态 不满*1，消除事件状态" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "×1";
     }
 }
 public class Event3_11 : Event
@@ -12295,13 +12295,13 @@ public class Event3_12 : Event
         Self.InfoDetail.AddPerk(new Perk55(Self), true);
         if(Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Num == 47)
         {
+            ResultText = "由于" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "的情绪在" + Self.Name + "心中的持续酝酿，" + Self.Name + "产生了新的愿望，获得事件状态 愿望*1，消除事件状态" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "×2";
             Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.RemoveEffect();
             Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.RemoveEffect();
-            ResultText += "由于" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "的情绪在"+Self.Name+"心中的持续酝酿，"+Self.Name+"产生了新的愿望，获得事件状态 愿望*1，消除事件状态" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "×2";
         }else
         {
+            ResultText = "由于" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "的情绪在" + Self.Name + "心中的持续酝酿，" + Self.Name + "产生了新的愿望，获得事件状态 愿望*1，消除事件状态" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "×1";
             Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.RemoveEffect();
-            ResultText += "由于" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "的情绪在"+Self.Name+"心中的持续酝酿，"+Self.Name+"产生了新的愿望，获得事件状态 愿望*1，消除事件状态" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "×1";
         }
     }
 }
@@ -12363,14 +12363,14 @@ public class Event3_13 : Event
         Self.InfoDetail.AddPerk(new Perk56(Self), true);
         if (Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Num == 49)
         {
+            ResultText = "由于" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "的情绪在" + Self.Name + "心中的持续酝酿，野心在" + Self.Name + "的内心萌发，获得事件状态 野心*1，消除事件状态" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "×2";
             Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.RemoveEffect();
             Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.RemoveEffect();
-            ResultText += "由于" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "的情绪在"+Self.Name+"心中的持续酝酿，野心在"+Self.Name+"的内心萌发，获得事件状态 野心*1，消除事件状态" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "×2";
         }
         else
         {
+            ResultText = "由于" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "的情绪在" + Self.Name + "心中的持续酝酿，野心在" + Self.Name + "的内心萌发，获得事件状态 野心*1，消除事件状态" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "×1";
             Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.RemoveEffect();
-            ResultText += "由于" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "的情绪在"+Self.Name+"心中的持续酝酿，野心在"+Self.Name+"的内心萌发，获得事件状态 野心*1，消除事件状态" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "×1";
         }
     }
 }
@@ -13028,7 +13028,7 @@ public class Event3_20 : Event
     {
         base.Success(Posb);
         Self.InfoDetail.AddPerk(new Perk64(Self), true);
-        ResultText += "在"+SelfEntity.StandGridName()+"，"+Self.Name+"感到百无聊赖，获得事件状态 无聊*1";
+        ResultText = "在"+SelfEntity.StandGridName()+"，"+Self.Name+"感到百无聊赖，获得事件状态 无聊*1";
     }
 }
 public class Event3_21 : Event
@@ -13091,17 +13091,16 @@ public class Event3_21 : Event
     {
         base.Success(Posb);
         Self.InfoDetail.AddPerk(new Perk63(Self), true);
-        ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "感到百无聊赖";
         if (Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Num == 49)
         {
+            ResultText = "由于" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "的情绪在" + Self.Name + "心中的持续酝酿，" + Self.Name + "期望寻求安慰，获得事件状态 寻求安慰*1，消除事件状态" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "×2";
             Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.RemoveEffect();
             Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.RemoveEffect();
-            ResultText += "由于" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "的情绪在"+Self.Name+"心中的持续酝酿，"+Self.Name+"期望寻求安慰，获得事件状态 寻求安慰*1，消除事件状态" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "×2";
         }
         else
         {
+            ResultText = "由于" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "的情绪在" + Self.Name + "心中的持续酝酿，" + Self.Name + "期望寻求安慰，获得事件状态 寻求安慰*1，消除事件状态" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "×1";
             Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.RemoveEffect();
-            ResultText += "由于" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "的情绪在"+Self.Name+"心中的持续酝酿，"+Self.Name+"期望寻求安慰，获得事件状态 寻求安慰*1，消除事件状态" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "×1";
         }
     }
 }
@@ -13157,8 +13156,8 @@ public class Event3_22 : Event
     {
         base.Success(Posb);
         Self.InfoDetail.AddPerk(new Perk61(Self), true);
+        ResultText = "由于" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "的情绪在" + Self.Name + "心中的持续酝酿，" + Self.Name + "渐渐渴望获得别人认可，获得事件状态 认可交谈*1，消除事件状态" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "×1";
         Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.RemoveEffect();
-        ResultText += "由于" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "的情绪在"+Self.Name+"心中的持续酝酿，"+Self.Name+"渐渐渴望获得别人认可，获得事件状态 认可交谈*1，消除事件状态" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "×1";
     }
 }
 public class Event3_23 : Event
@@ -13213,8 +13212,8 @@ public class Event3_23 : Event
     {
         base.Success(Posb);
         Self.InfoDetail.AddPerk(new Perk62(Self), true);
+        ResultText = "由于" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "的情绪在" + Self.Name + "心中的持续酝酿，" + Self.Name + "想聊聊自己的日常，获得事件状态 分享日常*1，消除事件状态" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "×1";
         Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.RemoveEffect();
-        ResultText += "由于" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "的情绪在"+Self.Name+"心中的持续酝酿，"+Self.Name+"想聊聊自己的日常，获得事件状态 分享日常*1，消除事件状态" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "×1";
     }
 }
 public class Event3_24 : Event
@@ -13275,14 +13274,14 @@ public class Event3_24 : Event
         Self.InfoDetail.AddPerk(new Perk59(Self), true);
         if (Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Num == 49)
         {
+            ResultText = "由于" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "的情绪在" + Self.Name + "心中的持续酝酿，" + Self.Name + "渴望与别人进行深刻交谈，获得事件状态 深刻交谈*1，消除事件状态" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "×2";
             Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.RemoveEffect();
             Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.RemoveEffect();
-            ResultText += "由于" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "的情绪在"+Self.Name+"心中的持续酝酿，"+Self.Name+"渴望与别人进行深刻交谈，获得事件状态 深刻交谈*1，消除事件状态" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "×2";
         }
         else
         {
+            ResultText = "由于" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "的情绪在" + Self.Name + "心中的持续酝酿，" + Self.Name + "渴望与别人进行深刻交谈，获得事件状态 深刻交谈*1，消除事件状态" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "×1";
             Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.RemoveEffect();
-            ResultText += "由于" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "的情绪在"+Self.Name+"心中的持续酝酿，"+Self.Name+"渴望与别人进行深刻交谈，获得事件状态 深刻交谈*1，消除事件状态" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "×1";
         }
     }
 }
@@ -13340,14 +13339,14 @@ public class Event3_25 : Event
         Self.InfoDetail.AddPerk(new Perk60(Self), true);
         if (Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Num == 47)
         {
+            ResultText = "由于" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "的情绪在" + Self.Name + "心中的持续酝酿，" + Self.Name + "想要与别人分享自己的快乐，获得事件状态 分享快乐*1 ，消除事件状态" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "×2";
             Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.RemoveEffect();
             Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.RemoveEffect();
-            ResultText += "由于" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "的情绪在"+Self.Name+"心中的持续酝酿，"+Self.Name+"想要与别人分享自己的快乐，获得事件状态 分享快乐*1 ，消除事件状态" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "×2";
         }
         else
         {
+            ResultText = "由于" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "的情绪在" + Self.Name + "心中的持续酝酿，" + Self.Name + "想要与别人分享自己的快乐，获得事件状态 分享快乐*1 ，消除事件状态" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "×1";
             Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.RemoveEffect();
-            ResultText += "由于" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "的情绪在"+Self.Name+"心中的持续酝酿，"+Self.Name+"想要与别人分享自己的快乐，获得事件状态 分享快乐*1 ，消除事件状态" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "×1";
         }
     }
 }
@@ -14794,14 +14793,14 @@ public class Event3_44 : Event
         Target.FindRelation(Self).LoveValue = 1;
         Self.Lover = Target;
         Target.Lover = Self;
-        ResultText += Self.Name + "希望与" + Target.Name + "结为恋人，双方结成恋人";
+        ResultText = Self.Name + "希望与" + Target.Name + "结为恋人，双方结成恋人";
     }
     public override void Failure(float Posb)
     {
         base.Failure(Posb);
         Self.AddEmotion(EColor.Blue);
         Self.ChangeRelation(Target, -10);
-        ResultText += Self.Name + "希望与" + Target.Name + "结为恋人，被对方拒绝，获得蓝色情绪，好感度下降10点";
+        ResultText = Self.Name + "希望与" + Target.Name + "结为恋人，被对方拒绝，获得蓝色情绪，好感度下降10点";
     }
 }
 public class Event3_45 : Event
@@ -14850,14 +14849,14 @@ public class Event3_45 : Event
         Target.FindRelation(Self).FriendValue = 1;
         //flag编号2：前置事件12的标记
         Self.FindRelation(Target).EventFlag[2] = 1;
-        ResultText += Self.Name + "跟" + Target.Name + "结成朋友关系";
+        ResultText = Self.Name + "跟" + Target.Name + "结成朋友关系";
     }
     public override void Failure(float Posb)
     {
         base.Failure(Posb);
         Self.ChangeRelation(Target, -10);
         Target.ChangeRelation(Self, -10);
-        ResultText += Self.Name + "跟" + Target.Name + "没能结成朋友关系，好感度下降10点";
+        ResultText = Self.Name + "跟" + Target.Name + "没能结成朋友关系，好感度下降10点";
     }
 }
 public class Event3_46 : Event
@@ -14904,14 +14903,14 @@ public class Event3_46 : Event
         base.Success(Posb);
         Target.FindRelation(Self).FriendValue = 2;
         Self.FindRelation(Target).FriendValue = 2;
-        ResultText += Self.Name + "与" + Target.Name + "结成了挚友";
+        ResultText = Self.Name + "与" + Target.Name + "结成了挚友";
     }
     public override void Failure(float Posb)
     {
         base.Failure(Posb);
         Self.ChangeRelation(Target, -10);
         Target.ChangeRelation(Self, -10);
-        ResultText += Self.Name + "想要与" + Target.Name + "结成挚友，但被对方婉拒了，好感度-10";
+        ResultText = Self.Name + "想要与" + Target.Name + "结成挚友，但被对方婉拒了，好感度-10";
     }
 }
 
@@ -14959,14 +14958,14 @@ public class Event3_47 : Event
         base.Success(Posb);
         Self.ChangeRelation(Target, -5);
         Target.ChangeRelation(Self, -5);
-        ResultText += Self.Name + "与" + Target.Name + "关系缓和了";
+        ResultText = Self.Name + "与" + Target.Name + "关系缓和了";
     }
     public override void Failure(float Posb)
     {
         base.Failure(Posb);
         Target.FindRelation(Self).FriendValue = -1;
         Self.FindRelation(Target).FriendValue = -1;
-        ResultText += Self.Name + "与" + Target.Name + "结为陌路";
+        ResultText = Self.Name + "与" + Target.Name + "结为陌路";
     }
 }
 
@@ -15014,14 +15013,14 @@ public class Event3_48 : Event
         base.Success(Posb);
         Self.ChangeRelation(Target, -5);
         Target.ChangeRelation(Self, -5);
-        ResultText += Self.Name + "与" + Target.Name + "关系缓和了";
+        ResultText = Self.Name + "与" + Target.Name + "关系缓和了";
     }
     public override void Failure(float Posb)
     {
         base.Failure(Posb);
         Target.FindRelation(Self).FriendValue = -2;
         Self.FindRelation(Target).FriendValue = -2;
-        ResultText += Self.Name + "与" + Target.Name + "结为仇人";
+        ResultText = Self.Name + "与" + Target.Name + "结为仇人";
     }
 }
 public class Event3_49 : Event
@@ -15032,8 +15031,18 @@ public class Event3_49 : Event
         HaveTarget = true;
         Weight = 5;
         RelationRequire = 0;
-        ResultText = Self.Name + "心力爆炸";
         HaveTarget = false;
+    }
+    public override bool SpecialCheck()
+    {
+        if (Self.Mentality <= 0)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
     public override int FindResult()
     {
@@ -15043,6 +15052,7 @@ public class Event3_49 : Event
     public override void Success(float Posb)
     {
         base.Success(Posb);
+        ResultText = Self.Name + "心力爆炸";
         switch (Random.Range(0, 4))
         {
             case 1:
@@ -15129,7 +15139,7 @@ static public class EventData
     //个人关系序列
     public static List<Event> RelationList = new List<Event>()
     {
-        new Event3_20(),new Event3_21(),new Event3_22(),new Event3_23(),new Event3_24(),new Event3_25(),new Event3_26(),new Event3_27(),new Event3_28(),new Event3_29(),new Event3_30(),new Event3_31(),new Event3_32(),new Event3_33(),new Event3_34(),new Event3_35(),new Event3_36(),new Event3_37(),new Event3_38(),new Event3_39(),new Event3_40(),new Event3_41(),new Event3_42(),new Event3_43(),new Event3_44(),new Event3_45(),new Event3_46(),new Event3_47(),new Event3_48()
+        new Event3_20(),new Event3_21(),new Event3_22(),new Event3_23(),new Event3_24(),new Event3_25(),new Event3_26(),new Event3_27(),new Event3_28(),new Event3_29(),new Event3_30(),new Event3_31(),new Event3_32(),new Event3_33(),new Event3_34(),new Event3_35(),new Event3_36(),new Event3_37(),new Event3_38(),new Event3_39(),new Event3_40(),new Event3_41(),new Event3_42(),new Event3_43(),new Event3_44(),new Event3_45(),new Event3_46(),new Event3_47(),new Event3_48(),new Event3_49()
     };
 
     //权重1-4事件链表
