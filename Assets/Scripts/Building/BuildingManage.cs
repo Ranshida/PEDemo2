@@ -79,7 +79,6 @@ public class BuildingManage : MonoBehaviour
         buildingPrefabs = ResourcesLoader.LoadAll<GameObject>("Prefabs/Scene/Buildings");
         CEOBuilding = ResourcesLoader.LoadPrefab("Prefabs/Scene/Buildings/CEO办公室");
         m_EffectHalo = Instantiate(ResourcesLoader.LoadPrefab("Prefabs/Scene/EffectHalo"), transform);
-        Debug.LogError(Application.dataPath + "/StreamingAssets/Excel/BuildingFunction.xlsx");
         BuildingExcelValue = ExcelTool.ReadAsString(Application.streamingAssetsPath + "/Excel/BuildingFunction.xlsx");
 
         foreach (GameObject prefab in buildingPrefabs)
