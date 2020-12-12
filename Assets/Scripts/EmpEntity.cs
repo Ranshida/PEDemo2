@@ -95,11 +95,6 @@ public class EmpEntity : MonoBehaviour
         }
         return "走廊";
     }
-
-    //public List<Event> EventList = new List<Event>();        //存储的待执行事件列表
-    //public bool HasEvent { get { return EventList.Count > 0; } }        //事件列表不为空
-    //public bool Available { get { return CurrentEvent == null && !IsSpying; } }      //员工为可用状态
-    //public bool SolvingEvent { get { return CurrentEvent != null && CurrentEvent.isSolving; } }     //事件正在执行中
     
     public void Init()
     {
@@ -164,10 +159,6 @@ public class EmpEntity : MonoBehaviour
                 }
             }
         }
-
-        //空闲状态，检查新事件
-        //if (Available)
-        //    CheckEvents();
     }
 
     void EventFinish()
@@ -200,6 +191,11 @@ public class EmpEntity : MonoBehaviour
     //下班
     public void WorkEnd()
     {
+        if (OutCompany)
+        {
+            return;
+        }
+
         //Debug.Log("下");
         OffWork = true;
 
@@ -247,6 +243,11 @@ public class EmpEntity : MonoBehaviour
             if (CurrentEvent != null) 
             {
                 CurrentEvent.PerkRemoveCheck();
+
+                if (CurrentEvent.HaveTarget && CurrentEvent.Target == null)
+                {
+                    Debug.LogError("有目标的事件，但是没有目标对象" + CurrentEvent.EventName);
+                }
             }
         }
     }
@@ -254,13 +255,6 @@ public class EmpEntity : MonoBehaviour
     public void AddEvent(Event e)  //废弃
     {
         return;
-    }
-
-    void EventAbandon()
-    {
-        CurrentEvent = null;
-        EventStage = 0;
-        EventTarget = null;
     }
 
     //进入忙碌状态

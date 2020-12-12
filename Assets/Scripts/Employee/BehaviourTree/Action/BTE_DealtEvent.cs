@@ -19,6 +19,7 @@ public class BTE_DealtEvent : BTE_Action
 
     public override TaskStatus OnUpdate()
     {
+        //为空则返回了
         if (ThisEntity.CurrentEvent == null) 
             return TaskStatus.Failure;
 

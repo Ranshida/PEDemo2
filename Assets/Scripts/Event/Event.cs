@@ -14493,7 +14493,7 @@ public class Event3_38 : Event
                 {
                     if (relation.EventFlag[0] == 0)
                     {
-                        Target = relation.Self;
+                        Target = relation.Target;
                         break;
                     }
                 }
@@ -14540,8 +14540,6 @@ public class Event3_38 : Event
             info.CurrentPerk.RemoveEffect();
         }
 
-        Debug.LogError(Target);
-
         Self.AddEmotion(EColor.Yellow);
         Self.ChangeRelation(Target, 5);
         Self.FindRelation(Target).EventFlag[0] = 1;
@@ -14568,9 +14566,6 @@ public class Event3_38 : Event
         {
             info.CurrentPerk.RemoveEffect();
         }
-
-        Debug.LogError(Target);
-
 
         Self.AddEmotion(EColor.Blue);
         Self.ChangeRelation(Target, -5);
