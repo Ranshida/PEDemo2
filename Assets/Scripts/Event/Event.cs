@@ -709,7 +709,7 @@ public abstract class Event
     }
 
     //复制当前类(利用新建基类覆盖 如new Event = Storage[num].Clone())
-    public Event Clone()
+    public virtual Event Clone()
     {
         return (Event)this.MemberwiseClone();
     }
@@ -14222,7 +14222,7 @@ public class Event3_38 : Event
     public Event3_38() : base()
     {
         EventName = "认识新人";
-        HaveTarget = true;
+        HaveTarget = false;
         Weight = 4;
         RelationRequire = 0;
     }
@@ -14256,25 +14256,23 @@ public class Event3_38 : Event
         //重新随机一个不认识的人作为Target
         List<Relation> allRelation = Function.CopyList(Self.Relations);
         allRelation = Function.RandomSortList(allRelation);
-        foreach (Relation relation in allRelation)
+
+        foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
         {
-             if (Self.FindRelation(relation.Self).EventFlag[0] == 0)
-             {
-                 Target = relation.Self;
-                 break;
-             }
-        }
-        if (Target != null)
-        {
-            foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
-            {
-                if (p.CurrentPerk.Num == 64 & p.CurrentPerk.Level >= 1)
-                {//无聊×1
-                    return true;
+            if (p.CurrentPerk.Num == 64 & p.CurrentPerk.Level >= 1)
+            {//无聊×1
+                foreach (Relation relation in allRelation)
+                {
+                    if (relation.EventFlag[0] == 0)
+                    {
+                        Target = relation.Self;
+                        break;
+                    }
                 }
+                return true;
             }
         }
-       
+
         return false;
     }
     public override int ExtraValue()
@@ -14300,13 +14298,22 @@ public class Event3_38 : Event
     public override void Success(float Posb)
     {
         base.Success(Posb);
+
+        PerkInfo info = null;
         foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
         {
             if (p.CurrentPerk.Num == 64)
             {
-                p.CurrentPerk.RemoveEffect();
+                info = p;
             }
         }
+        if (info)
+        {
+            info.CurrentPerk.RemoveEffect();
+        }
+
+        Debug.LogError(Target);
+
         Self.AddEmotion(EColor.Yellow);
         Self.ChangeRelation(Target, 5);
         Self.FindRelation(Target).EventFlag[0] = 1;
@@ -14320,13 +14327,23 @@ public class Event3_38 : Event
     public override void Failure(float Posb)
     {
         base.Failure(Posb);
+
+        PerkInfo info = null;
         foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
         {
             if (p.CurrentPerk.Num == 64)
             {
-                p.CurrentPerk.RemoveEffect();
+                info = p;
             }
         }
+        if (info)
+        {
+            info.CurrentPerk.RemoveEffect();
+        }
+
+        Debug.LogError(Target);
+
+
         Self.AddEmotion(EColor.Blue);
         Self.ChangeRelation(Target, -5);
         Target.ChangeRelation(Self, -5);
@@ -14334,6 +14351,13 @@ public class Event3_38 : Event
         ResultText = Self.Name + "因无聊闲逛，在" + SelfEntity.StandGridName() + "认识" + Target.Name + "，";
         ObjectText = ResultText + Target.Name + "觉得"+Self.Name+"很烦，双方认识 双方好感-5，消除事件状态：无聊×1，获得情绪状态：反感×1";
         ResultText += Target.Name + "双方第一印象很差，双方认识 双方好感-5，消除事件状态：无聊×1，获得情绪状态：反感×1";
+    }
+
+    public override Event Clone()
+    {
+        Event clone = (Event)this.MemberwiseClone();
+        clone.HaveTarget = true;
+        return clone;
     }
 }
 public class Event3_39 : Event
