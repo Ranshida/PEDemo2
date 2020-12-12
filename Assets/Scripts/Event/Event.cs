@@ -12435,17 +12435,26 @@ public class Event3_14 : Event
         base.Success(Posb);
         Self.InfoDetail.AddPerk(new Perk70(Self), true);
         Self.InfoDetail.AddPerk(new Perk46(Self), true);
+        PerkInfo yuanwang = null, chengzhang = null;
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
         {
             if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 55)
             {
-                Self.InfoDetail.PerksInfo[i].CurrentPerk.RemoveEffect();
+                yuanwang = Self.InfoDetail.PerksInfo[i];
             }
             else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 58 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 2)
             {
-                Self.InfoDetail.PerksInfo[i].CurrentPerk.RemoveEffect();
-                Self.InfoDetail.PerksInfo[i].CurrentPerk.RemoveEffect();
+                chengzhang = Self.InfoDetail.PerksInfo[i];
             }
+        }
+        if (yuanwang)
+        {
+            yuanwang.CurrentPerk.RemoveEffect();
+        }
+        if (chengzhang)
+        {
+            chengzhang.CurrentPerk.RemoveEffect();
+            chengzhang.CurrentPerk.RemoveEffect();
         }
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "与" + Target.Name + "交流着职场生涯";
         ResultText += Self.Name + "渐渐意识到自己的理想,获得事件状态 理想*1，受到启发*1，消除事件状态：愿望*1 成长*2  ";
@@ -12455,17 +12464,26 @@ public class Event3_14 : Event
         base.Failure(Posb);
         Self.InfoDetail.AddPerk(new Perk69(Self), true);
         Self.Mentality -= 8;
+        PerkInfo yuanwang = null, chengzhang = null;
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
         {
             if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 55)
             {
-                Self.InfoDetail.PerksInfo[i].CurrentPerk.RemoveEffect();
+                yuanwang = Self.InfoDetail.PerksInfo[i];
             }
             else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 58 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 2)
             {
-                Self.InfoDetail.PerksInfo[i].CurrentPerk.RemoveEffect();
-                Self.InfoDetail.PerksInfo[i].CurrentPerk.RemoveEffect();
+                chengzhang = Self.InfoDetail.PerksInfo[i];
             }
+        }
+        if (yuanwang)
+        {
+            yuanwang.CurrentPerk.RemoveEffect();
+        }
+        if (chengzhang)
+        {
+            chengzhang.CurrentPerk.RemoveEffect();
+            chengzhang.CurrentPerk.RemoveEffect();
         }
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "与" + Target.Name + "交流着职场生涯";
         ResultText +=  Self.Name +"被"+Target.Name+"嘲笑是妄想家，获得事件状态 遭到敌意*1,己方信念下降8,消除事件状态： 愿望*1 成长*2  ";
@@ -12528,17 +12546,26 @@ public class Event3_15 : Event
         base.Success(Posb);
         Self.InfoDetail.AddPerk(new Perk55(Self), true);
         Self.InfoDetail.AddPerk(new Perk67(Self), true);
+        PerkInfo yuanwang = null, chengzhang = null;
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
         {
             if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 55)
             {
-                Self.InfoDetail.PerksInfo[i].CurrentPerk.RemoveEffect();
+                yuanwang = Self.InfoDetail.PerksInfo[i];
             }
             else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 58 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 2)
             {
-                Self.InfoDetail.PerksInfo[i].CurrentPerk.RemoveEffect();
-                Self.InfoDetail.PerksInfo[i].CurrentPerk.RemoveEffect();
+                chengzhang = Self.InfoDetail.PerksInfo[i];
             }
+        }
+        if (yuanwang)
+        {
+            yuanwang.CurrentPerk.RemoveEffect();
+        }
+        if (chengzhang)
+        {
+            chengzhang.CurrentPerk.RemoveEffect();
+            chengzhang.CurrentPerk.RemoveEffect();
         }
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "与" + Target.Name + "讨论理想";
         ResultText += Target.Name + "对"+Self.Name+"表示赞许,获得事件状态 愿望*1，受到赞扬*1，消除事件状态：愿望*1 成长*2 ";
@@ -12548,17 +12575,26 @@ public class Event3_15 : Event
         base.Failure(Posb);
         Self.InfoDetail.AddPerk(new Perk68(Self), true);
         Self.Mentality -= 5;
+        PerkInfo yuanwang = null, chengzhang = null;
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
         {
             if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 55)
             {
-                Self.InfoDetail.PerksInfo[i].CurrentPerk.RemoveEffect();
+                yuanwang = Self.InfoDetail.PerksInfo[i];
             }
             else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 58 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 2)
             {
-                Self.InfoDetail.PerksInfo[i].CurrentPerk.RemoveEffect();
-                Self.InfoDetail.PerksInfo[i].CurrentPerk.RemoveEffect();
+                chengzhang = Self.InfoDetail.PerksInfo[i];
             }
+        }
+        if (yuanwang)
+        {
+            yuanwang.CurrentPerk.RemoveEffect();
+        }
+        if (chengzhang)
+        {
+            chengzhang.CurrentPerk.RemoveEffect();
+            chengzhang.CurrentPerk.RemoveEffect();
         }
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "与" + Target.Name + "讨论理想";
         ResultText += Target.Name + "认为"+Self.Name+"只管赚钱就好，获得事件状态 受到批评*1，己方信念下降5，消除事件状态：愿望*1 成长*2 ";
@@ -12626,16 +12662,25 @@ public class Event3_16 : JudgeEvent
         base.Success(Posb);
         Self.InfoDetail.AddPerk(new Perk55(Self), true);
         Self.InfoDetail.AddPerk(new Perk67(Self), true);
+        PerkInfo yuanwang = null, chengzhang = null;
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
         {
             if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 55)
             {
-                Self.InfoDetail.PerksInfo[i].CurrentPerk.RemoveEffect();
+                yuanwang = Self.InfoDetail.PerksInfo[i];
             }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 58)
+            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 58 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 1)
             {
-                Self.InfoDetail.PerksInfo[i].CurrentPerk.RemoveEffect();
+                chengzhang = Self.InfoDetail.PerksInfo[i];
             }
+        }
+        if (yuanwang)
+        {
+            yuanwang.CurrentPerk.RemoveEffect();
+        }
+        if (chengzhang)
+        {
+            chengzhang.CurrentPerk.RemoveEffect();
         }
         //弹出窗口询问玩家
         bool canAccept = true;
@@ -12668,16 +12713,25 @@ public class Event3_16 : JudgeEvent
         base.Failure(Posb);
         Self.InfoDetail.AddPerk(new Perk68(Self), true);
         Self.Mentality -= 10;
+        PerkInfo yuanwang = null, chengzhang = null;
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
         {
             if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 55)
             {
-                Self.InfoDetail.PerksInfo[i].CurrentPerk.RemoveEffect();
+                yuanwang = Self.InfoDetail.PerksInfo[i];
             }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 58)
+            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 58 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 1)
             {
-                Self.InfoDetail.PerksInfo[i].CurrentPerk.RemoveEffect();
+                chengzhang = Self.InfoDetail.PerksInfo[i];
             }
+        }
+        if (yuanwang)
+        {
+            yuanwang.CurrentPerk.RemoveEffect();
+        }
+        if (chengzhang)
+        {
+            chengzhang.CurrentPerk.RemoveEffect();
         }
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "希望上司" + Target.Name + "为其转岗";
         ResultText += "上司"+Target.Name+"拒绝了"+Self.Name+"的请求，并叮嘱好好工作,获得事件状态 受到批评*1，己方信念下降10，消除事件状态：愿望*1 成长*1 ";
@@ -12742,16 +12796,25 @@ public class Event3_17 : Event
         base.Success(Posb);
         Self.InfoDetail.AddPerk(new Perk46(Self), true);
         Self.InfoDetail.AddPerk(new Perk55(Self), true);
+        PerkInfo yuanwang = null, chengzhang = null;
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
         {
             if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 55)
             {
-                Self.InfoDetail.PerksInfo[i].CurrentPerk.RemoveEffect();
+                yuanwang = Self.InfoDetail.PerksInfo[i];
             }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 58)
+            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 58 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 1)
             {
-                Self.InfoDetail.PerksInfo[i].CurrentPerk.RemoveEffect();
+                chengzhang = Self.InfoDetail.PerksInfo[i];
             }
+        }
+        if (yuanwang)
+        {
+            yuanwang.CurrentPerk.RemoveEffect();
+        }
+        if (chengzhang)
+        {
+            chengzhang.CurrentPerk.RemoveEffect();
         }
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "与同事" + Target.Name + "讨论转岗到其他部门";
         ResultText += "同事"+Target.Name+"赞许"+Self.Name+"的勇气，获得事件状态 受到启发*1，愿望*1，消除事件状态：愿望*1 成长*1 ";
@@ -12761,16 +12824,25 @@ public class Event3_17 : Event
         base.Failure(Posb);
         Self.InfoDetail.AddPerk(new Perk69(Self), true);
         Self.Mentality -= 8;
+        PerkInfo yuanwang = null, chengzhang = null;
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
         {
             if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 55)
             {
-                Self.InfoDetail.PerksInfo[i].CurrentPerk.RemoveEffect();
+                yuanwang = Self.InfoDetail.PerksInfo[i];
             }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 58)
+            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 58 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 1)
             {
-                Self.InfoDetail.PerksInfo[i].CurrentPerk.RemoveEffect();
+                chengzhang = Self.InfoDetail.PerksInfo[i];
             }
+        }
+        if (yuanwang)
+        {
+            yuanwang.CurrentPerk.RemoveEffect();
+        }
+        if (chengzhang)
+        {
+            chengzhang.CurrentPerk.RemoveEffect();
         }
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "与同事" + Target.Name + "讨论转岗到其他部门";
         ResultText += "同事"+Target.Name+"取笑"+Self.Name+"的鲁莽，获得事件状态 遭到敌意*1，己方信念下降8，消除事件状态：愿望*1 成长*1 ";
@@ -12833,19 +12905,28 @@ public class Event3_18 : JudgeEvent
     {
         base.Success(Posb);
         Self.InfoDetail.AddPerk(new Perk65(Self), true);
+        PerkInfo yuanwang = null, chengzhang = null;
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
         {
             if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 55)
             {
-                Self.InfoDetail.PerksInfo[i].CurrentPerk.RemoveEffect();
+                yuanwang = Self.InfoDetail.PerksInfo[i];
             }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 58)
+            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 58 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 4)
             {
-                Self.InfoDetail.PerksInfo[i].CurrentPerk.RemoveEffect();
-                Self.InfoDetail.PerksInfo[i].CurrentPerk.RemoveEffect();
-                Self.InfoDetail.PerksInfo[i].CurrentPerk.RemoveEffect();
-                Self.InfoDetail.PerksInfo[i].CurrentPerk.RemoveEffect();
+                chengzhang = Self.InfoDetail.PerksInfo[i];
             }
+        }
+        if (yuanwang)
+        {
+            yuanwang.CurrentPerk.RemoveEffect();
+        }
+        if (chengzhang)
+        {
+            chengzhang.CurrentPerk.RemoveEffect();
+            chengzhang.CurrentPerk.RemoveEffect();
+            chengzhang.CurrentPerk.RemoveEffect();
+            chengzhang.CurrentPerk.RemoveEffect();
         }
         //弹出窗口询问玩家
         bool canAccept = true;
@@ -12878,19 +12959,28 @@ public class Event3_18 : JudgeEvent
         base.Failure(Posb);
         Self.InfoDetail.AddPerk(new Perk66(Self), true);
         Self.Mentality -= 12;
+        PerkInfo yuanwang = null, chengzhang = null;
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
         {
             if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 55)
             {
-                Self.InfoDetail.PerksInfo[i].CurrentPerk.RemoveEffect();
+                yuanwang = Self.InfoDetail.PerksInfo[i];
             }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 58)
+            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 58 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 4)
             {
-                Self.InfoDetail.PerksInfo[i].CurrentPerk.RemoveEffect();
-                Self.InfoDetail.PerksInfo[i].CurrentPerk.RemoveEffect();
-                Self.InfoDetail.PerksInfo[i].CurrentPerk.RemoveEffect();
-                Self.InfoDetail.PerksInfo[i].CurrentPerk.RemoveEffect();
+                chengzhang = Self.InfoDetail.PerksInfo[i];
             }
+        }
+        if (yuanwang)
+        {
+            yuanwang.CurrentPerk.RemoveEffect();
+        }
+        if (chengzhang)
+        {
+            chengzhang.CurrentPerk.RemoveEffect();
+            chengzhang.CurrentPerk.RemoveEffect();
+            chengzhang.CurrentPerk.RemoveEffect();
+            chengzhang.CurrentPerk.RemoveEffect();
         }
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "希望得到上司" + Target.Name + "的升职推荐";
         ResultText += "上司"+Target.Name+"质疑"+Self.Name+"的能力并拒绝推荐，获得事件状态 受到质疑*1，己方信念下降12，消除事件状态：愿望*1 成长*4";
@@ -12954,17 +13044,26 @@ public class Event3_19 : JudgeEvent
     {
         base.Success(Posb);
         Self.InfoDetail.AddPerk(new Perk65(Self), true);
+        PerkInfo yuanwang = null, chengzhang = null;
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
         {
             if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 55)
             {
-                Self.InfoDetail.PerksInfo[i].CurrentPerk.RemoveEffect();
+                yuanwang = Self.InfoDetail.PerksInfo[i];
             }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 58)
+            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 58 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 2)
             {
-                Self.InfoDetail.PerksInfo[i].CurrentPerk.RemoveEffect();
-                Self.InfoDetail.PerksInfo[i].CurrentPerk.RemoveEffect();
+                chengzhang = Self.InfoDetail.PerksInfo[i];
             }
+        }
+        if (yuanwang)
+        {
+            yuanwang.CurrentPerk.RemoveEffect();
+        }
+        if (chengzhang)
+        {
+            chengzhang.CurrentPerk.RemoveEffect();
+            chengzhang.CurrentPerk.RemoveEffect();
         }
         //弹出窗口询问玩家
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "请求上司" + Target.Name + "为其加薪";
@@ -12989,17 +13088,26 @@ public class Event3_19 : JudgeEvent
         base.Failure(Posb);
         Self.InfoDetail.AddPerk(new Perk66(Self), true);
         Self.Mentality -= 12;
+        PerkInfo yuanwang = null, chengzhang = null;
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
         {
             if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 55)
             {
-                Self.InfoDetail.PerksInfo[i].CurrentPerk.RemoveEffect();
+                yuanwang = Self.InfoDetail.PerksInfo[i];
             }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 58)
+            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 58 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 2)
             {
-                Self.InfoDetail.PerksInfo[i].CurrentPerk.RemoveEffect();
-                Self.InfoDetail.PerksInfo[i].CurrentPerk.RemoveEffect();
+                chengzhang = Self.InfoDetail.PerksInfo[i];
             }
+        }
+        if (yuanwang)
+        {
+            yuanwang.CurrentPerk.RemoveEffect();
+        }
+        if (chengzhang)
+        {
+            chengzhang.CurrentPerk.RemoveEffect();
+            chengzhang.CurrentPerk.RemoveEffect();
         }
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "请求上司" + Target.Name + "为其加薪";
         ResultText += "上司"+Target.Name+"质疑"+Self.Name+"的能力并拒绝加薪，获得事件状态 受到质疑*1， 己方信念下降12，消除事件状态：愿望*1 成长*2";
@@ -13391,12 +13499,17 @@ public class Event3_26 : Event
     public override void Success(float Posb)
     {
         base.Success(Posb);
+        PerkInfo shenkejiaotan = null;
         foreach(PerkInfo p in Self.InfoDetail.PerksInfo)
         {
             if(p.CurrentPerk.Num == 59)
             {
-                p.CurrentPerk.RemoveEffect();
+                shenkejiaotan = p;
             }
+        }
+        if (shenkejiaotan)
+        {
+            shenkejiaotan.CurrentPerk.RemoveEffect();
         }
         Self.AddEmotion(EColor.Yellow);
         Self.ChangeRelation(Target, 5);
@@ -13408,12 +13521,17 @@ public class Event3_26 : Event
     public override void Failure(float Posb)
     {
         base.Failure(Posb);
+        PerkInfo shenkejiaotan = null;
         foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
         {
             if (p.CurrentPerk.Num == 59)
             {
-                p.CurrentPerk.RemoveEffect();
+                shenkejiaotan = p;
             }
+        }
+        if (shenkejiaotan)
+        {
+            shenkejiaotan.CurrentPerk.RemoveEffect();
         }
         Self.AddEmotion(EColor.Blue);
         Self.ChangeRelation(Target,-10);
@@ -13464,12 +13582,17 @@ public class Event3_27 : Event
     public override void Success(float Posb)
     {
         base.Success(Posb);
+        PerkInfo renkejiaotan = null;
         foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
         {
             if (p.CurrentPerk.Num == 61)
             {
-                p.CurrentPerk.RemoveEffect();
+                renkejiaotan = p;
             }
+        }
+        if (renkejiaotan)
+        {
+            renkejiaotan.CurrentPerk.RemoveEffect();
         }
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "找人聊了聊自己想要做的事情，";
         ObjectText = ResultText + Target.Name + "听到之后不以为意，好感度不变，消除事件状态：认可交谈×1";
@@ -13478,12 +13601,17 @@ public class Event3_27 : Event
     public override void Failure(float Posb)
     {
         base.Failure(Posb);
+        PerkInfo renkejiaotan = null;
         foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
         {
             if (p.CurrentPerk.Num == 61)
             {
-                p.CurrentPerk.RemoveEffect();
+                renkejiaotan = p;
             }
+        }
+        if (renkejiaotan)
+        {
+            renkejiaotan.CurrentPerk.RemoveEffect();
         }
         Self.AddEmotion(EColor.Red);
         Self.ChangeRelation(Target, -10);
@@ -13534,12 +13662,17 @@ public class Event3_28 : Event
     public override void Success(float Posb)
     {
         base.Success(Posb);
+        PerkInfo info = null;
         foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
         {
             if (p.CurrentPerk.Num == 62)
             {
-                p.CurrentPerk.RemoveEffect();
+                info = p;
             }
+        }
+        if (info)
+        {
+            info.CurrentPerk.RemoveEffect();
         }
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "给别人讲了自己今天发生的事情，";
         ObjectText = ResultText + Target.Name + "没当回事，好感度不变，消除事件状态：分享日常×1";
@@ -13548,12 +13681,17 @@ public class Event3_28 : Event
     public override void Failure(float Posb)
     {
         base.Failure(Posb);
+        PerkInfo info = null;
         foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
         {
             if (p.CurrentPerk.Num == 62)
             {
-                p.CurrentPerk.RemoveEffect();
+                info = p;
             }
+        }
+        if (info)
+        {
+            info.CurrentPerk.RemoveEffect();
         }
         Self.AddEmotion(EColor.Blue);
         Self.ChangeRelation(Target, -10);
@@ -13604,12 +13742,17 @@ public class Event3_29 : Event
     public override void Success(float Posb)
     {
         base.Success(Posb);
+        PerkInfo info = null;
         foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
         {
             if (p.CurrentPerk.Num == 60)
             {
-                p.CurrentPerk.RemoveEffect();
+                info = p;
             }
+        }
+        if (info)
+        {
+            info.CurrentPerk.RemoveEffect();
         }
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "给别人讲了自己今天发生的事情，";
         ObjectText = ResultText + Target.Name + "不以为意，好感度不变，消除事件状态：分享乐事×1";
@@ -13618,12 +13761,17 @@ public class Event3_29 : Event
     public override void Failure(float Posb)
     {
         base.Failure(Posb);
+        PerkInfo info = null;
         foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
         {
             if (p.CurrentPerk.Num == 60)
             {
-                p.CurrentPerk.RemoveEffect();
+                info = p;
             }
+        }
+        if (info)
+        {
+            info.CurrentPerk.RemoveEffect();
         }
         Self.AddEmotion(EColor.Red);
         Self.ChangeRelation(Target, -10);
@@ -13674,12 +13822,17 @@ public class Event3_30 : Event
     public override void Success(float Posb)
     {
         base.Success(Posb);
+        PerkInfo info = null;
         foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
         {
             if (p.CurrentPerk.Num == 61)
             {
-                p.CurrentPerk.RemoveEffect();
+                info = p;
             }
+        }
+        if (info)
+        {
+            info.CurrentPerk.RemoveEffect();
         }
         Self.AddEmotion(EColor.Red);
         Self.ChangeRelation(Target, -5);
@@ -13691,12 +13844,17 @@ public class Event3_30 : Event
     public override void Failure(float Posb)
     {
         base.Failure(Posb);
+        PerkInfo info = null;
         foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
         {
             if (p.CurrentPerk.Num == 61)
             {
-                p.CurrentPerk.RemoveEffect();
+                info = p;
             }
+        }
+        if (info)
+        {
+            info.CurrentPerk.RemoveEffect();
         }
         Self.AddEmotion(EColor.DBlue);
         Self.ChangeRelation(Target, -10);
@@ -13747,12 +13905,17 @@ public class Event3_31 : Event
     public override void Success(float Posb)
     {
         base.Success(Posb);
+        PerkInfo info = null;
         foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
         {
             if (p.CurrentPerk.Num == 63)
             {
-                p.CurrentPerk.RemoveEffect();
+                info = p;
             }
+        }
+        if (info)
+        {
+            info.CurrentPerk.RemoveEffect();
         }
         Self.AddEmotion(EColor.Red);
         Self.ChangeRelation(Target, -5);
@@ -13764,12 +13927,17 @@ public class Event3_31 : Event
     public override void Failure(float Posb)
     {
         base.Failure(Posb);
+        PerkInfo info = null;
         foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
         {
             if (p.CurrentPerk.Num == 63)
             {
-                p.CurrentPerk.RemoveEffect();
+                info = p;
             }
+        }
+        if (info)
+        {
+            info.CurrentPerk.RemoveEffect();
         }
         Self.AddEmotion(EColor.DRed);
         Self.ChangeRelation(Target, -10);
@@ -13820,12 +13988,17 @@ public class Event3_32 : Event
     public override void Success(float Posb)
     {
         base.Success(Posb);
+        PerkInfo info = null;
         foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
         {
             if (p.CurrentPerk.Num == 62)
             {
-                p.CurrentPerk.RemoveEffect();
+                info = p;
             }
+        }
+        if (info)
+        {
+            info.CurrentPerk.RemoveEffect();
         }
         Self.AddEmotion(EColor.Yellow);
         Self.ChangeRelation(Target, 5);
@@ -13837,12 +14010,17 @@ public class Event3_32 : Event
     public override void Failure(float Posb)
     {
         base.Failure(Posb);
+        PerkInfo info = null;
         foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
         {
             if (p.CurrentPerk.Num == 62)
             {
-                p.CurrentPerk.RemoveEffect();
+                info = p;
             }
+        }
+        if (info)
+        {
+            info.CurrentPerk.RemoveEffect();
         }
         Self.AddEmotion(EColor.Red);
         Self.ChangeRelation(Target, -5);
@@ -13893,12 +14071,17 @@ public class Event3_33 : Event
     public override void Success(float Posb)
     {
         base.Success(Posb);
+        PerkInfo info = null;
         foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
         {
             if (p.CurrentPerk.Num == 61)
             {
-                p.CurrentPerk.RemoveEffect();
+                info = p;
             }
+        }
+        if (info)
+        {
+            info.CurrentPerk.RemoveEffect();
         }
         Self.AddEmotion(EColor.Yellow);
         Self.ChangeRelation(Target, 10);
@@ -13910,12 +14093,17 @@ public class Event3_33 : Event
     public override void Failure(float Posb)
     {
         base.Failure(Posb);
+        PerkInfo info = null;
         foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
         {
             if (p.CurrentPerk.Num == 61)
             {
-                p.CurrentPerk.RemoveEffect();
+                info = p;
             }
+        }
+        if (info)
+        {
+            info.CurrentPerk.RemoveEffect();
         }
         Self.AddEmotion(EColor.DRed);
         Self.ChangeRelation(Target, -10);
@@ -13966,12 +14154,17 @@ public class Event3_34 : Event
     public override void Success(float Posb)
     {
         base.Success(Posb);
+        PerkInfo info = null;
         foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
         {
             if (p.CurrentPerk.Num == 60)
             {
-                p.CurrentPerk.RemoveEffect();
+                info = p;
             }
+        }
+        if (info)
+        {
+            info.CurrentPerk.RemoveEffect();
         }
         Self.AddEmotion(EColor.Yellow);
         Self.ChangeRelation(Target, 5);
@@ -13983,12 +14176,17 @@ public class Event3_34 : Event
     public override void Failure(float Posb)
     {
         base.Failure(Posb);
+        PerkInfo info = null;
         foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
         {
             if (p.CurrentPerk.Num == 60)
             {
-                p.CurrentPerk.RemoveEffect();
+                info = p;
             }
+        }
+        if (info)
+        {
+            info.CurrentPerk.RemoveEffect();
         }
         Self.AddEmotion(EColor.Blue);
         Self.ChangeRelation(Target, -5);
@@ -14039,12 +14237,17 @@ public class Event3_35 : Event
     public override void Success(float Posb)
     {
         base.Success(Posb);
+        PerkInfo info = null;
         foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
         {
             if (p.CurrentPerk.Num == 63)
             {
-                p.CurrentPerk.RemoveEffect();
+                info = p;
             }
+        }
+        if (info)
+        {
+            info.CurrentPerk.RemoveEffect();
         }
         Self.AddEmotion(EColor.Yellow);
         Self.ChangeRelation(Target, 10);
@@ -14056,12 +14259,17 @@ public class Event3_35 : Event
     public override void Failure(float Posb)
     {
         base.Failure(Posb);
+        PerkInfo info = null;
         foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
         {
             if (p.CurrentPerk.Num == 63)
             {
-                p.CurrentPerk.RemoveEffect();
+                info = p;
             }
+        }
+        if (info)
+        {
+            info.CurrentPerk.RemoveEffect();
         }
         Self.AddEmotion(EColor.Red);
         Self.ChangeRelation(Target, -5);
@@ -14112,12 +14320,17 @@ public class Event3_36 : Event
     public override void Success(float Posb)
     {
         base.Success(Posb);
+        PerkInfo info = null;
         foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
         {
             if (p.CurrentPerk.Num == 63)
             {
-                p.CurrentPerk.RemoveEffect();
+                info = p;
             }
+        }
+        if (info)
+        {
+            info.CurrentPerk.RemoveEffect();
         }
         Self.AddEmotion(EColor.Yellow);
         Self.ChangeRelation(Target, 10);
@@ -14129,12 +14342,17 @@ public class Event3_36 : Event
     public override void Failure(float Posb)
     {
         base.Failure(Posb);
+        PerkInfo info = null;
         foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
         {
             if (p.CurrentPerk.Num == 63)
             {
-                p.CurrentPerk.RemoveEffect();
+                info = p;
             }
+        }
+        if (info)
+        {
+            info.CurrentPerk.RemoveEffect();
         }
         Self.AddEmotion(EColor.DBlue);
         Self.ChangeRelation(Target, -5);
@@ -14185,12 +14403,17 @@ public class Event3_37 : Event
     public override void Success(float Posb)
     {
         base.Success(Posb);
+        PerkInfo info = null;
         foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
         {
             if (p.CurrentPerk.Num == 59)
             {
-                p.CurrentPerk.RemoveEffect();
+                info = p;
             }
+        }
+        if (info)
+        {
+            info.CurrentPerk.RemoveEffect();
         }
         Self.AddEmotion(EColor.DYellow);
         Self.ChangeRelation(Target, 10);
@@ -14202,12 +14425,17 @@ public class Event3_37 : Event
     public override void Failure(float Posb)
     {
         base.Failure(Posb);
+        PerkInfo info = null;
         foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
         {
             if (p.CurrentPerk.Num == 59)
             {
-                p.CurrentPerk.RemoveEffect();
+                info = p;
             }
+        }
+        if (info)
+        {
+            info.CurrentPerk.RemoveEffect();
         }
         Self.AddEmotion(EColor.Blue);
         Self.ChangeRelation(Target, -5);
@@ -14406,12 +14634,17 @@ public class Event3_39 : Event
     public override void Success(float Posb)
     {
         base.Success(Posb);
+        PerkInfo info = null;
         foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
         {
             if (p.CurrentPerk.Num == 64)
             {
-                p.CurrentPerk.RemoveEffect();
+                info = p;
             }
+        }
+        if (info)
+        {
+            info.CurrentPerk.RemoveEffect();
         }
         Self.AddEmotion(EColor.DYellow);
         Self.ChangeRelation(Target, 5);
@@ -14423,12 +14656,17 @@ public class Event3_39 : Event
     public override void Failure(float Posb)
     {
         base.Failure(Posb);
+        PerkInfo info = null;
         foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
         {
             if (p.CurrentPerk.Num == 64)
             {
-                p.CurrentPerk.RemoveEffect();
+                info = p;
             }
+        }
+        if (info)
+        {
+            info.CurrentPerk.RemoveEffect();
         }
         Self.AddEmotion(EColor.Blue);
         Self.ChangeRelation(Target, -5);
@@ -14483,12 +14721,17 @@ public class Event3_40 : Event
     public override void Success(float Posb)
     {
         base.Success(Posb);
+        PerkInfo info = null;
         foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
         {
             if (p.CurrentPerk.Num == 64)
             {
-                p.CurrentPerk.RemoveEffect();
+                info = p;
             }
+        }
+        if (info)
+        {
+            info.CurrentPerk.RemoveEffect();
         }
         Self.AddEmotion(EColor.Yellow);
         ResultText = Self.Name + "自己闲逛，逛到了" + SelfEntity.StandGridName() + "那里，";
@@ -14497,12 +14740,17 @@ public class Event3_40 : Event
     public override void Failure(float Posb)
     {
         base.Failure(Posb);
+        PerkInfo info = null;
         foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
         {
             if (p.CurrentPerk.Num == 64)
             {
-                p.CurrentPerk.RemoveEffect();
+                info = p;
             }
+        }
+        if (info)
+        {
+            info.CurrentPerk.RemoveEffect();
         }
         Self.AddEmotion(EColor.Blue);
         ResultText = Self.Name + "自己闲逛，逛到了" + SelfEntity.StandGridName() + "那里，";
@@ -14557,12 +14805,17 @@ public class Event3_41 : Event
     public override void Success(float Posb)
     {
         base.Success(Posb);
+        PerkInfo info = null;
         foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
         {
             if (p.CurrentPerk.Num == 64)
             {
-                p.CurrentPerk.RemoveEffect();
+                info = p;
             }
+        }
+        if (info)
+        {
+            info.CurrentPerk.RemoveEffect();
         }
         Self.AddEmotion(EColor.DYellow);
         Self.ChangeRelation(Target, 5);
@@ -14574,12 +14827,17 @@ public class Event3_41 : Event
     public override void Failure(float Posb)
     {
         base.Failure(Posb);
+        PerkInfo info = null;
         foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
         {
             if (p.CurrentPerk.Num == 64)
             {
-                p.CurrentPerk.RemoveEffect();
+                info = p;
             }
+        }
+        if (info)
+        {
+            info.CurrentPerk.RemoveEffect();
         }
         Self.AddEmotion(EColor.Red);
         Self.ChangeRelation(Target, -5);
@@ -14635,12 +14893,17 @@ public class Event3_42 : JudgeEvent
     public override void Success(float Posb)
     {
         base.Success(Posb);
+        PerkInfo info = null;
         foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
         {
             if (p.CurrentPerk.Num == 64)
             {
-                p.CurrentPerk.RemoveEffect();
+                info = p;
             }
+        }
+        if (info)
+        {
+            info.CurrentPerk.RemoveEffect();
         }
         Self.AddEmotion(EColor.DYellow);
         ResultText = Self.Name + "感到无聊想要请个假，";
@@ -14666,12 +14929,17 @@ public class Event3_42 : JudgeEvent
     public override void Failure(float Posb)
     {
         base.Failure(Posb);
+        PerkInfo info = null;
         foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
         {
             if (p.CurrentPerk.Num == 64)
             {
-                p.CurrentPerk.RemoveEffect();
+                info = p;
             }
+        }
+        if (info)
+        {
+            info.CurrentPerk.RemoveEffect();
         }
         Self.AddEmotion(EColor.DRed);
         ResultText = Self.Name + "感到无聊想要请个假，";
@@ -14724,12 +14992,17 @@ public class Event3_43 : Event
     public override void Success(float Posb)
     {
         base.Success(Posb);
+        PerkInfo info = null;
         foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
         {
             if (p.CurrentPerk.Num == 64)
             {
-                p.CurrentPerk.RemoveEffect();
+                info = p;
             }
+        }
+        if (info)
+        {
+            info.CurrentPerk.RemoveEffect();
         }
         Self.AddEmotion(EColor.Yellow);
         Self.ChangeRelation(Target, 10);
@@ -14741,12 +15014,17 @@ public class Event3_43 : Event
     public override void Failure(float Posb)
     {
         base.Failure(Posb);
+        PerkInfo info = null;
         foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
         {
             if (p.CurrentPerk.Num == 64)
             {
-                p.CurrentPerk.RemoveEffect();
+                info = p;
             }
+        }
+        if (info)
+        {
+            info.CurrentPerk.RemoveEffect();
         }
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "想要约" + Target.Name + "周末一起出去玩";
         if (Random.Range(0,2) == 0)
