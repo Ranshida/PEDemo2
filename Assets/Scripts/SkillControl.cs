@@ -22,7 +22,7 @@ public class SkillControl : MonoBehaviour
     public int SelectNum = 0, CurrentPoint = 0, Sp2Multiply = 0, Sp3Multiply = 0, Sp4Multiply = 0, Sp5Multiply = 0, 
         BossHp = 0, Sp1Multiply = 0;
 
-    public float ExtraSuccessRate = 0.0f, ExtraMajorSuccessRate;//各部门的额外成功率加成
+    public float ExtraSuccessRate = 0.0f, ExtraMajorSuccessRate = 0, ExtraMajorFailureRate = 0;//各部门的额外成功率加成
     public int DiceUseNum = 0;//用于记录每回合使用的骰子数量
     public int DotValue = 0;//每回合持续伤害(洞察)
     public int ExtraDamage = 0;//每回合附加伤害(想象力)
@@ -176,7 +176,7 @@ public class SkillControl : MonoBehaviour
         SkillSetButton.interactable = false;
 
         if (AdvanceMobilize == true)
-            Sp2Multiply += 1;
+            Sp2Multiply = 1;
         SkillCheck();
     }
 
@@ -398,8 +398,6 @@ public class SkillControl : MonoBehaviour
     public void CauseDamage(int damage)
     {
         damage += ExtraDamage;
-        damage += damage * Sp2Multiply;
-        Sp2Multiply = 0;
         if (damage < 0)
             damage = 0;
         BossHp -= damage;
@@ -621,7 +619,9 @@ public class SkillControl : MonoBehaviour
         ExtraDiceDamage = 0;//重置额外伤害
         SkillLockBonus = 0;//重置锁技能奖励层数
         Sp1Multiply = 0;//重置额外骰子奖励
-        for(int i = 0; i < CurrentSkills.Count; i++)
+        if (AdvanceMobilize == true)//晨会制度，基本技翻倍效果
+            Sp2Multiply = 1;
+        for (int i = 0; i < CurrentSkills.Count; i++)
         {
             //重置技能锁定时间
             if (CurrentSkills[i].LockTime > 0)

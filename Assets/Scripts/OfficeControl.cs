@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class OfficeControl : MonoBehaviour
 {
     public bool CanWork = false;
-    public int ManageValue = 0, Progress = 100;
+    public int ManageValue = 0, Progress = 100, MaxProgress = 96;
     public int OfficeMode = 1;//1决策 战略充能 2人力 心力回复(说服) 3管理 加启发 4招聘 5行业 刷新建筑
     public int ExpTime = 5;//每5工时加经验
 
@@ -30,6 +30,7 @@ public class OfficeControl : MonoBehaviour
         {
             GC.HourEvent.AddListener(TimePass);
         }
+        Progress = 0;
         SetOfficeUI();
     }
 
@@ -268,7 +269,7 @@ public class OfficeControl : MonoBehaviour
             GC.OfficeModeHireOptionButton.SetActive(false);
     }
 
-    public float CalcSuccessRate()
+    public float CountSuccessRate()
     {
         float BaseSRate = 0.6f;
         Text_SRateDetail.text = "";
@@ -310,8 +311,17 @@ public class OfficeControl : MonoBehaviour
             Text_SRateDetail.text += (EValue * 100) + "%";
             if (CurrentManager.ExtraSuccessRate > 0.001f || CurrentManager.ExtraSuccessRate < -0.001f)
                 Text_SRateDetail.text += " +" + (CurrentManager.ExtraSuccessRate * 100) + "%";
+
+            if (GC.SC.ExtraSuccessRate > 0.001f)
+                Text_SRateDetail.text += "\n动员效果:" + (GC.SC.ExtraSuccessRate * 100) + "%";
+
+            if (OfficeMode == 4 && GC.HireSuccessExtra > 0.001f)
+            {
+                Text_SRateDetail.text += "\n额外招聘成功率:" + (GC.HireSuccessExtra * 100) + "%";
+                BaseSRate += GC.HireSuccessExtra;
+            }
         }
-        return BaseSRate;
+        return BaseSRate + GC.SC.ExtraSuccessRate;
     }
 
     public void TimePass()
@@ -355,19 +365,33 @@ public class OfficeControl : MonoBehaviour
                 SetOfficeUI();
                 //高管（CEO）办公室的四种模式效果
 
-                if (Progress > 0)
+                if (Progress < MaxProgress)
                 {
-                    Progress -= 5;
+                    Progress += 1;
                 }
                 else
                 {
-                    Progress = 100;
-                    float BaseSRate = CalcSuccessRate();
+                    bool MajorSuccess = false;
+                    Progress = 0;
+                    float BaseSRate = CountSuccessRate();
+                    //大成功
                     if (Random.Range(0.0f, 1.0f) < BaseSRate)
+                    {
+                        if (Random.Range(0.0f, 1.0f) < 0.2f + GC.SC.ExtraMajorSuccessRate)
+                            MajorSuccess = true;
+                    }
+                    //失败和大失败
+                    else
+                    {
+                        if (Random.Range(0.0f, 1.0f) < 0.5f + GC.SC.ExtraMajorFailureRate)
+                            CurrentManager.Mentality -= 20;
                         return;
+                    }
                     if (OfficeMode == 1)
                     {
                         CurrentManager.InfoDetail.DirectAddStrategy();
+                        if(MajorSuccess == true)
+                            CurrentManager.InfoDetail.DirectAddStrategy();
                         GC.CreateMessage("(" + Text_OfficeName.text + "添加了新战略");
                     }
                     else if (OfficeMode == 2)
@@ -385,8 +409,11 @@ public class OfficeControl : MonoBehaviour
                         }
                         if (E != null)
                         {
-                            E.Mentality += (int)(20 * GC.HRBuildingMentalityExtra);
-                            GC.CreateMessage("(" + Text_OfficeName.text + ")" + E.Name + "回复了20点心力");
+                            int value = 10;
+                            if (MajorSuccess == true)
+                                value = 20;
+                            E.Mentality += (int)(value * GC.HRBuildingMentalityExtra);
+                            GC.CreateMessage("(" + Text_OfficeName.text + ")" + E.Name + "回复了" + value + "点心力");
                         }
 
                     }
@@ -404,7 +431,9 @@ public class OfficeControl : MonoBehaviour
                         {
                             Employee E2 = E[Random.Range(0, E.Count)];
                             E2.InfoDetail.AddPerk(new Perk3(E2), true);
-                            GC.CreateMessage("(" + Text_OfficeName.text + ")" + E2.Name + "获得了一层启发");
+                            if(MajorSuccess == true)
+                                E2.InfoDetail.AddPerk(new Perk3(E2), true);
+                            GC.CreateMessage("(" + Text_OfficeName.text + ")" + E2.Name + "获得了启发");
                         }
 
                     }
@@ -412,12 +441,14 @@ public class OfficeControl : MonoBehaviour
                     {
                         HireType ht = new HireType(0);
                         ht.SetHeadHuntStatus();
+                        if (MajorSuccess == true)
+                            ht.MajorSuccess = true;
                         GC.HC.AddHireTypes(ht);
                         GC.CreateMessage("(" + Text_OfficeName.text + ")完成了招聘");
                     }
                     else if (OfficeMode == 5)
                     {
-                        if (Random.Range(0.0f, 1.0f) < 0.1f)
+                        if (MajorSuccess == true)
                             GC.BM.Lottery(3);
                         else
                             GC.BM.Lottery(2);
@@ -467,9 +498,9 @@ public class OfficeControl : MonoBehaviour
         }
         else
         {
-            float BaseSRate = CalcSuccessRate();
+            float BaseSRate = CountSuccessRate();
             Text_SuccessRate.text = "成功率:" + (BaseSRate * 100) + "%";
-            Text_TimeLeft.text = "剩余时间:" + (Progress / 5) + "时";
+            Text_TimeLeft.text = "剩余时间:" + (Progress / MaxProgress) + "时";
         }
     }
 
@@ -495,7 +526,7 @@ public class OfficeControl : MonoBehaviour
 
     public void ShowSRateDetailPanel()
     {
-        CalcSuccessRate();
+        CountSuccessRate();
         SRateDetailPanel.transform.position = Input.mousePosition;
         SRateDetailPanel.gameObject.SetActive(true);
         LayoutRebuilder.ForceRebuildLayoutImmediate(SRateDetailPanel.gameObject.GetComponent<RectTransform>());

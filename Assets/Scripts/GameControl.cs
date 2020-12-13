@@ -61,6 +61,14 @@ public class GameControl : MonoBehaviour
     #region 杂项变量
     [HideInInspector] public bool ProduceBuffBonus = false;//“精进”和“团结”状态的持续时间提高至4m战略效果
     [HideInInspector] public bool GymBuffBonus = false;//“健身房”大成功时获得“强化”或“铁人”状态的概率上升为80%战略效果
+    [HideInInspector] public bool WorkToggle = false;//下周开始是否加班
+    [HideInInspector] public bool NeutralOccupieBonus = false;//商战中立占领Buff加成
+    [HideInInspector] public bool TargetOccupieBonus = false;//商战反占领Buff加成
+    [HideInInspector] public bool CEOExtraVote = false;//CEO投票是否有额外加成
+    [HideInInspector] public bool ResearchExtraMentality = false;//科研额外心力恢复
+    [HideInInspector] public float ResearchExtraSuccessRate = 0;//研发业务额外成功率
+    [HideInInspector] public int ResearchExtraTimeBoost = 0;//科研业务时间增益
+    bool WorkOverTime = false;//是否已经处于加班状态
     #endregion
 
     [HideInInspector] public EmpInfo CurrentEmpInfo, CurrentEmpInfo2;//2主要用于需要两个员工的动员技能
@@ -85,9 +93,10 @@ public class GameControl : MonoBehaviour
     public Transform HireContent, EmpPanelContent, DepContent, DepSelectContent, TotalEmpContent, StandbyContent, EmpDetailContent, MessageContent, SRateDetailContent;
     public InfoPanel infoPanel;
     public GameObject DepSelectPanel, StandbyButton, MessagePrefab, CEOSkillPanel, VacationPanel, GameOverPanel, OfficeModeSelectPanel,
-        OfficeModeHireOptionButton, DepModeSelectPanel, DepSkillConfirmPanel;
+        OfficeModeHireOptionButton, DepModeSelectPanel, DepSkillConfirmPanel, SkillTreeSelectPanel;
     public Text Text_Time, Text_TechResource, Text_MarketResource, Text_ProductResource, Text_Money, Text_Stamina, Text_Mentality, 
         Text_Morale, Text_DepMode1, Text_DepMode2, Text_DepSkillDescribe;
+    public Toggle WorkOvertimeToggle;
     public SkillControl SC;
     [HideInInspector] public UnityEvent DailyEvent, WeeklyEvent, MonthlyEvent, HourEvent, YearEvent;
 
@@ -139,25 +148,60 @@ public class GameControl : MonoBehaviour
     {
         Hour += 1;
         CalcTotalSalary();
-        HourEvent.Invoke();
-        if (Hour > 8)
+        //以下为加班判定
+        //体力额外扣除
+        if(WorkOverTime == true)
         {
-            Hour = 1;
-            WeekPass();
-            //StartWorkEnd();
-        }
-
-        //开会封锁时间
-        if (MeetingBlockTime > 0)
-            MeetingBlockTime -= 1;
-        if(MobTime > 0)
-        {
-            MobTime -= 1;
-            if(MobTime == 0)
+            foreach(Employee emp in CurrentEmployees)
             {
-                SC.gameObject.SetActive(true);
-                SC.SkillSetButton.interactable = false;
-                ForceTimePause = true;
+                emp.Stamina -= 1;
+            }
+        }
+        //正常工作时间内正常走时间
+        if (WorkOverTime == false || (WorkOverTime == true && Hour <= 8))
+        {
+            HourEvent.Invoke();
+            if (Hour > 8 && WorkOverTime == false)
+            {
+                Hour = 1;
+                WeekPass();
+                //StartWorkEnd();
+            }
+
+            //开会封锁时间
+            if (MeetingBlockTime > 0)
+                MeetingBlockTime -= 1;
+            if (MobTime > 0)
+            {
+                MobTime -= 1;
+                if (MobTime == 0)
+                {
+                    SC.gameObject.SetActive(true);
+                    SC.SkillSetButton.interactable = false;
+                    ForceTimePause = true;
+                }
+            }
+        }
+        //加班时间只进行工作和事件计算
+        else if (WorkOverTime == true && Hour > 8)
+        {
+            foreach(DepControl dep in CurrentDeps)
+            {
+                dep.Produce();
+            }
+            foreach(OfficeControl office in CurrentOffices)
+            {
+                office.TimePass();
+            }
+            foreach(Employee emp in CurrentEmployees)
+            {
+                emp.EventTimePass();
+                emp.InfoDetail.Entity.TimePass();
+            }
+            if(Hour > 12)
+            {
+                Hour = 1;
+                WeekPass();
             }
         }
 
@@ -177,6 +221,12 @@ public class GameControl : MonoBehaviour
             Stamina = 100;
         if (Mentality > 100)
             Mentality = 100;
+        //每周开始时的加班判定
+        if (WorkToggle == false)
+            WorkOverTime = false;
+        else
+            WorkOverTime = true;
+
 
         if (Week > 4)
         {
@@ -187,6 +237,13 @@ public class GameControl : MonoBehaviour
             for (int i = 0; i < CurrentDeps.Count; i++)
             {
                 CurrentDeps[i].FailCheck();
+                if(ResearchExtraMentality == true && CurrentDeps[i].building.Type == BuildingType.研发部门)
+                {
+                    foreach(Employee emp in CurrentDeps[i].CurrentEmps)
+                    {
+                        emp.Mentality += 20;
+                    }
+                }
             }
         }
         if (Month > 12)
@@ -935,18 +992,33 @@ public class GameControl : MonoBehaviour
         {
             CurrentOffice.OfficeMode = num;
             OfficeModeSelectPanel.SetActive(false);
-            CurrentOffice.Progress = 100;
+            CurrentOffice.Progress = 0;
             CurrentOffice.SetOfficeUI();
             if (num == 1)
+            {
                 CurrentOffice.Text_OfficeMode.text = "办公室模式:决策";
+                CurrentOffice.MaxProgress = 96;
+            }
             else if (num == 2)
+            {
                 CurrentOffice.Text_OfficeMode.text = "办公室模式:人力";
+                CurrentOffice.MaxProgress = 24;
+            }
             else if (num == 3)
+            {
                 CurrentOffice.Text_OfficeMode.text = "办公室模式:管理";
+                CurrentOffice.MaxProgress = 32;
+            }
             else if (num == 4)
+            {
                 CurrentOffice.Text_OfficeMode.text = "办公室模式:招聘";
+                CurrentOffice.MaxProgress = 24;
+            }
             else if (num == 5)
+            {
                 CurrentOffice.Text_OfficeMode.text = "办公室模式:部门研究";
+                CurrentOffice.MaxProgress = 48;
+            }
         }
     }
     public void SetDepMode(int num)
@@ -981,5 +1053,19 @@ public class GameControl : MonoBehaviour
                 Text_EmpSelectTip.text = "选择第一个员工";
             }
         }
+    }
+
+    public void ToggleWorkHour(bool value)
+    {
+        WorkToggle = value;
+    }
+
+    public void SetSkillTree(int num)
+    {
+        if (CurrentEmpInfo != null)
+            CurrentEmpInfo.emp.InfoDetail.ST.ChangeSkillTree(num);
+        SkillTreeSelectPanel.SetActive(false);
+        TotalEmpContent.parent.parent.gameObject.SetActive(false);
+        ResetSelectMode();
     }
 }

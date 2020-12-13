@@ -18,7 +18,6 @@ public class SkillTree : MonoBehaviour
     public void InitSkill()
     {
         SkillType = Random.Range(1, 14);
-        SkillType = 2;
         SetDefaultInfo(SkillType);
         SkillCheck();
     }
@@ -404,6 +403,20 @@ public class SkillTree : MonoBehaviour
                 SkillLevel = 3;
             }
         }
+    }
+
+    public void ChangeSkillTree(int type = 0)
+    {
+        info.ClearSkillPreset();
+        foreach(SkillInfo skill in info.SkillsInfo)
+        {
+            Destroy(skill.gameObject);
+        }
+        info.SkillsInfo.Clear();
+        if (type == 0)
+            type = Random.Range(1, 14);
+        SetDefaultInfo(type);
+        SkillCheck();
     }
 
     void SetDefaultInfo(int num)

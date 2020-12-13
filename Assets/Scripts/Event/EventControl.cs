@@ -36,6 +36,8 @@ public class EventControl : MonoBehaviour
 
         int VoteNum = 1;
         int AgreeNum = 1;
+        if (GC.CEOExtraVote == true)
+            AgreeNum += 1;
         ManageVotePanel.SetActive(true);
         for(int i = 0; i < VCells.Count; i++)
         {

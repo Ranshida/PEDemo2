@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class HireControl : MonoBehaviour
 {
-    public int MaxHireNum;
+    public int MaxHireNum = 1;
 
     public GameControl GC;
     public Button HireRefreshButton;

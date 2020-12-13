@@ -141,7 +141,10 @@ public class FOEControl : MonoBehaviour
         Companies[0].SelfMarketAttackLimit -= 1;
         GC.FinishedTask[3] -= 2;
         GC.UpdateResourceInfo();
-        if (Random.Range(0.0f, 1.0f) < Companies[0].NeutralSkillNum * 0.1f + 0.5f)
+        float Bonus = 0;
+        if (GC.NeutralOccupieBonus == true)
+            Bonus = 0.1f;
+        if (Random.Range(0.0f, 1.0f) < Companies[0].NeutralSkillNum * 0.1f + 0.5f + Bonus)
         {
             Companies[0].ControledMarket += 1;
             Companies[0].NeutralMarket -= 1;
@@ -173,6 +176,9 @@ public class FOEControl : MonoBehaviour
         Companies[0].FoeMarketAttackLimit -= 1;
         GC.FinishedTask[3] -= 2;
         GC.UpdateResourceInfo();
+        float Bonus = 0;
+        if (GC.TargetOccupieBonus == true)
+            Bonus = 0.2f;
         if (Random.Range(0.0f, 1.0f) < (Companies[0].FOESkillNum * 0.2f) + (Companies[0].NeutralSkillNum * 0.1f) + 0.2f)
         {
             Companies[0].ControledMarket += 1;

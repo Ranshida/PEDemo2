@@ -1346,21 +1346,7 @@ public class Employee
 
     public void TimePass()
     {
-        EventTime -= 1;
-        if (EventTime == 0)
-        {//事件版本2
-            //AddEvent();
-            //EventTime = Random.Range(12, 21);
-            EventTime = Random.Range(7, 10);
-            InfoDetail.Entity.AddEvent(EmpManager.Instance.RandomEventTarget(this, out int index), index);
-        }
-        //寻找新关系发展目标
-        NewRelationTargetTime -= 1;
-        if(NewRelationTargetTime == 0)
-        {
-            FindRelationTarget();
-            NewRelationTargetTime = 192;
-        }
+        EventTimePass();
         //假期计时
         if (VacationTime > 0)
         {
@@ -1402,6 +1388,22 @@ public class Employee
                 CurrentItems.Remove(DesItems[i]);
             }
             DesItems.Clear();
+        }
+    }
+    public void EventTimePass()
+    {
+        EventTime -= 1;
+        if (EventTime == 0)
+        {
+            EventTime = Random.Range(7, 10);
+            InfoDetail.Entity.AddEvent(EmpManager.Instance.RandomEventTarget(this, out int index), index);
+        }
+        //寻找新关系发展目标
+        NewRelationTargetTime -= 1;
+        if (NewRelationTargetTime == 0)
+        {
+            FindRelationTarget();
+            NewRelationTargetTime = 192;
         }
     }
 

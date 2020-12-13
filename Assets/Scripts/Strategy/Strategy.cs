@@ -353,30 +353,30 @@ public class Strategy2_7 : Strategy
 //996加班制
 public class Strategy3_1 : Strategy
 {
+    int TempValue = 0;
     public Strategy3_1() : base()
     {
         Type = StrategyType.执行;
         Name = "996加班制";
-        EffectDescription = "所有业务部门效率+20% \n 士气-15";
-        RequestDescription = "2个低劣及以上公关谈判";
-
-        RequestTasks.Add(3);
-
-        RequestNum = new List<int> { 2 };
+        EffectDescription = "可以选择加班,加班状态下一天会工作12小时,但是当天的工作的每小时会扣除1体力,士气-30";
     }
 
     public override void Effect(GameControl GC)
     {
         base.Effect(GC);
-        GC.EfficiencyExtraNormal += 0.2f;
-        GC.Morale -= 15;
+        GC.WorkOvertimeToggle.gameObject.SetActive(true);
+        TempValue = 100 - GC.Morale;
+        if (TempValue > 30)
+            TempValue = 30;
+        GC.Morale -= TempValue;
     }
 
     public override void EffectRemove(GameControl GC)
     {
         base.EffectRemove(GC);
-        GC.EfficiencyExtraNormal -= 0.2f;
-        GC.Morale += 15;
+        GC.WorkOvertimeToggle.isOn = false;
+        GC.WorkOvertimeToggle.gameObject.SetActive(false);   
+        GC.Morale += TempValue;
     }
 }
 
@@ -387,27 +387,19 @@ public class Strategy3_2 : Strategy
     {
         Type = StrategyType.执行;
         Name = "舆论战";
-        EffectDescription = "公关谈判效果增加50%";
-        RequestDescription = "生产15次营销文案";
-        RequestType = 4;
-        RequestValue = 15;
-        //RequestDescription = "3个平庸及以上公关谈判";
-
-        //RequestTasks.Add(3);
-
-        //RequestNum = new List<int> { 3 };
+        EffectDescription = "占领时的骰子修正+1";
     }
 
     public override void Effect(GameControl GC)
     {
         base.Effect(GC);
-        //GC.foeControl.NegotiateEfficiency += 0.5f;
+        GC.NeutralOccupieBonus = true;
     }
 
     public override void EffectRemove(GameControl GC)
     {
         base.EffectRemove(GC);
-        //GC.foeControl.NegotiateEfficiency -= 0.5f;
+        GC.NeutralOccupieBonus = false;
     }
 }
 
@@ -418,27 +410,19 @@ public class Strategy3_3 : Strategy
     {
         Type = StrategyType.执行;
         Name = "内线爆料";
-        EffectDescription = "公关效果+20%";
-        RequestDescription = "生产15次营销文案";
-        RequestType = 4;
-        RequestValue = 15;
-        //RequestDescription = "3个平庸及以上公关谈判";
-
-        //RequestTasks.Add(3);
-
-        //RequestNum = new List<int> { 3 };
+        EffectDescription = "占领时的骰子修正+2";
     }
 
     public override void Effect(GameControl GC)
     {
         base.Effect(GC);
-        //GC.foeControl.FOEEventProtection += 2;
+        GC.TargetOccupieBonus = true;
     }
 
     public override void EffectRemove(GameControl GC)
     {
         base.EffectRemove(GC);
-        MonoBehaviour.print("3_3Remove");
+        GC.TargetOccupieBonus = false;
     }
 }
 
@@ -449,22 +433,42 @@ public class Strategy3_4 : Strategy
     {
         Type = StrategyType.执行;
         Name = "KPI制度";
-        EffectDescription = "部门失误率-20%";
-        RequestDescription = "生产15次程序迭代";
-        RequestType = 5;
-        RequestValue = 15;
+        EffectDescription = "所有部门重大失误率-30%";
     }
 
     public override void Effect(GameControl GC)
     {
         base.Effect(GC);
-        GC.ExtrafailRate += 0.2f;
+        GC.SC.ExtraMajorFailureRate -= 0.3f;
     }
 
     public override void EffectRemove(GameControl GC)
     {
         base.EffectRemove(GC);
-        GC.ExtrafailRate -= 0.2f;
+        GC.SC.ExtraMajorFailureRate += 0.3f;
+    }
+}
+
+//团队核心
+public class Strategy3_5 : Strategy
+{
+    public Strategy3_5() : base()
+    {
+        Type = StrategyType.执行;
+        Name = "团队核心";
+        EffectDescription = "CEO一票算作两票";
+    }
+
+    public override void Effect(GameControl GC)
+    {
+        base.Effect(GC);
+        GC.CEOExtraVote = true;
+    }
+
+    public override void EffectRemove(GameControl GC)
+    {
+        base.EffectRemove(GC);
+        GC.CEOExtraVote = false;
     }
 }
 
@@ -741,25 +745,18 @@ public class Strategy5_1 : Strategy
         Type = StrategyType.研发;
         Name = "搜集文献";
         EffectDescription = "研发成功率+10%";
-        RequestDescription = "完成3次研究或调研";
-        RequestType = 7;
-        RequestValue = 3;
-
-        //RequestDescription = "2个低劣及以上可行性调研";
-
-        //RequestTasks.Add(2);
-
-        //RequestNum = new List<int> { 2 };
     }
 
     public override void Effect(GameControl GC)
     {
         base.Effect(GC);
+        GC.ResearchExtraSuccessRate += 0.1f;
     }
 
     public override void EffectRemove(GameControl GC)
     {
         base.EffectRemove(GC);
+        GC.ResearchExtraSuccessRate -= 0.1f;
     }
 }
 
@@ -770,27 +767,19 @@ public class Strategy5_2 : Strategy
     {
         Type = StrategyType.研发;
         Name = "像素级拷贝";
-        EffectDescription = "研发部门效率+15%";
-        RequestDescription = "完成5次研究或调研";
-        RequestType = 7;
-        RequestValue = 5;
-        //RequestDescription = "3个平庸及以上可行性调研";
-
-        //RequestTasks.Add(2);
-
-        //RequestNum = new List<int> { 3 };
+        EffectDescription = "研发部门生产周期-4";
     }
 
     public override void Effect(GameControl GC)
     {
         base.Effect(GC);
-        GC.EfficiencyExtraScience += 0.15f;
+        GC.ResearchExtraTimeBoost += 4;
     }
 
     public override void EffectRemove(GameControl GC)
     {
         base.EffectRemove(GC);
-        GC.EfficiencyExtraScience -= 0.15f;
+        GC.ResearchExtraTimeBoost -= 4;
     }
 }
 
@@ -802,24 +791,18 @@ public class Strategy5_3 : Strategy
         Type = StrategyType.研发;
         Name = "前沿观察";
         EffectDescription = "研发成功率+20%";
-        RequestDescription = "完成5次研究或调研";
-        RequestType = 7;
-        RequestValue = 5;
-        //RequestDescription = "3个平庸及以上可行性调研";
-
-        //RequestTasks.Add(2);
-
-        //RequestNum = new List<int> { 3 };
     }
 
     public override void Effect(GameControl GC)
     {
         base.Effect(GC);
+        GC.ResearchExtraSuccessRate += 0.2f;
     }
 
     public override void EffectRemove(GameControl GC)
     {
         base.EffectRemove(GC);
+        GC.ResearchExtraSuccessRate -= 0.2f;
     }
 }
 
@@ -830,27 +813,44 @@ public class Strategy5_4 : Strategy
     {
         Type = StrategyType.研发;
         Name = "学术国际化";
-        EffectDescription = "研发部门效率+30%";
-        RequestDescription = "完成7次研究或调研";
-        RequestType = 7;
-        RequestValue = 7;
-        //RequestDescription = "4个平庸及以上可行性调研";
-
-        //RequestTasks.Add(2);
-
-        //RequestNum = new List<int> { 4 };
+        EffectDescription = "研发成功率+15%,研发部门生产周期-2";
     }
 
     public override void Effect(GameControl GC)
     {
         base.Effect(GC);
-        GC.EfficiencyExtraScience += 0.3f;
+        GC.ResearchExtraSuccessRate += 0.15f;
+        GC.ResearchExtraTimeBoost += 2;
     }
 
     public override void EffectRemove(GameControl GC)
     {
         base.EffectRemove(GC);
-        GC.EfficiencyExtraScience -= 0.3f;
+        GC.ResearchExtraSuccessRate -= 0.15f;
+        GC.ResearchExtraTimeBoost -= 2;
+    }
+}
+
+//快乐探索者
+public class Strategy5_5 : Strategy
+{
+    public Strategy5_5() : base()
+    {
+        Type = StrategyType.研发;
+        Name = "快乐探索者";
+        EffectDescription = "科研人员心力每月+20";
+    }
+
+    public override void Effect(GameControl GC)
+    {
+        base.Effect(GC);
+        GC.ResearchExtraMentality = true;
+    }
+
+    public override void EffectRemove(GameControl GC)
+    {
+        base.EffectRemove(GC);
+        GC.ResearchExtraMentality = false;
     }
 }
 
@@ -862,18 +862,23 @@ public static class StrategyData
         new Strategy1_2(),
         new Strategy1_3(),
         new Strategy1_4(),
+        new Strategy1_5(),
         new Strategy2_1(),
         new Strategy2_2(),
-        //new Strategy2_3(),
+        new Strategy2_3(),
         new Strategy2_4(),
         new Strategy2_5(),
-        //new Strategy3_1(),
+        new Strategy2_6(),
+        new Strategy2_7(),
+        new Strategy3_1(),
         new Strategy3_2(),
-        //new Strategy3_3(),
+        new Strategy3_3(),
         new Strategy3_4(),
+        new Strategy3_5(),
         new Strategy5_1(),
         new Strategy5_2(),
         new Strategy5_3(),
         new Strategy5_4(),
+        new Strategy5_5()
     };
 }

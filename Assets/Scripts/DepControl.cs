@@ -185,7 +185,12 @@ public class DepControl : MonoBehaviour
             else
                 SpProgress += Pp;
 
-            if (SpProgress >= ProducePointLimit)
+            int limit = ProducePointLimit;
+            //研发部门额外Buff
+            if (building.Type == BuildingType.研发部门)
+                limit -= GC.ResearchExtraTimeBoost;
+
+            if (SpProgress >= limit)
             {
                 //完成生产
                 float BaseSuccessRate = 0.5f + CountSuccessRate(building.effectValue);
@@ -264,7 +269,7 @@ public class DepControl : MonoBehaviour
                 else
                 {
                     SpProgress = 0;
-                    if (Random.Range(0.0f, 1.0f) < 0.5f)
+                    if (Random.Range(0.0f, 1.0f) < 0.5f + GC.SC.ExtraMajorFailureRate)
                     {
                         //大失败
                         GC.CreateMessage(Text_DepName.text + " 工作中发生重大失误,部门员工心力-20");
@@ -306,7 +311,12 @@ public class DepControl : MonoBehaviour
             Text_Progress.text = "生产力:" + Pp + "/时";
             //成功率计算
             Text_Quality.text = "成功率:" + ((0.5f + CountSuccessRate(building.effectValue)) * 100) + "%";
-            Text_Time.text = "剩余时间:" + calcTime(Pp, ProducePointLimit - SpProgress) + "时";
+
+            int limit = ProducePointLimit;
+            //研发部门额外Buff
+            if (building.Type == BuildingType.研发部门)
+                limit -= GC.ResearchExtraTimeBoost;
+            Text_Time.text = "剩余时间:" + calcTime(Pp, limit - SpProgress) + "时";
         }
         else
         {
@@ -598,6 +608,11 @@ public class DepControl : MonoBehaviour
                 Text_SRateDetail.text += "\n额外业务成功率:" + (GC.BaseDepExtraSuccessRate * 100) + "%";
                 BaseSuccessRate += GC.BaseDepExtraSuccessRate;
             }
+        }
+        if(GC.ResearchExtraSuccessRate > 0.001f && building.Type == BuildingType.研发部门)
+        {
+            Text_SRateDetail.text += "\n额外研发成功率:" + (GC.ResearchExtraSuccessRate * 100) + "%";
+            BaseSuccessRate += GC.ResearchExtraSuccessRate;
         }
         return BaseSuccessRate + GC.SC.ExtraSuccessRate + Efficiency;
     }
@@ -1180,7 +1195,10 @@ public class DepControl : MonoBehaviour
         //
         else if (building.Type == BuildingType.职业再发展中心 && GC.CurrentEmpInfo != null)
         {
-           
+            if (MajorSuccess == false)
+                GC.CurrentEmpInfo.emp.InfoDetail.ST.ChangeSkillTree();
+            else
+                GC.SkillTreeSelectPanel.SetActive(true);
         }
         else if (building.Type == BuildingType.中央监控室 && GC.SelectedDep != null)
         {

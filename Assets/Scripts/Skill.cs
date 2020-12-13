@@ -16,6 +16,7 @@ public class Skill
     public bool ManageSkill = false;//头脑风暴版本2，用来判断是否为管理人员专用技能
 
     public Employee TargetEmp = null;
+    protected SkillControl sc;
 
     public virtual bool ConditionCheck()
     {
@@ -43,6 +44,7 @@ public class Skill
                 TargetEmp.InfoDetail.GC.SC.CurrentSkills[i].skill.DiceExtra = 0;
             }
         }
+        sc = GameControl.Instance.SC;
     }
 
     public Skill Clone()
@@ -788,7 +790,7 @@ public class Skill32 : Skill
     public Skill32()
     {
         Name = "发表看法";
-        Description = "产生5点头脑风暴点数";
+        Description = "基本技,产生5点头脑风暴点数";
         StaminaCost = 20;
         DiceCost = 6;
         EffectMode = 1;
@@ -797,7 +799,13 @@ public class Skill32 : Skill
     public override void StartEffect()
     {
         base.StartEffect();
-        TargetEmp.InfoA.GC.SC.CauseDamage(5);
+        if (sc.Sp2Multiply > 0)
+        {
+            TargetEmp.InfoA.GC.SC.CauseDamage(10);
+            sc.Sp2Multiply = 0;
+        }
+        else
+            TargetEmp.InfoA.GC.SC.CauseDamage(5);
     }
 }
 
@@ -807,7 +815,7 @@ public class Skill33 : Skill
     public Skill33()
     {
         Name = "分析";
-        Description = "产生9点头脑风暴点数";
+        Description = "基本技,产生9点头脑风暴点数";
         StaminaCost = 40;
         DiceCost = 5;
         EffectMode = 1;
@@ -817,7 +825,13 @@ public class Skill33 : Skill
     public override void StartEffect()
     {
         base.StartEffect();
-        TargetEmp.InfoA.GC.SC.CauseDamage(9);
+        if (sc.Sp2Multiply > 0)
+        {
+            TargetEmp.InfoA.GC.SC.CauseDamage(18);
+            sc.Sp2Multiply = 0;
+        }
+        else
+            TargetEmp.InfoA.GC.SC.CauseDamage(9);
     }
 }
 
@@ -848,7 +862,7 @@ public class Skill35 : Skill
     public Skill35()
     {
         Name = "创意";
-        Description = "产生7点头脑风暴点数";
+        Description = "基本技,产生7点头脑风暴点数";
         StaminaCost = 0;
         DiceCost = 1;
         EffectMode = 1;
@@ -858,7 +872,13 @@ public class Skill35 : Skill
     public override void StartEffect()
     {
         base.StartEffect();
-        TargetEmp.InfoA.GC.SC.CauseDamage(7);
+        if (sc.Sp2Multiply > 0)
+        {
+            TargetEmp.InfoDetail.emp.Confidence += 14;
+            sc.Sp2Multiply = 0;
+        }
+        else
+            TargetEmp.InfoDetail.emp.Confidence += 7;
     }
 }
 
@@ -893,7 +913,7 @@ public class Skill37 : Skill
     public Skill37()
     {
         Name = "连续推理";
-        Description = "产生2点头脑风暴点数，连续产生5次";
+        Description = "基本技,产生2点头脑风暴点数，连续产生5次";
         StaminaCost = 20;
         DiceCost = 8;
         EffectMode = 1;
@@ -903,10 +923,21 @@ public class Skill37 : Skill
     public override void StartEffect()
     {
         base.StartEffect();
-        for(int i = 0; i < 5; i++)
+        if (sc.Sp2Multiply > 0)
         {
-            TargetEmp.InfoA.GC.SC.CauseDamage(2);
-        }        
+            for (int i = 0; i < 5; i++)
+            {
+                TargetEmp.InfoA.GC.SC.CauseDamage(4);
+            }
+            sc.Sp2Multiply = 0;
+        }
+        else
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                TargetEmp.InfoA.GC.SC.CauseDamage(2);
+            }
+        }             
     }
 }
 
@@ -937,7 +968,7 @@ public class Skill39 : Skill
     public Skill39()
     {
         Name = "妥协姿态";
-        Description = "选择1个技能禁用2回合，产生7点头脑风暴点数";
+        Description = "基本技,选择1个技能禁用2回合，产生7点头脑风暴点数";
         StaminaCost = 20;
         DiceCost = 6;
         EffectMode = 4;
@@ -950,7 +981,14 @@ public class Skill39 : Skill
         TargetEmp.InfoDetail.GC.SC.TargetSkill.LockTime += 2;
         TargetEmp.InfoDetail.GC.SC.TargetSkill.gameObject.SetActive(false);
         TargetEmp.InfoDetail.GC.SC.SkillLockBonusCheck();
-        TargetEmp.InfoDetail.GC.SC.CauseDamage(7);
+
+        if (sc.Sp2Multiply > 0)
+        {
+            TargetEmp.InfoDetail.GC.SC.CauseDamage(14);
+            sc.Sp2Multiply = 0;
+        }
+        else
+            TargetEmp.InfoDetail.GC.SC.CauseDamage(7);
     }
 }
 
@@ -980,7 +1018,7 @@ public class Skill41 : Skill
     public Skill41()
     {
         Name = "和解";
-        Description = "选择1名员工回复20点心力";
+        Description = "基本技,选择1名员工回复20点心力";
         StaminaCost = 50;
         DiceCost = 5;
         EffectMode = 2;
@@ -990,7 +1028,14 @@ public class Skill41 : Skill
     public override void StartEffect()
     {
         base.StartEffect();
-        TargetEmp.InfoDetail.GC.CurrentEmpInfo.emp.Mentality += 20;
+        if (sc.Sp2Multiply > 0)
+        {
+            TargetEmp.InfoDetail.GC.CurrentEmpInfo.emp.Mentality += 40;
+            sc.Sp2Multiply = 0;
+        }
+        else
+            TargetEmp.InfoDetail.GC.CurrentEmpInfo.emp.Mentality += 20;
+
     }
 }
 
@@ -1000,7 +1045,7 @@ public class Skill42 : Skill
     public Skill42()
     {
         Name = "熟练按摩";
-        Description = "选择一名员工回复15点体力";
+        Description = "基本技,选择一名员工回复15点体力";
         StaminaCost = 20;
         DiceCost = 4;
         EffectMode = 2;
@@ -1010,7 +1055,13 @@ public class Skill42 : Skill
     public override void StartEffect()
     {
         base.StartEffect();
-        TargetEmp.InfoDetail.GC.CurrentEmpInfo.emp.Stamina += 15;
+        if (sc.Sp2Multiply > 0)
+        {
+            TargetEmp.InfoDetail.GC.CurrentEmpInfo.emp.Stamina += 30;
+            sc.Sp2Multiply = 0;
+        }
+        else
+            TargetEmp.InfoDetail.GC.CurrentEmpInfo.emp.Stamina += 15;
     }
 }
 
@@ -1040,7 +1091,7 @@ public class Skill44 : Skill
     public Skill44()
     {
         Name = "私下承诺";
-        Description = "选择一名员工，信心+10";
+        Description = "基本技,选择一名员工，信心+10";
         StaminaCost = 20;
         DiceCost = 3;
         EffectMode = 2;
@@ -1050,7 +1101,13 @@ public class Skill44 : Skill
     public override void StartEffect()
     {
         base.StartEffect();
-        TargetEmp.InfoDetail.emp.Confidence += 10;
+        if (sc.Sp2Multiply > 0)
+        {
+            TargetEmp.InfoDetail.emp.Confidence += 20;
+            sc.Sp2Multiply = 0;
+        }
+        else
+            TargetEmp.InfoDetail.emp.Confidence += 10;
     }
 }
 
@@ -1375,7 +1432,7 @@ public class Skill60 : Skill
     public Skill60()
     {
         Name = "发表看法+";
-        Description = "产生9点头脑风暴点数";
+        Description = "基本技,产生9点头脑风暴点数";
         StaminaCost = 20;
         DiceCost = 6;
         EffectMode = 1;
@@ -1384,7 +1441,13 @@ public class Skill60 : Skill
     public override void StartEffect()
     {
         base.StartEffect();
-        TargetEmp.InfoA.GC.SC.CauseDamage(9);
+        if (sc.Sp2Multiply > 0)
+        {
+            TargetEmp.InfoA.GC.SC.CauseDamage(18);
+            sc.Sp2Multiply = 0;
+        }
+        else
+            TargetEmp.InfoA.GC.SC.CauseDamage(9);
     }
 }
 
@@ -1394,7 +1457,7 @@ public class Skill61 : Skill
     public Skill61()
     {
         Name = "私下承诺+";
-        Description = "选择一名员工，信心+20";
+        Description = "基本技,选择一名员工，信心+20";
         StaminaCost = 20;
         DiceCost = 3;
         EffectMode = 2;
@@ -1404,7 +1467,14 @@ public class Skill61 : Skill
     public override void StartEffect()
     {
         base.StartEffect();
-        TargetEmp.InfoDetail.emp.Confidence += 20;
+        if (sc.Sp2Multiply > 0)
+        {
+            TargetEmp.InfoDetail.emp.Confidence += 40;
+            sc.Sp2Multiply = 0;
+        }
+        else
+            TargetEmp.InfoDetail.emp.Confidence += 20;
+
     }
 }
 
@@ -1414,7 +1484,7 @@ public class Skill62 : Skill
     public Skill62()
     {
         Name = "熟练按摩+";
-        Description = "选择一名员工回复30点体力";
+        Description = "基本技,选择一名员工回复30点体力";
         StaminaCost = 20;
         DiceCost = 4;
         EffectMode = 2;
@@ -1424,7 +1494,13 @@ public class Skill62 : Skill
     public override void StartEffect()
     {
         base.StartEffect();
-        TargetEmp.InfoDetail.GC.CurrentEmpInfo.emp.Stamina += 30;
+        if (sc.Sp2Multiply > 0)
+        {
+            TargetEmp.InfoDetail.GC.CurrentEmpInfo.emp.Stamina += 60;
+            sc.Sp2Multiply = 0;
+        }
+        else
+            TargetEmp.InfoDetail.GC.CurrentEmpInfo.emp.Stamina += 30;
     }
 }
 
@@ -1434,7 +1510,7 @@ public class Skill63 : Skill
     public Skill63()
     {
         Name = "和解+";
-        Description = "选择2名员工回复20点心力";
+        Description = "基本技,选择2名员工回复20点心力";
         StaminaCost = 50;
         DiceCost = 5;
         EffectMode = 5;
@@ -1444,8 +1520,17 @@ public class Skill63 : Skill
     public override void StartEffect()
     {
         base.StartEffect();
-        TargetEmp.InfoDetail.GC.CurrentEmpInfo.emp.Mentality += 20;
-        TargetEmp.InfoDetail.GC.CurrentEmpInfo2.emp.Mentality += 20;
+        if (sc.Sp2Multiply > 0)
+        {
+            TargetEmp.InfoDetail.GC.CurrentEmpInfo.emp.Mentality += 40;
+            TargetEmp.InfoDetail.GC.CurrentEmpInfo2.emp.Mentality += 40;
+            sc.Sp2Multiply = 0;
+        }
+        else
+        {
+            TargetEmp.InfoDetail.GC.CurrentEmpInfo.emp.Mentality += 20;
+            TargetEmp.InfoDetail.GC.CurrentEmpInfo2.emp.Mentality += 20;
+        }
     }
 }
 
@@ -1476,7 +1561,7 @@ public class Skill65 : Skill
     public Skill65()
     {
         Name = "分析+";
-        Description = "产生13点头脑风暴点数";
+        Description = "基本技,产生13点头脑风暴点数";
         StaminaCost = 40;
         DiceCost = 5;
         EffectMode = 1;
@@ -1486,7 +1571,13 @@ public class Skill65 : Skill
     public override void StartEffect()
     {
         base.StartEffect();
-        TargetEmp.InfoA.GC.SC.CauseDamage(13);
+        if (sc.Sp2Multiply > 0)
+        {
+            TargetEmp.InfoA.GC.SC.CauseDamage(26);
+            sc.Sp2Multiply = 0;
+        }
+        else
+            TargetEmp.InfoA.GC.SC.CauseDamage(13);
     }
 }
 

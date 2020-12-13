@@ -135,7 +135,7 @@ public class EmpEntity : MonoBehaviour
         detail.GC.HourEvent.AddListener(TimePass);
         transform.parent.name = EmpName;
     }
-    private void TimePass()
+    public void TimePass()
     {
         //事件处理中
         if (SolvingEvent)

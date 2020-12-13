@@ -221,13 +221,15 @@ public class StrategyInfo : MonoBehaviour
     {
         Destroy(this.gameObject);
     }
-
+    //CEO的投票
     public void CEOVote()
     {
         if(SC.CEOVote > 0)
         {
             SC.CEOVote = 0;
             VoteNum += 1;
+            if (GameControl.Instance.CEOExtraVote == true)
+                VoteNum += 1;
             UpdateUI();
             SC.CheckVoteStatus();
             VoteButton.gameObject.SetActive(false);
@@ -238,6 +240,10 @@ public class StrategyInfo : MonoBehaviour
     {
         SC.CEOVote += 1;
         VoteNum -= 1;
+        if (GameControl.Instance.CEOExtraVote == true)
+            VoteNum -= 1;
+        if (VoteNum < 0)
+            VoteNum = 0;
         UpdateUI();
         SC.CheckVoteStatus();
         VoteButton.gameObject.SetActive(true);
