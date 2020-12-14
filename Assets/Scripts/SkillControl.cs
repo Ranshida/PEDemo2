@@ -532,7 +532,15 @@ public class SkillControl : MonoBehaviour
 
             for (int i = 0; i < InvolvedEmps.Count; i++)
             {
-                InvolvedEmps[i].Mentality -= value;
+                int tempvalue = value;
+                if (InvolvedEmps[i].Confidence > tempvalue)
+                    InvolvedEmps[i].Confidence -= tempvalue;
+                else
+                {
+                    tempvalue -= InvolvedEmps[i].Confidence;
+                    InvolvedEmps[i].Confidence = 0;
+                    InvolvedEmps[i].Mentality -= tempvalue;
+                }
             }
         }
 
@@ -546,7 +554,15 @@ public class SkillControl : MonoBehaviour
                 value = 45;
             else if (NextBossSkill == 7)
                 value = 55;
-            TargetEmployee.Mentality -= value;
+
+            if (TargetEmployee.Confidence > value)
+                TargetEmployee.Confidence -= value;
+            else
+            {
+                value -= TargetEmployee.Confidence;
+                TargetEmployee.Confidence = 0;
+                TargetEmployee.Mentality -= value;
+            }
         }
 
         //下一次技能的消耗翻倍
