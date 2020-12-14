@@ -611,6 +611,7 @@ public class Employee
 
         if (SkillExp[type - 1] >= (SkillLevel * 50) && SkillLevel < 25)
         {
+            InfoDetail.AddPerk(new Perk58(this), true);
             SkillExp[type - 1] = 0;
             Levels[SNum] += 1;
             string SkillName;

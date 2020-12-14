@@ -252,7 +252,19 @@ public class GameControl : MonoBehaviour
             Year += 1;
             Month = 1;
             for (int i = 0; i < CurrentEmployees.Count; i++)
+            {
                 CurrentEmployees[i].Age += 1;
+                foreach(PerkInfo p in CurrentEmployees[i].InfoDetail.PerksInfo)
+                {
+                    if(p.CurrentPerk.Num == 58)
+                    {
+                        PerkInfo pi = p;
+                        CurrentEmployees[i].InfoDetail.PerksInfo.Remove(pi);
+                        Destroy(pi.gameObject);
+                        break;
+                    }
+                }
+            }
         }
         Text_Time.text = "年" + Year + " 月" + Month + " 周" + Week + " 时" + Hour;
     }
