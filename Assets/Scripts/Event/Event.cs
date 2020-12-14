@@ -14497,7 +14497,11 @@ public class Event3_38 : Event
                         break;
                     }
                 }
-                return true;
+
+                if (Target != null)
+                {
+                    return true;
+                }
             }
         }
 
@@ -14569,7 +14573,9 @@ public class Event3_38 : Event
 
         Self.AddEmotion(EColor.Blue);
         Self.ChangeRelation(Target, -5);
+        Self.FindRelation(Target).EventFlag[0] = 1;
         Target.ChangeRelation(Self, -5);
+        Target.FindRelation(Self).EventFlag[0] = 1;
         Self.InfoDetail.AddPerk(new Perk81(Self), true);
         ResultText = Self.Name + "因无聊闲逛，在" + SelfEntity.StandGridName() + "认识" + Target.Name + "，";
         ObjectText = ResultText + Target.Name + "觉得"+Self.Name+"很烦，双方认识 双方好感-5，消除事件状态：无聊×1，获得情绪状态：反感×1";
