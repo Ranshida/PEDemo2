@@ -11583,7 +11583,7 @@ public class Event3_1 : Event
         }
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "与同事" + Target.Name + "对于某个工作细节产生分歧，";
         ResultText += "双方互相不停指责";
-        GC.CreateMessage(ResultText);
+        GC.CreateMessage(Self.Name + "与同事" + Target.Name + "对于某个工作细节\n产生分歧，互相不停指责");
     }
     public override void Success(float Posb)
     {
@@ -11592,7 +11592,7 @@ public class Event3_1 : Event
         Target.InfoDetail.AddPerk(new Perk52(Target), true);
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "与同事" + Target.Name + "对于某个工作细节产生分歧，";
         ResultText += "双方感到一丝烦恼";
-        GC.CreateMessage(ResultText);
+        GC.CreateMessage(Self.Name + "与同事" + Target.Name + "对于某个工作细节\n产生分歧，双方感到一丝烦恼");
     }
 }
 public class Event3_2 : Event
@@ -11655,7 +11655,7 @@ public class Event3_2 : Event
             ResultText = "在" + SelfEntity.StandGridName() + "，下级" + Target.Name + "向上司" + Self.Name + "反应当前工作问题，";
         }
         ResultText += "上司将责任完全推给下级，双方获得事件状态 悔恨*4，双方心力下降15点";
-        GC.CreateMessage(ResultText);
+        GC.CreateMessage(Self.Name+"与"+Target.Name+"互相甩锅");
     }
     public override void Success(float Posb)
     {
@@ -11671,7 +11671,7 @@ public class Event3_2 : Event
             ResultText = "在" + SelfEntity.StandGridName() + "，下级" + Target.Name + "向上司" + Self.Name + "反应当前工作问题，";
         }
         ResultText += "上司表示自己负次要责任，双方获得事件状态 烦恼*1";
-        GC.CreateMessage(ResultText);
+        GC.CreateMessage(Self.Name + "与" + Target.Name + "互相甩锅");
     }
 }
 public class Event3_3 : Event
@@ -11777,7 +11777,7 @@ public class Event3_4 : Event
         Target.InfoDetail.AddPerk(new Perk53(Target), true);
         ResultText = "在" + SelfEntity.StandGridName() + "，由于" + Self.Name + "进入一种狂想的状态，向附近的同事" + Target.Name + "说个不停，";
         ResultText += Target.Name + "隐约听到一些洞见，双方获得事件状态 顺利*1";
-        GC.CreateMessage(ResultText);
+        GC.CreateMessage(Self.Name + "产生了狂想");
     }
     public override void Failure(float Posb)
     {
@@ -11791,7 +11791,7 @@ public class Event3_4 : Event
         Target.Mentality -= 5;
         ResultText = "在" + SelfEntity.StandGridName() + "，由于" + Self.Name + "进入一种狂想的状态，向附近的同事" + Target.Name + "说个不停，";
         ResultText += Target.Name + "建议"+Self.Name+ "去看医生双方获得事件状态 悔恨*3，双方心力下降5点";
-        GC.CreateMessage(ResultText);
+        GC.CreateMessage(Self.Name + "产生了狂想");
     }
 }
 public class Event3_5 : Event
@@ -11844,7 +11844,7 @@ public class Event3_5 : Event
         Target.InfoDetail.AddPerk(new Perk53(Target), true);
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "与同事" + Target.Name + "一起讨论了工作，";
         ResultText += "双方就难点达成共识，双方获得事件状态 顺利*1";
-        GC.CreateMessage(ResultText);
+        GC.CreateMessage(Self.Name + "与同事" + Target.Name+ "就难点达成共识");
     }
     public override void Failure(float Posb)
     {
@@ -11853,7 +11853,7 @@ public class Event3_5 : Event
         Target.InfoDetail.AddPerk(new Perk51(Target), true);
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "与同事" + Target.Name + "一起讨论了工作，";
         ResultText += "双方对目标产生分歧，双方获得事件状态 困惑*1，双方心力下降10点";
-        GC.CreateMessage(ResultText);
+        GC.CreateMessage(Self.Name + "与同事" + Target.Name + "对目标产生分歧");
     }
 }
 public class Event3_6 : Event
@@ -11902,6 +11902,7 @@ public class Event3_6 : Event
     }
     public override void Success(float Posb)
     {
+        string shuchu = "";
         base.Success(Posb);
         for (int i = 0; i < 2; i++)
         {
@@ -11911,23 +11912,28 @@ public class Event3_6 : Event
         if (EmpManager.Instance.FindBoss(Self) == Target)
         {
             ResultText = "上司" + Target.Name + "在会议室向下级" + Self.Name + "提出下一阶段工作计划，";
+            shuchu = "上司" + Target.Name;
         }
         else if (EmpManager.Instance.FindBoss(Target) == Self)
         {
             ResultText = "上司" + Self.Name + "在会议室向下级" + Target.Name + "提出下一阶段工作计划，";
+            shuchu = "上司" + Self.Name;
         }
         if (EmpManager.Instance.FindBoss(Self) == Target)
         {
             ResultText += "下级"+Self.Name+"表示理解并认可，双方获得事件状态 顺利*2";
+            shuchu += "给" + Self.Name+"分配工作并取得了认可";
         }
         else if (EmpManager.Instance.FindBoss(Target) == Self)
         {
             ResultText += "下级"+Target.Name+"表示理解并认可，双方获得事件状态 顺利*2";
+            shuchu += "给" + Target.Name + "分配工作并取得了认可";
         }
-        GC.CreateMessage(ResultText);
+        GC.CreateMessage(shuchu);
     }
     public override void Failure(float Posb)
     {
+        string shuchu = "";
         base.Failure(Posb);
         Self.InfoDetail.AddPerk(new Perk52(Self), true);
         Target.InfoDetail.AddPerk(new Perk52(Target), true);
@@ -11936,20 +11942,24 @@ public class Event3_6 : Event
         if (EmpManager.Instance.FindBoss(Self) == Target)
         {
             ResultText = "上司" + Target.Name + "在会议室向下级" + Self.Name + "提出下一阶段工作计划，";
+            shuchu = "上司" + Target.Name;
         }
         else if (EmpManager.Instance.FindBoss(Target) == Self)
         {
             ResultText = "上司" + Self.Name + "在会议室向下级" + Target.Name + "提出下一阶段工作计划，";
+            shuchu = "上司" + Self.Name;
         }
         if (EmpManager.Instance.FindBoss(Self) == Target)
         {
             ResultText += "下级"+Self.Name+"认为不属于自己的工作范围，双方获得事件状态 烦恼*1，双方心力下降10点";
+            shuchu += "给" + Self.Name + "分配工作但没有取得认可";
         }
         else if (EmpManager.Instance.FindBoss(Target) == Self)
         {
             ResultText += "下级"+Target.Name+"认为不属于自己的工作范围，双方获得事件状态 烦恼*1，双方心力下降10点";
+            shuchu += "给" +Target.Name + "分配工作但没有取得认可";
         }
-        GC.CreateMessage(ResultText);
+        GC.CreateMessage(shuchu);
     }
 }
 public class Event3_7 : Event
@@ -12013,7 +12023,7 @@ public class Event3_7 : Event
             ResultText = "上司" + Self.Name + "约下级" + Target.Name + "在会议室商讨工作流程，";
         }
         ResultText += "双方进行极富成效地流程梳理！双方获得事件状态 顺利*4";
-        GC.CreateMessage(ResultText);
+        GC.CreateMessage(Self.Name + "与" + Target.Name+ "进行了极富成效地流程梳理");
     }
     public override void Failure(float Posb)
     {
@@ -12031,7 +12041,7 @@ public class Event3_7 : Event
             ResultText = "上司" + Self.Name + "约下级" + Target.Name + "在会议室商讨工作流程，";
         }
         ResultText += "双方暂未达成共识，双方获得事件状态 困惑*1，双方心力下降5点";
-        GC.CreateMessage(ResultText);
+        GC.CreateMessage(Self.Name + "与" + Target.Name + "分配工作暂未达成共识");
     }
 }
 public class Event3_8 : Event
@@ -12088,7 +12098,7 @@ public class Event3_8 : Event
         }
         ResultText = Self.Name + "约同事" + Target.Name + "在会议室商量工作计划";
         ResultText += "双方分工明确，双方获得事件状态 顺利*2";
-        GC.CreateMessage(ResultText);
+        GC.CreateMessage(Self.Name + "约同事" + Target.Name + "\n在会议室商量工作计划\n双方分工明确");
     }
     public override void Failure(float Posb)
     {
@@ -12099,7 +12109,7 @@ public class Event3_8 : Event
         Target.Mentality -= 5;
         ResultText = Self.Name + "约同事" + Target.Name + "在会议室商量工作计划";
         ResultText += "双方存在分歧，双方获得事件状态 困惑*1，双方心力下降5点";
-        GC.CreateMessage(ResultText);
+        GC.CreateMessage(Self.Name + "约同事" + Target.Name + "\n在会议室商量工作计划\n双方存在分歧");
     }
 }
 public class Event3_9 : Event
@@ -12694,7 +12704,7 @@ public class Event3_16 : JudgeEvent
         }
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "希望上司" + Target.Name + "为其转岗";
         ResultText += "上司"+Target.Name+"表示赞许和支持，并上报CEO，获得事件状态 受到赞扬*1，消除事件状态：愿望*1 成长*1 ";
-        GC.CreateMessage(ResultText);
+        GC.CreateMessage(Self.Name + "请求上司" + Target.Name+ "为其转岗，\n上司支持并上报CEO");
         EmpManager.Instance.JudgeEvent(this, canAccept);
     }
     public override void OnAccept()
@@ -12735,7 +12745,7 @@ public class Event3_16 : JudgeEvent
         }
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "希望上司" + Target.Name + "为其转岗";
         ResultText += "上司"+Target.Name+"拒绝了"+Self.Name+"的请求，并叮嘱好好工作,获得事件状态 受到批评*1，己方信念下降10，消除事件状态：愿望*1 成长*1 ";
-        GC.CreateMessage(ResultText);
+        GC.CreateMessage(Self.Name + "请求上司" + Target.Name + "为其转岗，\n被上司拒绝");
     }
 }
 public class Event3_17 : Event
@@ -12940,7 +12950,7 @@ public class Event3_18 : JudgeEvent
         }
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "希望得到上司" + Target.Name + "的升职推荐";
         ResultText += "上司肯定其成长，并上报CEO，获得事件状态 受到信任*1，消除事件状态：愿望*1 成长*4 ";
-        GC.CreateMessage(ResultText);
+        GC.CreateMessage(Self.Name+"请求升职被上司接受，请求CEO");
         EmpManager.Instance.JudgeEvent(this, canAccept);
     }
     public override void OnAccept()
@@ -12984,7 +12994,7 @@ public class Event3_18 : JudgeEvent
         }
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "希望得到上司" + Target.Name + "的升职推荐";
         ResultText += "上司"+Target.Name+"质疑"+Self.Name+"的能力并拒绝推荐，获得事件状态 受到质疑*1，己方信念下降12，消除事件状态：愿望*1 成长*4";
-        GC.CreateMessage(ResultText);
+        GC.CreateMessage(Self.Name + "请求升职被拒绝");
     }
 }
 public class Event3_19 : JudgeEvent
@@ -13068,7 +13078,7 @@ public class Event3_19 : JudgeEvent
         //弹出窗口询问玩家
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "请求上司" + Target.Name + "为其加薪";
         ResultText += "上司表示早有此意，并上报CEO，获得事件状态 受到信任*1，消除事件状态： 愿望*1 成长*2";
-        GC.CreateMessage(ResultText);
+        GC.CreateMessage(Self.Name + "请求加薪被上司接受，请求CEO");
         EmpManager.Instance.JudgeEvent(this, true);
     }
     public override void OnAccept()
@@ -13111,7 +13121,7 @@ public class Event3_19 : JudgeEvent
         }
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "请求上司" + Target.Name + "为其加薪";
         ResultText += "上司"+Target.Name+"质疑"+Self.Name+"的能力并拒绝加薪，获得事件状态 受到质疑*1， 己方信念下降12，消除事件状态：愿望*1 成长*2";
-        GC.CreateMessage(ResultText);
+        GC.CreateMessage(Self.Name + "请求加薪被上司拒绝");
     }
 }
 public class Event3_20 : Event
