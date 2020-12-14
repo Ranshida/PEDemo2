@@ -12242,7 +12242,7 @@ public class Event3_11 : Event
     public override void Success(float Posb)
     {
         base.Success(Posb);
-        Self.InfoDetail.AddPerk(new Perk46(Self), true);
+        Self.InfoDetail.AddPerk(new Perk3(Self), true);
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "独自工作进展顺利，";
         ResultText += "并受到了一些启发，获得事件状态 受到启发*1";
     }
@@ -12444,7 +12444,7 @@ public class Event3_14 : Event
     {
         base.Success(Posb);
         Self.InfoDetail.AddPerk(new Perk70(Self), true);
-        Self.InfoDetail.AddPerk(new Perk46(Self), true);
+        Self.InfoDetail.AddPerk(new Perk3(Self), true);
         PerkInfo yuanwang = null, chengzhang = null;
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
         {
@@ -12804,7 +12804,7 @@ public class Event3_17 : Event
     public override void Success(float Posb)
     {
         base.Success(Posb);
-        Self.InfoDetail.AddPerk(new Perk46(Self), true);
+        Self.InfoDetail.AddPerk(new Perk3(Self), true);
         Self.InfoDetail.AddPerk(new Perk55(Self), true);
         PerkInfo yuanwang = null, chengzhang = null;
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
