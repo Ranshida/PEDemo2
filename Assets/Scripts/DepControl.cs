@@ -299,8 +299,11 @@ public class DepControl : MonoBehaviour
             int Pp = 0;
             foreach (Employee e in CurrentEmps)
             {
-                if (e.InfoDetail.Entity.OutCompany == false)
-                    Pp++;
+                if (e.InfoDetail != null && e.InfoDetail.Entity != null)
+                {
+                    if (e.InfoDetail.Entity.OutCompany == false)
+                        Pp++;
+                }
             }
             if (building.Type == BuildingType.技术部门 || building.Type == BuildingType.市场部门 || building.Type == BuildingType.产品部门)
                 Text_Task.text = "当前任务:基础资源生产";

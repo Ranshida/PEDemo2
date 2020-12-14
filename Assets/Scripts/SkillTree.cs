@@ -17,25 +17,10 @@ public class SkillTree : MonoBehaviour
 
     public void InitSkill()
     {
-        SkillType = Random.Range(1, 14);
+        SkillType = info.emp.StarType;
         SetDefaultInfo(SkillType);
         SkillCheck();
-        //确定特殊天赋
-        int num = 0;
-        if (SkillType == 1)
-            num = 1;
-        else if (SkillType <= 4)
-            num = 0;
-        else if (SkillType <= 6)
-            num = 2;
-        else if (SkillType <= 8)
-            num = 1;
-        else if (SkillType <= 10)
-            num = 3;
-        else if (SkillType <= 13)
-            num = 2;
-        info.emp.StarLimit[num] = Random.Range(3, 6);
-        info.emp.Stars[num] = Random.Range(0, info.emp.StarLimit[num] * 5 + 1);
+
     }
     public void SkillCheck()
     {

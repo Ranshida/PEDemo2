@@ -239,7 +239,7 @@ public class Employee
     #endregion
 
     public int SkillExtra1, SkillExtra2, SkillExtra3, SalaryExtra = 0, Age, EventTime, ObeyTime, NoPromotionTime = 0, NoMarriageTime = 0,
-        VacationTime = 0, SpyTime = 0;
+        VacationTime = 0, SpyTime = 0, StarType = 0;
     public int Confidence;//信心，头脑风暴中的护盾
     public int NewRelationTargetTime = 1;
     public float ExtraSuccessRate = 0, SalaryMultiple = 1.0f;
@@ -327,6 +327,9 @@ public class Employee
         #endregion
 
         Type = type;
+
+        //初始化技能树类型
+
         //设定姓名并检查是否重名
         bool nameCheck = false;
         while (nameCheck == false)
@@ -466,17 +469,8 @@ public class Employee
             Age = Random.Range(20, 25);
         else
             Age = 25 + AgeRange * 5;
-        
-        //确定热情(Star)和天赋(StarLimit)
-        for (int i = 0; i < 5; i++)
-        {
-            StarLimit[i] = Random.Range(0, 3);
 
-            if (AgeRange == 0)
-                Stars[i] = Random.Range(0, StarLimit[i] * 5 + 1);
-            else
-                Stars[i] = 0;
-        }
+        InitStar();
         //确定倾向
         for (int i = 0; i < 5; i++)
         {
@@ -502,19 +496,7 @@ public class Employee
         Name = "CEO";
 
         //确定热情(Star)和天赋(StarLimit)
-        int TopStarNum = Random.Range(0, 5), TopStarNum2 = Random.Range(0, 5);
-        while(TopStarNum == TopStarNum2)
-        {
-            TopStarNum2 = Random.Range(0, 5);
-        }
-        for (int i = 0; i < 5; i++)
-        {
-            if (i == TopStarNum || i == TopStarNum2)
-                StarLimit[i] = Random.Range(1, 6);
-            else
-                StarLimit[i] = Random.Range(0, 3);
-            Stars[i] = Random.Range(0, StarLimit[i] * 5 + 1);
-        }
+        InitStar();
         //确定倾向
         for (int i = 0; i < 5; i++)
         {
@@ -524,6 +506,34 @@ public class Employee
         }
         CheckCharacter();
         EventTime = 8;
+    }
+
+    void InitStar()
+    {
+        //确定热情(Star)和天赋(StarLimit)
+        for (int i = 0; i < 5; i++)
+        {
+            StarLimit[i] = Random.Range(0, 4);
+            Stars[i] = Random.Range(0, StarLimit[i] * 5 + 1);
+        }
+
+        //确定特殊天赋
+        StarType = Random.Range(1, 14);
+        int Num = 0;
+        if (StarType == 1)
+            Num = 1;
+        else if (StarType <= 4)
+            Num = 0;
+        else if (StarType <= 6)
+            Num = 2;
+        else if (StarType <= 8)
+            Num = 1;
+        else if (StarType <= 10)
+            Num = 3;
+        else if (StarType <= 13)
+            Num = 2;
+        StarLimit[Num] = Random.Range(3, 6);
+        Stars[Num] = Random.Range(0, StarLimit[Num] * 5 + 1);
     }
 
     public void GainExp(int value, int type)

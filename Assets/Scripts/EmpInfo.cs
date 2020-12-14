@@ -178,7 +178,6 @@ public class EmpInfo : MonoBehaviour
 
     public void StartHire()
     {
-        print("Shit");
         GC.CurrentEmpInfo = this;
         GC.SelectMode = 1;
         GC.ShowDepSelectPanel(emp.Type);
@@ -206,8 +205,7 @@ public class EmpInfo : MonoBehaviour
         if (GC.EC.ManagerVoteCheck(emp, true, true) == false)
             return;
 
-        //删除员工实体
-        emp.InfoDetail.Entity.RemoveEntity();
+
 
         emp.ClearRelations();//清空所有关系
 
@@ -224,6 +222,10 @@ public class EmpInfo : MonoBehaviour
             TempDestroyStrategy();
             emp.CurrentOffice.CurrentManager = null;
         }
+
+        //删除员工实体
+        emp.InfoDetail.Entity.RemoveEntity();
+
         if (emp.InfoA == this)
             Destroy(emp.InfoB.gameObject);
         else
@@ -249,27 +251,27 @@ public class EmpInfo : MonoBehaviour
         //发动CEO技能
         else if(GC.SelectMode == 6)
         {
-            //调查员工
-            if(GC.CEOSkillNum == 18)
-            {
-                GC.CC.EmpSelectWarning.SetActive(false);
-                GC.CEOSkillNum = 15;
-                int Posb = Random.Range(1, 7);
-                Posb += (int)(GC.CurrentEmpInfo.emp.Gossip * 0.2f);
-                if (Posb >= 3)
-                {
-                    if (emp.isSpy == true)
-                    {
-                        emp.InfoDetail.AddPerk(new Perk29(emp), true);
-                        GC.CreateMessage("成功发现了内鬼" + emp.Name);
-                    }
-                    else
-                        GC.CreateMessage("发现" + emp.Name + "不是内鬼");
-                }
-                else
-                    GC.CreateMessage("调查失败，无法了解" + emp.Name + "的成分");
-                return;
-            }
+            ////调查员工
+            //if(GC.CEOSkillNum == 18)
+            //{
+            //    GC.CC.EmpSelectWarning.SetActive(false);
+            //    GC.CEOSkillNum = 15;
+            //    int Posb = Random.Range(1, 7);
+            //    Posb += (int)(GC.CurrentEmpInfo.emp.Gossip * 0.2f);
+            //    if (Posb >= 3)
+            //    {
+            //        if (emp.isSpy == true)
+            //        {
+            //            emp.InfoDetail.AddPerk(new Perk29(emp), true);
+            //            GC.CreateMessage("成功发现了内鬼" + emp.Name);
+            //        }
+            //        else
+            //            GC.CreateMessage("发现" + emp.Name + "不是内鬼");
+            //    }
+            //    else
+            //        GC.CreateMessage("调查失败，无法了解" + emp.Name + "的成分");
+            //    return;
+            //}
             if (GC.CEOSkillNum == 4)
             {
                 emp.Mentality += (int)(10 * GC.HRBuildingMentalityExtra);
