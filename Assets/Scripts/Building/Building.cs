@@ -32,6 +32,7 @@ public class Building : MonoBehaviour
     public int Pay;               //维护费用
     public bool BasicBuilding;    //基础建筑物，可以直接建造
 
+    private bool CanDismantle = true;
     public List<Grid> ContainsGrids;   //所包含的格子
     public DepControl Department; //BM赋值
     public OfficeControl Office;  //BM赋值
@@ -74,6 +75,11 @@ public class Building : MonoBehaviour
             if (EffectRange_str == "全公司")
                 EffectRange = 999;
         }
+
+        if (Type == BuildingType.CEO办公室)
+        {
+            CanDismantle = false;
+        }
     }
     
     //确定建造
@@ -104,8 +110,14 @@ public class Building : MonoBehaviour
     }
 
     //拆除
-    public void Dismantle()
+    public bool Dismantle()
     {
+        if (!CanDismantle)
+        {
+            return false;
+        }
+
+        CanDismantle = false;
         if (!Moving)
         {
             //重置影响范围
@@ -126,5 +138,7 @@ public class Building : MonoBehaviour
         }
 
         Destroy(gameObject);
+
+        return true;
     }
 }

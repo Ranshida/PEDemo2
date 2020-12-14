@@ -284,6 +284,7 @@ public class BuildingManage : MonoBehaviour
                     temp_Building.transform.position = AimingPosition + new Vector3(-5, 0, -5);
 
                 btn_Dismantle.gameObject.SetActive(true);
+                btn_Dismantle.onClick.RemoveAllListeners();
                 btn_Dismantle.onClick.AddListener(() => { DismantleBuilding(temp_Building); });
             }
         }
@@ -537,13 +538,23 @@ public class BuildingManage : MonoBehaviour
     //拆除建筑
     public void DismantleBuilding(Building building)
     {
-        GameControl.Instance.BuildingPay -= building.Pay;
-        building.Dismantle();
+        if (building.Dismantle())
+        {
+            if (building.BuildingSet)
+            {
+                GameControl.Instance.BuildingPay -= building.Pay;
+            }
+        }
     }
     public void DismantleBuilding()
     {
-        GameControl.Instance.BuildingPay -= m_SelectBuilding.Pay;
-        m_SelectBuilding.Dismantle();
+        if (m_SelectBuilding.Dismantle())
+        {
+            if (m_SelectBuilding.BuildingSet)
+            {
+                GameControl.Instance.BuildingPay -= m_SelectBuilding.Pay;
+            }
+        }
     }
 
     //取消摆放
