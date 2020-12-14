@@ -153,7 +153,6 @@ public class HireControl : MonoBehaviour
         ED.GC = GC;
         ED.emp = emp;
         ED.SetSkillName();
-        ED.InitSkillAndStrategy();
         GC.CC.CEO = emp;
 
         EmpInfo EI1 = Instantiate(CEOInfoPrefab, GC.TotalEmpContent);
@@ -171,6 +170,8 @@ public class HireControl : MonoBehaviour
         emp.InitRelation();
         //检测技能
         ED.ST.InitSkill();
+        //创建特质和技能
+        ED.InitSkillAndStrategy();
 
         //创建员工实体
         ED.Entity = EmpManager.Instance.CreateEmp(BuildingManage.Instance.ExitPos.position);

@@ -98,6 +98,11 @@ public class Perk
         //立刻造成影响的效果
     }
 
+    public Perk Clone()
+    {
+        return (Perk)this.MemberwiseClone();
+    }
+
 }
 
 //受伤
@@ -149,47 +154,45 @@ public class Perk2 : Perk
 //启发
 public class Perk3 : Perk
 {
-    int Value = 0;
+    int Value = -1;
     public Perk3(Employee Emp) : base(Emp)
     {
         Name = "启发";
-        Value = Random.Range(1, 6);
-        string SName;
-        //0职业(业务) 1基础 2经营 3战略 4社交
-        if (Value == 1)
-            SName = "技术技能";
-        else if (Value == 2)
-            SName = "基础技能";
-        else if (Value == 3)
-            SName = "经营技能";
-        else if (Value == 4)
-            SName = "战略技能";
-        else
-            SName = "社交技能";
-        Description = "随机增加某项技能(" + SName + ")1点热情";
-        TimeLeft = 96;
+        if (TargetEmp.CurrentDep != null)
+            Value = TargetEmp.CurrentDep.building.effectValue - 1;
+        else if (TargetEmp.CurrentOffice != null)
+            Value = TargetEmp.CurrentOffice.building.effectValue - 1;
+        Value /= 3;
+        Description = "随机增加当前工作领域1点热情";
+        TimeLeft = 64;
         Num = 3;
     }
 
     public override void ImmEffect()
     {
-        if(TargetEmp.Stars[Value - 1] < TargetEmp.StarLimit[(Value - 1)] * 5)
+        if (Value != -1)
         {
-            TargetEmp.Stars[Value - 1] += 1;
+            if (TargetEmp.Stars[Value] < TargetEmp.StarLimit[Value] * 5)
+            {
+                TargetEmp.Stars[Value] += 1;
+            }
         }
     }
 
     public override void RemoveEffect()
     {
-        TargetEmp.Stars[Value - 1] -= 1;
-        if (TargetEmp.Stars[Value - 1] < 0)
-            TargetEmp.Stars[Value - 1] = 0;
-        for(int i = 0; i < TargetEmp.InfoDetail.PerksInfo.Count; i++)
+        if (Value != -1)
         {
-            if(TargetEmp.InfoDetail.PerksInfo[i].CurrentPerk.Num == 12)
+            TargetEmp.Stars[Value] -= 1;
+            if (TargetEmp.Stars[Value] < 0)
+                TargetEmp.Stars[Value] = 0;
+            for (int i = 0; i < TargetEmp.InfoDetail.PerksInfo.Count; i++)
             {
-                TargetEmp.InfoDetail.AddPerk(new Perk3(TargetEmp), true);
-                break;
+                if (TargetEmp.InfoDetail.PerksInfo[i].CurrentPerk.Num == 12)
+                {
+                    TargetEmp.InfoDetail.AddPerk(new Perk3(TargetEmp), true);
+                    break;
+                }
             }
         }
         base.RemoveEffect();
@@ -1245,6 +1248,15 @@ public class Perk47 : Perk
         Num = 47;
         canStack = true;
     }
+    public override void ImmEffect()
+    {
+        TargetEmp.ExtraSuccessRate += 0.01f;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetEmp.ExtraSuccessRate -= 0.01f;
+    }
 }
 
 //顺利-进步
@@ -1270,6 +1282,15 @@ public class Perk49 : Perk
         TimeLeft = 64;
         Num = 49;
         canStack = true;
+    }
+    public override void ImmEffect()
+    {
+        TargetEmp.ExtraSuccessRate -= 0.01f;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetEmp.ExtraSuccessRate += 0.01f;
     }
 }
 
@@ -1740,4 +1761,13 @@ public class Perk96 : Perk
         Num = 96;
         canStack = false;
     }
+}
+
+public static class PerkData
+{
+    public static List<Perk> PerkList = new List<Perk>()
+    {
+        new Perk42(null), new Perk43(null), new Perk82(null), new Perk83(null), new Perk84(null), new Perk85(null), new Perk86(null),
+        new Perk87(null), new Perk88(null), new Perk89(null), new Perk90(null), new Perk91(null), new Perk92(null)
+    };
 }

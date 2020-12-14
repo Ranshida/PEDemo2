@@ -166,6 +166,7 @@ public class EmpInfo : MonoBehaviour
         //NewSkill.TargetEmp = this.emp;
         //AddSkill(NewSkill);
         AddThreeRandomStrategy();
+        AddRandomPerk();
     }
 
     public void CopyStatus(EmpInfo ei)
@@ -439,6 +440,23 @@ public class EmpInfo : MonoBehaviour
         AddStrategy(numA);
         AddStrategy(numB);
         AddStrategy(numC);
+    }
+    void AddRandomPerk()
+    {
+        int numA, numB;
+        numA = Random.Range(0, PerkData.PerkList.Count);
+        numB = Random.Range(0, PerkData.PerkList.Count);
+        while (numB == numA)
+        {
+            numB = Random.Range(0, PerkData.PerkList.Count);
+        }
+        Perk perk1 = PerkData.PerkList[numA].Clone();
+        Perk perk2 = PerkData.PerkList[numB].Clone();
+        perk1.TargetEmp = emp;
+        perk2.TargetEmp = emp;
+
+        AddPerk(perk1, true);
+        AddPerk(perk2, true);
     }
 
     public int CalcSalary()
