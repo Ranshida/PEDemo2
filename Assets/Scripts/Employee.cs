@@ -468,17 +468,9 @@ public class Employee
             Age = 25 + AgeRange * 5;
         
         //确定热情(Star)和天赋(StarLimit)
-        int TopStartNum = (Random.Range(0, 5)), TopStartNum2 = (Random.Range(0, 5));
-        while (TopStartNum == TopStartNum2)
-        {
-            TopStartNum2 = (Random.Range(0, 5));
-        }
         for (int i = 0; i < 5; i++)
         {
-            if (i == TopStartNum || i == TopStartNum2)
-                StarLimit[i] = Random.Range(1, 5);
-            else
-                StarLimit[i] = Random.Range(0, 2);
+            StarLimit[i] = Random.Range(0, 3);
 
             if (AgeRange == 0)
                 Stars[i] = Random.Range(0, StarLimit[i] * 5 + 1);
