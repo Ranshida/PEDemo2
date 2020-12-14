@@ -232,6 +232,8 @@ public class Employee
                 mentality = 0;
             if (mentality < 50 && WantLeave == true)
                 InfoA.Fire();
+            if (isCEO == true)
+                InfoDetail.GC.Text_Mentality.text = "心力:" + mentality;
         }
     }
     #endregion

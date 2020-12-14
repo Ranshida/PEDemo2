@@ -384,7 +384,12 @@ public class OfficeControl : MonoBehaviour
                     else
                     {
                         if (Random.Range(0.0f, 1.0f) < 0.5f + GC.SC.ExtraMajorFailureRate)
+                        {
                             CurrentManager.Mentality -= 20;
+                            GC.CreateMessage(Text_OfficeName.text + "工作发生严重失误,高管心力-20");
+                        }
+                        else
+                            GC.CreateMessage(Text_OfficeName.text + "充能失败");
                         return;
                     }
                     if (OfficeMode == 1)
@@ -500,7 +505,7 @@ public class OfficeControl : MonoBehaviour
         {
             float BaseSRate = CountSuccessRate();
             Text_SuccessRate.text = "成功率:" + (BaseSRate * 100) + "%";
-            Text_TimeLeft.text = "剩余时间:" + (Progress / MaxProgress) + "时";
+            Text_TimeLeft.text = "剩余时间:" + (MaxProgress - Progress) + "时";
         }
     }
 
