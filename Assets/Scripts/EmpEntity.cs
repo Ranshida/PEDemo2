@@ -62,9 +62,8 @@ public class EmpEntity : MonoBehaviour
         }
     }    //员工工作的位置（如果没有工作建筑则没有值）
 
-
-    //忙碌任务
-    public bool OutCompany { get; private set; } = false;      //间谍任务中
+    public bool Fired { get; private set; }                   //已经被开除
+    public bool OutCompany { get; private set; } = false;      //离开公司
     public bool IsSpying { get; private set; }
 
     //事件
@@ -140,22 +139,24 @@ public class EmpEntity : MonoBehaviour
         //事件处理中
         if (SolvingEvent)
         {
+            CurrentEvent.TimeLeft--;
             //独立事件
             if (!CurrentEvent.HaveTarget)
             {
-                CurrentEvent.TimeLeft--;
                 if (CurrentEvent.TimeLeft <= 0)
                 {
                     EventFinish();
                 }
             }
-            //主动方控制
-            else if (CurrentEvent.SelfEntity == this)
+            else
             {
-                CurrentEvent.TimeLeft--;
-                if (CurrentEvent.TimeLeft <= 0)
+                //主动方控制
+                if (CurrentEvent.SelfEntity == this)
                 {
-                    EventFinish();
+                    if (CurrentEvent.TimeLeft <= 0)
+                    {
+                        EventFinish();
+                    }
                 }
             }
         }
@@ -164,15 +165,36 @@ public class EmpEntity : MonoBehaviour
     void EventFinish()
     {
         CurrentEvent.EventFinish();
-        EventStage = 0;
-        EventTarget = null;
-        if (CurrentEvent.HaveTarget)
+
+        //独立事件  自身清空
+        if (!CurrentEvent.HaveTarget)
         {
-            CurrentEvent.TargetEntity.EventStage = 0;
-            CurrentEvent.TargetEntity.EventTarget = null;
-            CurrentEvent.TargetEntity.CurrentEvent = null;
+            EventStage = 0;
+            EventTarget = null;
+            CurrentEvent = null;
         }
-        CurrentEvent = null;
+        else
+        {
+            //主动方
+            if (CurrentEvent.SelfEntity == this)
+            {
+                EventStage = 0;
+                EventTarget = null;
+                CurrentEvent.TargetEntity.EventStage = 0;
+                CurrentEvent.TargetEntity.EventTarget = null;
+                CurrentEvent.TargetEntity.CurrentEvent = null;
+            }
+            //被动方
+            else
+            {
+                EventStage = 0;
+                EventTarget = null;
+                CurrentEvent.SelfEntity.EventStage = 0;
+                CurrentEvent.SelfEntity.EventTarget = null;
+                CurrentEvent.SelfEntity.CurrentEvent = null;
+            }
+            CurrentEvent = null;
+        }
     }
 
     //员工主动发起的执行事件的指令
@@ -184,6 +206,10 @@ public class EmpEntity : MonoBehaviour
         //对方也开始处理
         if (CurrentEvent.HaveTarget)
         {
+            if (!EventTarget)
+            {
+                Debug.LogError(ThisEmp.Name + " " + CurrentEvent.EventName);
+            }
             EventTarget.EventStage = 2;
         }
     }
@@ -217,41 +243,43 @@ public class EmpEntity : MonoBehaviour
     ///寻找目标（事件版本2）
     public void AddEvent(EmpEntity Ee, int index)  //场景序列
     {
-        if (Ee != null)
+        //自己的事件还没有完成
+        if (CurrentEvent != null) 
+            return;
+
+
+        if (Ee == null) 
+            CurrentEvent = EmpManager.Instance.RandomEvent(ThisEmp, null, index);
+        else
+            CurrentEvent = EmpManager.Instance.RandomEvent(ThisEmp, Ee.ThisEmp, index);
+
+        //找到了合适的事件
+        if (CurrentEvent != null) 
         {
-            if (!EventTarget || !EventTarget.Available)
+            if (CurrentEvent.HaveTarget)
             {
-                CurrentEvent = EmpManager.Instance.RandomEvent(ThisEmp, null, index);
-                if (CurrentEvent!=null)
-                {
-                    EventStage = 1;
-                    EventTarget = Ee;
-                }
+                EventStage = 1;
+                EventTarget = CurrentEvent.TargetEntity;
+
+                EventTarget.CurrentEvent = CurrentEvent;
+                EventTarget.EventStage = 1;
+                EventTarget.EventTarget = CurrentEvent.SelfEntity;
             }
             else
             {
-                CurrentEvent = EmpManager.Instance.RandomEvent(ThisEmp, EventTarget.ThisEmp, index);
-                if (CurrentEvent != null)
-                {
-                    EventStage = 1;
-                    EventTarget = Ee;
-                    EventTarget.EventStage = 1;
-                    EventTarget.EventTarget = this;
-                    EventTarget.CurrentEvent = CurrentEvent;
-                }
+                EventStage = 1;
+                EventTarget = null;
             }
-            if (CurrentEvent != null) 
-            {
-                CurrentEvent.PerkRemoveCheck();
 
-                if (CurrentEvent.HaveTarget && CurrentEvent.Target == null)
-                {
-                    Debug.LogError("有目标的事件，但是没有目标对象" + CurrentEvent.EventName);
-                }
+            CurrentEvent.PerkRemoveCheck();
+
+            if (CurrentEvent.HaveTarget && CurrentEvent.Target == null)
+            {
+                Debug.LogError("有目标的事件，但是没有目标对象" + CurrentEvent.EventName);
             }
         }
     }
-
+    
     public void AddEvent(Event e)  //废弃
     {
         return;
@@ -278,7 +306,16 @@ public class EmpEntity : MonoBehaviour
     //移除员工，清除全部事件
     public void RemoveEntity()
     {
-        Destroy(gameObject);
+        Fired = true;
+        OffWork = true;
+        if (CurrentEvent != null)
+        {
+            EventFinish();
+        }
+    }
+    public void Remove()
+    {
+        Destroy(transform.parent.gameObject);
     }
 
     public void ShowTips(int index)

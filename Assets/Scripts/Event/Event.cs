@@ -14447,6 +14447,9 @@ public class Event3_37 : Event
 }
 public class Event3_38 : Event
 {
+    //这个事件比较特殊，判定之前HaveTarget == false，Target == null;
+    //判定之后，HaveTarget == true，Target != null。
+
     public Event3_38() : base()
     {
         EventName = "认识新人";
@@ -14491,7 +14494,7 @@ public class Event3_38 : Event
             {//无聊×1
                 foreach (Relation relation in allRelation)
                 {
-                    if (relation.EventFlag[0] == 0)
+                    if (relation.KnowEachOther == false)
                     {
                         Target = relation.Target;
                         break;
@@ -14546,9 +14549,9 @@ public class Event3_38 : Event
 
         Self.AddEmotion(EColor.Yellow);
         Self.ChangeRelation(Target, 5);
-        Self.FindRelation(Target).EventFlag[0] = 1;
+        Self.FindRelation(Target).KnowTarget();
         Target.ChangeRelation(Self, 5);
-        Target.FindRelation(Self).EventFlag[0] = 1;
+        Target.FindRelation(Self).KnowTarget();
         Self.InfoDetail.AddPerk(new Perk81(Self), true);
         ResultText = Self.Name + "因无聊闲逛，在" + SelfEntity.StandGridName() + "认识" + Target.Name + "，";
         ObjectText = ResultText + Target.Name + "就这样认识了"+Self.Name+"，双方认识 双方好感+5，消除事件状态：无聊×1，获得情绪状态：愉悦×1";
@@ -14573,9 +14576,9 @@ public class Event3_38 : Event
 
         Self.AddEmotion(EColor.Blue);
         Self.ChangeRelation(Target, -5);
-        Self.FindRelation(Target).EventFlag[0] = 1;
+        Self.FindRelation(Target).KnowTarget();
         Target.ChangeRelation(Self, -5);
-        Target.FindRelation(Self).EventFlag[0] = 1;
+        Target.FindRelation(Self).KnowTarget();
         Self.InfoDetail.AddPerk(new Perk81(Self), true);
         ResultText = Self.Name + "因无聊闲逛，在" + SelfEntity.StandGridName() + "认识" + Target.Name + "，";
         ObjectText = ResultText + Target.Name + "觉得"+Self.Name+"很烦，双方认识 双方好感-5，消除事件状态：无聊×1，获得情绪状态：反感×1";
@@ -14600,7 +14603,7 @@ public class Event3_39 : Event
     }
     public override bool SpecialCheck()
     {
-        if (Self.FindRelation(Target).EventFlag[0] == 1)
+        if (Self.FindRelation(Target).KnowEachOther)
         {
             foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
             {
@@ -14771,7 +14774,7 @@ public class Event3_41 : Event
     }
     public override bool SpecialCheck()
     {
-        if (Self.FindRelation(Target).EventFlag[0] == 1)
+        if (Self.FindRelation(Target).KnowEachOther)
         {
             foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
             {
@@ -14958,7 +14961,7 @@ public class Event3_43 : Event
     }
     public override bool SpecialCheck()
     {
-        if (Self.FindRelation(Target).EventFlag[0] == 1)
+        if (Self.FindRelation(Target).KnowEachOther)
         {
             foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
             {

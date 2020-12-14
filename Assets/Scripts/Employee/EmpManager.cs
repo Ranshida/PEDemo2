@@ -34,10 +34,11 @@ public class EmpManager : MonoBehaviour
             pointEmp = CameraController.CharacterRaycast.collider.transform.parent.parent.GetComponentInChildren<EmpEntity>();
             DynamicWindow.Instance.SetEmpName(pointEmp.EmpName, pointEmp.transform, Vector3.up * 10);
         }
-        if (pointEmp && Input.GetMouseButtonDown(1))
+        if (pointEmp && !pointEmp.Fired && Input.GetMouseButtonDown(1))
             pointEmp.ShowDetailPanel();
     }
 
+    //矛盾事件弹窗
     public void JudgeEvent(Event currentEvent, bool canAccept)
     {
         //这个方法应当会导致游戏暂停
@@ -133,9 +134,11 @@ public class EmpManager : MonoBehaviour
         return members;
     }
 
-
     public EmpEntity RandomEventTarget(Employee self, out int index)
     {
+        //检查认识关系
+        CheckRelation(self);
+
         List<Event> eventList = RandomEventList(self, out index);
         List<Employee> posbTargets = new List<Employee>();     //可能的对象（随机其一）
 
@@ -368,5 +371,20 @@ public class EmpManager : MonoBehaviour
         if (newEvent == null)
             MonoBehaviour.print("无合适事件");
         return newEvent;
+    }
+
+    private void CheckRelation(Employee self)
+    {
+        Employee boss = FindBoss(self);
+        if (boss != null) 
+        {
+            self.FindRelation(boss).KnowTarget();
+        }
+
+        List<Employee> colleagues = FindColleague(self);
+        foreach (Employee item in colleagues)
+        {
+            self.FindRelation(item).KnowTarget();
+        }
     }
 }

@@ -741,12 +741,11 @@ public class Employee
         }
         for (int i = 0; i < 3; i++)
         {
+            //没有认识的人
+            if (tempRelation.Count == 0) 
+                break;
+
             Relation relation = FindRelationTarget(tempRelation);
-            if (relation == null)
-            {
-                Debug.LogError(Relations.Count + "   " + RelationTargets.Count);
-                return;
-            }
             tempRelation.Remove(relation);
             RelationTargets.Add(relation.Target);
         }

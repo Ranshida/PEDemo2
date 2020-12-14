@@ -25,7 +25,16 @@ public class BTE_OffWork : BTE_Action
         StopDistance.Value = 1f;
         //设置寻路点至公司出口
         Destination.Value = BuildingManage.Instance.ExitPos.position;
-       
+
+        if (ThisEntity.Fired)
+        {
+            if (Function.XZDistance(transform.position, Destination.Value) < 5)
+            {
+                ThisEntity.Remove();
+            }
+        }
+        
+
         return TaskStatus.Running;
     }
 }

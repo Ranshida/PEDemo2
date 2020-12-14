@@ -16,7 +16,7 @@ public class Relation
     public int RPoint; //好感度
     public RelationInfo Info;
     public Employee Target, Self;
-    public bool KnowEachOther = true;         //相互处于认识关系
+    public bool KnowEachOther { get; private set; }         //相互处于认识关系
 
     public int[] EventFlag = new int[200];//事件状态开关
 
@@ -24,7 +24,7 @@ public class Relation
     {
         Target = target;
         Self = self;
-        KnowEachOther = true;
+        KnowEachOther = false;
         RPoint = Random.Range(30, 40);
         Info = MonoBehaviour.Instantiate(Target.InfoDetail.GC.RelationInfoPrefab, Self.InfoDetail.RelationContent);
         UpdateUI();
@@ -199,6 +199,20 @@ public class Relation
         MasterValue = 0;
         UpdateUI();
         Self.Master = null;
+    }
+
+    public void KnowTarget()
+    {
+        if (KnowEachOther)
+        {
+            return;
+        }
+
+        KnowEachOther = true;
+        if (Self.RelationTargets.Count < 3) 
+        {
+            Self.RelationTargets.Add(Target);
+        }
     }
 
 }
