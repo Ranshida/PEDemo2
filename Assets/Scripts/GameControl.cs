@@ -264,7 +264,7 @@ public class GameControl : MonoBehaviour
         {
             int value = e.InfoDetail.CalcSalary();
             if (e.CurrentDep != null)
-                value = (int)(value * CurrentDep.SalaryMultiply);
+                value = (int)(value * e.CurrentDep.SalaryMultiply);
             value = (int)(value * SalaryMultiple);
             Salary += value;
         }
