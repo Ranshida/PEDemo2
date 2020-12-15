@@ -11553,6 +11553,13 @@ public class Event3_1 : Event
     public override int ExtraValue()
     {
         int Extra = 0;
+        foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
+        {
+            if (p.CurrentPerk.Num == 93)
+            {
+                Extra -= 2;
+            }
+        }
         Extra += RelationBonus() + MoraleBonus() + EmotionBonus() + PerksBonus();
         return Extra;
     }
@@ -11618,6 +11625,13 @@ public class Event3_2 : Event
     public override int ExtraValue()
     {
         int Extra = 0;
+        foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
+        {
+            if (p.CurrentPerk.Num == 93)
+            {
+                Extra -= 2;
+            }
+        }
         Extra += RelationBonus() + MoraleBonus() + EmotionBonus() + PerksBonus();
         return Extra;
     }
@@ -11695,6 +11709,13 @@ public class Event3_3 : Event
     public override int ExtraValue()
     {
         int Extra = 0;
+        foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
+        {
+            if (p.CurrentPerk.Num == 93)
+            {
+                Extra -= 2;
+            }
+        }
         Extra += RelationBonus() + MoraleBonus() + EmotionBonus() + PerksBonus();
         return Extra;
     }
@@ -11753,6 +11774,13 @@ public class Event3_4 : Event
     public override int ExtraValue()
     {
         int Extra = 0;
+        foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
+        {
+            if (p.CurrentPerk.Num == 93)
+            {
+                Extra -= 2;
+            }
+        }
         Extra += RelationBonus() + MoraleBonus() + EmotionBonus() + PerksBonus();
         return Extra;
     }
@@ -11820,6 +11848,13 @@ public class Event3_5 : Event
     public override int ExtraValue()
     {
         int Extra = 0;
+        foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
+        {
+            if (p.CurrentPerk.Num == 93)
+            {
+                Extra -= 2;
+            }
+        }
         Extra += RelationBonus() + MoraleBonus() + EmotionBonus() + PerksBonus();
         return Extra;
     }
@@ -11883,6 +11918,13 @@ public class Event3_6 : Event
     public override int ExtraValue()
     {
         int Extra = 0;
+        foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
+        {
+            if (p.CurrentPerk.Num == 93)
+            {
+                Extra -= 2;
+            }
+        }
         Extra += RelationBonus() + MoraleBonus() + EmotionBonus() + PerksBonus();
         return Extra;
     }
@@ -11989,6 +12031,13 @@ public class Event3_7 : Event
     public override int ExtraValue()
     {
         int Extra = 0;
+        foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
+        {
+            if (p.CurrentPerk.Num == 93)
+            {
+                Extra -= 2;
+            }
+        }
         Extra += RelationBonus() + MoraleBonus() + EmotionBonus() + PerksBonus();
         return Extra;
     }
@@ -12071,6 +12120,13 @@ public class Event3_8 : Event
     public override int ExtraValue()
     {
         int Extra = 0;
+        foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
+        {
+            if (p.CurrentPerk.Num == 93)
+            {
+                Extra -= 2;
+            }
+        }
         Extra += RelationBonus() + MoraleBonus() + EmotionBonus() + PerksBonus();
         return Extra;
     }
