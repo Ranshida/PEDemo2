@@ -76,7 +76,7 @@ public class EmpInfo : MonoBehaviour
                 UpdateCharacterUI();
                 for(int i = 0; i < 5; i++)
                 {
-                    Text_Stars[i].text = "热情 " + ((float)emp.Stars[i] / 5f) + "/" + emp.StarLimit[i];
+                    Text_Stars[i].text = "热情 " + emp.Stars[i] + "/" + emp.StarLimit[i];
                 }
             }
             //详细面板

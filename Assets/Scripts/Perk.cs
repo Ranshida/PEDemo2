@@ -19,6 +19,8 @@ public class Perk
 
     protected int TempValue1, TempValue2, TempValue3;
 
+    private bool StackAdded = false;
+
     public Perk(Employee Emp)
     {
         TargetEmp = Emp;
@@ -26,43 +28,29 @@ public class Perk
 
     public void AddEffect()
     {
-        if(effectType == EffectType.Dayily)
+        //叠加特质只添加一次监听
+        if (StackAdded == false)
         {
-            TargetEmp.InfoA.GC.DailyEvent.AddListener(ContinuousEffect);
+            if (effectType == EffectType.Dayily)
+            {
+                TargetEmp.InfoA.GC.DailyEvent.AddListener(ContinuousEffect);
+            }
+            else if (effectType == EffectType.Weekly)
+            {
+                TargetEmp.InfoA.GC.WeeklyEvent.AddListener(ContinuousEffect);
+            }
+            else if (effectType == EffectType.Monthly)
+            {
+                TargetEmp.InfoA.GC.MonthlyEvent.AddListener(ContinuousEffect);
+            }
+            TargetEmp.InfoA.GC.HourEvent.AddListener(TimePass);
+            StackAdded = true;
         }
-        else if (effectType == EffectType.Weekly)
-        {
-            TargetEmp.InfoA.GC.WeeklyEvent.AddListener(ContinuousEffect);
-        }
-        else if (effectType == EffectType.Monthly)
-        {
-            TargetEmp.InfoA.GC.MonthlyEvent.AddListener(ContinuousEffect);
-        }
-        TargetEmp.InfoA.GC.HourEvent.AddListener(TimePass);
-
-        //else if (EType == EffectType.Weekly)
-        //{
-        //    TargetEmp.InfoA.GC.WeeklyEvent.AddListener(ContinuousEffect);
-        //}
-
         ImmEffect();
     }
 
     public virtual void RemoveEffect()
     {
-        if (effectType == EffectType.Dayily)
-        {
-            TargetEmp.InfoA.GC.DailyEvent.RemoveListener(ContinuousEffect);
-        }
-        else if (effectType == EffectType.Weekly)
-        {
-            TargetEmp.InfoA.GC.WeeklyEvent.RemoveListener(ContinuousEffect);
-        }
-        else if (effectType == EffectType.Monthly)
-        {
-            TargetEmp.InfoA.GC.MonthlyEvent.RemoveListener(ContinuousEffect);
-        }
-        TargetEmp.InfoA.GC.HourEvent.RemoveListener(TimePass);
 
         //可叠加的时间清零后直接重置
         if (canStack == true)
@@ -71,11 +59,22 @@ public class Perk
             TimeLeft = BaseTime;
         }
         if (canStack == false || Level == 0)
+        {
             Info.RemovePerk();
-        //else if (EType == EffectType.Weekly)
-        //{
-        //    TargetEmp.InfoA.GC.WeeklyEvent.RemoveListener(ContinuousEffect);
-        //}
+            if (effectType == EffectType.Dayily)
+            {
+                TargetEmp.InfoA.GC.DailyEvent.RemoveListener(ContinuousEffect);
+            }
+            else if (effectType == EffectType.Weekly)
+            {
+                TargetEmp.InfoA.GC.WeeklyEvent.RemoveListener(ContinuousEffect);
+            }
+            else if (effectType == EffectType.Monthly)
+            {
+                TargetEmp.InfoA.GC.MonthlyEvent.RemoveListener(ContinuousEffect);
+            }
+            TargetEmp.InfoA.GC.HourEvent.RemoveListener(TimePass);
+        }
     }
 
     public virtual void TimePass()
@@ -162,7 +161,6 @@ public class Perk3 : Perk
             Value = TargetEmp.CurrentDep.building.effectValue - 1;
         else if (TargetEmp.CurrentOffice != null)
             Value = TargetEmp.CurrentOffice.building.effectValue - 1;
-        Value /= 3;
         Description = "随机增加当前工作领域1点热情";
         TimeLeft = 64;
         Num = 3;
@@ -172,28 +170,69 @@ public class Perk3 : Perk
     {
         if (Value != -1)
         {
-            if (TargetEmp.Stars[Value] < TargetEmp.StarLimit[Value] * 5)
+            Value /= 3;
+            if (TargetEmp.Stars[Value] < TargetEmp.StarLimit[Value])
             {
-                TargetEmp.Stars[Value] += 1;
+                TargetEmp.InfoDetail.AddPerk(new Perk97(TargetEmp), true);
             }
         }
     }
 
     public override void RemoveEffect()
     {
-        if (Value != -1)
+        for (int i = 0; i < TargetEmp.InfoDetail.PerksInfo.Count; i++)
         {
-            TargetEmp.Stars[Value] -= 1;
-            if (TargetEmp.Stars[Value] < 0)
-                TargetEmp.Stars[Value] = 0;
-            for (int i = 0; i < TargetEmp.InfoDetail.PerksInfo.Count; i++)
+            if (TargetEmp.InfoDetail.PerksInfo[i].CurrentPerk.Num == 12)
             {
-                if (TargetEmp.InfoDetail.PerksInfo[i].CurrentPerk.Num == 12)
-                {
-                    TargetEmp.InfoDetail.AddPerk(new Perk3(TargetEmp), true);
-                    break;
-                }
+                TargetEmp.InfoDetail.AddPerk(new Perk3(TargetEmp), true);
+                break;
             }
+        }
+        base.RemoveEffect();
+    }
+}
+
+//热情
+public class Perk97 : Perk
+{
+    int Value = -1;
+    List<int> StarNum = new List<int>();
+    public Perk97(Employee Emp) : base(Emp)
+    {
+        Name = "热情";
+        Description = "对应领域热情+1";
+        TimeLeft = 192;
+        Num = 97;
+        canStack = true;
+    }
+
+    public override void ImmEffect()
+    {
+        //叠加时重置
+        Value = -1;
+        if (TargetEmp.CurrentDep != null)
+            Value = TargetEmp.CurrentDep.building.effectValue - 1;
+        else if (TargetEmp.CurrentOffice != null)
+            Value = TargetEmp.CurrentOffice.building.effectValue - 1;
+        if (Value != -1)
+        { 
+            Value /= 3;
+            if (TargetEmp.Stars[Value] < TargetEmp.StarLimit[Value])
+            {
+                TargetEmp.Stars[Value] += 1;
+                StarNum.Add(Value);
+            }
+        }
+    }
+
+    public override void RemoveEffect()
+    {
+        if (StarNum.Count > 0)
+        {
+            TargetEmp.Stars[StarNum[0]] -= 1;
+            if (TargetEmp.Stars[StarNum[0]] < 0)
+                TargetEmp.Stars[StarNum[0]] = 0;
+            StarNum.RemoveAt(0);
         }
         base.RemoveEffect();
     }
@@ -1250,12 +1289,14 @@ public class Perk47 : Perk
     }
     public override void ImmEffect()
     {
-        TargetEmp.ExtraSuccessRate += 0.01f;
+        if(TargetEmp.CurrentDep != null)
+        {
+            new ProduceBuff(0.01f, TargetEmp.CurrentDep, -1);
+        }
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetEmp.ExtraSuccessRate -= 0.01f;
     }
 }
 
@@ -1285,12 +1326,14 @@ public class Perk49 : Perk
     }
     public override void ImmEffect()
     {
-        TargetEmp.ExtraSuccessRate -= 0.01f;
+        if (TargetEmp.CurrentDep != null)
+        {
+            new ProduceBuff(-0.01f, TargetEmp.CurrentDep, -1);
+        }
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetEmp.ExtraSuccessRate += 0.01f;
     }
 }
 
@@ -1722,6 +1765,11 @@ public class Perk93 : Perk
         Num = 93;
         canStack = false;
     }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetEmp.ExhaustedCount.Remove(Num);
+    }
 }
 
 //刚愎自用
@@ -1735,6 +1783,16 @@ public class Perk94: Perk
         Num = 94;
         canStack = false;
     }
+    public override void ImmEffect()
+    {
+        TargetEmp.ExtraSuccessRate -= 0.1f;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetEmp.ExtraSuccessRate += 0.1f;
+        TargetEmp.ExhaustedCount.Remove(Num);
+    }
 }
 
 //重度抑郁
@@ -1747,6 +1805,16 @@ public class Perk95 : Perk
         TimeLeft = -1;//特质
         Num = 95;
         canStack = false;
+        effectType = EffectType.Weekly;
+    }
+    public override void ContinuousEffect()
+    {
+        TargetEmp.Mentality -= 20;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetEmp.ExhaustedCount.Remove(Num);
     }
 }
 
@@ -1760,6 +1828,11 @@ public class Perk96 : Perk
         TimeLeft = -1;//特质
         Num = 96;
         canStack = false;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetEmp.ExhaustedCount.Remove(Num);
     }
 }
 

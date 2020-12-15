@@ -1033,18 +1033,20 @@ public class GameControl : MonoBehaviour
             }
         }
     }
+
     public void SetDepMode(int num)
     {
         if (CurrentDep != null)
             CurrentDep.ChangeBuildingMode(num);
     }
+
     public void ActiveDepSkill()
     {
         if (CurrentDep != null)
             CurrentDep.ConfirmActive();
     }
 
-
+    //选两个员工时取消选择
     public void CancelEmpSelect()
     {
         if(SelectMode == 4)
@@ -1066,12 +1068,12 @@ public class GameControl : MonoBehaviour
             }
         }
     }
-
+    //开关996加班效果
     public void ToggleWorkHour(bool value)
     {
         WorkToggle = value;
     }
-
+    //手动分配技能树
     public void SetSkillTree(int num)
     {
         if (CurrentEmpInfo != null)
@@ -1079,5 +1081,11 @@ public class GameControl : MonoBehaviour
         SkillTreeSelectPanel.SetActive(false);
         TotalEmpContent.parent.parent.gameObject.SetActive(false);
         ResetSelectMode();
+    }
+    //游戏结束后续钱继续
+    public void GameReset()
+    {
+        Money += 10000;
+        GameOverPanel.gameObject.SetActive(false);
     }
 }

@@ -15369,27 +15369,7 @@ public class Event3_49 : Event
     {
         base.Success(Posb);
         ResultText = Self.Name + "心力爆炸";
-        switch (Random.Range(0, 4))
-        {
-            case 1:
-                Self.InfoDetail.AddPerk(new Perk93(Self),true);
-                ResultText += "获得特质：被害妄想症，所有公司日常类的事件正面修正-2";
-                break;
-            case 2:
-                Self.InfoDetail.AddPerk(new Perk94(Self), true);
-                ResultText += "获得特质：刚愎自用，所在部门成功率-10%";
-                break;
-            case 3:
-                Self.InfoDetail.AddPerk(new Perk95(Self), true);
-                ResultText += "获得特质：重度抑郁，心力每周下降20点";
-                break;
-            case 4:
-                Self.InfoDetail.AddPerk(new Perk96(Self), true);
-                ResultText += "获得特质：开悟，不产生红色系情绪，愤怒、反感、侮辱等";
-                break;
-            default:
-                break;
-        }
+        Self.Exhausted();
     }
 }
 static public class EventData

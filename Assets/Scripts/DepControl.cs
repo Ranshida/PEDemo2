@@ -7,6 +7,7 @@ public class ProduceBuff
 {
     public float Value;
     public int TimeLeft;
+    public bool SpecialCheck = false;//用于检测持续到业务结束才消除的Buff
     public DepControl TargetDep;
 
     public ProduceBuff(float value, DepControl Dep, int Time = 32)
@@ -17,17 +18,24 @@ public class ProduceBuff
         Dep.produceBuffs.Add(this);
         Dep.Efficiency += Value;
         TargetDep.GC.HourEvent.AddListener(TimePass);
+        if (Time == -1)
+            SpecialCheck = true;
     }
 
     public void TimePass()
     {
+        if (SpecialCheck == true)
+            return;
         TimeLeft -= 1;
-        if(TimeLeft < 1)
-        {
-            TargetDep.GC.HourEvent.RemoveListener(TimePass);
-            TargetDep.produceBuffs.Remove(this);
-            TargetDep.Efficiency -= Value;
-        }
+        if (TimeLeft < 1)
+            RemoveBuff();
+    }
+
+    public void RemoveBuff()
+    {
+        TargetDep.GC.HourEvent.RemoveListener(TimePass);
+        TargetDep.produceBuffs.Remove(this);
+        TargetDep.Efficiency -= Value;
     }
 }
 public class HireType
@@ -284,6 +292,7 @@ public class DepControl : MonoBehaviour
                         GC.CreateMessage(Text_DepName.text + " 工作失败");
                     }
                 }
+                RemoveSpecialBuffs();
             }
 
             UpdateUI();
@@ -1299,6 +1308,24 @@ public class DepControl : MonoBehaviour
                 Emps[i].InfoB.gameObject.SetActive(true);
             else
                 Emps[i].InfoB.gameObject.SetActive(false);
+        }
+    }
+
+    void RemoveSpecialBuffs()
+    {
+        List<ProduceBuff> BuffList = new List<ProduceBuff>();
+        foreach(ProduceBuff Buff in produceBuffs)
+        {
+            if (Buff.SpecialCheck == true)
+                BuffList.Add(Buff);
+        }
+        if (BuffList.Count > 0)
+        {
+            foreach(ProduceBuff buff in BuffList)
+            {
+                buff.RemoveBuff();
+            }
+            BuffList.Clear();
         }
     }
 }

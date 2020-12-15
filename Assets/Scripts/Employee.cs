@@ -271,8 +271,9 @@ public class Employee
     public List<Relation> Relations = new List<Relation>();
     public List<EmpItem> CurrentItems = new List<EmpItem>();
     public List<Emotion> CurrentEmotions = new List<Emotion>();
+    public List<int> ExhaustedCount = new List<int>();
 
-    int mentality, stamina;
+    private int mentality, stamina;
 
     //初始化员工属性
     public void InitStatus(EmpType type, int[] Hst, int AgeRange)
@@ -510,30 +511,56 @@ public class Employee
 
     void InitStar()
     {
-        //确定热情(Star)和天赋(StarLimit)
-        for (int i = 0; i < 5; i++)
-        {
-            StarLimit[i] = Random.Range(0, 4);
-            Stars[i] = Random.Range(0, StarLimit[i] * 5 + 1);
-        }
-
+        float Posb = Random.Range(0.0f, 1.0f);
+        int SNum1 = 0, SNum2 = Random.Range(0, 5);
         //确定特殊天赋
         StarType = Random.Range(1, 14);
-        int Num = 0;
         if (StarType == 1)
-            Num = 1;
+            SNum1 = 1;
         else if (StarType <= 4)
-            Num = 0;
+            SNum1 = 0;
         else if (StarType <= 6)
-            Num = 2;
+            SNum1 = 2;
         else if (StarType <= 8)
-            Num = 1;
+            SNum1 = 1;
         else if (StarType <= 10)
-            Num = 3;
+            SNum1 = 3;
         else if (StarType <= 13)
-            Num = 2;
-        StarLimit[Num] = Random.Range(3, 6);
-        Stars[Num] = Random.Range(0, StarLimit[Num] * 5 + 1);
+            SNum1 = 2;
+
+        while (SNum1 == SNum2)
+        {
+            SNum2 = Random.Range(0, 5);
+        }
+        //根据随机的方案设置天赋
+        if(Posb < 0.2f)
+        {
+            StarLimit[SNum1] = 5;
+        }
+        else if (Posb < 0.4f)
+        {
+            StarLimit[SNum1] = 3;
+            StarLimit[SNum2] = 2;
+        }
+        else if (Posb < 0.7f)
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                StarLimit[i] = 1;
+            }
+            StarLimit[SNum1] = 2;
+        }
+        else
+        {
+            StarLimit[SNum1] = 2;
+            StarLimit[SNum2] = 1;
+        }
+
+        //确定热情
+        for (int i = 0; i < 5; i++)
+        {
+            Stars[i] = Random.Range(0, StarLimit[i] + 1);
+        }
     }
 
     public void GainExp(int value, int type)
@@ -586,7 +613,7 @@ public class Employee
         float AgePenalty = 0;
         if (Age > 23)
             AgePenalty = (Age - 23) * 0.05f;
-        float Efficiency = 1 - AgePenalty + (Stars[SNum] / 5) * 0.2f;
+        float Efficiency = 1 - AgePenalty + (Stars[SNum] * 0.2f);
         if (Efficiency < 0)
             Efficiency = 0;
         SkillExp[type - 1] += (int)(value * Efficiency);
@@ -1424,7 +1451,9 @@ public class Employee
     {
         for(int i = 0; i < InfoDetail.PerksInfo.Count; i++)
         {
-            if(InfoDetail.PerksInfo[i].CurrentPerk.Num == 36)
+            if ((C == EColor.Red || C == EColor.DRed) && InfoDetail.PerksInfo[i].CurrentPerk.Num == 96)
+                return;
+            else if(InfoDetail.PerksInfo[i].CurrentPerk.Num == 36)
             {
                 InfoDetail.PerksInfo[i].CurrentPerk.RemoveEffect();
                 return;
@@ -1780,6 +1809,36 @@ public class Employee
             }
         }
         return EL;
+    }
+
+    //心力爆炸
+    public void Exhausted()
+    {
+        if (ExhaustedCount.Count >= 4)
+        {
+            InfoDetail.GC.CreateMessage(Name + "再次心力爆炸但是没有任何效果");
+            return;
+        }
+        int num = 0;
+        List<int> PosbNum = new List<int> { 93, 94, 95, 96 };
+        foreach(int n in ExhaustedCount)
+        {
+            if (PosbNum.Contains(n) == true)
+            {
+                PosbNum.Remove(n);
+            }
+        }
+        num = PosbNum[Random.Range(0, PosbNum.Count)];
+        if (num == 93)
+            InfoDetail.AddPerk(new Perk93(this), true);
+        else if (num == 94)
+            InfoDetail.AddPerk(new Perk94(this), true);
+        else if (num == 95)
+            InfoDetail.AddPerk(new Perk95(this), true);
+        else if (num == 96)
+            InfoDetail.AddPerk(new Perk96(this), true);
+        ExhaustedCount.Add(num);
+        InfoDetail.GC.CreateMessage(Name + "心力爆炸,获得了" + InfoDetail.PerksInfo[InfoDetail.PerksInfo.Count - 1].CurrentPerk.Name);
     }
 }
 

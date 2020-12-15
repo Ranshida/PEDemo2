@@ -41,7 +41,6 @@ public class Skill
             for (int i = 0; i < TargetEmp.InfoDetail.GC.SC.CurrentSkills.Count; i++)
             {
                 TargetEmp.InfoDetail.GC.SC.CurrentSkills[i].skill.StaminaExtra = 0;
-                TargetEmp.InfoDetail.GC.SC.CurrentSkills[i].skill.DiceExtra = 0;
             }
         }
         sc = GameControl.Instance.SC;

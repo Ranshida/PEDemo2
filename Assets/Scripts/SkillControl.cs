@@ -166,6 +166,8 @@ public class SkillControl : MonoBehaviour
             BossLevel = 1;
             SetStatus();
             DiceNum = CurrentManager.Manage / 2 + GC.ExtraDice;
+            if (DiceNum > 6)
+                DiceNum = 6;
             CreateDice(DiceNum);
             FightStart = true;
             RollButton.interactable = false;
@@ -540,6 +542,8 @@ public class SkillControl : MonoBehaviour
                     tempvalue -= InvolvedEmps[i].Confidence;
                     InvolvedEmps[i].Confidence = 0;
                     InvolvedEmps[i].Mentality -= tempvalue;
+                    if (InvolvedEmps[i].Mentality == 0)
+                        InvolvedEmps[i].Exhausted();
                 }
             }
         }
@@ -562,6 +566,8 @@ public class SkillControl : MonoBehaviour
                 value -= TargetEmployee.Confidence;
                 TargetEmployee.Confidence = 0;
                 TargetEmployee.Mentality -= value;
+                if (TargetEmployee.Mentality == 0)
+                    TargetEmployee.Exhausted();
             }
         }
 
@@ -571,8 +577,6 @@ public class SkillControl : MonoBehaviour
             for (int i = 0; i < CurrentSkills.Count; i++)
             {
                 CurrentSkills[i].skill.StaminaExtra = CurrentSkills[i].skill.StaminaCost * -1;
-
-                CurrentSkills[i].skill.DiceExtra = CurrentSkills[i].skill.DiceCost * -1;
             }
             DoubleCost = true;
         }
