@@ -612,7 +612,7 @@ public class GameControl : MonoBehaviour
         }
         for (int i = 0; i < CurrentOffices.Count; i++)
         {
-            if (office.InRangeOffices.Contains(CurrentOffices[i]))
+            if (office.InRangeOffices.Contains(CurrentOffices[i]) && office.ControledOffices.Contains(CurrentOffices[i]) == false)
                 CurrentOffices[i].DS.gameObject.SetActive(true);
             else
                 CurrentOffices[i].DS.gameObject.SetActive(false);

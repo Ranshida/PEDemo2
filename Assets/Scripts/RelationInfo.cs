@@ -25,7 +25,7 @@ public class Relation
         Target = target;
         Self = self;
         KnowEachOther = false;
-        RPoint = Random.Range(30, 40);
+        RPoint = 0;
         Info = MonoBehaviour.Instantiate(Target.InfoDetail.GC.RelationInfoPrefab, Self.InfoDetail.RelationContent);
         UpdateUI();
     }

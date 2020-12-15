@@ -309,7 +309,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &8691309007887371287
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1017,7 +1017,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &2494666066833534788
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1149,9 +1149,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68a1fbabe0145714f923a19cc8d82db7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CanWork: 1
+  CanWork: 0
   ManageValue: 0
   Progress: 100
+  MaxProgress: 96
   OfficeMode: 1
   ExpTime: 5
   OfficeWarning: {fileID: 5648009750388115013}

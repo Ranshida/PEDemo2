@@ -367,6 +367,8 @@ public class OfficeControl : MonoBehaviour
 
                 if (Progress < MaxProgress)
                 {
+                    if (building.Type == BuildingType.高管办公室 && CanWork == false)
+                        return;
                     Progress += 1;
                 }
                 else
@@ -520,6 +522,10 @@ public class OfficeControl : MonoBehaviour
         for(int i = 0; i < ControledDeps.Count; i++)
         {
             ControledDeps[i].CommandingOffice = null;
+        }
+        for (int i = 0; i < ControledOffices.Count; i++)
+        {
+            ControledOffices[i].CommandingOffice = null;
         }
         GC.HourEvent.RemoveListener(TimePass);
         GC.CurrentOffices.Remove(this);
