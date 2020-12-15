@@ -265,13 +265,14 @@ public class EmpManager : MonoBehaviour
         {
             foreach (Event item in PosbEvents)
             {
-                if (!item.HaveTarget)
-                {
-                    continue;
-                }
+                //有对象，也可以选择无目标的事件
                 int weight = item.Weight;
                 item.Self = self;
-                item.Target = target;
+                if (item.HaveTarget)
+                    item.Target = target;
+                else
+                    item.Target = null;
+
                 if (item.ConditionCheck(-1) == true)
                 {
                     item.SetWeight();
@@ -368,8 +369,6 @@ public class EmpManager : MonoBehaviour
             if (TempEvent != null)
                 newEvent = TempEvent.Clone();
         }
-        if (newEvent == null)
-            MonoBehaviour.print("无合适事件");
         return newEvent;
     }
 

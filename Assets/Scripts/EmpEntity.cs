@@ -6,8 +6,18 @@ using UnityEngine.UI;
 
 public class EmpEntity : MonoBehaviour
 {
-    public Employee ThisEmp { get { return InfoDetail.emp; } }
-    public string EmpName { get { return ThisEmp.Name; } }
+    public Employee ThisEmp
+    {
+        get
+        {
+            if (InfoDetail == null)
+            {
+                return null;
+            } 
+            return InfoDetail.emp;
+        } 
+    }
+    public string EmpName;
     private BehaviorTree selfTree;
     public MeshRenderer Renderer { get; private set; }
     public EmpInfo InfoDetail { get; private set; }
@@ -32,6 +42,9 @@ public class EmpEntity : MonoBehaviour
     {
         get
         {
+            if (ThisEmp == null)  
+                return null;
+            
             if (ThisEmp.InfoDetail.emp.CurrentDep != null)
             {
                 return ThisEmp.InfoDetail.emp.CurrentDep.building;
@@ -78,7 +91,7 @@ public class EmpEntity : MonoBehaviour
     public bool OffWork { get; private set; }                //下班
 
     //闲逛
-    public bool WalkAround { get { return !WorkPosition.HasValue; } }   //没有工作时闲逛
+    public bool WalkAround { get { return !WorkPosition.HasValue && ThisEmp != null; } }   //没有工作时闲逛
     public WayPoint NextWP { get; private set; }        //目标寻路点
     private bool m_ArriveWP;    //到达目标路点
     private float m_WPTimer;    //到达后计时
@@ -132,8 +145,10 @@ public class EmpEntity : MonoBehaviour
         InfoDetail = detail;
         detail.Entity = this;
         detail.GC.HourEvent.AddListener(TimePass);
+        EmpName = ThisEmp.Name;
         transform.parent.name = EmpName;
     }
+    
     public void TimePass()
     {
         //事件处理中
@@ -253,30 +268,41 @@ public class EmpEntity : MonoBehaviour
         else
             CurrentEvent = EmpManager.Instance.RandomEvent(ThisEmp, Ee.ThisEmp, index);
 
-        //找到了合适的事件
-        if (CurrentEvent != null) 
+        //没找到合适事件
+        if (CurrentEvent == null)
         {
-            if (CurrentEvent.HaveTarget)
-            {
-                EventStage = 1;
-                EventTarget = CurrentEvent.TargetEntity;
+            MonoBehaviour.print("无合适事件");
+            return;
+        }
 
-                EventTarget.CurrentEvent = CurrentEvent;
-                EventTarget.EventStage = 1;
-                EventTarget.EventTarget = CurrentEvent.SelfEntity;
-            }
-            else
+        if (CurrentEvent.HaveTarget)
+        {
+            if (!CurrentEvent.TargetEntity.Available)
             {
-                EventStage = 1;
-                EventTarget = null;
+                MonoBehaviour.print("无合适事件");
+                EventStage = 0;
+                CurrentEvent = null;
+                return;
             }
 
-            CurrentEvent.PerkRemoveCheck();
+            EventStage = 1;
+            EventTarget = CurrentEvent.TargetEntity;
 
-            if (CurrentEvent.HaveTarget && CurrentEvent.Target == null)
-            {
-                Debug.LogError("有目标的事件，但是没有目标对象" + CurrentEvent.EventName);
-            }
+            EventTarget.CurrentEvent = CurrentEvent;
+            EventTarget.EventStage = 1;
+            EventTarget.EventTarget = CurrentEvent.SelfEntity;
+        }
+        else
+        {
+            EventStage = 1;
+            EventTarget = null;
+        }
+        //找到了合适的事件
+        CurrentEvent.PerkRemoveCheck();
+
+        if (CurrentEvent.HaveTarget && CurrentEvent.Target == null)
+        {
+            Debug.LogError("有目标的事件，但是没有目标对象" + CurrentEvent.EventName);
         }
     }
     
@@ -306,6 +332,7 @@ public class EmpEntity : MonoBehaviour
     //移除员工，清除全部事件
     public void RemoveEntity()
     {
+        InfoDetail = null;
         Fired = true;
         OffWork = true;
         if (CurrentEvent != null)
@@ -359,6 +386,9 @@ public class EmpEntity : MonoBehaviour
 
     public void ShowDetailPanel()
     {
-        InfoDetail.ShowPanel();
+        if (InfoDetail)
+        {
+            InfoDetail.ShowPanel();
+        }
     }
 }
