@@ -15202,16 +15202,8 @@ public class Event3_45 : Event
     {
         int value = Random.Range(1, 20);
         value += ExtraValue();
-        if (value < 10)
-        {
-            ResultText = "失败,";
-            return 2;
-        }
-        else
-        {
-            ResultText = "成功,";
-            return 3;
-        }
+        ResultText = "成功,";
+        return 3;
         //1大失败 2失败 3成功 4大成功
     }
     public override void Success(float Posb)
@@ -15258,16 +15250,7 @@ public class Event3_46 : Event
     {
         int value = Random.Range(1, 20);
         value += ExtraValue();
-        if (value < 10)
-        {
-            ResultText = "失败,";
-            return 2;
-        }
-        else
-        {
-            ResultText = "成功,";
-            return 3;
-        }
+        return 3;
         //1大失败 2失败 3成功 4大成功
     }
     public override void Success(float Posb)
@@ -15313,16 +15296,7 @@ public class Event3_47 : Event
     {
         int value = Random.Range(1, 20);
         value += ExtraValue();
-        if (value < 10)
-        {
-            ResultText = "失败,";
-            return 2;
-        }
-        else
-        {
-            ResultText = "成功,";
-            return 3;
-        }
+        return 2;
         //1大失败 2失败 3成功 4大成功
     }
     public override void Success(float Posb)
@@ -15368,16 +15342,7 @@ public class Event3_48 : Event
     {
         int value = Random.Range(1, 20);
         value += ExtraValue();
-        if (value < 10)
-        {
-            ResultText = "失败,";
-            return 2;
-        }
-        else
-        {
-            ResultText = "成功,";
-            return 3;
-        }
+        return 2;
         //1大失败 2失败 3成功 4大成功
     }
     public override void Success(float Posb)
