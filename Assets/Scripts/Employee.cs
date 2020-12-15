@@ -555,12 +555,6 @@ public class Employee
             StarLimit[SNum1] = 2;
             StarLimit[SNum2] = 1;
         }
-
-        //确定热情
-        for (int i = 0; i < 5; i++)
-        {
-            Stars[i] = Random.Range(0, StarLimit[i] + 1);
-        }
     }
 
     public void GainExp(int value, int type)
