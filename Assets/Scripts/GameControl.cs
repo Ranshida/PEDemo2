@@ -1040,6 +1040,7 @@ public class GameControl : MonoBehaviour
             CurrentDep.ChangeBuildingMode(num);
     }
 
+    //激活部门效果
     public void ActiveDepSkill()
     {
         if (CurrentDep != null)
