@@ -12342,6 +12342,10 @@ public class Event3_12 : Event
             {
                 pList.Add(i);
             }
+            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 52)
+            {
+                pList.Add(i);
+            }
         }
         if (pList.Count > 0)
         {
@@ -15184,12 +15188,16 @@ public class Event3_45 : Event
         SelfEmotionRequire = new List<EColor>() { };
         TargetEmotionRequire = new List<EColor>() { };
         RelationRequire = 0;
-        Weight = 3;
+        Weight = 5;
     }
     public override bool RelationCheck()
     {
         if (Self.FindRelation(Target).RPoint < 40)
             return false;
+        if (Self.FindRelation(Target).FriendValue == 1 | Self.FindRelation(Target).FriendValue == 2)
+        {
+            return false;
+        }
         return base.RelationCheck();
     }
     public override int ExtraValue()
@@ -15232,7 +15240,7 @@ public class Event3_46 : Event
         SelfEmotionRequire = new List<EColor>() { };
         TargetEmotionRequire = new List<EColor>() { };
         RelationRequire = 1;
-        Weight = 4;
+        Weight = 5;
     }
     public override bool RelationCheck()
     {
@@ -15278,12 +15286,16 @@ public class Event3_47 : Event
         SelfEmotionRequire = new List<EColor>() { };
         TargetEmotionRequire = new List<EColor>() { };
         RelationRequire = 0;
-        Weight = 3;
+        Weight = 5;
     }
     public override bool RelationCheck()
     {
         if (Self.FindRelation(Target).RPoint >-30)
             return false;
+        if(Self.FindRelation(Target).FriendValue == -1| Self.FindRelation(Target).FriendValue == -2)
+        {
+            return false;
+        }
         return base.RelationCheck();
     }
     public override int ExtraValue()
@@ -15324,7 +15336,7 @@ public class Event3_48 : Event
         SelfEmotionRequire = new List<EColor>() { };
         TargetEmotionRequire = new List<EColor>() { };
         RelationRequire = -1;
-        Weight = 4;
+        Weight = 5;
     }
     public override bool RelationCheck()
     {
