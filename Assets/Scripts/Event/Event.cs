@@ -15464,7 +15464,7 @@ static public class EventData
     //个人关系序列
     public static List<Event> RelationList = new List<Event>()
     {
-        new Event3_20(),new Event3_21(),new Event3_22(),new Event3_23(),new Event3_24(),new Event3_25(),new Event3_26(),new Event3_27(),new Event3_28(),new Event3_29(),new Event3_30(),new Event3_31(),new Event3_32(),new Event3_33(),new Event3_34(),new Event3_35(),new Event3_36(),new Event3_37(),new Event3_38(),new Event3_39(),new Event3_40(),new Event3_41(),new Event3_42(),new Event3_43(),new Event3_44(),new Event3_45(),new Event3_46(),new Event3_47(),new Event3_48(),new Event3_49()
+        new Event3_20(),new Event3_21(),new Event3_22(),new Event3_23(),new Event3_24(),new Event3_25(),new Event3_26(),new Event3_27(),new Event3_28(),new Event3_29(),new Event3_30(),new Event3_31(),new Event3_32(),new Event3_33(),new Event3_34(),new Event3_35(),new Event3_36(),new Event3_37(),new Event3_38(),new Event3_39(),new Event3_40(),new Event3_41(),new Event3_42(),new Event3_43(),new Event3_44(),new Event3_45(),new Event3_46(),new Event3_47(),new Event3_48()
     };
 
     //权重1-4事件链表
