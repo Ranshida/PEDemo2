@@ -613,7 +613,7 @@ public class EmpInfo : MonoBehaviour
         if (LS.Count > 0)
             S = LS[Random.Range(0, LS.Count)];
         else
-            print(emp.Name + "没有符合的战略");
+            GC.CreateMessage(emp.Name + "没有符合自身特性的战略");
         if (S != null)
         {
             StrategyInfo NewStr = Instantiate(GC.StrC.ChargePrefab, GC.StrC.StrategyContent);

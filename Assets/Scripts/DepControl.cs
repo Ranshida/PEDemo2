@@ -277,7 +277,9 @@ public class DepControl : MonoBehaviour
                 else
                 {
                     SpProgress = 0;
-                    if (Random.Range(0.0f, 1.0f) < 0.5f + GC.SC.ExtraMajorFailureRate)
+                    float Posb2 = Random.Range(0.0f, 1.0f);
+                    print(Posb2);
+                    if (Posb2 < 0.5f + GC.SC.ExtraMajorFailureRate)
                     {
                         //大失败
                         GC.CreateMessage(Text_DepName.text + " 工作中发生重大失误,部门员工心力-20");
@@ -866,18 +868,30 @@ public class DepControl : MonoBehaviour
             {
                 GC.FinishedTask[4] -= 5;
                 if (MajorSuccess == true)
+                {
                     GC.CreateMessage("获得了2个传播");
+                    GC.FinishedTask[3] += 2;
+                }
                 else
+                {
                     GC.CreateMessage("获得了1个传播");
+                    GC.FinishedTask[3] += 1;
+                }
             }
             else if (BuildingMode == 2)
             {
                 GC.Money -= 300;
                 GC.FinishedTask[4] -= 1;
                 if (MajorSuccess == true)
+                {
                     GC.CreateMessage("获得了2个传播");
+                    GC.FinishedTask[3] += 2;
+                }
                 else
+                {
                     GC.CreateMessage("获得了1个传播");
+                    GC.FinishedTask[3] += 1; 
+                }
             }
         }
         else if (building.Type == BuildingType.研发部门)
