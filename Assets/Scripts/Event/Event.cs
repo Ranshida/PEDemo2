@@ -11899,7 +11899,7 @@ public class Event3_6 : Event
         HaveTarget = true;
         Weight = 4;
         RelationRequire = 0;
-        BuildingRequires = new List<BuildingType>() { BuildingType.会议室 };
+        //BuildingRequires = new List<BuildingType>() { BuildingType.会议室 };
     }
     public override bool SpecialCheck()
     {
@@ -12012,7 +12012,7 @@ public class Event3_7 : Event
         HaveTarget = true;
         Weight = 5;
         RelationRequire = 0;
-        BuildingRequires = new List<BuildingType>() { BuildingType.会议室 };
+        //BuildingRequires = new List<BuildingType>() { BuildingType.会议室 };
     }
     public override bool SpecialCheck()
     {
@@ -12101,7 +12101,7 @@ public class Event3_8 : Event
         HaveTarget = true;
         Weight = 5;
         RelationRequire = 0;
-        BuildingRequires = new List<BuildingType>() { BuildingType.会议室 };
+        //BuildingRequires = new List<BuildingType>() { BuildingType.会议室 };
     }
     public override bool SpecialCheck()
     {
@@ -12339,10 +12339,6 @@ public class Event3_12 : Event
                 pList.Add(i);
             }
             else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 65)
-            {
-                pList.Add(i);
-            }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 52)
             {
                 pList.Add(i);
             }
@@ -13190,7 +13186,7 @@ public class Event3_20 : Event
     {
         EventName = "感到无聊";
         HaveTarget = true;
-        Weight = 2;
+        Weight = 3;
         RelationRequire = 0;
         HaveTarget = false;
     }
@@ -13215,7 +13211,7 @@ public class Event3_21 : Event
     {
         EventName = "寻求安慰";
         HaveTarget = true;
-        Weight = 3;
+        Weight = 4;
         RelationRequire = 0;
         HaveTarget = false;
     }
@@ -13288,7 +13284,7 @@ public class Event3_22 : Event
     {
         EventName = "认可交谈";
         HaveTarget = true;
-        Weight = 3;
+        Weight = 4;
         RelationRequire = 0;
         HaveTarget = false;
     }
@@ -13344,7 +13340,7 @@ public class Event3_23 : Event
     {
         EventName = "分享日常";
         HaveTarget = true;
-        Weight = 3;
+        Weight = 4;
         RelationRequire = 0;
         HaveTarget = false;
     }
@@ -13400,7 +13396,7 @@ public class Event3_24 : Event
     {
         EventName = "深刻交谈";
         HaveTarget = true;
-        Weight = 3;
+        Weight = 4;
         RelationRequire = 0;
         HaveTarget = false;
     }
@@ -13469,7 +13465,7 @@ public class Event3_25 : Event
     {
         EventName = "分享快乐";
         HaveTarget = true;
-        Weight = 3;
+        Weight = 4;
         RelationRequire = 0;
         HaveTarget = false;
     }
@@ -14668,7 +14664,7 @@ public class Event3_39 : Event
     {
         EventName = "闲聊";
         HaveTarget = true;
-        Weight = 2;
+        Weight = 3;
         RelationRequire =0;
     }
     public override bool SpecialCheck()
