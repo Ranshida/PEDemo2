@@ -13,6 +13,11 @@ public class GridContainer : MonoBehaviour
     public int xInput;       //Editor输入值
     public int zInput;       //Editor输入值
 
+    public int MinX;         //解锁区域的最小X值
+    public int MaxX;         //解锁区域的最大X值
+    public int MinZ;         //解锁区域的最小Z值
+    public int MaxZ;         //解锁区域的最大Z值
+
     public Transform WayPoint;
     public List<Grid> GridList;                               //包含所有单元格的列表
     public Dictionary<int, Dictionary<int, Grid>> GridDict;   //包含所有单元格的二重字典（x,z）
@@ -24,8 +29,11 @@ public class GridContainer : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+       
         AllWayPoint = Function.ReturnChildList<WayPoint>(WayPoint);
         GridDict = new Dictionary<int, Dictionary<int, Grid>>();
+
+        //刷新网格状态
         foreach (Grid grid in GridList)
         {
             if (GridDict.ContainsKey(grid.X))
@@ -39,8 +47,24 @@ public class GridContainer : MonoBehaviour
             }
             grid.RefreshGrid();
         }
+
+        //激活可用的寻路点
+        foreach (var wp in AllWayPoint)
+        {
+            if (GetGrid(wp.transform.position.x, wp.transform.position.z, out Grid grid))
+            {
+                wp.Active = !grid.Lock;
+            }
+        }
+
+        //构造区域面积
+        MinX = 5;
+        MaxX = 135;
+        MinZ = 85;
+        MaxZ = 155;
+
     }
-    
+
     //根据坐标返回所处网格
     public bool GetGrid(float posX, float posZ, out Grid grid)
     {
@@ -70,6 +94,10 @@ public class GridContainer : MonoBehaviour
             {
                 grid.Unlock();
             }
+            MinX = 5;
+            MaxX = 275;
+            MinZ = 85;
+            MaxZ = 155;
         }
         if (id == 1)
         {
@@ -77,12 +105,28 @@ public class GridContainer : MonoBehaviour
             {
                 grid.Unlock();
             }
+            MinX = 5;
+            MaxX = 275;
+            MinZ = 5;
+            MaxZ = 155;
         }
         if (id == 2)
         {
             foreach (Grid grid in LockGrids_2)
             {
                 grid.Unlock();
+            }
+            MinX = 5;
+            MaxX = 275;
+            MinZ = 5;
+            MaxZ = 155;
+        }
+
+        foreach (var wp in AllWayPoint)
+        {
+            if (GetGrid(wp.transform.position.x,wp.transform.position.z,out Grid grid))
+            {
+                wp.Active = !grid.Lock;
             }
         }
     }

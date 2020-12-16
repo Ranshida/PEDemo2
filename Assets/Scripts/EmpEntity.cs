@@ -77,7 +77,6 @@ public class EmpEntity : MonoBehaviour
 
     public bool Fired { get; private set; }                   //已经被开除
     public bool OutCompany { get; private set; } = false;      //离开公司
-    public bool IsSpying { get; private set; }
 
     //事件
     public bool NewEventFlag;       //接受到新事件，但还没有开始执行
@@ -95,6 +94,7 @@ public class EmpEntity : MonoBehaviour
     public WayPoint NextWP { get; private set; }        //目标寻路点
     private bool m_ArriveWP;    //到达目标路点
     private float m_WPTimer;    //到达后计时
+
 
     public string StandGridName()
     {

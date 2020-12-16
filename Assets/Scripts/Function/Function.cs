@@ -38,6 +38,17 @@ public static class Function
         return list;
     }
 
+    //数组转列表
+    public static List<T> Array2List<T>(T[] array)
+    {
+        List<T> list = new List<T>();
+        for (int i = 0; i < array.Length; i++)
+        {
+            list.Add(array[i]);
+        }
+        return list;
+    } 
+
     //随机排列列表
     public static List<T> RandomSortList<T>(List<T> ListT)
     {

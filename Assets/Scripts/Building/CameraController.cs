@@ -39,14 +39,14 @@ public class CameraController : MonoBehaviour
     private void Update()
     {
         focus.transform.position += new Vector3(Input.GetAxis("Horizontal") * m_SpeedSmooth, 0, Input.GetAxis("Vertical") * m_SpeedSmooth);
-        if (focus.transform.position.x < 0)
-            focus.transform.position = new Vector3(0, focus.transform.position.y, focus.transform.position.z);
-        if (focus.transform.position.x > GridContainer.Instance.xInput * 10)
-            focus.transform.position = new Vector3(GridContainer.Instance.xInput * 10, focus.transform.position.y, focus.transform.position.z);
-        if (focus.transform.position.z < 0)
-            focus.transform.position = new Vector3(focus.transform.position.x, focus.transform.position.y, 0);
-        if (focus.transform.position.z > GridContainer.Instance.zInput * 10)
-            focus.transform.position = new Vector3(focus.transform.position.x, focus.transform.position.y, GridContainer.Instance.zInput * 10);
+        if (focus.transform.position.x < GridContainer.Instance.MinX)
+            focus.transform.position = new Vector3(GridContainer.Instance.MinX, focus.transform.position.y, focus.transform.position.z);
+        if (focus.transform.position.x > GridContainer.Instance.MaxX)
+            focus.transform.position = new Vector3(GridContainer.Instance.MaxX, focus.transform.position.y, focus.transform.position.z);
+        if (focus.transform.position.z < GridContainer.Instance.MinZ)
+            focus.transform.position = new Vector3(focus.transform.position.x, focus.transform.position.y, GridContainer.Instance.MinZ);
+        if (focus.transform.position.z > GridContainer.Instance.MaxZ)
+            focus.transform.position = new Vector3(focus.transform.position.x, focus.transform.position.y, GridContainer.Instance.MaxZ);
 
         if (Input.GetAxis("Mouse ScrollWheel") < 0) 
             height += 20;
