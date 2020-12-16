@@ -20,8 +20,13 @@ public class BTE_DealtEvent : BTE_Action
     public override TaskStatus OnUpdate()
     {
         //为空则返回了
-        if (ThisEntity.EventStage != 2) 
-            return TaskStatus.Failure;
+        if (ThisEntity.CurrentEvent == null)  
+            return TaskStatus.Success;
+
+        if (!ThisEntity.CurrentEvent.isSolving)
+            return TaskStatus.Success;
+
+        MoveFlag.Value = false;
 
         //没有当前事件，返回工作
         return TaskStatus.Running;

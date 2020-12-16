@@ -16,6 +16,11 @@ public class BTE_OnWork : BTE_Action
 
     public override TaskStatus OnUpdate()
     {
+        if (ThisEntity.EventStage > 0)
+        {
+            return TaskStatus.Success;
+        }
+
         Movable.Value = true;
         StopDistance.Value = 0.5f;
         Destination.Value = FindWorkPosition();

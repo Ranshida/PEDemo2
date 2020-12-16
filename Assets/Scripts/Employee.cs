@@ -825,8 +825,10 @@ public class Employee
                 value += 3;
             if (relation.LoveValue == 4)
                 value += 6;
+            if (EmpManager.Instance.FindBoss(this) == relation.Target)
+                value -= 2;
 
-            lastValue += value;
+                  lastValue += value;
             valueList.Add(lastValue);
             Targets.Add(relation);
         }

@@ -86,6 +86,10 @@ public class EmpEntity : MonoBehaviour
     public EmpEntity EventTarget { get; private set; }       //事件发生的对象
     public int EventStage { get; private set; } = 0;         //事件发生的阶段   0：无事件  1：确定目标  2：发生中
 
+    public 事件类型 类型;
+    public string eventName;
+    public int LastHour;
+
     //上下班
     public bool OffWork { get; private set; }                //下班
 
@@ -126,6 +130,29 @@ public class EmpEntity : MonoBehaviour
         //模型只同步位置，不同步旋转
         mesh.position = this.transform.position + offset;
 
+        if (CurrentEvent == null)
+        {
+            类型 = 事件类型.NoEvent;
+               LastHour = 99999;
+        }
+        else
+        {
+            eventName = CurrentEvent.EventName;
+            LastHour = CurrentEvent.TimeLeft;
+            if (!CurrentEvent.HaveTarget)
+            {
+                类型 = 事件类型.Self;
+            }
+            if (CurrentEvent.Self == ThisEmp)
+            {
+                类型 = 事件类型.主动;
+            }
+            else
+            {
+                类型 = 事件类型.被动;
+            }
+        }
+
         if (WalkAround)
         {
             //如果到达路点，则计时
@@ -154,10 +181,10 @@ public class EmpEntity : MonoBehaviour
         //事件处理中
         if (SolvingEvent)
         {
-            CurrentEvent.TimeLeft--;
             //独立事件
             if (!CurrentEvent.HaveTarget)
             {
+                CurrentEvent.TimeLeft--;
                 if (CurrentEvent.TimeLeft <= 0)
                 {
                     EventFinish();
@@ -168,6 +195,7 @@ public class EmpEntity : MonoBehaviour
                 //主动方控制
                 if (CurrentEvent.SelfEntity == this)
                 {
+                    CurrentEvent.TimeLeft--;
                     if (CurrentEvent.TimeLeft <= 0)
                     {
                         EventFinish();
@@ -391,4 +419,14 @@ public class EmpEntity : MonoBehaviour
             InfoDetail.ShowPanel();
         }
     }
+
+
+}
+
+public enum 事件类型
+{
+    NoEvent,
+    Self,
+    主动,
+    被动
 }
