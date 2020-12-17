@@ -608,24 +608,24 @@ public abstract class Event
             if (Self.CharacterTendency[0] * Target.CharacterTendency[0] == 1)
                 Value += 1;
             else if (Self.CharacterTendency[0] * Target.CharacterTendency[0] == -1)
-                Value -= 2;
+                Value -= 1;
 
             if (Self.CharacterTendency[1] * Target.CharacterTendency[1] == 1)
                 Value += 1;
             else if (Self.CharacterTendency[1] * Target.CharacterTendency[1] == -1)
-                Value -= 2;
+                Value -= 1;
         }
         else if (Reverse == true && Target != null)
         {
             if (Self.CharacterTendency[0] * Target.CharacterTendency[0] == 1)
                 Value -= 1;
             else if (Self.CharacterTendency[0] * Target.CharacterTendency[0] == -1)
-                Value += 2;
+                Value += 1;
 
             if (Self.CharacterTendency[1] * Target.CharacterTendency[1] == 1)
                 Value -= 1;
             else if (Self.CharacterTendency[1] * Target.CharacterTendency[1] == -1)
-                Value += 2;
+                Value += 1;
         }
         return Value;
     }
@@ -11568,7 +11568,7 @@ public class Event3_1 : Event
     {
         int value = Random.Range(1, 20);
         value += ExtraValue();
-        if (value <= 10)
+        if (value < 10)
         {
             return 2;
         }
@@ -11641,7 +11641,7 @@ public class Event3_2 : Event
     {
         int value = Random.Range(1, 20);
         value += ExtraValue();
-        if (value <= 10)
+        if (value < 10)
         {
             return 2;
         }
@@ -11725,7 +11725,7 @@ public class Event3_3 : Event
     {
         int value = Random.Range(1, 20);
         value += ExtraValue();
-        if (value <= 10)
+        if (value < 10)
         {
             return 2;
         }
@@ -11790,7 +11790,7 @@ public class Event3_4 : Event
     {
         int value = Random.Range(1, 20);
         value += ExtraValue();
-        if (value <= 10)
+        if (value < 10)
         {
             return 2;
         }
@@ -11864,7 +11864,7 @@ public class Event3_5 : Event
     {
         int value = Random.Range(1, 20);
         value += ExtraValue();
-        if (value <= 10)
+        if (value < 10)
         {
             return 2;
         }
@@ -11934,7 +11934,7 @@ public class Event3_6 : Event
     {
         int value = Random.Range(1, 20);
         value += ExtraValue();
-        if (value <= 10)
+        if (value < 10)
         {
             return 2;
         }
@@ -12047,7 +12047,7 @@ public class Event3_7 : Event
     {
         int value = Random.Range(1, 20);
         value += ExtraValue();
-        if (value <= 10)
+        if (value < 10)
         {
             return 2;
         }
@@ -12136,7 +12136,7 @@ public class Event3_8 : Event
     {
         int value = Random.Range(1, 20);
         value += ExtraValue();
-        if (value <= 10)
+        if (value < 10)
         {
             return 2;
         }
@@ -12184,7 +12184,7 @@ public class Event3_9 : Event
     {
         int value = Random.Range(1, 20);
         value += ExtraValue();
-        if (value <= 10)
+        if (value < 10)
         {
             return 2;
         }
@@ -12318,7 +12318,7 @@ public class Event3_11 : Event
     {
         int value = Random.Range(1, 20);
         value += ExtraValue();
-        if (value <= 10)
+        if (value < 10)
         {
             return 2;
         }
@@ -12577,7 +12577,7 @@ public class Event3_14 : Event
     {
         int value = Random.Range(1, 20);
         value += ExtraValue();
-        if (value <= 10)
+        if (value < 10)
         {
             return 2;
         }
@@ -12688,7 +12688,7 @@ public class Event3_15 : Event
     {
         int value = Random.Range(1, 20);
         value += ExtraValue();
-        if (value <= 10)
+        if (value < 10)
         {
             return 2;
         }
@@ -12804,7 +12804,7 @@ public class Event3_16 : JudgeEvent
     {
         int value = Random.Range(1, 20);
         value += ExtraValue();
-        if (value <= 10)
+        if (value < 10)
         {
             return 2;
         }
@@ -12938,7 +12938,7 @@ public class Event3_17 : Event
     {
         int value = Random.Range(1, 20);
         value += ExtraValue();
-        if (value <= 10)
+        if (value < 10)
         {
             return 2;
         }
@@ -13048,7 +13048,7 @@ public class Event3_18 : JudgeEvent
     {
         int value = Random.Range(1, 20);
         value += ExtraValue();
-        if (value <= 10)
+        if (value < 10)
         {
             return 2;
         }
@@ -13187,7 +13187,7 @@ public class Event3_19 : JudgeEvent
     {
         int value = Random.Range(1, 20);
         value += ExtraValue();
-        if (value <= 10)
+        if (value < 10)
         {
             return 2;
         }
@@ -13790,7 +13790,7 @@ public class Event3_26 : Event
     {
         int value = Random.Range(1, 20);
         value += ExtraValue();
-        if (value <= 10)
+        if (value < 10)
         {
             return 2;
         }
@@ -13873,7 +13873,7 @@ public class Event3_27 : Event
     {
         int value = Random.Range(1, 20);
         value += ExtraValue();
-        if (value <= 10)
+        if (value < 10)
         {
             return 2;
         }
@@ -13953,7 +13953,7 @@ public class Event3_28 : Event
     {
         int value = Random.Range(1, 20);
         value += ExtraValue();
-        if (value <= 10)
+        if (value < 10)
         {
             return 2;
         }
@@ -14033,7 +14033,7 @@ public class Event3_29 : Event
     {
         int value = Random.Range(1, 20);
         value += ExtraValue();
-        if (value <= 10)
+        if (value < 10)
         {
             return 2;
         }
@@ -14113,7 +14113,7 @@ public class Event3_30 : Event
     {
         int value = Random.Range(1, 20);
         value += ExtraValue();
-        if (value <= 10)
+        if (value < 10)
         {
             return 2;
         }
@@ -14196,7 +14196,7 @@ public class Event3_31 : Event
     {
         int value = Random.Range(1, 20);
         value += ExtraValue();
-        if (value <= 10)
+        if (value < 10)
         {
             return 2;
         }
@@ -14257,7 +14257,7 @@ public class Event3_32 : Event
     {
         EventName = "朋友日常";
         HaveTarget = true;
-        Weight = 2;
+        Weight = 3;
         RelationRequire = 0;
         PerkRequire = 62;
     }
@@ -14279,7 +14279,7 @@ public class Event3_32 : Event
     {
         int value = Random.Range(1, 20);
         value += ExtraValue();
-        if (value <= 10)
+        if (value < 10)
         {
             return 2;
         }
@@ -14362,7 +14362,7 @@ public class Event3_33 : Event
     {
         int value = Random.Range(1, 20);
         value += ExtraValue();
-        if (value <= 10)
+        if (value < 10)
         {
             return 2;
         }
@@ -14445,7 +14445,7 @@ public class Event3_34 : Event
     {
         int value = Random.Range(1, 20);
         value += ExtraValue();
-        if (value <= 10)
+        if (value < 10)
         {
             return 2;
         }
@@ -14528,7 +14528,7 @@ public class Event3_35 : Event
     {
         int value = Random.Range(1, 20);
         value += ExtraValue();
-        if (value <= 10)
+        if (value < 10)
         {
             return 2;
         }
@@ -14611,7 +14611,7 @@ public class Event3_36 : Event
     {
         int value = Random.Range(1, 20);
         value += ExtraValue();
-        if (value <= 10)
+        if (value < 10)
         {
             return 2;
         }
@@ -14694,7 +14694,7 @@ public class Event3_37 : Event
     {
         int value = Random.Range(1, 20);
         value += ExtraValue();
-        if (value <= 10)
+        if (value < 10)
         {
             return 2;
         }
@@ -14824,7 +14824,7 @@ public class Event3_38 : Event
     {
         int value = Random.Range(1, 20);
         value += ExtraValue();
-        if (value <= 10)
+        if (value < 10)
         {
             return 2;
         }
@@ -14942,7 +14942,7 @@ public class Event3_39 : Event
     {
         int value = Random.Range(1, 20);
         value += ExtraValue();
-        if (value <= 10)
+        if (value < 10)
         {
             return 2;
         }
@@ -15045,7 +15045,7 @@ public class Event3_40 : Event
     {
         int value = Random.Range(1, 20);
         value += ExtraValue();
-        if (value <= 10)
+        if (value < 10)
         {
             return 2;
         }
@@ -15145,7 +15145,7 @@ public class Event3_41 : Event
     {
         int value = Random.Range(1, 20);
         value += ExtraValue();
-        if (value <= 10)
+        if (value < 10)
         {
             return 2;
         }
@@ -15249,7 +15249,7 @@ public class Event3_42 : JudgeEvent
     {
         int value = Random.Range(1, 20);
         value += ExtraValue();
-        if (value <= 10)
+        if (value < 10)
         {
             return 2;
         }
@@ -15335,7 +15335,7 @@ public class Event3_43 : Event
 {
     public Event3_43() : base()
     {
-        EventName = "建筑互动";
+        EventName = "约周末";
         HaveTarget = true;
         Weight = 5;
         RelationRequire = 0;
@@ -15364,7 +15364,7 @@ public class Event3_43 : Event
     {
         int value = Random.Range(1, 20);
         value += ExtraValue();
-        if (value <= 10)
+        if (value < 10)
         {
             return 2;
         }
@@ -15748,6 +15748,7 @@ public class Event3_49 : Event
     {
         base.Success(Posb);
         ResultText = Self.Name + "心力爆炸";
+        Self.Mentality += 50;
         Self.Exhausted();
     }
 }
