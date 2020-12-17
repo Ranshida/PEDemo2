@@ -46,7 +46,7 @@ public class EmpManager : MonoBehaviour
         EventPanel.gameObject.SetActive(true);
         Transform childPanel = EventPanel.Find("Panel");
         childPanel.Find("Txt_Title").GetComponent<Text>().text = currentEvent.EventName;
-        childPanel.Find("Txt_Description").GetComponent<Text>().text = currentEvent.Self + "发生了事件" + currentEvent.EventName;
+        childPanel.Find("Txt_Description").GetComponent<Text>().text = currentEvent.Self.Name + "发生了事件" + currentEvent.EventName;
         childPanel.Find("Btn_Refuse").GetComponent<Button>().onClick.AddListener(() =>
         {
             SystemPause = false;
