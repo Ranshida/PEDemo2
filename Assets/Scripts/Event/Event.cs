@@ -11877,8 +11877,8 @@ public class Event3_5 : Event
     public override void Success(float Posb)
     {
         base.Success(Posb);
-        Self.InfoDetail.AddPerk(new Perk53(Self), true);
-        Target.InfoDetail.AddPerk(new Perk53(Target), true);
+        Self.InfoDetail.AddPerk(new Perk47(Self), true);
+        Target.InfoDetail.AddPerk(new Perk47(Target), true);
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "与同事" + Target.Name + "一起讨论了工作，";
         ResultText += "双方就难点达成共识，双方获得事件状态 顺利*1";
         GC.CreateMessage(Self.Name + "与同事" + Target.Name+ "就难点达成共识");
@@ -13421,10 +13421,10 @@ public class Event3_22 : Event
     public override bool SpecialCheck()
     {
         List<int> pList = new List<int>();
-        if (Self.Mentality < 30)
-        {
-            return false;
-        }
+        //if (Self.Mentality < 30)
+        //{
+        //    return false;
+        //}
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
         {
             if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 53)
@@ -13504,10 +13504,10 @@ public class Event3_23 : Event
     public override bool SpecialCheck()
     {
         List<int> pList = new List<int>();
-        if (Self.Mentality < 30)
-        {
-            return false;
-        }
+        //if (Self.Mentality < 30)
+        //{
+        //    return false;
+        //}
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
         {
             if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 51)
@@ -13587,10 +13587,10 @@ public class Event3_24 : Event
     public override bool SpecialCheck()
     {
         List<int> pList = new List<int>();
-        if (Self.Mentality < 60)
-        {
-            return false;
-        }
+        //if (Self.Mentality < 60)
+        //{
+        //    return false;
+        //}
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
         {
             if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 49 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 2)
@@ -13687,10 +13687,10 @@ public class Event3_25 : Event
     public override bool SpecialCheck()
     {
         List<int> pList = new List<int>();
-        if (Self.Mentality < 60)
-        {
-            return false;
-        }
+        //if (Self.Mentality < 60)
+        //{
+        //    return false;
+        //}
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
         {
             if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 47 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 2)
