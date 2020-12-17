@@ -11536,7 +11536,7 @@ public class Event3_1 : Event
     {
         EventName = "扯皮";
         HaveTarget = true;
-        Weight = 2;
+        Weight = 3;
         RelationRequire = 0;
     }
     public override bool SpecialCheck()
@@ -11608,7 +11608,7 @@ public class Event3_2 : Event
     {
         EventName = "甩锅三连";
         HaveTarget = true;
-        Weight = 2;
+        Weight = 3;
         RelationRequire = 0;
     }
     public override bool SpecialCheck()
@@ -11897,7 +11897,7 @@ public class Event3_6 : Event
     {
         EventName = "分配工作";
         HaveTarget = true;
-        Weight = 4;
+        Weight = 3;
         RelationRequire = 0;
         //BuildingRequires = new List<BuildingType>() { BuildingType.会议室 };
     }
@@ -12008,9 +12008,9 @@ public class Event3_7 : Event
 {
     public Event3_7() : base()
     {
-        EventName = "分配工作";
+        EventName = "开会商讨";
         HaveTarget = true;
-        Weight = 5;
+        Weight = 3;
         RelationRequire = 0;
         //BuildingRequires = new List<BuildingType>() { BuildingType.会议室 };
     }
@@ -12097,9 +12097,9 @@ public class Event3_8 : Event
 {
     public Event3_8() : base()
     {
-        EventName = "分配工作";
+        EventName = "互相协助";
         HaveTarget = true;
-        Weight = 5;
+        Weight = 3;
         RelationRequire = 0;
         //BuildingRequires = new List<BuildingType>() { BuildingType.会议室 };
     }
@@ -12174,7 +12174,7 @@ public class Event3_9 : Event
     {
         EventName = "工作瓶颈";
         HaveTarget = true;
-        Weight = 2;
+        Weight = 3;
         RelationRequire = 0;
         HaveTarget = false;
     }
@@ -12269,7 +12269,7 @@ public class Event3_11 : Event
     {
         EventName = "有效工作";
         HaveTarget = true;
-        Weight = 2;
+        Weight = 3;
         RelationRequire = 0;
         HaveTarget = false;
     }
@@ -13578,11 +13578,11 @@ public class Event3_26 : Event
             shenkejiaotan.CurrentPerk.RemoveEffect();
         }
         Self.AddEmotion(EColor.Yellow);
-        Self.ChangeRelation(Target, 5);
-        Target.ChangeRelation(Self, 5);
+        Self.ChangeRelation(Target, 15);
+        Target.ChangeRelation(Self, 15);
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "遇到了一些麻烦想要和人聊聊，";
-        ObjectText = ResultText + ""+Target.Name+"拿"+Self.Name+"开了玩笑，但对方并没有觉得冒犯，双方好感度+5，获得情绪状态：愉悦×1，消除事件状态：深刻交谈×1";
-        ResultText += "被"+Target.Name+"拿他开了玩笑，但是他反而很开心，双方好感度+5，获得情绪状态：愉悦×1，消除事件状态：深刻交谈×1";
+        ObjectText = ResultText + ""+Target.Name+"拿"+Self.Name+"开了玩笑，但对方并没有觉得冒犯，双方好感度+15，获得情绪状态：愉悦×1，消除事件状态：深刻交谈×1";
+        ResultText += "被"+Target.Name+"拿他开了玩笑，但是他反而很开心，双方好感度+15，获得情绪状态：愉悦×1，消除事件状态：深刻交谈×1";
     }
     public override void Failure(float Posb)
     {
@@ -13904,8 +13904,8 @@ public class Event3_30 : Event
         Self.ChangeRelation(Target, -5);
         Target.ChangeRelation(Self, -5);
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "正在向别人展示自己的成果，";
-        ObjectText = ResultText + Target.Name + "否定了"+Self.Name+"，双方好感度-5，获得情绪状态：侮辱×1，消除事件状态：认可交谈×1";
-        ResultText += Target.Name + "说毫无价值，双方好感度-5，获得情绪状态：侮辱×1，消除事件状态：认可交谈×1";
+        ObjectText = ResultText + Target.Name + "否定了"+Self.Name+"，双方好感度-15，获得情绪状态：侮辱×1，消除事件状态：认可交谈×1";
+        ResultText += Target.Name + "说毫无价值，双方好感度-15，获得情绪状态：侮辱×1，消除事件状态：认可交谈×1";
     }
     public override void Failure(float Posb)
     {
@@ -13984,11 +13984,11 @@ public class Event3_31 : Event
             info.CurrentPerk.RemoveEffect();
         }
         Self.AddEmotion(EColor.Red);
-        Self.ChangeRelation(Target, -5);
-        Target.ChangeRelation(Self, -5);
+        Self.ChangeRelation(Target, -15);
+        Target.ChangeRelation(Self, -15);
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "情绪低落想要寻求安慰，";
-        ObjectText = ResultText + Target.Name + "嘲笑了"+Self.Name+"，双方好感度-5，获得情绪状态：反感×1，消除事件状态：寻求安慰×1";
-        ResultText += Target.Name + "看到后嘲笑了"+Self.Name+"一番，双方好感度-5，获得情绪状态：反感×1，消除事件状态：寻求安慰×1";
+        ObjectText = ResultText + Target.Name + "嘲笑了"+Self.Name+"，双方好感度-15，获得情绪状态：反感×1，消除事件状态：寻求安慰×1";
+        ResultText += Target.Name + "看到后嘲笑了"+Self.Name+"一番，双方好感度-15，获得情绪状态：反感×1，消除事件状态：寻求安慰×1";
     }
     public override void Failure(float Posb)
     {
@@ -14067,11 +14067,11 @@ public class Event3_32 : Event
             info.CurrentPerk.RemoveEffect();
         }
         Self.AddEmotion(EColor.Yellow);
-        Self.ChangeRelation(Target, 5);
-        Target.ChangeRelation(Self, 5);
+        Self.ChangeRelation(Target, 15);
+        Target.ChangeRelation(Self, 15);
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "跟朋友" + Target.Name + "分享了日常，";
-        ObjectText = ResultText + Target.Name + "觉得还挺有趣的，双方好感度+5，获得情绪状态：愉悦×1，消除事件状态：分享日常×1";
-        ResultText += "两人谈了一会儿，双方好感度-5，双方好感度+5，获得情绪状态：愉悦×1，消除事件状态：分享日常×1";
+        ObjectText = ResultText + Target.Name + "觉得还挺有趣的，双方好感度+15，获得情绪状态：愉悦×1，消除事件状态：分享日常×1";
+        ResultText += "两人谈了一会儿，双方好感度-5，双方好感度+15，获得情绪状态：愉悦×1，消除事件状态：分享日常×1";
     }
     public override void Failure(float Posb)
     {
@@ -14089,11 +14089,11 @@ public class Event3_32 : Event
             info.CurrentPerk.RemoveEffect();
         }
         Self.AddEmotion(EColor.Red);
-        Self.ChangeRelation(Target, -5);
-        Target.ChangeRelation(Self, -5);
+        Self.ChangeRelation(Target, -15);
+        Target.ChangeRelation(Self, -15);
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "跟朋友" + Target.Name + "分享了日常，";
-        ObjectText = ResultText + Target.Name + "完全不懂为什么"+Self.Name+"说这些，双方好感度-5，获得情绪状态：反感×1，消除事件状态：分享日常×1";
-        ResultText += Target.Name + "有些走神，双方好感度-5，获得情绪状态：反感×1，消除事件状态：分享日常×1";
+        ObjectText = ResultText + Target.Name + "完全不懂为什么"+Self.Name+"说这些，双方好感度-15，获得情绪状态：反感×1，消除事件状态：分享日常×1";
+        ResultText += Target.Name + "有些走神，双方好感度-15，获得情绪状态：反感×1，消除事件状态：分享日常×1";
     }
 }
 public class Event3_33 : Event
@@ -14233,11 +14233,11 @@ public class Event3_34 : Event
             info.CurrentPerk.RemoveEffect();
         }
         Self.AddEmotion(EColor.Yellow);
-        Self.ChangeRelation(Target, 5);
-        Target.ChangeRelation(Self, 5);
+        Self.ChangeRelation(Target, 15);
+        Target.ChangeRelation(Self, 15);
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "跟朋友" + Target.Name + "分享今天发生的高兴事，";
-        ObjectText = ResultText + Target.Name + "也觉得很开心，双方好感度+5，获得情绪状态：愉悦×1，消除事件状态：分享乐事×1";
-        ResultText += Target.Name + "也很开心，双方好感度+5，获得情绪状态：愉悦×1，消除事件状态：分享乐事×1";
+        ObjectText = ResultText + Target.Name + "也觉得很开心，双方好感度+15，获得情绪状态：愉悦×1，消除事件状态：分享乐事×1";
+        ResultText += Target.Name + "也很开心，双方好感度+15，获得情绪状态：愉悦×1，消除事件状态：分享乐事×1";
     }
     public override void Failure(float Posb)
     {
@@ -14255,11 +14255,11 @@ public class Event3_34 : Event
             info.CurrentPerk.RemoveEffect();
         }
         Self.AddEmotion(EColor.Blue);
-        Self.ChangeRelation(Target, -5);
-        Target.ChangeRelation(Self, -5);
+        Self.ChangeRelation(Target, -15);
+        Target.ChangeRelation(Self, -15);
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "跟朋友" + Target.Name + "分享今天发生的高兴事，";
-        ObjectText = ResultText + Target.Name + "觉得很无聊，双方好感度-5，获得情绪状态：苦涩×1，消除事件状态：分享乐事×1";
-        ResultText += Target.Name + "有点犯困，双方好感度-5，获得情绪状态：苦涩×1，消除事件状态：分享乐事×1";
+        ObjectText = ResultText + Target.Name + "觉得很无聊，双方好感度-15，获得情绪状态：苦涩×1，消除事件状态：分享乐事×1";
+        ResultText += Target.Name + "有点犯困，双方好感度-15，获得情绪状态：苦涩×1，消除事件状态：分享乐事×1";
     }
 }
 public class Event3_35 : Event
@@ -14338,11 +14338,11 @@ public class Event3_35 : Event
             info.CurrentPerk.RemoveEffect();
         }
         Self.AddEmotion(EColor.Red);
-        Self.ChangeRelation(Target, -5);
-        Target.ChangeRelation(Self, -5);
+        Self.ChangeRelation(Target, -15);
+        Target.ChangeRelation(Self, -15);
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "向朋友" + Target.Name + "寻求安慰，";
-        ObjectText = ResultText + Target.Name + "让"+Self.Name+"回去反思，双方好感度-5，获得情绪状态：侮辱×1，消除事件状态：寻求安慰×1";
-        ResultText += Target.Name + "指点了"+Self.Name+"一番，双方好感度-5，获得情绪状态：侮辱×1，消除事件状态：寻求安慰×1";
+        ObjectText = ResultText + Target.Name + "让"+Self.Name+"回去反思，双方好感度-15，获得情绪状态：侮辱×1，消除事件状态：寻求安慰×1";
+        ResultText += Target.Name + "指点了"+Self.Name+"一番，双方好感度-15，获得情绪状态：侮辱×1，消除事件状态：寻求安慰×1";
     }
 }
 public class Event3_36 : Event
@@ -14421,11 +14421,11 @@ public class Event3_36 : Event
             info.CurrentPerk.RemoveEffect();
         }
         Self.AddEmotion(EColor.DBlue);
-        Self.ChangeRelation(Target, -5);
-        Target.ChangeRelation(Self, -5);
+        Self.ChangeRelation(Target, -15);
+        Target.ChangeRelation(Self, -15);
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "向挚友" + Target.Name + "寻求帮助，";
-        ObjectText = ResultText + Target.Name + "推脱了，双方好感度-5，获得情绪状态：悲伤×1，消除事件状态：寻求安慰×1";
-        ResultText += Target.Name + "声称自己有事，双方好感度-5，获得情绪状态：悲伤×1，消除事件状态：寻求安慰×1";
+        ObjectText = ResultText + Target.Name + "推脱了，双方好感度-15，获得情绪状态：悲伤×1，消除事件状态：寻求安慰×1";
+        ResultText += Target.Name + "声称自己有事，双方好感度-15，获得情绪状态：悲伤×1，消除事件状态：寻求安慰×1";
     }
 }
 public class Event3_37 : Event
@@ -14504,11 +14504,11 @@ public class Event3_37 : Event
             info.CurrentPerk.RemoveEffect();
         }
         Self.AddEmotion(EColor.Blue);
-        Self.ChangeRelation(Target, -5);
-        Target.ChangeRelation(Self, -5);
+        Self.ChangeRelation(Target, -15);
+        Target.ChangeRelation(Self, -15);
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "跟挚友" + Target.Name + "聊了很多心里话，";
-        ObjectText = ResultText + Target.Name + "没有心思听下去，双方好感度-5，获得情绪状态：辛酸×1，消除事件状态：深刻交谈×1";
-        ResultText += Target.Name + "岔开了话题，双方好感度-5，获得情绪状态：辛酸×1，消除事件状态：深刻交谈×1";
+        ObjectText = ResultText + Target.Name + "没有心思听下去，双方好感度-15，获得情绪状态：辛酸×1，消除事件状态：深刻交谈×1";
+        ResultText += Target.Name + "岔开了话题，双方好感度-15，获得情绪状态：辛酸×1，消除事件状态：深刻交谈×1";
     }
 }
 public class Event3_38 : Event
@@ -14600,55 +14600,68 @@ public class Event3_38 : Event
     {
         base.Success(Posb);
 
-        PerkInfo info = null;
-        foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
-        {
-            if (p.CurrentPerk.Num == 64)
-            {
-                info = p;
-            }
-        }
-        if (info)
-        {
-            info.CurrentPerk.RemoveEffect();
-        }
-
         Self.AddEmotion(EColor.Yellow);
-        Self.ChangeRelation(Target, 5);
+        Self.ChangeRelation(Target, 15);
         Self.FindRelation(Target).KnowTarget();
-        Target.ChangeRelation(Self, 5);
+        Target.ChangeRelation(Self, 15);
         Target.FindRelation(Self).KnowTarget();
         Self.InfoDetail.AddPerk(new Perk81(Self), true);
         ResultText = Self.Name + "因无聊闲逛，在" + SelfEntity.StandGridName() + "认识" + Target.Name + "，";
-        ObjectText = ResultText + Target.Name + "就这样认识了"+Self.Name+"，双方认识 双方好感+5，消除事件状态：无聊×1，获得情绪状态：愉悦×1";
-        ResultText += Target.Name + "双方觉得颇为投缘，双方认识 双方好感+5，消除事件状态：无聊×1，获得情绪状态：愉悦×1";
+        if (Random.Range(0.0f, 1.0f) <= 0.5)
+        {
+            PerkInfo info = null;
+            foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
+            {
+                if (p.CurrentPerk.Num == 64)
+                {
+                    info = p;
+                }
+            }
+            if (info)
+            {
+                info.CurrentPerk.RemoveEffect();
+            }
+            ObjectText = ResultText + Target.Name + "就这样认识了" + Self.Name + "，双方认识 双方好感+15，消除事件状态：无聊×1，获得情绪状态：愉悦×1";
+            ResultText += Target.Name + "双方觉得颇为投缘，双方认识 双方好感+15，消除事件状态：无聊×1，获得情绪状态：愉悦×1";
+        }
+        else
+        {
+            ObjectText = ResultText + Target.Name + "就这样认识了" + Self.Name + "，双方认识 双方好感+15，获得情绪状态：愉悦×1";
+            ResultText += Target.Name + "双方觉得颇为投缘，双方认识 双方好感+15，获得情绪状态：愉悦×1";
+        }
     }
     public override void Failure(float Posb)
     {
         base.Failure(Posb);
-
-        PerkInfo info = null;
-        foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
-        {
-            if (p.CurrentPerk.Num == 64)
-            {
-                info = p;
-            }
-        }
-        if (info)
-        {
-            info.CurrentPerk.RemoveEffect();
-        }
-
         Self.AddEmotion(EColor.Blue);
-        Self.ChangeRelation(Target, -5);
+        Self.ChangeRelation(Target, -15);
         Self.FindRelation(Target).KnowTarget();
-        Target.ChangeRelation(Self, -5);
+        Target.ChangeRelation(Self, -15);
         Target.FindRelation(Self).KnowTarget();
         Self.InfoDetail.AddPerk(new Perk81(Self), true);
         ResultText = Self.Name + "因无聊闲逛，在" + SelfEntity.StandGridName() + "认识" + Target.Name + "，";
-        ObjectText = ResultText + Target.Name + "觉得"+Self.Name+"很烦，双方认识 双方好感-5，消除事件状态：无聊×1，获得情绪状态：反感×1";
-        ResultText += Target.Name + "双方第一印象很差，双方认识 双方好感-5，消除事件状态：无聊×1，获得情绪状态：反感×1";
+        if (Random.Range(0.0f, 1.0f) <= 0.5)
+        {
+            PerkInfo info = null;
+            foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
+            {
+                if (p.CurrentPerk.Num == 64)
+                {
+                    info = p;
+                }
+            }
+            if (info)
+            {
+                info.CurrentPerk.RemoveEffect();
+            }
+            ObjectText = ResultText + Target.Name + "觉得" + Self.Name + "很烦，双方认识 双方好感-15，消除事件状态：无聊×1，获得情绪状态：反感×1";
+            ResultText += Target.Name + "双方第一印象很差，双方认识 双方好感-15，消除事件状态：无聊×1，获得情绪状态：反感×1";
+        }
+        else
+        {
+            ObjectText = ResultText + Target.Name + "觉得" + Self.Name + "很烦，双方认识 双方好感-15，获得情绪状态：反感×1";
+            ResultText += Target.Name + "双方第一印象很差，双方认识 双方好感-15，获得情绪状态：反感×1";
+        }
     }
 
     public override Event Clone()
@@ -14704,46 +14717,62 @@ public class Event3_39 : Event
     public override void Success(float Posb)
     {
         base.Success(Posb);
-        PerkInfo info = null;
-        foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
-        {
-            if (p.CurrentPerk.Num == 64)
-            {
-                info = p;
-            }
-        }
-        if (info)
-        {
-            info.CurrentPerk.RemoveEffect();
-        }
         Self.AddEmotion(EColor.DYellow);
-        Self.ChangeRelation(Target, 5);
-        Target.ChangeRelation(Self, 5);
+        Self.ChangeRelation(Target, 15);
+        Target.ChangeRelation(Self, 15);
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "和" + Target.Name + "在走廊遇见闲聊了一会儿，";
-        ObjectText = ResultText + "两人互相很有兴趣，双方好感度+5，获得情绪状态：好奇×1，消除事件状态：无聊×1";
-        ResultText += "双方聊得挺高兴的，"+Self.Name+"对"+Target.Name+"更加好奇，双方好感度+5，获得情绪状态：好奇×1，消除事件状态：无聊×1";
+        if (Random.Range(0.0f, 1.0f) <= 0.5)
+        {
+            PerkInfo info = null;
+            foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
+            {
+                if (p.CurrentPerk.Num == 64)
+                {
+                    info = p;
+                }
+            }
+            if (info)
+            {
+                info.CurrentPerk.RemoveEffect();
+            }
+            ObjectText = ResultText + "两人互相很有兴趣，双方好感度+15，获得情绪状态：好奇×1，消除事件状态：无聊×1";
+            ResultText += "双方聊得挺高兴的，" + Self.Name + "对" + Target.Name + "更加好奇，双方好感度+15，获得情绪状态：好奇×1，消除事件状态：无聊×1";
+        }
+        else
+        {
+            ObjectText = ResultText + "两人互相很有兴趣，双方好感度+15，获得情绪状态：好奇×1";
+            ResultText += "双方聊得挺高兴的，" + Self.Name + "对" + Target.Name + "更加好奇，双方好感度+15，获得情绪状态：好奇×1";
+        }
     }
     public override void Failure(float Posb)
     {
         base.Failure(Posb);
-        PerkInfo info = null;
-        foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
-        {
-            if (p.CurrentPerk.Num == 64)
-            {
-                info = p;
-            }
-        }
-        if (info)
-        {
-            info.CurrentPerk.RemoveEffect();
-        }
         Self.AddEmotion(EColor.Blue);
-        Self.ChangeRelation(Target, -5);
-        Target.ChangeRelation(Self, -5);
+        Self.ChangeRelation(Target, -15);
+        Target.ChangeRelation(Self, -15);
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "和" + Target.Name + "在走廊遇见闲聊了一会儿，";
-        ObjectText = ResultText + "两人互相没什么兴趣，双方好感度-5，获得情绪状态：辛酸×1，消除事件状态：无聊×1";
-        ResultText += "双方聊的不太高兴，"+Target.Name+"没什么兴趣的样子，双方好感度-5，获得情绪状态：辛酸×1，消除事件状态：无聊×1";
+        if (Random.Range(0.0f, 1.0f) <= 0.5)
+        {
+            PerkInfo info = null;
+            foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
+            {
+                if (p.CurrentPerk.Num == 64)
+                {
+                    info = p;
+                }
+            }
+            if (info)
+            {
+                info.CurrentPerk.RemoveEffect();
+            }
+            ObjectText = ResultText + "两人互相没什么兴趣，双方好感度-15，获得情绪状态：辛酸×1，消除事件状态：无聊×1";
+            ResultText += "双方聊的不太高兴，" + Target.Name + "没什么兴趣的样子，双方好感度-15，获得情绪状态：辛酸×1，消除事件状态：无聊×1";
+        }
+        else
+        {
+            ObjectText = ResultText + "两人互相没什么兴趣，双方好感度-15，获得情绪状态：辛酸×1";
+            ResultText += "双方聊的不太高兴，" + Target.Name + "没什么兴趣的样子，双方好感度-15，获得情绪状态：辛酸×1";
+        }
     }
 }
 public class Event3_40 : Event
@@ -14791,40 +14820,56 @@ public class Event3_40 : Event
     public override void Success(float Posb)
     {
         base.Success(Posb);
-        PerkInfo info = null;
-        foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
-        {
-            if (p.CurrentPerk.Num == 64)
-            {
-                info = p;
-            }
-        }
-        if (info)
-        {
-            info.CurrentPerk.RemoveEffect();
-        }
         Self.AddEmotion(EColor.Yellow);
-        ResultText = Self.Name + "自己闲逛，逛到了" + SelfEntity.StandGridName() + "那里，";
-        ResultText += "待了一会儿，感觉心情舒畅，获得情绪状态：愉悦×1，消除事件状态：无聊×1";
+        if (Random.Range(0.0f, 1.0f) <= 0.5)
+        {
+            PerkInfo info = null;
+            foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
+            {
+                if (p.CurrentPerk.Num == 64)
+                {
+                    info = p;
+                }
+            }
+            if (info)
+            {
+                info.CurrentPerk.RemoveEffect();
+            }
+            ResultText = Self.Name + "自己闲逛，逛到了" + SelfEntity.StandGridName() + "那里，";
+            ResultText += "待了一会儿，感觉心情舒畅，获得情绪状态：愉悦×1，消除事件状态：无聊×1";
+        }
+        else
+        {
+            ResultText = Self.Name + "自己闲逛，逛到了" + SelfEntity.StandGridName() + "那里，";
+            ResultText += "待了一会儿，感觉心情舒畅，获得情绪状态：愉悦×1";
+        }
     }
     public override void Failure(float Posb)
     {
         base.Failure(Posb);
-        PerkInfo info = null;
-        foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
-        {
-            if (p.CurrentPerk.Num == 64)
-            {
-                info = p;
-            }
-        }
-        if (info)
-        {
-            info.CurrentPerk.RemoveEffect();
-        }
         Self.AddEmotion(EColor.Blue);
-        ResultText = Self.Name + "自己闲逛，逛到了" + SelfEntity.StandGridName() + "那里，";
-        ResultText += "待了一会儿，觉得更无聊了，获得情绪状态：苦涩×1，消除事件状态：无聊×1";
+        if (Random.Range(0.0f, 1.0f) <= 0.5)
+        {
+            PerkInfo info = null;
+            foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
+            {
+                if (p.CurrentPerk.Num == 64)
+                {
+                    info = p;
+                }
+            }
+            if (info)
+            {
+                info.CurrentPerk.RemoveEffect();
+            }
+            ResultText = Self.Name + "自己闲逛，逛到了" + SelfEntity.StandGridName() + "那里，";
+            ResultText += "待了一会儿，觉得更无聊了，获得情绪状态：苦涩×1，消除事件状态：无聊×1";
+        }
+        else
+        {
+            ResultText = Self.Name + "自己闲逛，逛到了" + SelfEntity.StandGridName() + "那里，";
+            ResultText += "待了一会儿，觉得更无聊了，获得情绪状态：苦涩×1";
+        }
     }
 }
 public class Event3_41 : Event
@@ -14875,46 +14920,62 @@ public class Event3_41 : Event
     public override void Success(float Posb)
     {
         base.Success(Posb);
-        PerkInfo info = null;
-        foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
-        {
-            if (p.CurrentPerk.Num == 64)
-            {
-                info = p;
-            }
-        }
-        if (info)
-        {
-            info.CurrentPerk.RemoveEffect();
-        }
         Self.AddEmotion(EColor.DYellow);
-        Self.ChangeRelation(Target, 5);
-        Target.ChangeRelation(Self, 5);
+        Self.ChangeRelation(Target, 15);
+        Target.ChangeRelation(Self, 15);
         ResultText = Self.Name + "在" + SelfEntity.StandGridName() + "碰到了" + Target.Name + "，";
-        ObjectText = ResultText + "两人聊得很开心，双方好感度+5，获得情绪状态：愉悦×1，消除事件状态：无聊×1";
-        ResultText += "跟"+Target.Name+"一起在"+SelfEntity.StandGridName()+"度过了一段愉快的时光，双方好感度+5，获得情绪状态：愉悦×1，消除事件状态：无聊×1";
+        if (Random.Range(0.0f, 1.0f) <= 0.5)
+        {
+            PerkInfo info = null;
+            foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
+            {
+                if (p.CurrentPerk.Num == 64)
+                {
+                    info = p;
+                }
+            }
+            if (info)
+            {
+                info.CurrentPerk.RemoveEffect();
+            }
+            ObjectText = ResultText + "两人聊得很开心，双方好感度+15，获得情绪状态：愉悦×1，消除事件状态：无聊×1";
+            ResultText += "跟" + Target.Name + "一起在" + SelfEntity.StandGridName() + "度过了一段愉快的时光，双方好感度+15，获得情绪状态：愉悦×1，消除事件状态：无聊×1";
+        }
+        else
+        {
+            ObjectText = ResultText + "两人聊得很开心，双方好感度+15，获得情绪状态：愉悦×1";
+            ResultText += "跟" + Target.Name + "一起在" + SelfEntity.StandGridName() + "度过了一段愉快的时光，双方好感度+15，获得情绪状态：愉悦×1";
+        }
     }
     public override void Failure(float Posb)
     {
         base.Failure(Posb);
-        PerkInfo info = null;
-        foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
-        {
-            if (p.CurrentPerk.Num == 64)
-            {
-                info = p;
-            }
-        }
-        if (info)
-        {
-            info.CurrentPerk.RemoveEffect();
-        }
         Self.AddEmotion(EColor.Red);
-        Self.ChangeRelation(Target, -5);
-        Target.ChangeRelation(Self, -5);
+        Self.ChangeRelation(Target, -15);
+        Target.ChangeRelation(Self, -15);
         ResultText = Self.Name+ "在"+SelfEntity.StandGridName()+"碰到了"+Target.Name+"，";
-        ObjectText = ResultText + "感叹冤家路窄，双方好感度-5，获得情绪状态：反感×1，消除事件状态：无聊×1";
-        ResultText += "觉得挺别扭的，双方好感度-5，获得情绪状态：反感×1，消除事件状态：无聊×1";
+        if (Random.Range(0.0f, 1.0f) <= 0.5)
+        {
+            PerkInfo info = null;
+            foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
+            {
+                if (p.CurrentPerk.Num == 64)
+                {
+                    info = p;
+                }
+            }
+            if (info)
+            {
+                info.CurrentPerk.RemoveEffect();
+            }
+            ObjectText = ResultText + "感叹冤家路窄，双方好感度-15，获得情绪状态：反感×1，消除事件状态：无聊×1";
+            ResultText += "觉得挺别扭的，双方好感度-15，获得情绪状态：反感×1，消除事件状态：无聊×1";
+        }
+        else
+        {
+            ObjectText = ResultText + "感叹冤家路窄，双方好感度-5，获得情绪状态：反感×1";
+            ResultText += "觉得挺别扭的，双方好感度-15，获得情绪状态：反感×1";
+        }
     }
 }
 public class Event3_42 : JudgeEvent
@@ -14963,21 +15024,29 @@ public class Event3_42 : JudgeEvent
     public override void Success(float Posb)
     {
         base.Success(Posb);
-        PerkInfo info = null;
-        foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
-        {
-            if (p.CurrentPerk.Num == 64)
-            {
-                info = p;
-            }
-        }
-        if (info)
-        {
-            info.CurrentPerk.RemoveEffect();
-        }
         Self.AddEmotion(EColor.DYellow);
-        ResultText = Self.Name + "感到无聊想要请个假，";
-        ResultText += "上司准许"+Self.Name+"请假，并上报CEO，获得情绪状态：愉悦×1，消除事件状态：无聊×1";
+        if (Random.Range(0.0f, 1.0f) <= 0.5)
+        {
+            PerkInfo info = null;
+            foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
+            {
+                if (p.CurrentPerk.Num == 64)
+                {
+                    info = p;
+                }
+            }
+            if (info)
+            {
+                info.CurrentPerk.RemoveEffect();
+            }
+            ResultText = Self.Name + "感到无聊想要请个假，";
+            ResultText += "上司准许" + Self.Name + "请假，并上报CEO，获得情绪状态：愉悦×1，消除事件状态：无聊×1";
+        }
+        else
+        {
+            ResultText = Self.Name + "感到无聊想要请个假，";
+            ResultText += "上司准许" + Self.Name + "请假，并上报CEO，获得情绪状态：愉悦×1";
+        }
         //此时应弹出对话框询问玩家
         EmpManager.Instance.JudgeEvent(this, true);
     }
@@ -14999,21 +15068,29 @@ public class Event3_42 : JudgeEvent
     public override void Failure(float Posb)
     {
         base.Failure(Posb);
-        PerkInfo info = null;
-        foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
-        {
-            if (p.CurrentPerk.Num == 64)
-            {
-                info = p;
-            }
-        }
-        if (info)
-        {
-            info.CurrentPerk.RemoveEffect();
-        }
         Self.AddEmotion(EColor.DRed);
-        ResultText = Self.Name + "感到无聊想要请个假，";
-        ResultText += "上司回绝了"+Self.Name+"的请假请求，获得情绪状态：愤怒×1，消除事件状态：无聊×1";
+        if (Random.Range(0.0f, 1.0f) <= 0.5)
+        {
+            PerkInfo info = null;
+            foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
+            {
+                if (p.CurrentPerk.Num == 64)
+                {
+                    info = p;
+                }
+            }
+            if (info)
+            {
+                info.CurrentPerk.RemoveEffect();
+            }
+            ResultText = Self.Name + "感到无聊想要请个假，";
+            ResultText += "上司回绝了" + Self.Name + "的请假请求，获得情绪状态：愤怒×1，消除事件状态：无聊×1";
+        }
+        else
+        {
+            ResultText = Self.Name + "感到无聊想要请个假，";
+            ResultText += "上司回绝了" + Self.Name + "的请假请求，获得情绪状态：愤怒×1";
+        }
     }
 }
 public class Event3_43 : Event
@@ -15062,57 +15139,92 @@ public class Event3_43 : Event
     public override void Success(float Posb)
     {
         base.Success(Posb);
-        PerkInfo info = null;
-        foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
-        {
-            if (p.CurrentPerk.Num == 64)
-            {
-                info = p;
-            }
-        }
-        if (info)
-        {
-            info.CurrentPerk.RemoveEffect();
-        }
         Self.AddEmotion(EColor.Yellow);
         Self.ChangeRelation(Target, 10);
         Target.ChangeRelation(Self, 10);
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "想要约" + Target.Name + "周末一起出去玩";
-        ObjectText = ResultText + Target.Name+ "答应了"+Self.Name+"，双方好感度+10，获得情绪状态：愉悦×1，消除事件状态：无聊×1";
-        ResultText += Target.Name + "欣然接受，双方好感度+10，获得情绪状态：愉悦×1，消除事件状态：无聊×1";
+        if (Random.Range(0.0f, 1.0f) <= 0.5)
+        {
+            PerkInfo info = null;
+            foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
+            {
+                if (p.CurrentPerk.Num == 64)
+                {
+                    info = p;
+                }
+            }
+            if (info)
+            {
+                info.CurrentPerk.RemoveEffect();
+            }
+            ObjectText = ResultText + Target.Name + "答应了" + Self.Name + "，双方好感度+10，获得情绪状态：愉悦×1，消除事件状态：无聊×1";
+            ResultText += Target.Name + "欣然接受，双方好感度+10，获得情绪状态：愉悦×1，消除事件状态：无聊×1";
+        }
+        else
+        {
+            ObjectText = ResultText + Target.Name + "答应了" + Self.Name + "，双方好感度+10，获得情绪状态：愉悦×1";
+            ResultText += Target.Name + "欣然接受，双方好感度+10，获得情绪状态：愉悦×1";
+        }
     }
     public override void Failure(float Posb)
     {
         base.Failure(Posb);
-        PerkInfo info = null;
-        foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
-        {
-            if (p.CurrentPerk.Num == 64)
-            {
-                info = p;
-            }
-        }
-        if (info)
-        {
-            info.CurrentPerk.RemoveEffect();
-        }
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "想要约" + Target.Name + "周末一起出去玩";
         if (Random.Range(0,2) == 0)
         {
             Self.AddEmotion(EColor.DRed);
             Self.ChangeRelation(Target, -5);
             Target.ChangeRelation(Self, -5);
-            ObjectText = ResultText + Target.Name + "没有答应"+Self.Name+"，双方好感度-5，获得情绪状态：愤怒×1，消除事件状态：无聊×1";
-            ResultText += Target.Name + "没有接受，双方好感度-5，获得情绪状态：愤怒×1，消除事件状态：无聊×1";
+            if (Random.Range(0.0f, 1.0f) <= 0.5)
+            {
+                PerkInfo info = null;
+                foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
+                {
+                    if (p.CurrentPerk.Num == 64)
+                    {
+                        info = p;
+                    }
+                }
+                if (info)
+                {
+                    info.CurrentPerk.RemoveEffect();
+                }
+                ObjectText = ResultText + Target.Name + "没有答应" + Self.Name + "，双方好感度-5，获得情绪状态：愤怒×1，消除事件状态：无聊×1";
+                ResultText += Target.Name + "没有接受，双方好感度-5，获得情绪状态：愤怒×1，消除事件状态：无聊×1";
+            }
+            else
+            {
+                ObjectText = ResultText + Target.Name + "没有答应" + Self.Name + "，双方好感度-5，获得情绪状态：愤怒×1";
+                ResultText += Target.Name + "没有接受，双方好感度-5，获得情绪状态：愤怒×1";
+            }
         }
         else
         {
-
             Self.AddEmotion(EColor.DBlue);
             Self.ChangeRelation(Target, -5);
             Target.ChangeRelation(Self, -5);
-            ObjectText = ResultText + Target.Name + "没有答应"+Self.Name+"，双方好感度-5，获得情绪状态：悲伤×1，消除事件状态：无聊×1";
-            ResultText += Target.Name + "没有接受，双方好感度-5，获得情绪状态：悲伤×1，消除事件状态：无聊×1";
+            if (Random.Range(0.0f, 1.0f) <= 0.5)
+            {
+                PerkInfo info = null;
+                foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
+                {
+                    if (p.CurrentPerk.Num == 64)
+                    {
+                        info = p;
+                    }
+                }
+                if (info)
+                {
+                    info.CurrentPerk.RemoveEffect();
+                }
+                ObjectText = ResultText + Target.Name + "没有答应" + Self.Name + "，双方好感度-5，获得情绪状态：悲伤×1，消除事件状态：无聊×1";
+                ResultText += Target.Name + "没有接受，双方好感度-5，获得情绪状态：悲伤×1，消除事件状态：无聊×1";
+            }
+            else
+            {
+                ObjectText = ResultText + Target.Name + "没有答应" + Self.Name + "，双方好感度-5，获得情绪状态：悲伤×1";
+                ResultText += Target.Name + "没有接受，双方好感度-5，获得情绪状态：悲伤×1";
+            }
         }
     }
 }
@@ -15356,8 +15468,8 @@ public class Event3_48 : Event
     public override void Success(float Posb)
     {
         base.Success(Posb);
-        Self.ChangeRelation(Target, -5);
-        Target.ChangeRelation(Self, -5);
+        Self.ChangeRelation(Target, 5);
+        Target.ChangeRelation(Self, 5);
         ResultText = Self.Name + "与" + Target.Name + "关系缓和了";
     }
     public override void Failure(float Posb)
@@ -15464,7 +15576,7 @@ static public class EventData
     //个人关系序列
     public static List<Event> RelationList = new List<Event>()
     {
-        new Event3_20(),new Event3_21(),new Event3_22(),new Event3_23(),new Event3_24(),new Event3_25(),new Event3_26(),new Event3_27(),new Event3_28(),new Event3_29(),new Event3_30(),new Event3_31(),new Event3_32(),new Event3_33(),new Event3_34(),new Event3_35(),new Event3_36(),new Event3_37(),new Event3_38(),new Event3_39(),new Event3_40(),new Event3_41(),new Event3_42(),new Event3_43(),new Event3_44(),new Event3_45(),new Event3_46(),new Event3_47(),new Event3_48()
+        new Event3_20(),new Event3_21(),new Event3_22(),new Event3_23(),new Event3_24(),new Event3_25(),new Event3_26(),new Event3_27(),new Event3_28(),new Event3_29(),new Event3_30(),new Event3_31(),new Event3_32(),new Event3_33(),new Event3_34(),new Event3_35(),new Event3_36(),new Event3_37(),new Event3_38(),new Event3_39(),new Event3_40(),new Event3_41(),new Event3_42(),new Event3_43(),new Event3_44(),new Event3_45(),new Event3_46(),new Event3_47(),new Event3_48(),new Event3_49()
     };
 
     //权重1-4事件链表
