@@ -67,7 +67,7 @@ public class Building : MonoBehaviour
         Length = int.Parse(size[0]);
         Width = int.Parse(size[1]);
         Pay = 100;
-        BasicBuilding = value[ID, 2] == "基础建筑物";
+        BasicBuilding = value[ID, 2] == "基础建筑物" || Type == BuildingType.CEO办公室;
         if (!int.TryParse(EffectRange_str, out EffectRange))
         {
             if (EffectRange_str == "/")
