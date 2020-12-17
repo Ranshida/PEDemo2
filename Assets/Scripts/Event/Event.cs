@@ -12475,10 +12475,39 @@ public class Event3_13 : Event
         }
         if (pList.Count > 0)
         {
-            perkUsed = pList[Random.Range(0, pList.Count)];
             return true;
         }
         return false;
+    }
+
+    public override Event Clone()
+    {
+        Event clone = (Event)this.MemberwiseClone();
+        List<int> pList = new List<int>();
+        for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
+        {
+            if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 49 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 2)
+            {
+                pList.Add(i);
+            }
+            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 53)
+            {
+                pList.Add(i);
+            }
+            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 66)
+            {
+                pList.Add(i);
+            }
+            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 69)
+            {
+                pList.Add(i);
+            }
+        }
+        if (pList.Count > 0)
+        {
+            clone.perkUsed = pList[Random.Range(0, pList.Count)];
+        }
+        return clone;
     }
     public override int FindResult()
     {
