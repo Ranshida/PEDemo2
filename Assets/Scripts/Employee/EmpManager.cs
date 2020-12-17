@@ -176,9 +176,9 @@ public class EmpManager : MonoBehaviour
 
     private List<Event> RandomEventList(Employee self, out int listIndex)
     {
-        float initalValue = 0.2f;
-        float companyValue = 0.2f;
-        float relationValue = 0.6f;
+        float initalValue = 0.3f;
+        float companyValue = 0.3f;
+        float relationValue = 0.4f;
         for (int i = 0; i < self.InfoDetail.PerksInfo.Count; i++)
         {
             if (self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 42)

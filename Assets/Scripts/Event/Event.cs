@@ -13277,7 +13277,7 @@ public class Event3_20 : Event
     {
         EventName = "感到无聊";
         HaveTarget = true;
-        Weight = 3;
+        Weight = 2;
         RelationRequire = 0;
         HaveTarget = false;
     }
@@ -13302,7 +13302,7 @@ public class Event3_21 : Event
     {
         EventName = "寻求安慰";
         HaveTarget = true;
-        Weight = 4;
+        Weight = 5;
         RelationRequire = 0;
         HaveTarget = false;
     }
@@ -13410,7 +13410,7 @@ public class Event3_22 : Event
     {
         EventName = "认可交谈";
         HaveTarget = true;
-        Weight = 4;
+        Weight = 5;
         RelationRequire = 0;
         HaveTarget = false;
     }
@@ -13493,7 +13493,7 @@ public class Event3_23 : Event
     {
         EventName = "分享日常";
         HaveTarget = true;
-        Weight = 4;
+        Weight = 5;
         RelationRequire = 0;
         HaveTarget = false;
     }
@@ -13576,7 +13576,7 @@ public class Event3_24 : Event
     {
         EventName = "深刻交谈";
         HaveTarget = true;
-        Weight = 4;
+        Weight = 5;
         RelationRequire = 0;
         HaveTarget = false;
     }
@@ -13676,7 +13676,7 @@ public class Event3_25 : Event
     {
         EventName = "分享快乐";
         HaveTarget = true;
-        Weight = 4;
+        Weight = 5;
         RelationRequire = 0;
         HaveTarget = false;
     }
@@ -13768,11 +13768,11 @@ public class Event3_26 : Event
     {
         EventName = "陌路恶意玩笑";
         HaveTarget = true;
-        Weight = 2;
+        Weight = 4;
         RelationRequire = 0;
         PerkRequire = 59;
     }
-    public override bool SpecialCheck()
+    public override bool RelationCheck()
     {
         if (Self.FindRelation(Target).RPoint >= 0)
         {
@@ -13851,11 +13851,11 @@ public class Event3_27 : Event
     {
         EventName = "陌路不认可";
         HaveTarget = true;
-        Weight = 3;
+        Weight = 5;
         RelationRequire = 0;
         PerkRequire = 61;
     }
-    public override bool SpecialCheck()
+    public override bool RelationCheck()
     {
         if (Self.FindRelation(Target).RPoint >= 0)
         {
@@ -13931,11 +13931,11 @@ public class Event3_28 : Event
     {
         EventName = "陌路批评";
         HaveTarget = true;
-        Weight = 4;
+        Weight = 6;
         RelationRequire = -1;
         PerkRequire = 62;
     }
-    public override bool SpecialCheck()
+    public override bool RelationCheck()
     {
         if (Self.FindRelation(Target).RPoint >= -30)
         {
@@ -14011,11 +14011,11 @@ public class Event3_29 : Event
     {
         EventName = "陌路泼冷水";
         HaveTarget = true;
-        Weight = 4;
+        Weight = 6;
         RelationRequire = -1;
         PerkRequire = 60;
     }
-    public override bool SpecialCheck()
+    public override bool RelationCheck()
     {
         if (Self.FindRelation(Target).RPoint >= -30)
         {
@@ -14091,11 +14091,11 @@ public class Event3_30 : Event
     {
         EventName = "仇敌侮辱";
         HaveTarget = true;
-        Weight = 5;
+        Weight = 7;
         RelationRequire = -2;
         PerkRequire = 61;
     }
-    public override bool SpecialCheck()
+    public override bool RelationCheck()
     {
         if (Self.FindRelation(Target).RPoint >= -60)
         {
@@ -14174,11 +14174,11 @@ public class Event3_31 : Event
     {
         EventName = "仇敌落井下石";
         HaveTarget = true;
-        Weight = 5;
+        Weight = 7;
         RelationRequire = -2;
         PerkRequire = 63;
     }
-    public override bool SpecialCheck()
+    public override bool RelationCheck()
     {
         if (Self.FindRelation(Target).RPoint >= -60)
         {
@@ -14257,11 +14257,11 @@ public class Event3_32 : Event
     {
         EventName = "朋友日常";
         HaveTarget = true;
-        Weight = 3;
+        Weight = 4;
         RelationRequire = 0;
         PerkRequire = 62;
     }
-    public override bool SpecialCheck()
+    public override bool RelationCheck()
     {
         if (Self.FindRelation(Target).RPoint <= 5)
         {
@@ -14340,11 +14340,11 @@ public class Event3_33 : Event
     {
         EventName = "朋友认可";
         HaveTarget = true;
-        Weight = 4;
+        Weight = 5;
         RelationRequire = 0;
         PerkRequire = 61;
     }
-    public override bool SpecialCheck()
+    public override bool RelationCheck()
     {
         if (Self.FindRelation(Target).RPoint <= 5)
         {
@@ -14423,11 +14423,11 @@ public class Event3_34 : Event
     {
         EventName = "朋友乐事";
         HaveTarget = true;
-        Weight = 3;
+        Weight = 5;
         RelationRequire = 0;
         PerkRequire = 60;
     }
-    public override bool SpecialCheck()
+    public override bool RelationCheck()
     {
         if (Self.FindRelation(Target).RPoint <= 5)
         {
@@ -14506,11 +14506,11 @@ public class Event3_35 : Event
     {
         EventName = "朋友安慰";
         HaveTarget = true;
-        Weight = 4;
+        Weight = 6;
         RelationRequire = 1;
         PerkRequire = 63;
     }
-    public override bool SpecialCheck()
+    public override bool RelationCheck()
     {
         if (Self.FindRelation(Target).RPoint <=40)
         {
@@ -14589,11 +14589,11 @@ public class Event3_36 : Event
     {
         EventName = "挚友之助";
         HaveTarget = true;
-        Weight = 5;
+        Weight = 7;
         RelationRequire = 2;
         PerkRequire = 63;
     }
-    public override bool SpecialCheck()
+    public override bool RelationCheck()
     {
         if (Self.FindRelation(Target).RPoint <= 80)
         {
@@ -14672,11 +14672,11 @@ public class Event3_37 : Event
     {
         EventName = "挚友深谈";
         HaveTarget = true;
-        Weight = 5;
+        Weight = 7;
         RelationRequire = 2;
         PerkRequire =59;
     }
-    public override bool SpecialCheck()
+    public override bool RelationCheck()
     {
         if (Self.FindRelation(Target).RPoint <= 80)
         {

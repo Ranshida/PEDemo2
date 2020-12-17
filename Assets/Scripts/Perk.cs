@@ -1604,9 +1604,9 @@ public class Perk70 : Perk
     {
         Name = "理想";
         Description = "解锁事件，公司普通行为树";
-        TimeLeft = 64;
+        TimeLeft = -1;//永久，直到完成
         Num = 70;
-        canStack = true;
+        canStack = false;
     }
 }
 
