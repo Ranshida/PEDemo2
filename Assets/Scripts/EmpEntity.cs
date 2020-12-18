@@ -243,7 +243,7 @@ public class EmpEntity : MonoBehaviour
     //员工主动发起的执行事件的指令
     public void SolveEvent()
     {
-        CurrentEvent.isSolving = true;
+        CurrentEvent.StartSolve();
         EventStage = 2;
 
         //对方也开始处理

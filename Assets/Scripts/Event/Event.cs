@@ -21,7 +21,7 @@ public abstract class Event
     public int PerkRemoveNumber;    //要移除的特质 （20.12.5新增）
     public int TimeLeft = 2;
     public bool HaveTarget = true;  //是否有目标
-    public bool isSolving = false;
+    public bool isSolving = false;  //开始处理
     public string EventName = "无";
     public string ResultText = "无";
     public string ObjectText = "无";
@@ -44,6 +44,12 @@ public abstract class Event
     {
         if (GameControl.Instance != null)
             GC = GameControl.Instance;
+    }
+
+    //开始处理事件
+    public virtual void StartSolve()
+    {
+        isSolving = true;
     }
 
     //可行性检测
@@ -12226,31 +12232,29 @@ public class Event3_10 : Event
     }
     public override bool SpecialCheck()
     {
-        List<int> pList = new List<int>();
-        for(int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
+        for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
         {
-            if(Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 52)
+            Perk perk = Self.InfoDetail.PerksInfo[i].CurrentPerk;
+            if (perk.Num == 52 || perk.Num == 54 || perk.Num == 68 || perk.Num == 69)
             {
-                pList.Add(i);
-            }else if(Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 54)
-            {
-                pList.Add(i);
+                return true;
             }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 68)
-            {
-                pList.Add(i);
-            }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 69)
-            {
-                pList.Add(i);
-            }
-        }
-        if (pList.Count > 0)
-        {
-            return true;
         }
         return false;
     }
+
+    public override void StartSolve()
+    {
+        base.StartSolve();
+        foreach (PerkInfo info in Self.InfoDetail.PerksInfo)
+        {
+            if (info.CurrentPerk.Num == perkUsed)
+            {
+                info.CurrentPerk.RemoveEffect();
+            }
+        }
+    }
+
     public override int FindResult()
     {
         return 3;
@@ -12260,8 +12264,8 @@ public class Event3_10 : Event
     {
         base.Success(Posb);
         Self.InfoDetail.AddPerk(new Perk51(Self), true);
+        
         ResultText = "由于" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "的情绪在" + Self.Name + "心中的持续酝酿，" + Self.Name + "渐渐感到对公司不满，获得事件状态 不满*1，消除事件状态" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "×1";
-        Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.RemoveEffect();
     }
 
     public override Event Clone()
@@ -12271,27 +12275,13 @@ public class Event3_10 : Event
         List<int> pList = new List<int>();
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
         {
-            if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 52)
+            Perk perk = Self.InfoDetail.PerksInfo[i].CurrentPerk;
+            if (perk.Num == 52 || perk.Num == 54 || perk.Num == 68 || perk.Num == 69)
             {
-                pList.Add(i);
-            }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 54)
-            {
-                pList.Add(i);
-            }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 68)
-            {
-                pList.Add(i);
-            }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 69)
-            {
-                pList.Add(i);
+                pList.Add(perk.Num);
             }
         }
-        if (pList.Count > 0)
-        {
-            clone.perkUsed = pList[Random.Range(0, pList.Count)];
-        }
+        clone.perkUsed = pList[Random.Range(0, pList.Count)];
 
         return clone;
     }
@@ -12363,27 +12353,35 @@ public class Event3_12 : Event
         {
             return false;
         }
+
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
         {
-            if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 47 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >=2)
+            Perk perk = Self.InfoDetail.PerksInfo[i].CurrentPerk;
+            if ((perk.Num == 47 && perk.Level >= 2) || perk.Num == 51 || perk.Num == 65) 
             {
-                pList.Add(i);
+                return true;
             }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 51)
-            {
-                pList.Add(i);
-            }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 65)
-            {
-                pList.Add(i);
-            }
-        }
-        if (pList.Count > 0)
-        {
-            return true;
         }
         return false;
     }
+
+    public override void StartSolve()
+    {
+        base.StartSolve();
+        foreach (PerkInfo info in Self.InfoDetail.PerksInfo)
+        {
+            if (info.CurrentPerk.Num == perkUsed && perkUsed == 47 && info.CurrentPerk.Level >= 2)
+            {
+                info.CurrentPerk.RemoveEffect();
+                info.CurrentPerk.RemoveEffect();
+            }
+            else
+            {
+                info.CurrentPerk.RemoveEffect();
+            }
+        }
+    }
+
     public override int FindResult()
     {
         return 3;
@@ -12396,39 +12394,27 @@ public class Event3_12 : Event
         if(Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Num == 47)
         {
             ResultText = "由于" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "的情绪在" + Self.Name + "心中的持续酝酿，" + Self.Name + "产生了新的愿望，获得事件状态 愿望*1，消除事件状态" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "×2";
-            Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.RemoveEffect();
-            Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.RemoveEffect();
         }else
         {
             ResultText = "由于" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "的情绪在" + Self.Name + "心中的持续酝酿，" + Self.Name + "产生了新的愿望，获得事件状态 愿望*1，消除事件状态" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "×1";
-            Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.RemoveEffect();
         }
     }
+
 
     public override Event Clone()
     {
         Event clone = (Event)this.MemberwiseClone();
 
-        List<int> pList = new List<int>();
+           List<int> pList = new List<int>();
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
         {
-            if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 47 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 2)
+            Perk perk = Self.InfoDetail.PerksInfo[i].CurrentPerk;
+            if ((perk.Num == 47 && perk.Level >= 2) || perk.Num == 51 || perk.Num == 65 || perk.Num == 69)
             {
-                pList.Add(i);
-            }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 51)
-            {
-                pList.Add(i);
-            }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 65)
-            {
-                pList.Add(i);
+                pList.Add(perk.Num);
             }
         }
-        if (pList.Count > 0)
-        {
-            clone.perkUsed = pList[Random.Range(0, pList.Count)];
-        }
+        clone.perkUsed = pList[Random.Range(0, pList.Count)];
 
         return clone;
     }
