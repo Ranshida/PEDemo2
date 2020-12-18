@@ -15789,13 +15789,13 @@ static public class EventData
     //初始序列
     public static List<Event> InitialList = new List<Event>()
     {
-       new Event3_1(),new Event3_2(),new Event3_3(),new Event3_4(),new Event3_5(),new Event3_6(),new Event3_7(),new Event3_8(),new Event3_45(),new Event3_46(),new Event3_47(),new Event3_48()
+       new Event3_1(),new Event3_2(),new Event3_3(),new Event3_4(),new Event3_5(),new Event3_6(),new Event3_7(),new Event3_8()
     };
 
     //公司序列
     public static List<Event> CompanyList = new List<Event>()
     {
-         new Event3_9(),new Event3_10(),new Event3_11(),new Event3_12(),new Event3_13(),new Event3_14(),new Event3_15(),new Event3_16(),new Event3_17(),new Event3_18(),new Event3_19(),new Event3_45(),new Event3_46(),new Event3_47(),new Event3_48()
+         new Event3_9(),new Event3_10(),new Event3_11(),new Event3_12(),new Event3_13(),new Event3_14(),new Event3_15(),new Event3_16(),new Event3_17(),new Event3_18(),new Event3_19()
     };
 
     //个人关系序列
