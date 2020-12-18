@@ -12253,6 +12253,7 @@ public class Event3_10 : Event
             {
                 perkUsedName = info.CurrentPerk.Name;
                 info.CurrentPerk.RemoveEffect();
+                return;
             }
         }
     }
@@ -12379,10 +12380,12 @@ public class Event3_12 : Event
                 {
                     info.CurrentPerk.RemoveEffect();
                     info.CurrentPerk.RemoveEffect();
+                    return;
                 }
                 else
                 {
                     info.CurrentPerk.RemoveEffect();
+                    return;
                 }
             }
         }
@@ -12486,10 +12489,12 @@ public class Event3_13 : Event
                 {
                     info.CurrentPerk.RemoveEffect();
                     info.CurrentPerk.RemoveEffect();
+                    return;
                 }
                 else
                 {
                     info.CurrentPerk.RemoveEffect();
+                    return;
                 }
             }
         }
@@ -12708,13 +12713,20 @@ public class Event3_15 : Event
             chengzhang.CurrentPerk.RemoveEffect();
         }
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "与" + Target.Name + "讨论理想";
-        ResultText += Target.Name + "对"+Self.Name+"表示赞许,获得事件状态 愿望*1，受到赞扬*1，消除事件状态：愿望*1 成长*2 ";
+        if (Random.Range(0.0f, 1.0f) <= 0.5f)
+        {
+            Self.InfoDetail.AddPerk(new Perk107(Self), true);
+            ResultText += Target.Name + "对" + Self.Name + "表示赞许,获得事件状态 愿望*1，受到赞扬*1,遗憾*1，消除事件状态：愿望*1 成长*2 ";
+        }
+        else
+        {
+            ResultText += Target.Name + "对" + Self.Name + "表示赞许,获得事件状态 愿望*1，受到赞扬*1，消除事件状态：愿望*1 成长*2 ";
+        }
     }
     public override void Failure(float Posb)
     {
         base.Failure(Posb);
         Self.InfoDetail.AddPerk(new Perk68(Self), true);
-        Self.InfoDetail.AddPerk(new Perk107(Self), true);
         Self.Mentality -= 5;
         PerkInfo yuanwang = null, chengzhang = null;
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
@@ -12738,7 +12750,15 @@ public class Event3_15 : Event
             chengzhang.CurrentPerk.RemoveEffect();
         }
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "与" + Target.Name + "讨论理想";
-        ResultText += Target.Name + "认为"+Self.Name+"只管赚钱就好，获得事件状态 受到批评*1,遗憾*1，己方信念下降5，消除事件状态：愿望*1 成长*2 ";
+        if (Random.Range(0.0f, 1.0f)<=0.5f)
+        {
+            Self.InfoDetail.AddPerk(new Perk107(Self), true);
+            ResultText += Target.Name + "认为" + Self.Name + "只管赚钱就好，获得事件状态 受到批评*1,遗憾*1，己方信念下降5，消除事件状态：愿望*1 成长*2 ";
+        }
+        else
+        {
+            ResultText += Target.Name + "认为" + Self.Name + "只管赚钱就好，获得事件状态 受到批评*1，己方信念下降5，消除事件状态：愿望*1 成长*2 ";
+        }
     }
 }
 public class Event3_16 : JudgeEvent
@@ -12834,7 +12854,15 @@ public class Event3_16 : JudgeEvent
             }
         }
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "希望上司" + Target.Name + "为其转岗";
-        ResultText += "上司"+Target.Name+"表示赞许和支持，并上报CEO，获得事件状态 受到赞扬*1，消除事件状态：愿望*1 成长*1 ";
+        if (Random.Range(0.0f, 1.0f) <= 0.5f)
+        {
+            Self.InfoDetail.AddPerk(new Perk107(Self), true);
+            ResultText += "上司" + Target.Name + "表示赞许和支持，并上报CEO，获得事件状态 受到赞扬*1,遗憾*1，消除事件状态：愿望*1 成长*1 ";
+        }
+        else
+        {
+            ResultText += "上司" + Target.Name + "表示赞许和支持，并上报CEO，获得事件状态 受到赞扬*1，消除事件状态：愿望*1 成长*1 ";
+        }
         GC.CreateMessage(Self.Name + "请求上司" + Target.Name+ "为其转岗，\n上司支持并上报CEO");
         EmpManager.Instance.JudgeEvent(this, canAccept);
     }
@@ -12853,7 +12881,6 @@ public class Event3_16 : JudgeEvent
     {
         base.Failure(Posb);
         Self.InfoDetail.AddPerk(new Perk68(Self), true);
-        Self.InfoDetail.AddPerk(new Perk107(Self), true);
         Self.Mentality -= 10;
         PerkInfo yuanwang = null, chengzhang = null;
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
@@ -12876,7 +12903,15 @@ public class Event3_16 : JudgeEvent
             chengzhang.CurrentPerk.RemoveEffect();
         }
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "希望上司" + Target.Name + "为其转岗";
-        ResultText += "上司"+Target.Name+"拒绝了"+Self.Name+"的请求，并叮嘱好好工作,获得事件状态 受到批评*1,遗憾*1，己方信念下降10，消除事件状态：愿望*1 成长*1 ";
+        if (Random.Range(0.0f, 1.0f) <= 0.5f)
+        {
+            Self.InfoDetail.AddPerk(new Perk107(Self), true);
+            ResultText += "上司" + Target.Name + "拒绝了" + Self.Name + "的请求，并叮嘱好好工作,获得事件状态 受到批评*1,遗憾*1，己方信念下降10，消除事件状态：愿望*1 成长*1 ";
+        }
+        else
+        {
+            ResultText += "上司" + Target.Name + "拒绝了" + Self.Name + "的请求，并叮嘱好好工作,获得事件状态 受到批评*1，己方信念下降10，消除事件状态：愿望*1 成长*1 ";
+        }
         GC.CreateMessage(Self.Name + "请求上司" + Target.Name + "为其转岗，\n被上司拒绝");
     }
 }
@@ -12971,13 +13006,20 @@ public class Event3_17 : Event
             yihan.CurrentPerk.RemoveEffect();
         }
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "与同事" + Target.Name + "讨论转岗到其他部门";
-        ResultText += "同事"+Target.Name+"赞许"+Self.Name+"的勇气，获得事件状态 受到启发*1，愿望*1，消除事件状态：愿望*1 成长*1 遗憾*1 ";
+        if (Random.Range(0.0f, 1.0f) <= 0.5f)
+        {
+            Self.InfoDetail.AddPerk(new Perk107(Self), true);
+            ResultText += "同事" + Target.Name + "赞许" + Self.Name + "的勇气，获得事件状态 受到启发*1，愿望*1,遗憾*1，消除事件状态：愿望*1 成长*1 遗憾*1 ";
+        }
+        else
+        {
+            ResultText += "同事" + Target.Name + "赞许" + Self.Name + "的勇气，获得事件状态 受到启发*1，愿望*1，消除事件状态：愿望*1 成长*1 遗憾*1 ";
+        }
     }
     public override void Failure(float Posb)
     {
         base.Failure(Posb);
         Self.InfoDetail.AddPerk(new Perk69(Self), true);
-        Self.InfoDetail.AddPerk(new Perk107(Self), true);
         Self.Mentality -= 8;
         PerkInfo yuanwang = null, chengzhang = null;
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
@@ -13000,7 +13042,15 @@ public class Event3_17 : Event
             chengzhang.CurrentPerk.RemoveEffect();
         }
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "与同事" + Target.Name + "讨论转岗到其他部门";
-        ResultText += "同事"+Target.Name+"取笑"+Self.Name+"的鲁莽，获得事件状态 遭到敌意*1，遗憾*1，己方信念下降8，消除事件状态：愿望*1 成长*1 ";
+        if (Random.Range(0.0f, 1.0f) <= 0.5f)
+        {
+            Self.InfoDetail.AddPerk(new Perk107(Self), true);
+            ResultText += "同事" + Target.Name + "取笑" + Self.Name + "的鲁莽，获得事件状态 遭到敌意*1，遗憾*1，己方信念下降8，消除事件状态：愿望*1 成长*1 ";
+        }
+        else
+        {
+            ResultText += "同事" + Target.Name + "取笑" + Self.Name + "的鲁莽，获得事件状态 遭到敌意*1，己方信念下降8，消除事件状态：愿望*1 成长*1 ";
+        }
     }
 }
 public class Event3_18 : JudgeEvent
@@ -13105,7 +13155,15 @@ public class Event3_18 : JudgeEvent
             }
         }
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "希望得到上司" + Target.Name + "的升职推荐";
-        ResultText += "上司肯定其成长，并上报CEO，获得事件状态 受到信任*1，消除事件状态：愿望*1 成长*4 遗憾*2";
+        if (Random.Range(0.0f, 1.0f) <= 0.5f)
+        {
+            Self.InfoDetail.AddPerk(new Perk107(Self), true);
+            ResultText += "上司肯定其成长，并上报CEO，获得事件状态 受到信任*1,遗憾*1，消除事件状态：愿望*1 成长*4 遗憾*2";
+        }
+        else
+        {
+            ResultText += "上司肯定其成长，并上报CEO，获得事件状态 受到信任*1，消除事件状态：愿望*1 成长*4 遗憾*2";
+        }
         GC.CreateMessage(Self.Name+"请求升职被上司接受，请求CEO");
         EmpManager.Instance.JudgeEvent(this, canAccept);
     }
@@ -13156,7 +13214,15 @@ public class Event3_18 : JudgeEvent
             yihan.CurrentPerk.RemoveEffect();
         }
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "希望得到上司" + Target.Name + "的升职推荐";
-        ResultText += "上司"+Target.Name+"质疑"+Self.Name+"的能力并拒绝推荐，获得事件状态 受到质疑*1，己方信念下降12，消除事件状态：愿望*1 成长*4 遗憾*2";
+        if (Random.Range(0.0f, 1.0f) <= 0.5f)
+        {
+            Self.InfoDetail.AddPerk(new Perk107(Self), true);
+            ResultText += "上司" + Target.Name + "质疑" + Self.Name + "的能力并拒绝推荐，获得事件状态 受到质疑*1,遗憾*1，己方信念下降12，消除事件状态：愿望*1 成长*4 遗憾*2";
+        }
+        else
+        {
+            ResultText += "上司" + Target.Name + "质疑" + Self.Name + "的能力并拒绝推荐，获得事件状态 受到质疑*1，己方信念下降12，消除事件状态：愿望*1 成长*4 遗憾*2";
+        }
         GC.CreateMessage(Self.Name + "请求升职被拒绝");
     }
 }
@@ -13252,7 +13318,15 @@ public class Event3_19 : JudgeEvent
         }
         //弹出窗口询问玩家
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "请求上司" + Target.Name + "为其加薪";
-        ResultText += "上司表示早有此意，并上报CEO，获得事件状态 受到信任*1，消除事件状态： 愿望*1 成长*2 遗憾*2";
+        if (Random.Range(0.0f, 1.0f) <= 0.5f)
+        {
+            Self.InfoDetail.AddPerk(new Perk107(Self), true);
+            ResultText += "上司表示早有此意，并上报CEO，获得事件状态 受到信任*1，遗憾*1，消除事件状态： 愿望*1 成长*2 遗憾*2";
+        }
+        else
+        {
+            ResultText += "上司表示早有此意，并上报CEO，获得事件状态 受到信任*1，消除事件状态： 愿望*1 成长*2 遗憾*2";
+        }
         GC.CreateMessage(Self.Name + "请求加薪被上司接受，请求CEO");
         EmpManager.Instance.JudgeEvent(this, true);
     }
@@ -13303,7 +13377,15 @@ public class Event3_19 : JudgeEvent
             yihan.CurrentPerk.RemoveEffect();
         }
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "请求上司" + Target.Name + "为其加薪";
-        ResultText += "上司"+Target.Name+"质疑"+Self.Name+"的能力并拒绝加薪，获得事件状态 受到质疑*1， 己方信念下降12，消除事件状态：愿望*1 成长*2 遗憾*2";
+        if (Random.Range(0.0f, 1.0f) <= 0.5f)
+        {
+            Self.InfoDetail.AddPerk(new Perk107(Self), true);
+            ResultText += "上司" + Target.Name + "质疑" + Self.Name + "的能力并拒绝加薪，获得事件状态 受到质疑*1,遗憾*1， 己方信念下降12，消除事件状态：愿望*1 成长*2 遗憾*2";
+        }
+        else
+        {
+            ResultText += "上司" + Target.Name + "质疑" + Self.Name + "的能力并拒绝加薪，获得事件状态 受到质疑*1， 己方信念下降12，消除事件状态：愿望*1 成长*2 遗憾*2";
+        }
         GC.CreateMessage(Self.Name + "请求加薪被上司拒绝");
     }
 }
@@ -13393,10 +13475,12 @@ public class Event3_21 : Event
                 {
                     info.CurrentPerk.RemoveEffect();
                     info.CurrentPerk.RemoveEffect();
+                    return;
                 }
                 else
                 {
                     info.CurrentPerk.RemoveEffect();
+                    return;
                 }
             }
         }
@@ -13489,6 +13573,7 @@ public class Event3_22 : Event
             {
                 perkUsedName = info.CurrentPerk.Name;
                 info.CurrentPerk.RemoveEffect();
+                return;
             }
         }
     }
@@ -13562,6 +13647,7 @@ public class Event3_23 : Event
             {
                 perkUsedName = info.CurrentPerk.Name;
                 info.CurrentPerk.RemoveEffect();
+                return;
             }
         }
     }
@@ -13645,10 +13731,12 @@ public class Event3_24 : Event
                 {
                     info.CurrentPerk.RemoveEffect();
                     info.CurrentPerk.RemoveEffect();
+                    return;
                 }
                 else
                 {
                     info.CurrentPerk.RemoveEffect();
+                    return;
                 }
             }
         }
@@ -13733,10 +13821,12 @@ public class Event3_25 : Event
                 {
                     info.CurrentPerk.RemoveEffect();
                     info.CurrentPerk.RemoveEffect();
+                    return;
                 }
                 else
                 {
                     info.CurrentPerk.RemoveEffect();
+                    return;
                 }
             }
         }
@@ -15732,6 +15822,39 @@ public class Event3_49 : Event
         Self.Exhausted();
     }
 }
+public class Event3_50 : Event
+{
+    public Event3_50() : base()
+    {
+        EventName = "找到上司";
+        HaveTarget = true;
+        Weight = 10;
+        RelationRequire = 0;
+        HaveTarget = false;
+    }
+    public override bool SpecialCheck()
+    {
+        if(EmpManager.Instance.FindBoss(Self) == Target)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+    public override int FindResult()
+    {
+        return 3;
+        //1大失败 2失败 3成功 4大成功
+    }
+    public override void Success(float Posb)
+    {
+        base.Success(Posb);
+        GC.CreateMessage(Self.Name + "找到上司了");
+        ResultText = Self.Name + "找到上司了";
+    }
+}
 static public class EventData
 {
     #region 事件版本2内容
@@ -15783,19 +15906,19 @@ static public class EventData
     //初始序列
     public static List<Event> InitialList = new List<Event>()
     {
-       new Event3_1(),new Event3_2(),new Event3_3(),new Event3_4(),new Event3_5(),new Event3_6(),new Event3_7(),new Event3_8(),new Event3_45(),new Event3_46(),new Event3_47(),new Event3_48()
+       new Event3_1(),new Event3_2(),new Event3_3(),new Event3_4(),new Event3_5(),new Event3_6(),new Event3_7(),new Event3_8(),new Event3_45(),new Event3_46(),new Event3_47(),new Event3_48(),new Event3_50()
     };
 
     //公司序列
     public static List<Event> CompanyList = new List<Event>()
     {
-         new Event3_9(),new Event3_10(),new Event3_11(),new Event3_12(),new Event3_13(),new Event3_14(),new Event3_15(),new Event3_16(),new Event3_17(),new Event3_18(),new Event3_19(),new Event3_45(),new Event3_46(),new Event3_47(),new Event3_48()
+         new Event3_9(),new Event3_10(),new Event3_11(),new Event3_12(),new Event3_13(),new Event3_14(),new Event3_15(),new Event3_16(),new Event3_17(),new Event3_18(),new Event3_19(),new Event3_45(),new Event3_46(),new Event3_47(),new Event3_48(),new Event3_50()
     };
 
     //个人关系序列
     public static List<Event> RelationList = new List<Event>()
     {
-        new Event3_20(),new Event3_21(),new Event3_22(),new Event3_23(),new Event3_24(),new Event3_25(),new Event3_26(),new Event3_27(),new Event3_28(),new Event3_29(),new Event3_30(),new Event3_31(),new Event3_32(),new Event3_33(),new Event3_34(),new Event3_35(),new Event3_36(),new Event3_37(),new Event3_38(),new Event3_39(),new Event3_40(),new Event3_41(),new Event3_42(),new Event3_43(),new Event3_44(),new Event3_45(),new Event3_46(),new Event3_47(),new Event3_48(),new Event3_49()
+        new Event3_20(),new Event3_21(),new Event3_22(),new Event3_23(),new Event3_24(),new Event3_25(),new Event3_26(),new Event3_27(),new Event3_28(),new Event3_29(),new Event3_30(),new Event3_31(),new Event3_32(),new Event3_33(),new Event3_34(),new Event3_35(),new Event3_36(),new Event3_37(),new Event3_38(),new Event3_39(),new Event3_40(),new Event3_41(),new Event3_42(),new Event3_43(),new Event3_44(),new Event3_45(),new Event3_46(),new Event3_47(),new Event3_48(),new Event3_49(),new Event3_50()
     };
 
     //权重1-4事件链表
