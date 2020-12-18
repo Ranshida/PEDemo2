@@ -767,11 +767,12 @@ public class Employee
         }
         for (int i = 0; i < 3; i++)
         {
+            Relation relation = FindRelationTarget(tempRelation);
+
             //没有认识的人
-            if (tempRelation.Count == 0) 
+            if (relation == null)
                 break;
 
-            Relation relation = FindRelationTarget(tempRelation);
             tempRelation.Remove(relation);
             RelationTargets.Add(relation.Target);
         }
@@ -828,7 +829,7 @@ public class Employee
             if (EmpManager.Instance.FindBoss(this) == relation.Target)
                 value -= 2;
 
-                  lastValue += value;
+            lastValue += value;
             valueList.Add(lastValue);
             Targets.Add(relation);
         }
