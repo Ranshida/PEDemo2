@@ -1836,6 +1836,18 @@ public class Perk96 : Perk
     }
 }
 
+//遗憾
+public class Perk107 : Perk
+{
+    public Perk107(Employee Emp) : base(Emp)
+    {
+        Name = "遗憾";
+        Description = "愿望没有被满足而产生的遗憾";
+        TimeLeft = -1;
+        Num = 107;
+        canStack = true;
+    }
+}
 public static class PerkData
 {
     public static List<Perk> PerkList = new List<Perk>()

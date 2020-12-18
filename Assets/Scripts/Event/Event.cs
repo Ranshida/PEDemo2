@@ -27,6 +27,7 @@ public abstract class Event
     public string ObjectText = "无";
     public int Weight = 1;          //事件权重
     public int perkUsed = -1;    //出现多个满足条件的状态时，使用的状态编号（20.12.9新增）
+    public string perkUsedName = "未知状态";
 
     public GameControl GC;
     public Employee Self, Target;
@@ -12250,6 +12251,7 @@ public class Event3_10 : Event
         {
             if (info.CurrentPerk.Num == perkUsed)
             {
+                perkUsedName = info.CurrentPerk.Name;
                 info.CurrentPerk.RemoveEffect();
             }
         }
@@ -12265,7 +12267,7 @@ public class Event3_10 : Event
         base.Success(Posb);
         Self.InfoDetail.AddPerk(new Perk51(Self), true);
         
-        ResultText = "由于" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "的情绪在" + Self.Name + "心中的持续酝酿，" + Self.Name + "渐渐感到对公司不满，获得事件状态 不满*1，消除事件状态" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "×1";
+        ResultText = "由于" + perkUsedName + "的情绪在" + Self.Name + "心中的持续酝酿，" + Self.Name + "渐渐感到对公司不满，获得事件状态 不满*1，消除事件状态" + perkUsedName + "×1";
     }
 
     public override Event Clone()
@@ -12349,15 +12351,15 @@ public class Event3_12 : Event
     public override bool SpecialCheck()
     {
         List<int> pList = new List<int>();
-        if (Self.Mentality < 30)
-        {
-            return false;
-        }
+        //if (Self.Mentality < 60)
+        //{
+        //    return false;
+        //}
 
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
         {
             Perk perk = Self.InfoDetail.PerksInfo[i].CurrentPerk;
-            if ((perk.Num == 47 && perk.Level >= 2) || perk.Num == 51 || perk.Num == 65) 
+            if ((perk.Num == 47 && perk.Level >= 2) || perk.Num == 51 || perk.Num == 65 || perk.Num == 69) 
             {
                 return true;
             }
@@ -12370,14 +12372,18 @@ public class Event3_12 : Event
         base.StartSolve();
         foreach (PerkInfo info in Self.InfoDetail.PerksInfo)
         {
-            if (info.CurrentPerk.Num == perkUsed && perkUsed == 47 && info.CurrentPerk.Level >= 2)
+            if (info.CurrentPerk.Num == perkUsed)
             {
-                info.CurrentPerk.RemoveEffect();
-                info.CurrentPerk.RemoveEffect();
-            }
-            else
-            {
-                info.CurrentPerk.RemoveEffect();
+                perkUsedName = info.CurrentPerk.Name;
+                if (perkUsed == 47 && info.CurrentPerk.Level >= 2)
+                {
+                    info.CurrentPerk.RemoveEffect();
+                    info.CurrentPerk.RemoveEffect();
+                }
+                else
+                {
+                    info.CurrentPerk.RemoveEffect();
+                }
             }
         }
     }
@@ -12391,12 +12397,12 @@ public class Event3_12 : Event
     {
         base.Success(Posb);
         Self.InfoDetail.AddPerk(new Perk55(Self), true);
-        if(Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Num == 47)
+        if(perkUsed == 47)
         {
-            ResultText = "由于" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "的情绪在" + Self.Name + "心中的持续酝酿，" + Self.Name + "产生了新的愿望，获得事件状态 愿望*1，消除事件状态" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "×2";
+            ResultText = "由于" + perkUsedName + "的情绪在" + Self.Name + "心中的持续酝酿，" + Self.Name + "产生了新的愿望，获得事件状态 愿望*1，消除事件状态" + perkUsedName + "×2";
         }else
         {
-            ResultText = "由于" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "的情绪在" + Self.Name + "心中的持续酝酿，" + Self.Name + "产生了新的愿望，获得事件状态 愿望*1，消除事件状态" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "×1";
+            ResultText = "由于" + perkUsedName + "的情绪在" + Self.Name + "心中的持续酝酿，" + Self.Name + "产生了新的愿望，获得事件状态 愿望*1，消除事件状态" + perkUsedName + "×1";
         }
     }
 
@@ -12436,32 +12442,18 @@ public class Event3_13 : Event
     public override bool SpecialCheck()
     {
         List<int> pList = new List<int>();
-        if (Self.Mentality < 30)
-        {
-            return false;
-        }
+        //if (Self.Mentality < 60)
+        //{
+        //    return false;
+        //}
+
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
         {
-            if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 49 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 2)
+            Perk perk = Self.InfoDetail.PerksInfo[i].CurrentPerk;
+            if ((perk.Num == 49 && perk.Level >= 2) || perk.Num == 53 || perk.Num == 66 || perk.Num == 69)
             {
-                pList.Add(i);
+                return true;
             }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 53)
-            {
-                pList.Add(i);
-            }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 66)
-            {
-                pList.Add(i);
-            }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 69)
-            {
-                pList.Add(i);
-            }
-        }
-        if (pList.Count > 0)
-        {
-            return true;
         }
         return false;
     }
@@ -12469,31 +12461,38 @@ public class Event3_13 : Event
     public override Event Clone()
     {
         Event clone = (Event)this.MemberwiseClone();
+
         List<int> pList = new List<int>();
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
         {
-            if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 49 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 2)
+            Perk perk = Self.InfoDetail.PerksInfo[i].CurrentPerk;
+            if ((perk.Num == 49 && perk.Level >= 2) || perk.Num == 53 || perk.Num == 66 || perk.Num == 69)
             {
-                pList.Add(i);
-            }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 53)
-            {
-                pList.Add(i);
-            }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 66)
-            {
-                pList.Add(i);
-            }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 69)
-            {
-                pList.Add(i);
+                pList.Add(perk.Num);
             }
         }
-        if (pList.Count > 0)
-        {
-            clone.perkUsed = pList[Random.Range(0, pList.Count)];
-        }
+        clone.perkUsed = pList[Random.Range(0, pList.Count)];
+
         return clone;
+    }
+    public override void StartSolve()
+    {
+        base.StartSolve();
+        foreach (PerkInfo info in Self.InfoDetail.PerksInfo)
+        {
+            if (info.CurrentPerk.Num == perkUsed)
+            {
+                if(perkUsed == 49 && info.CurrentPerk.Level >= 2)
+                {
+                    info.CurrentPerk.RemoveEffect();
+                    info.CurrentPerk.RemoveEffect();
+                }
+                else
+                {
+                    info.CurrentPerk.RemoveEffect();
+                }
+            }
+        }
     }
     public override int FindResult()
     {
@@ -12504,16 +12503,13 @@ public class Event3_13 : Event
     {
         base.Success(Posb);
         Self.InfoDetail.AddPerk(new Perk56(Self), true);
-        if (Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Num == 49)
+        if (perkUsed == 49)
         {
-            ResultText = "由于" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "的情绪在" + Self.Name + "心中的持续酝酿，野心在" + Self.Name + "的内心萌发，获得事件状态 野心*1，消除事件状态" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "×2";
-            Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.RemoveEffect();
-            Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.RemoveEffect();
+            ResultText = "由于" + perkUsedName + "的情绪在" + Self.Name + "心中的持续酝酿，野心在" + Self.Name + "的内心萌发，获得事件状态 野心*1，消除事件状态" + perkUsedName + "×2";
         }
         else
         {
-            ResultText = "由于" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "的情绪在" + Self.Name + "心中的持续酝酿，野心在" + Self.Name + "的内心萌发，获得事件状态 野心*1，消除事件状态" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "×1";
-            Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.RemoveEffect();
+            ResultText = "由于" + perkUsedName + "的情绪在" + Self.Name + "心中的持续酝酿，野心在" + Self.Name + "的内心萌发，获得事件状态 野心*1，消除事件状态" + perkUsedName + "×1";
         }
     }
 }
@@ -12606,6 +12602,7 @@ public class Event3_14 : Event
     {
         base.Failure(Posb);
         Self.InfoDetail.AddPerk(new Perk69(Self), true);
+        Self.InfoDetail.AddPerk(new Perk107(Self), true);
         Self.Mentality -= 8;
         PerkInfo yuanwang = null, chengzhang = null;
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
@@ -12629,7 +12626,7 @@ public class Event3_14 : Event
             chengzhang.CurrentPerk.RemoveEffect();
         }
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "与" + Target.Name + "交流着职场生涯";
-        ResultText +=  Self.Name +"被"+Target.Name+"嘲笑是妄想家，获得事件状态 遭到敌意*1,己方信念下降8,消除事件状态： 愿望*1 成长*2  ";
+        ResultText +=  Self.Name +"被"+Target.Name+"嘲笑是妄想家，获得事件状态 遭到敌意*1，遗憾×1,己方信念下降8,消除事件状态： 愿望*1 成长*2  ";
     }
 }
 public class Event3_15 : Event
@@ -12717,6 +12714,7 @@ public class Event3_15 : Event
     {
         base.Failure(Posb);
         Self.InfoDetail.AddPerk(new Perk68(Self), true);
+        Self.InfoDetail.AddPerk(new Perk107(Self), true);
         Self.Mentality -= 5;
         PerkInfo yuanwang = null, chengzhang = null;
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
@@ -12740,7 +12738,7 @@ public class Event3_15 : Event
             chengzhang.CurrentPerk.RemoveEffect();
         }
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "与" + Target.Name + "讨论理想";
-        ResultText += Target.Name + "认为"+Self.Name+"只管赚钱就好，获得事件状态 受到批评*1，己方信念下降5，消除事件状态：愿望*1 成长*2 ";
+        ResultText += Target.Name + "认为"+Self.Name+"只管赚钱就好，获得事件状态 受到批评*1,遗憾*1，己方信念下降5，消除事件状态：愿望*1 成长*2 ";
     }
 }
 public class Event3_16 : JudgeEvent
@@ -12855,6 +12853,7 @@ public class Event3_16 : JudgeEvent
     {
         base.Failure(Posb);
         Self.InfoDetail.AddPerk(new Perk68(Self), true);
+        Self.InfoDetail.AddPerk(new Perk107(Self), true);
         Self.Mentality -= 10;
         PerkInfo yuanwang = null, chengzhang = null;
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
@@ -12877,7 +12876,7 @@ public class Event3_16 : JudgeEvent
             chengzhang.CurrentPerk.RemoveEffect();
         }
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "希望上司" + Target.Name + "为其转岗";
-        ResultText += "上司"+Target.Name+"拒绝了"+Self.Name+"的请求，并叮嘱好好工作,获得事件状态 受到批评*1，己方信念下降10，消除事件状态：愿望*1 成长*1 ";
+        ResultText += "上司"+Target.Name+"拒绝了"+Self.Name+"的请求，并叮嘱好好工作,获得事件状态 受到批评*1,遗憾*1，己方信念下降10，消除事件状态：愿望*1 成长*1 ";
         GC.CreateMessage(Self.Name + "请求上司" + Target.Name + "为其转岗，\n被上司拒绝");
     }
 }
@@ -12899,7 +12898,7 @@ public class Event3_17 : Event
         List<int> pList = new List<int>();
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
         {
-            if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 55 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 2)
+            if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 55 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 1)
             {
                 pList.Add(i);
             }
@@ -12907,8 +12906,12 @@ public class Event3_17 : Event
             {
                 pList.Add(i);
             }
+            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 107)
+            {
+                pList.Add(i);
+            }
         }
-        if (pList.Count >= 2)
+        if (pList.Count >= 3)
         {
             return true;
         }
@@ -12939,7 +12942,7 @@ public class Event3_17 : Event
         base.Success(Posb);
         Self.InfoDetail.AddPerk(new Perk3(Self), true);
         Self.InfoDetail.AddPerk(new Perk55(Self), true);
-        PerkInfo yuanwang = null, chengzhang = null;
+        PerkInfo yuanwang = null, chengzhang = null, yihan = null;
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
         {
             if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 55)
@@ -12950,6 +12953,10 @@ public class Event3_17 : Event
             {
                 chengzhang = Self.InfoDetail.PerksInfo[i];
             }
+            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 107 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 1)
+            {
+                yihan = Self.InfoDetail.PerksInfo[i];
+            }
         }
         if (yuanwang)
         {
@@ -12959,13 +12966,18 @@ public class Event3_17 : Event
         {
             chengzhang.CurrentPerk.RemoveEffect();
         }
+        if (yihan)
+        {
+            yihan.CurrentPerk.RemoveEffect();
+        }
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "与同事" + Target.Name + "讨论转岗到其他部门";
-        ResultText += "同事"+Target.Name+"赞许"+Self.Name+"的勇气，获得事件状态 受到启发*1，愿望*1，消除事件状态：愿望*1 成长*1 ";
+        ResultText += "同事"+Target.Name+"赞许"+Self.Name+"的勇气，获得事件状态 受到启发*1，愿望*1，消除事件状态：愿望*1 成长*1 遗憾*1 ";
     }
     public override void Failure(float Posb)
     {
         base.Failure(Posb);
         Self.InfoDetail.AddPerk(new Perk69(Self), true);
+        Self.InfoDetail.AddPerk(new Perk107(Self), true);
         Self.Mentality -= 8;
         PerkInfo yuanwang = null, chengzhang = null;
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
@@ -12988,7 +13000,7 @@ public class Event3_17 : Event
             chengzhang.CurrentPerk.RemoveEffect();
         }
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "与同事" + Target.Name + "讨论转岗到其他部门";
-        ResultText += "同事"+Target.Name+"取笑"+Self.Name+"的鲁莽，获得事件状态 遭到敌意*1，己方信念下降8，消除事件状态：愿望*1 成长*1 ";
+        ResultText += "同事"+Target.Name+"取笑"+Self.Name+"的鲁莽，获得事件状态 遭到敌意*1，遗憾*1，己方信念下降8，消除事件状态：愿望*1 成长*1 ";
     }
 }
 public class Event3_18 : JudgeEvent
@@ -13009,16 +13021,20 @@ public class Event3_18 : JudgeEvent
         List<int> pList = new List<int>();
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
         {
-            if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 55 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 3)
+            if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 55 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 1)
             {
                 pList.Add(i);
             }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 58 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 4)
+            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 58 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 2)
+            {
+                pList.Add(i);
+            }
+            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 107 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 2)
             {
                 pList.Add(i);
             }
         }
-        if (pList.Count >= 2 )
+        if (pList.Count >= 3 )
         {
             return true;
         }
@@ -13048,16 +13064,20 @@ public class Event3_18 : JudgeEvent
     {
         base.Success(Posb);
         Self.InfoDetail.AddPerk(new Perk65(Self), true);
-        PerkInfo yuanwang = null, chengzhang = null;
+        PerkInfo yuanwang = null, chengzhang = null, yihan = null;
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
         {
             if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 55)
             {
                 yuanwang = Self.InfoDetail.PerksInfo[i];
             }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 58 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 4)
+            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 58 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 2)
             {
                 chengzhang = Self.InfoDetail.PerksInfo[i];
+            }
+            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 107 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 2)
+            {
+                yihan = Self.InfoDetail.PerksInfo[i];
             }
         }
         if (yuanwang)
@@ -13068,8 +13088,11 @@ public class Event3_18 : JudgeEvent
         {
             chengzhang.CurrentPerk.RemoveEffect();
             chengzhang.CurrentPerk.RemoveEffect();
-            chengzhang.CurrentPerk.RemoveEffect();
-            chengzhang.CurrentPerk.RemoveEffect();
+        }
+        if (yihan)
+        {
+            yihan.CurrentPerk.RemoveEffect();
+            yihan.CurrentPerk.RemoveEffect();
         }
         //弹出窗口询问玩家
         bool canAccept = true;
@@ -13082,7 +13105,7 @@ public class Event3_18 : JudgeEvent
             }
         }
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "希望得到上司" + Target.Name + "的升职推荐";
-        ResultText += "上司肯定其成长，并上报CEO，获得事件状态 受到信任*1，消除事件状态：愿望*1 成长*4 ";
+        ResultText += "上司肯定其成长，并上报CEO，获得事件状态 受到信任*1，消除事件状态：愿望*1 成长*4 遗憾*2";
         GC.CreateMessage(Self.Name+"请求升职被上司接受，请求CEO");
         EmpManager.Instance.JudgeEvent(this, canAccept);
     }
@@ -13102,16 +13125,20 @@ public class Event3_18 : JudgeEvent
         base.Failure(Posb);
         Self.InfoDetail.AddPerk(new Perk66(Self), true);
         Self.Mentality -= 12;
-        PerkInfo yuanwang = null, chengzhang = null;
+        PerkInfo yuanwang = null, chengzhang = null, yihan = null;
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
         {
             if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 55)
             {
                 yuanwang = Self.InfoDetail.PerksInfo[i];
             }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 58 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 4)
+            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 58 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 2)
             {
                 chengzhang = Self.InfoDetail.PerksInfo[i];
+            }
+            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 107 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 2)
+            {
+                yihan = Self.InfoDetail.PerksInfo[i];
             }
         }
         if (yuanwang)
@@ -13122,11 +13149,14 @@ public class Event3_18 : JudgeEvent
         {
             chengzhang.CurrentPerk.RemoveEffect();
             chengzhang.CurrentPerk.RemoveEffect();
-            chengzhang.CurrentPerk.RemoveEffect();
-            chengzhang.CurrentPerk.RemoveEffect();
+        }
+        if (yihan)
+        {
+            yihan.CurrentPerk.RemoveEffect();
+            yihan.CurrentPerk.RemoveEffect();
         }
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "希望得到上司" + Target.Name + "的升职推荐";
-        ResultText += "上司"+Target.Name+"质疑"+Self.Name+"的能力并拒绝推荐，获得事件状态 受到质疑*1，己方信念下降12，消除事件状态：愿望*1 成长*4";
+        ResultText += "上司"+Target.Name+"质疑"+Self.Name+"的能力并拒绝推荐，获得事件状态 受到质疑*1，己方信念下降12，消除事件状态：愿望*1 成长*4 遗憾*2";
         GC.CreateMessage(Self.Name + "请求升职被拒绝");
     }
 }
@@ -13148,16 +13178,20 @@ public class Event3_19 : JudgeEvent
         List<int> pList = new List<int>();
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
         {
-            if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 55 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 3)
+            if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 55 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 1)
             {
                 pList.Add(i);
             }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 58 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 2)
+            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 58 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 1)
+            {
+                pList.Add(i);
+            }
+            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 107 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 2)
             {
                 pList.Add(i);
             }
         }
-        if (pList.Count >= 2)
+        if (pList.Count >= 3)
         {
             return true;
         }
@@ -13187,16 +13221,20 @@ public class Event3_19 : JudgeEvent
     {
         base.Success(Posb);
         Self.InfoDetail.AddPerk(new Perk65(Self), true);
-        PerkInfo yuanwang = null, chengzhang = null;
+        PerkInfo yuanwang = null, chengzhang = null, yihan = null;
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
         {
             if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 55)
             {
                 yuanwang = Self.InfoDetail.PerksInfo[i];
             }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 58 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 2)
+            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 58 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 1)
             {
                 chengzhang = Self.InfoDetail.PerksInfo[i];
+            }
+            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 107 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 2)
+            {
+                yihan = Self.InfoDetail.PerksInfo[i];
             }
         }
         if (yuanwang)
@@ -13206,11 +13244,15 @@ public class Event3_19 : JudgeEvent
         if (chengzhang)
         {
             chengzhang.CurrentPerk.RemoveEffect();
-            chengzhang.CurrentPerk.RemoveEffect();
+        }
+        if (yihan)
+        {
+            yihan.CurrentPerk.RemoveEffect();
+            yihan.CurrentPerk.RemoveEffect();
         }
         //弹出窗口询问玩家
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "请求上司" + Target.Name + "为其加薪";
-        ResultText += "上司表示早有此意，并上报CEO，获得事件状态 受到信任*1，消除事件状态： 愿望*1 成长*2";
+        ResultText += "上司表示早有此意，并上报CEO，获得事件状态 受到信任*1，消除事件状态： 愿望*1 成长*2 遗憾*2";
         GC.CreateMessage(Self.Name + "请求加薪被上司接受，请求CEO");
         EmpManager.Instance.JudgeEvent(this, true);
     }
@@ -13231,16 +13273,20 @@ public class Event3_19 : JudgeEvent
         base.Failure(Posb);
         Self.InfoDetail.AddPerk(new Perk66(Self), true);
         Self.Mentality -= 12;
-        PerkInfo yuanwang = null, chengzhang = null;
+        PerkInfo yuanwang = null, chengzhang = null, yihan = null;
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
         {
             if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 55)
             {
                 yuanwang = Self.InfoDetail.PerksInfo[i];
             }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 58 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 2)
+            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 58 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 1)
             {
                 chengzhang = Self.InfoDetail.PerksInfo[i];
+            }
+            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 107 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 2)
+            {
+                yihan = Self.InfoDetail.PerksInfo[i];
             }
         }
         if (yuanwang)
@@ -13250,10 +13296,14 @@ public class Event3_19 : JudgeEvent
         if (chengzhang)
         {
             chengzhang.CurrentPerk.RemoveEffect();
-            chengzhang.CurrentPerk.RemoveEffect();
+        }
+        if (yihan)
+        {
+            yihan.CurrentPerk.RemoveEffect();
+            yihan.CurrentPerk.RemoveEffect();
         }
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "请求上司" + Target.Name + "为其加薪";
-        ResultText += "上司"+Target.Name+"质疑"+Self.Name+"的能力并拒绝加薪，获得事件状态 受到质疑*1， 己方信念下降12，消除事件状态：愿望*1 成长*2";
+        ResultText += "上司"+Target.Name+"质疑"+Self.Name+"的能力并拒绝加薪，获得事件状态 受到质疑*1， 己方信念下降12，消除事件状态：愿望*1 成长*2 遗憾*2";
         GC.CreateMessage(Self.Name + "请求加薪被上司拒绝");
     }
 }
@@ -13299,36 +13349,17 @@ public class Event3_21 : Event
     public override bool SpecialCheck()
     {
         List<int> pList = new List<int>();
-        if (Self.Mentality < 30)
-        {
-            return false;
-        }
+        //if (Self.Mentality < 30)
+        //{
+        //    return false;
+        //}
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
         {
-            if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 49 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 2)
+            Perk perk = Self.InfoDetail.PerksInfo[i].CurrentPerk;
+            if ((perk.Num == 49 && perk.Level >= 2) || perk.Num == 68 || perk.Num == 66 || perk.Num == 69||perk.Num ==52)
             {
-                pList.Add(i);
+                return true;
             }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 68)
-            {
-                pList.Add(i);
-            }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 66)
-            {
-                pList.Add(i);
-            }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 69)
-            {
-                pList.Add(i);
-            }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 52)
-            {
-                pList.Add(i);
-            }
-        }
-        if (pList.Count > 0)
-        {
-            return true;
         }
         return false;
     }
@@ -13341,16 +13372,33 @@ public class Event3_21 : Event
     {
         base.Success(Posb);
         Self.InfoDetail.AddPerk(new Perk63(Self), true);
-        if (Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Num == 49)
+        if (perkUsed == 49)
         {
-            ResultText = "由于" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "的情绪在" + Self.Name + "心中的持续酝酿，" + Self.Name + "期望寻求安慰，获得事件状态 寻求安慰*1，消除事件状态" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "×2";
-            Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.RemoveEffect();
-            Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.RemoveEffect();
+            ResultText = "由于" + perkUsedName + "的情绪在" + Self.Name + "心中的持续酝酿，" + Self.Name + "期望寻求安慰，获得事件状态 寻求安慰*1，消除事件状态" + perkUsedName + "×2";
         }
         else
         {
-            ResultText = "由于" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "的情绪在" + Self.Name + "心中的持续酝酿，" + Self.Name + "期望寻求安慰，获得事件状态 寻求安慰*1，消除事件状态" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "×1";
-            Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.RemoveEffect();
+            ResultText = "由于" + perkUsedName + "的情绪在" + Self.Name + "心中的持续酝酿，" + Self.Name + "期望寻求安慰，获得事件状态 寻求安慰*1，消除事件状态" + perkUsedName + "×1";
+        }
+    }
+    public override void StartSolve()
+    {
+        base.StartSolve();
+        foreach (PerkInfo info in Self.InfoDetail.PerksInfo)
+        {
+            if (info.CurrentPerk.Num == perkUsed)
+            {
+                perkUsedName = info.CurrentPerk.Name;
+                if (perkUsed == 49 && info.CurrentPerk.Level >= 2)
+                {
+                    info.CurrentPerk.RemoveEffect();
+                    info.CurrentPerk.RemoveEffect();
+                }
+                else
+                {
+                    info.CurrentPerk.RemoveEffect();
+                }
+            }
         }
     }
 
@@ -13361,31 +13409,13 @@ public class Event3_21 : Event
         List<int> pList = new List<int>();
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
         {
-            if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 49 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 2)
+            Perk perk = Self.InfoDetail.PerksInfo[i].CurrentPerk;
+            if ((perk.Num == 49 && perk.Level >= 2) || perk.Num == 68 || perk.Num == 66 || perk.Num == 69 || perk.Num == 52)
             {
-                pList.Add(i);
-            }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 68)
-            {
-                pList.Add(i);
-            }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 66)
-            {
-                pList.Add(i);
-            }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 69)
-            {
-                pList.Add(i);
-            }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 52)
-            {
-                pList.Add(i);
+                pList.Add(perk.Num);
             }
         }
-        if (pList.Count > 0)
-        {
-            clone.perkUsed = pList[Random.Range(0, pList.Count)];
-        }
+        clone.perkUsed = pList[Random.Range(0, pList.Count)];
 
         return clone;
     }
@@ -13413,22 +13443,11 @@ public class Event3_22 : Event
         //}
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
         {
-            if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 53)
+            Perk perk = Self.InfoDetail.PerksInfo[i].CurrentPerk;
+            if (perk.Num == 53 || perk.Num == 66 || perk.Num == 69)
             {
-                pList.Add(i);
+                return true;
             }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 66)
-            {
-                pList.Add(i);
-            }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 69)
-            {
-                pList.Add(i);
-            }
-        }
-        if (pList.Count > 0)
-        {
-            return true;
         }
         return false;
     }
@@ -13441,8 +13460,7 @@ public class Event3_22 : Event
     {
         base.Success(Posb);
         Self.InfoDetail.AddPerk(new Perk61(Self), true);
-        ResultText = "由于" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "的情绪在" + Self.Name + "心中的持续酝酿，" + Self.Name + "渐渐渴望获得别人认可，获得事件状态 认可交谈*1，消除事件状态" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "×1";
-        Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.RemoveEffect();
+        ResultText = "由于" + perkUsedName + "的情绪在" + Self.Name + "心中的持续酝酿，" + Self.Name + "渐渐渴望获得别人认可，获得事件状态 认可交谈*1，消除事件状态" + perkUsedName + "×1";
     }
 
     public override Event Clone()
@@ -13452,25 +13470,27 @@ public class Event3_22 : Event
         List<int> pList = new List<int>();
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
         {
-            if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 53)
+            Perk perk = Self.InfoDetail.PerksInfo[i].CurrentPerk;
+            if (perk.Num == 53 || perk.Num == 66 || perk.Num == 69)
             {
-                pList.Add(i);
-            }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 66)
-            {
-                pList.Add(i);
-            }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 69)
-            {
-                pList.Add(i);
+                pList.Add(perk.Num);
             }
         }
-        if (pList.Count > 0)
-        {
-            clone.perkUsed = pList[Random.Range(0, pList.Count)];
-        }
+        clone.perkUsed = pList[Random.Range(0, pList.Count)];
 
         return clone;
+    }
+    public override void StartSolve()
+    {
+        base.StartSolve();
+        foreach (PerkInfo info in Self.InfoDetail.PerksInfo)
+        {
+            if (info.CurrentPerk.Num == perkUsed)
+            {
+                perkUsedName = info.CurrentPerk.Name;
+                info.CurrentPerk.RemoveEffect();
+            }
+        }
     }
 }
 public class Event3_23 : Event
@@ -13496,22 +13516,11 @@ public class Event3_23 : Event
         //}
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
         {
-            if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 51)
+            Perk perk = Self.InfoDetail.PerksInfo[i].CurrentPerk;
+            if (perk.Num == 51 || perk.Num == 52 || perk.Num == 54)
             {
-                pList.Add(i);
+                return true;
             }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 52)
-            {
-                pList.Add(i);
-            }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 54)
-            {
-                pList.Add(i);
-            }
-        }
-        if (pList.Count > 0)
-        {
-            return true;
         }
         return false;
     }
@@ -13524,8 +13533,7 @@ public class Event3_23 : Event
     {
         base.Success(Posb);
         Self.InfoDetail.AddPerk(new Perk62(Self), true);
-        ResultText = "由于" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "的情绪在" + Self.Name + "心中的持续酝酿，" + Self.Name + "想聊聊自己的日常，获得事件状态 分享日常*1，消除事件状态" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "×1";
-        Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.RemoveEffect();
+        ResultText = "由于" + perkUsedName + "的情绪在" + Self.Name + "心中的持续酝酿，" + Self.Name + "想聊聊自己的日常，获得事件状态 分享日常*1，消除事件状态" + perkUsedName + "×1";
     }
 
     public override Event Clone()
@@ -13535,25 +13543,27 @@ public class Event3_23 : Event
         List<int> pList = new List<int>();
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
         {
-            if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 51)
+            Perk perk = Self.InfoDetail.PerksInfo[i].CurrentPerk;
+            if (perk.Num == 51 || perk.Num == 52 || perk.Num == 54)
             {
-                pList.Add(i);
-            }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 52)
-            {
-                pList.Add(i);
-            }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 54)
-            {
-                pList.Add(i);
+                pList.Add(perk.Num);
             }
         }
-        if (pList.Count > 0)
-        {
-            clone.perkUsed = pList[Random.Range(0, pList.Count)];
-        }
+        clone.perkUsed = pList[Random.Range(0, pList.Count)];
 
         return clone;
+    }
+    public override void StartSolve()
+    {
+        base.StartSolve();
+        foreach (PerkInfo info in Self.InfoDetail.PerksInfo)
+        {
+            if (info.CurrentPerk.Num == perkUsed)
+            {
+                perkUsedName = info.CurrentPerk.Name;
+                info.CurrentPerk.RemoveEffect();
+            }
+        }
     }
 }
 public class Event3_24 : Event
@@ -13579,26 +13589,11 @@ public class Event3_24 : Event
         //}
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
         {
-            if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 49 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 2)
+            Perk perk = Self.InfoDetail.PerksInfo[i].CurrentPerk;
+            if ((perk.Num == 49 && perk.Level >= 2) || perk.Num == 52 || perk.Num == 51 || perk.Num == 46)
             {
-                pList.Add(i);
+                return true;
             }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 52)
-            {
-                pList.Add(i);
-            }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 51)
-            {
-                pList.Add(i);
-            }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 46)
-            {
-                pList.Add(i);
-            }
-        }
-        if (pList.Count > 0)
-        {
-            return true;
         }
         return false;
     }
@@ -13611,16 +13606,13 @@ public class Event3_24 : Event
     {
         base.Success(Posb);
         Self.InfoDetail.AddPerk(new Perk59(Self), true);
-        if (Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Num == 49)
+        if (perkUsed == 49)
         {
-            ResultText = "由于" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "的情绪在" + Self.Name + "心中的持续酝酿，" + Self.Name + "渴望与别人进行深刻交谈，获得事件状态 深刻交谈*1，消除事件状态" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "×2";
-            Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.RemoveEffect();
-            Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.RemoveEffect();
+            ResultText = "由于" + perkUsedName + "的情绪在" + Self.Name + "心中的持续酝酿，" + Self.Name + "渴望与别人进行深刻交谈，获得事件状态 深刻交谈*1，消除事件状态" + perkUsedName + "×2";
         }
         else
         {
-            ResultText = "由于" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "的情绪在" + Self.Name + "心中的持续酝酿，" + Self.Name + "渴望与别人进行深刻交谈，获得事件状态 深刻交谈*1，消除事件状态" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "×1";
-            Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.RemoveEffect();
+            ResultText = "由于" + perkUsedName + "的情绪在" + Self.Name + "心中的持续酝酿，" + Self.Name + "渴望与别人进行深刻交谈，获得事件状态 深刻交谈*1，消除事件状态" + perkUsedName + "×1";
         }
     }
 
@@ -13631,29 +13623,35 @@ public class Event3_24 : Event
         List<int> pList = new List<int>();
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
         {
-            if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 49 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 2)
+            Perk perk = Self.InfoDetail.PerksInfo[i].CurrentPerk;
+            if ((perk.Num == 49 && perk.Level >= 2) || perk.Num == 52 || perk.Num == 51 || perk.Num == 46)
             {
-                pList.Add(i);
-            }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 52)
-            {
-                pList.Add(i);
-            }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 51)
-            {
-                pList.Add(i);
-            }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 46)
-            {
-                pList.Add(i);
+                pList.Add(perk.Num);
             }
         }
-        if (pList.Count > 0)
-        {
-            clone.perkUsed = pList[Random.Range(0, pList.Count)];
-        }
+        clone.perkUsed = pList[Random.Range(0, pList.Count)];
 
         return clone;
+    }
+    public override void StartSolve()
+    {
+        base.StartSolve();
+        foreach (PerkInfo info in Self.InfoDetail.PerksInfo)
+        {
+            if (info.CurrentPerk.Num == perkUsed)
+            {
+                perkUsedName = info.CurrentPerk.Name;
+                if (perkUsed == 49 && info.CurrentPerk.Level >= 2)
+                {
+                    info.CurrentPerk.RemoveEffect();
+                    info.CurrentPerk.RemoveEffect();
+                }
+                else
+                {
+                    info.CurrentPerk.RemoveEffect();
+                }
+            }
+        }
     }
 }
 public class Event3_25 : Event
@@ -13679,22 +13677,11 @@ public class Event3_25 : Event
         //}
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
         {
-            if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 47 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 2)
+            Perk perk = Self.InfoDetail.PerksInfo[i].CurrentPerk;
+            if ((perk.Num == 47 && perk.Level >= 2) || perk.Num == 65 || perk.Num == 67)
             {
-                pList.Add(i);
+                return true;
             }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 65)
-            {
-                pList.Add(i);
-            }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 67)
-            {
-                pList.Add(i);
-            }
-        }
-        if (pList.Count > 0)
-        {
-            return true;
         }
         return false;
     }
@@ -13707,16 +13694,13 @@ public class Event3_25 : Event
     {
         base.Success(Posb);
         Self.InfoDetail.AddPerk(new Perk60(Self), true);
-        if (Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Num == 47)
+        if (perkUsed == 47)
         {
-            ResultText = "由于" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "的情绪在" + Self.Name + "心中的持续酝酿，" + Self.Name + "想要与别人分享自己的快乐，获得事件状态 分享快乐*1 ，消除事件状态" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "×2";
-            Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.RemoveEffect();
-            Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.RemoveEffect();
+            ResultText = "由于" + perkUsedName + "的情绪在" + Self.Name + "心中的持续酝酿，" + Self.Name + "想要与别人分享自己的快乐，获得事件状态 分享快乐*1 ，消除事件状态" + perkUsedName + "×2";
         }
         else
         {
-            ResultText = "由于" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "的情绪在" + Self.Name + "心中的持续酝酿，" + Self.Name + "想要与别人分享自己的快乐，获得事件状态 分享快乐*1 ，消除事件状态" + Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.Name + "×1";
-            Self.InfoDetail.PerksInfo[perkUsed].CurrentPerk.RemoveEffect();
+            ResultText = "由于" + perkUsedName + "的情绪在" + Self.Name + "心中的持续酝酿，" + Self.Name + "想要与别人分享自己的快乐，获得事件状态 分享快乐*1 ，消除事件状态" + perkUsedName + "×1";
         }
     }
 
@@ -13727,25 +13711,35 @@ public class Event3_25 : Event
         List<int> pList = new List<int>();
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
         {
-            if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 47 & Self.InfoDetail.PerksInfo[i].CurrentPerk.Level >= 2)
+            Perk perk = Self.InfoDetail.PerksInfo[i].CurrentPerk;
+            if ((perk.Num == 47 && perk.Level >= 2) || perk.Num == 65 || perk.Num == 67)
             {
-                pList.Add(i);
-            }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 65)
-            {
-                pList.Add(i);
-            }
-            else if (Self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 67)
-            {
-                pList.Add(i);
+                pList.Add(perk.Num);
             }
         }
-        if (pList.Count > 0)
-        {
-            clone.perkUsed = pList[Random.Range(0, pList.Count)];
-        }
+        clone.perkUsed = pList[Random.Range(0, pList.Count)];
 
         return clone;
+    }
+    public override void StartSolve()
+    {
+        base.StartSolve();
+        foreach (PerkInfo info in Self.InfoDetail.PerksInfo)
+        {
+            if (info.CurrentPerk.Num == perkUsed)
+            {
+                perkUsedName = info.CurrentPerk.Name;
+                if (perkUsed == 47 && info.CurrentPerk.Level >= 2)
+                {
+                    info.CurrentPerk.RemoveEffect();
+                    info.CurrentPerk.RemoveEffect();
+                }
+                else
+                {
+                    info.CurrentPerk.RemoveEffect();
+                }
+            }
+        }
     }
 }
 public class Event3_26 : Event
@@ -15789,13 +15783,13 @@ static public class EventData
     //初始序列
     public static List<Event> InitialList = new List<Event>()
     {
-       new Event3_1(),new Event3_2(),new Event3_3(),new Event3_4(),new Event3_5(),new Event3_6(),new Event3_7(),new Event3_8()
+       new Event3_1(),new Event3_2(),new Event3_3(),new Event3_4(),new Event3_5(),new Event3_6(),new Event3_7(),new Event3_8(),new Event3_45(),new Event3_46(),new Event3_47(),new Event3_48()
     };
 
     //公司序列
     public static List<Event> CompanyList = new List<Event>()
     {
-         new Event3_9(),new Event3_10(),new Event3_11(),new Event3_12(),new Event3_13(),new Event3_14(),new Event3_15(),new Event3_16(),new Event3_17(),new Event3_18(),new Event3_19()
+         new Event3_9(),new Event3_10(),new Event3_11(),new Event3_12(),new Event3_13(),new Event3_14(),new Event3_15(),new Event3_16(),new Event3_17(),new Event3_18(),new Event3_19(),new Event3_45(),new Event3_46(),new Event3_47(),new Event3_48()
     };
 
     //个人关系序列
