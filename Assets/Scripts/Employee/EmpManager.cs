@@ -91,7 +91,11 @@ public class EmpManager : MonoBehaviour
 
         if (self.CurrentDep.CommandingOffice != null && self.CurrentDep.CommandingOffice.CurrentManager != null) 
         {
-            return self.CurrentDep.CommandingOffice.CurrentManager;
+            Employee boss = self.CurrentDep.CommandingOffice.CurrentManager;
+            if (boss != self) 
+            {
+                return boss;
+            }
         }
         return null;
     }
@@ -143,14 +147,24 @@ public class EmpManager : MonoBehaviour
         List<Employee> posbTargets = new List<Employee>();     //可能的对象（随机其一）
 
         //从上下级同事之间选择
-        if (index == 0 || index == 1)  
+        if (index == 0 || index == 1)
         {
+            //如果Boss存在，则有50%概率发生到Boss上（可用是前提）
             Employee boss = FindBoss(self);
-            List<Employee> colleagues = FindColleague(self);
+            if (boss != null) 
+            {
+                if (Random.Range(0,2) == 0)
+                {
+                    if (boss.InfoDetail.Entity.Available)
+                    {
+                        return boss.InfoDetail.Entity;
+                    }
+                }
+            }
+            //否则找其他同事下属
             List<Employee> members = FindMembers(self);
+            List<Employee> colleagues = FindColleague(self);
             posbTargets = Function.MergerList<Employee>(colleagues, members);
-            if (boss != null)
-                posbTargets.Add(boss);
         }
         if (index == 2)
         {
@@ -216,6 +230,8 @@ public class EmpManager : MonoBehaviour
         List<Event> AddEvents = new List<Event>();
         List<Event> PosbEvents = new List<Event>();
 
+        List<Event> weight_7 = new List<Event>();
+        List<Event> weight_6 = new List<Event>();
         List<Event> weight_5 = new List<Event>();
         List<Event> weight_4 = new List<Event>();
         List<Event> weight_3 = new List<Event>();
@@ -244,8 +260,12 @@ public class EmpManager : MonoBehaviour
                 if (item.ConditionCheck(-1) == true)
                 {
                     item.SetWeight();
-                    if (item.Weight >= 5)
-                        weight_5.Add(item.Clone());
+                    if (item.Weight >= 7)
+                        weight_7.Add(item.Clone());
+                    if (item.Weight == 6)
+                        weight_6.Add(item.Clone());   
+                    if (item.Weight == 5)
+                        weight_5.Add(item.Clone());  
                     if (item.Weight == 4)
                         weight_4.Add(item.Clone());
                     if (item.Weight == 3)
@@ -275,8 +295,12 @@ public class EmpManager : MonoBehaviour
 
                 if (item.ConditionCheck(-1) == true)
                 {
-                    item.SetWeight();
-                    if (item.Weight >= 5)
+                    item.SetWeight(); 
+                    if (item.Weight >= 7)
+                        weight_7.Add(item.Clone());
+                    if (item.Weight == 6)
+                        weight_6.Add(item.Clone());
+                    if (item.Weight == 5)
                         weight_5.Add(item.Clone());
                     if (item.Weight == 4)
                         weight_4.Add(item.Clone());
@@ -296,6 +320,20 @@ public class EmpManager : MonoBehaviour
         //找到5个AddEvents，按42211的权重排序
         for (int i = 0; i < 5; i++)
         {
+            if (weight_7.Count > 0)
+            {
+                Event temp = weight_7[Random.Range(0, weight_7.Count)];
+                AddEvents.Add(temp);
+                weight_7.Remove(temp);
+                continue;
+            }
+            if (weight_6.Count > 0)
+            {
+                Event temp = weight_6[Random.Range(0, weight_6.Count)];
+                AddEvents.Add(temp);
+                weight_6.Remove(temp);
+                continue;
+            }
             if (weight_5.Count > 0) 
             {
                 Event temp = weight_5[Random.Range(0, weight_5.Count)];

@@ -15830,7 +15830,6 @@ public class Event3_50 : Event
         HaveTarget = true;
         Weight = 10;
         RelationRequire = 0;
-        HaveTarget = false;
     }
     public override bool SpecialCheck()
     {
