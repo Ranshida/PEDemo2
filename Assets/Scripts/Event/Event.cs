@@ -15833,6 +15833,7 @@ public class Event3_50 : Event
     }
     public override bool SpecialCheck()
     {
+        return false;
         if(EmpManager.Instance.FindBoss(Self) == Target)
         {
             return true;

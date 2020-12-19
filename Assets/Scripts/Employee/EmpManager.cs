@@ -45,18 +45,14 @@ public class EmpManager : MonoBehaviour
         SystemPause = true;
         EventPanel.gameObject.SetActive(true);
         Transform childPanel = EventPanel.Find("Panel");
-        childPanel.Find("Txt_Title").GetComponent<Text>().text = currentEvent.EventName;
-        childPanel.Find("Txt_Description").GetComponent<Text>().text = currentEvent.Self.Name + "发生了事件" + currentEvent.EventName;
-        childPanel.Find("Btn_Refuse").GetComponent<Button>().onClick.AddListener(() =>
-        {
-            SystemPause = false;
-            EventPanel.gameObject.SetActive(false);
-            (currentEvent as JudgeEvent).OnAccept();
-        });
-
         Transform acceptBtn = childPanel.Find("Btn_Accept");
         Transform cantAccept = childPanel.Find("Txt_CantAccept");
-        if (canAccept)     //可以接受
+
+        childPanel.Find("Txt_Title").GetComponent<Text>().text = currentEvent.EventName;
+        childPanel.Find("Txt_Description").GetComponent<Text>().text = currentEvent.Self.Name + "发生了事件" + currentEvent.EventName;
+
+        //接受
+        if (canAccept) 
         {
             acceptBtn.gameObject.SetActive(true);
             cantAccept.gameObject.SetActive(false);
@@ -64,14 +60,23 @@ public class EmpManager : MonoBehaviour
             {
                 SystemPause = false;
                 EventPanel.gameObject.SetActive(false);
-                (currentEvent as JudgeEvent).OnRefuse();
+                (currentEvent as JudgeEvent).OnAccept();
             });
         }
         else
         {
+            //无法接受
             acceptBtn.gameObject.SetActive(false);
             cantAccept.gameObject.SetActive(true);
         }
+
+        //拒绝
+        childPanel.Find("Btn_Refuse").GetComponent<Button>().onClick.AddListener(() =>
+        {
+            SystemPause = false;
+            EventPanel.gameObject.SetActive(false);
+            (currentEvent as JudgeEvent).OnRefuse();
+        });
     }
 
     public EmpEntity CreateEmp(Vector3 position)
