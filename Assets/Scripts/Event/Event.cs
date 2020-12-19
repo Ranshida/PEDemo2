@@ -15906,19 +15906,19 @@ static public class EventData
     //初始序列
     public static List<Event> InitialList = new List<Event>()
     {
-       new Event3_1(),new Event3_2(),new Event3_3(),new Event3_4(),new Event3_5(),new Event3_6(),new Event3_7(),new Event3_8(),new Event3_45(),new Event3_46(),new Event3_47(),new Event3_48(),new Event3_50()
+       new Event3_1(),new Event3_2(),new Event3_3(),new Event3_4(),new Event3_5(),new Event3_6(),new Event3_7(),new Event3_8(),new Event3_45(),new Event3_46(),new Event3_47(),new Event3_48()
     };
 
     //公司序列
     public static List<Event> CompanyList = new List<Event>()
     {
-         new Event3_9(),new Event3_10(),new Event3_11(),new Event3_12(),new Event3_13(),new Event3_14(),new Event3_15(),new Event3_16(),new Event3_17(),new Event3_18(),new Event3_19(),new Event3_45(),new Event3_46(),new Event3_47(),new Event3_48(),new Event3_50()
+         new Event3_9(),new Event3_10(),new Event3_11(),new Event3_12(),new Event3_13(),new Event3_14(),new Event3_15(),new Event3_16(),new Event3_17(),new Event3_18(),new Event3_19(),new Event3_45(),new Event3_46(),new Event3_47(),new Event3_48()
     };
 
     //个人关系序列
     public static List<Event> RelationList = new List<Event>()
     {
-        new Event3_20(),new Event3_21(),new Event3_22(),new Event3_23(),new Event3_24(),new Event3_25(),new Event3_26(),new Event3_27(),new Event3_28(),new Event3_29(),new Event3_30(),new Event3_31(),new Event3_32(),new Event3_33(),new Event3_34(),new Event3_35(),new Event3_36(),new Event3_37(),new Event3_38(),new Event3_39(),new Event3_40(),new Event3_41(),new Event3_42(),new Event3_43(),new Event3_44(),new Event3_45(),new Event3_46(),new Event3_47(),new Event3_48(),new Event3_49(),new Event3_50()
+        new Event3_20(),new Event3_21(),new Event3_22(),new Event3_23(),new Event3_24(),new Event3_25(),new Event3_26(),new Event3_27(),new Event3_28(),new Event3_29(),new Event3_30(),new Event3_31(),new Event3_32(),new Event3_33(),new Event3_34(),new Event3_35(),new Event3_36(),new Event3_37(),new Event3_38(),new Event3_39(),new Event3_40(),new Event3_41(),new Event3_42(),new Event3_43(),new Event3_44(),new Event3_45(),new Event3_46(),new Event3_47(),new Event3_48(),new Event3_49()
     };
 
     //权重1-4事件链表
