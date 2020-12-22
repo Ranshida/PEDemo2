@@ -168,8 +168,6 @@ public class HireControl : MonoBehaviour
         EI2.DetailInfo = ED;
         EI1.transform.parent = GC.StandbyContent;
         emp.InitRelation();
-        //检测技能
-        ED.ST.InitSkill();
         //创建特质和技能
         ED.InitSkillAndStrategy();
 

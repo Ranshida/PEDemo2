@@ -509,6 +509,7 @@ public class GameControl : MonoBehaviour
         newDep.Text_DepName.text = newDepName + num;
         newDep.GC = this;
         HourEvent.AddListener(newDep.Produce);
+        WeeklyEvent.AddListener(newDep.FaithEffect);
 
         //创建对应按钮
         newDep.DS = Instantiate(DepSelectButtonPrefab, DepSelectContent);
@@ -756,7 +757,6 @@ public class GameControl : MonoBehaviour
                 }
             }
             CurrentDep.CommandingOffice = office;
-            CurrentDep.Text_Office.text = "由 " + office.Text_OfficeName.text + " 管理";
             office.ControledDeps.Add(CurrentDep);
             office.CheckManage();
         }
@@ -794,6 +794,7 @@ public class GameControl : MonoBehaviour
             depControl.CurrentEmps.Add(CurrentEmpInfo.emp);
             depControl.UpdateUI();
             CurrentEmpInfo.emp.CurrentDep = depControl;
+            CurrentEmpInfo.emp.CurrentDep.EmpMove(false);
             HC.SetInfoPanel();
             CurrentEmpInfo.emp.InfoA.transform.parent = depControl.EmpContent;
         }
@@ -813,6 +814,7 @@ public class GameControl : MonoBehaviour
             //修改新部门生产力显示
             CurrentEmpInfo.emp.CurrentDep = depControl;
             depControl.CurrentEmps.Add(CurrentEmpInfo.emp);
+            CurrentEmpInfo.emp.CurrentDep.EmpMove(false);
             depControl.UpdateUI();
             //CurrentEmpInfo.DetailInfo.Entity.FindWorkPos();
         }
@@ -836,24 +838,28 @@ public class GameControl : MonoBehaviour
         }
         DepSelectPanel.SetActive(false);
     }
-
-    public void ResetOldAssignment()
+    //重置各项信息
+    public void ResetOldAssignment(Employee target = null)
     {
-        if (CurrentEmpInfo.emp.CurrentDep != null)
+        Employee emp = target;
+        if (emp == null)
+            emp = CurrentEmpInfo.emp;
+        if (emp.CurrentDep != null)
         {
-            CurrentEmpInfo.emp.CurrentDep.CurrentEmps.Remove(CurrentEmpInfo.emp);
+            emp.CurrentDep.CurrentEmps.Remove(emp);
             //修改生产力显示
-            CurrentEmpInfo.emp.CurrentDep.UpdateUI();
-            CurrentEmpInfo.emp.CurrentDep = null;
+            emp.CurrentDep.UpdateUI();
+            CurrentEmpInfo.emp.CurrentDep.EmpMove(true);
+            emp.CurrentDep = null;
         }
-        if (CurrentEmpInfo.emp.CurrentOffice != null)
+        if (emp.CurrentOffice != null)
         {
-            if (CurrentEmpInfo.emp.CurrentOffice.building.Type == BuildingType.高管办公室 || CurrentEmpInfo.emp.CurrentOffice.building.Type == BuildingType.CEO办公室)
-                CurrentEmpInfo.emp.InfoDetail.TempDestroyStrategy();
-            CurrentEmpInfo.emp.CurrentOffice.CurrentManager = null;
-            CurrentEmpInfo.emp.CurrentOffice.SetOfficeStatus();
-            CurrentEmpInfo.emp.CurrentOffice.CheckManage();
-            CurrentEmpInfo.emp.CurrentOffice = null;
+            if (emp.CurrentOffice.building.Type == BuildingType.高管办公室 || emp.CurrentOffice.building.Type == BuildingType.CEO办公室)
+                emp.InfoDetail.TempDestroyStrategy();
+            emp.CurrentOffice.CurrentManager = null;
+            emp.CurrentOffice.SetOfficeStatus();
+            emp.CurrentOffice.CheckManage();
+            emp.CurrentOffice = null;
         }
     }
 

@@ -839,7 +839,7 @@ public class Skill34 : Skill
 {
     public Skill34()
     {
-        Name = "分析";
+        Name = "边际利润";
         Description = "产生5点头脑风暴点数，发动后本回合每使用一颗骰子造成1点头脑风暴点数";
         StaminaCost = 40;
         DiceCost = 6;
@@ -873,11 +873,11 @@ public class Skill35 : Skill
         base.StartEffect();
         if (sc.Sp2Multiply > 0)
         {
-            TargetEmp.InfoDetail.emp.Confidence += 14;
+            TargetEmp.InfoA.GC.SC.CauseDamage(14);
             sc.Sp2Multiply = 0;
         }
         else
-            TargetEmp.InfoDetail.emp.Confidence += 7;
+            TargetEmp.InfoA.GC.SC.CauseDamage(7);
     }
 }
 
@@ -1587,7 +1587,7 @@ public class Skill66 : Skill
     {
         Name = "随机应变+";
         Description = "产生等于已选骰子点数和的头脑风暴点数";
-        StaminaCost = 30;
+        StaminaCost = 15;
         DiceCost = 0;
         EffectMode = 1;
         ManageSkill = true;
@@ -1651,10 +1651,16 @@ public static class SkillData
 {
     public static List<Skill> Skills = new List<Skill>()
     {
-        new Skill1(), new Skill2(), new Skill3(), new Skill4(), new Skill5(), new Skill6(), new Skill7(),
-        new Skill8(), new Skill9(), new Skill10(), new Skill11(), new Skill12(), new Skill13(), new Skill14(),
-        new Skill5(), new Skill6(), new Skill7(), new Skill8(), new Skill9(), new Skill20(),
-        new Skill21(), new Skill22(), new Skill23(), new Skill24(), new Skill25(), new Skill26(), new Skill27(),
-        new Skill28(), new Skill29(), new Skill30(), new Skill31()
+        //new Skill1(), new Skill2(), new Skill3(), new Skill4(), new Skill5(), new Skill6(), new Skill7(),
+        //new Skill8(), new Skill9(), new Skill10(), new Skill11(), new Skill12(), new Skill13(), new Skill14(),
+        //new Skill5(), new Skill6(), new Skill7(), new Skill8(), new Skill9(), new Skill20(),
+        //new Skill21(), new Skill22(), new Skill23(), new Skill24(), new Skill25(), new Skill26(), new Skill27(),
+        //new Skill28(), new Skill29(), new Skill30(), new Skill31()
+                new Skill32(), new Skill33(), new Skill34(), new Skill35(), new Skill36(), new Skill37(), new Skill38(),
+        new Skill39(), new Skill40(), new Skill41(), new Skill42(), new Skill43(), new Skill44(), new Skill45(),
+        new Skill46(), new Skill47(), new Skill48(), new Skill49(), new Skill50(), new Skill51(),
+        new Skill52(), new Skill53(), new Skill54(), new Skill55(), new Skill56(), new Skill57(), new Skill58(),
+        new Skill59(), new Skill60(), new Skill61(), new Skill62(), new Skill63(), new Skill64(), new Skill65(),
+        new Skill66(), new Skill67(), new Skill68()
     };
 }

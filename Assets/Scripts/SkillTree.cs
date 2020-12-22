@@ -17,6 +17,7 @@ public class SkillTree : MonoBehaviour
 
     public void InitSkill()
     {
+        //InitSkill被调用两次，刷新招聘一次，实际招聘一次，目前技能不会转移
         SkillType = info.emp.StarType;
         SetDefaultInfo(SkillType);
         SkillCheck();

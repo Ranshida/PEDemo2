@@ -37,7 +37,7 @@ public class Relation
         if (FriendValue == -2)
             Info.Text_Friend.text = "仇人";
         else if (FriendValue == -1)
-            Info.Text_Friend.text = "普通";
+            Info.Text_Friend.text = "陌路";
         else if (FriendValue == 0)
             Info.Text_Friend.text = "普通";
         else if (FriendValue == 1)

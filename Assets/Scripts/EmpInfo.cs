@@ -155,9 +155,10 @@ public class EmpInfo : MonoBehaviour
     //初始化头脑风暴技能和战略
     public void InitSkillAndStrategy()
     {
-        //for (int i = 0; i < 4; i++)
+        //for (int i = 0; i < SkillData.Skills.Count; i++)
         //{
-        //    int Snum = Random.Range(20, SkillData.Skills.Count);
+        //    //int Snum = Random.Range(20, SkillData.Skills.Count);
+        //    int Snum = i;
         //    Skill NewSkill = SkillData.Skills[Snum].Clone();
         //    NewSkill.TargetEmp = this.emp;
         //    AddSkill(NewSkill);
@@ -165,6 +166,7 @@ public class EmpInfo : MonoBehaviour
         //Skill NewSkill = new Skill32();
         //NewSkill.TargetEmp = this.emp;
         //AddSkill(NewSkill);
+        ST.InitSkill();
         AddThreeRandomStrategy();
         AddRandomPerk();
     }
@@ -210,19 +212,10 @@ public class EmpInfo : MonoBehaviour
         emp.ClearRelations();//清空所有关系
 
         ClearSkillPreset();
+        GC.ResetOldAssignment(emp);
         GC.HourEvent.RemoveListener(emp.TimePass);
         GC.CurrentEmployees.Remove(emp);
-        if(emp.CurrentDep != null)
-        {
-            emp.CurrentDep.CurrentEmps.Remove(emp);
-            emp.CurrentDep.UpdateUI();
-        }
-        else if(emp.CurrentOffice != null)
-        {
-            TempDestroyStrategy();
-            emp.CurrentOffice.CurrentManager = null;
-        }
-
+        
         //删除员工实体
         emp.InfoDetail.Entity.RemoveEntity();
 
@@ -376,6 +369,11 @@ public class EmpInfo : MonoBehaviour
         if (AddEffect == true)
             newPerk.CurrentPerk.AddEffect();
     }
+    public void DepAddPerk(Perk perk)
+    {
+        if (emp.CurrentDep != null)
+            emp.CurrentDep.AddPerk(perk);
+    }
 
     //增减头脑风暴技能
     public void AddSkill(Skill skill)
@@ -462,7 +460,8 @@ public class EmpInfo : MonoBehaviour
     }
 
     public int CalcSalary()
-    {
+    {//暂时定为25
+        return 25;
         int type = emp.InfoDetail.ST.SkillType;
         int salary = emp.SalaryExtra + emp.Manage + emp.Skill1 + emp.Skill2 + emp.Skill3 + emp.Observation + emp.Tenacity + emp.Strength
              + emp.HR + emp.Finance + emp.Decision + emp.Forecast + emp.Strategy + emp.Convince + emp.Charm + emp.Gossip;
@@ -663,5 +662,11 @@ public class EmpInfo : MonoBehaviour
         //    Destroy(CurrentStrategy.gameObject);
         //    CurrentStrategy = null;
         //}
+    }
+
+    //显示技能树
+    public void ShowSkillTree()
+    {
+        ST.gameObject.SetActive(true);
     }
 }

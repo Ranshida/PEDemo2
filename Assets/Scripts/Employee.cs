@@ -214,8 +214,8 @@ public class Employee
         set
         {
             stamina = value;
-            if (stamina > 100)
-                stamina = 100;
+            if (stamina > 100 + Strength * 5)
+                stamina = 100 + Strength * 5;
             else if (stamina < 0)
                 stamina = 0;
         }
@@ -226,8 +226,8 @@ public class Employee
         set
         {
             mentality = value;
-            if (mentality > 100)
-                mentality = 100;
+            if (mentality > 100 + Tenacity * 5)
+                mentality = 100 + Tenacity * 5;
             else if (mentality < 0)
                 mentality = 0;
             if (mentality < 50 && WantLeave == true)
@@ -977,6 +977,8 @@ public class Employee
             CharacterTendency[3] = -1;
         else
             CharacterTendency[3] = 0;
+        if (CurrentDep != null)
+            CurrentDep.FaithRelationCheck();
     }
 
     public int CheckMotivation(int type)

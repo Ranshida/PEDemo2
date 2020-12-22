@@ -32,6 +32,7 @@ public class SkillControl : MonoBehaviour
     public int SkillLockBonus = 0;//本回合每锁定一个技能额外生成两个骰子效果的层数
     public int TurnLeft = 0;//距离可以结束的回合数
     public int ExtraDiceNum = 0;//下回合额外获得的骰子数量
+    public int MobLevel = 1;//当前动员等级
     public bool NoStaminaCost = false; //下一个技能无消耗buff
     public bool DoubleCost = false; //下一个技能消耗翻倍buff
 
@@ -320,16 +321,16 @@ public class SkillControl : MonoBehaviour
             ExDamage += ExtraDiceDamage;
             DesDices.Add(SelectedDices[i]);
         }
-        for(int i = 0; i < DesDices.Count; i++)
+        if (ExDamage > 0)
+            CauseDamage(ExDamage);
+
+        CurrentSkill.skill.StartEffect();//发动技能效果
+        for (int i = 0; i < DesDices.Count; i++)
         {
             Dices.Remove(DesDices[i]);
             SelectedDices.Remove(DesDices[i]);
             Destroy(DesDices[i].gameObject);
         }
-        if (ExDamage > 0)
-            CauseDamage(ExDamage);
-
-        CurrentSkill.skill.StartEffect();//发动技能效果
 
         if(Sp4Multiply > 0)
         {
@@ -691,6 +692,7 @@ public class SkillControl : MonoBehaviour
         SelectedDices.Clear();
         CreateDice(DiceNum);
         ExtraDiceNum = 0;
+        DotValue = 0;//重置洞察
 
         if (BossLevel == 1)
             ExtraSuccessRate = 0.1f;
@@ -711,8 +713,10 @@ public class SkillControl : MonoBehaviour
             ExtraSuccessRate = 0.3f;
             ExtraMajorSuccessRate = 0.5f;
         }
-
+        MobLevel = BossLevel;
         BossLevel += 1;
+        if (BossLevel > 5)
+            BossLevel = 5;
         SetStatus();
         SkillSetButton.interactable = true;
         EndButton.interactable = true;

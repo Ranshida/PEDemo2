@@ -15,9 +15,10 @@ public class Perk
     public EffectType effectType;
 
     public Employee TargetEmp;
+    public DepControl TargetDep;
     public PerkInfo Info;
 
-    protected int TempValue1, TempValue2, TempValue3;
+    public int TempValue1, TempValue2, TempValue3;//用于检测和保存的一些数值
 
     private bool StackAdded = false;
 
@@ -33,17 +34,17 @@ public class Perk
         {
             if (effectType == EffectType.Dayily)
             {
-                TargetEmp.InfoA.GC.DailyEvent.AddListener(ContinuousEffect);
+                GameControl.Instance.DailyEvent.AddListener(ContinuousEffect);
             }
             else if (effectType == EffectType.Weekly)
             {
-                TargetEmp.InfoA.GC.WeeklyEvent.AddListener(ContinuousEffect);
+                GameControl.Instance.WeeklyEvent.AddListener(ContinuousEffect);
             }
             else if (effectType == EffectType.Monthly)
             {
-                TargetEmp.InfoA.GC.MonthlyEvent.AddListener(ContinuousEffect);
+                GameControl.Instance.MonthlyEvent.AddListener(ContinuousEffect);
             }
-            TargetEmp.InfoA.GC.HourEvent.AddListener(TimePass);
+            GameControl.Instance.HourEvent.AddListener(TimePass);
             StackAdded = true;
         }
         ImmEffect();
@@ -63,17 +64,17 @@ public class Perk
             Info.RemovePerk();
             if (effectType == EffectType.Dayily)
             {
-                TargetEmp.InfoA.GC.DailyEvent.RemoveListener(ContinuousEffect);
+                GameControl.Instance.DailyEvent.RemoveListener(ContinuousEffect);
             }
             else if (effectType == EffectType.Weekly)
             {
-                TargetEmp.InfoA.GC.WeeklyEvent.RemoveListener(ContinuousEffect);
+                GameControl.Instance.WeeklyEvent.RemoveListener(ContinuousEffect);
             }
             else if (effectType == EffectType.Monthly)
             {
-                TargetEmp.InfoA.GC.MonthlyEvent.RemoveListener(ContinuousEffect);
+                GameControl.Instance.MonthlyEvent.RemoveListener(ContinuousEffect);
             }
-            TargetEmp.InfoA.GC.HourEvent.RemoveListener(TimePass);
+            GameControl.Instance.HourEvent.RemoveListener(TimePass);
         }
     }
 
@@ -173,7 +174,7 @@ public class Perk3 : Perk
             Value /= 3;
             if (TargetEmp.Stars[Value] < TargetEmp.StarLimit[Value])
             {
-                TargetEmp.InfoDetail.AddPerk(new Perk97(TargetEmp), true);
+                TargetEmp.InfoDetail.AddPerk(new Perk109(TargetEmp), true);
             }
         }
     }
@@ -193,16 +194,16 @@ public class Perk3 : Perk
 }
 
 //热情
-public class Perk97 : Perk
+public class Perk109 : Perk
 {
     int Value = -1;
     List<int> StarNum = new List<int>();
-    public Perk97(Employee Emp) : base(Emp)
+    public Perk109(Employee Emp) : base(Emp)
     {
         Name = "热情";
         Description = "对应领域热情+1";
         TimeLeft = 192;
-        Num = 97;
+        Num = 109;
         canStack = true;
     }
 
@@ -1836,6 +1837,250 @@ public class Perk96 : Perk
     }
 }
 
+//转岗无望
+public class Perk97 : Perk
+{
+    public Perk97(Employee Emp) : base(Emp)
+    {
+        Name = "转岗无望";
+        Description = "部门信念-15";
+        TimeLeft = 96;
+        Num = 97;
+        canStack = true;
+    }
+    public override void ImmEffect()
+    {
+        TargetDep.DepFaith -= 15;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDep.DepFaith += 15;
+    }
+}
+
+//升职无望
+public class Perk98 : Perk
+{
+    public Perk98(Employee Emp) : base(Emp)
+    {
+        Name = "升职无望";
+        Description = "部门信念-15";
+        TimeLeft = 96;
+        Num = 98;
+        canStack = true;
+    }
+    public override void ImmEffect()
+    {
+        TargetDep.DepFaith -= 15;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDep.DepFaith += 15;
+    }
+}
+
+//并肩作战
+public class Perk99 : Perk
+{
+    public Perk99(Employee Emp) : base(Emp)
+    {
+        Name = "并肩作战";
+        Description = "部门内每存在一组好友/挚友关系，信念+5";
+        TimeLeft = -1;
+        Num = 99;
+        canStack = false;
+    }
+    public override void ImmEffect()
+    {
+        if(TargetDep != null)
+        {
+            for(int i = 0; i < TargetDep.CurrentEmps.Count; i++)
+            {
+                for(int j = i + 1; j < TargetDep.CurrentEmps.Count; j++)
+                {
+                    if (TargetDep.CurrentEmps[i].FindRelation(TargetDep.CurrentEmps[j]).FriendValue > 0)
+                        TempValue1 += 5;
+                }
+            }
+            TargetDep.DepFaith += TempValue1;
+            Description += "(+" + TempValue1 + ")";
+        }
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDep.DepFaith -= TempValue1;
+    }
+}
+
+//同室操戈
+public class Perk100 : Perk
+{
+    public Perk100(Employee Emp) : base(Emp)
+    {
+        Name = "同室操戈";
+        Description = "部门内每存在一组陌路/仇人关系，信念-10";
+        TimeLeft = -1;
+        Num = 100;
+        canStack = false;
+    }
+    public override void ImmEffect()
+    {
+        if (TargetDep != null)
+        {
+            for (int i = 0; i < TargetDep.CurrentEmps.Count; i++)
+            {
+                for (int j = i + 1; j < TargetDep.CurrentEmps.Count; j++)
+                {
+                    if (TargetDep.CurrentEmps[i].FindRelation(TargetDep.CurrentEmps[j]).FriendValue < 0)
+                        TempValue1 += 10;
+                }
+            }
+            TargetDep.DepFaith += TempValue1;
+            Description += "(+" + TempValue1 + ")";
+        }
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDep.DepFaith += TempValue1;
+    }
+}
+
+//信仰不一
+public class Perk101 : Perk
+{
+    public Perk101(Employee Emp) : base(Emp)
+    {
+        Name = "信仰不一";
+        Description = "部门信念-15";
+        TimeLeft = -1;
+        Num = 101;
+        canStack = false;
+    }
+    public override void ImmEffect()
+    {
+        TargetDep.DepFaith -= 15;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDep.DepFaith += 15;
+    }
+}
+
+//信仰一致
+public class Perk102 : Perk
+{
+    public Perk102(Employee Emp) : base(Emp)
+    {
+        Name = "信仰一致";
+        Description = "部门信念+15";
+        TimeLeft = -1;
+        Num = 102;
+        canStack = false;
+    }
+    public override void ImmEffect()
+    {
+        TargetDep.DepFaith += 15;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDep.DepFaith -= 15;
+    }
+}
+
+//文化不一
+public class Perk103 : Perk
+{
+    public Perk103(Employee Emp) : base(Emp)
+    {
+        Name = "文化不一";
+        Description = "部门信念-15";
+        TimeLeft = -1;
+        Num = 103;
+        canStack = false;
+    }
+    public override void ImmEffect()
+    {
+        TargetDep.DepFaith -= 15;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDep.DepFaith += 15;
+    }
+}
+
+//文化一致
+public class Perk104 : Perk
+{
+    public Perk104(Employee Emp) : base(Emp)
+    {
+        Name = "文化一致";
+        Description = "部门信念+15";
+        TimeLeft = -1;
+        Num = 104;
+        canStack = false;
+    }
+    public override void ImmEffect()
+    {
+        TargetDep.DepFaith += 15;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDep.DepFaith -= 15;
+    }
+}
+
+//重大失误
+public class Perk105 : Perk
+{
+    public Perk105(Employee Emp) : base(Emp)
+    {
+        Name = "重大失误";
+        Description = "部门信念-20";
+        TimeLeft = 96;
+        Num = 105;
+        canStack = true;
+    }
+    public override void ImmEffect()
+    {
+        TargetDep.DepFaith -= 20;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDep.DepFaith += 20;
+    }
+}
+
+//心理咨询
+public class Perk106 : Perk
+{
+    public Perk106(Employee Emp) : base(Emp)
+    {
+        Name = "心理咨询";
+        Description = "部门信念+25";
+        TimeLeft = 64;
+        Num = 106;
+        canStack = true;
+    }
+    public override void ImmEffect()
+    {
+        TargetDep.DepFaith += 25;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDep.DepFaith -= 25;
+    }
+}
+
 //遗憾
 public class Perk107 : Perk
 {
@@ -1848,6 +2093,73 @@ public class Perk107 : Perk
         canStack = true;
     }
 }
+
+//生疏磨合
+public class Perk108 : Perk
+{
+    public Perk108(Employee Emp) : base(Emp)
+    {
+        Name = "生疏磨合";
+        Description = "部门内有新转岗进来一人，信念-15";
+        TimeLeft = 16;
+        Num = 108;
+        canStack = true;
+    }
+    public override void ImmEffect()
+    {
+        TargetDep.DepFaith -= 15;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDep.DepFaith += 15;
+    }
+}
+
+//紧急调离
+public class Perk110 : Perk
+{
+    public Perk110(Employee Emp) : base(Emp)
+    {
+        Name = "紧急调离";
+        Description = "部门内有新转岗转出一人，信念-15";
+        TimeLeft = 16;
+        Num = 110;
+        canStack = true;
+    }
+    public override void ImmEffect()
+    {
+        TargetDep.DepFaith -= 15;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDep.DepFaith += 15;
+    }
+}
+
+//空置部门
+public class Perk111 : Perk
+{
+    public Perk111(Employee Emp) : base(Emp)
+    {
+        Name = "空置部门";
+        Description = "降低部门30点信念,移入员工1周后移除";
+        TimeLeft = -1;
+        Num = 111;
+        canStack = false;
+    }
+    public override void ImmEffect()
+    {
+        TargetDep.DepFaith -= 30;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDep.DepFaith += 30;
+    }
+}
+
 public static class PerkData
 {
     public static List<Perk> PerkList = new List<Perk>()

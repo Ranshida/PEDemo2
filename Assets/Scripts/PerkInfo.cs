@@ -24,9 +24,13 @@ public class PerkInfo : MonoBehaviour
                 if (CurrentPerk != null)
                 {
                     info.Text_Name.text = CurrentPerk.Name;
+                    if (CurrentPerk.Level > 1)
+                        info.Text_Name.text += "(" + CurrentPerk.Level + "层)";
                     info.Text_Description.text = CurrentPerk.Description;
                     if (CurrentPerk.TimeLeft != -1)
-                        info.Text_ExtraInfo.text = "剩余" + (CurrentPerk.TimeLeft / 8) + "周";
+                        info.Text_ExtraInfo.text = "剩余" + CurrentPerk.TimeLeft + "时";
+                    else
+                        info.Text_ExtraInfo.text = "剩余∞时";
                 }
                 if (info.Visible == false)
                     info.ShowPanel();
@@ -49,7 +53,11 @@ public class PerkInfo : MonoBehaviour
 
     public void RemovePerk()
     {
-        empInfo.PerksInfo.Remove(this);
+        if (empInfo != null)
+            empInfo.PerksInfo.Remove(this);
+        else if (CurrentPerk.TargetDep != null)
+            CurrentPerk.TargetDep.CurrentPerks.Remove(this);
+
         Destroy(this.gameObject);
     }
 }
