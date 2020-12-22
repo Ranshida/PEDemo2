@@ -268,7 +268,7 @@ public class DepControl : MonoBehaviour
                 if (GC.FinishedTask[6] > 0)
                     SpProgress += Pp;
             }
-            else if (building.Type == BuildingType.公关营销部)
+            else if (building.Type == BuildingType.公关营销部 && ActiveButton.interactable == false)
             {
                 if (GC.FinishedTask[4] > 4)
                     SpProgress += Pp;
@@ -290,7 +290,7 @@ public class DepControl : MonoBehaviour
                 float Posb = Random.Range(0.0f, 1.0f);
                 //作弊模式必定成功
                 if (CheatMode == true)
-                    Posb = 0;
+                    Posb = BaseSuccessRate - 1;
                 //成功和大成功
                 print(Posb);
                 if (Posb <= BaseSuccessRate)

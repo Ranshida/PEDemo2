@@ -351,6 +351,7 @@ public class GameControl : MonoBehaviour
             newDep.EmpLimit = 2;
             newDep.building.effectValue = 2;
             newDep.ProducePointLimit = 16;
+            newDep.ActiveMode = 1;
         }
         else if (b.Type == BuildingType.研发部门)
         {
