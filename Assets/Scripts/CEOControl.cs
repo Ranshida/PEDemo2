@@ -42,7 +42,7 @@ public class CEOControl : MonoBehaviour
             Text_Name.text = "威胁" + Target.Name;
             Text_SuccessContent.text = "好感度-20，对方会在下次会议时无条件同意CEO的意见";
             Text_FailContent.text = "好感度-20，员工独裁文化倾向+20";
-            Text_Requirement.text = "无";
+            Text_Requirement.text = "没有影响";
             Text_OptionContent.text = "执行，成功率:" + CalcPosb() + "%";
         }
         else if (GC.CEOSkillNum == 9)
@@ -65,7 +65,7 @@ public class CEOControl : MonoBehaviour
         {
             Text_Name.text = "与" + Target.Name + "结成陌路";
             Text_SuccessContent.text = "单方面视对方为陌路";
-            Text_FailContent.text = "无";
+            Text_FailContent.text = "没有影响";
             Text_Requirement.text = "需要好感度<0";
             Text_OptionContent.text = "执行，成功率:" + CalcPosb() + "%";
         }
@@ -105,7 +105,7 @@ public class CEOControl : MonoBehaviour
         {
             Text_Name.text = "劝说" + Target.Name + "改变信仰";
             Text_SuccessContent.text = "增加对方CEO所倾向的信仰及文化各15点";
-            Text_FailContent.text = "这技能失败居然没有Debuff";
+            Text_FailContent.text = "没有影响";
             Text_Requirement.text = "体力30";
             Text_OptionContent.text = "执行，成功率:" + CalcPosb() + "%";
         }
@@ -113,7 +113,7 @@ public class CEOControl : MonoBehaviour
         {
             Text_Name.text = "劝说" + Target.Name + "保持忠诚";
             Text_SuccessContent.text = "员工添加“忠诚”状态";
-            Text_FailContent.text = "这技能失败居然没有Debuff";
+            Text_FailContent.text = "没有影响";
             Text_Requirement.text = "体力30";
             Text_OptionContent.text = "执行，成功率:" + CalcPosb() + "%";
         }
@@ -121,7 +121,7 @@ public class CEOControl : MonoBehaviour
         {
             Text_Name.text = "提升" + Target.Name + "信念";
             Text_SuccessContent.text = "员工增加10点信念";
-            Text_FailContent.text = "这技能失败居然没有Debuff";
+            Text_FailContent.text = "没有影响";
             Text_Requirement.text = "体力30, 金钱300";
             Text_OptionContent.text = "执行，成功率:" + CalcPosb() + "%";
         }
@@ -129,7 +129,7 @@ public class CEOControl : MonoBehaviour
         {
             Text_Name.text = "说服" + Target.Name + "成为间谍";
             Text_SuccessContent.text = "成功后对方会成为商业间谍潜入他人公司";
-            Text_FailContent.text = "这技能失败居然没有Debuff";
+            Text_FailContent.text = "没有影响";
             Text_Requirement.text = "体力30";
             Text_OptionContent.text = "执行，成功率:" + CalcPosb() + "%";
         }
@@ -393,6 +393,9 @@ public class CEOControl : MonoBehaviour
                 GC.CurrentEmpInfo = Target.InfoDetail;
                 GC.foeControl.ShowSpyPanel();
             }
+            CEO.InfoDetail.AddHistory(Text_Name.text + "成功," + Text_Result.text);
+            if (Target != null)
+                Target.InfoDetail.AddHistory("CEO" + Text_Name.text + "成功," + Text_Result.text);
         }
         else
         {
@@ -449,6 +452,9 @@ public class CEOControl : MonoBehaviour
                 Target.ChangeRelation(CEO, -5);
                 Target.ChangeCharacter(0, -10);
             }
+            CEO.InfoDetail.AddHistory(Text_Name.text + "失败," + Text_Result.text);
+            if (Target != null)
+                Target.InfoDetail.AddHistory("CEO" + Text_Name.text + "失败," + Text_Result.text);
         }
         ResultPanel.SetActive(true);
     }

@@ -772,7 +772,7 @@ public class DepControl : MonoBehaviour
                 else if (info.CurrentPerk.Num == 104)
                     Text_DetailInfo.text += "\n文化一致 +15";
                 else if (info.CurrentPerk.Num == 105)
-                    Text_DetailInfo.text += "\n重大失误 -20";
+                    Text_DetailInfo.text += "\n重大失误 -" + (info.CurrentPerk.Level * 20);
                 else if (info.CurrentPerk.Num == 106)
                     Text_DetailInfo.text += "\n心理咨询 +25";
                 else if (info.CurrentPerk.Num == 108)

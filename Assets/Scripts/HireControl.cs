@@ -147,6 +147,9 @@ public class HireControl : MonoBehaviour
             GC.CurrentEmpInfo.StrategiesInfo[i].transform.parent = ED.StrategyContent;
         }
         ED.StrategiesInfo = GC.CurrentEmpInfo.StrategiesInfo;
+        //创建招聘历史
+        if (GC.CC.CEO != null)
+            GC.CC.CEO.InfoDetail.AddHistory("招聘了" + ED.emp.Name);
         HideOptions();
     }
 

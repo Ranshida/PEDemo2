@@ -682,6 +682,13 @@ public class GameControl : MonoBehaviour
             ResetOldAssignment();
             //CurrentEmpInfo.DetailInfo.Entity.FindWorkPos();
         }
+        //调动信息
+        if (SelectMode == 1 || SelectMode == 2)
+        {
+            CurrentEmpInfo.emp.InfoDetail.AddHistory("调动至待命室");
+            if (CurrentEmpInfo.emp.isCEO == false)
+                CC.CEO.InfoDetail.AddHistory("将" + CurrentEmpInfo.emp.Name + "调动至待命室");
+        }
     }
 
     //将移动或雇佣的员工放入特定办公室 + 确定部门(办公室)领导者 + CEO技能发动
@@ -710,6 +717,7 @@ public class GameControl : MonoBehaviour
             office.CurrentManager = CurrentEmpInfo.emp;
             CurrentEmpInfo.emp.CurrentOffice = office;
             office.SetOfficeStatus();
+            //给部门添加临时状态
             foreach(DepControl dep in office.ControledDeps)
             {
                 dep.AddPerk(new Perk108(null));
@@ -737,12 +745,12 @@ public class GameControl : MonoBehaviour
             CurrentEmpInfo.emp.CurrentOffice = office;
             office.CurrentManager = CurrentEmpInfo.emp;
             office.SetOfficeStatus();
+            //给部门添加临时状态
             foreach (DepControl dep in office.ControledDeps)
             {
                 dep.AddPerk(new Perk108(null));
                 dep.FaithRelationCheck();
             }
-            //CurrentEmpInfo.DetailInfo.Entity.FindWorkPos();
         }
         //确定部门领导者
         else if (SelectMode == 3)
@@ -784,11 +792,27 @@ public class GameControl : MonoBehaviour
             }
             CC.CEOSkillConfirm();
         }
+
+        //调动信息设定
+        if (SelectMode == 1 || SelectMode == 2)
+        {
+            CurrentEmpInfo.emp.InfoDetail.AddHistory("调动至" + office.Text_OfficeName.text);
+            if (CurrentEmpInfo.emp.isCEO == false)
+                CC.CEO.InfoDetail.AddHistory("将" + CurrentEmpInfo.emp.Name + "调动至" + office.Text_OfficeName.text);
+        }
     }
 
     //将移动或雇佣的员工放入特定部门 + 选择部门发动建筑特效 + CEO技能发动
     public void SelectDep(DepControl depControl)
     {
+        //调动信息
+        if(SelectMode == 1 || SelectMode == 2)
+        {
+            //调动信息设定
+            CurrentEmpInfo.emp.InfoDetail.AddHistory("调动至" + depControl.Text_DepName.text);
+            if (CurrentEmpInfo.emp.isCEO == false)
+                CC.CEO.InfoDetail.AddHistory("将" + CurrentEmpInfo.emp.Name + "调动至" + depControl.Text_DepName.text);
+        }
         if(SelectMode == 1)
         {
             HC.SetInfoPanel();
@@ -816,7 +840,6 @@ public class GameControl : MonoBehaviour
             depControl.CurrentEmps.Add(CurrentEmpInfo.emp);
             CurrentEmpInfo.emp.CurrentDep.EmpMove(false);
             depControl.UpdateUI();
-            //CurrentEmpInfo.DetailInfo.Entity.FindWorkPos();
         }
         //选择部门发动建筑特效
         else if(SelectMode == 5)
@@ -964,8 +987,11 @@ public class GameControl : MonoBehaviour
     //TrainEmp函数目前实际为放假功能
     public void TrainEmp(int type)
     {
+        type *= 2;
         CurrentEmpInfo.emp.VacationTime = type;
         CurrentEmpInfo.emp.InfoDetail.Entity.SetBusy();
+        CurrentEmpInfo.emp.InfoDetail.AddHistory("被安排放假" + type + "工时");
+        CC.CEO.InfoDetail.AddHistory("安排" + CurrentEmpInfo.emp.Name + "放假" + type + "工时");
         if (CurrentEmpInfo.emp.isCEO == true)
             CC.SkillButton.interactable = false;
     }

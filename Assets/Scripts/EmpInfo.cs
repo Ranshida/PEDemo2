@@ -207,7 +207,7 @@ public class EmpInfo : MonoBehaviour
         if (GC.EC.ManagerVoteCheck(emp, true, true) == false)
             return;
 
-
+        GC.CC.CEO.InfoDetail.AddHistory("解雇了" + emp.Name);
 
         emp.ClearRelations();//清空所有关系
 
@@ -269,6 +269,8 @@ public class EmpInfo : MonoBehaviour
             {
                 emp.Mentality += (int)(10 * GC.HRBuildingMentalityExtra);
                 GC.TotalEmpContent.parent.parent.gameObject.SetActive(false);
+                emp.InfoDetail.AddHistory("收到CEO安抚,心力+" + (10 * GC.HRBuildingMentalityExtra));
+                GC.CC.CEO.InfoDetail.AddHistory("安抚了" + emp.Name + ",对方心力+" + (10 * GC.HRBuildingMentalityExtra));
             }
             else if (GC.CEOSkillNum == 5)
             {
