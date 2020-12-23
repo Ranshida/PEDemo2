@@ -8,7 +8,6 @@ public class OfficeControl : MonoBehaviour
     public bool CanWork = false;
     public int ManageValue = 0, Progress = 100, MaxProgress = 96;
     public int OfficeMode = 1;//1决策 战略充能 2人力 心力回复(说服) 3管理 加启发 4招聘 5行业 刷新建筑
-    public int ExpTime = 5;//每5工时加经验
 
     public GameObject OfficeWarning;
     public Transform SRateDetailPanel;
@@ -102,7 +101,10 @@ public class OfficeControl : MonoBehaviour
     public void CheckManage()
     {
         if (CurrentManager != null)
+        {
             ManageValue = CurrentManager.Manage;
+
+        }
         for(int i = 0; i < ControledDeps.Count; i++)
         {
             if (i < ManageValue)
@@ -128,6 +130,23 @@ public class OfficeControl : MonoBehaviour
                 ControledOffices[i].CanWork = false;
                 ControledOffices[i].OfficeWarning.SetActive(true);
             }
+        }
+    }
+
+    void SetManageValue()
+    {
+        if (CurrentManager != null)
+        {
+            if (CurrentManager.Manage <= 5)
+                ManageValue = 1;
+            else if (CurrentManager.Manage <= 9)
+                ManageValue = 2;
+            else if (CurrentManager.Manage <= 13)
+                ManageValue = 3;
+            else if (CurrentManager.Manage < 17)
+                ManageValue = 4;
+            else
+                ManageValue = 5;
         }
     }
 
@@ -469,30 +488,16 @@ public class OfficeControl : MonoBehaviour
         //经验获取
         if (CurrentManager != null)
         {
-            ExpTime -= 1;
-            if (ExpTime == 0 && CurrentManager != null)
-            {
-                ExpTime = 5;
-                if (building.Type == BuildingType.CEO办公室 || building.Type == BuildingType.高管办公室)
-                {
-                    if(OfficeMode == 1)
-                        CurrentManager.GainExp(250, 10);
-                    else if(OfficeMode == 2)
-                        CurrentManager.GainExp(250, 13);
-                    else if (OfficeMode == 3)
-                        CurrentManager.GainExp(250, 7);
-                    else if (OfficeMode == 4)
-                        CurrentManager.GainExp(250, 8);
-                    else if (OfficeMode == 5)
-                        CurrentManager.GainExp(250, 11);
-                }
-                else if (building.Type == BuildingType.财务部)
-                    CurrentManager.GainExp(50, 9);
-                else if (building.Type == BuildingType.按摩房)
-                    CurrentManager.GainExp(50, 5);
-                else if (building.Type == BuildingType.健身房)
-                    CurrentManager.GainExp(50, 6);
-            }
+            if (OfficeMode == 1)
+                CurrentManager.GainExp(5, 10);
+            else if (OfficeMode == 2)
+                CurrentManager.GainExp(5, 13);
+            else if (OfficeMode == 3)
+                CurrentManager.GainExp(5, 7);
+            else if (OfficeMode == 4)
+                CurrentManager.GainExp(5, 8);
+            else if (OfficeMode == 5)
+                CurrentManager.GainExp(5, 11);
         }
     }
 
@@ -522,6 +527,8 @@ public class OfficeControl : MonoBehaviour
         for(int i = 0; i < ControledDeps.Count; i++)
         {
             ControledDeps[i].CommandingOffice = null;
+            ControledDeps[i].AddPerk(new Perk110(null));
+            ControledDeps[i].FaithRelationCheck();
         }
         for (int i = 0; i < ControledOffices.Count; i++)
         {

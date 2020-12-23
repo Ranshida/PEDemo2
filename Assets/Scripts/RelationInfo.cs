@@ -6,6 +6,14 @@ using UnityEngine.UI;
 public class RelationInfo : MonoBehaviour
 {
     public Text Text_Name, Text_Friend, Text_Master, Text_Love, Text_RPoint;
+    public Relation relation;
+    private void Update()
+    {
+        if(relation != null)
+        {
+            relation.UpdateUI();
+        }
+    }
 }
 
 public class Relation
@@ -27,7 +35,7 @@ public class Relation
         KnowEachOther = false;
         RPoint = 0;
         Info = MonoBehaviour.Instantiate(Target.InfoDetail.GC.RelationInfoPrefab, Self.InfoDetail.RelationContent);
-        UpdateUI();
+        Info.relation = this;
     }
 
     public void UpdateUI()
@@ -162,42 +170,34 @@ public class Relation
         Relation rt = Target.FindRelation(Self);
 
         LoveValue = 1;
-        UpdateUI();
         Self.Lover = Target;
 
         rt.LoveValue = 1;
-        rt.UpdateUI();
         Target.Lover = Self;
     }
     public void RemoveLover()
     {
         Relation rt = Self.Lover.FindRelation(Self);
         rt.LoveValue = 0;
-        rt.UpdateUI();
         Self.Lover.Lover = null;
 
         LoveValue = 0;
-        UpdateUI();
         Self.Lover = null;
     }
     public void AddMaster()
     {
         Target.FindRelation(Self).MasterValue = 1;
-        Target.FindRelation(Self).UpdateUI();
         Target.Students.Add(Self);
 
         MasterValue = 2;
-        UpdateUI();
         Self.Master = Target;
     }
     public void RemoveMaster()
     {
         Self.Master.Students.Remove(Self);
         Self.Master.FindRelation(Self).MasterValue = 0;
-        Self.Master.FindRelation(Self).UpdateUI();
 
         MasterValue = 0;
-        UpdateUI();
         Self.Master = null;
     }
 

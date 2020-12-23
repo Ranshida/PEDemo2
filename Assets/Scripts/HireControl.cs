@@ -21,10 +21,17 @@ public class HireControl : MonoBehaviour
         InitCEO();
         AddHireTypes(new HireType(1));
         RefreshHire();
+        //初始的员工
         for(int i = 0; i < 5; i++)
         {
-            if (i < 5)
+            if (i < 2)
             {
+                //下面两个StarType是为了临时设定技能树
+                if (i == 0)
+                    HireInfos[i].emp.StarType = 2;
+                else if (i == 1)
+                    HireInfos[i].emp.StarType = 6;
+
                 GC.CurrentEmpInfo = HireInfos[i];
                 SetInfoPanel();
                 GC.CurrentEmpInfo.emp.InfoA.transform.parent = GC.StandbyContent;
@@ -169,6 +176,7 @@ public class HireControl : MonoBehaviour
         EI1.transform.parent = GC.StandbyContent;
         emp.InitRelation();
         //创建特质和技能
+        emp.StarType = 11;//临时设定CEO技能树
         ED.InitSkillAndStrategy();
 
         //创建员工实体

@@ -166,7 +166,17 @@ public class SkillControl : MonoBehaviour
         {
             BossLevel = 1;
             SetStatus();
-            DiceNum = CurrentManager.Manage / 2 + GC.ExtraDice;
+            if (CurrentManager.Manage <= 5)
+                DiceNum = 2;
+            else if (CurrentManager.Manage <= 9)
+                DiceNum = 3;
+            else if (CurrentManager.Manage <= 13)
+                DiceNum = 4;
+            else if (CurrentManager.Manage < 17)
+                DiceNum = 5;
+            else
+                DiceNum = 6;
+            DiceNum += GC.ExtraDice;
             if (DiceNum > 6)
                 DiceNum = 6;
             CreateDice(DiceNum);
@@ -543,8 +553,6 @@ public class SkillControl : MonoBehaviour
                     tempvalue -= InvolvedEmps[i].Confidence;
                     InvolvedEmps[i].Confidence = 0;
                     InvolvedEmps[i].Mentality -= tempvalue;
-                    if (InvolvedEmps[i].Mentality == 0)
-                        InvolvedEmps[i].Exhausted();
                 }
             }
         }
@@ -567,8 +575,6 @@ public class SkillControl : MonoBehaviour
                 value -= TargetEmployee.Confidence;
                 TargetEmployee.Confidence = 0;
                 TargetEmployee.Mentality -= value;
-                if (TargetEmployee.Mentality == 0)
-                    TargetEmployee.Exhausted();
             }
         }
 
@@ -598,7 +604,7 @@ public class SkillControl : MonoBehaviour
         //下回合少获得n个骰子
         else if (NextBossSkill == 11)
         {
-            int maxValue = (TargetDep.CommandingOffice.ManageValue - TargetDep.CommandingOffice.ControledDeps.Count + GC.ExtraDice) / 2;
+            int maxValue = DiceNum;
             if (maxValue <= 0)
                 maxValue = 2;
             ExtraDiceNum = Random.Range(1, maxValue) * -1;

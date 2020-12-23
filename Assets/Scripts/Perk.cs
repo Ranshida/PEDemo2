@@ -1896,11 +1896,18 @@ public class Perk99 : Perk
     {
         if(TargetDep != null)
         {
-            for(int i = 0; i < TargetDep.CurrentEmps.Count; i++)
+            List<Employee> TempEmps = new List<Employee>();
+            foreach (Employee emp in TargetDep.CurrentEmps)
             {
-                for(int j = i + 1; j < TargetDep.CurrentEmps.Count; j++)
+                TempEmps.Add(emp);
+            }
+            if (TargetDep.CommandingOffice != null && TargetDep.CommandingOffice.CurrentManager != null)
+                TempEmps.Add(TargetDep.CommandingOffice.CurrentManager);
+            for (int i = 0; i < TempEmps.Count; i++)
+            {
+                for(int j = i + 1; j < TempEmps.Count; j++)
                 {
-                    if (TargetDep.CurrentEmps[i].FindRelation(TargetDep.CurrentEmps[j]).FriendValue > 0)
+                    if (TempEmps[i].FindRelation(TempEmps[j]).FriendValue > 0)
                         TempValue1 += 5;
                 }
             }
@@ -1930,16 +1937,23 @@ public class Perk100 : Perk
     {
         if (TargetDep != null)
         {
-            for (int i = 0; i < TargetDep.CurrentEmps.Count; i++)
+            List<Employee> TempEmps = new List<Employee>();
+            foreach (Employee emp in TargetDep.CurrentEmps)
             {
-                for (int j = i + 1; j < TargetDep.CurrentEmps.Count; j++)
+                TempEmps.Add(emp);
+            }
+            if (TargetDep.CommandingOffice != null && TargetDep.CommandingOffice.CurrentManager != null)
+                TempEmps.Add(TargetDep.CommandingOffice.CurrentManager);
+            for (int i = 0; i < TempEmps.Count; i++)
+            {
+                for (int j = i + 1; j < TempEmps.Count; j++)
                 {
-                    if (TargetDep.CurrentEmps[i].FindRelation(TargetDep.CurrentEmps[j]).FriendValue < 0)
+                    if (TempEmps[i].FindRelation(TempEmps[j]).FriendValue > 0)
                         TempValue1 += 10;
                 }
             }
-            TargetDep.DepFaith += TempValue1;
-            Description += "(+" + TempValue1 + ")";
+            TargetDep.DepFaith -= TempValue1;
+            Description += "(-" + TempValue1 + ")";
         }
     }
     public override void RemoveEffect()

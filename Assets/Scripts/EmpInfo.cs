@@ -312,10 +312,6 @@ public class EmpInfo : MonoBehaviour
         }
         gameObject.SetActive(true);
         AdjustSize();
-        for(int i = 0; i < emp.Relations.Count; i++)
-        {
-            emp.Relations[i].UpdateUI();
-        }
     }
 
     public void SetSkillName()

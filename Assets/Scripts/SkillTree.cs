@@ -25,6 +25,7 @@ public class SkillTree : MonoBehaviour
     }
     public void SkillCheck()
     {
+        //1观察
         if (SkillType == 1)
         {
             if (SkillLevel == 0 && info.emp.Observation >= 5)
@@ -57,6 +58,7 @@ public class SkillTree : MonoBehaviour
                 info.AddSkill(new Skill49());
             }
         }
+        //2程序
         else if (SkillType == 2)
         {
             if (SkillLevel == 0 && info.emp.Skill1 >= 5)
@@ -89,6 +91,7 @@ public class SkillTree : MonoBehaviour
                 info.AddSkill(new Skill58());
             }
         }
+        //3产品
         else if (SkillType == 3)
         {
             if (SkillLevel == 0 && info.emp.Skill3 >= 5)
@@ -121,6 +124,7 @@ public class SkillTree : MonoBehaviour
                 info.AddSkill(new Skill50());
             }
         }
+        //4市场
         else if (SkillType == 4)
         {
             if (SkillLevel == 0 && info.emp.Skill2 >= 5)
@@ -153,6 +157,7 @@ public class SkillTree : MonoBehaviour
                 info.AddSkill(new Skill49());
             }
         }
+        //5财务
         else if (SkillType == 5)
         {
             if (SkillLevel == 0 && info.emp.Finance >= 5)
@@ -185,6 +190,7 @@ public class SkillTree : MonoBehaviour
                 info.AddSkill(new Skill49());
             }
         }
+        //6人力
         else if (SkillType == 6)
         {
             if (SkillLevel == 0 && info.emp.HR >= 5)
@@ -217,6 +223,7 @@ public class SkillTree : MonoBehaviour
                 info.AddSkill(new Skill50());
             }
         }
+        //7强壮
         else if (SkillType == 7)
         {
             if (SkillLevel == 0 && info.emp.Strength >= 5)
@@ -249,6 +256,7 @@ public class SkillTree : MonoBehaviour
                 info.AddSkill(new Skill49());
             }
         }
+        //8坚韧
         else if (SkillType == 8)
         {
             if (SkillLevel == 0 && info.emp.Tenacity >= 5)
@@ -281,6 +289,7 @@ public class SkillTree : MonoBehaviour
                 info.AddSkill(new Skill50());
             }
         }
+        //9行业
         else if (SkillType == 9)
         {
             if (SkillLevel == 0 && info.emp.Forecast >= 5)
@@ -313,6 +322,7 @@ public class SkillTree : MonoBehaviour
                 info.AddSkill(new Skill50());
             }
         }
+        //10谋略
         else if (SkillType == 10)
         {
             if (SkillLevel == 0 && info.emp.Strategy >= 5)
@@ -345,6 +355,7 @@ public class SkillTree : MonoBehaviour
                 info.AddSkill(new Skill49());
             }
         }
+        //11-13管理
         else if (SkillType == 11)
         {
             if (SkillLevel == 0 && info.emp.Manage >= 10 && info.emp.HR >= 5)

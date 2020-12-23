@@ -228,8 +228,11 @@ public class Employee
             mentality = value;
             if (mentality > 100 + (Tenacity * 5))
                 mentality = 100 + (Tenacity * 5);
-            else if (mentality < 0)
+            else if (mentality <= 0)
+            {
                 mentality = 0;
+                Exhausted();
+            }
             if (mentality < 50 && WantLeave == true)
                 InfoA.Fire();
             if (isCEO == true)
@@ -879,7 +882,6 @@ public class Employee
             if (r.RPoint > 100)
                 r.RPoint = 100;
         }
-        r.UpdateUI();
         //else if (r.RPoint < 0)
         //    r.RPoint = 0;
         //r.RelationCheck();

@@ -134,7 +134,6 @@ public class DepControl : MonoBehaviour
     public Button SurveyButton, ActiveButton, ModeChangeButton;
     public EmpType type;
 
-    public Skill[] DSkillSetA = new Skill[6], DSkillSetB = new Skill[6], DSkillSetC = new Skill[6];
     public List<ProduceBuff> produceBuffs = new List<ProduceBuff>();
     public List<Employee> CurrentEmps = new List<Employee>();
     public List<OfficeControl> InRangeOffices = new List<OfficeControl>();
@@ -158,7 +157,7 @@ public class DepControl : MonoBehaviour
                 if (CommandingOffice.CurrentManager != null)
                 {
                     int TotalNum = CommandingOffice.ControledDeps.Count + CommandingOffice.ControledOffices.Count;
-                    int LimitNum = CommandingOffice.CurrentManager.Manage;
+                    int LimitNum = CommandingOffice.ManageValue;
                     Text_Office.text = "由 " + CommandingOffice.CurrentManager.Name + "(" + TotalNum + "/" + LimitNum + ")" +
                         "(" + CommandingOffice.Text_OfficeName.text + ") 管理";
                 }
@@ -371,11 +370,8 @@ public class DepControl : MonoBehaviour
                     if (Posb2 < 0.5f + GC.SC.ExtraMajorFailureRate)
                     {
                         //大失败
-                        GC.CreateMessage(Text_DepName.text + " 工作中发生重大失误,部门员工心力-20");
-                        for (int i = 0; i < CurrentEmps.Count; i++)
-                        {
-                            CurrentEmps[i].Mentality -= 20;
-                        }
+                        GC.CreateMessage(Text_DepName.text + " 工作中发生重大失误");
+                        AddPerk(new Perk105(null));
                     }
                     else
                     {
@@ -424,7 +420,7 @@ public class DepControl : MonoBehaviour
                 Text_Task.text = "当前任务:" + building.Function_B;
             Text_Progress.text = "生产力:" + Pp + "/时";
             //成功率计算
-            Text_Quality.text = "成功率:" + ((0.5f + CountSuccessRate(building.effectValue)) * 100) + "%";
+            Text_Quality.text = "成功率:" + Mathf.Round((0.5f + CountSuccessRate(building.effectValue)) * 100) + "%";
 
             int limit = ProducePointLimit;
             //研发部门额外Buff
@@ -651,8 +647,6 @@ public class DepControl : MonoBehaviour
                     EValue += 0.06f;
                 else if (value > 21)
                     EValue += 0.1f;
-                BaseSuccessRate += EValue;
-                BaseSuccessRate += CurrentEmps[i].ExtraSuccessRate;
                 //文字显示
                 Text_SRateDetail.text += CurrentEmps[i].Name + "技能:" + (EValue * 100) + "%";
                 if (CurrentEmps[i].ExtraSuccessRate > 0.001f || CurrentEmps[i].ExtraSuccessRate < -0.001f)
@@ -732,6 +726,7 @@ public class DepControl : MonoBehaviour
             Text_SRateDetail.text += "\n额外研发成功率:" + (GC.ResearchExtraSuccessRate * 100) + "%";
             BaseSuccessRate += GC.ResearchExtraSuccessRate;
         }
+        
         return BaseSuccessRate + GC.SC.ExtraSuccessRate + Efficiency;
     }
 
@@ -739,10 +734,7 @@ public class DepControl : MonoBehaviour
     {
         Text_DetailInfo.gameObject.SetActive(false);
         Text_SRateDetail.gameObject.SetActive(true);
-        if (type == EmpType.HR)
-            CountSuccessRate(8);
-        else
-            CountSuccessRate(building.effectValue);
+        CountSuccessRate(building.effectValue);
         SRateDetailPanel.transform.position = Input.mousePosition;
         SRateDetailPanel.gameObject.SetActive(true);
         LayoutRebuilder.ForceRebuildLayoutImmediate(SRateDetailPanel.gameObject.GetComponent<RectTransform>());
@@ -1559,34 +1551,43 @@ public class DepControl : MonoBehaviour
     //检测信念
     public void FaithRelationCheck()
     {
-        if (CurrentEmps.Count > 1)
+        List<Employee> TempEmps = new List<Employee>();
+        foreach(Employee emp in CurrentEmps)
+        {
+            TempEmps.Add(emp);
+        }
+        //如果有高管加上高管
+        if (CommandingOffice != null && CommandingOffice.CurrentManager != null)
+            TempEmps.Add(CommandingOffice.CurrentManager);
+
+        if (TempEmps.Count > 1)
         {
             bool GoodRelation = false, BadRelation = false;
             int CPos = 0, CNeg = 0, RPos = 0, RNeg = 0;
-            for (int i = 0; i < CurrentEmps.Count; i++)
+            for (int i = 0; i < TempEmps.Count; i++)
             {
-                for (int j = i + 1; j < CurrentEmps.Count; j++)
+                for (int j = i + 1; j < TempEmps.Count; j++)
                 {
-                    if (CurrentEmps[i].FindRelation(CurrentEmps[j]).FriendValue > 0)
+                    if (TempEmps[i].FindRelation(TempEmps[j]).FriendValue > 0)
                     {
                         GoodRelation = true;
                         break;
                     }
-                    else if (CurrentEmps[i].FindRelation(CurrentEmps[j]).FriendValue < 0)
+                    else if (TempEmps[i].FindRelation(TempEmps[j]).FriendValue < 0)
                     {
                         BadRelation = true;
                         break;
                     }
                 }
                 //文化倾向计数
-                if (CurrentEmps[i].CharacterTendency[0] == -1)
+                if (TempEmps[i].CharacterTendency[0] == -1)
                     CNeg += 1;
-                else if (CurrentEmps[i].CharacterTendency[0] == 1)
+                else if (TempEmps[i].CharacterTendency[0] == 1)
                     CPos += 1;
                 //信仰倾向计数
-                if (CurrentEmps[i].CharacterTendency[1] == -1)
+                if (TempEmps[i].CharacterTendency[1] == -1)
                     RNeg += 1;
-                else if (CurrentEmps[i].CharacterTendency[1] == 1)
+                else if (TempEmps[i].CharacterTendency[1] == 1)
                     RPos += 1;
             }
             if (GoodRelation == true)
@@ -1594,7 +1595,7 @@ public class DepControl : MonoBehaviour
             if (BadRelation == true)
                 AddPerk(new Perk100(null));
 
-            if (RPos == CurrentEmps.Count || RNeg == CurrentEmps.Count)
+            if (RPos == TempEmps.Count || RNeg == TempEmps.Count)
             {
                 RemovePerk(101);
                 AddPerk(new Perk102(null));
@@ -1604,7 +1605,7 @@ public class DepControl : MonoBehaviour
                 RemovePerk(102);
                 AddPerk(new Perk101(null));
             }
-            if (CPos == CurrentEmps.Count || CNeg == CurrentEmps.Count)
+            if (CPos == TempEmps.Count || CNeg == TempEmps.Count)
             {
                 RemovePerk(103);
                 AddPerk(new Perk104(null));
@@ -1630,6 +1631,9 @@ public class DepControl : MonoBehaviour
     //信念效果
     public void FaithEffect()
     {
+        //员工关系检查放在这里，每周进行一次
+        FaithRelationCheck();
+
         int value = 0;
         if (DepFaith >= 80)
             value = 10;

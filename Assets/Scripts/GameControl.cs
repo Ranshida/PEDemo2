@@ -117,7 +117,7 @@ public class GameControl : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-        Morale = 100;
+        Morale = 50;
     }
 
     private void Start()
@@ -710,6 +710,11 @@ public class GameControl : MonoBehaviour
             office.CurrentManager = CurrentEmpInfo.emp;
             CurrentEmpInfo.emp.CurrentOffice = office;
             office.SetOfficeStatus();
+            foreach(DepControl dep in office.ControledDeps)
+            {
+                dep.AddPerk(new Perk108(null));
+                dep.FaithRelationCheck();
+            }
         }
         else if (SelectMode == 2)
         {
@@ -732,6 +737,11 @@ public class GameControl : MonoBehaviour
             CurrentEmpInfo.emp.CurrentOffice = office;
             office.CurrentManager = CurrentEmpInfo.emp;
             office.SetOfficeStatus();
+            foreach (DepControl dep in office.ControledDeps)
+            {
+                dep.AddPerk(new Perk108(null));
+                dep.FaithRelationCheck();
+            }
             //CurrentEmpInfo.DetailInfo.Entity.FindWorkPos();
         }
         //确定部门领导者
@@ -741,25 +751,15 @@ public class GameControl : MonoBehaviour
             {
                 CurrentDep.CommandingOffice.ControledDeps.Remove(CurrentDep);
                 CurrentDep.CommandingOffice.CheckManage();
-                //清除前高管技能预设
-                if (CurrentDep.CommandingOffice.CurrentManager != null)
-                {
-                    for (int j = 0; j < 6; j++)
-                    {
-                        if (CurrentDep.DSkillSetA[j] != null && CurrentDep.DSkillSetA[j].TargetEmp == CurrentDep.CommandingOffice.CurrentManager)
-                            CurrentDep.DSkillSetA[j] = null;
-
-                        if (CurrentDep.DSkillSetB[j] != null && CurrentDep.DSkillSetB[j].TargetEmp == CurrentDep.CommandingOffice.CurrentManager)
-                            CurrentDep.DSkillSetB[j] = null;
-
-                        if (CurrentDep.DSkillSetC[j] != null && CurrentDep.DSkillSetC[j].TargetEmp == CurrentDep.CommandingOffice.CurrentManager)
-                            CurrentDep.DSkillSetC[j] = null;
-                    }
-                }
+                CurrentDep.AddPerk(new Perk110(null));
             }
             CurrentDep.CommandingOffice = office;
             office.ControledDeps.Add(CurrentDep);
             office.CheckManage();
+            //加额外状态
+            if(office.CurrentManager != null)
+                CurrentDep.AddPerk(new Perk108(null));
+            CurrentDep.FaithRelationCheck();
         }
         //确定办公室的部门领导者
         else if (SelectMode == 8)
@@ -770,7 +770,6 @@ public class GameControl : MonoBehaviour
                 CurrentOffice.CommandingOffice.CheckManage();
             }
             CurrentOffice.CommandingOffice = office;
-            //CurrentDep.Text_Office.text = "由 " + office.Text_OfficeName.text + " 管理";
             office.ControledOffices.Add(CurrentOffice);
             office.CheckManage();
         }
@@ -792,11 +791,11 @@ public class GameControl : MonoBehaviour
     {
         if(SelectMode == 1)
         {
+            HC.SetInfoPanel();
             depControl.CurrentEmps.Add(CurrentEmpInfo.emp);
             depControl.UpdateUI();
             CurrentEmpInfo.emp.CurrentDep = depControl;
             CurrentEmpInfo.emp.CurrentDep.EmpMove(false);
-            HC.SetInfoPanel();
             CurrentEmpInfo.emp.InfoA.transform.parent = depControl.EmpContent;
         }
         else if(SelectMode == 2)
@@ -855,6 +854,11 @@ public class GameControl : MonoBehaviour
         }
         if (emp.CurrentOffice != null)
         {
+            foreach (DepControl dep in emp.CurrentOffice.ControledDeps)
+            {
+                dep.AddPerk(new Perk110(null));
+                dep.FaithRelationCheck();
+            }
             if (emp.CurrentOffice.building.Type == BuildingType.高管办公室 || emp.CurrentOffice.building.Type == BuildingType.CEO办公室)
                 emp.InfoDetail.TempDestroyStrategy();
             emp.CurrentOffice.CurrentManager = null;
