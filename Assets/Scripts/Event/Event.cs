@@ -12485,6 +12485,7 @@ public class Event3_13 : Event
         {
             if (info.CurrentPerk.Num == perkUsed)
             {
+                perkUsedName = info.CurrentPerk.Name;
                 if(perkUsed == 49 && info.CurrentPerk.Level >= 2)
                 {
                     info.CurrentPerk.RemoveEffect();
@@ -14377,7 +14378,7 @@ public class Event3_32 : Event
         Self.AddEmotion(EColor.Yellow);
         Self.ChangeRelation(Target, 15);
         Target.ChangeRelation(Self, 15);
-        ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "跟朋友" + Target.Name + "分享了日常，";
+        ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "跟" + Target.Name + "分享了日常，";
         ObjectText = ResultText + Target.Name + "觉得还挺有趣的，双方好感度+15，获得情绪状态：愉悦×1，消除事件状态：分享日常×1";
         ResultText += "两人谈了一会儿，双方好感度-5，双方好感度+15，获得情绪状态：愉悦×1，消除事件状态：分享日常×1";
     }
@@ -14399,7 +14400,7 @@ public class Event3_32 : Event
         Self.AddEmotion(EColor.Red);
         Self.ChangeRelation(Target, -15);
         Target.ChangeRelation(Self, -15);
-        ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "跟朋友" + Target.Name + "分享了日常，";
+        ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "跟" + Target.Name + "分享了日常，";
         ObjectText = ResultText + Target.Name + "完全不懂为什么"+Self.Name+"说这些，双方好感度-15，获得情绪状态：反感×1，消除事件状态：分享日常×1";
         ResultText += Target.Name + "有些走神，双方好感度-15，获得情绪状态：反感×1，消除事件状态：分享日常×1";
     }
@@ -14460,7 +14461,7 @@ public class Event3_33 : Event
         Self.AddEmotion(EColor.Yellow);
         Self.ChangeRelation(Target, 10);
         Target.ChangeRelation(Self, 10);
-        ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "向朋友" + Target.Name + "寻求认可，";
+        ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "向" + Target.Name + "寻求认可，";
         ObjectText = ResultText + Target.Name + "认可了"+Self.Name+"，双方好感度+10，获得情绪状态：愉悦×1，消除事件状态：认可交谈×1";
         ResultText += Target.Name + "肯定了"+Self.Name+"，双方好感度+10，获得情绪状态：愉悦×1，消除事件状态：认可交谈×1";
     }
@@ -14482,7 +14483,7 @@ public class Event3_33 : Event
         Self.AddEmotion(EColor.DRed);
         Self.ChangeRelation(Target, -10);
         Target.ChangeRelation(Self, -10);
-        ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "向朋友" + Target.Name + "寻求认可，";
+        ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "向" + Target.Name + "寻求认可，";
         ObjectText = ResultText + Target.Name + "敷衍了"+Self.Name+"，双方好感度-10，获得情绪状态：愤怒×1，消除事件状态：认可交谈×1";
         ResultText += Target.Name + "漫不经心地夸了两句"+Self.Name+"，双方好感度-10，获得情绪状态：愤怒×1，消除事件状态：认可交谈×1";
     }
