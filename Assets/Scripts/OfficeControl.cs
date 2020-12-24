@@ -101,10 +101,7 @@ public class OfficeControl : MonoBehaviour
     public void CheckManage()
     {
         if (CurrentManager != null)
-        {
-            ManageValue = CurrentManager.Manage;
-
-        }
+            SetManageValue();
         for(int i = 0; i < ControledDeps.Count; i++)
         {
             if (i < ManageValue)
@@ -328,13 +325,13 @@ public class OfficeControl : MonoBehaviour
 
             //文字显示
             Text_SRateDetail.text += (EValue * 100) + "%";
-            if (CurrentManager.ExtraSuccessRate > 0.001f || CurrentManager.ExtraSuccessRate < -0.001f)
-                Text_SRateDetail.text += " +" + (CurrentManager.ExtraSuccessRate * 100) + "%";
+            if (Mathf.Abs(CurrentManager.ExtraSuccessRate) > 0.001f)
+                Text_SRateDetail.text += "\n高管额外效果" + (CurrentManager.ExtraSuccessRate * 100) + "%";
 
-            if (GC.SC.ExtraSuccessRate > 0.001f)
+            if (Mathf.Abs(GC.SC.ExtraSuccessRate) > 0.001f)
                 Text_SRateDetail.text += "\n动员效果:" + (GC.SC.ExtraSuccessRate * 100) + "%";
 
-            if (OfficeMode == 4 && GC.HireSuccessExtra > 0.001f)
+            if (OfficeMode == 4 && Mathf.Abs(GC.HireSuccessExtra) > 0.001f)
             {
                 Text_SRateDetail.text += "\n额外招聘成功率:" + (GC.HireSuccessExtra * 100) + "%";
                 BaseSRate += GC.HireSuccessExtra;

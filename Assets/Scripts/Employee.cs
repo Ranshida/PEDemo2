@@ -350,9 +350,6 @@ public class Employee
             }
         }
 
-        stamina = 100;
-        mentality = 100;
-
         //职业技能
         if (Nst[0] == 0)
             Skill1 = Random.Range(0, 4);
@@ -485,6 +482,8 @@ public class Employee
         CheckCharacter();
 
         EventTime = Random.Range(7,10);
+        Stamina = 100 + (Strength * 5);
+        Mentality = 100 + (Tenacity * 5);
     }
 
     //初始化CEO属性
@@ -512,12 +511,15 @@ public class Employee
         EventTime = 8;
     }
 
-    void InitStar()
+    public void InitStar(int type = -1)
     {
         float Posb = Random.Range(0.0f, 1.0f);
         int SNum1 = 0, SNum2 = Random.Range(0, 5);
         //确定特殊天赋
-        StarType = Random.Range(1, 14);
+        if (type == -1)
+            StarType = Random.Range(1, 14);
+        else
+            StarType = type;
         if (StarType == 1)
             SNum1 = 1;
         else if (StarType <= 4)
@@ -1815,9 +1817,11 @@ public class Employee
     //心力爆炸
     public void Exhausted()
     {
+        Mentality += 50;
         if (ExhaustedCount.Count >= 4)
         {
             InfoDetail.GC.CreateMessage(Name + "再次心力爆炸但是没有任何效果");
+            InfoDetail.AddHistory(Name + "再次心力爆炸但是没有任何效果");
             return;
         }
         int num = 0;
@@ -1840,6 +1844,7 @@ public class Employee
             InfoDetail.AddPerk(new Perk96(this), true);
         ExhaustedCount.Add(num);
         InfoDetail.GC.CreateMessage(Name + "心力爆炸,获得了" + InfoDetail.PerksInfo[InfoDetail.PerksInfo.Count - 1].CurrentPerk.Name);
+        InfoDetail.AddHistory(Name + "心力爆炸,获得了" + InfoDetail.PerksInfo[InfoDetail.PerksInfo.Count - 1].CurrentPerk.Name);
     }
 }
 

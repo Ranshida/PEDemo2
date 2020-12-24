@@ -114,10 +114,10 @@ public class DepControl : MonoBehaviour
     [HideInInspector] public bool SurveyStart = false;
     public int DepFaith = 50;
     public float Efficiency = 0, SalaryMultiply = 1.0f;
-    public bool canWork = false;
+    public bool MajorSuccess = false, canWork = false;
 
     private int CurrentFinishedTaskNum = 0, PreFinishedTaskNum = 0, NoEmpTime = 0;
-    private bool MajorSuccess = false, NoEmp;
+    private bool NoEmp;
     private bool DetailPanelOpened = false;
     private bool CheatMode = false;
 
@@ -217,7 +217,7 @@ public class DepControl : MonoBehaviour
             else
                 Text_TaskTime.text = "生产周期:--";
 
-            Text_SRate.text = "成功率:" + ((0.5f + CountSuccessRate(building.effectValue)) * 100) + "%";
+            Text_SRate.text = "成功率:" + Mathf.Round((0.5f + CountSuccessRate(building.effectValue)) * 100) + "%";
             Text_MSRate.text = "大成功率:" + ((0.2f + GC.SC.ExtraMajorSuccessRate) * 100) + "%";
             Text_MFRate.text = "重大失误率:" + ((0.5f + GC.SC.ExtraMajorFailureRate) * 100) + "%";
             Text_FinishedTaskNum.text = "上季度业务成功数:" + PreFinishedTaskNum + "\n\n" + "本季度业务成功数:" + CurrentFinishedTaskNum;
@@ -320,6 +320,13 @@ public class DepControl : MonoBehaviour
                             SpProgress = 0;
                             GC.CreateMessage(Text_DepName.text + " 完美完成了原型图的生产");
                         }
+                        else if (building.Type == BuildingType.人力资源部)
+                        {
+                            MajorSuccess = true;
+                            BuildingActive();
+                            SpProgress = 0;
+                            GC.CreateMessage(Text_DepName.text + " 完美完成了招聘");
+                        }
                         //其他需要激活的建筑
                         else
                         {
@@ -350,6 +357,13 @@ public class DepControl : MonoBehaviour
                             GC.FinishedTask[6] += 1;
                             SpProgress = 0;
                             GC.CreateMessage(Text_DepName.text + " 完成了原型图的生产");
+                        }
+                        else if (building.Type == BuildingType.人力资源部)
+                        {
+                            MajorSuccess = false;
+                            BuildingActive();
+                            SpProgress = 0;
+                            GC.CreateMessage(Text_DepName.text + " 完成了招聘");
                         }
                         //其他需要激活的建筑
                         else
@@ -519,8 +533,14 @@ public class DepControl : MonoBehaviour
             GC.CurrentEmpInfo.transform.parent = GC.StandbyContent;
             GC.ResetOldAssignment();
         }
+
         GC.HourEvent.RemoveListener(Produce);
         GC.WeeklyEvent.RemoveListener(FaithEffect);
+        foreach(PerkInfo perk in CurrentPerks)
+        {
+            perk.CurrentPerk.RemoveAllListeners();
+        }
+
         GC.CurrentDeps.Remove(this);
         if (CommandingOffice != null)
         {
@@ -649,8 +669,8 @@ public class DepControl : MonoBehaviour
                     EValue += 0.1f;
                 //文字显示
                 Text_SRateDetail.text += CurrentEmps[i].Name + "技能:" + (EValue * 100) + "%";
-                if (CurrentEmps[i].ExtraSuccessRate > 0.001f || CurrentEmps[i].ExtraSuccessRate < -0.001f)
-                    Text_SRateDetail.text += " +" + (CurrentEmps[i].ExtraSuccessRate * 100) + "%";
+                if (Mathf.Abs(CurrentEmps[i].ExtraSuccessRate) > 0.001f)
+                    Text_SRateDetail.text += "\n" + CurrentEmps[i].Name + "额外效果:" + (CurrentEmps[i].ExtraSuccessRate * 100) + "%";
                 Text_SRateDetail.text += "\n";
                 BaseSuccessRate += EValue;
                 BaseSuccessRate += CurrentEmps[i].ExtraSuccessRate;
@@ -700,20 +720,20 @@ public class DepControl : MonoBehaviour
                 BaseSuccessRate += CommandingOffice.CurrentManager.ExtraSuccessRate;
                 //文字显示
                 Text_SRateDetail.text += "高管" + CommandingOffice.CurrentManager.Name + "技能:" + (EValue * 100) + "%";
-                if (CommandingOffice.CurrentManager.ExtraSuccessRate > 0.001f || CommandingOffice.CurrentManager.ExtraSuccessRate < -0.001f)
-                    Text_SRateDetail.text += " +" + (CommandingOffice.CurrentManager.ExtraSuccessRate * 100) + "%";
+                if (Mathf.Abs(CommandingOffice.CurrentManager.ExtraSuccessRate) > 0.001f)
+                    Text_SRateDetail.text += "\n高管" + CommandingOffice.CurrentManager.Name + "额外效果:" + (CommandingOffice.CurrentManager.ExtraSuccessRate * 100) + "%";
             }
         }
-        if (GC.SC.ExtraSuccessRate > 0.001f)
+        if (Mathf.Abs(GC.SC.ExtraSuccessRate) > 0.001f)
             Text_SRateDetail.text += "\n动员效果:" + (GC.SC.ExtraSuccessRate * 100) + "%";
-        if (Efficiency > 0.001f)
+        if (Mathf.Abs(Efficiency) > 0.001f)
             Text_SRateDetail.text += "\n额外效果:" + (Efficiency * 100) + "%";
         if (building.Type == BuildingType.人力资源部 && GC.HireSuccessExtra > 0.001f)
         {
             Text_SRateDetail.text += "\n额外招聘成功率:" + (GC.HireSuccessExtra * 100) + "%";
             BaseSuccessRate += GC.HireSuccessExtra;
         }
-        if (GC.BaseDepExtraSuccessRate > 0.001f)
+        if (Mathf.Abs(GC.BaseDepExtraSuccessRate) > 0.001f)
         {
             if (building.Type == BuildingType.技术部门 || building.Type == BuildingType.市场部门 || building.Type == BuildingType.产品部门 || building.Type == BuildingType.公关营销部)
             {
@@ -721,7 +741,7 @@ public class DepControl : MonoBehaviour
                 BaseSuccessRate += GC.BaseDepExtraSuccessRate;
             }
         }
-        if(GC.ResearchExtraSuccessRate > 0.001f && building.Type == BuildingType.研发部门)
+        if(Mathf.Abs(GC.ResearchExtraSuccessRate) > 0.001f && building.Type == BuildingType.研发部门)
         {
             Text_SRateDetail.text += "\n额外研发成功率:" + (GC.ResearchExtraSuccessRate * 100) + "%";
             BaseSuccessRate += GC.ResearchExtraSuccessRate;
@@ -782,6 +802,14 @@ public class DepControl : MonoBehaviour
                 else if (info.CurrentPerk.Num == 111)
                     Text_DetailInfo.text += "\n空置部门 -30";
             }
+            if (DepFaith >= 80)
+                Text_DetailInfo.text += "\n——————\n每周员工心力+10";
+            else if (DepFaith >= 60)
+                Text_DetailInfo.text += "\n——————\n每周员工心力+5";
+            else if (DepFaith >= 40)
+                Text_DetailInfo.text += "\n——————\n每周员工心力-5";
+            else
+                Text_DetailInfo.text += "\n——————\n每周员工心力-10";
         }
         else if (type == 2)
         {
@@ -867,6 +895,7 @@ public class DepControl : MonoBehaviour
     public void StartActive()
     {
         GC.DepSkillConfirmPanel.SetActive(true);
+        GC.CurrentDep = this;
     }
 
     //可执行检测+后续面板展开
@@ -1063,7 +1092,7 @@ public class DepControl : MonoBehaviour
         {
             if(BuildingMode == 1)
             {
-                GC.FinishedTask[4] -= 5;
+                GC.FinishedTask[4] -= 2;
                 if (MajorSuccess == true)
                 {
                     GC.CreateMessage("获得了2个传播");
@@ -1295,7 +1324,7 @@ public class DepControl : MonoBehaviour
                 }
             }
         }
-        else if (building.Type == BuildingType.兴趣社团)
+        else if (building.Type == BuildingType.兴趣社团 && GC.SelectedDep != null)
         {
             int Count = 0, PTime = 32;
             if (GC.ProduceBuffBonus == true)
@@ -1312,7 +1341,10 @@ public class DepControl : MonoBehaviour
             float value = 0.02f;
             if (MajorSuccess == true)
                 value += 0.01f;
-            new ProduceBuff(value * Count, GC.SelectedDep, PTime);
+            Perk newPerk = new Perk45(null);
+            newPerk.TimeLeft = PTime;
+            newPerk.TempValue4 = value * Count;
+            AddPerk(newPerk);
         }
         else if (building.Type == BuildingType.电子科技展)
         {
@@ -1485,7 +1517,7 @@ public class DepControl : MonoBehaviour
         GC.SelectedDep = null;
         GC.CurrentDep = null;
         GC.CurrentEmpInfo = null;
-        GC.TotalEmpContent.parent.parent.gameObject.SetActive(true);
+        GC.TotalEmpContent.parent.parent.gameObject.SetActive(false);
         ActiveButton.interactable = false;
         SpProgress = 0;
         GC.ResetSelectMode();
@@ -1704,27 +1736,30 @@ public class DepControl : MonoBehaviour
         for(int i = 0; i < GC.CurrentEmployees.Count; i++)
         {
             if (Emps.Contains(GC.CurrentEmployees[i]) == true)
-                Emps[i].InfoB.gameObject.SetActive(true);
+                GC.CurrentEmployees[i].InfoB.gameObject.SetActive(true);
             else
-                Emps[i].InfoB.gameObject.SetActive(false);
+                GC.CurrentEmployees[i].InfoB.gameObject.SetActive(false);
         }
     }
 
     void RemoveSpecialBuffs()
     {
-        List<ProduceBuff> BuffList = new List<ProduceBuff>();
-        foreach(ProduceBuff Buff in produceBuffs)
+        List<Perk> PerkList = new List<Perk>();
+        foreach(PerkInfo perk in CurrentPerks)
         {
-            if (Buff.SpecialCheck == true)
-                BuffList.Add(Buff);
+            if (perk.CurrentPerk.Num == 48 || perk.CurrentPerk.Num == 50 || perk.CurrentPerk.Num == 71)
+                PerkList.Add(perk.CurrentPerk);
         }
-        if (BuffList.Count > 0)
+        if (PerkList.Count > 0)
         {
-            foreach(ProduceBuff buff in BuffList)
+            foreach(Perk perk in PerkList)
             {
-                buff.RemoveBuff();
+                for(int i = 0; i < perk.Level; i++)
+                {
+                    perk.RemoveEffect();
+                }
             }
-            BuffList.Clear();
+            PerkList.Clear();
         }
     }
 }

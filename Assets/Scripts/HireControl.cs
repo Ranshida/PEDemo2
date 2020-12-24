@@ -28,10 +28,15 @@ public class HireControl : MonoBehaviour
             {
                 //下面两个StarType是为了临时设定技能树
                 if (i == 0)
+                {
                     HireInfos[i].emp.StarType = 2;
+                    HireInfos[i].emp.InitStar(2);
+                }
                 else if (i == 1)
+                {
                     HireInfos[i].emp.StarType = 6;
-
+                    HireInfos[i].emp.InitStar(6);
+                }
                 GC.CurrentEmpInfo = HireInfos[i];
                 SetInfoPanel();
                 GC.CurrentEmpInfo.emp.InfoA.transform.parent = GC.StandbyContent;
@@ -180,6 +185,7 @@ public class HireControl : MonoBehaviour
         emp.InitRelation();
         //创建特质和技能
         emp.StarType = 11;//临时设定CEO技能树
+        emp.InitStar(11);
         ED.InitSkillAndStrategy();
 
         //创建员工实体

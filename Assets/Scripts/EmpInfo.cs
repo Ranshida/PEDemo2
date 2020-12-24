@@ -207,6 +207,11 @@ public class EmpInfo : MonoBehaviour
         if (GC.EC.ManagerVoteCheck(emp, true, true) == false)
             return;
 
+        foreach (PerkInfo perk in emp.InfoDetail.PerksInfo)
+        {
+            perk.CurrentPerk.RemoveAllListeners();
+        }
+
         GC.CC.CEO.InfoDetail.AddHistory("解雇了" + emp.Name);
 
         emp.ClearRelations();//清空所有关系

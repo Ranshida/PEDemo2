@@ -374,6 +374,8 @@ public class GameControl : MonoBehaviour
             newDep.EmpLimit = 2;
             newDep.building.effectValue = 8;
             newDep.ProducePointLimit = 48;
+            newDep.ModeChangeButton.gameObject.SetActive(false);
+            newDep.ActiveButton.gameObject.SetActive(false);
         }
         else if (b.Type == BuildingType.心理咨询室)
         {
@@ -805,14 +807,6 @@ public class GameControl : MonoBehaviour
     //将移动或雇佣的员工放入特定部门 + 选择部门发动建筑特效 + CEO技能发动
     public void SelectDep(DepControl depControl)
     {
-        //调动信息
-        if(SelectMode == 1 || SelectMode == 2)
-        {
-            //调动信息设定
-            CurrentEmpInfo.emp.InfoDetail.AddHistory("调动至" + depControl.Text_DepName.text);
-            if (CurrentEmpInfo.emp.isCEO == false)
-                CC.CEO.InfoDetail.AddHistory("将" + CurrentEmpInfo.emp.Name + "调动至" + depControl.Text_DepName.text);
-        }
         if(SelectMode == 1)
         {
             HC.SetInfoPanel();
@@ -860,6 +854,14 @@ public class GameControl : MonoBehaviour
             CC.CEOSkillConfirm();
         }
         DepSelectPanel.SetActive(false);
+        //调动信息
+        if (SelectMode == 1 || SelectMode == 2)
+        {
+            //调动信息设定
+            CurrentEmpInfo.emp.InfoDetail.AddHistory("调动至" + depControl.Text_DepName.text);
+            if (CurrentEmpInfo.emp.isCEO == false)
+                CC.CEO.InfoDetail.AddHistory("将" + CurrentEmpInfo.emp.Name + "调动至" + depControl.Text_DepName.text);
+        }
     }
     //重置各项信息
     public void ResetOldAssignment(Employee target = null)

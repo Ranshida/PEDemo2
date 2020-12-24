@@ -19,6 +19,7 @@ public class Perk
     public PerkInfo Info;
 
     public int TempValue1, TempValue2, TempValue3;//用于检测和保存的一些数值
+    public float TempValue4;
 
     private bool StackAdded = false;
 
@@ -62,20 +63,25 @@ public class Perk
         if (canStack == false || Level == 0)
         {
             Info.RemovePerk();
-            if (effectType == EffectType.Dayily)
-            {
-                GameControl.Instance.DailyEvent.RemoveListener(ContinuousEffect);
-            }
-            else if (effectType == EffectType.Weekly)
-            {
-                GameControl.Instance.WeeklyEvent.RemoveListener(ContinuousEffect);
-            }
-            else if (effectType == EffectType.Monthly)
-            {
-                GameControl.Instance.MonthlyEvent.RemoveListener(ContinuousEffect);
-            }
-            GameControl.Instance.HourEvent.RemoveListener(TimePass);
+            RemoveAllListeners();
         }
+    }
+
+    public void RemoveAllListeners()
+    {
+        if (effectType == EffectType.Dayily)
+        {
+            GameControl.Instance.DailyEvent.RemoveListener(ContinuousEffect);
+        }
+        else if (effectType == EffectType.Weekly)
+        {
+            GameControl.Instance.WeeklyEvent.RemoveListener(ContinuousEffect);
+        }
+        else if (effectType == EffectType.Monthly)
+        {
+            GameControl.Instance.MonthlyEvent.RemoveListener(ContinuousEffect);
+        }
+        GameControl.Instance.HourEvent.RemoveListener(TimePass);
     }
 
     public virtual void TimePass()
@@ -1260,7 +1266,23 @@ public class Perk45 : Perk
         Description = "办公室成功率+1%";
         TimeLeft = 64;
         Num = 45;
-        canStack = true;
+        canStack = false;
+    }
+    public override void ImmEffect()
+    {
+        if (TargetDep != null)
+        {
+            TargetDep.Efficiency += TempValue4;
+            Description = "办公室成功率+" + (TempValue4 * 100) + "%";
+        }
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        if (TargetDep != null)
+        {
+            TargetDep.Efficiency -= TempValue4;
+        }
     }
 }
 
@@ -1290,10 +1312,8 @@ public class Perk47 : Perk
     }
     public override void ImmEffect()
     {
-        if(TargetEmp.CurrentDep != null)
-        {
-            new ProduceBuff(0.01f, TargetEmp.CurrentDep, -1);
-        }
+        if (TargetEmp.CurrentDep != null)
+            TargetEmp.CurrentDep.AddPerk(new Perk48(null));
     }
     public override void RemoveEffect()
     {
@@ -1307,10 +1327,25 @@ public class Perk48 : Perk
     public Perk48(Employee Emp) : base(Emp)
     {
         Name = "顺利-进步";
-        Description = "每个进步+1% 部门成功率";
+        Description = "每个进步+1% 部门成功率,持续到当前业务结束";
         TimeLeft = -1;//持续到当前业务结束
         Num = 48;
         canStack = true;
+    }
+    public override void ImmEffect()
+    {
+        if (TargetDep != null)
+        {
+            TargetDep.Efficiency += 0.01f;
+        }
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        if (TargetDep != null)
+        {
+            TargetDep.Efficiency -= 0.01f;
+        }
     }
 }
 
@@ -1328,9 +1363,7 @@ public class Perk49 : Perk
     public override void ImmEffect()
     {
         if (TargetEmp.CurrentDep != null)
-        {
-            new ProduceBuff(-0.01f, TargetEmp.CurrentDep, -1);
-        }
+            TargetEmp.CurrentDep.AddPerk(new Perk50(null));
     }
     public override void RemoveEffect()
     {
@@ -1344,10 +1377,25 @@ public class Perk50 : Perk
     public Perk50(Employee Emp) : base(Emp)
     {
         Name = "悔恨-混乱";
-        Description = "每个混乱-1% 部门成功率";
+        Description = "每个混乱-1% 部门成功率,持续到当前业务结束";
         TimeLeft = -1;//持续到当前业务结束
         Num = 50;
         canStack = true;
+    }
+    public override void ImmEffect()
+    {
+        if (TargetDep != null)
+        {
+            TargetDep.Efficiency -= 0.01f;
+        }
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        if (TargetDep != null)
+        {
+            TargetDep.Efficiency += 0.01f;
+        }
     }
 }
 
@@ -1621,6 +1669,21 @@ public class Perk71 : Perk
         TimeLeft = -1;//持续到当前业务结束
         Num = 71;
         canStack = true;
+    }
+    public override void ImmEffect()
+    {
+        if (TargetDep != null)
+        {
+            TargetDep.Efficiency += 0.05f;
+        }
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        if (TargetDep != null)
+        {
+            TargetDep.Efficiency -= 0.05f;
+        }
     }
 }
 
@@ -1948,7 +2011,7 @@ public class Perk100 : Perk
             {
                 for (int j = i + 1; j < TempEmps.Count; j++)
                 {
-                    if (TempEmps[i].FindRelation(TempEmps[j]).FriendValue > 0)
+                    if (TempEmps[i].FindRelation(TempEmps[j]).FriendValue < 0)
                         TempValue1 += 10;
                 }
             }
