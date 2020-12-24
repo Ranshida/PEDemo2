@@ -99,7 +99,7 @@ public class BuildingManage : MonoBehaviour
         }
     }
 
-    private void Start()
+    public void Init()
     {
         lotteryPanel = transform.Find("LotteryPanel");
         lotteryList = lotteryPanel.Find("List");
@@ -119,14 +119,11 @@ public class BuildingManage : MonoBehaviour
         warePanel.Find("Btn_公关营销部").GetComponent<Button>().onClick.AddListener(() => { BuildBasicBuilding(BuildingType.公关营销部); });
         warePanel.Find("Btn_高管办公室").GetComponent<Button>().onClick.AddListener(() => { BuildBasicBuilding(BuildingType.高管办公室); });
         btn_NewArea.onClick.AddListener(() => { UnlockNewArea(); });
-
         m_EffectHalo.SetActive(false);
-        InitBuilding(BuildingType.CEO办公室, new Int2(0, 8));
-        //InitBuilding(BuildingType.技术部门, new Int2(16, 1));
     }
 
     //初始化默认建筑
-    void InitBuilding(BuildingType type, Int2 leftDownGird)
+    public void InitBuilding(BuildingType type, Int2 leftDownGird)
     {
         StartBuildNew(type);
         
@@ -164,6 +161,18 @@ public class BuildingManage : MonoBehaviour
         temp_Building = null;
     }
 
+    //加载存档数据
+    public void LoadData()
+    {
+
+    }
+
+    public Files_Building Save()
+    {
+        Files_Building files = new Files_Building();
+        return null;
+    }
+
     private void Update()
     {
         if (!GridContainer.Instance)
@@ -172,6 +181,19 @@ public class BuildingManage : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.T))
         {
             Lottery(3);
+        }
+
+        if (Input.GetKeyDown(KeyCode.U))
+        {
+            Building building = ES3.Load<Building>("building");
+            if (building)
+            {
+                Debug.LogError("Load");
+                Debug.LogError(building.ID);
+                Debug.LogError(building.transform.position);
+                Debug.LogError(building.BuildingSet);
+                Debug.LogError(building.Office.building.name);
+            }
         }
 
         //屏幕射线命中地面
@@ -315,6 +337,11 @@ public class BuildingManage : MonoBehaviour
         //建筑的辐射范围光环
         if (m_SelectBuilding)
         {
+            if (Input.GetKeyDown(KeyCode.Y))
+            {
+                ES3.Save<Building>("building", m_SelectBuilding);
+                Debug.Log("Save");
+            }
             m_EffectHalo.SetActive(true);
             m_EffectHalo.transform.position = m_SelectBuilding.transform.position + new Vector3(m_SelectBuilding.Length * 5, 0.2f, m_SelectBuilding.Width * 5);
             m_EffectHalo.transform.localScale = new Vector3(m_SelectBuilding.Length + m_SelectBuilding.EffectRange * 2, 1, m_SelectBuilding.Width + m_SelectBuilding.EffectRange * 2);
