@@ -21,7 +21,6 @@ public class SkillTree : MonoBehaviour
         SkillType = info.emp.StarType;
         SetDefaultInfo(SkillType);
         SkillCheck();
-
     }
     public void SkillCheck()
     {
@@ -434,6 +433,9 @@ public class SkillTree : MonoBehaviour
 
     void SetDefaultInfo(int num)
     {
+        //招聘技能树需要反复刷新所以先设置为都可见
+        SubSkillPanelA.SetActive(true);
+        SubSkillPanelB.SetActive(true);
         if (num == 1)
         {
             Text_Requires[0].text = "观察>=5";

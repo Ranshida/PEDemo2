@@ -8,8 +8,8 @@ public class GameControl : MonoBehaviour
 {
     public static GameControl Instance;
     [HideInInspector] public int Salary, Income, BuildingPay, MobilizeExtraMent = 0, ExtraDice = 0, TimeMultiply = 1, WorkEndEmpCount = 0;
-    [HideInInspector] public float EfficiencyExtraNormal = 0, EfficiencyExtraScience = 0, ExtrafailRate = 0, SalaryMultiple = 1.0f,
-        HRBuildingMentalityExtra = 1.0f, BuildingSkillSuccessExtra = 0, BuildingMaintenanceCostRate = 1.0f, HireSuccessExtra = 0, 
+    [HideInInspector] public float EfficiencyExtraNormal = 0, EfficiencyExtraScience = 0, ExtrafailRate = 0, TotalSalaryMultiply = 1.0f,
+        HRBuildingMentalityExtra = 1.0f, BuildingSkillSuccessExtra = 0, TotalBuildingPayMultiply = 1.0f, HireSuccessExtra = 0, 
         BaseDepExtraSuccessRate = 0;
     public int SelectMode = 1; //1员工招聘时部门选择 2员工移动时部门选择 3部门的高管办公室选择 4发动动员技能时员工选择 
     //5发动建筑技能时员工选择 6CEO技能员工/部门选择 7选择两个员工发动动员技能 8普通办公室的上级(高管办公室)选择  9头脑风暴的员工选择
@@ -109,7 +109,7 @@ public class GameControl : MonoBehaviour
     public int[] CEOSkillCD = new int[5];
 
     int Year = 1, Month = 1, Week = 1, Day = 1, Hour = 1, morale = 50;
-    float Timer;
+    float Timer, MoneyCalcTimer;
     bool TimePause = false; //现在仅用来判断是否处于下班状态，用于其他功能时需检查WorkEndCheck()和WeekStart
 
 
@@ -138,8 +138,17 @@ public class GameControl : MonoBehaviour
             Money += 1000;
         if (Money < 0)
             GameOverPanel.SetActive(true);
+
+        //1秒算一次金钱
+        MoneyCalcTimer += Time.deltaTime;
+        if(MoneyCalcTimer > 1)
+        {
+            MoneyCalcTimer = 0;
+            CalcTotalSalary();
+            CalcBuildingPay();
+        }
         Text_Money.text = "金钱:" + Money +"\n" 
-                        + "    " + (Income - Salary - (int)(BuildingPay * BuildingMaintenanceCostRate)) + "/月";
+                        + "    " + (Income - Salary - BuildingPay) + "/月";
         if (CurrentEmployees.Count > 0)
             Text_Stamina.text = "体力:" + CurrentEmployees[0].Stamina;
     }
@@ -147,9 +156,10 @@ public class GameControl : MonoBehaviour
     void HourPass()
     {
         Hour += 1;
-        CalcTotalSalary();
         //以下为加班判定
         //体力额外扣除
+        CalcBuildingPay();
+        CalcTotalSalary();
         if(WorkOverTime == true)
         {
             foreach(Employee emp in CurrentEmployees)
@@ -232,7 +242,7 @@ public class GameControl : MonoBehaviour
         {
             Month += 1;
             Week = 1;
-            Money = Money + Income - Salary - (int)(BuildingPay * BuildingMaintenanceCostRate);
+            Money = Money + Income - Salary - (int)(BuildingPay * TotalBuildingPayMultiply);
             MonthlyEvent.Invoke();
             for (int i = 0; i < CurrentDeps.Count; i++)
             {
@@ -277,10 +287,24 @@ public class GameControl : MonoBehaviour
             int value = e.InfoDetail.CalcSalary();
             if (e.CurrentDep != null)
                 value = (int)(value * e.CurrentDep.SalaryMultiply);
-            value = (int)(value * SalaryMultiple);
+            value = (int)(value * TotalSalaryMultiply);
             Salary += value;
         }
     }
+    void CalcBuildingPay()
+    {
+        int value = 0;
+        foreach(DepControl dep in CurrentDeps)
+        {
+            value += dep.CalcCost(2);
+        }
+        foreach(OfficeControl office in CurrentOffices)
+        {
+            value += office.building.Pay;
+        }
+        BuildingPay = value;
+    }
+
     void StartWorkEnd()
     {
         if (CurrentEmployees.Count > 0)
@@ -352,6 +376,7 @@ public class GameControl : MonoBehaviour
             newDep.building.effectValue = 2;
             newDep.ProducePointLimit = 16;
             newDep.ActiveMode = 1;
+            newDep.ActiveButton.gameObject.SetActive(false);
         }
         else if (b.Type == BuildingType.研发部门)
         {
@@ -1127,5 +1152,37 @@ public class GameControl : MonoBehaviour
     {
         Money += 10000;
         GameOverPanel.gameObject.SetActive(false);
+    }
+
+    public void ShowCompayCost()
+    {
+        infoPanel.Text_Name.text = "";
+        infoPanel.Text_ExtraInfo.text = "";
+        string content = "维护费用";
+        foreach(DepControl dep in CurrentDeps)
+        {
+            content += "\n" + dep.Text_DepName.text + "维护费:" + dep.CalcCost(2);
+            if (dep.CurrentEmps.Count > 0)
+                content += "\n" + dep.Text_DepName.text + "工资:" + dep.CalcCost(1);
+        }
+        foreach(OfficeControl office in CurrentOffices)
+        {
+            content += "\n" + office.Text_OfficeName.text + "维护费:" + office.building.Pay;
+            if(office.CurrentManager != null)
+            content += "\n" + office.Text_OfficeName.text + "工资:" + (int)(office.CurrentManager.InfoDetail.CalcSalary() * TotalSalaryMultiply);
+        }
+        int otherCost = 0;
+        foreach(Employee emp in CurrentEmployees)
+        {
+            if(emp.CurrentDep == null && emp.CurrentOffice == null)
+            {
+                otherCost += (int)(emp.InfoDetail.CalcSalary() * TotalSalaryMultiply);
+            }
+        }
+        if (otherCost > 0)
+            content += "\n待命员工工资:" + otherCost;
+        infoPanel.Text_Description.text = content;
+        infoPanel.ShowPanel();
+        infoPanel.transform.position = Input.mousePosition;
     }
 }

@@ -887,11 +887,19 @@ public class Skill36 : Skill
     public Skill36()
     {
         Name = "随机应变";
-        Description = "产生等于已选骰子点数和的头脑风暴点数";
+        Description = "选择一颗骰子并产生等于该骰子点数的头脑风暴点数";
         StaminaCost = 30;
         DiceCost = 0;
         EffectMode = 1;
         ManageSkill = true;
+    }
+
+    public override bool ConditionCheck()
+    {
+        if (TargetEmp.InfoDetail.GC.SC.SelectedDices.Count == 1)
+            return true;
+        else
+            return false;
     }
 
     public override void StartEffect()

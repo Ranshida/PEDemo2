@@ -113,7 +113,7 @@ public class DepControl : MonoBehaviour
     [HideInInspector] public int EmpLimit, ProducePointLimit = 20, ActiveMode = 1, BuildingMode = 1;
     [HideInInspector] public bool SurveyStart = false;
     public int DepFaith = 50;
-    public float Efficiency = 0, SalaryMultiply = 1.0f;
+    public float Efficiency = 0, SalaryMultiply = 1.0f, BuildingPayMultiply = 1.0f;
     public bool MajorSuccess = false, canWork = false;
 
     private int CurrentFinishedTaskNum = 0, PreFinishedTaskNum = 0, NoEmpTime = 0;
@@ -221,9 +221,7 @@ public class DepControl : MonoBehaviour
             Text_MSRate.text = "大成功率:" + ((0.2f + GC.SC.ExtraMajorSuccessRate) * 100) + "%";
             Text_MFRate.text = "重大失误率:" + ((0.5f + GC.SC.ExtraMajorFailureRate) * 100) + "%";
             Text_FinishedTaskNum.text = "上季度业务成功数:" + PreFinishedTaskNum + "\n\n" + "本季度业务成功数:" + CurrentFinishedTaskNum;
-
-            int DepCost = building.Pay + CurrentEmps.Count * 25;
-            Text_DepCost.text = "运营成本:" + DepCost;
+            Text_DepCost.text = "运营成本:" + (CalcCost(1) + CalcCost(2));
         }
     }
 
@@ -267,9 +265,11 @@ public class DepControl : MonoBehaviour
                 if (GC.FinishedTask[6] > 0)
                     SpProgress += Pp;
             }
-            else if (building.Type == BuildingType.公关营销部 && ActiveButton.interactable == false)
+            else if (building.Type == BuildingType.公关营销部)
             {
-                if (GC.FinishedTask[4] > 4)
+                if (BuildingMode == 1 && GC.FinishedTask[4] >= 2)
+                    SpProgress += Pp;
+                else if (BuildingMode == 2 && GC.FinishedTask[4] >= 1 && GC.Money >= 300)
                     SpProgress += Pp;
             }
             else
@@ -320,6 +320,12 @@ public class DepControl : MonoBehaviour
                             SpProgress = 0;
                             GC.CreateMessage(Text_DepName.text + " 完美完成了原型图的生产");
                         }
+                        else if (building.Type == BuildingType.公关营销部)
+                        {
+                            MajorSuccess = true;
+                            BuildingActive();
+                            SpProgress = 0;
+                        }
                         else if (building.Type == BuildingType.人力资源部)
                         {
                             MajorSuccess = true;
@@ -357,6 +363,12 @@ public class DepControl : MonoBehaviour
                             GC.FinishedTask[6] += 1;
                             SpProgress = 0;
                             GC.CreateMessage(Text_DepName.text + " 完成了原型图的生产");
+                        }
+                        else if (building.Type == BuildingType.公关营销部)
+                        {
+                            MajorSuccess = false;
+                            BuildingActive();
+                            SpProgress = 0;
                         }
                         else if (building.Type == BuildingType.人力资源部)
                         {
@@ -562,7 +574,7 @@ public class DepControl : MonoBehaviour
         //1-3职业技能 4观察 5坚韧 6强壮 7管理 8人力 9财务 10决策 11行业 12谋略 13说服 14魅力 15八卦
         float BaseSuccessRate = 0;
         Text_SRateDetail.text = "基础成功率:50%\n";
-        //业务生产
+        //基础业务生产技能影响
         if (type < 4)
         {
             for (int i = 0; i < CurrentEmps.Count; i++)
@@ -596,36 +608,8 @@ public class DepControl : MonoBehaviour
                 BaseSuccessRate += EValue;
                 BaseSuccessRate += CurrentEmps[i].ExtraSuccessRate;
             }
-            if (CommandingOffice != null && CommandingOffice.CurrentManager != null)
-            {
-                int value = 0;
-                float EValue = 0;
-                if (building.effectValue == 1)
-                    value = CommandingOffice.CurrentManager.Skill1;
-                else if (building.effectValue == 2)
-                    value = CommandingOffice.CurrentManager.Skill2;
-                else
-                    value = CommandingOffice.CurrentManager.Skill3;
-                if (value <= 5)
-                    EValue -= 0.25f;
-                else if (value <= 9)
-                    EValue -= 0.15f;
-                else if (value <= 13)
-                    EValue -= 0.05f;
-                else if (value <= 17)
-                    EValue += 0;
-                else if (value <= 21)
-                    EValue += 0.05f;
-                else if (value > 21)
-                    EValue += 0.1f;
-                BaseSuccessRate += EValue;
-                BaseSuccessRate += CommandingOffice.CurrentManager.ExtraSuccessRate;
-                //文字显示
-                Text_SRateDetail.text += "高管" + CommandingOffice.CurrentManager.Name + "技能:" + (EValue * 100) + "%";
-                //高管额外效果A
-                ExtraEffectDescription(CommandingOffice.CurrentManager, true);
-            }
         }
+        //其他技能影响
         else
         {
             for (int i = 0; i < CurrentEmps.Count; i++)
@@ -677,54 +661,61 @@ public class DepControl : MonoBehaviour
                 BaseSuccessRate += EValue;
                 BaseSuccessRate += CurrentEmps[i].ExtraSuccessRate;
             }
-            if (CommandingOffice != null && CommandingOffice.CurrentManager != null)
-            {
-                int value = 0;
-                if (type == 4)
-                    value = CommandingOffice.CurrentManager.Observation;
-                else if (type == 5)
-                    value = CommandingOffice.CurrentManager.Tenacity;
-                else if (type == 6)
-                    value = CommandingOffice.CurrentManager.Strength;
-                else if (type == 7)
-                    value = CommandingOffice.CurrentManager.Manage;
-                else if (type == 8)
-                    value = CommandingOffice.CurrentManager.HR;
-                else if (type == 9)
-                    value = CommandingOffice.CurrentManager.Finance;
-                else if (type == 10)
-                    value = CommandingOffice.CurrentManager.Decision;
-                else if (type == 11)
-                    value = CommandingOffice.CurrentManager.Forecast;
-                else if (type == 12)
-                    value = CommandingOffice.CurrentManager.Strategy;
-                else if (type == 13)
-                    value = CommandingOffice.CurrentManager.Convince;
-                else if (type == 14)
-                    value = CommandingOffice.CurrentManager.Charm;
-                else if (type == 15)
-                    value = CommandingOffice.CurrentManager.Gossip;
-                float EValue = 0;
-                if (value <= 5)
-                    EValue -= 0.25f;
-                else if (value <= 9)
-                    EValue -= 0.15f;
-                else if (value <= 13)
-                    EValue -= 0.05f;
-                else if (value <= 17)
-                    EValue += 0;
-                else if (value <= 21)
-                    EValue += 0.05f;
-                else if (value > 21)
-                    EValue += 0.1f;
+        }
+        //高管技能影响
+        if (CommandingOffice != null && CommandingOffice.CurrentManager != null)
+        {
+            int value = 0;
+            if (building.effectValue == 1)
+                value = CommandingOffice.CurrentManager.Skill1;
+            else if (building.effectValue == 2)
+                value = CommandingOffice.CurrentManager.Skill2;
+            else if (building.effectValue == 3)
+                value = CommandingOffice.CurrentManager.Skill3;
+            else if (type == 4)
+                value = CommandingOffice.CurrentManager.Observation;
+            else if (type == 5)
+                value = CommandingOffice.CurrentManager.Tenacity;
+            else if (type == 6)
+                value = CommandingOffice.CurrentManager.Strength;
+            else if (type == 7)
+                value = CommandingOffice.CurrentManager.Manage;
+            else if (type == 8)
+                value = CommandingOffice.CurrentManager.HR;
+            else if (type == 9)
+                value = CommandingOffice.CurrentManager.Finance;
+            else if (type == 10)
+                value = CommandingOffice.CurrentManager.Decision;
+            else if (type == 11)
+                value = CommandingOffice.CurrentManager.Forecast;
+            else if (type == 12)
+                value = CommandingOffice.CurrentManager.Strategy;
+            else if (type == 13)
+                value = CommandingOffice.CurrentManager.Convince;
+            else if (type == 14)
+                value = CommandingOffice.CurrentManager.Charm;
+            else if (type == 15)
+                value = CommandingOffice.CurrentManager.Gossip;
+            float EValue = 0;
+            if (value <= 5)
+                EValue -= 0.15f;
+            else if (value <= 9)
+                EValue -= 0.05f;
+            else if (value <= 13)
+                EValue += 0.0f;
+            else if (value <= 17)
+                EValue += 0.05f;
+            else if (value <= 21)
+                EValue += 0.15f;
+            else if (value > 21)
+                EValue += 0.2f;
 
-                BaseSuccessRate += EValue;
-                BaseSuccessRate += CommandingOffice.CurrentManager.ExtraSuccessRate;
-                //文字显示
-                Text_SRateDetail.text += "高管" + CommandingOffice.CurrentManager.Name + "技能:" + (EValue * 100) + "%";
-                //高管额外效果B
-                ExtraEffectDescription(CommandingOffice.CurrentManager, true);
-            }
+            BaseSuccessRate += EValue;
+            BaseSuccessRate += CommandingOffice.CurrentManager.ExtraSuccessRate;
+            //文字显示
+            Text_SRateDetail.text += "高管" + CommandingOffice.CurrentManager.Name + "技能:" + (EValue * 100) + "%";
+            //高管额外效果B
+            ExtraEffectDescription(CommandingOffice.CurrentManager, true);
         }
         if (Mathf.Abs(GC.SC.ExtraSuccessRate) > 0.001f)
             Text_SRateDetail.text += "\n动员效果:" + (GC.SC.ExtraSuccessRate * 100) + "%";
@@ -771,6 +762,7 @@ public class DepControl : MonoBehaviour
         }
     }
 
+    //详细信息显示
     public void ShowSRateDetailPanel()
     {
         Text_DetailInfo.gameObject.SetActive(false);
@@ -863,11 +855,11 @@ public class DepControl : MonoBehaviour
             if (GC.SC.ExtraMajorSuccessRate > 0.0001)
                 Text_DetailInfo.text += "\nKPI制度:" + (GC.SC.ExtraMajorFailureRate * 100) + "%";
         }
-        else if (type == 6)
-        {
-            Text_DetailInfo.text = "建筑维护费:" + building.Pay + "\n员工工资:" + (CurrentEmps.Count * 25);
-        }
         else if (type == 7)
+        {
+            Text_DetailInfo.text = "建筑维护费:" + CalcCost(2) + "\n员工工资:" + CalcCost(1);
+        }
+        else if (type == 8)
         {
             if (CommandingOffice == null)
                 return;
@@ -887,7 +879,6 @@ public class DepControl : MonoBehaviour
 
     }
 
-
     public void CloseSRateDetailPanel()
     {
         SRateDetailPanel.gameObject.SetActive(false);
@@ -905,7 +896,7 @@ public class DepControl : MonoBehaviour
     //部门模式改变
     public void ChangeBuildingMode(int num)
     {
-        ActiveMode = num;
+        BuildingMode = num;
         SpProgress = 0;
         ActiveButton.interactable = false;
         GC.DepModeSelectPanel.SetActive(false);
@@ -1180,13 +1171,15 @@ public class DepControl : MonoBehaviour
         {
             if (BuildingMode == 1)
             {
-                //新工资计算方式
+                GC.SelectedDep.AddPerk(new Perk44(null));
+                if(MajorSuccess == true)
+                    GC.SelectedDep.AddPerk(new Perk44(null));
             }
             else if (BuildingMode == 2)
             {
-                GC.CurrentEmployees[0].InfoDetail.AddPerk(new Perk34(GC.CurrentEmployees[0]), true);
+                GC.SelectedDep.AddPerk(new Perk34(null));
                 if (MajorSuccess == true)
-                    GC.CurrentEmployees[0].InfoDetail.AddPerk(new Perk34(GC.CurrentEmployees[0]), true);
+                    GC.SelectedDep.AddPerk(new Perk34(null));
             }
         }
         else if (building.Type == BuildingType.体能研究室 && GC.SelectedDep != null)
@@ -1732,6 +1725,7 @@ public class DepControl : MonoBehaviour
         CheatMode = value;
     }
 
+    //查找自己影响范围内的部门
     List<DepControl> AvailableDeps()
     {
         List<DepControl> L = new List<DepControl>();
@@ -1742,7 +1736,7 @@ public class DepControl : MonoBehaviour
         }
         return L;
     }
-
+    //现实影响范围内部门的员工的面板
     void ShowAvailableEmps()
     {
         List<DepControl> Deps = AvailableDeps();
@@ -1763,6 +1757,7 @@ public class DepControl : MonoBehaviour
         }
     }
 
+    //删除持续时间为业务时间的perk
     void RemoveSpecialBuffs()
     {
         List<Perk> PerkList = new List<Perk>();
@@ -1782,5 +1777,17 @@ public class DepControl : MonoBehaviour
             }
             PerkList.Clear();
         }
+    }
+
+    public int CalcCost(int type)
+    {
+        int value = 0;
+        //工资
+        if (type == 1)
+            value = (int)(25 * CurrentEmps.Count * GC.TotalSalaryMultiply * SalaryMultiply);
+        //维护费
+        else if (type == 2)
+            value = (int)(building.Pay * GC.TotalBuildingPayMultiply * BuildingPayMultiply);
+        return value;
     }
 }

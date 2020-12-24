@@ -929,12 +929,18 @@ public class Perk34 : Perk
     }
     public override void ImmEffect()
     {
-        TargetEmp.InfoA.GC.BuildingPay -= 3;
+        if (TargetDep != null)
+        {
+            TargetDep.BuildingPayMultiply -= 0.05f;
+        }
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetEmp.InfoA.GC.BuildingPay += 3;
+        if (TargetDep != null)
+        {
+            TargetDep.BuildingPayMultiply += 0.05f;
+        }
     }
 }
 
@@ -1258,6 +1264,21 @@ public class Perk44 : Perk
         TimeLeft = 64;
         Num = 44;
         canStack = true;
+    }
+    public override void ImmEffect()
+    {
+        if (TargetDep != null)
+        {
+            TargetDep.SalaryMultiply -= 0.05f;
+        }
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        if (TargetDep != null)
+        {
+            TargetDep.SalaryMultiply += 0.05f;
+        }
     }
 }
 
@@ -1870,7 +1891,7 @@ public class Perk95 : Perk
     public Perk95(Employee Emp) : base(Emp)
     {
         Name = "重度抑郁";
-        Description = "心力每周下降20点";
+        Description = "心力每周下降10点";
         TimeLeft = -1;//特质
         Num = 95;
         canStack = false;
@@ -1878,7 +1899,7 @@ public class Perk95 : Perk
     }
     public override void ContinuousEffect()
     {
-        TargetEmp.Mentality -= 20;
+        TargetEmp.Mentality -= 10;
     }
     public override void RemoveEffect()
     {

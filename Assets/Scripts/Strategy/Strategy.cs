@@ -146,13 +146,13 @@ public class Strategy1_5 : Strategy
     public override void Effect(GameControl GC)
     {
         base.Effect(GC);
-        GC.SalaryMultiple -= 0.5f;
+        GC.TotalSalaryMultiply -= 0.5f;
     }
 
     public override void EffectRemove(GameControl GC)
     {
         base.EffectRemove(GC);
-        GC.SalaryMultiple += 0.5f;
+        GC.TotalSalaryMultiply += 0.5f;
     }
 }
 
@@ -294,13 +294,13 @@ public class Strategy2_5 : Strategy
     public override void Effect(GameControl GC)
     {
         base.Effect(GC);
-        GC.BuildingMaintenanceCostRate /= 2;
+        GC.TotalBuildingPayMultiply /= 2;
     }
 
     public override void EffectRemove(GameControl GC)
     {
         base.EffectRemove(GC);
-        GC.BuildingMaintenanceCostRate *= 2;
+        GC.TotalBuildingPayMultiply *= 2;
     }
 }
 

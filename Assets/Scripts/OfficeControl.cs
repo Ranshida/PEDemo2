@@ -100,11 +100,13 @@ public class OfficeControl : MonoBehaviour
 
     public void CheckManage()
     {
-        if (CurrentManager != null)
-            SetManageValue();
+        SetManageValue();
+        int value = ManageValue;
+        if (CanWork == false)
+            value = 0;
         for(int i = 0; i < ControledDeps.Count; i++)
         {
-            if (i < ManageValue)
+            if (i < value)
             {
                 ControledDeps[i].canWork = true;
                 ControledDeps[i].OfficeWarning.SetActive(false);
@@ -117,7 +119,7 @@ public class OfficeControl : MonoBehaviour
         }
         for (int i = 0; i < ControledOffices.Count; i++)
         {
-            if (i < ManageValue - ControledOffices.Count)
+            if (i < value - ControledDeps.Count)
             {
                 ControledOffices[i].CanWork = true;
                 ControledOffices[i].OfficeWarning.SetActive(false);
@@ -127,6 +129,7 @@ public class OfficeControl : MonoBehaviour
                 ControledOffices[i].CanWork = false;
                 ControledOffices[i].OfficeWarning.SetActive(true);
             }
+            ControledOffices[i].CheckManage();
         }
     }
 
@@ -145,6 +148,8 @@ public class OfficeControl : MonoBehaviour
             else
                 ManageValue = 5;
         }
+        else
+            ManageValue = 0;
     }
 
     public void SetName()
