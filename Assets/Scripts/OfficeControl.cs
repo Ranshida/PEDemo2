@@ -326,7 +326,16 @@ public class OfficeControl : MonoBehaviour
             //文字显示
             Text_SRateDetail.text += (EValue * 100) + "%";
             if (Mathf.Abs(CurrentManager.ExtraSuccessRate) > 0.001f)
-                Text_SRateDetail.text += "\n高管额外效果" + (CurrentManager.ExtraSuccessRate * 100) + "%";
+            {
+                foreach (PerkInfo perk in CurrentManager.InfoDetail.PerksInfo)
+                {
+                    int a = perk.CurrentPerk.Num;
+                    if (a == 30 || a == 31 || a == 33 || a == 38 || a == 94)
+                    {
+                        Text_SRateDetail.text += "\n" + CurrentManager.Name + perk.CurrentPerk.Name + "状态: " + (perk.CurrentPerk.TempValue4 * perk.CurrentPerk.Level * 100) + "%";
+                    }
+                }
+            }
 
             if (Mathf.Abs(GC.SC.ExtraSuccessRate) > 0.001f)
                 Text_SRateDetail.text += "\n动员效果:" + (GC.SC.ExtraSuccessRate * 100) + "%";

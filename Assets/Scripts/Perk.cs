@@ -839,6 +839,7 @@ public class Perk30 : Perk
     public override void ImmEffect()
     {
         TargetEmp.ExtraSuccessRate += 0.01f;
+        TempValue4 = 0.01f;
     }
     public override void RemoveEffect()
     {
@@ -860,6 +861,7 @@ public class Perk31 : Perk
     public override void ImmEffect()
     {
         TargetEmp.ExtraSuccessRate -= 0.01f;
+        TempValue4 = -0.01f;
     }
     public override void RemoveEffect()
     {
@@ -905,6 +907,7 @@ public class Perk33 : Perk
     public override void ImmEffect()
     {
         TargetEmp.ExtraSuccessRate += 0.05f;
+        TempValue4 = 0.05f;
     }
     public override void RemoveEffect()
     {
@@ -1031,6 +1034,7 @@ public class Perk38 : Perk
     public override void ImmEffect()
     {
         TargetEmp.ExtraSuccessRate += 0.05f;
+        TempValue4 = 0.05f;
     }
     public override void RemoveEffect()
     {
@@ -1850,6 +1854,7 @@ public class Perk94: Perk
     public override void ImmEffect()
     {
         TargetEmp.ExtraSuccessRate -= 0.1f;
+        TempValue4 = -0.1f;
     }
     public override void RemoveEffect()
     {

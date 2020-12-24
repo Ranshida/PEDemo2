@@ -31,11 +31,17 @@ public class HireControl : MonoBehaviour
                 {
                     HireInfos[i].emp.StarType = 2;
                     HireInfos[i].emp.InitStar(2);
+                    HireInfos[i].emp.Character[0] = GC.CurrentEmployees[0].Character[0];
+                    HireInfos[i].emp.Character[1] = GC.CurrentEmployees[0].Character[1];
+                    HireInfos[i].emp.ChangeCharacter(0, 0);
                 }
                 else if (i == 1)
                 {
                     HireInfos[i].emp.StarType = 6;
                     HireInfos[i].emp.InitStar(6);
+                    HireInfos[i].emp.Character[0] = GC.CurrentEmployees[0].Character[0];
+                    HireInfos[i].emp.Character[1] = GC.CurrentEmployees[0].Character[1];
+                    HireInfos[i].emp.ChangeCharacter(0, 0);
                 }
                 GC.CurrentEmpInfo = HireInfos[i];
                 SetInfoPanel();

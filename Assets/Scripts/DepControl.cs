@@ -589,8 +589,9 @@ public class DepControl : MonoBehaviour
                     BaseSuccessRate += 0.1f;
                 //文字显示
                 Text_SRateDetail.text += CurrentEmps[i].Name + "技能:" + (EValue * 100) + "%";
-                if (CurrentEmps[i].ExtraSuccessRate > 0.001f || CurrentEmps[i].ExtraSuccessRate < -0.001f)
-                    Text_SRateDetail.text += " +" + (CurrentEmps[i].ExtraSuccessRate * 100) + "%";
+                //员工额外效果A
+                ExtraEffectDescription(CurrentEmps[i]);
+
                 Text_SRateDetail.text += "\n";
                 BaseSuccessRate += EValue;
                 BaseSuccessRate += CurrentEmps[i].ExtraSuccessRate;
@@ -621,8 +622,8 @@ public class DepControl : MonoBehaviour
                 BaseSuccessRate += CommandingOffice.CurrentManager.ExtraSuccessRate;
                 //文字显示
                 Text_SRateDetail.text += "高管" + CommandingOffice.CurrentManager.Name + "技能:" + (EValue * 100) + "%";
-                if (CommandingOffice.CurrentManager.ExtraSuccessRate > 0.001f || CommandingOffice.CurrentManager.ExtraSuccessRate < -0.001f)
-                    Text_SRateDetail.text += " +" + (CommandingOffice.CurrentManager.ExtraSuccessRate * 100) + "%";
+                //高管额外效果A
+                ExtraEffectDescription(CommandingOffice.CurrentManager, true);
             }
         }
         else
@@ -669,8 +670,9 @@ public class DepControl : MonoBehaviour
                     EValue += 0.1f;
                 //文字显示
                 Text_SRateDetail.text += CurrentEmps[i].Name + "技能:" + (EValue * 100) + "%";
-                if (Mathf.Abs(CurrentEmps[i].ExtraSuccessRate) > 0.001f)
-                    Text_SRateDetail.text += "\n" + CurrentEmps[i].Name + "额外效果:" + (CurrentEmps[i].ExtraSuccessRate * 100) + "%";
+                //员工额外效果B
+                ExtraEffectDescription(CurrentEmps[i]);
+
                 Text_SRateDetail.text += "\n";
                 BaseSuccessRate += EValue;
                 BaseSuccessRate += CurrentEmps[i].ExtraSuccessRate;
@@ -720,8 +722,8 @@ public class DepControl : MonoBehaviour
                 BaseSuccessRate += CommandingOffice.CurrentManager.ExtraSuccessRate;
                 //文字显示
                 Text_SRateDetail.text += "高管" + CommandingOffice.CurrentManager.Name + "技能:" + (EValue * 100) + "%";
-                if (Mathf.Abs(CommandingOffice.CurrentManager.ExtraSuccessRate) > 0.001f)
-                    Text_SRateDetail.text += "\n高管" + CommandingOffice.CurrentManager.Name + "额外效果:" + (CommandingOffice.CurrentManager.ExtraSuccessRate * 100) + "%";
+                //高管额外效果B
+                ExtraEffectDescription(CommandingOffice.CurrentManager, true);
             }
         }
         if (Mathf.Abs(GC.SC.ExtraSuccessRate) > 0.001f)
@@ -748,6 +750,25 @@ public class DepControl : MonoBehaviour
         }
         
         return BaseSuccessRate + GC.SC.ExtraSuccessRate + Efficiency;
+    }
+    //额外效果描述
+    void ExtraEffectDescription(Employee emp, bool isManager = false)
+    {
+        if(Mathf.Abs(emp.ExtraSuccessRate) > 0.001f)
+        {
+            foreach (PerkInfo perk in emp.InfoDetail.PerksInfo)
+            {
+                int a = perk.CurrentPerk.Num;
+                string eName = "";
+                if (isManager == true)
+                    eName = "高管";
+                eName += emp.Name;
+                if (a == 30 || a == 31 || a == 33 || a == 38 || a == 94)
+                {
+                    Text_SRateDetail.text += "\n" + eName + perk.CurrentPerk.Name + "状态: " + (perk.CurrentPerk.TempValue4 * perk.CurrentPerk.Level * 100) + "%";
+                }
+            }
+        }
     }
 
     public void ShowSRateDetailPanel()

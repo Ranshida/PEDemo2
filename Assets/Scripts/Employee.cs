@@ -503,7 +503,12 @@ public class Employee
         //确定倾向
         for (int i = 0; i < 5; i++)
         {
-            Character[i] = Random.Range(-100, 101);
+            Character[i] = Random.Range(50, 101);
+            if(i == 0 || i == 1)
+            {
+                if (Random.Range(0.0f, 1.0f) < 0.5f)
+                    Character[i] *= -1;
+            }
             if (i == 4)
                 Character[4] = Random.Range(0, 101);
         }
