@@ -92,7 +92,7 @@ public class BuildingManage : MonoBehaviour
         {
             Building building = prefab.GetComponent<Building>();
             //基础建筑物不能通过抽卡获取
-            if (!building.BasicBuilding)
+            if (building.CanLottery)
             {
                 m_SelectDict.Add(building.Type, prefab);
             }
@@ -118,11 +118,12 @@ public class BuildingManage : MonoBehaviour
         warePanel.Find("Btn_产品部门").GetComponent<Button>().onClick.AddListener(() => { BuildBasicBuilding(BuildingType.产品部门); });
         warePanel.Find("Btn_公关营销部").GetComponent<Button>().onClick.AddListener(() => { BuildBasicBuilding(BuildingType.公关营销部); });
         warePanel.Find("Btn_高管办公室").GetComponent<Button>().onClick.AddListener(() => { BuildBasicBuilding(BuildingType.高管办公室); });
+        warePanel.Find("Btn_人力资源部").GetComponent<Button>().onClick.AddListener(() => { BuildBasicBuilding(BuildingType.人力资源部); });
         btn_NewArea.onClick.AddListener(() => { UnlockNewArea(); });
 
         m_EffectHalo.SetActive(false);
-        InitBuilding(BuildingType.CEO办公室, new Int2(0, 8));
-        //InitBuilding(BuildingType.技术部门, new Int2(16, 1));
+        InitBuilding(BuildingType.CEO办公室, new Int2(3, 8));
+        InitBuilding(BuildingType.人力资源部, new Int2(0, 8));
     }
 
     //初始化默认建筑
