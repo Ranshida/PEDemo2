@@ -1784,7 +1784,12 @@ public class DepControl : MonoBehaviour
         int value = 0;
         //工资
         if (type == 1)
-            value = (int)(25 * CurrentEmps.Count * GC.TotalSalaryMultiply * SalaryMultiply);
+        {
+            foreach (Employee emp in CurrentEmps)
+            {
+                value += (int)(emp.InfoDetail.CalcSalary() * GC.TotalSalaryMultiply * SalaryMultiply);
+            }
+        }
         //维护费
         else if (type == 2)
             value = (int)(building.Pay * GC.TotalBuildingPayMultiply * BuildingPayMultiply);

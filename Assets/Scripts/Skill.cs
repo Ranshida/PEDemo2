@@ -896,6 +896,7 @@ public class Skill36 : Skill
 
     public override bool ConditionCheck()
     {
+        //只能选中一个骰子
         if (TargetEmp.InfoDetail.GC.SC.SelectedDices.Count == 1)
             return true;
         else
