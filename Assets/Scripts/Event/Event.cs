@@ -14012,6 +14012,10 @@ public class Event3_28 : Event
         {
             return false;
         }
+        if (Self.FindRelation(Target).FriendValue != -1 && Self.FindRelation(Target).FriendValue != -2)
+        {
+            return false;
+        }
         return true;
     }
     public override int ExtraValue()
@@ -14089,6 +14093,10 @@ public class Event3_29 : Event
     public override bool RelationCheck()
     {
         if (Self.FindRelation(Target).RPoint >= -30)
+        {
+            return false;
+        }
+        if (Self.FindRelation(Target).FriendValue != -1 && Self.FindRelation(Target).FriendValue != -2)
         {
             return false;
         }
@@ -14172,6 +14180,10 @@ public class Event3_30 : Event
         {
             return false;
         }
+        if (Self.FindRelation(Target).FriendValue != -2)
+        {
+            return false;
+        }
         return true;
     }
     public override int ExtraValue()
@@ -14252,6 +14264,10 @@ public class Event3_31 : Event
     public override bool RelationCheck()
     {
         if (Self.FindRelation(Target).RPoint >= -60)
+        {
+            return false;
+        }
+        if (Self.FindRelation(Target).FriendValue != -2)
         {
             return false;
         }
@@ -14500,7 +14516,11 @@ public class Event3_34 : Event
     }
     public override bool RelationCheck()
     {
-        if (Self.FindRelation(Target).RPoint <= 5)
+        if (Self.FindRelation(Target).RPoint <= 40)
+        {
+            return false;
+        }
+        if(Self.FindRelation(Target).FriendValue!=1 && Self.FindRelation(Target).FriendValue != 2)
         {
             return false;
         }
@@ -14587,6 +14607,10 @@ public class Event3_35 : Event
         {
             return false;
         }
+        if (Self.FindRelation(Target).FriendValue != 1 && Self.FindRelation(Target).FriendValue != 2)
+        {
+            return false;
+        }
         return true;
     }
     public override int ExtraValue()
@@ -14670,6 +14694,10 @@ public class Event3_36 : Event
         {
             return false;
         }
+        if ( Self.FindRelation(Target).FriendValue != 2)
+        {
+            return false;
+        }
         return true;
     }
     public override int ExtraValue()
@@ -14750,6 +14778,10 @@ public class Event3_37 : Event
     public override bool RelationCheck()
     {
         if (Self.FindRelation(Target).RPoint <= 80)
+        {
+            return false;
+        }
+        if (Self.FindRelation(Target).FriendValue != 2)
         {
             return false;
         }
@@ -15636,8 +15668,6 @@ public class Event3_45 : Event
         base.Success(Posb);
         Self.FindRelation(Target).FriendValue = 1;
         Target.FindRelation(Self).FriendValue = 1;
-        //flag编号2：前置事件12的标记
-        Self.FindRelation(Target).EventFlag[2] = 1;
         ResultText = Self.Name + "跟" + Target.Name + "结成朋友关系";
     }
     public override void Failure(float Posb)
