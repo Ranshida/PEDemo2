@@ -166,16 +166,7 @@ public class SkillControl : MonoBehaviour
         {
             BossLevel = 1;
             SetStatus();
-            if (CurrentManager.Manage <= 5)
-                DiceNum = 2;
-            else if (CurrentManager.Manage <= 9)
-                DiceNum = 3;
-            else if (CurrentManager.Manage <= 13)
-                DiceNum = 4;
-            else if (CurrentManager.Manage < 17)
-                DiceNum = 5;
-            else
-                DiceNum = 6;
+            DiceNum = CurrentManager.CurrentOffice.ManageValue + 1;
             DiceNum += GC.ExtraDice;
             if (DiceNum > 6)
                 DiceNum = 6;

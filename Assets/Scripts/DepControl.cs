@@ -129,7 +129,7 @@ public class DepControl : MonoBehaviour
     public DepSelect DS;
     public OfficeControl CommandingOffice;
     public Text Text_DepName, Text_Task, Text_Progress, Text_Quality, Text_Time, Text_Office, Text_Efficiency, Text_LevelDownTime, 
-        Text_SRateDetail, Text_DetailInfo;
+        Text_SRateDetail, Text_DetailInfo, Text_ManagerStatus;
     public Text Text_DepFaith, Text_DepMode, Text_SkillRequire, Text_TaskTime, Text_SRate, Text_MSRate, Text_MFRate, Text_FinishedTaskNum, Text_DepCost;
     public Button SurveyButton, ActiveButton, ModeChangeButton;
     public EmpType type;
@@ -162,10 +162,16 @@ public class DepControl : MonoBehaviour
                         "(" + CommandingOffice.Text_OfficeName.text + ") 管理";
                 }
                 else
+                {
                     Text_Office.text = "由 " + CommandingOffice.Text_OfficeName.text + "(空) 管理";
+                    Text_ManagerStatus.text = "上司业务能力等级:——";
+                }
             }
             else
+            {
                 Text_Office.text = "无管理者";
+                Text_ManagerStatus.text = "上司业务能力等级:——";
+            }
             Text_DepFaith.text = "部门信念:" + DepFaith;
             Text_DepMode.text = "部门模式:模式" + BuildingMode;
             Text_Efficiency.text = "动员等级:" + GC.SC.MobLevel;
@@ -581,12 +587,7 @@ public class DepControl : MonoBehaviour
             {
                 int value = 0;
                 float EValue = 0;
-                if (building.effectValue == 1)
-                    value = CurrentEmps[i].Skill1;
-                else if (building.effectValue == 2)
-                    value = CurrentEmps[i].Skill2;
-                else
-                    value = CurrentEmps[i].Skill3;
+                value = CurrentEmps[i].BaseAttributes[type - 1];
                 if (value <= 5)
                     EValue -= 0.15f;
                 else if (value <= 9)
@@ -615,30 +616,7 @@ public class DepControl : MonoBehaviour
             for (int i = 0; i < CurrentEmps.Count; i++)
             {
                 int value = 0;
-                if (type == 4)
-                    value = CurrentEmps[i].Observation;
-                else if (type == 5)
-                    value = CurrentEmps[i].Tenacity;
-                else if (type == 6)
-                    value = CurrentEmps[i].Strength;
-                else if (type == 7)
-                    value = CurrentEmps[i].Manage;
-                else if (type == 8)
-                    value = CurrentEmps[i].HR;
-                else if (type == 9)
-                    value = CurrentEmps[i].Finance;
-                else if (type == 10)
-                    value = CurrentEmps[i].Decision;
-                else if (type == 11)
-                    value = CurrentEmps[i].Forecast;
-                else if (type == 12)
-                    value = CurrentEmps[i].Strategy;
-                else if (type == 13)
-                    value = CurrentEmps[i].Convince;
-                else if (type == 14)
-                    value = CurrentEmps[i].Charm;
-                else if (type == 15)
-                    value = CurrentEmps[i].Gossip;
+                value = CurrentEmps[i].BaseAttributes[type - 1];
                 float EValue = 0;
                 if (value <= 5)
                     EValue -= 0.15f;
@@ -666,50 +644,38 @@ public class DepControl : MonoBehaviour
         if (CommandingOffice != null && CommandingOffice.CurrentManager != null)
         {
             int value = 0;
-            if (building.effectValue == 1)
-                value = CommandingOffice.CurrentManager.Skill1;
-            else if (building.effectValue == 2)
-                value = CommandingOffice.CurrentManager.Skill2;
-            else if (building.effectValue == 3)
-                value = CommandingOffice.CurrentManager.Skill3;
-            else if (type == 4)
-                value = CommandingOffice.CurrentManager.Observation;
-            else if (type == 5)
-                value = CommandingOffice.CurrentManager.Tenacity;
-            else if (type == 6)
-                value = CommandingOffice.CurrentManager.Strength;
-            else if (type == 7)
-                value = CommandingOffice.CurrentManager.Manage;
-            else if (type == 8)
-                value = CommandingOffice.CurrentManager.HR;
-            else if (type == 9)
-                value = CommandingOffice.CurrentManager.Finance;
-            else if (type == 10)
-                value = CommandingOffice.CurrentManager.Decision;
-            else if (type == 11)
-                value = CommandingOffice.CurrentManager.Forecast;
-            else if (type == 12)
-                value = CommandingOffice.CurrentManager.Strategy;
-            else if (type == 13)
-                value = CommandingOffice.CurrentManager.Convince;
-            else if (type == 14)
-                value = CommandingOffice.CurrentManager.Charm;
-            else if (type == 15)
-                value = CommandingOffice.CurrentManager.Gossip;
+            value = CommandingOffice.CurrentManager.BaseAttributes[type - 1];
             float EValue = 0;
             if (value <= 5)
+            {
                 EValue -= 0.15f;
+                Text_ManagerStatus.text = "上司业务能力等级:草包管理";
+            }
             else if (value <= 9)
+            {
                 EValue -= 0.05f;
+                Text_ManagerStatus.text = "上司业务能力等级:胡乱指挥";
+            }
             else if (value <= 13)
+            {
                 EValue += 0.0f;
+                Text_ManagerStatus.text = "上司业务能力等级:外行领导";
+            }
             else if (value <= 17)
+            {
                 EValue += 0.05f;
+                Text_ManagerStatus.text = "上司业务能力等级:普通管理者";
+            }
             else if (value <= 21)
+            {
                 EValue += 0.15f;
+                Text_ManagerStatus.text = "上司业务能力等级:优秀管理";
+            }
             else if (value > 21)
+            {
                 EValue += 0.2f;
-
+                Text_ManagerStatus.text = "上司业务能力等级:业界领袖";
+            }
             BaseSuccessRate += EValue;
             BaseSuccessRate += CommandingOffice.CurrentManager.ExtraSuccessRate;
             //文字显示
@@ -872,6 +838,46 @@ public class DepControl : MonoBehaviour
             {
                 Text_DetailInfo.text += "\n" + office.Text_OfficeName.text;
             }
+        }
+        else if (type == 9)
+        {
+            if (CommandingOffice == null)
+                return;
+            if (CommandingOffice.CurrentManager == null)
+                return;
+            int value = 0;
+            value = CommandingOffice.CurrentManager.BaseAttributes[building.effectValue - 1];
+            if (value <= 5)
+            {
+                Text_DetailInfo.text = "部门成功率:-15%";
+                Text_DetailInfo.text += "\n技能 <= 5";
+            }
+            else if (value <= 9)
+            {
+                Text_DetailInfo.text = "部门成功率:-5%";
+                Text_DetailInfo.text += "\n5 <技能 <= 9";
+            }
+            else if (value <= 13)
+            {
+                Text_DetailInfo.text = "部门成功率:+0%";
+                Text_DetailInfo.text += "\n9 <技能 <= 13";
+            }
+            else if (value <= 17)
+            {
+                Text_DetailInfo.text = "部门成功率:+5%";
+                Text_DetailInfo.text += "\n13 <技能 <= 17";
+            }
+            else if (value <= 21)
+            {
+                Text_DetailInfo.text = "部门成功率:+15%";
+                Text_DetailInfo.text += "\n17 <技能 <= 21";
+            }
+            else if (value > 21)
+            {
+                Text_DetailInfo.text = "部门成功率:+20%";
+                Text_DetailInfo.text += "\n技能 > 21";
+            }
+            Text_DetailInfo.text += "\n(当前等级:" + value + ")";
         }
         SRateDetailPanel.transform.position = Input.mousePosition;
         SRateDetailPanel.gameObject.SetActive(true);

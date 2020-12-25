@@ -436,6 +436,15 @@ public class SkillTree : MonoBehaviour
         //招聘技能树需要反复刷新所以先设置为都可见
         SubSkillPanelA.SetActive(true);
         SubSkillPanelB.SetActive(true);
+        //重置所有节点内容
+        for (int i = 0; i < 5; i++)
+        {
+            Text_Names[i].text = "";
+            Text_DCost[i].text = "";
+            Text_SCost[i].text = "";
+            Text_Describes[i].text = "???";
+        }
+
         if (num == 1)
         {
             Text_Requires[0].text = "观察>=5";

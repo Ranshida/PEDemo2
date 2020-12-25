@@ -137,13 +137,13 @@ public class OfficeControl : MonoBehaviour
     {
         if (CurrentManager != null)
         {
-            if (CurrentManager.Manage <= 5)
+            if (CurrentManager.Manage < 6)
                 ManageValue = 1;
-            else if (CurrentManager.Manage <= 9)
+            else if (CurrentManager.Manage < 11)
                 ManageValue = 2;
-            else if (CurrentManager.Manage <= 13)
+            else if (CurrentManager.Manage < 16)
                 ManageValue = 3;
-            else if (CurrentManager.Manage < 17)
+            else if (CurrentManager.Manage < 21)
                 ManageValue = 4;
             else
                 ManageValue = 5;
@@ -417,8 +417,8 @@ public class OfficeControl : MonoBehaviour
                     {
                         if (Random.Range(0.0f, 1.0f) < 0.5f + GC.SC.ExtraMajorFailureRate)
                         {
-                            CurrentManager.Mentality -= 20;
-                            GC.CreateMessage(Text_OfficeName.text + "工作发生严重失误,高管心力-20");
+                            //CurrentManager.Mentality -= 20;
+                            GC.CreateMessage(Text_OfficeName.text + "工作发生严重失误");
                         }
                         else
                             GC.CreateMessage(Text_OfficeName.text + "充能失败");

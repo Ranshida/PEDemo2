@@ -690,6 +690,8 @@ public class Employee
             { 
                 Manage += 1;
                 SkillName = "管理";
+                if (CurrentOffice != null)
+                    CurrentOffice.CheckManage();
             }
             else if (type == 8)
             { 
