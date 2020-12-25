@@ -3,11 +3,15 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class GameRoot : MonoBehaviour
 {
     public static string Key_Files = "FilesKey";
     public bool GameActive;
+    public GameObject fileGo;
+
+    public Transform fileContent;
 
     private void Awake()
     {
@@ -17,36 +21,106 @@ public class GameRoot : MonoBehaviour
 
     private void Start()
     {
-        Action action = () =>
-        {
-            GameActive = true;
-            Init();
-            NewGame();
-        };
-        AsyncLoadScene("SampleScene", action);
+        
     }
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.U))
+        {
+            string[] keys = ES3.GetKeys();
+            foreach (string key in keys)
+            {
+                ES3.DeleteKey(key);
+            }
+            Debug.LogError("清除存档");
+        }
+
+        if (GameActive)
+        {
+            if (Input.GetKeyDown(KeyCode.Y))
+            {
+                Save();
+            }
+        }
+
+
+
         if (prgCB != null)
         {
             prgCB();
         }
     }
 
-    public void Init()
+    public void FilesPanel()
     {
-        BuildingManage.Instance.Init();
+        //首次存档
+        if (!ES3.KeyExists(Key_Files))
+        {
+            FilesKey newFilesKey = new FilesKey();
+            ES3.Save(Key_Files, newFilesKey);
+        }
+        FilesKey files = ES3.Load(Key_Files) as FilesKey;
+        for (int i = 0; i < files.allFiles.Length; i++)
+        {
+            GameObject go = Instantiate(fileGo, fileContent);
+
+            if (files.allFiles[i] == false)
+            {  //没有存档
+                //go.GetComponent<Button>().onClick.AddListener(() => { LoadGame(i); });
+                go.transform.Find("Txt_Key").GetComponent<Text>().text = "空";
+                go.transform.Find("Txt_Time").GetComponent<Text>().text = "";
+            }
+            else
+            {
+                Debug.LogError(i);
+                Debug.LogError(files.KeysDict[i].FileKey);
+                //已有存档
+                go.GetComponent<Button>().onClick.AddListener(() => { LoadGame(i); });
+                go.transform.Find("Txt_Key").GetComponent<Text>().text = files.KeysDict[i].FileKey;
+                go.transform.Find("Txt_Time").GetComponent<Text>().text = files.KeysDict[i].Date;
+            }
+        }
+
     }
 
+    //开始新游戏
     public void NewGame()
     {
+        Action action = () =>
+        {
+            GameActive = true;
+            BuildingManage.Instance.Init();
+            OnNewGame();
+        };
+
+        AsyncLoadScene("SampleScene", action);
+    }
+    private void OnNewGame()
+    {
+        //基础办公室、员工
         BuildingManage.Instance.InitBuilding(BuildingType.CEO办公室, new Int2(0, 8));
     }
 
-    public void LoadGame()
-    {
 
+    //读取存档
+    public void LoadGame(int fileIndex)
+    {
+        Debug.LogError("读取存档：" + fileIndex);
+
+        //Action action = () =>
+        //{
+        //    GameActive = true;
+        //    BuildingManage.Instance.Init();
+        //    OnLoadGame(fileIndex);
+        //};
+
+        //AsyncLoadScene("SampleScene", action);
+    }
+
+    private void OnLoadGame(int fileIndex)
+    {
+        BuildingManage.Instance.InitBuilding(BuildingType.CEO办公室, new Int2(0, 8));
     }
 
 
@@ -57,44 +131,72 @@ public class GameRoot : MonoBehaviour
             return;
         }
 
+        Debug.LogError("Save");
+
         //首次存档
         if (!ES3.KeyExists(Key_Files))
         {
-            FilesKey newFilesKey = new FilesKey();
-            ES3.Save(Key_Files, newFilesKey);
+            Debug.LogError("First");
+            FilesKey newTest = new FilesKey();
+            ES3.Save(Key_Files, newTest);
         }
+        FilesKey test = ES3.Load(Key_Files) as FilesKey;
 
-        FilesKey filesKey = ES3.Load(Key_Files) as FilesKey;
-        for (int i = 0; i < filesKey.allFiles.Length; i++)
-        {  //存档可用
-            if (filesKey.allFiles[i] == false)
+        for (int i = 0; i < test.allFiles.Length; i++)
+        {
+            if (test.allFiles[i] == false)
             {
-                //这个存档的Key
                 string key = DateTime.Now.ToShortDateString() + "-" + i.ToString();
-                FilesData fileData = new FilesData(key);
-                filesKey.KeysDict[i] = fileData;
+                test.allFiles[i] = true;
 
-                if (filesKey.KeysDict.ContainsKey(key))
-                {
-                    Debug.LogError("已包含这个");
-                }
+                FilesData test1 = new FilesData();
+                test1.Init(key);
+                test.KeysDict.Add(i, test1);
+                Debug.LogError(i + "  " + test.KeysDict[i].FileName);
+                ES3.Save(Key_Files, test);
+
+                FilesKey newtest = ES3.Load(Key_Files) as FilesKey;
+                Debug.LogError(newtest.KeysDict[i].FileName);
+                break;
             }
         }
 
+       
 
-        //这个存档自身的数据
 
 
-        //游戏的数据
-        GameFiles files = new GameFiles();
-        Files_Building building = BuildingManage.Instance.Save();
+        //FilesKey filesKey = ES3.Load(Key_Files) as FilesKey;
+        //int index = -1;
+        //for (int i = 0; i < filesKey.allFiles.Length; i++)
+        //{  //找到下一个可用的存档
+        //    if (filesKey.allFiles[i] == false)
+        //    {
+        //        index = i;
 
-        files.building = building;
-        foreach (ES3.k item in collection)
-        {
+        //        break;
+        //    }
+        //}
 
-        }
-        ES3.Save()
+        //if (index != -1)
+        //{
+        //    filesKey.allFiles[index] = true;
+        //    string key = index.ToString();
+        //    Debug.LogError("Confirm: " + index + " " + key);
+
+        //    //这个存档自身的数据
+        //    FilesData fileData = new FilesData(key);
+        //    filesKey.KeysDict.Add(index, fileData);
+        //    Debug.LogError(filesKey.KeysDict[index].FileKey);
+        //    ES3.Save(Key_Files, filesKey);
+
+        //    FilesKey ttt = ES3.Load(Key_Files) as FilesKey;
+        //    Debug.LogError(ttt.KeysDict[index].FileKey);
+
+        //    //游戏的数据
+        //    //GameFiles files = new GameFiles();
+        //    //Files_Building building = BuildingManage.Instance.Save();
+        //    //ES3.Save(key, files);
+        //}
     }
 
 
