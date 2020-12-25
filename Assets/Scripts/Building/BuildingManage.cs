@@ -478,7 +478,7 @@ public class BuildingManage : MonoBehaviour
             //在链表上保存新建筑
             ConstructedBuildings.Add(building);
             GameControl.Instance.Money -= 100;
-            GameControl.Instance.BuildingPay += building.Pay;
+            //GameControl.Instance.BuildingPay += building.Pay;
 
             BuildingType T = building.Type;
             //生产部门创建
@@ -543,7 +543,7 @@ public class BuildingManage : MonoBehaviour
         {
             if (building.BuildingSet)
             {
-                GameControl.Instance.BuildingPay -= building.Pay;
+                //GameControl.Instance.BuildingPay -= building.Pay;
             }
         }
     }
@@ -553,7 +553,7 @@ public class BuildingManage : MonoBehaviour
         {
             if (m_SelectBuilding.BuildingSet)
             {
-                GameControl.Instance.BuildingPay -= m_SelectBuilding.Pay;
+                //GameControl.Instance.BuildingPay -= m_SelectBuilding.Pay;
             }
         }
     }
