@@ -557,6 +557,7 @@ public class GameControl : MonoBehaviour
         newOffice.GC = this;
         newOffice.SetName();
         CurrentOffices.Add(newOffice);
+        b.effectValue = 10;
 
         //创建对应按钮
         newOffice.DS = Instantiate(OfficeSelectButtonPrefab, DepSelectContent);
@@ -1074,26 +1075,31 @@ public class GameControl : MonoBehaviour
             {
                 CurrentOffice.Text_OfficeMode.text = "办公室模式:决策";
                 CurrentOffice.MaxProgress = 96;
+                CurrentOffice.building.effectValue = 10;
             }
             else if (num == 2)
             {
                 CurrentOffice.Text_OfficeMode.text = "办公室模式:人力";
                 CurrentOffice.MaxProgress = 24;
+                CurrentOffice.building.effectValue = 8;
             }
             else if (num == 3)
             {
                 CurrentOffice.Text_OfficeMode.text = "办公室模式:管理";
                 CurrentOffice.MaxProgress = 32;
+                CurrentOffice.building.effectValue = 7;
             }
             else if (num == 4)
             {
                 CurrentOffice.Text_OfficeMode.text = "办公室模式:招聘";
                 CurrentOffice.MaxProgress = 24;
+                CurrentOffice.building.effectValue = 8;
             }
             else if (num == 5)
             {
                 CurrentOffice.Text_OfficeMode.text = "办公室模式:部门研究";
                 CurrentOffice.MaxProgress = 48;
+                CurrentOffice.building.effectValue = 7;
             }
         }
     }

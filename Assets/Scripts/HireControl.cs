@@ -143,21 +143,23 @@ public class HireControl : MonoBehaviour
         {
             GC.CurrentEmpInfo.PerksInfo[i].CurrentPerk.AddEffect();
             GC.CurrentEmpInfo.PerksInfo[i].transform.parent = ED.PerkContent;
+            ED.PerksInfo.Add(GC.CurrentEmpInfo.PerksInfo[i]);
         }
-        ED.PerksInfo = GC.CurrentEmpInfo.PerksInfo;
-        //(目前能力不会在招聘刷新时添加，而是在招聘之后检测并添加)
-        //复制能力
-        //for (int i = 0; i < GC.CurrentEmpInfo.SkillsInfo.Count; i++)
-        //{
-        //    GC.CurrentEmpInfo.SkillsInfo[i].transform.parent = ED.SkillContent;
-        //}
-        //ED.SkillsInfo = GC.CurrentEmpInfo.SkillsInfo;
+        GC.CurrentEmpInfo.PerksInfo.Clear();
+
+        //删除展示用能力
+        for (int i = 0; i < GC.CurrentEmpInfo.SkillsInfo.Count; i++)
+        {
+            Destroy(GC.CurrentEmpInfo.SkillsInfo[i].gameObject);
+        }
+        GC.CurrentEmpInfo.SkillsInfo.Clear();
         //复制战略
         for (int i = 0; i < GC.CurrentEmpInfo.StrategiesInfo.Count; i++)
         {
             GC.CurrentEmpInfo.StrategiesInfo[i].transform.parent = ED.StrategyContent;
+            ED.StrategiesInfo.Add(GC.CurrentEmpInfo.StrategiesInfo[i]);
         }
-        ED.StrategiesInfo = GC.CurrentEmpInfo.StrategiesInfo;
+        GC.CurrentEmpInfo.StrategiesInfo.Clear();
         //创建招聘历史
         if (GC.CC.CEO != null)
             GC.CC.CEO.InfoDetail.AddHistory("招聘了" + ED.emp.Name);

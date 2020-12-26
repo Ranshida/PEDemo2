@@ -36,6 +36,10 @@ public class FOEControl : MonoBehaviour
         if(FightTime == 0)
         {
             FightTime = 96;
+            foreach(DepControl dep in GC.CurrentDeps)
+            {
+                dep.ResetFinishedTaskNum();
+            }
             FightStart();
         }
     }

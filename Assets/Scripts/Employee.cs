@@ -679,11 +679,13 @@ public class Employee
             else if (type == 5)
             { 
                 Tenacity += 1;
+                Mentality += 5;
                 SkillName = "坚韧";
             }
             else if (type == 6)
             { 
                 Strength += 1;
+                Stamina += 5;
                 SkillName = "强壮";
             }
             else if (type == 7)

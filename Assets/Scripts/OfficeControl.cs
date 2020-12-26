@@ -41,7 +41,12 @@ public class OfficeControl : MonoBehaviour
             Text_EmpName.text = "当前高管:" + CurrentManager.Name;
             if (building.Type == BuildingType.高管办公室 || building.Type == BuildingType.CEO办公室)
             {
-                Text_MAbility.text = "管理:" + CurrentManager.Manage;
+                if (OfficeMode == 1)
+                    Text_MAbility.text = "决策:" + CurrentManager.Decision;
+                else if (OfficeMode == 2 || OfficeMode == 4)
+                    Text_MAbility.text = "人力:" + CurrentManager.HR;
+                else if (OfficeMode == 3 || OfficeMode == 5)
+                    Text_MAbility.text = "管理:" + CurrentManager.Manage;
                 ManageValue = CurrentManager.Manage;
                 CurrentManager.InfoDetail.CreateStrategy();
                 CurrentManager.NoPromotionTime = 0;
@@ -56,43 +61,29 @@ public class OfficeControl : MonoBehaviour
                 CheckManage();
                 SetOfficeUI();
             }
-            else if (building.effectValue == 1)
-                Text_MAbility.text = "人力:" + CurrentManager.HR;
-            else if (building.effectValue == 2)
-                Text_MAbility.text = "八卦:" + CurrentManager.Gossip;
-            else if (building.effectValue == 3)
-                Text_MAbility.text = "强壮:" + CurrentManager.Strength;
-            else if (building.effectValue == 4)
-                Text_MAbility.text = "谋略:" + CurrentManager.Strategy;
-            else if (building.effectValue == 5)
-                Text_MAbility.text = "行业:" + CurrentManager.Forecast;
-            else if (building.effectValue == 6)
-                Text_MAbility.text = "决策:" + CurrentManager.Decision;
-            else if (building.effectValue == 7)
-                Text_MAbility.text = "财务:" + CurrentManager.Finance;
-            else if (building.effectValue == 8)
-                Text_MAbility.text = "管理:" + CurrentManager.Finance;
+            //1-3职业技能 4观察 5坚韧 6强壮 7管理 8人力 9财务 10决策 11行业 12谋略 13说服 14魅力 15八卦
+            //else if (building.effectValue == 1)
+            //    Text_MAbility.text = "人力:" + CurrentManager.HR;
+            //else if (building.effectValue == 2)
+            //    Text_MAbility.text = "八卦:" + CurrentManager.Gossip;
+            //else if (building.effectValue == 3)
+            //    Text_MAbility.text = "强壮:" + CurrentManager.Strength;
+            //else if (building.effectValue == 4)
+            //    Text_MAbility.text = "谋略:" + CurrentManager.Strategy;
+            //else if (building.effectValue == 5)
+            //    Text_MAbility.text = "行业:" + CurrentManager.Forecast;
+            //else if (building.effectValue == 6)
+            //    Text_MAbility.text = "决策:" + CurrentManager.Decision;
+            //else if (building.effectValue == 7)
+            //    Text_MAbility.text = "财务:" + CurrentManager.Finance;
+            //else if (building.effectValue == 8)
+            //    Text_MAbility.text = "管理:" + CurrentManager.Finance;
 
         }
         else
         {
             Text_EmpName.text = "当前高管:无";
-            if (building.effectValue == 1)
-                Text_MAbility.text = "人力:--";
-            else if (building.effectValue == 2)
-                Text_MAbility.text = "八卦:--";
-            else if (building.effectValue == 3)
-                Text_MAbility.text = "强壮:--";
-            else if (building.effectValue == 4)
-                Text_MAbility.text = "谋略:--";
-            else if (building.effectValue == 5)
-                Text_MAbility.text = "行业:--";
-            else if (building.effectValue == 6)
-                Text_MAbility.text = "决策:--";
-            else if (building.effectValue == 7)
-                Text_MAbility.text = "财务:--";
-            else if (building.effectValue == 8)
-                Text_MAbility.text = "管理:--";
+            Text_MAbility.text = "能力:--";
             ManageValue = 0;
         }
 
@@ -360,29 +351,29 @@ public class OfficeControl : MonoBehaviour
         {
             if (CurrentManager != null && Progress < 100 && CanWork == true)
             {
-                if (building.effectValue == 1)
-                    Progress += CurrentManager.HR;
-                else if (building.effectValue == 2)
-                    Progress += CurrentManager.Gossip;
-                else if (building.effectValue == 3)
-                    Progress += CurrentManager.Strength;
-                else if (building.effectValue == 4)
-                    Progress += CurrentManager.Strategy;
-                else if (building.effectValue == 5)
-                    Progress += CurrentManager.Forecast;
-                else if (building.effectValue == 6)
-                    Progress += CurrentManager.Decision;
-                else if (building.effectValue == 7)
-                    Progress += CurrentManager.Finance;
-                else if (building.effectValue == 8)
-                    Progress += CurrentManager.Manage;
+                //if (building.effectValue == 1)
+                //    Progress += CurrentManager.HR;
+                //else if (building.effectValue == 2)
+                //    Progress += CurrentManager.Gossip;
+                //else if (building.effectValue == 3)
+                //    Progress += CurrentManager.Strength;
+                //else if (building.effectValue == 4)
+                //    Progress += CurrentManager.Strategy;
+                //else if (building.effectValue == 5)
+                //    Progress += CurrentManager.Forecast;
+                //else if (building.effectValue == 6)
+                //    Progress += CurrentManager.Decision;
+                //else if (building.effectValue == 7)
+                //    Progress += CurrentManager.Finance;
+                //else if (building.effectValue == 8)
+                //    Progress += CurrentManager.Manage;
 
-                if (Progress >= 100)
-                {
-                    Progress = 100;
-                    ActiveButton.interactable = true;
-                }
-                Text_Progress.text = "激活进度:" + Progress + "%";
+                //if (Progress >= 100)
+                //{
+                //    Progress = 100;
+                //    ActiveButton.interactable = true;
+                //}
+                //Text_Progress.text = "激活进度:" + Progress + "%";
             }
         }
         else
@@ -544,6 +535,11 @@ public class OfficeControl : MonoBehaviour
         for (int i = 0; i < ControledOffices.Count; i++)
         {
             ControledOffices[i].CommandingOffice = null;
+        }
+        if(CommandingOffice != null)
+        {
+            CommandingOffice.ControledOffices.Remove(this);
+            CommandingOffice.CheckManage();
         }
         GC.HourEvent.RemoveListener(TimePass);
         GC.CurrentOffices.Remove(this);

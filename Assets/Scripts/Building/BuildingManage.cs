@@ -507,12 +507,13 @@ public class BuildingManage : MonoBehaviour
             else if (T == BuildingType.高管办公室)
             {
                 building.Office = GameControl.Instance.CreateOffice(building);
-                building.effectValue = 8;
+                building.effectValue = 10;
             }
             else if (T == BuildingType.CEO办公室)
             {
                 building.Office = CEOOffice;    //互相引用
                 CEOOffice.building = building;  //互相引用
+                building.effectValue = 10;
             }
         }
 

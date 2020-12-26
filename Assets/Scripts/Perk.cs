@@ -168,7 +168,7 @@ public class Perk3 : Perk
             Value = TargetEmp.CurrentDep.building.effectValue - 1;
         else if (TargetEmp.CurrentOffice != null)
             Value = TargetEmp.CurrentOffice.building.effectValue - 1;
-        Description = "随机增加当前工作领域1点热情";
+        Description = "增加当前工作领域1点热情";
         TimeLeft = 64;
         Num = 3;
     }

@@ -1154,7 +1154,6 @@ MonoBehaviour:
   Progress: 100
   MaxProgress: 96
   OfficeMode: 1
-  ExpTime: 5
   OfficeWarning: {fileID: 5648009750388115013}
   SRateDetailPanel: {fileID: 2524745864626978213}
   CommandingOffice: {fileID: 0}
@@ -1454,6 +1453,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: SRateDetailPanel
       objectReference: {fileID: 0}
+    - target: {fileID: 8712070146951918997, guid: e0b780c2faf99e440aeccf368073b79a,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7197858534945455731, guid: e0b780c2faf99e440aeccf368073b79a,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1558,6 +1562,31 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Pivot.y
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2492777823469411795, guid: e0b780c2faf99e440aeccf368073b79a,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 112.85
+      objectReference: {fileID: 0}
+    - target: {fileID: 2492777823469411795, guid: e0b780c2faf99e440aeccf368073b79a,
+        type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2492777823469411795, guid: e0b780c2faf99e440aeccf368073b79a,
+        type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2492777823469411795, guid: e0b780c2faf99e440aeccf368073b79a,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -19
+      objectReference: {fileID: 0}
+    - target: {fileID: 2492777823469411795, guid: e0b780c2faf99e440aeccf368073b79a,
+        type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 20
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e0b780c2faf99e440aeccf368073b79a, type: 3}
