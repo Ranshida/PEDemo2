@@ -13,8 +13,11 @@ public class EmpManager : MonoBehaviour
     private GameObject empPrefabs;
     private Material[] empMaterials;
     private EmpEntity pointEmp;
+    private GameObject eventBubble;
 
-    public Transform EventPanel;
+    public Transform EventPanel;        //事件相关面板
+    private Transform JudgeEventPanel;   //矛盾事件
+    private Transform EventDetailPanel;
 
     public bool SystemPause = false;
 
@@ -23,6 +26,10 @@ public class EmpManager : MonoBehaviour
         Instance = this;
         empPrefabs = ResourcesLoader.LoadPrefab("Prefabs/Employee/Emp");
         empMaterials = ResourcesLoader.LoadAll<Material>("Image/Employee/Materials");
+        eventBubble = ResourcesLoader.LoadPrefab("Prefabs/Employee/Bubble");
+
+        JudgeEventPanel = EventPanel.Find("JudgeEvent");
+        EventDetailPanel = EventPanel.Find("EventDetail");
     }
 
     private void Update()
@@ -34,8 +41,30 @@ public class EmpManager : MonoBehaviour
             pointEmp = CameraController.CharacterRaycast.collider.transform.parent.parent.GetComponentInChildren<EmpEntity>();
             DynamicWindow.Instance.SetEmpName(pointEmp.EmpName, pointEmp.transform, Vector3.up * 10);
         }
-        if (pointEmp && !pointEmp.Fired && Input.GetMouseButtonDown(1))
+        if (pointEmp && !pointEmp.Fired && Input.GetMouseButtonDown(0))
             pointEmp.ShowDetailPanel();
+
+        if (CameraController.ItemHit)
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                GameObject itemGo = CameraController.ItemRaycast.collider.gameObject;
+                EventBulle bubble = itemGo.GetComponentInParent<EventBulle>();
+                if (bubble)
+                {
+                    bubble.OnLeftClick();
+                }
+            }
+            if (Input.GetMouseButtonDown(1))
+            {
+                GameObject itemGo = CameraController.ItemRaycast.collider.gameObject;
+                EventBulle bubble = itemGo.GetComponentInParent<EventBulle>();
+                if (bubble)
+                {
+                    bubble.OnRightClick();
+                }
+            }
+        }
     }
 
     //矛盾事件弹窗
@@ -43,23 +72,25 @@ public class EmpManager : MonoBehaviour
     {
         //这个方法应当会导致游戏暂停
         SystemPause = true;
-        EventPanel.gameObject.SetActive(true);
-        Transform childPanel = EventPanel.Find("Panel");
-        Transform acceptBtn = childPanel.Find("Btn_Accept");
-        Transform cantAccept = childPanel.Find("Txt_CantAccept");
+        JudgeEventPanel.gameObject.SetActive(true);
+        Transform acceptBtn = JudgeEventPanel.Find("Btn_Accept");
+        Transform cantAccept = JudgeEventPanel.Find("Txt_CantAccept");
+        Button acceptbutton = acceptBtn.GetComponent<Button>();
+        Button refusebutton = JudgeEventPanel.Find("Btn_Refuse").GetComponent<Button>();
 
-        childPanel.Find("Txt_Title").GetComponent<Text>().text = currentEvent.EventName;
-        childPanel.Find("Txt_Description").GetComponent<Text>().text = currentEvent.Self.Name + "发生了事件" + currentEvent.EventName;
+        JudgeEventPanel.Find("Txt_Title").GetComponent<Text>().text = currentEvent.EventName;
+        JudgeEventPanel.Find("Txt_Description").GetComponent<Text>().text = currentEvent.Self.Name + "发生了事件" + currentEvent.EventName;
 
         //接受
         if (canAccept) 
         {
             acceptBtn.gameObject.SetActive(true);
             cantAccept.gameObject.SetActive(false);
-            acceptBtn.GetComponent<Button>().onClick.AddListener(() =>
+            acceptbutton.onClick.RemoveAllListeners();
+            acceptbutton.onClick.AddListener(() =>
             {
                 SystemPause = false;
-                EventPanel.gameObject.SetActive(false);
+                JudgeEventPanel.gameObject.SetActive(false);
                 (currentEvent as JudgeEvent).OnAccept();
             });
         }
@@ -71,10 +102,11 @@ public class EmpManager : MonoBehaviour
         }
 
         //拒绝
-        childPanel.Find("Btn_Refuse").GetComponent<Button>().onClick.AddListener(() =>
+        refusebutton.onClick.RemoveAllListeners();
+        refusebutton.onClick.AddListener(() =>
         {
             SystemPause = false;
-            EventPanel.gameObject.SetActive(false);
+            JudgeEventPanel.gameObject.SetActive(false);
             (currentEvent as JudgeEvent).OnRefuse();
         });
     }
@@ -428,5 +460,42 @@ public class EmpManager : MonoBehaviour
         {
             self.FindRelation(item).KnowTarget();
         }
+    }
+
+    public void ShowEventBubble(Event thisEvent)
+    {
+        GameObject bubble =  Instantiate(eventBubble, thisEvent.SelfEntity.Renderer.transform);
+        bubble.transform.localPosition = new Vector3(-8, 0, -6);
+        bubble.GetComponent<EventBulle>().Init(thisEvent);
+        //thisEvent.selfEntity头上显示一个气泡
+
+        //左键点气泡弹出事件面板
+
+        //右键点气泡关掉
+
+        //不点气泡，10秒消失
+    }
+
+    public void ShowEventDetail(Event thisEvent)
+    {
+        EventDetailPanel.gameObject.SetActive(true);
+
+        if (thisEvent.result == 1 || thisEvent.result == 2) 
+        {  //失败  
+            EventDetailPanel.Find("Txt_Success").gameObject.SetActive(false);
+            EventDetailPanel.Find("Txt_Failure").gameObject.SetActive(true);
+        }
+        else
+        {  //成功
+            EventDetailPanel.Find("Txt_Success").gameObject.SetActive(true);
+            EventDetailPanel.Find("Txt_Failure").gameObject.SetActive(false);
+        }
+
+        EventDetailPanel.Find("Txt_EventName").GetComponent<Text>().text = thisEvent.EventName;
+        if (thisEvent.HaveTarget)
+            EventDetailPanel.Find("Txt_Entity").GetComponent<Text>().text = thisEvent.SelfEntity.EmpName + "与" + thisEvent.TargetEntity.EmpName;
+        else
+            EventDetailPanel.Find("Txt_Entity").GetComponent<Text>().text = thisEvent.SelfEntity.EmpName;
+        EventDetailPanel.Find("Txt_Detail").GetComponent<Text>().text = thisEvent.ResultText;
     }
 }

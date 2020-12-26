@@ -28,6 +28,7 @@ public abstract class Event
     public int Weight = 1;          //事件权重
     public int perkUsed = -1;    //出现多个满足条件的状态时，使用的状态编号（20.12.9新增）
     public string perkUsedName = "未知状态";
+    public int result = 0;
 
     public GameControl GC;
     public Employee Self, Target;
@@ -388,7 +389,7 @@ public abstract class Event
         {
             return;
         }
-        int result = FindResult();
+        result = FindResult();
         float Posb = Random.Range(0.0f, 1.0f);
         if (result == 1)
             MajorFailure(Posb);
@@ -399,6 +400,7 @@ public abstract class Event
         else if (result == 4)
             MajorSuccess(Posb);
         AddHistory();
+        EmpManager.Instance.ShowEventBubble(this);
         MonoBehaviour.print(Self.Name + "发生了事件" + EventName);
     }
     //事件结果判定

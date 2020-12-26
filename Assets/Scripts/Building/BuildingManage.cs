@@ -174,7 +174,7 @@ public class BuildingManage : MonoBehaviour
         }
 
         //屏幕射线命中地面
-        if (CameraController.TerrainHit && !CameraController.IsPointingUI)
+        if (CameraController.BuildingHit && !CameraController.IsPointingUI)
                 AimingPosition = new Vector3(CameraController.TerrainRaycast.point.x, 0, CameraController.TerrainRaycast.point.z);
             else
                 AimingPosition = new Vector3(-1000, 0, 0);

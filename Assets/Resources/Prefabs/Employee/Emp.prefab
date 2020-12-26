@@ -123,7 +123,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6942d1dc88798ab4e8a617bd7aee091b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  EmpName: 
   NewEventFlag: 0
+  "\u7C7B\u578B": 0
+  eventName: 
+  LastHour: 0
 --- !u!195 &6588953348601058703
 NavMeshAgent:
   m_ObjectHideFlags: 0

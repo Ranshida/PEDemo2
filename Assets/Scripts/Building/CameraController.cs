@@ -21,11 +21,14 @@ public class CameraController : MonoBehaviour
 
     public static bool IsPointingUI { get { return EventSystem.current.IsPointerOverGameObject(); } }
     private Ray RayTerrain; 
-    private Ray RayCharacter;
     public static bool TerrainHit { get; private set; }
+    public static bool BuildingHit { get; private set; }
+    public static bool ItemHit { get; private set; }
     public static bool CharacterHit { get; private set; }
     public static RaycastHit TerrainRaycast;      //与地面的碰撞
+    public static RaycastHit BuildingRaycast;      //与地面的碰撞
     public static RaycastHit CharacterRaycast;   //与人物的碰撞
+    public static RaycastHit ItemRaycast;   //与人物的碰撞
 
 
     private void Awake()
@@ -56,9 +59,20 @@ public class CameraController : MonoBehaviour
 
         //检查鼠标位置及所属网格
         RayTerrain = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RayCharacter = Camera.main.ScreenPointToRay(Input.mousePosition);
         TerrainHit = Physics.Raycast(RayTerrain, out TerrainRaycast, 1000, 1 << 8);
-        CharacterHit = Physics.Raycast(RayTerrain, out CharacterRaycast, 1000, 1 << 9);
+
+        ItemHit = false;
+        BuildingHit = false;
+        CharacterHit = false;
+        ItemHit = Physics.Raycast(RayTerrain, out ItemRaycast, 1000, 1 << 10);
+        if (!ItemHit)
+        {
+            CharacterHit = Physics.Raycast(RayTerrain, out CharacterRaycast, 1000, 1 << 9);
+            if (!CharacterHit)
+            {
+                BuildingHit = Physics.Raycast(RayTerrain, out BuildingRaycast, 1000, 1 << 8);
+            }
+        }
     }
 
     private float m_TempHeight;   //临时高度变量，像height靠拢

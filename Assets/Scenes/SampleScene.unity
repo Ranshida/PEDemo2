@@ -28499,11 +28499,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: EventPanel
       objectReference: {fileID: 0}
-    - target: {fileID: 4119718920508409575, guid: 7e3a1b2608029f5488bc4c55d650b9ce,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 7945318089439658314, guid: 7e3a1b2608029f5488bc4c55d650b9ce,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -28572,12 +28567,12 @@ PrefabInstance:
     - target: {fileID: 7945318089439658314, guid: 7e3a1b2608029f5488bc4c55d650b9ce,
         type: 3}
       propertyPath: m_SizeDelta.x
-      value: 791.8
+      value: 1920
       objectReference: {fileID: 0}
     - target: {fileID: 7945318089439658314, guid: 7e3a1b2608029f5488bc4c55d650b9ce,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 394.5
+      value: 1080
       objectReference: {fileID: 0}
     - target: {fileID: 7945318089439658314, guid: 7e3a1b2608029f5488bc4c55d650b9ce,
         type: 3}
@@ -85060,26 +85055,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: BuildingPanel
       objectReference: {fileID: 0}
-    - target: {fileID: 1193905140049806697, guid: 1ef1c0f0510751d42ad62a485d344ee4,
-        type: 3}
-      propertyPath: ExitPos
-      value: 
-      objectReference: {fileID: 1577447548915779892}
-    - target: {fileID: 1193905140049806697, guid: 1ef1c0f0510751d42ad62a485d344ee4,
-        type: 3}
-      propertyPath: btn_EnterBuildMode
-      value: 
-      objectReference: {fileID: 8181157980170356878}
-    - target: {fileID: 1193905140049806697, guid: 1ef1c0f0510751d42ad62a485d344ee4,
-        type: 3}
-      propertyPath: btn_NewArea
-      value: 
-      objectReference: {fileID: 3437621388065999043}
-    - target: {fileID: 1193905140049806697, guid: 1ef1c0f0510751d42ad62a485d344ee4,
-        type: 3}
-      propertyPath: CEOOffice
-      value: 
-      objectReference: {fileID: 5815906007067711633}
     - target: {fileID: 3212853679948727271, guid: 1ef1c0f0510751d42ad62a485d344ee4,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -85185,6 +85160,26 @@ PrefabInstance:
       propertyPath: m_Pivot.y
       value: 0.5
       objectReference: {fileID: 0}
+    - target: {fileID: 1193905140049806697, guid: 1ef1c0f0510751d42ad62a485d344ee4,
+        type: 3}
+      propertyPath: ExitPos
+      value: 
+      objectReference: {fileID: 1577447548915779892}
+    - target: {fileID: 1193905140049806697, guid: 1ef1c0f0510751d42ad62a485d344ee4,
+        type: 3}
+      propertyPath: btn_EnterBuildMode
+      value: 
+      objectReference: {fileID: 8181157980170356878}
+    - target: {fileID: 1193905140049806697, guid: 1ef1c0f0510751d42ad62a485d344ee4,
+        type: 3}
+      propertyPath: btn_NewArea
+      value: 
+      objectReference: {fileID: 3437621388065999043}
+    - target: {fileID: 1193905140049806697, guid: 1ef1c0f0510751d42ad62a485d344ee4,
+        type: 3}
+      propertyPath: CEOOffice
+      value: 
+      objectReference: {fileID: 5815906007067711633}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1ef1c0f0510751d42ad62a485d344ee4, type: 3}
 --- !u!224 &1045288397252047886
