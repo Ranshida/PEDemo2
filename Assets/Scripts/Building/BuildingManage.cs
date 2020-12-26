@@ -24,8 +24,8 @@ public class BuildingManage : MonoBehaviour
     private BuildingDescription description;   //抽卡的建筑描述
     private GameObject wareBuilding;       //仓库中的临时建筑
     private GameObject[] buildingPrefabs;  //建筑预制体
-    private Dictionary<BuildingType, GameObject> m_AllBuildingDict;   //  <建筑类型，预制体> 的字典
-    private Dictionary<BuildingType, GameObject> m_SelectDict;        //可以抽取的建筑字典  <建筑类型，预制体> 的字典
+    private Dictionary<BuildingType, Building> m_SelectDict;        //可以抽取的建筑字典  <建筑类型，预制体> 的字典
+    public Dictionary<BuildingType, GameObject> m_AllBuildingDict;   //  <建筑类型，预制体> 的字典
     public string[,] BuildingExcelValue;
 
     //准备建造的建筑
@@ -71,7 +71,7 @@ public class BuildingManage : MonoBehaviour
         wareBuildings = new List<Building>();
         temp_Grids = new List<Grid>();
         m_AllBuildingDict = new Dictionary<BuildingType, GameObject>();
-        m_SelectDict = new Dictionary<BuildingType, GameObject>();
+        m_SelectDict = new Dictionary<BuildingType, Building>();
 
         //加载建筑预制体，加入建筑字典
         lotteryBuilding = ResourcesLoader.LoadPrefab("Prefabs/UI/Building/LotteryBuilding");
@@ -94,7 +94,7 @@ public class BuildingManage : MonoBehaviour
             //基础建筑物不能通过抽卡获取
             if (building.CanLottery)
             {
-                m_SelectDict.Add(building.Type, prefab);
+                m_SelectDict.Add(building.Type, building);
             }
         }
     }
@@ -106,10 +106,8 @@ public class BuildingManage : MonoBehaviour
         warePanel = transform.Find("WarePanel");
         wareBuildingsPanel = warePanel.Find("Scroll View/Viewport/Content");
         selectBuildingPanel = transform.Find("SelectBuilding");
-        btn_EnterBuildMode = transform.Find("Btn_BuildMode").GetComponent<Button>();
         btn_FinishBuild = transform.Find("WarePanel/Btn_Finish").GetComponent<Button>();
         btn_Dismantle = transform.Find("WarePanel/Btn_Dismantle").GetComponent<Button>();
-        btn_NewArea = transform.Find("Btn_NewArea").GetComponent<Button>();
         description = lotteryPanel.Find("BuildingDescriptionPanel").GetComponent<BuildingDescription>();
         description.Init();
 
@@ -345,26 +343,53 @@ public class BuildingManage : MonoBehaviour
         lotteryPanel.gameObject.SetActive(true);
         EnterBuildMode();
 
-        List<Building> buildingList = new List<Building>();     //所有可用的抽卡列表 10+个
-        List<Building> tempBuildings = new List<Building>();    //可选的建筑 count个
-        foreach (KeyValuePair<BuildingType, GameObject> building in m_SelectDict)
+        List<BuildingType> buildingList = new List<BuildingType>();     //所有可用的抽卡列表 10+个
+        List<BuildingType> tempBuildings = new List<BuildingType>();    //可选的建筑 count个
+        foreach (KeyValuePair<BuildingType, Building> building in m_SelectDict)
         {
-            buildingList.Add(building.Value.GetComponent<Building>());
+            if (building.Value.Str_Type != "装饰设施") 
+            {
+                buildingList.Add(building.Key);
+            }
         }
+
+        buildingList.Add(BuildingType.空); buildingList.Add(BuildingType.空); buildingList.Add(BuildingType.空); buildingList.Add(BuildingType.空); buildingList.Add(BuildingType.空);
         for (int i = 0; i < count; i++)
         {
-            Building temp = buildingList[UnityEngine.Random.Range(0, buildingList.Count)];
+            BuildingType temp = buildingList[UnityEngine.Random.Range(0, buildingList.Count)];
             tempBuildings.Add(temp);
             buildingList.Remove(temp);
+            if (temp == BuildingType.空)
+            {
+                buildingList.Remove(BuildingType.空); buildingList.Remove(BuildingType.空); buildingList.Remove(BuildingType.空);  buildingList.Remove(BuildingType.空); buildingList.Remove(BuildingType.空);
+            } 
         }
-        foreach (Building building in tempBuildings)
+        foreach (BuildingType type in tempBuildings)
         {
             Transform panel = GameObject.Instantiate(lotteryBuilding, lotteryList).transform;
             lotteryUI.Add(panel);
             LotteryBuilding lottery = panel.GetComponent<LotteryBuilding>();
             Action action = () =>
             {
-                StartBuildNew(building.Type);
+                //装饰设施
+                if (type == BuildingType.空)
+                {
+                    List<Building> decorate = new List<Building>();
+                    foreach (KeyValuePair<BuildingType, Building> building in m_SelectDict) 
+                    {
+                        if (building.Value.Str_Type == "装饰设施")
+                        {
+                            decorate.Add(building.Value);
+                        }
+                    }
+                    StartBuildNew(decorate[UnityEngine.Random.Range(0, decorate.Count)].Type);
+                }
+                //普通建筑
+                else
+                {
+                    StartBuildNew(type);
+                }
+
                 lotteryPanel.gameObject.SetActive(false);
                 warePanel.gameObject.SetActive(true);
                 foreach (Transform ui in lotteryUI)
@@ -374,21 +399,7 @@ public class BuildingManage : MonoBehaviour
                 lotteryUI.Clear();
             };
 
-            lottery.Init(description, building, building.Type.ToString(), action);
-                
-            //panel.name = building.Type.ToString();
-            //panel.GetComponentInChildren<Text>().text = building.Type.ToString();
-            //panel.GetComponent<Button>().onClick.AddListener(() =>
-            //{
-            //    StartBuildNew(building.Type);
-            //    lotteryPanel.gameObject.SetActive(false);
-            //    warePanel.gameObject.SetActive(true);
-            //    foreach (Transform ui in lotteryUI)
-            //    {
-            //        Destroy(ui.gameObject);
-            //    }
-            //    lotteryUI.Clear();
-            //});
+            lottery.Init(description, type, action);
         }
     }
     //放弃这次抽奖

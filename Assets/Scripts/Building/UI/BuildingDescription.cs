@@ -57,4 +57,26 @@ public class BuildingDescription : MonoBehaviour
         str_Require3.text = building.Require_C;
         str_Description3.text = building.Description_C;
     }
+
+    public void ShowInfo_Decorate(LotteryBuilding lottery)
+    {
+        if (lottery.transform.localPosition.x < 0)
+            transform.localPosition = new Vector3(550, transform.localPosition.y);
+        else
+            transform.localPosition = new Vector3(-550, transform.localPosition.y);
+
+        str_BuildingName.text = "装饰建筑物";
+        str_BuildingSize.text = "随机大小";
+        str_BuildingRange.text = "";
+        str_Jobs.text = "";
+        str_Func1.text = "随机装饰建筑";
+        str_Require1.text = "无";
+        str_Description1.text = "随机获得一个装饰建筑物，不同的装饰建筑物可以解锁不同事件";
+        str_Func2.text = "";
+        str_Require2.text = "";
+        str_Description2.text = "";
+        str_Func3.text = "";
+        str_Require3.text = "";
+        str_Description3.text = "";
+    }
 }

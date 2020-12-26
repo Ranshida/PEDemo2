@@ -10,11 +10,24 @@ public class LotteryBuilding : MonoBehaviour, IPointerEnterHandler, IPointerExit
     BuildingDescription Description;
     Building ThisBuilding;
 
-    public void Init(BuildingDescription desctiption, Building building, string name, Action clickAction)
+    public void Init(BuildingDescription desctiption, BuildingType building, Action clickAction)
     {
         Description = desctiption;
-        ThisBuilding = building;
-        transform.name = name;
+        if (BuildingManage.Instance.m_AllBuildingDict.TryGetValue(building,out GameObject go))
+        {
+            ThisBuilding = go.GetComponent<Building>();
+        }
+
+        if (building == BuildingType.空)
+        {
+            transform.name = "装饰设施";
+        }
+        else
+        {
+            transform.name = building.ToString();
+        }
+
+
         transform.GetComponentInChildren<Text>().text = name;
         transform.GetComponent<Button>().onClick.AddListener(() =>
         {
@@ -26,7 +39,14 @@ public class LotteryBuilding : MonoBehaviour, IPointerEnterHandler, IPointerExit
     public void OnPointerEnter(PointerEventData eventData)
     {
         Description.gameObject.SetActive(true);
-        Description.ShowInfo(this, ThisBuilding);
+        if (ThisBuilding)
+        {
+            Description.ShowInfo(this, ThisBuilding);
+        }
+        else
+        {
+            Description.ShowInfo_Decorate(this);
+        }
     }
 
     public void OnPointerExit(PointerEventData eventData)

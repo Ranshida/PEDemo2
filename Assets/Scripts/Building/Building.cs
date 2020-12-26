@@ -28,6 +28,7 @@ public class Building : MonoBehaviour
     public bool Moving { get; private set; } = false;        //移动中
     public int effectValue = 1, StaminaRequest = 0; //1人力 2八卦 3强壮 4谋略 5行业 6决策 7财务 8管理
     public BuildingType Type;    //现在是创建时赋值，需改为预制体赋值或子类构造
+    public string Str_Type;
     private Transform m_Decoration;   //修饰物，建造后删除
     public int Pay;               //维护费用
     public bool CanLottery;    //基础建筑物，可以直接建造
@@ -49,6 +50,7 @@ public class Building : MonoBehaviour
         if (ID < 3)
             return;
         Name = value[ID, 1];
+        Str_Type = value[ID, 2];
         Size = value[ID, 5];
         EffectRange_str = value[ID, 6];
         Jobs = value[ID, 4];
@@ -67,7 +69,7 @@ public class Building : MonoBehaviour
         Length = int.Parse(size[0]);
         Width = int.Parse(size[1]);
         Pay = 100;
-        CanLottery = value[ID, 2] != "基础办公室" && Type != BuildingType.CEO办公室 && Type != BuildingType.人力资源部;
+        CanLottery = Str_Type != "基础办公室" && Type != BuildingType.CEO办公室 && Type != BuildingType.人力资源部;
         if (!int.TryParse(EffectRange_str, out EffectRange))
         {
             if (EffectRange_str == "/")
