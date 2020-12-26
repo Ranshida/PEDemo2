@@ -400,7 +400,6 @@ public abstract class Event
         else if (result == 4)
             MajorSuccess(Posb);
         AddHistory();
-        EmpManager.Instance.ShowEventBubble(this);
         MonoBehaviour.print(Self.Name + "发生了事件" + EventName);
     }
     //事件结果判定
@@ -11587,6 +11586,11 @@ public class Event3_1 : Event
         }
         //1大失败 2失败 3成功 4大成功
     }
+    public override void EventFinish()
+    {
+        base.EventFinish();
+        EmpManager.Instance.ShowEventBubble(this);
+    }
 
     public override void Failure(float Posb)
     {
@@ -11659,6 +11663,11 @@ public class Event3_2 : Event
             return 3;
         }
         //1大失败 2失败 3成功 4大成功
+    }
+    public override void EventFinish()
+    {
+        base.EventFinish();
+        EmpManager.Instance.ShowEventBubble(this);
     }
 
     public override void Failure(float Posb)
@@ -11744,6 +11753,11 @@ public class Event3_3 : Event
         }
         //1大失败 2失败 3成功 4大成功
     }
+    public override void EventFinish()
+    {
+        base.EventFinish();
+        EmpManager.Instance.ShowEventBubble(this);
+    }
 
     public override void Failure(float Posb)
     {
@@ -11781,6 +11795,11 @@ public class Event3_4 : Event
             return true;
         }
         return false;
+    }
+    public override void EventFinish()
+    {
+        base.EventFinish();
+        EmpManager.Instance.ShowEventBubble(this);
     }
     public override int ExtraValue()
     {
@@ -11841,6 +11860,11 @@ public class Event3_5 : Event
         HaveTarget = true;
         Weight = 3;
         RelationRequire = 0;
+    }
+    public override void EventFinish()
+    {
+        base.EventFinish();
+        EmpManager.Instance.ShowEventBubble(this);
     }
     public override bool SpecialCheck()
     {
@@ -11938,6 +11962,11 @@ public class Event3_6 : Event
         }
         Extra += RelationBonus() + MoraleBonus() + EmotionBonus() + PerksBonus();
         return Extra;
+    }
+    public override void EventFinish()
+    {
+        base.EventFinish();
+        EmpManager.Instance.ShowEventBubble(this);
     }
     public override int FindResult()
     {
@@ -12066,6 +12095,11 @@ public class Event3_7 : Event
         }
         //1大失败 2失败 3成功 4大成功
     }
+    public override void EventFinish()
+    {
+        base.EventFinish();
+        EmpManager.Instance.ShowEventBubble(this);
+    }
     public override void Success(float Posb)
     {
         base.Success(Posb);
@@ -12154,6 +12188,11 @@ public class Event3_8 : Event
             return 3;
         }
         //1大失败 2失败 3成功 4大成功
+    }
+    public override void EventFinish()
+    {
+        base.EventFinish();
+        EmpManager.Instance.ShowEventBubble(this);
     }
     public override void Success(float Posb)
     {
