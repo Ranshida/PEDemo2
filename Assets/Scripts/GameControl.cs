@@ -93,7 +93,7 @@ public class GameControl : MonoBehaviour
     public Transform HireContent, EmpPanelContent, DepContent, DepSelectContent, TotalEmpContent, StandbyContent, EmpDetailContent, MessageContent, SRateDetailContent;
     public InfoPanel infoPanel;
     public GameObject DepSelectPanel, StandbyButton, MessagePrefab, CEOSkillPanel, VacationPanel, GameOverPanel, OfficeModeSelectPanel,
-        OfficeModeHireOptionButton, DepModeSelectPanel, DepSkillConfirmPanel, SkillTreeSelectPanel;
+        OfficeModeBuildingOptionButton, OfficeModeTalkOptionButton, DepModeSelectPanel, DepSkillConfirmPanel, SkillTreeSelectPanel;
     public Text Text_Time, Text_TechResource, Text_MarketResource, Text_ProductResource, Text_Money, Text_Stamina, Text_Mentality, 
         Text_Morale, Text_DepMode1, Text_DepMode2, Text_DepSkillDescribe;
     public Toggle WorkOvertimeToggle;

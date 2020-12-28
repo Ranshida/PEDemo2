@@ -280,9 +280,15 @@ public class OfficeControl : MonoBehaviour
         GC.OfficeModeSelectPanel.SetActive(true);
         GC.CurrentOffice = this;
         if (building.Type == BuildingType.CEO办公室)
-            GC.OfficeModeHireOptionButton.SetActive(true);
+        {
+            GC.OfficeModeBuildingOptionButton.SetActive(true);
+            GC.OfficeModeTalkOptionButton.SetActive(false);
+        }
         else
-            GC.OfficeModeHireOptionButton.SetActive(false);
+        {
+            GC.OfficeModeBuildingOptionButton.SetActive(false);
+            GC.OfficeModeTalkOptionButton.SetActive(true);
+        }
     }
 
     public float CountSuccessRate()

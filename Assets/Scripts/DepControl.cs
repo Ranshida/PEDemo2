@@ -909,10 +909,10 @@ public class DepControl : MonoBehaviour
         GC.CurrentDep = this;
         GC.Text_DepMode1.text = building.Function_A;
         GC.Text_DepMode1.transform.parent.parent.GetComponent<Text>().text = "技能需求:" + building.Require_A + "\n生产周期:" + 
-            building.Time_A + "\n功能描述:\n" + building.Result_A;
+            building.Time_A + "\n功能描述:" + building.Description_A + "\n" + building.Result_A;
         GC.Text_DepMode2.text = building.Function_B;
         GC.Text_DepMode2.transform.parent.parent.GetComponent<Text>().text = "技能需求:" + building.Require_B + "\n生产周期:" +
-            building.Time_B + "\n功能描述:\n" + building.Result_B;
+            building.Time_B + "\n功能描述:" + building.Description_B + "\n" + building.Result_B;
     }
 
     //部门模式改变
