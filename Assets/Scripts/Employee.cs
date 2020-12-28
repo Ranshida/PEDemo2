@@ -236,7 +236,7 @@ public class Employee
             if (mentality < 50 && WantLeave == true)
                 InfoA.Fire();
             if (isCEO == true)
-                InfoDetail.GC.Text_Mentality.text = "心力:" + mentality;
+                GameControl.Instance.Text_Mentality.text = "心力:" + mentality;
         }
     }
     #endregion
@@ -493,9 +493,6 @@ public class Employee
         Skill1 = 5; Skill2 = 5; Skill3 = 5;
         Observation = 5; Tenacity = 5; Strength = 5; Manage = 5; HR = 5; Finance = 5; Decision = 5;
         Forecast = 5; Strategy = 5; Convince = 5; Charm = 5; Gossip = 5; Age = 25;
-        stamina = 100;
-        mentality = 100;
-
         Name = "CEO";
 
         //确定热情(Star)和天赋(StarLimit)
@@ -514,6 +511,8 @@ public class Employee
         }
         CheckCharacter();
         EventTime = 8;
+                Stamina = 100 + (Strength * 5);
+        Mentality = 100 + (Tenacity * 5);
     }
 
     public void InitStar(int type = -1)
@@ -617,10 +616,19 @@ public class Employee
         float AgePenalty = 0;
         if (Age > 23)
             AgePenalty = (Age - 23) * 0.05f;
-        float Efficiency = 1 - AgePenalty + (Stars[SNum] * 0.2f);
-        if (Efficiency < 0)
-            Efficiency = 0;
-        SkillExp[type - 1] += (int)(value * Efficiency);
+        int ExtraValue = 0;
+        if (Stars[SNum] == 1)
+            ExtraValue = 1;
+        else if (Stars[SNum] == 2)
+            ExtraValue = 3;
+        else if (Stars[SNum] == 3)
+            ExtraValue = 6;
+        else if (Stars[SNum] == 4)
+            ExtraValue = 10;
+        else if (Stars[SNum] >= 5)
+            ExtraValue = 15;
+
+        SkillExp[type - 1] += (value + ExtraValue);
 
         int StartExp = 50, ExtraExp = 50, ExtraLevel = 0;
         if(SkillLevel < 10)

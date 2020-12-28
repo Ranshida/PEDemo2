@@ -5,6 +5,10 @@ using UnityEngine.UI;
 
 public class OfficeControl : MonoBehaviour
 {
+    static public float OfficeBaseSuccessRate = 0.6f;
+    static public float OfficeBaseMajorSuccessRate = 0.2f;
+    static public float OfficeBaseMajorFailureRate = 0.5f;
+
     public bool CanWork = false;
     public int ManageValue = 0, Progress = 100, MaxProgress = 96;
     public int OfficeMode = 1;//1决策 战略充能 2人力 心力回复(说服) 3管理 加启发 4招聘 5行业 刷新建筑
@@ -283,7 +287,7 @@ public class OfficeControl : MonoBehaviour
 
     public float CountSuccessRate()
     {
-        float BaseSRate = 0.6f;
+        float BaseSRate = OfficeBaseSuccessRate;
         Text_SRateDetail.text = "";
         if(CurrentManager != null)
         {
@@ -396,17 +400,16 @@ public class OfficeControl : MonoBehaviour
                 {
                     bool MajorSuccess = false;
                     Progress = 0;
-                    float BaseSRate = CountSuccessRate();
                     //大成功
-                    if (Random.Range(0.0f, 1.0f) < BaseSRate)
+                    if (Random.Range(0.0f, 1.0f) < CountSuccessRate())
                     {
-                        if (Random.Range(0.0f, 1.0f) < 0.2f + GC.SC.ExtraMajorSuccessRate)
+                        if (Random.Range(0.0f, 1.0f) < OfficeBaseMajorSuccessRate + GC.SC.ExtraMajorSuccessRate)
                             MajorSuccess = true;
                     }
                     //失败和大失败
                     else
                     {
-                        if (Random.Range(0.0f, 1.0f) < 0.5f + GC.SC.ExtraMajorFailureRate)
+                        if (Random.Range(0.0f, 1.0f) < OfficeBaseMajorFailureRate + GC.SC.ExtraMajorFailureRate)
                         {
                             //CurrentManager.Mentality -= 20;
                             GC.CreateMessage(Text_OfficeName.text + "工作发生严重失误");

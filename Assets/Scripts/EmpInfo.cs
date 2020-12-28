@@ -163,9 +163,12 @@ public class EmpInfo : MonoBehaviour
         //    NewSkill.TargetEmp = this.emp;
         //    AddSkill(NewSkill);
         //}
-        //Skill NewSkill = new Skill32();
-        //NewSkill.TargetEmp = this.emp;
-        //AddSkill(NewSkill);
+        if (emp.isCEO == true)
+        {
+            Skill NewSkill = new Skill32();
+            NewSkill.TargetEmp = this.emp;
+            AddSkill(NewSkill);
+        }
         ST.InitSkill();
         AddThreeRandomStrategy();
         AddRandomPerk();

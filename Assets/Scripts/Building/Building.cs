@@ -11,12 +11,17 @@ public class Building : MonoBehaviour
     public string Function_A;                  //建筑的功能1
     public string Require_A;                   //技能需求
     public string Description_A;               //建筑功能1的描述
+    public string Time_A;                      //建筑功能1的基础生产周期
+    public string Result_A;                    //建筑功能1具体效果描述
     public string Function_B;
     public string Require_B;
     public string Description_B;
+    public string Time_B;
+    public string Result_B;
     public string Function_C;
     public string Require_C;
     public string Description_C;
+
 
     public string EffectRange_str;                        //影响范围str
     public string Jobs;                             //岗位数量
@@ -26,7 +31,8 @@ public class Building : MonoBehaviour
     public int EffectRange;
     public bool BuildingSet { get; private set; } = false;   //设置完毕不再动
     public bool Moving { get; private set; } = false;        //移动中
-    public int effectValue = 1, StaminaRequest = 0; //1人力 2八卦 3强壮 4谋略 5行业 6决策 7财务 8管理
+    public int effectValue = 1;//1技术 2市场 3产品 4观察 5坚韧 6强壮 7管理 8人力 9财务 10决策 11行业 12谋略 13说服 14魅力 15八卦
+    public int StaminaRequest = 0;
     public BuildingType Type;    //现在是创建时赋值，需改为预制体赋值或子类构造
     public string Str_Type;
     private Transform m_Decoration;   //修饰物，建造后删除
@@ -57,9 +63,13 @@ public class Building : MonoBehaviour
         Function_A = value[ID, 11];
         Require_A = value[ID, 13];
         Description_A = value[ID, 14];
+        Time_A = value[ID, 12];
+        Result_A = value[ID, 15];
         Function_B = value[ID, 16];
         Require_B = value[ID, 18];
         Description_B = value[ID, 19];
+        Time_B = value[ID, 17];
+        Result_B = value[ID, 20];
         Function_C = value[ID, 21];
         Require_C = value[ID, 23];
         Description_C = value[ID, 24];

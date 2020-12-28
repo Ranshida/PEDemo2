@@ -1352,7 +1352,7 @@ public class Perk48 : Perk
     public Perk48(Employee Emp) : base(Emp)
     {
         Name = "顺利-进步";
-        Description = "每个进步+1% 部门成功率,持续到当前业务结束";
+        Description = "每个进步+2% 部门成功率,持续到当前业务结束";
         TimeLeft = -1;//持续到当前业务结束
         Num = 48;
         canStack = true;
@@ -1361,7 +1361,7 @@ public class Perk48 : Perk
     {
         if (TargetDep != null)
         {
-            TargetDep.Efficiency += 0.01f;
+            TargetDep.Efficiency += 0.02f;
         }
     }
     public override void RemoveEffect()
@@ -1369,7 +1369,7 @@ public class Perk48 : Perk
         base.RemoveEffect();
         if (TargetDep != null)
         {
-            TargetDep.Efficiency -= 0.01f;
+            TargetDep.Efficiency -= 0.02f;
         }
     }
 }
@@ -1402,7 +1402,7 @@ public class Perk50 : Perk
     public Perk50(Employee Emp) : base(Emp)
     {
         Name = "悔恨-混乱";
-        Description = "每个混乱-1% 部门成功率,持续到当前业务结束";
+        Description = "每个混乱-2% 部门成功率,持续到当前业务结束";
         TimeLeft = -1;//持续到当前业务结束
         Num = 50;
         canStack = true;
@@ -1411,7 +1411,7 @@ public class Perk50 : Perk
     {
         if (TargetDep != null)
         {
-            TargetDep.Efficiency -= 0.01f;
+            TargetDep.Efficiency -= 0.02f;
         }
     }
     public override void RemoveEffect()
@@ -1419,7 +1419,7 @@ public class Perk50 : Perk
         base.RemoveEffect();
         if (TargetDep != null)
         {
-            TargetDep.Efficiency += 0.01f;
+            TargetDep.Efficiency += 0.02f;
         }
     }
 }
@@ -2260,6 +2260,72 @@ public class Perk111 : Perk
     {
         base.RemoveEffect();
         TargetDep.DepFaith += 30;
+    }
+}
+
+//相互帮助
+public class Perk112 : Perk
+{
+    public Perk112(Employee Emp) : base(Emp)
+    {
+        Name = "相互帮助";
+        Description = "提高部门2点信念";
+        TimeLeft = 16;
+        Num = 112;
+        canStack = true;
+    }
+    public override void ImmEffect()
+    {
+        TargetDep.DepFaith += 2;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDep.DepFaith -= 2;
+    }
+}
+
+//产生矛盾
+public class Perk113 : Perk
+{
+    public Perk113(Employee Emp) : base(Emp)
+    {
+        Name = "产生矛盾";
+        Description = "降低部门2点信念";
+        TimeLeft = 16;
+        Num = 113;
+        canStack = true;
+    }
+    public override void ImmEffect()
+    {
+        TargetDep.DepFaith -= 2;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDep.DepFaith += 2;
+    }
+}
+
+//环境舒适
+public class Perk114 : Perk
+{
+    public Perk114(Employee Emp) : base(Emp)
+    {
+        Name = "环境舒适";
+        Description = "提高部门2点信念";
+        TimeLeft = -1;
+        Num = 114;
+        canStack = true;
+    }
+    public override void ImmEffect()
+    {
+        TargetDep.DepFaith += 2;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDep.DepFaith -= 2;
     }
 }
 

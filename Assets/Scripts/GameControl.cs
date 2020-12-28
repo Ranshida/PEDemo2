@@ -225,12 +225,9 @@ public class GameControl : MonoBehaviour
         Week += 1;
         WeeklyEvent.Invoke();
         //Day += 1;
-        Stamina += 30;
-        Mentality += 30;
-        if (Stamina > 100)
-            Stamina = 100;
-        if (Mentality > 100)
-            Mentality = 100;
+        //
+        CC.CEO.Stamina += 30;
+        CC.CEO.Mentality += 30;
         //每周开始时的加班判定
         if (WorkToggle == false)
             WorkOverTime = false;
@@ -340,12 +337,12 @@ public class GameControl : MonoBehaviour
 
         //部门命名
         string newDepName = b.Type.ToString();
+        newDep.ProducePointLimit = int.Parse(b.Time_A);
         if (b.Type == BuildingType.技术部门)
         {
             newDep.type = EmpType.Tech;
             newDep.EmpLimit = 4;
             newDep.building.effectValue = 1;
-            newDep.ProducePointLimit = 16;
             newDep.ModeChangeButton.gameObject.SetActive(false);
             newDep.ActiveButton.gameObject.SetActive(false);
             PC.SetName(newDep);
@@ -357,7 +354,6 @@ public class GameControl : MonoBehaviour
             newDep.type = EmpType.Market;
             newDep.EmpLimit = 4;
             newDep.building.effectValue = 2;
-            newDep.ProducePointLimit = 16;
             newDep.ModeChangeButton.gameObject.SetActive(false);
             newDep.ActiveButton.gameObject.SetActive(false);
         }
@@ -366,7 +362,6 @@ public class GameControl : MonoBehaviour
             newDep.type = EmpType.Product;
             newDep.EmpLimit = 4;
             newDep.building.effectValue = 3;
-            newDep.ProducePointLimit = 16;
             newDep.ModeChangeButton.gameObject.SetActive(false);
             newDep.ActiveButton.gameObject.SetActive(false);
         }
@@ -374,7 +369,7 @@ public class GameControl : MonoBehaviour
         {            
             newDep.EmpLimit = 2;
             newDep.building.effectValue = 2;
-            newDep.ProducePointLimit = 16;
+            newDep.Mode2EffectValue = 10;
             newDep.ActiveMode = 1;
             newDep.ActiveButton.gameObject.SetActive(false);
         }
@@ -382,7 +377,7 @@ public class GameControl : MonoBehaviour
         {
             newDep.EmpLimit = 2;
             newDep.building.effectValue = 1;
-            newDep.ProducePointLimit = 16;
+            newDep.Mode2EffectValue = 3;
             newDep.ModeChangeButton.gameObject.SetActive(false);
             newDep.ActiveButton.gameObject.SetActive(false);
         }
@@ -390,7 +385,7 @@ public class GameControl : MonoBehaviour
         {
             newDep.EmpLimit = 2;
             newDep.building.effectValue = 11;
-            newDep.ProducePointLimit = 48;
+            newDep.Mode2EffectValue = 9;
             newDep.ActiveMode = 3;
         }
         else if (b.Type == BuildingType.人力资源部)
@@ -398,7 +393,7 @@ public class GameControl : MonoBehaviour
             newDep.type = EmpType.HR;
             newDep.EmpLimit = 2;
             newDep.building.effectValue = 8;
-            newDep.ProducePointLimit = 48;
+            newDep.Mode2EffectValue = 12;
             newDep.ModeChangeButton.gameObject.SetActive(false);
             newDep.ActiveButton.gameObject.SetActive(false);
         }
@@ -406,76 +401,76 @@ public class GameControl : MonoBehaviour
         {
             newDep.EmpLimit = 2;
             newDep.building.effectValue = 8;
-            newDep.ProducePointLimit = 24;
+            newDep.Mode2EffectValue = 14;
             newDep.ActiveMode = 2;
         }
         else if (b.Type == BuildingType.财务部)
         {
             newDep.EmpLimit = 2;
             newDep.building.effectValue = 9;
-            newDep.ProducePointLimit = 24;
             newDep.ActiveMode = 3;
         }
         else if (b.Type == BuildingType.体能研究室)
         {
             newDep.EmpLimit = 4;
             newDep.building.effectValue = 10;
-            newDep.ProducePointLimit = 48;
+            newDep.Mode2EffectValue = 4;
             newDep.ActiveMode = 3;
         }
         else if (b.Type == BuildingType.按摩房)
         {
             newDep.EmpLimit = 1;
             newDep.building.effectValue = 6;
-            newDep.ProducePointLimit = 24;
+            newDep.Mode2EffectValue = 14;
             newDep.ActiveMode = 2;
         }
         else if (b.Type == BuildingType.健身房)
         {
             newDep.EmpLimit = 2;
             newDep.building.effectValue = 6;
-            newDep.ProducePointLimit = 24;
+            newDep.Mode2EffectValue = 5;
             newDep.ActiveMode = 2;
         }
         else if (b.Type == BuildingType.宣传中心)
         {
             newDep.EmpLimit = 1;
             newDep.building.effectValue = 2;
-            newDep.ProducePointLimit = 24;
+            newDep.Mode2EffectValue = 12;
             newDep.ActiveMode = 2;
         }
         else if (b.Type == BuildingType.科技工作坊)
         {
             newDep.EmpLimit = 1;
             newDep.building.effectValue = 1;
-            newDep.ProducePointLimit = 24;
+            newDep.Mode2EffectValue = 3;
             newDep.ActiveMode = 2;
         }
         else if (b.Type == BuildingType.绩效考评中心)
         {
             newDep.EmpLimit = 1;
             newDep.building.effectValue = 4;
-            newDep.ProducePointLimit = 24;
+            newDep.Mode2EffectValue = 11;
             newDep.ActiveMode = 2;
         }
         else if (b.Type == BuildingType.员工休息室)
         {
             newDep.EmpLimit = 1;
             newDep.building.effectValue = 5;
-            newDep.ProducePointLimit = 24;
+            newDep.Mode2EffectValue = 9;
+            newDep.Mode2EffectValue = 10;
             newDep.ActiveMode = 2;
         }
         else if (b.Type == BuildingType.人文沙龙)
         {
             newDep.EmpLimit = 2;
             newDep.building.effectValue = 8;
-            newDep.ProducePointLimit = 48;
+            newDep.Mode2EffectValue = 14;
         }
         else if (b.Type == BuildingType.兴趣社团)
         {
             newDep.EmpLimit = 2;
             newDep.building.effectValue = 8;
-            newDep.ProducePointLimit = 32;
+            newDep.Mode2EffectValue = 15;
             newDep.ActiveMode = 3;
             newDep.ModeChangeButton.gameObject.SetActive(false);
         }
@@ -483,50 +478,51 @@ public class GameControl : MonoBehaviour
         {
             newDep.EmpLimit = 2;
             newDep.building.effectValue = 1;
-            newDep.ProducePointLimit = 48;
+            newDep.Mode2EffectValue = 14;
         }
         else if (b.Type == BuildingType.冥想室)
         {
             newDep.EmpLimit = 1;
             newDep.building.effectValue = 5;
-            newDep.ProducePointLimit = 48;
+            newDep.Mode2EffectValue = 13;
             newDep.ActiveMode = 2;
         }
         else if (b.Type == BuildingType.特别秘书处)
         {
             newDep.EmpLimit = 1;
             newDep.building.effectValue = 12;
-            newDep.ProducePointLimit = 48;
+            newDep.Mode2EffectValue = 15;
             newDep.ActiveMode = 2;
         }
         else if (b.Type == BuildingType.成人再教育所)
         {
             newDep.EmpLimit = 1;
             newDep.building.effectValue = 13;
-            newDep.ProducePointLimit = 96;
+            newDep.Mode2EffectValue = 6;
             newDep.ActiveMode = 2;
         }
         else if (b.Type == BuildingType.职业再发展中心)
         {
             newDep.EmpLimit = 1;
             newDep.building.effectValue = 12;
-            newDep.ProducePointLimit = 48;
+            newDep.Mode2EffectValue = 8;
             newDep.ActiveMode = 2;
         }
         else if (b.Type == BuildingType.中央监控室)
         {
             newDep.EmpLimit = 3;
             newDep.building.effectValue = 15;
-            newDep.ProducePointLimit = 48;
             newDep.ModeChangeButton.gameObject.SetActive(false);
         }
         else if (b.Type == BuildingType.谍战中心)
         {
             newDep.EmpLimit = 2;
             newDep.building.effectValue = 12;
-            newDep.ProducePointLimit = 96;
+            newDep.Mode2EffectValue = 6;
             newDep.ActiveMode = 2;
         }
+
+        newDep.Mode1EffectValue = b.effectValue;
 
         int num = 1;
         for(int i = 0; i < CurrentDeps.Count; i++)

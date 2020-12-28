@@ -86,13 +86,11 @@ public class BuildingEffect
     public void RemoveAffect()
     {
         //不再影响这些
-        if (CurrentBuilding.Type == BuildingType.CEO办公室 || CurrentBuilding.Type == BuildingType.高管办公室)
-        {
             foreach (Building affect in AffectedBuildings)
             {
                 OnRemoveAffect(affect);
             }
-        }
+        
 
         //遍历场景中所有建筑
         foreach (Building temp in BuildingManage.Instance.ConstructedBuildings)
@@ -126,6 +124,10 @@ public class BuildingEffect
             else if (building.Office != null)
                 building.Office.InRangeOffices.Add(CurrentBuilding.Office);
         }
+        if (CurrentBuilding.Department != null && building.Department == null && building.Office == null)
+            ActiveBuildingEffect(CurrentBuilding, building);
+        if(CurrentBuilding.Department == null && CurrentBuilding.Office == null && building.Department != null)
+            ActiveBuildingEffect(building, CurrentBuilding);
     }
 
     //不在影响这个建筑
@@ -147,8 +149,71 @@ public class BuildingEffect
             else if (building.Office != null)
                 building.Office.InRangeOffices.Remove(CurrentBuilding.Office);
         }
+        if (CurrentBuilding.Department != null && building.Department == null && building.Office == null)
+            RemoveBuildingEffect(CurrentBuilding, building);
+        if (CurrentBuilding.Department == null && CurrentBuilding.Office == null && building.Department != null)
+            RemoveBuildingEffect(building, CurrentBuilding);
     }
 
+    //添加/移除装饰性建筑效果
+    public void ActiveBuildingEffect(Building B1, Building B2)
+    {
+        //B1是收到效果的建筑, B2是提供效果的建筑       
+        int level = 0;
+        if (B2.Type == BuildingType.室内温室)
+            level = 3;
+        else if (B2.Type == BuildingType.整修楼顶)
+            level = 4;
+        else if (B2.Type == BuildingType.游戏厅)
+            level = 3;
+        else if (B2.Type == BuildingType.营养师定制厨房)
+            level = 4;
+        else if (B2.Type == BuildingType.咖啡bar)
+            level = 3;
+        else if (B2.Type == BuildingType.花盆)
+            level = 1;
+        else if (B2.Type == BuildingType.长椅)
+            level = 2;
+        else if (B2.Type == BuildingType.自动贩卖机)
+            level = 1;
+
+        if (level < 1 || B1.Department == null)
+            return;
+
+        for (int i = 0; i < level; i++)
+        {
+            B1.Department.AddPerk(new Perk114(null));
+        }
+
+    }
+    public void RemoveBuildingEffect(Building B1, Building B2)
+    {
+        //B1是收到效果的建筑, B2是提供效果的建筑       
+        int level = 0;
+        if (B2.Type == BuildingType.室内温室)
+            level = 3;
+        else if (B2.Type == BuildingType.整修楼顶)
+            level = 4;
+        else if (B2.Type == BuildingType.游戏厅)
+            level = 3;
+        else if (B2.Type == BuildingType.营养师定制厨房)
+            level = 4;
+        else if (B2.Type == BuildingType.咖啡bar)
+            level = 3;
+        else if (B2.Type == BuildingType.花盆)
+            level = 1;
+        else if (B2.Type == BuildingType.长椅)
+            level = 2;
+        else if (B2.Type == BuildingType.自动贩卖机)
+            level = 1;
+
+        if (level < 1 || B1.Department == null)
+            return;
+        for (int i = 0; i < level; i++)
+        {
+            B1.Department.RemovePerk(114);
+        }
+    }
 
     //遍历m_TargetBuildings，对每个目标建筑设置影响
     //public void Affect()

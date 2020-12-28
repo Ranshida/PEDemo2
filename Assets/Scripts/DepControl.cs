@@ -108,9 +108,12 @@ public class HireType
 public class DepControl : MonoBehaviour
 {
     static public int StandardProducePoint = 50;
+    static public float DepBaseSuccessRate = 1.0f;
+    static public float DepBaseMajorSuccessRate = 0.2f;
+    static public float DepBaseMajorFailureRate = 0.2f;
     [HideInInspector] public int SpProgress = 0, SpTotalProgress, FailProgress = 0, EfficiencyLevel = 0, SpType;
     //BuildingMode用于区分建筑模式  ActiveMode用于区分激活方式 1直接激活 2选择员工 3选择部门
-    [HideInInspector] public int EmpLimit, ProducePointLimit = 20, ActiveMode = 1, BuildingMode = 1;
+    [HideInInspector] public int EmpLimit, ProducePointLimit = 20, ActiveMode = 1, BuildingMode = 1, Mode1EffectValue = -1, Mode2EffectValue = -2;
     [HideInInspector] public bool SurveyStart = false;
     public int DepFaith = 50;
     public float Efficiency = 0, SalaryMultiply = 1.0f, BuildingPayMultiply = 1.0f;
@@ -173,7 +176,10 @@ public class DepControl : MonoBehaviour
                 Text_ManagerStatus.text = "上司业务能力等级:——";
             }
             Text_DepFaith.text = "部门信念:" + DepFaith;
-            Text_DepMode.text = "部门模式:模式" + BuildingMode;
+            if (BuildingMode == 1)
+                Text_DepMode.text = "部门模式:" + building.Function_A;
+            else if (BuildingMode == 2)
+                Text_DepMode.text = "部门模式:" + building.Function_B;
             Text_Efficiency.text = "动员等级:" + GC.SC.MobLevel;
             string skill = "";//1技术 2市场 3产品 4观察 5坚韧 6强壮 7管理 8人力 9财务 10决策 11行业 12谋略 13说服 14魅力 15八卦
             if (building.effectValue == 1)
@@ -223,9 +229,9 @@ public class DepControl : MonoBehaviour
             else
                 Text_TaskTime.text = "生产周期:--";
 
-            Text_SRate.text = "成功率:" + Mathf.Round((0.5f + CountSuccessRate(building.effectValue)) * 100) + "%";
-            Text_MSRate.text = "大成功率:" + ((0.2f + GC.SC.ExtraMajorSuccessRate) * 100) + "%";
-            Text_MFRate.text = "重大失误率:" + ((0.5f + GC.SC.ExtraMajorFailureRate) * 100) + "%";
+            Text_SRate.text = "成功率:" + Mathf.Round((DepBaseSuccessRate + CountSuccessRate(building.effectValue)) * 100) + "%";
+            Text_MSRate.text = "大成功率:" + ((DepBaseMajorSuccessRate + GC.SC.ExtraMajorSuccessRate) * 100) + "%";
+            Text_MFRate.text = "重大失误率:" + ((DepBaseMajorFailureRate + GC.SC.ExtraMajorFailureRate) * 100) + "%";
             Text_FinishedTaskNum.text = "上季度业务成功数:" + PreFinishedTaskNum + "\n\n" + "本季度业务成功数:" + CurrentFinishedTaskNum;
             Text_DepCost.text = "运营成本:" + (CalcCost(1) + CalcCost(2));
         }
@@ -291,7 +297,7 @@ public class DepControl : MonoBehaviour
             if (SpProgress >= limit && ActiveButton.interactable == false)
             {
                 //完成生产
-                float BaseSuccessRate = 0.5f + CountSuccessRate(building.effectValue);
+                float BaseSuccessRate = DepBaseSuccessRate + CountSuccessRate(building.effectValue);
                 float Posb = Random.Range(0.0f, 1.0f);
                 //作弊模式必定成功
                 if (CheatMode == true)
@@ -301,28 +307,34 @@ public class DepControl : MonoBehaviour
                 if (Posb <= BaseSuccessRate)
                 {
                     CurrentFinishedTaskNum += 1;
-                    if (Random.Range(0.0f, 1.0f) < 0.2f + GC.SC.ExtraMajorSuccessRate)
+                    if (Random.Range(0.0f, 1.0f) < DepBaseMajorSuccessRate + GC.SC.ExtraMajorSuccessRate)
                     {
                         //大成功
                         //额外经验获取
-                        EmpsGetExp(building.effectValue, 5 * ProducePointLimit / CurrentEmps.Count);
+                        if (CurrentEmps.Count > 0)
+                        {
+                            for (int i = 0; i < ProducePointLimit / CurrentEmps.Count; i++)
+                            {
+                                EmpsGetExp(building.effectValue, 5);
+                            }
+                        }
                         //分部门效果
                         if (building.Type == BuildingType.技术部门)
                         {
-                            GC.FinishedTask[0] += 2;
+                            GC.FinishedTask[0] += 3;
                             GC.FinishedTask[6] -= 1;
                             SpProgress = 0;
                             GC.CreateMessage(Text_DepName.text + " 完美完成了程序迭代的生产");
                         }
                         else if (building.Type == BuildingType.市场部门)
                         {
-                            GC.FinishedTask[4] += 2;
+                            GC.FinishedTask[4] += 3;
                             SpProgress = 0;
                             GC.CreateMessage(Text_DepName.text + " 完美完成了营销文案的生产");
                         }
                         else if (building.Type == BuildingType.产品部门)
                         {
-                            GC.FinishedTask[6] += 2;
+                            GC.FinishedTask[6] += 3;
                             SpProgress = 0;
                             GC.CreateMessage(Text_DepName.text + " 完美完成了原型图的生产");
                         }
@@ -399,7 +411,7 @@ public class DepControl : MonoBehaviour
                 {
                     SpProgress = 0;
                     float Posb2 = Random.Range(0.0f, 1.0f);
-                    if (Posb2 < 0.5f + GC.SC.ExtraMajorFailureRate)
+                    if (Posb2 < DepBaseMajorFailureRate + GC.SC.ExtraMajorFailureRate)
                     {
                         //大失败
                         GC.CreateMessage(Text_DepName.text + " 工作中发生重大失误");
@@ -452,7 +464,7 @@ public class DepControl : MonoBehaviour
                 Text_Task.text = "当前任务:" + building.Function_B;
             Text_Progress.text = "生产力:" + Pp + "/时";
             //成功率计算
-            Text_Quality.text = "成功率:" + Mathf.Round((0.5f + CountSuccessRate(building.effectValue)) * 100) + "%";
+            Text_Quality.text = "成功率:" + Mathf.Round((DepBaseSuccessRate + CountSuccessRate(building.effectValue)) * 100) + "%";
 
             int limit = ProducePointLimit;
             //研发部门额外Buff
@@ -579,7 +591,7 @@ public class DepControl : MonoBehaviour
     {
         //1-3职业技能 4观察 5坚韧 6强壮 7管理 8人力 9财务 10决策 11行业 12谋略 13说服 14魅力 15八卦
         float BaseSuccessRate = 0;
-        Text_SRateDetail.text = "基础成功率:50%\n";
+        Text_SRateDetail.text = "基础成功率:" + Mathf.Round(DepBaseSuccessRate * 100) + "%\n";
         //基础业务生产技能影响
         if (type < 4)
         {
@@ -811,13 +823,13 @@ public class DepControl : MonoBehaviour
         }
         else if (type == 5)
         {
-            Text_DetailInfo.text = "基础大成功率:20%";
+            Text_DetailInfo.text = "基础大成功率:" + Mathf.Round(DepBaseMajorSuccessRate * 100) + "%";
             if (GC.SC.ExtraMajorSuccessRate > 0.0001)
                 Text_DetailInfo.text += "\n额外动员效果:" + (GC.SC.ExtraMajorSuccessRate * 100) + "%";
         }
         else if (type == 6)
         {
-            Text_DetailInfo.text = "基础重大失误率:50%";
+            Text_DetailInfo.text = "基础重大失误率:" + Mathf.Round(DepBaseMajorFailureRate * 100) + "%";
             if (GC.SC.ExtraMajorSuccessRate > 0.0001)
                 Text_DetailInfo.text += "\nKPI制度:" + (GC.SC.ExtraMajorFailureRate * 100) + "%";
         }
@@ -895,8 +907,12 @@ public class DepControl : MonoBehaviour
     {
         GC.DepModeSelectPanel.SetActive(true);
         GC.CurrentDep = this;
-        GC.Text_DepMode1.text = building.Description_A;
-        GC.Text_DepMode2.text = building.Description_B;
+        GC.Text_DepMode1.text = building.Function_A;
+        GC.Text_DepMode1.transform.parent.parent.GetComponent<Text>().text = "技能需求:" + building.Require_A + "\n生产周期:" + 
+            building.Time_A + "\n功能描述:\n" + building.Result_A;
+        GC.Text_DepMode2.text = building.Function_B;
+        GC.Text_DepMode2.transform.parent.parent.GetComponent<Text>().text = "技能需求:" + building.Require_B + "\n生产周期:" +
+            building.Time_B + "\n功能描述:\n" + building.Result_B;
     }
 
     //部门模式改变
@@ -906,6 +922,16 @@ public class DepControl : MonoBehaviour
         SpProgress = 0;
         ActiveButton.interactable = false;
         GC.DepModeSelectPanel.SetActive(false);
+        if (num == 1)
+        {
+            building.effectValue = Mode1EffectValue;
+            ProducePointLimit = int.Parse(building.Time_A);
+        }
+        else if (num == 2 && Mode2EffectValue != -1)
+        {
+            building.effectValue = Mode2EffectValue;
+            ProducePointLimit = int.Parse(building.Time_B);
+        }
         UpdateUI();
     }
 
@@ -1113,8 +1139,8 @@ public class DepControl : MonoBehaviour
                 GC.FinishedTask[4] -= 2;
                 if (MajorSuccess == true)
                 {
-                    GC.CreateMessage("获得了2个传播");
-                    GC.FinishedTask[3] += 2;
+                    GC.CreateMessage("获得了3个传播");
+                    GC.FinishedTask[3] += 3;
                 }
                 else
                 {
