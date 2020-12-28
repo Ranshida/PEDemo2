@@ -496,6 +496,6 @@ public class EmpManager : MonoBehaviour
             EventDetailPanel.Find("Txt_Entity").GetComponent<Text>().text = thisEvent.SelfEntity.EmpName + "与" + thisEvent.TargetEntity.EmpName;
         else
             EventDetailPanel.Find("Txt_Entity").GetComponent<Text>().text = thisEvent.SelfEntity.EmpName;
-        EventDetailPanel.Find("Txt_Detail").GetComponent<Text>().text = thisEvent.ResultText;
+        //EventDetailPanel.Find("Txt_Detail").GetComponent<Text>().text = thisEvent.ResultText;
     }
 }
