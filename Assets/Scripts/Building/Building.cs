@@ -24,6 +24,7 @@ public class Building : MonoBehaviour
     public int Length;
     public int Width;
     public int EffectRange;
+    public Int2 LeftDownGrid { get; private set; }           //左下格子坐标
     public bool BuildingSet { get; private set; } = false;   //设置完毕不再动
     public bool Moving { get; private set; } = false;        //移动中
     public int effectValue = 1, StaminaRequest = 0; //1人力 2八卦 3强壮 4谋略 5行业 6决策 7财务 8管理
@@ -88,10 +89,16 @@ public class Building : MonoBehaviour
         BuildingSet = true;
         Moving = false;
         ContainsGrids = new List<Grid>();
+
+        LeftDownGrid = new Int2(1000, 1000);
         foreach (Grid grid in grids)
         {
             ContainsGrids.Add(grid);
             grid.Build(this);
+            if (grid.X < LeftDownGrid.X)
+                LeftDownGrid.X = grid.X;
+            if (grid.Z < LeftDownGrid.Y)
+                LeftDownGrid.Y = grid.Z;
         }
 
         effect = new BuildingEffect(this);

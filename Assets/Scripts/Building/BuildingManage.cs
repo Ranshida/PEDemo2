@@ -122,11 +122,28 @@ public class BuildingManage : MonoBehaviour
         m_EffectHalo.SetActive(false);
     }
 
+    //开始新游戏
+    public void OnNewGame()
+    {
+        InitBuilding(BuildingType.CEO办公室, new Int2(0, 8));
+    }
+
+    //加载存档数据
+    public void OnLoadGame(GameFiles file)
+    {
+        File_Building building = file.building;
+
+        foreach (Data_Building data in building.buildingList)
+        {
+            InitBuilding(data.Type, new Int2(data.X, data.Y));
+        }
+    }
+
     //初始化默认建筑
     public void InitBuilding(BuildingType type, Int2 leftDownGird)
     {
         StartBuildNew(type);
-        
+
         Grid grid;
         Dictionary<int, Grid> gridDict;
         for (int i = 0; i < temp_Building.Length; i++)
@@ -161,16 +178,21 @@ public class BuildingManage : MonoBehaviour
         temp_Building = null;
     }
 
-    //加载存档数据
-    public void LoadData()
-    {
 
-    }
-
-    public Files_Building Save()
+    public File_Building Save()
     {
-        Files_Building files = new Files_Building();
-        return null;
+        File_Building files = new File_Building();
+
+        foreach (Building building in ConstructedBuildings)
+        {
+            Data_Building data = new Data_Building();
+            data.X = building.LeftDownGrid.X;
+            data.Y = building.LeftDownGrid.Y;
+            data.Type = building.Type;
+            files.buildingList.Add(data);
+        }
+
+        return files;
     }
 
     private void Update()
