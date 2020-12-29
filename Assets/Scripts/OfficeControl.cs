@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class OfficeControl : MonoBehaviour
 {
-    static public float OfficeBaseSuccessRate = 0.6f;
+    static public float OfficeBaseSuccessRate = 1.0f;
     static public float OfficeBaseMajorSuccessRate = 0.2f;
     static public float OfficeBaseMajorFailureRate = 0.5f;
 
@@ -34,7 +34,7 @@ public class OfficeControl : MonoBehaviour
             GC.HourEvent.AddListener(TimePass);
         }
         Progress = 0;
-        SetOfficeUI();
+        UpdateUI();
     }
 
     //放入和移除高管时调用
@@ -63,7 +63,7 @@ public class OfficeControl : MonoBehaviour
                     }
                 }
                 CheckManage();
-                SetOfficeUI();
+                UpdateUI();
             }
             //1-3职业技能 4观察 5坚韧 6强壮 7管理 8人力 9财务 10决策 11行业 12谋略 13说服 14魅力 15八卦
             //else if (building.effectValue == 1)
@@ -111,6 +111,7 @@ public class OfficeControl : MonoBehaviour
                 ControledDeps[i].canWork = false;
                 ControledDeps[i].OfficeWarning.SetActive(true);
             }
+            ControledDeps[i].UpdateUI();
         }
         for (int i = 0; i < ControledOffices.Count; i++)
         {
@@ -125,6 +126,7 @@ public class OfficeControl : MonoBehaviour
                 ControledOffices[i].OfficeWarning.SetActive(true);
             }
             ControledOffices[i].CheckManage();
+            ControledOffices[i].UpdateUI();
         }
     }
 
@@ -317,15 +319,15 @@ public class OfficeControl : MonoBehaviour
             if (value <= 5)
                 EValue -= 0.15f;
             else if (value <= 9)
-                EValue -= 0.05f;
+                EValue -= 0.1f;
             else if (value <= 13)
-                EValue += 0.0f;
+                EValue += 0.05f;
             else if (value <= 17)
-                EValue += 0.02f;
+                EValue += 0;
             else if (value <= 21)
-                EValue += 0.06f;
+                EValue += 0.04f;
             else if (value > 21)
-                EValue += 0.1f;
+                EValue += 0.08f;
             BaseSRate += EValue;
             BaseSRate += CurrentManager.ExtraSuccessRate;
 
@@ -350,6 +352,59 @@ public class OfficeControl : MonoBehaviour
             {
                 Text_SRateDetail.text += "\n额外招聘成功率:" + (GC.HireSuccessExtra * 100) + "%";
                 BaseSRate += GC.HireSuccessExtra;
+            }
+        }
+        //高管的效果
+        if (CommandingOffice != null)
+        {
+            if (CommandingOffice.CurrentManager != null)
+            {
+                int value = 0;
+                float EValue = 0;
+                Text_SRateDetail.text += "\n";
+                if (OfficeMode == 2 || OfficeMode == 4)
+                {
+                    value = CommandingOffice.CurrentManager.HR;
+                    Text_SRateDetail.text += "上级高管" + CommandingOffice.CurrentManager.Name + "人力技能:";
+                }
+                else if (OfficeMode == 3 || OfficeMode == 5)
+                {
+                    value = CommandingOffice.CurrentManager.Manage;
+                    Text_SRateDetail.text += "上级高管" + CommandingOffice.CurrentManager.Name + "管理技能:";
+                }
+                else if (OfficeMode == 1)
+                {
+                    value = CommandingOffice.CurrentManager.Decision;
+                    Text_SRateDetail.text += "上级高管" + CommandingOffice.CurrentManager.Name + "决策技能:";
+                }
+                if (value <= 5)
+                    EValue -= 0.15f;
+                else if (value <= 9)
+                    EValue -= 0.1f;
+                else if (value <= 13)
+                    EValue += 0.05f;
+                else if (value <= 17)
+                    EValue += 0;
+                else if (value <= 21)
+                    EValue += 0.04f;
+                else if (value > 21)
+                    EValue += 0.08f;
+                BaseSRate += EValue;
+                BaseSRate += CommandingOffice.CurrentManager.ExtraSuccessRate;
+
+                //文字显示
+                Text_SRateDetail.text += (EValue * 100) + "%";
+                if (Mathf.Abs(CommandingOffice.CurrentManager.ExtraSuccessRate) > 0.001f)
+                {
+                    foreach (PerkInfo perk in CommandingOffice.CurrentManager.InfoDetail.PerksInfo)
+                    {
+                        int a = perk.CurrentPerk.Num;
+                        if (a == 30 || a == 31 || a == 33 || a == 38 || a == 94)
+                        {
+                            Text_SRateDetail.text += "\n" + CommandingOffice.CurrentManager.Name + perk.CurrentPerk.Name + "状态: " + (perk.CurrentPerk.TempValue4 * perk.CurrentPerk.Level * 100) + "%";
+                        }
+                    }
+                }
             }
         }
         return BaseSRate + GC.SC.ExtraSuccessRate;
@@ -393,7 +448,7 @@ public class OfficeControl : MonoBehaviour
                 //原本的战略充能
                 CurrentManager.InfoDetail.ReChargeStrategy();
 
-                SetOfficeUI();
+                UpdateUI();
                 //高管（CEO）办公室的四种模式效果
 
                 if (Progress < MaxProgress)
@@ -406,7 +461,7 @@ public class OfficeControl : MonoBehaviour
                 {
                     bool MajorSuccess = false;
                     Progress = 0;
-                    //大成功
+                    //成功和大成功
                     if (Random.Range(0.0f, 1.0f) < CountSuccessRate())
                     {
                         if (Random.Range(0.0f, 1.0f) < OfficeBaseMajorSuccessRate + GC.SC.ExtraMajorSuccessRate)
@@ -500,19 +555,11 @@ public class OfficeControl : MonoBehaviour
         if (CurrentManager != null)
         {
             if (OfficeMode == 1)
-                CurrentManager.GainExp(5, 10);
-            else if (OfficeMode == 2)
-                CurrentManager.GainExp(5, 13);
-            else if (OfficeMode == 3)
-                CurrentManager.GainExp(5, 7);
-            else if (OfficeMode == 4)
-                CurrentManager.GainExp(5, 8);
-            else if (OfficeMode == 5)
-                CurrentManager.GainExp(5, 11);
+                CurrentManager.GainExp(5, building.effectValue);
         }
     }
 
-    public void SetOfficeUI()
+    public void UpdateUI()
     {
         if (CurrentManager == null)
         {
@@ -522,7 +569,7 @@ public class OfficeControl : MonoBehaviour
         else
         {
             float BaseSRate = CountSuccessRate();
-            Text_SuccessRate.text = "成功率:" + (BaseSRate * 100) + "%";
+            Text_SuccessRate.text = "成功率:" + Mathf.Round(BaseSRate * 100) + "%";
             Text_TimeLeft.text = "剩余时间:" + (MaxProgress - Progress) + "时";
         }
     }

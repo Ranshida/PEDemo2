@@ -217,10 +217,9 @@ public class EmpInfo : MonoBehaviour
 
         GC.CC.CEO.InfoDetail.AddHistory("解雇了" + emp.Name);
 
-        emp.ClearRelations();//清空所有关系
-
         ClearSkillPreset();
         GC.ResetOldAssignment(emp);
+        emp.ClearRelations();//清空所有关系
         GC.HourEvent.RemoveListener(emp.TimePass);
         GC.CurrentEmployees.Remove(emp);
         

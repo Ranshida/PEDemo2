@@ -572,11 +572,14 @@ public class SkillControl : MonoBehaviour
         //下一次技能的消耗翻倍
         else if (NextBossSkill == 8)
         {
-            for (int i = 0; i < CurrentSkills.Count; i++)
+            if (DoubleCost == false)
             {
-                CurrentSkills[i].skill.StaminaExtra = CurrentSkills[i].skill.StaminaCost * -1;
+                for (int i = 0; i < CurrentSkills.Count; i++)
+                {
+                    CurrentSkills[i].skill.StaminaExtra = (CurrentSkills[i].skill.StaminaCost - CurrentSkills[i].skill.StaminaExtra) * -1;
+                }
+                DoubleCost = true;
             }
-            DoubleCost = true;
         }
 
         //禁用一个技能3回合

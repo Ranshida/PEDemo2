@@ -1066,7 +1066,7 @@ public class GameControl : MonoBehaviour
             CurrentOffice.OfficeMode = num;
             OfficeModeSelectPanel.SetActive(false);
             CurrentOffice.Progress = 0;
-            CurrentOffice.SetOfficeUI();
+            CurrentOffice.UpdateUI();
             if (num == 1)
             {
                 CurrentOffice.Text_OfficeMode.text = "办公室模式:决策";

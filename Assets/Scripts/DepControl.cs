@@ -321,20 +321,20 @@ public class DepControl : MonoBehaviour
                         //分部门效果
                         if (building.Type == BuildingType.技术部门)
                         {
-                            GC.FinishedTask[0] += 3;
+                            GC.FinishedTask[0] += 6;
                             GC.FinishedTask[6] -= 1;
                             SpProgress = 0;
                             GC.CreateMessage(Text_DepName.text + " 完美完成了程序迭代的生产");
                         }
                         else if (building.Type == BuildingType.市场部门)
                         {
-                            GC.FinishedTask[4] += 3;
+                            GC.FinishedTask[4] += 6;
                             SpProgress = 0;
                             GC.CreateMessage(Text_DepName.text + " 完美完成了营销文案的生产");
                         }
                         else if (building.Type == BuildingType.产品部门)
                         {
-                            GC.FinishedTask[6] += 3;
+                            GC.FinishedTask[6] += 6;
                             SpProgress = 0;
                             GC.CreateMessage(Text_DepName.text + " 完美完成了原型图的生产");
                         }
@@ -365,20 +365,20 @@ public class DepControl : MonoBehaviour
                         //成功
                         if (building.Type == BuildingType.技术部门)
                         {
-                            GC.FinishedTask[0] += 1;
+                            GC.FinishedTask[0] += 3;
                             GC.FinishedTask[6] -= 1;
                             SpProgress = 0;
                             GC.CreateMessage(Text_DepName.text + " 完成了程序迭代的生产");
                         }
                         else if (building.Type == BuildingType.市场部门)
                         {
-                            GC.FinishedTask[4] += 1;
+                            GC.FinishedTask[4] += 3;
                             SpProgress = 0;
                             GC.CreateMessage(Text_DepName.text + " 完成了营销文案的生产");
                         }
                         else if (building.Type == BuildingType.产品部门)
                         {
-                            GC.FinishedTask[6] += 1;
+                            GC.FinishedTask[6] += 3;
                             SpProgress = 0;
                             GC.CreateMessage(Text_DepName.text + " 完成了原型图的生产");
                         }
@@ -592,66 +592,34 @@ public class DepControl : MonoBehaviour
         //1-3职业技能 4观察 5坚韧 6强壮 7管理 8人力 9财务 10决策 11行业 12谋略 13说服 14魅力 15八卦
         float BaseSuccessRate = 0;
         Text_SRateDetail.text = "基础成功率:" + Mathf.Round(DepBaseSuccessRate * 100) + "%\n";
-        //基础业务生产技能影响
-        if (type < 4)
+        //技能影响
+        for (int i = 0; i < CurrentEmps.Count; i++)
         {
-            for (int i = 0; i < CurrentEmps.Count; i++)
-            {
-                int value = 0;
-                float EValue = 0;
-                value = CurrentEmps[i].BaseAttributes[type - 1];
-                if (value <= 5)
-                    EValue -= 0.15f;
-                else if (value <= 9)
-                    EValue -= 0.05f;
-                else if (value <= 13)
-                    EValue += 0;
-                else if (value <= 17)
-                    EValue += 0.02f;
-                else if (value <= 21)
-                    EValue += 0.06f;
-                else if (value > 21)
-                    BaseSuccessRate += 0.1f;
-                //文字显示
-                Text_SRateDetail.text += CurrentEmps[i].Name + "技能:" + (EValue * 100) + "%";
-                //员工额外效果A
-                ExtraEffectDescription(CurrentEmps[i]);
+            int value = 0;
+            value = CurrentEmps[i].BaseAttributes[type - 1];
+            float EValue = 0;
+            if (value <= 5)
+                EValue -= 0.15f;
+            else if (value <= 9)
+                EValue -= 0.1f;
+            else if (value <= 13)
+                EValue -= 0.05f;
+            else if (value <= 17)
+                EValue += 0;
+            else if (value <= 21)
+                EValue += 0.04f;
+            else if (value > 21)
+                EValue += 0.08f;
+            //文字显示
+            Text_SRateDetail.text += CurrentEmps[i].Name + "技能:" + (EValue * 100) + "%";
+            //员工额外效果B
+            ExtraEffectDescription(CurrentEmps[i]);
 
-                Text_SRateDetail.text += "\n";
-                BaseSuccessRate += EValue;
-                BaseSuccessRate += CurrentEmps[i].ExtraSuccessRate;
-            }
+            Text_SRateDetail.text += "\n";
+            BaseSuccessRate += EValue;
+            BaseSuccessRate += CurrentEmps[i].ExtraSuccessRate;
         }
-        //其他技能影响
-        else
-        {
-            for (int i = 0; i < CurrentEmps.Count; i++)
-            {
-                int value = 0;
-                value = CurrentEmps[i].BaseAttributes[type - 1];
-                float EValue = 0;
-                if (value <= 5)
-                    EValue -= 0.15f;
-                else if (value <= 9)
-                    EValue -= 0.05f;
-                else if (value <= 13)
-                    EValue += 0;
-                else if (value <= 17)
-                    EValue += 0.02f;
-                else if (value <= 21)
-                    EValue += 0.06f;
-                else if (value > 21)
-                    EValue += 0.1f;
-                //文字显示
-                Text_SRateDetail.text += CurrentEmps[i].Name + "技能:" + (EValue * 100) + "%";
-                //员工额外效果B
-                ExtraEffectDescription(CurrentEmps[i]);
-
-                Text_SRateDetail.text += "\n";
-                BaseSuccessRate += EValue;
-                BaseSuccessRate += CurrentEmps[i].ExtraSuccessRate;
-            }
-        }
+        
         //高管技能影响
         if (CommandingOffice != null && CommandingOffice.CurrentManager != null)
         {
@@ -665,27 +633,27 @@ public class DepControl : MonoBehaviour
             }
             else if (value <= 9)
             {
-                EValue -= 0.05f;
+                EValue -= 0.1f;
                 Text_ManagerStatus.text = "上司业务能力等级:胡乱指挥";
             }
             else if (value <= 13)
             {
-                EValue += 0.0f;
+                EValue += 0.05f;
                 Text_ManagerStatus.text = "上司业务能力等级:外行领导";
             }
             else if (value <= 17)
             {
-                EValue += 0.05f;
+                EValue += 0;
                 Text_ManagerStatus.text = "上司业务能力等级:普通管理者";
             }
             else if (value <= 21)
             {
-                EValue += 0.15f;
+                EValue += 0.04f;
                 Text_ManagerStatus.text = "上司业务能力等级:优秀管理";
             }
             else if (value > 21)
             {
-                EValue += 0.2f;
+                EValue += 0.08f;
                 Text_ManagerStatus.text = "上司业务能力等级:业界领袖";
             }
             BaseSuccessRate += EValue;
@@ -765,9 +733,9 @@ public class DepControl : MonoBehaviour
             foreach (PerkInfo info in CurrentPerks)
             {
                 if (info.CurrentPerk.Num == 97)
-                    Text_DetailInfo.text += "\n转岗无望 -15";
+                    Text_DetailInfo.text += "\n转岗无望 -" + (info.CurrentPerk.Level * 15);
                 else if (info.CurrentPerk.Num == 98)
-                    Text_DetailInfo.text += "\n升职无望 -15";
+                    Text_DetailInfo.text += "\n升职无望 -" + (info.CurrentPerk.Level * 15);
                 else if (info.CurrentPerk.Num == 99)
                     Text_DetailInfo.text += "\n并肩作战 +" + info.CurrentPerk.TempValue1;
                 else if (info.CurrentPerk.Num == 100)
@@ -787,9 +755,9 @@ public class DepControl : MonoBehaviour
                 else if (info.CurrentPerk.Num == 106)
                     Text_DetailInfo.text += "\n心理咨询 +25";
                 else if (info.CurrentPerk.Num == 108)
-                    Text_DetailInfo.text += "\n生疏磨合 -15";
+                    Text_DetailInfo.text += "\n生疏磨合 -" + (info.CurrentPerk.Level * 15);
                 else if (info.CurrentPerk.Num == 110)
-                    Text_DetailInfo.text += "\n紧急调离 -15";
+                    Text_DetailInfo.text += "\n紧急调离 -" + (info.CurrentPerk.Level * 15);
                 else if (info.CurrentPerk.Num == 111)
                     Text_DetailInfo.text += "\n空置部门 -30";
             }
@@ -841,7 +809,20 @@ public class DepControl : MonoBehaviour
         {
             if (CommandingOffice == null)
                 return;
-            Text_DetailInfo.text = "直属下属:";
+            if (CommandingOffice.CurrentManager == null)
+                return;
+            Text_DetailInfo.text = "管理能力:" + CommandingOffice.CurrentManager.Manage;
+            if (CommandingOffice.CurrentManager.Manage < 6)
+                Text_DetailInfo.text += "\n管理等级:组长 (管理能力 < 6) \n可管理部门数:1";
+            else if (CommandingOffice.CurrentManager.Manage < 11)
+                Text_DetailInfo.text += "\n管理等级:初级管理者 (6 <= 管理能力 < 11) \n可管理部门数:2";
+            else if (CommandingOffice.CurrentManager.Manage < 16)
+                Text_DetailInfo.text += "\n管理等级:中层管理者 (11 <= 管理能力 < 16) \n可管理部门数:3";
+            else if (CommandingOffice.CurrentManager.Manage < 21)
+                Text_DetailInfo.text += "\n管理等级:精英管理者 (16 <= 管理能力 < 21) \n可管理部门数:4";
+            else
+                Text_DetailInfo.text += "\n管理等级:管理大师 (21 <= 管理能力) \n可管理部门数:5";
+            Text_DetailInfo.text += "\n直属下属:";
             foreach (DepControl dep in CommandingOffice.ControledDeps)
             {
                 Text_DetailInfo.text += "\n" + dep.Text_DepName.text;
@@ -1139,13 +1120,13 @@ public class DepControl : MonoBehaviour
                 GC.FinishedTask[4] -= 2;
                 if (MajorSuccess == true)
                 {
-                    GC.CreateMessage("获得了3个传播");
-                    GC.FinishedTask[3] += 3;
+                    GC.CreateMessage("获得了6个传播");
+                    GC.FinishedTask[3] += 6;
                 }
                 else
                 {
-                    GC.CreateMessage("获得了1个传播");
-                    GC.FinishedTask[3] += 1;
+                    GC.CreateMessage("获得了3个传播");
+                    GC.FinishedTask[3] += 3;
                 }
             }
             else if (BuildingMode == 2)

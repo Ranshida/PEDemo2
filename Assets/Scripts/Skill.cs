@@ -8,7 +8,7 @@ public enum SkillType
 public class Skill
 {
     public SkillType Type = SkillType.Basic;
-    public int StaminaCost, DiceCost, StaminaExtra, DiceExtra;
+    public int StaminaCost, DiceCost, StaminaExtra, DiceExtra; //Extra为需要减掉的额外值，所以额外值越大实际消耗越低
     public int EffectMode = 1; //EffectMode为2时需要选择作用员工 为3时需要选择骰子 为4时需要选择技能 为5时需要选择两名员工 为6时需要选择技能再选择员工
     //DiceExtra指减少的点数，为负时代表需要更多点数
     public string Name, Description;
@@ -776,7 +776,7 @@ public class Skill31 : Skill
     {
         base.StartEffect();
         TargetEmp.InfoA.GC.SC.CurrentPoint += 12;
-        TargetEmp.Mentality -= (20 + StaminaExtra);
+        TargetEmp.Mentality -= 20;
     }
 }
 #endregion
@@ -1306,7 +1306,8 @@ public class Skill53 : Skill
         TargetEmp.InfoDetail.GC.SC.NoStaminaCost = true;
         for(int i = 0; i < TargetEmp.InfoDetail.GC.SC.CurrentSkills.Count; i++)
         {
-            TargetEmp.InfoDetail.GC.SC.CurrentSkills[i].skill.StaminaExtra = TargetEmp.InfoDetail.GC.SC.CurrentSkills[i].skill.StaminaCost / 2;
+            TargetEmp.InfoDetail.GC.SC.CurrentSkills[i].skill.StaminaExtra +=
+                ((TargetEmp.InfoDetail.GC.SC.CurrentSkills[i].skill.StaminaCost - TargetEmp.InfoDetail.GC.SC.CurrentSkills[i].skill.StaminaExtra) / 2);
         }
     }
 }
