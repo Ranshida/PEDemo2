@@ -693,6 +693,11 @@ public class SkillControl : MonoBehaviour
         CreateDice(DiceNum);
         ExtraDiceNum = 0;
         DotValue = 0;//重置洞察
+        ExtraDamage = 0;//重置想象力
+        foreach(EmpInfo info in SelectedEmps)
+        {
+            info.emp.Confidence = 0;
+        }
 
         if (BossLevel == 1)
             ExtraSuccessRate = 0.1f;

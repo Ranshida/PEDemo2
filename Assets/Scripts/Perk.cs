@@ -888,9 +888,9 @@ public class Perk32 : Perk
     {
         base.RemoveEffect();
         if (TargetEmp.CurrentOffice == null)
-            TargetEmp.AddEmotion(EColor.Blue);
+            TargetEmp.AddEmotion(EColor.LBlue);
         else if (TargetEmp.CurrentOffice.building.Type != BuildingType.CEO办公室 || TargetEmp.CurrentOffice.building.Type != BuildingType.高管办公室)
-            TargetEmp.AddEmotion(EColor.Blue);
+            TargetEmp.AddEmotion(EColor.LBlue);
     }
 }
 

@@ -17,13 +17,15 @@ public class EmpInfo : MonoBehaviour
     public Text[] Text_Stars = new Text[5], Text_Exps = new Text[5];
     public Scrollbar[] Scrollbar_Character = new Scrollbar[5];
     public EmpInfo DetailInfo;
-    public Transform PerkContent, SkillContent, StrategyContent, RelationContent, HistoryContent;
+    public EmotionInfo EmotionInfoPrefab;
+    public Transform PerkContent, SkillContent, StrategyContent, RelationContent, HistoryContent, EmotionContent;
     public StrategyInfo CurrentStrategy;
     public SkillTree ST;
 
     public List<PerkInfo> PerksInfo = new List<PerkInfo>();
     public List<SkillInfo> SkillsInfo = new List<SkillInfo>();
     public List<StrategyInfo> StrategiesInfo = new List<StrategyInfo>();
+    public List<EmotionInfo> EmotionInfos = new List<EmotionInfo>();
 
     public int InfoType;
 
@@ -558,29 +560,29 @@ public class EmpInfo : MonoBehaviour
                 Text_Emotion.text += "  白" + emp.CurrentEmotions[i].Level;
             else if (emp.CurrentEmotions[i].color == EColor.Gray)
                 Text_Emotion.text += "  灰" + emp.CurrentEmotions[i].Level;
-            else if (emp.CurrentEmotions[i].color == EColor.Yellow)
+            else if (emp.CurrentEmotions[i].color == EColor.LYellow)
                 Text_Emotion.text += "  淡黄" + emp.CurrentEmotions[i].Level;
-            else if (emp.CurrentEmotions[i].color == EColor.Red)
+            else if (emp.CurrentEmotions[i].color == EColor.LRed)
                 Text_Emotion.text += "  淡红" + emp.CurrentEmotions[i].Level;
-            else if (emp.CurrentEmotions[i].color == EColor.Blue)
+            else if (emp.CurrentEmotions[i].color == EColor.LBlue)
                 Text_Emotion.text += "  淡蓝" + emp.CurrentEmotions[i].Level;
-            else if (emp.CurrentEmotions[i].color == EColor.Orange)
+            else if (emp.CurrentEmotions[i].color == EColor.LOrange)
                 Text_Emotion.text += "  淡橙" + emp.CurrentEmotions[i].Level;
-            else if (emp.CurrentEmotions[i].color == EColor.Purple)
+            else if (emp.CurrentEmotions[i].color == EColor.LPurple)
                 Text_Emotion.text += "  淡紫" + emp.CurrentEmotions[i].Level;
-            else if (emp.CurrentEmotions[i].color == EColor.Green)
+            else if (emp.CurrentEmotions[i].color == EColor.LGreen)
                 Text_Emotion.text += "  淡绿" + emp.CurrentEmotions[i].Level;
-            else if (emp.CurrentEmotions[i].color == EColor.DYellow)
+            else if (emp.CurrentEmotions[i].color == EColor.Yellow)
                 Text_Emotion.text += "  黄" + emp.CurrentEmotions[i].Level;
-            else if (emp.CurrentEmotions[i].color == EColor.DRed)
+            else if (emp.CurrentEmotions[i].color == EColor.Red)
                 Text_Emotion.text += "  红" + emp.CurrentEmotions[i].Level;
-            else if (emp.CurrentEmotions[i].color == EColor.DBlue)
+            else if (emp.CurrentEmotions[i].color == EColor.Blue)
                 Text_Emotion.text += "  蓝" + emp.CurrentEmotions[i].Level;
-            else if (emp.CurrentEmotions[i].color == EColor.DOrange)
+            else if (emp.CurrentEmotions[i].color == EColor.Orange)
                 Text_Emotion.text += "  橙" + emp.CurrentEmotions[i].Level;
-            else if (emp.CurrentEmotions[i].color == EColor.DPurple)
+            else if (emp.CurrentEmotions[i].color == EColor.Purple)
                 Text_Emotion.text += "  紫" + emp.CurrentEmotions[i].Level;
-            else if (emp.CurrentEmotions[i].color == EColor.DGreen)
+            else if (emp.CurrentEmotions[i].color == EColor.Green)
                 Text_Emotion.text += "  绿" + emp.CurrentEmotions[i].Level;
         }
         Text_RTarget.text = "发展目标:";
@@ -629,6 +631,27 @@ public class EmpInfo : MonoBehaviour
             CurrentStrategy.Text_Progress.text = "充能完毕";
             CurrentStrategy.RechargeComplete = true;
             NewStr.UpdateUI();
+        }
+    }
+
+    public void AddEmotionInfo(Emotion E)
+    {
+        EmotionInfo info = Instantiate(EmotionInfoPrefab, EmotionContent);
+        info.SetColor(E);
+        EmotionInfos.Add(info);
+        emp.CurrentEmotions.Add(E);
+    }
+    public void RemoveEmotionInfo(Emotion emotion)
+    {
+        foreach(EmotionInfo info in EmotionInfos)
+        {
+            if(info.E == emotion)
+            {
+                EmotionInfos.Remove(info);
+                emp.CurrentEmotions.Remove(emotion);
+                Destroy(info.gameObject);
+                return;
+            }
         }
     }
 

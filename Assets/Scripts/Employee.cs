@@ -7,8 +7,8 @@ public enum EmpType
     Tech, Market, Product, Operate, Science, HR
 }
 public enum EColor
-{//D开头为对应二级深色情绪
-    White, Gray, Yellow, Red, Blue, Orange, Purple, Green, DYellow, DRed, DBlue, DOrange, DPurple, DGreen, None
+{//L开头为对应1级浅色情绪
+    White, Gray, LYellow, LRed, LBlue, LOrange, LPurple, LGreen, Yellow, Red, Blue, Orange, Purple, Green, None
 }
 
 public class Emotion
@@ -491,7 +491,7 @@ public class Employee
     {
         isCEO = true;
         Skill1 = 5; Skill2 = 5; Skill3 = 5;
-        Observation = 5; Tenacity = 5; Strength = 5; Manage = 5; HR = 5; Finance = 5; Decision = 5;
+        Observation = 5; Tenacity = 5; Strength = 5; Manage = 9; HR = 5; Finance = 5; Decision = 5;
         Forecast = 5; Strategy = 5; Convince = 5; Charm = 5; Gossip = 5; Age = 25;
         Name = "X";
 
@@ -1469,9 +1469,10 @@ public class Employee
     //增减情绪
     public void AddEmotion(EColor C)
     {
+        //遇到麻木等状态抵消一次情绪添加
         for(int i = 0; i < InfoDetail.PerksInfo.Count; i++)
         {
-            if ((C == EColor.Red || C == EColor.DRed) && InfoDetail.PerksInfo[i].CurrentPerk.Num == 96)
+            if ((C == EColor.LRed || C == EColor.Red) && InfoDetail.PerksInfo[i].CurrentPerk.Num == 96)
                 return;
             else if(InfoDetail.PerksInfo[i].CurrentPerk.Num == 36)
             {
@@ -1479,7 +1480,181 @@ public class Employee
                 return;
             }
         }
-        if (C == EColor.Yellow)
+        if (C == EColor.LYellow)
+        {
+            for (int i = 0; i < CurrentEmotions.Count; i++)
+            {
+                if (CurrentEmotions[i].color == EColor.LRed)
+                {
+                    AddEmotion(EColor.LOrange);
+                    AddEmotion(EColor.LOrange);
+                    ReduceEmotion(CurrentEmotions[i]);
+                    return;
+                }
+                else if (CurrentEmotions[i].color == EColor.LBlue)
+                {
+                    AddEmotion(EColor.LGreen);
+                    AddEmotion(EColor.LGreen);
+                    ReduceEmotion(CurrentEmotions[i]);
+                    return;
+                }
+                else if (CurrentEmotions[i].color == EColor.LPurple)
+                {
+                    ReduceEmotion(CurrentEmotions[i]);
+                    return;
+                }
+                else if (CurrentEmotions[i].color == EColor.LYellow)
+                {
+                    if (CurrentEmotions[i].Level < 3)
+                        CurrentEmotions[i].Level += 1;
+                    else
+                    {
+                        InfoDetail.RemoveEmotionInfo(CurrentEmotions[i]);
+                        AddEmotion(EColor.Yellow);
+                    }
+                    return;
+                }
+            }
+        }
+        else if (C == EColor.LRed)
+        {
+            for (int i = 0; i < CurrentEmotions.Count; i++)
+            {
+                if (CurrentEmotions[i].color == EColor.LYellow)
+                {
+                    AddEmotion(EColor.LOrange);
+                    AddEmotion(EColor.LOrange);
+                    ReduceEmotion(CurrentEmotions[i]);
+                    return;
+                }
+                else if (CurrentEmotions[i].color == EColor.LBlue)
+                {
+                    AddEmotion(EColor.LPurple);
+                    AddEmotion(EColor.LPurple);
+                    ReduceEmotion(CurrentEmotions[i]);
+                    return;
+                }
+                else if (CurrentEmotions[i].color == EColor.LGreen)
+                {
+                    ReduceEmotion(CurrentEmotions[i]);
+                    return;
+                }
+                else if (CurrentEmotions[i].color == EColor.LRed)
+                {
+                    if (CurrentEmotions[i].Level < 3)
+                        CurrentEmotions[i].Level += 1;
+                    else
+                    {
+                        InfoDetail.RemoveEmotionInfo(CurrentEmotions[i]);
+                        AddEmotion(EColor.Red);
+                    }
+                    return;
+                }
+            }
+        }
+        else if (C == EColor.LBlue)
+        {
+            for (int i = 0; i < CurrentEmotions.Count; i++)
+            {
+                if (CurrentEmotions[i].color == EColor.LYellow)
+                {
+                    AddEmotion(EColor.LGreen);
+                    AddEmotion(EColor.LGreen);
+                    ReduceEmotion(CurrentEmotions[i]);
+                    return;
+                }
+                else if (CurrentEmotions[i].color == EColor.LRed)
+                {
+                    AddEmotion(EColor.LPurple);
+                    AddEmotion(EColor.LPurple);
+                    ReduceEmotion(CurrentEmotions[i]);
+                    return;
+                }
+                else if (CurrentEmotions[i].color == EColor.LOrange)
+                {
+                    ReduceEmotion(CurrentEmotions[i]);
+                    return;
+                }
+                else if (CurrentEmotions[i].color == EColor.LBlue)
+                {
+                    if (CurrentEmotions[i].Level < 3)
+                        CurrentEmotions[i].Level += 1;
+                    else
+                    {
+                        InfoDetail.RemoveEmotionInfo(CurrentEmotions[i]);
+                        AddEmotion(EColor.Blue);
+                    }
+                    return;
+                }
+            }
+        }
+        else if (C == EColor.LOrange)
+        {
+            for (int i = 0; i < CurrentEmotions.Count; i++)
+            {
+                if(CurrentEmotions[i].color == EColor.LOrange)
+                {
+                    if (CurrentEmotions[i].Level < 3)
+                        CurrentEmotions[i].Level += 1;
+                    else
+                    {
+                        InfoDetail.RemoveEmotionInfo(CurrentEmotions[i]);
+                        AddEmotion(EColor.Orange);
+                    }
+                    return;
+                }
+                else if (CurrentEmotions[i].color == EColor.LBlue)
+                {
+                    ReduceEmotion(CurrentEmotions[i]);
+                    return;
+                }
+            }
+        }
+        else if (C == EColor.LPurple)
+        {
+            for (int i = 0; i < CurrentEmotions.Count; i++)
+            {
+                if (CurrentEmotions[i].color == EColor.LPurple)
+                {
+                    if (CurrentEmotions[i].Level < 3)
+                        CurrentEmotions[i].Level += 1;
+                    else
+                    {
+                        InfoDetail.RemoveEmotionInfo(CurrentEmotions[i]);
+                        AddEmotion(EColor.Purple);
+                    }
+                    return;
+                }
+                else if (CurrentEmotions[i].color == EColor.LYellow)
+                {
+                    ReduceEmotion(CurrentEmotions[i]);
+                    return;
+                }
+            }
+        }
+        else if (C == EColor.LGreen)
+        {
+            for (int i = 0; i < CurrentEmotions.Count; i++)
+            {
+                if (CurrentEmotions[i].color == EColor.LGreen)
+                {
+                    if (CurrentEmotions[i].Level < 3)
+                        CurrentEmotions[i].Level += 1;
+                    else
+                    {
+                        InfoDetail.RemoveEmotionInfo(CurrentEmotions[i]);
+                        AddEmotion(EColor.Green);
+                    }
+                    return;
+                }
+                else if (CurrentEmotions[i].color == EColor.LRed)
+                {
+                    ReduceEmotion(CurrentEmotions[i]);
+                    return;
+                }
+            }
+        }
+        else if (C == EColor.Yellow)
         {
             for (int i = 0; i < CurrentEmotions.Count; i++)
             {
@@ -1487,24 +1662,24 @@ public class Employee
                 {
                     AddEmotion(EColor.Orange);
                     AddEmotion(EColor.Orange);
-                    CurrentEmotions[i].Level -= 1;
-                    if (CurrentEmotions[i].Level == 0)
-                        CurrentEmotions.Remove(CurrentEmotions[i]);
+                    ReduceEmotion(CurrentEmotions[i]);
                     return;
                 }
                 else if (CurrentEmotions[i].color == EColor.Blue)
                 {
                     AddEmotion(EColor.Green);
                     AddEmotion(EColor.Green);
-                    CurrentEmotions[i].Level -= 1;
-                    if (CurrentEmotions[i].Level == 0)
-                        CurrentEmotions.Remove(CurrentEmotions[i]);
+                    ReduceEmotion(CurrentEmotions[i]);
+                    return;
+                }
+                else if (CurrentEmotions[i].color == EColor.Purple)
+                {
+                    ReduceEmotion(CurrentEmotions[i]);
                     return;
                 }
                 else if (CurrentEmotions[i].color == EColor.Yellow)
                 {
-                    if (CurrentEmotions[i].Level < 3)
-                        CurrentEmotions[i].Level += 1;
+                    CurrentEmotions[i].Level += 1;
                     return;
                 }
             }
@@ -1517,24 +1692,24 @@ public class Employee
                 {
                     AddEmotion(EColor.Orange);
                     AddEmotion(EColor.Orange);
-                    CurrentEmotions[i].Level -= 1;
-                    if (CurrentEmotions[i].Level == 0)
-                        CurrentEmotions.Remove(CurrentEmotions[i]);
+                    ReduceEmotion(CurrentEmotions[i]);
                     return;
                 }
                 else if (CurrentEmotions[i].color == EColor.Blue)
                 {
                     AddEmotion(EColor.Purple);
                     AddEmotion(EColor.Purple);
-                    CurrentEmotions[i].Level -= 1;
-                    if (CurrentEmotions[i].Level == 0)
-                        CurrentEmotions.Remove(CurrentEmotions[i]);
+                    ReduceEmotion(CurrentEmotions[i]);
+                    return;
+                }
+                else if (CurrentEmotions[i].color == EColor.Green)
+                {
+                    ReduceEmotion(CurrentEmotions[i]);
                     return;
                 }
                 else if (CurrentEmotions[i].color == EColor.Red)
                 {
-                    if (CurrentEmotions[i].Level < 3)
-                        CurrentEmotions[i].Level += 1;
+                    CurrentEmotions[i].Level += 1;
                     return;
                 }
             }
@@ -1547,24 +1722,24 @@ public class Employee
                 {
                     AddEmotion(EColor.Green);
                     AddEmotion(EColor.Green);
-                    CurrentEmotions[i].Level -= 1;
-                    if (CurrentEmotions[i].Level == 0)
-                        CurrentEmotions.Remove(CurrentEmotions[i]);
+                    ReduceEmotion(CurrentEmotions[i]);
                     return;
                 }
                 else if (CurrentEmotions[i].color == EColor.Red)
                 {
                     AddEmotion(EColor.Purple);
                     AddEmotion(EColor.Purple);
-                    CurrentEmotions[i].Level -= 1;
-                    if (CurrentEmotions[i].Level == 0)
-                        CurrentEmotions.Remove(CurrentEmotions[i]);
+                    ReduceEmotion(CurrentEmotions[i]);
+                    return;
+                }
+                else if (CurrentEmotions[i].color == EColor.Orange)
+                {
+                    ReduceEmotion(CurrentEmotions[i]);
                     return;
                 }
                 else if (CurrentEmotions[i].color == EColor.Blue)
                 {
-                    if (CurrentEmotions[i].Level < 3)
-                        CurrentEmotions[i].Level += 1;
+                    CurrentEmotions[i].Level += 1;
                     return;
                 }
             }
@@ -1573,15 +1748,14 @@ public class Employee
         {
             for (int i = 0; i < CurrentEmotions.Count; i++)
             {
-                if(CurrentEmotions[i].color == EColor.Orange)
+                if (CurrentEmotions[i].color == EColor.Orange)
                 {
-                    if (CurrentEmotions[i].Level < 3)
-                        CurrentEmotions[i].Level += 1;
-                    else
-                    {
-                        CurrentEmotions.Remove(CurrentEmotions[i]);
-                        AddEmotion(EColor.DOrange);
-                    }
+                    CurrentEmotions[i].Level += 1;
+                    return;
+                }
+                else if (CurrentEmotions[i].color == EColor.Blue)
+                {
+                    ReduceEmotion(CurrentEmotions[i]);
                     return;
                 }
             }
@@ -1592,13 +1766,12 @@ public class Employee
             {
                 if (CurrentEmotions[i].color == EColor.Purple)
                 {
-                    if (CurrentEmotions[i].Level < 3)
-                        CurrentEmotions[i].Level += 1;
-                    else
-                    {
-                        CurrentEmotions.Remove(CurrentEmotions[i]);
-                        AddEmotion(EColor.DPurple);
-                    }
+                    CurrentEmotions[i].Level += 1;
+                    return;
+                }
+                else if (CurrentEmotions[i].color == EColor.Yellow)
+                {
+                    ReduceEmotion(CurrentEmotions[i]);
                     return;
                 }
             }
@@ -1609,105 +1782,18 @@ public class Employee
             {
                 if (CurrentEmotions[i].color == EColor.Green)
                 {
-                    if (CurrentEmotions[i].Level < 3)
-                        CurrentEmotions[i].Level += 1;
-                    else
-                    {
-                        CurrentEmotions.Remove(CurrentEmotions[i]);
-                        AddEmotion(EColor.DGreen);
-                    }
-                    return;
-                }
-            }
-        }
-        else if (C == EColor.DYellow)
-        {
-            for (int i = 0; i < CurrentEmotions.Count; i++)
-            {
-                if (CurrentEmotions[i].color == EColor.DRed)
-                {
-                    AddEmotion(EColor.DOrange);
-                    AddEmotion(EColor.DOrange);
-                    CurrentEmotions[i].Level -= 1;
-                    if (CurrentEmotions[i].Level == 0)
-                        CurrentEmotions.Remove(CurrentEmotions[i]);
-                    return;
-                }
-                else if (CurrentEmotions[i].color == EColor.DBlue)
-                {
-                    AddEmotion(EColor.DGreen);
-                    AddEmotion(EColor.DGreen);
-                    CurrentEmotions[i].Level -= 1;
-                    if (CurrentEmotions[i].Level == 0)
-                        CurrentEmotions.Remove(CurrentEmotions[i]);
-                    return;
-                }
-                else if (CurrentEmotions[i].color == EColor.DYellow)
-                {
                     CurrentEmotions[i].Level += 1;
                     return;
                 }
-            }
-        }
-        else if (C == EColor.DRed)
-        {
-            for (int i = 0; i < CurrentEmotions.Count; i++)
-            {
-                if (CurrentEmotions[i].color == EColor.DYellow)
+                else if (CurrentEmotions[i].color == EColor.Red)
                 {
-                    AddEmotion(EColor.DOrange);
-                    AddEmotion(EColor.DOrange);
-                    CurrentEmotions[i].Level -= 1;
-                    if (CurrentEmotions[i].Level == 0)
-                        CurrentEmotions.Remove(CurrentEmotions[i]);
-                    return;
-                }
-                else if (CurrentEmotions[i].color == EColor.DBlue)
-                {
-                    AddEmotion(EColor.DPurple);
-                    AddEmotion(EColor.DPurple);
-                    CurrentEmotions[i].Level -= 1;
-                    if (CurrentEmotions[i].Level == 0)
-                        CurrentEmotions.Remove(CurrentEmotions[i]);
-                    return;
-                }
-                else if (CurrentEmotions[i].color == EColor.DRed)
-                {
-                    CurrentEmotions[i].Level += 1;
+                    ReduceEmotion(CurrentEmotions[i]);
                     return;
                 }
             }
         }
-        else if (C == EColor.DBlue)
-        {
-            for (int i = 0; i < CurrentEmotions.Count; i++)
-            {
-                if (CurrentEmotions[i].color == EColor.DYellow)
-                {
-                    AddEmotion(EColor.DGreen);
-                    AddEmotion(EColor.DGreen);
-                    CurrentEmotions[i].Level -= 1;
-                    if (CurrentEmotions[i].Level == 0)
-                        CurrentEmotions.Remove(CurrentEmotions[i]);
-                    return;
-                }
-                else if (CurrentEmotions[i].color == EColor.DRed)
-                {
-                    AddEmotion(EColor.DPurple);
-                    AddEmotion(EColor.DPurple);
-                    CurrentEmotions[i].Level -= 1;
-                    if (CurrentEmotions[i].Level == 0)
-                        CurrentEmotions.Remove(CurrentEmotions[i]);
-                    return;
-                }
-                else if (CurrentEmotions[i].color == EColor.DBlue)
-                {
-                    CurrentEmotions[i].Level += 1;
-                    return;
-                }
-            }
-        }
-        CurrentEmotions.Add(new Emotion(C));
+        InfoDetail.AddEmotionInfo(new Emotion(C));
+
     }
     public void RemoveEmotion(EColor C)
     {
@@ -1715,14 +1801,17 @@ public class Employee
         {
             if(CurrentEmotions[i].color == C)
             {
-                CurrentEmotions[i].Level -= 1;
-                if (CurrentEmotions[i].Level == 0)
-                {
-                    CurrentEmotions.Remove(CurrentEmotions[i]);
-                    return;
-                }
+                ReduceEmotion(CurrentEmotions[i]);
+                return;
             }
         }
+    }
+    //减层数
+    void ReduceEmotion(Emotion E)
+    {
+        E.Level -= 1;
+        if (E.Level <= 0)
+            InfoDetail.RemoveEmotionInfo(E);
     }
 
     //根据已知目标确定一个事件

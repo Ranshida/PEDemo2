@@ -303,7 +303,6 @@ public class DepControl : MonoBehaviour
                 if (CheatMode == true)
                     Posb = BaseSuccessRate - 1;
                 //成功和大成功
-                print(Posb);
                 if (Posb <= BaseSuccessRate)
                 {
                     CurrentFinishedTaskNum += 1;
@@ -980,7 +979,7 @@ public class DepControl : MonoBehaviour
                 {
                     for (int j = 0; j < Emps[i].CurrentEmotions.Count; j++)
                     {
-                        if (Emps[i].CurrentEmotions[j].color == EColor.DGreen && Emps[i].CurrentEmotions[j].Level >= count)
+                        if (Emps[i].CurrentEmotions[j].color == EColor.Green && Emps[i].CurrentEmotions[j].Level >= count)
                         {
                             Emps[i].InfoB.gameObject.SetActive(true);
                             break;
@@ -1002,11 +1001,11 @@ public class DepControl : MonoBehaviour
                     Emps.Add(Deps[i].CurrentEmps[j]);
                 }
             }
-            EColor ColorA = EColor.DRed, ColorB = EColor.Red;
+            EColor ColorA = EColor.Red, ColorB = EColor.LRed;
             if (ActiveMode == 2)
             {
-                ColorA = EColor.DBlue;
-                ColorB = EColor.Blue;
+                ColorA = EColor.Blue;
+                ColorB = EColor.LBlue;
             }
             for (int i = 0; i < GC.CurrentEmployees.Count; i++)
             {
@@ -1048,7 +1047,7 @@ public class DepControl : MonoBehaviour
                 {
                     for (int j = 0; j < Emps[i].CurrentEmotions.Count; j++)
                     {
-                        if (Emps[i].CurrentEmotions[j].color == EColor.DGreen && Emps[i].CurrentEmotions[j].Level >= count)
+                        if (Emps[i].CurrentEmotions[j].color == EColor.Green && Emps[i].CurrentEmotions[j].Level >= count)
                         {
                             Emps[i].InfoB.gameObject.SetActive(true);
                             break;
@@ -1272,44 +1271,44 @@ public class DepControl : MonoBehaviour
         }
         else if (building.Type == BuildingType.宣传中心 && GC.CurrentEmpInfo != null)
         {
-            GC.CurrentEmpInfo.emp.AddEmotion(EColor.DRed);
+            GC.CurrentEmpInfo.emp.AddEmotion(EColor.Red);
             if (MajorSuccess == true)
-                GC.CurrentEmpInfo.emp.AddEmotion(EColor.DRed);
+                GC.CurrentEmpInfo.emp.AddEmotion(EColor.Red);
         }
         else if (building.Type == BuildingType.科技工作坊 && GC.CurrentEmpInfo != null)
         {
-            GC.CurrentEmpInfo.emp.AddEmotion(EColor.DYellow);
+            GC.CurrentEmpInfo.emp.AddEmotion(EColor.Yellow);
             if (MajorSuccess == true)
-                GC.CurrentEmpInfo.emp.AddEmotion(EColor.DYellow);
+                GC.CurrentEmpInfo.emp.AddEmotion(EColor.Yellow);
         }
         else if (building.Type == BuildingType.绩效考评中心 && GC.CurrentEmpInfo != null)
         {
             if (BuildingMode == 1)
             {
-                GC.CurrentEmpInfo.emp.AddEmotion(EColor.Blue);
+                GC.CurrentEmpInfo.emp.AddEmotion(EColor.LBlue);
                 if (MajorSuccess == true)
                 {
-                    GC.CurrentEmpInfo.emp.AddEmotion(EColor.Blue);
+                    GC.CurrentEmpInfo.emp.AddEmotion(EColor.LBlue);
                     if (Random.Range(0.0f, 1.0f) < 0.8f)
                         GC.CurrentEmpInfo.DetailInfo.AddPerk(new Perk38(GC.CurrentEmpInfo.emp), true);
                 }
             }
             else if (BuildingMode == 2)
             {
-                GC.CurrentEmpInfo.emp.AddEmotion(EColor.DYellow);
-                GC.CurrentEmpInfo.emp.AddEmotion(EColor.DYellow);
+                GC.CurrentEmpInfo.emp.AddEmotion(EColor.Yellow);
+                GC.CurrentEmpInfo.emp.AddEmotion(EColor.Yellow);
                 if (MajorSuccess == true)
                 {
-                    GC.CurrentEmpInfo.emp.AddEmotion(EColor.DYellow);
-                    GC.CurrentEmpInfo.emp.AddEmotion(EColor.DYellow);
+                    GC.CurrentEmpInfo.emp.AddEmotion(EColor.Yellow);
+                    GC.CurrentEmpInfo.emp.AddEmotion(EColor.Yellow);
                 }
             }
         }
         else if (building.Type == BuildingType.员工休息室 && GC.CurrentEmpInfo != null)
         {
-            GC.CurrentEmpInfo.emp.AddEmotion(EColor.Yellow);
+            GC.CurrentEmpInfo.emp.AddEmotion(EColor.LYellow);
             if (MajorSuccess == true)
-                GC.CurrentEmpInfo.emp.AddEmotion(EColor.Yellow);
+                GC.CurrentEmpInfo.emp.AddEmotion(EColor.LYellow);
         }
         else if (building.Type == BuildingType.人文沙龙)
         {
@@ -1420,7 +1419,7 @@ public class DepControl : MonoBehaviour
             {
                 for (int i = 0; i < 3; i++)
                 {
-                    GC.CurrentEmpInfo.emp.RemoveEmotion(EColor.DGreen);
+                    GC.CurrentEmpInfo.emp.RemoveEmotion(EColor.Green);
                 }
                 int count = 3;
                 if (MajorSuccess == true)
@@ -1432,7 +1431,7 @@ public class DepControl : MonoBehaviour
             }
             else if (BuildingMode == 2)
             {
-                GC.CurrentEmpInfo.emp.RemoveEmotion(EColor.DGreen);
+                GC.CurrentEmpInfo.emp.RemoveEmotion(EColor.Green);
                 GC.CurrentEmpInfo.DetailInfo.AddPerk(new Perk3(GC.CurrentEmpInfo.emp), true);
                 if (MajorSuccess == true)
                     GC.CurrentEmpInfo.DetailInfo.AddPerk(new Perk3(GC.CurrentEmpInfo.emp), true);
@@ -1442,17 +1441,17 @@ public class DepControl : MonoBehaviour
         {
             if (BuildingMode == 1)
             {
-                GC.CurrentEmpInfo.emp.RemoveEmotion(EColor.DRed);
-                GC.CurrentEmpInfo.emp.RemoveEmotion(EColor.DRed);
                 GC.CurrentEmpInfo.emp.RemoveEmotion(EColor.Red);
                 GC.CurrentEmpInfo.emp.RemoveEmotion(EColor.Red);
+                GC.CurrentEmpInfo.emp.RemoveEmotion(EColor.LRed);
+                GC.CurrentEmpInfo.emp.RemoveEmotion(EColor.LRed);
             }
             else if (BuildingMode == 2)
             {
-                GC.CurrentEmpInfo.emp.RemoveEmotion(EColor.DBlue);
-                GC.CurrentEmpInfo.emp.RemoveEmotion(EColor.DBlue);
                 GC.CurrentEmpInfo.emp.RemoveEmotion(EColor.Blue);
                 GC.CurrentEmpInfo.emp.RemoveEmotion(EColor.Blue);
+                GC.CurrentEmpInfo.emp.RemoveEmotion(EColor.LBlue);
+                GC.CurrentEmpInfo.emp.RemoveEmotion(EColor.LBlue);
             }
             GC.CurrentEmpInfo.DetailInfo.AddPerk(new Perk39(GC.CurrentEmpInfo.emp));
         }
