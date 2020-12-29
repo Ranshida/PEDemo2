@@ -90,18 +90,18 @@ public class GridContainer : MonoBehaviour
     {
         if (id == 0)
         {
-            foreach (Grid grid in LockGrids_0)
+            foreach (Grid grid in LockGrids_1)
             {
                 grid.Unlock();
             }
             MinX = 5;
-            MaxX = 275;
-            MinZ = 85;
+            MaxX = 135;
+            MinZ = 5;
             MaxZ = 155;
         }
         if (id == 1)
         {
-            foreach (Grid grid in LockGrids_1)
+            foreach (Grid grid in LockGrids_0)
             {
                 grid.Unlock();
             }

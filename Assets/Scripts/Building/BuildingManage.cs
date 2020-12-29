@@ -36,20 +36,22 @@ public class BuildingManage : MonoBehaviour
     private Building temp_Building;
     private GameObject CEOBuilding;
 
-    //建造面板
-    public Button btn_FinishBuild;
+    //建造面板        
     public Button btn_EnterBuildMode;
-    public Button btn_Dismantle;
     public Button btn_NewArea;
-    public Transform lotteryPanel;   //抽卡面板
-    public Transform lotteryList;    //抽卡表
-    public List<Transform> lotteryUI;   //抽卡面板
-    public List<Transform> warePanels;  //仓库中存储的待建建筑
-    public List<Building> wareBuildings;  //仓库中存储的待建建筑
-    public Transform warePanel;     //仓库面板
-    public Transform wareBuildingsPanel;     //仓库面板
-    public Transform selectBuildingPanel;     //仓库面板
+    private Button btn_Dismantle;
+    private Button btn_FinishBuild;
+    private Transform unlockGridPanel;        //解锁网格的询问面板
+    private Transform lotteryPanel;   //抽卡面板
+    private Transform lotteryList;    //抽卡表
+    private List<Transform> lotteryUI;   //抽卡面板
+    private List<Transform> warePanels;  //仓库中存储的待建建筑
+    private List<Building> wareBuildings;  //仓库中存储的待建建筑    
+    private Transform warePanel;     //仓库面板
+    private Transform wareBuildingsPanel;     //仓库面板
+    private Transform selectBuildingPanel;     //仓库面板
     private bool m_InBuildingMode;          //建造中
+
 
     //默认建筑（CEO办公室）
     public List<Building> ConstructedBuildings { get; private set; } = new List<Building>();
@@ -74,6 +76,7 @@ public class BuildingManage : MonoBehaviour
         m_SelectDict = new Dictionary<BuildingType, Building>();
 
         //加载建筑预制体，加入建筑字典
+
         lotteryBuilding = ResourcesLoader.LoadPrefab("Prefabs/UI/Building/LotteryBuilding");
         wareBuilding = ResourcesLoader.LoadPrefab("Prefabs/UI/Building/WareBuilding");
         buildingPrefabs = ResourcesLoader.LoadAll<GameObject>("Prefabs/Scene/Buildings");
@@ -101,7 +104,8 @@ public class BuildingManage : MonoBehaviour
 
     private void Start()
     {
-        lotteryPanel = transform.Find("LotteryPanel");
+        unlockGridPanel = transform.Find("UnlockNewArea");
+           lotteryPanel = transform.Find("LotteryPanel");
         lotteryList = lotteryPanel.Find("List");
         warePanel = transform.Find("WarePanel");
         wareBuildingsPanel = warePanel.Find("Scroll View/Viewport/Content");
@@ -117,8 +121,7 @@ public class BuildingManage : MonoBehaviour
         warePanel.Find("Btn_公关营销部").GetComponent<Button>().onClick.AddListener(() => { BuildBasicBuilding(BuildingType.公关营销部); });
         warePanel.Find("Btn_高管办公室").GetComponent<Button>().onClick.AddListener(() => { BuildBasicBuilding(BuildingType.高管办公室); });
         warePanel.Find("Btn_人力资源部").GetComponent<Button>().onClick.AddListener(() => { BuildBasicBuilding(BuildingType.人力资源部); });
-        btn_NewArea.onClick.AddListener(() => { UnlockNewArea(); });
-
+            
         m_EffectHalo.SetActive(false);
         InitBuilding(BuildingType.CEO办公室, new Int2(3, 8));
         InitBuilding(BuildingType.人力资源部, new Int2(0, 8));
@@ -590,9 +593,28 @@ public class BuildingManage : MonoBehaviour
         temp_Building = null;
     }
 
+    //按钮方法，打开询问解锁新区域的面板
+    public void AskUnlockArea()
+    {
+        //弹出面板询问是否要继续，继续需要花2000块
+        unlockGridPanel.gameObject.SetActive(true);
+
+        Button btn_Yes = unlockGridPanel.Find("Btn_Yes").GetComponent<Button>();
+        if (GameControl.Instance.Money > 2000) 
+            btn_Yes.interactable = true;
+        else
+            btn_Yes.interactable = false;
+    }
     private int m_Area = 0;
+    //确定解锁新区域
     public void UnlockNewArea()
     {
+        if (GameControl.Instance.Money < 2000) 
+        {
+            Debug.Log("金钱不够");
+            return;
+        }
+        GameControl.Instance.Money -= 2000;
         GridContainer.Instance.UnlockGrids(m_Area);
         m_Area++;
         if (m_Area >= 3) 

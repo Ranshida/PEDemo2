@@ -78,7 +78,7 @@ public class Building : MonoBehaviour
         string[] size = Size.Split('×');
         Length = int.Parse(size[0]);
         Width = int.Parse(size[1]);
-        Pay = 100;
+        Pay = 10;
         CanLottery = Str_Type != "基础办公室" && Type != BuildingType.CEO办公室 && Type != BuildingType.人力资源部;
         if (!int.TryParse(EffectRange_str, out EffectRange))
         {
