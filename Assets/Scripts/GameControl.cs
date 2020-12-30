@@ -1187,4 +1187,27 @@ public class GameControl : MonoBehaviour
         infoPanel.ShowPanel();
         infoPanel.transform.position = Input.mousePosition;
     }
+
+    List<MonoBehaviour> pauseMono = new List<MonoBehaviour>();
+    public void AskPause(MonoBehaviour mono)
+    {
+        if (!pauseMono.Contains(mono))
+        {
+            pauseMono.Add(mono);
+        }
+    }
+
+    public void RemovePause(MonoBehaviour mono)
+    {
+        pauseMono.Remove(mono);
+
+        if (pauseMono.Count == 0)
+        {
+            //不暂停
+        }
+        else
+        {
+            //暂停
+        }
+    }
 }
