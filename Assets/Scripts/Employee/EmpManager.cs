@@ -19,8 +19,6 @@ public class EmpManager : MonoBehaviour
     private Transform JudgeEventPanel;   //矛盾事件
     private Transform EventDetailPanel;
 
-    public bool SystemPause = false;
-
     private void Awake()
     {
         Instance = this;
@@ -71,7 +69,7 @@ public class EmpManager : MonoBehaviour
     public void JudgeEvent(Event currentEvent, bool canAccept)
     {
         //这个方法应当会导致游戏暂停
-        SystemPause = true;
+        GameControl.Instance.AskPause(this);
         JudgeEventPanel.gameObject.SetActive(true);
         Transform acceptBtn = JudgeEventPanel.Find("Btn_Accept");
         Transform cantAccept = JudgeEventPanel.Find("Txt_CantAccept");
@@ -89,7 +87,7 @@ public class EmpManager : MonoBehaviour
             acceptbutton.onClick.RemoveAllListeners();
             acceptbutton.onClick.AddListener(() =>
             {
-                SystemPause = false;
+                GameControl.Instance.RemovePause(this);
                 JudgeEventPanel.gameObject.SetActive(false);
                 (currentEvent as JudgeEvent).OnAccept();
             });
@@ -105,7 +103,7 @@ public class EmpManager : MonoBehaviour
         refusebutton.onClick.RemoveAllListeners();
         refusebutton.onClick.AddListener(() =>
         {
-            SystemPause = false;
+            GameControl.Instance.RemovePause(this);
             JudgeEventPanel.gameObject.SetActive(false);
             (currentEvent as JudgeEvent).OnRefuse();
         });
