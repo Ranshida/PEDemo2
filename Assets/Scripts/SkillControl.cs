@@ -215,7 +215,6 @@ public class SkillControl : MonoBehaviour
         }
 
         FightStart = false;
-        GC.ForceTimePause = false;
         for(int i = 0; i < Dices.Count; i++)
         {
             Destroy(Dices[i].gameObject);
@@ -273,7 +272,7 @@ public class SkillControl : MonoBehaviour
         VictoryPanel.SetActive(false);
         PresetPanel.SetActive(false);
         GC.MobTime = 192;
-        GC.ForceTimePause = false;
+        GC.RemovePause(this);
         this.gameObject.SetActive(false);
     }
 

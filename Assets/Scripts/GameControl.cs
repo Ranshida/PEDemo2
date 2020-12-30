@@ -188,7 +188,7 @@ public class GameControl : MonoBehaviour
                 {
                     SC.gameObject.SetActive(true);
                     SC.SkillSetButton.interactable = false;
-                    ForceTimePause = true;
+                    AskPause(SC);
                 }
             }
         }
@@ -1188,12 +1188,14 @@ public class GameControl : MonoBehaviour
         infoPanel.transform.position = Input.mousePosition;
     }
 
+    //暂停检测相关
     List<MonoBehaviour> pauseMono = new List<MonoBehaviour>();
     public void AskPause(MonoBehaviour mono)
     {
         if (!pauseMono.Contains(mono))
         {
             pauseMono.Add(mono);
+            ForceTimePause = true;
         }
     }
 
@@ -1203,11 +1205,11 @@ public class GameControl : MonoBehaviour
 
         if (pauseMono.Count == 0)
         {
-            //不暂停
+            ForceTimePause = false;
         }
         else
         {
-            //暂停
+            ForceTimePause = true;
         }
     }
 }

@@ -46,7 +46,7 @@ public class EventInfo : MonoBehaviour
         Text_Option2.text = CurrentEvent.SetSolvableEventText(2);
         Text_Option3.text = CurrentEvent.SetSolvableEventText(3);
         Text_Option4.text = CurrentEvent.SetSolvableEventText(4);
-        EC.GC.ForceTimePause = true;
+        EC.GC.AskPause(this);
     }
 
     public void CloseOptionPanel()
@@ -57,13 +57,13 @@ public class EventInfo : MonoBehaviour
         {
             SelectPanel.SetActive(false);
         }
-        EC.GC.ForceTimePause = false;
+        EC.GC.RemovePause(this);
     }
 
     //后期可能需要从员工身上移除事件
     public void RemoveEvent()
     {
-        EC.GC.ForceTimePause = false;
+        EC.GC.RemovePause(this);
         EC.GC.HourEvent.RemoveListener(TimePass);
         EC.EventInfos.Remove(this);
         Destroy(SelectPanel);

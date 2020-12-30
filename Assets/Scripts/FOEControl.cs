@@ -59,7 +59,7 @@ public class FOEControl : MonoBehaviour
     {
         canvasGroup.interactable = true;
         CloseButton2.SetActive(false);
-        GC.ForceTimePause = true;
+        GC.AskPause(this);
         FightBegins = true;
         Companies[0].ResetStatus();
         Companies[0].NeutralSkillNum = 0;
@@ -80,7 +80,7 @@ public class FOEControl : MonoBehaviour
     //商战结束
     public void FightFinish()
     {
-        GC.ForceTimePause = false;
+        GC.RemovePause(this);
         for(int i = 1; i < 4; i++)
         {
             Companies[i].TotalActionPoint += 1;

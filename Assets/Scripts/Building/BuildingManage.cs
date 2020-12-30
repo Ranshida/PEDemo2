@@ -433,7 +433,7 @@ public class BuildingManage : MonoBehaviour
             selectBuildingPanel.Find("Text").GetComponent<Text>().text = m_SelectBuilding.Type.ToString();
         }
         m_InBuildingMode = true;
-        GameControl.Instance.ForceTimePause = true;
+        GameControl.Instance.AskPause(this);
     }
     //(尝试)退出建造模式
     public void TryQuitBuildMode()
@@ -449,7 +449,7 @@ public class BuildingManage : MonoBehaviour
         lotteryPanel.gameObject.SetActive(false);
         selectBuildingPanel.gameObject.SetActive(false);
         btn_EnterBuildMode.gameObject.SetActive(false);
-        GameControl.Instance.ForceTimePause = false;
+        GameControl.Instance.RemovePause(this);
     }
 
     //开始建造（按建筑类型创造新建筑）
