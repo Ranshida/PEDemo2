@@ -228,8 +228,6 @@ public class GameControl : MonoBehaviour
         Week += 1;
         WeeklyEvent.Invoke();
         //Day += 1;
-        //
-        CC.CEO.Mentality += 30;
         //每周开始时的加班判定
         if (WorkToggle == false)
             WorkOverTime = false;
