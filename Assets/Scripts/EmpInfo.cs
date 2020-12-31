@@ -281,6 +281,11 @@ public class EmpInfo : MonoBehaviour
                 emp.InfoDetail.AddHistory("收到CEO安抚,心力+" + (10 * GC.HRBuildingMentalityExtra));
                 GC.CC.CEO.InfoDetail.AddHistory("安抚了" + emp.Name + ",对方心力+" + (10 * GC.HRBuildingMentalityExtra));
             }
+            else if (GC.CEOSkillNum == 3)
+            {
+                GC.CurrentEmpInfo = this;
+                GC.TrainingPanel.SetActive(true);
+            }
             else if (GC.CEOSkillNum == 5)
             {
                 GC.CurrentEmpInfo = this;
@@ -294,7 +299,7 @@ public class EmpInfo : MonoBehaviour
                 GC.CC.CEOSkillConfirm();
         }
         //选两个员工的动员技能
-        else if(GC.SelectMode == 7)
+        else if(GC.SelectMode == 7 || GC.SelectMode == 10)
         {
             if (GC.CurrentEmpInfo2 == null)
             {
@@ -303,8 +308,16 @@ public class EmpInfo : MonoBehaviour
             }
             else
             {
-                GC.CurrentEmpInfo = DetailInfo;
-                GC.SC.ConfirmPanel.SetActive(true);
+                if (GC.SelectMode == 7)
+                {
+                    GC.CurrentEmpInfo = DetailInfo;
+                    GC.SC.ConfirmPanel.SetActive(true);
+                }
+                else if (GC.SelectMode == 10)
+                {
+                    if (GC.CurrentEmpInfo2.emp != emp)
+                        GC.CC.SetPanelContent(emp, GC.CurrentEmpInfo2.emp);
+                }
             }
         }
 

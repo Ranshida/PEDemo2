@@ -18,6 +18,7 @@ public class ProduceBuff
         Dep.produceBuffs.Add(this);
         Dep.Efficiency += Value;
         TargetDep.GC.HourEvent.AddListener(TimePass);
+        //持续到业务结束的检测
         if (Time == -1)
             SpecialCheck = true;
     }
@@ -759,6 +760,8 @@ public class DepControl : MonoBehaviour
                     Text_DetailInfo.text += "\n紧急调离 -" + (info.CurrentPerk.Level * 15);
                 else if (info.CurrentPerk.Num == 111)
                     Text_DetailInfo.text += "\n空置部门 -30";
+                else if (info.CurrentPerk.Num == 115)
+                    Text_DetailInfo.text += "\n老板摸鱼 -35";
             }
             if (DepFaith >= 80)
                 Text_DetailInfo.text += "\n——————\n每周员工心力+10";
@@ -1156,21 +1159,21 @@ public class DepControl : MonoBehaviour
             if (BuildingMode == 1)
             {
                 if (MajorSuccess == true)
-                    GC.CurrentEmpInfo.emp.Mentality += (int)(GC.CurrentEmpInfo.emp.Mentality * 0.25f);
+                    GC.CurrentEmpInfo.emp.Mentality += (int)(GC.CurrentEmpInfo.emp.MentalityLimit * 0.25f);
                 else
-                    GC.CurrentEmpInfo.emp.Mentality += (int)(GC.CurrentEmpInfo.emp.Mentality * 0.1f);
+                    GC.CurrentEmpInfo.emp.Mentality += (int)(GC.CurrentEmpInfo.emp.MentalityLimit * 0.1f);
             }
             else if (BuildingMode == 2)
             {
                 int value = 0;
                 if (MajorSuccess == true)
                 {
-                    GC.CurrentEmpInfo.emp.Mentality += (int)(GC.CurrentEmpInfo.emp.Mentality * 0.15f);
+                    GC.CurrentEmpInfo.emp.Mentality += (int)(GC.CurrentEmpInfo.emp.MentalityLimit * 0.15f);
                     value = 20;
                 }
                 else
                 {
-                    GC.CurrentEmpInfo.emp.Mentality += (int)(GC.CurrentEmpInfo.emp.Mentality * 0.05f);
+                    GC.CurrentEmpInfo.emp.Mentality += (int)(GC.CurrentEmpInfo.emp.MentalityLimit * 0.05f);
                     value = 10;
                 }
                 for (int i = 0; i < CurrentEmps.Count; i++)
@@ -1225,16 +1228,16 @@ public class DepControl : MonoBehaviour
             if (BuildingMode == 1)
             {
                 if (MajorSuccess == true)
-                    GC.CurrentEmpInfo.emp.Mentality += (int)(GC.CurrentEmpInfo.emp.Stamina * 0.25f);
+                    GC.CurrentEmpInfo.emp.Mentality += (int)(GC.CurrentEmpInfo.emp.StaminaLimit * 0.25f);
                 else
-                    GC.CurrentEmpInfo.emp.Mentality += (int)(GC.CurrentEmpInfo.emp.Stamina * 0.1f);
+                    GC.CurrentEmpInfo.emp.Mentality += (int)(GC.CurrentEmpInfo.emp.StaminaLimit * 0.1f);
             }
             else if (BuildingMode == 2)
             {
                 if (MajorSuccess == true)
-                    GC.CurrentEmpInfo.emp.Mentality += (int)(GC.CurrentEmpInfo.emp.Stamina * 0.15f);
+                    GC.CurrentEmpInfo.emp.Mentality += (int)(GC.CurrentEmpInfo.emp.StaminaLimit * 0.15f);
                 else
-                    GC.CurrentEmpInfo.emp.Mentality += (int)(GC.CurrentEmpInfo.emp.Stamina * 0.05f);
+                    GC.CurrentEmpInfo.emp.Mentality += (int)(GC.CurrentEmpInfo.emp.StaminaLimit * 0.05f);
                 for (int i = 0; i < CurrentEmps.Count; i++)
                 {
                     CurrentEmps[i].ChangeRelation(GC.CurrentEmpInfo.emp, 10);
@@ -1250,23 +1253,23 @@ public class DepControl : MonoBehaviour
             {
                 if (MajorSuccess == true)
                 {
-                    GC.CurrentEmpInfo.emp.Mentality += (int)(GC.CurrentEmpInfo.emp.Stamina * 0.15f);
+                    GC.CurrentEmpInfo.emp.Mentality += (int)(GC.CurrentEmpInfo.emp.StaminaLimit * 0.15f);
                     if (Random.Range(0.0f, 1.0f) < BuffPosb)
                         GC.CurrentEmpInfo.DetailInfo.AddPerk(new Perk35(GC.CurrentEmpInfo.emp), true);
                 }
                 else
-                    GC.CurrentEmpInfo.emp.Mentality += (int)(GC.CurrentEmpInfo.emp.Stamina * 0.05f);
+                    GC.CurrentEmpInfo.emp.Mentality += (int)(GC.CurrentEmpInfo.emp.StaminaLimit * 0.05f);
             }
             else if (BuildingMode == 2)
             {
                 if (MajorSuccess == true)
                 {
-                    GC.CurrentEmpInfo.emp.Mentality += (int)(GC.CurrentEmpInfo.emp.Stamina * 0.15f);
+                    GC.CurrentEmpInfo.emp.Mentality += (int)(GC.CurrentEmpInfo.emp.StaminaLimit * 0.15f);
                     if (Random.Range(0.0f, 1.0f) < BuffPosb)
                         GC.CurrentEmpInfo.DetailInfo.AddPerk(new Perk37(GC.CurrentEmpInfo.emp), true);
                 }
                 else
-                    GC.CurrentEmpInfo.emp.Mentality += (int)(GC.CurrentEmpInfo.emp.Stamina * 0.05f);
+                    GC.CurrentEmpInfo.emp.Mentality += (int)(GC.CurrentEmpInfo.emp.StaminaLimit * 0.05f);
             }
         }
         else if (building.Type == BuildingType.宣传中心 && GC.CurrentEmpInfo != null)

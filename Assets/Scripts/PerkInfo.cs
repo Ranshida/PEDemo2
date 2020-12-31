@@ -58,6 +58,7 @@ public class PerkInfo : MonoBehaviour
         else if (CurrentPerk.TargetDep != null)
             CurrentPerk.TargetDep.CurrentPerks.Remove(this);
 
+        info.ClosePanel();
         Destroy(this.gameObject);
     }
 }

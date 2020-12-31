@@ -2329,6 +2329,28 @@ public class Perk114 : Perk
     }
 }
 
+//老板摸鱼
+public class Perk115 : Perk
+{
+    public Perk115(Employee Emp) : base(Emp)
+    {
+        Name = "老板摸鱼";
+        Description = "降低部门35点信念,持续到CEO放假结束";
+        TimeLeft = -1;
+        Num = 115;
+        canStack = false;
+    }
+    public override void ImmEffect()
+    {
+        TargetDep.DepFaith -= 35;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDep.DepFaith += 35;
+    }
+}
+
 public static class PerkData
 {
     public static List<Perk> PerkList = new List<Perk>()

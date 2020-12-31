@@ -13,6 +13,7 @@ public class GameControl : MonoBehaviour
         BaseDepExtraSuccessRate = 0;
     public int SelectMode = 1; //1员工招聘时部门选择 2员工移动时部门选择 3部门的高管办公室选择 4发动动员技能时员工选择 
     //5发动建筑技能时员工选择 6CEO技能员工/部门选择 7选择两个员工发动动员技能 8普通办公室的上级(高管办公室)选择  9头脑风暴的员工选择
+    //10选择两个员工的CEO技能
     public int Money = 1000, CEOSkillNum = 0, DoubleMobilizeCost = 0, MeetingBlockTime = 0, MobTime = 192;
     public bool ForceTimePause = false;
     public int Stamina
@@ -66,6 +67,7 @@ public class GameControl : MonoBehaviour
     [HideInInspector] public bool TargetOccupieBonus = false;//商战反占领Buff加成
     [HideInInspector] public bool CEOExtraVote = false;//CEO投票是否有额外加成
     [HideInInspector] public bool ResearchExtraMentality = false;//科研额外心力恢复
+    [HideInInspector] public bool CEOVacation = false;
     [HideInInspector] public float ResearchExtraSuccessRate = 0;//研发业务额外成功率
     [HideInInspector] public int ResearchExtraTimeBoost = 0;//科研业务时间增益
     bool WorkOverTime = false;//是否已经处于加班状态
@@ -93,7 +95,8 @@ public class GameControl : MonoBehaviour
     public Transform HireContent, EmpPanelContent, DepContent, DepSelectContent, TotalEmpContent, StandbyContent, EmpDetailContent, MessageContent, SRateDetailContent;
     public InfoPanel infoPanel;
     public GameObject DepSelectPanel, StandbyButton, MessagePrefab, CEOSkillPanel, VacationPanel, GameOverPanel, OfficeModeSelectPanel,
-        OfficeModeBuildingOptionButton, OfficeModeTalkOptionButton, DepModeSelectPanel, DepSkillConfirmPanel, SkillTreeSelectPanel;
+        OfficeModeBuildingOptionButton, OfficeModeTalkOptionButton, DepModeSelectPanel, DepSkillConfirmPanel, SkillTreeSelectPanel,
+        TrainingPanel;
     public Text Text_Time, Text_TechResource, Text_MarketResource, Text_ProductResource, Text_Money, Text_Stamina, Text_Mentality, 
         Text_Morale, Text_DepMode1, Text_DepMode2, Text_DepSkillDescribe;
     public Toggle WorkOvertimeToggle;
@@ -226,7 +229,6 @@ public class GameControl : MonoBehaviour
         WeeklyEvent.Invoke();
         //Day += 1;
         //
-        CC.CEO.Stamina += 30;
         CC.CEO.Mentality += 30;
         //每周开始时的加班判定
         if (WorkToggle == false)
@@ -541,7 +543,10 @@ public class GameControl : MonoBehaviour
         newDep.DS.DC = newDep;
         newDep.DS.GC = this;
 
+        //检测老板摸鱼的附加状态
         CurrentDeps.Add(newDep);
+        if (CEOVacation == true)
+            newDep.AddPerk(new Perk115(null));
         return newDep;
     }
 
@@ -867,10 +872,14 @@ public class GameControl : MonoBehaviour
         else if (SelectMode == 6)
         {
             if (CEOSkillNum == 1)
-                new ProduceBuff(0.2f, depControl, 16);
+            {
+                new ProduceBuff(0.45f, depControl, 128);
+                new EmpBuff(CC.CEO, 16, -45);
+                ResetSelectMode();
+            }
             else if (CEOSkillNum == 2)
             {
-              //  depControl.SpTime += 16;
+                //  depControl.SpTime += 16;
 
             }
             CC.CEOSkillConfirm();
@@ -946,7 +955,7 @@ public class GameControl : MonoBehaviour
     {
         if (num == 1)
         {
-            if (Stamina >= 20)
+            if (CC.CEO.StaminaLimit >= 45)
             {
                 CEOSkillNum = 1;
                 CEOSkillPanel.SetActive(false);
@@ -966,6 +975,12 @@ public class GameControl : MonoBehaviour
         }
         else if (num == 3)
         {
+            SelectMode = 6;
+            CEOSkillNum = num;
+            CEOSkillPanel.SetActive(false);
+            TotalEmpContent.parent.parent.gameObject.SetActive(true);
+            Text_EmpSelectTip.gameObject.SetActive(true);
+            Text_EmpSelectTip.text = "选择一个员工";
             //CEOSkillNum = 3;
             //CEOSkillPanel.SetActive(false);
             //List<OfficeControl> TempOffices = new List<OfficeControl>();
@@ -993,10 +1008,14 @@ public class GameControl : MonoBehaviour
         }
         else
         {
-            SelectMode = 6;
             CEOSkillNum = num;
+            SelectMode = 6;
+            if (CEOSkillNum == 11)
+                SelectMode = 10;
             CEOSkillPanel.SetActive(false);
             TotalEmpContent.parent.parent.gameObject.SetActive(true);
+            Text_EmpSelectTip.gameObject.SetActive(true);
+            Text_EmpSelectTip.text = "选择一个员工";
             if (num == 5 || num == 19)
             {
                 foreach (Employee e in CurrentEmployees)
@@ -1008,16 +1027,30 @@ public class GameControl : MonoBehaviour
         }
     }
 
-    //TrainEmp函数目前实际为放假功能
     public void TrainEmp(int type)
     {
-        type *= 2;
+        new EmpBuff(CurrentEmpInfo.emp, type);
+        new EmpBuff(CC.CEO, 16, -45);
+        CurrentEmpInfo.emp.InfoDetail.AddHistory("接受了CEO的培养");
+        CC.CEO.InfoDetail.AddHistory("培养了" + CurrentEmpInfo.emp.Name);
+    }
+
+    public void SetEmpVacationTime(int type)
+    {
         CurrentEmpInfo.emp.VacationTime = type;
         CurrentEmpInfo.emp.InfoDetail.Entity.SetBusy();
         CurrentEmpInfo.emp.InfoDetail.AddHistory("被安排放假" + type + "工时");
         CC.CEO.InfoDetail.AddHistory("安排" + CurrentEmpInfo.emp.Name + "放假" + type + "工时");
         if (CurrentEmpInfo.emp.isCEO == true)
+        {
+            ResetSelectMode();
             CC.SkillButton.interactable = false;
+            CEOVacation = true;
+            foreach(DepControl dep in CurrentDeps)
+            {
+                dep.AddPerk(new Perk115(null));
+            }
+        }
     }
     void GCTimePass()
     {
@@ -1043,6 +1076,8 @@ public class GameControl : MonoBehaviour
         CEOSkillNum = 0;
         Text_EmpSelectTip.gameObject.SetActive(false);
         SC.SelectConfirmButton.SetActive(false);
+        CC.SelectPanel.SetActive(false);
+        CC.ResultPanel.SetActive(false);
         for(int i = 0; i < CurrentEmployees.Count; i++)
         {
             CurrentEmployees[i].InfoB.gameObject.SetActive(true);
@@ -1121,11 +1156,14 @@ public class GameControl : MonoBehaviour
             TotalEmpContent.parent.parent.gameObject.SetActive(false);
             ResetSelectMode();
         }
-        else if (SelectMode == 7)
+        else if (SelectMode == 6)
+            ResetSelectMode();
+        else if (SelectMode == 7 || SelectMode == 10)
         {
             if(CurrentEmpInfo2 == null)
             {
-                TotalEmpContent.parent.parent.gameObject.SetActive(false);
+                if (SelectMode == 7)
+                    TotalEmpContent.parent.parent.gameObject.SetActive(false);
                 ResetSelectMode();
             }
             else

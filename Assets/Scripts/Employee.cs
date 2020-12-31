@@ -214,8 +214,8 @@ public class Employee
         set
         {
             stamina = value;
-            if (stamina > 100 + (Strength * 5))
-                stamina = 100 + (Strength * 5);
+            if (stamina > StaminaLimit)
+                stamina = StaminaLimit;
             else if (stamina < 0)
                 stamina = 0;
         }
@@ -226,8 +226,8 @@ public class Employee
         set
         {
             mentality = value;
-            if (mentality > 100 + (Tenacity * 5))
-                mentality = 100 + (Tenacity * 5);
+            if (mentality > MentalityLimit)
+                mentality = MentalityLimit;
             else if (mentality <= 0)
             {
                 mentality = 0;
@@ -239,6 +239,10 @@ public class Employee
                 GameControl.Instance.Text_Mentality.text = "心力:" + mentality;
         }
     }
+    public int StaminaLimit { get { return 100 + (Strength * 5) + StaminaLimitExtra; } set { StaminaLimit = value;} } //体力上限
+    public int MentalityLimit { get { return 100 + (Tenacity * 5) + MentalityLimitExtra; } set { MentalityLimit = value; } } // 心力上限
+    public int StaminaLimitExtra = 0; //体力上限额外值
+    public int MentalityLimitExtra = 0; //心理上限额外值
     #endregion
 
     public int SkillExtra1, SkillExtra2, SkillExtra3, SalaryExtra = 0, Age, EventTime, ObeyTime, NoPromotionTime = 0, NoMarriageTime = 0,
@@ -274,6 +278,7 @@ public class Employee
     public List<Relation> Relations = new List<Relation>();
     public List<EmpItem> CurrentItems = new List<EmpItem>();
     public List<Emotion> CurrentEmotions = new List<Emotion>();
+    public List<EmpBuff> CurrentBuffs = new List<EmpBuff>();
     public List<int> ExhaustedCount = new List<int>();
 
     private int mentality, stamina;
@@ -482,8 +487,8 @@ public class Employee
         CheckCharacter();
 
         EventTime = Random.Range(7,10);
-        Stamina = 100 + (Strength * 5);
-        Mentality = 100 + (Tenacity * 5);
+        Stamina = StaminaLimit;
+        Mentality = MentalityLimit;
     }
 
     //初始化CEO属性
@@ -493,7 +498,7 @@ public class Employee
         Skill1 = 5; Skill2 = 5; Skill3 = 5;
         Observation = 5; Tenacity = 5; Strength = 5; Manage = 9; HR = 5; Finance = 5; Decision = 5;
         Forecast = 5; Strategy = 5; Convince = 5; Charm = 5; Gossip = 5; Age = 25;
-        Name = "X";
+        Name = "CEO";
 
         //确定热情(Star)和天赋(StarLimit)
         InitStar();
@@ -511,8 +516,8 @@ public class Employee
         }
         CheckCharacter();
         EventTime = 8;
-                Stamina = 100 + (Strength * 5);
-        Mentality = 100 + (Tenacity * 5);
+        Stamina = StaminaLimit;
+        Mentality = MentalityLimit;
     }
 
     public void InitStar(int type = -1)
@@ -1402,7 +1407,7 @@ public class Employee
         if (VacationTime > 0)
         {
             VacationTime -= 1;
-            Stamina += 5;
+            Stamina += 2;
             if (VacationTime == 0)
                 EndVacation();
         }
@@ -1440,6 +1445,29 @@ public class Employee
             }
             DesItems.Clear();
         }
+        //计算经验加成
+        if(CurrentBuffs.Count > 0)
+        {
+            List<EmpBuff> RemoveBonus = new List<EmpBuff>();
+            foreach(EmpBuff buff in CurrentBuffs)
+            {
+                if (buff.Type < 16)
+                    GainExp(buff.Value, buff.Type);
+                buff.Time -= 1;
+                if (buff.Time <= 0)
+                    RemoveBonus.Add(buff);
+            }
+            foreach(EmpBuff buff in RemoveBonus)
+            {
+                if (buff.Type == 16)
+                {
+                    StaminaLimitExtra -= buff.Value;
+                    Stamina += 0;
+                }
+                CurrentBuffs.Remove(buff);
+            }
+            RemoveBonus.Clear();
+        }
     }
     public void EventTimePass()
     {
@@ -1463,7 +1491,13 @@ public class Employee
         VacationTime = 0;
         InfoDetail.Entity.SetFree();
         if (isCEO == true)
+        {
             InfoDetail.GC.CC.SkillButton.interactable = true;
+            foreach(DepControl dep in InfoDetail.GC.CurrentDeps)
+            {
+                dep.RemovePerk(115);
+            }
+        }
     }
 
     //增减情绪
@@ -1951,6 +1985,28 @@ public class Employee
         ExhaustedCount.Add(num);
         InfoDetail.GC.CreateMessage(Name + "心力爆炸,获得了" + InfoDetail.PerksInfo[InfoDetail.PerksInfo.Count - 1].CurrentPerk.Name);
         InfoDetail.AddHistory(Name + "心力爆炸,获得了" + InfoDetail.PerksInfo[InfoDetail.PerksInfo.Count - 1].CurrentPerk.Name);
+    }
+}
+
+public class EmpBuff
+{
+    //目前用于技能经验缓慢增长和减体力上限两个buff
+    public int Type = 0;
+    public int Time = 0;
+    public int Value = 3;
+    Employee Target;
+    public EmpBuff(Employee emp, int type, int value = 3, int time = 128)
+    {
+        Target = emp;
+        Target.CurrentBuffs.Add(this);
+        Type = type;
+        Time = time;
+        Value = value;
+        if (type == 16)
+        {
+            Target.StaminaLimitExtra += value;
+            Target.Stamina += 0;
+        }
     }
 }
 
