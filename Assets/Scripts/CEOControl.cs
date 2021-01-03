@@ -34,7 +34,7 @@ public class CEOControl : MonoBehaviour
             SuccessLimit = 10;
             Text_Name.text = "给" + Target.Name + "送礼物";
             Text_SuccessContent.text = "好感度+5";
-            Text_Requirement.text = "消耗体力:10点";
+            Text_Requirement.text = "消耗体力:10";
             Text_Extra.text = "陌路-2 \n仇敌 - 4\n" + AddText(1) + AddText(6);
             Text_OptionContent.text = "执行，成功率:" + CalcPosb() + "%";
         }
@@ -129,7 +129,7 @@ public class CEOControl : MonoBehaviour
         {
             SuccessLimit = 14;
             Text_Name.text = "劝说" + Target.Name + "改变信仰";
-            Text_SuccessContent.text = "指定一个信仰方向和一个文化方向，使对方的文化和信仰分别在对应的方向上+50";
+            Text_SuccessContent.text = "指定一个信仰方向和一个文化方向，使对方的文化和信仰分别在对应的方向上产生巨大偏向";
             Text_Requirement.text = "消耗体力:50";
             Text_Extra.text = AddText(1) + AddText(3) + AddText(6) + "选择的方向与CEO自身相同 +1 \n选择的方向与CEO自身不同 -1\n";
             Text_OptionContent.text = "执行，成功率:" + CalcPosb() + "%";
@@ -586,7 +586,7 @@ public class CEOControl : MonoBehaviour
     //返回成功率
     int CalcPosb()
     {
-        int value = (int)((float)(20 - CalcExtra() - SuccessLimit) / 20.0f * 100);
+        int value = (int)((float)(20 + CalcExtra() - SuccessLimit) / 20.0f * 100);
         if (value < 0)
             value = 0;
         else if (value > 100)
@@ -787,7 +787,7 @@ public class CEOControl : MonoBehaviour
         else if (type == 2)
             content += "存在“善辩”特质时 +1 \n存在“说客”特质时 +2 \n存在“雄辩家”特质时 +3\n";
         else if (type == 3)
-            content += "对方身上具有: \n1个愤怒（红色）情绪 +2 \n1个沮丧（紫色）情绪 +2 \n1个反感（浅红）情绪 +1 \n1个委屈（浅紫）情绪 +1\n";
+            content += "对方身上具有: \n1个愤怒（红色）情绪 +4 \n1个沮丧（紫色）情绪 +4 \n1个反感（浅红）情绪 +2 \n1个委屈（浅紫）情绪 +2\n";
         else if (type == 4)
             content += "双方身上具有: \n1个好奇（黄色）情绪 +2 \n1个沉思（绿色）情绪 +2 \n1个愉悦（浅黄）情绪 +1 \n1个敬畏（浅绿）情绪 +1 \n" +
                        "1个愤怒（红色）情绪 -2 \n1个沮丧（紫色）情绪 -2 \n1个反感（浅红）情绪 -1 \n1个委屈（浅紫）情绪 -1\n";
@@ -831,9 +831,9 @@ public class CEOControl : MonoBehaviour
             foreach (Emotion e in Target.CurrentEmotions)
             {
                 if (e.color == EColor.Red || e.color == EColor.Purple)
-                    value += (e.Level * 2);
+                    value += (e.Level * 4);
                 else if (e.color == EColor.LRed || e.color == EColor.LPurple)
-                    value += e.Level;
+                    value += (e.Level * 2);
             }
         }
         else if (type == 4)

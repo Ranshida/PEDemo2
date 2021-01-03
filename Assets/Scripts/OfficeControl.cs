@@ -554,7 +554,6 @@ public class OfficeControl : MonoBehaviour
         //经验获取
         if (CurrentManager != null)
         {
-            if (OfficeMode == 1)
                 CurrentManager.GainExp(5, building.effectValue);
         }
     }

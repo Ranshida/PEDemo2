@@ -153,7 +153,10 @@ public class GameControl : MonoBehaviour
         Text_Money.text = "金钱:" + Money +"\n" 
                         + "    " + (Income - Salary - BuildingPay) + "/月";
         if (CurrentEmployees.Count > 0)
-            Text_Stamina.text = "体力:" + CurrentEmployees[0].Stamina;
+        {
+            Text_Stamina.text = "体力:" + CurrentEmployees[0].Stamina + "/" + CurrentEmployees[0].StaminaLimit;
+            Text_Mentality.text = "心力:" + CurrentEmployees[0].Mentality + "/" + CurrentEmployees[0].MentalityLimit;
+        }
     }
 
     void HourPass()

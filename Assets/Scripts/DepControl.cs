@@ -845,32 +845,32 @@ public class DepControl : MonoBehaviour
             if (value <= 5)
             {
                 Text_DetailInfo.text = "部门成功率:-15%";
-                Text_DetailInfo.text += "\n技能 <= 5";
+                Text_DetailInfo.text += "\n当前生产所需技能 <= 5";
             }
             else if (value <= 9)
             {
                 Text_DetailInfo.text = "部门成功率:-5%";
-                Text_DetailInfo.text += "\n5 <技能 <= 9";
+                Text_DetailInfo.text += "\n5 <当前生产所需技能 <= 9";
             }
             else if (value <= 13)
             {
                 Text_DetailInfo.text = "部门成功率:+0%";
-                Text_DetailInfo.text += "\n9 <技能 <= 13";
+                Text_DetailInfo.text += "\n9 <当前生产所需技能 <= 13";
             }
             else if (value <= 17)
             {
                 Text_DetailInfo.text = "部门成功率:+5%";
-                Text_DetailInfo.text += "\n13 <技能 <= 17";
+                Text_DetailInfo.text += "\n13 <当前生产所需技能 <= 17";
             }
             else if (value <= 21)
             {
                 Text_DetailInfo.text = "部门成功率:+15%";
-                Text_DetailInfo.text += "\n17 <技能 <= 21";
+                Text_DetailInfo.text += "\n17 <当前生产所需技能 <= 21";
             }
             else if (value > 21)
             {
                 Text_DetailInfo.text = "部门成功率:+20%";
-                Text_DetailInfo.text += "\n技能 > 21";
+                Text_DetailInfo.text += "\n当前生产所需技能 > 21";
             }
             Text_DetailInfo.text += "\n(当前等级:" + value + ")";
         }
