@@ -1374,7 +1374,7 @@ public class DepControl : MonoBehaviour
             //Perk newPerk = new Perk45(null);
             //newPerk.TimeLeft = PTime;
             //newPerk.TempValue4 = value * Count;
-            AddPerk(new Perk45(null));
+            GC.SelectedDep.AddPerk(new Perk45(null));
         }
         else if (building.Type == BuildingType.电子科技展)
         {
@@ -1739,6 +1739,7 @@ public class DepControl : MonoBehaviour
     public void ToggleCheatMode(bool value)
     {
         CheatMode = value;
+        AddPerk(new Perk45(null));
     }
 
     //查找自己影响范围内的部门

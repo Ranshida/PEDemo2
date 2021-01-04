@@ -382,7 +382,7 @@ public class CEOControl : MonoBehaviour
             {
                 Target.ChangeRelation(Target2, 20);
                 Target2.ChangeRelation(Target, 20);
-                GC.Text_EmpSelectTip.text = "选择一个员工";
+                GC.Text_EmpSelectTip.text = "选择第一个员工";
                 GC.CurrentEmpInfo2 = null;
             }
             else if (GC.CEOSkillNum == 12)
@@ -504,6 +504,11 @@ public class CEOControl : MonoBehaviour
             CEO.InfoDetail.AddHistory(Text_Name.text + "失败," + Text_Result.text);
             if (Target != null)
                 Target.InfoDetail.AddHistory("CEO" + Text_Name.text + "失败," + Text_Result.text);
+            if (GC.CEOSkillNum == 11)
+            {
+                GC.Text_EmpSelectTip.text = "选择第一个员工";
+                GC.CurrentEmpInfo2 = null;
+            }
         }
         ResultPanel.SetActive(true);
     }

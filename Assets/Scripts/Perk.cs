@@ -1298,22 +1298,13 @@ public class Perk45 : Perk
         if (TargetDep != null)
         {
             Description = "存在时“并肩作战”效果×3";
-            foreach (PerkInfo perk in TargetDep.CurrentPerks)
-            {
-                if(perk.CurrentPerk.Num == 99)
-                {
-                    TargetDep.AddPerk(new Perk99(null));
-                }
-            }
+            TargetDep.FaithRelationCheck();
         }
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        if (TargetDep != null)
-        {
-            TargetDep.AddPerk(new Perk99(null));
-        }
+        TargetDep.FaithRelationCheck();
     }
 }
 
