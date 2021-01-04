@@ -94,8 +94,13 @@ public class BuildingManage : MonoBehaviour
         foreach (GameObject prefab in buildingPrefabs)
         {
             Building building = prefab.GetComponent<Building>();
-            //基础建筑物不能通过抽卡获取
-            if (building.CanLottery)
+            ////基础建筑物不能通过抽卡获取
+            //if (building.CanLottery)
+            //{
+            //    m_SelectDict.Add(building.Type, building);
+            //}
+            if (building.Type == BuildingType.心理咨询室 || building.Type == BuildingType.健身房 || building.Type == BuildingType.绩效考评中心
+                || building.Type == BuildingType.员工休息室 || building.Type == BuildingType.冥想室 || building.Type == BuildingType.宣传中心 || building.Type == BuildingType.兴趣社团)
             {
                 m_SelectDict.Add(building.Type, building);
             }
@@ -356,7 +361,7 @@ public class BuildingManage : MonoBehaviour
             }
         }
 
-        buildingList.Add(BuildingType.空); buildingList.Add(BuildingType.空); buildingList.Add(BuildingType.空); buildingList.Add(BuildingType.空); buildingList.Add(BuildingType.空);
+        //buildingList.Add(BuildingType.空); buildingList.Add(BuildingType.空); buildingList.Add(BuildingType.空); buildingList.Add(BuildingType.空); buildingList.Add(BuildingType.空);
         for (int i = 0; i < count; i++)
         {
             BuildingType temp = buildingList[UnityEngine.Random.Range(0, buildingList.Count)];

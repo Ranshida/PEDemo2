@@ -69,6 +69,7 @@ public class EmpManager : MonoBehaviour
     public void JudgeEvent(Event currentEvent, bool canAccept)
     {
         //这个方法应当会导致游戏暂停
+        //应该需要Instantiate一个新panel写，现在如果同时发生两次就顶掉一个
         GameControl.Instance.AskPause(this);
         JudgeEventPanel.gameObject.SetActive(true);
         Transform acceptBtn = JudgeEventPanel.Find("Btn_Accept");
