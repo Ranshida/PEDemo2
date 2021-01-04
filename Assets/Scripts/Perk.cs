@@ -1288,7 +1288,7 @@ public class Perk45 : Perk
     public Perk45(Employee Emp) : base(Emp)
     {
         Name = "团结";
-        Description = "办公室成功率+1%";
+        Description = "存在时“并肩作战”效果×3";
         TimeLeft = 64;
         Num = 45;
         canStack = false;
@@ -1297,8 +1297,14 @@ public class Perk45 : Perk
     {
         if (TargetDep != null)
         {
-            TargetDep.Efficiency += TempValue4;
-            Description = "办公室成功率+" + (TempValue4 * 100) + "%";
+            Description = "存在时“并肩作战”效果×3";
+            foreach (PerkInfo perk in TargetDep.CurrentPerks)
+            {
+                if(perk.CurrentPerk.Num == 99)
+                {
+                    TargetDep.AddPerk(new Perk99(null));
+                }
+            }
         }
     }
     public override void RemoveEffect()
@@ -1306,7 +1312,7 @@ public class Perk45 : Perk
         base.RemoveEffect();
         if (TargetDep != null)
         {
-            TargetDep.Efficiency -= TempValue4;
+            TargetDep.AddPerk(new Perk99(null));
         }
     }
 }
@@ -1997,7 +2003,16 @@ public class Perk99 : Perk
                 for(int j = i + 1; j < TempEmps.Count; j++)
                 {
                     if (TempEmps[i].FindRelation(TempEmps[j]).FriendValue > 0)
-                        TempValue1 += 5;
+                        TempValue2 += 5;
+                }
+            }
+            TempValue1 = TempValue2;
+            foreach(PerkInfo perk in TargetDep.CurrentPerks)
+            {
+                if(perk.CurrentPerk.Num == 45)
+                {
+                    TempValue1 = TempValue2 * 3;
+                    break;
                 }
             }
             TargetDep.DepFaith += TempValue1;

@@ -437,7 +437,7 @@ public class GameControl : MonoBehaviour
         else if (b.Type == BuildingType.宣传中心)
         {
             newDep.EmpLimit = 1;
-            newDep.building.effectValue = 2;
+            newDep.building.effectValue = 15;
             newDep.Mode2EffectValue = 12;
             newDep.ActiveMode = 2;
         }

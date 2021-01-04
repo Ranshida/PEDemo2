@@ -1370,10 +1370,11 @@ public class DepControl : MonoBehaviour
             float value = 0.02f;
             if (MajorSuccess == true)
                 value += 0.01f;
-            Perk newPerk = new Perk45(null);
-            newPerk.TimeLeft = PTime;
-            newPerk.TempValue4 = value * Count;
-            AddPerk(newPerk);
+            //旧团结部分，需要先修改作用效果
+            //Perk newPerk = new Perk45(null);
+            //newPerk.TimeLeft = PTime;
+            //newPerk.TempValue4 = value * Count;
+            AddPerk(new Perk45(null));
         }
         else if (building.Type == BuildingType.电子科技展)
         {
