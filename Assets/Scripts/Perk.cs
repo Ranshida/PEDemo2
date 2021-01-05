@@ -2357,6 +2357,29 @@ public class Perk115 : Perk
     }
 }
 
+//老板摸鱼
+public class Perk116 : Perk
+{
+    public Perk116(Employee Emp) : base(Emp)
+    {
+        Name = "业务干扰";
+        Description = "降低部门" + TempValue1 + "点信念";
+        TimeLeft = 96;
+        Num = 116;
+        canStack = false;
+    }
+    public override void ImmEffect()
+    {
+        TargetDep.DepFaith -= TempValue1;
+        Description = "降低部门" + TempValue1 + "点信念";
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDep.DepFaith += TempValue1;
+    }
+}
+
 public static class PerkData
 {
     public static List<Perk> PerkList = new List<Perk>()

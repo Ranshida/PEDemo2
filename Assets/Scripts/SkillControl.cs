@@ -208,7 +208,7 @@ public class SkillControl : MonoBehaviour
         //直接退出的Debuff
         if(FightStart == false)
         {
-            GC.Morale -= 50;
+            GC.Morale -= 5;
             GC.CreateMessage("直接放弃头脑风暴,士气-50");
             ExtraMajorSuccessRate = 0;
             ExtraSuccessRate = 0;

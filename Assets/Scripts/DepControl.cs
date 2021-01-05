@@ -321,7 +321,7 @@ public class DepControl : MonoBehaviour
                         //分部门效果
                         if (building.Type == BuildingType.技术部门)
                         {
-                            GC.FinishedTask[0] += 6;
+                            GC.FinishedTask[0] += 2;
                             GC.FinishedTask[6] -= 1;
                             SpProgress = 0;
                             GC.CreateMessage(Text_DepName.text + " 完美完成了程序迭代的生产");
@@ -365,7 +365,7 @@ public class DepControl : MonoBehaviour
                         //成功
                         if (building.Type == BuildingType.技术部门)
                         {
-                            GC.FinishedTask[0] += 3;
+                            GC.FinishedTask[0] += 1;
                             GC.FinishedTask[6] -= 1;
                             SpProgress = 0;
                             GC.CreateMessage(Text_DepName.text + " 完成了程序迭代的生产");
@@ -762,6 +762,8 @@ public class DepControl : MonoBehaviour
                     Text_DetailInfo.text += "\n空置部门 -30";
                 else if (info.CurrentPerk.Num == 115)
                     Text_DetailInfo.text += "\n老板摸鱼 -35";
+                else if (info.CurrentPerk.Num == 116)
+                    Text_DetailInfo.text += "\n业务干扰 -" + info.CurrentPerk.TempValue1;
             }
             if (DepFaith >= 80)
                 Text_DetailInfo.text += "\n——————\n每周员工心力+10";
@@ -1122,13 +1124,13 @@ public class DepControl : MonoBehaviour
                 GC.FinishedTask[4] -= 2;
                 if (MajorSuccess == true)
                 {
-                    GC.CreateMessage("获得了6个传播");
-                    GC.FinishedTask[3] += 6;
+                    GC.CreateMessage("获得了2个传播");
+                    GC.FinishedTask[3] += 2;
                 }
                 else
                 {
-                    GC.CreateMessage("获得了3个传播");
-                    GC.FinishedTask[3] += 3;
+                    GC.CreateMessage("获得了1个传播");
+                    GC.FinishedTask[3] += 1;
                 }
             }
             else if (BuildingMode == 2)

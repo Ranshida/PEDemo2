@@ -417,15 +417,15 @@ public class CEOControl : MonoBehaviour
             }
             else if (GC.CEOSkillNum == 16)
             {
-                if (CEO.Character[0] >= 0)
-                    Target.ChangeCharacter(0, 15);
-                else if (CEO.Character[0] < 0)
-                    Target.ChangeCharacter(0, -15);
+                if (CultureValue == 1)
+                    Target.ChangeCharacter(0, -50);
+                else
+                    Target.ChangeCharacter(0, 50);
 
-                if (CEO.Character[1] >= 0)
-                    Target.ChangeCharacter(1, 15);
+                if (ReligionValue == 1)
+                    Target.ChangeCharacter(1, -50);
                 else if (CEO.Character[1] < 0)
-                    Target.ChangeCharacter(1, -15);
+                    Target.ChangeCharacter(1, 50);
             }
             else if (GC.CEOSkillNum == 17)
             {

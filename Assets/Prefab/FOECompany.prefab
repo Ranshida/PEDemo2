@@ -113,8 +113,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -1.7099609}
-  m_SizeDelta: {x: 207.8, y: 66.37}
+  m_AnchoredPosition: {x: 0, y: -31.642}
+  m_SizeDelta: {x: 207.8, y: 126.24}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6563258057223545781
 CanvasRenderer:
@@ -146,7 +146,7 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 25
+    m_FontSize: 23
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 2
@@ -253,9 +253,15 @@ MonoBehaviour:
   TotalActionPoint: 18
   CurrentActionPoint: 0
   StoredActionPoint: 0
+  ExtraActionPoint: 0
   SelfMarketAttackLimit: 0
   FoeMarketAttackLimit: 0
   NeutralSkillNum: -1
   FOESkillNum: -1
+  ResourceA: 0
+  ResourceB: 0
+  Level: 0
+  Morale: 100
+  isPlayer: 0
   Text_Status: {fileID: 6563258057223545780}
   FC: {fileID: 0}

@@ -498,7 +498,7 @@ public class Employee
         Skill1 = 5; Skill2 = 5; Skill3 = 5;
         Observation = 5; Tenacity = 5; Strength = 5; Manage = 9; HR = 5; Finance = 5; Decision = 5;
         Forecast = 5; Strategy = 5; Convince = 5; Charm = 5; Gossip = 5; Age = 25;
-        Name = "CEO";
+        Name = "X";
 
         //确定热情(Star)和天赋(StarLimit)
         InitStar();
