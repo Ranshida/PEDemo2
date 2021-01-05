@@ -11550,11 +11550,14 @@ public class Event3_1 : Event
     }
     public override bool SpecialCheck()
     {
-        if (Self.Character[4] <= 30)
+        if (Self.CurrentDep != null)
         {
-            if (EmpManager.Instance.FindColleague(Self).Contains(Target) == true)
+            if (Self.CurrentDep.DepFaith <= 30)
             {
-                return true;
+                if (EmpManager.Instance.FindColleague(Self).Contains(Target) == true)
+                {
+                    return true;
+                }
             }
         }
         return false;
@@ -11628,11 +11631,14 @@ public class Event3_2 : Event
     }
     public override bool SpecialCheck()
     {
-        if (Self.Character[4] <= 30)
+        if (Self.CurrentDep != null)
         {
-            if (EmpManager.Instance.FindBoss(Self) == Target| EmpManager.Instance.FindBoss(Target)==Self)
+            if (Self.CurrentDep.DepFaith <= 30)
             {
-                return true;
+                if (EmpManager.Instance.FindBoss(Self) == Target | EmpManager.Instance.FindBoss(Target) == Self)
+                {
+                    return true;
+                }
             }
         }
         return false;
@@ -11720,9 +11726,12 @@ public class Event3_3 : Event
     }
     public override bool SpecialCheck()
     {
-        if (Self.Character[4] <= 30)
+        if (Self.CurrentDep != null)
         {
-            return true;
+            if (Self.CurrentDep.DepFaith <= 30)
+            {
+                    return true;
+            }
         }
         return false;
     }
@@ -11790,9 +11799,12 @@ public class Event3_4 : Event
     }
     public override bool SpecialCheck()
     {
-        if (Self.Character[4] <= 30)
+        if (Self.CurrentDep != null)
         {
-            return true;
+            if (Self.CurrentDep.DepFaith <= 30)
+            {
+                return true;
+            }
         }
         return false;
     }
@@ -11868,13 +11880,19 @@ public class Event3_5 : Event
     }
     public override bool SpecialCheck()
     {
-        if (Self.Character[4] >= 30)
+        if (Self.CurrentDep != null)
         {
-            if (Target.Character[4] >= 30)
+            if (Self.CurrentDep.DepFaith >= 30)
             {
-                if (EmpManager.Instance.FindColleague(Self).Contains(Target))
+                if (Target.CurrentDep != null)
                 {
-                    return true;
+                    if (Target.CurrentDep.DepFaith >= 30)
+                    {
+                        if (EmpManager.Instance.FindColleague(Self).Contains(Target))
+                        {
+                            return true;
+                        }
+                    }
                 }
             }
         }
@@ -11972,13 +11990,19 @@ public class Event3_6 : Event
     }
     public override bool SpecialCheck()
     {
-        if (Self.Character[4] >= 30)
+        if (Self.CurrentDep != null)
         {
-            if (Target.Character[4] >= 30)
+            if (Self.CurrentDep.DepFaith >= 30)
             {
-                if (EmpManager.Instance.FindBoss(Self) == Target | EmpManager.Instance.FindBoss(Target) == Self)
+                if (Target.CurrentDep != null)
                 {
-                    return true;
+                    if (Target.CurrentDep.DepFaith >= 30)
+                    {
+                        if (EmpManager.Instance.FindBoss(Self) == Target | EmpManager.Instance.FindBoss(Target) == Self)
+                        {
+                            return true;
+                        }
+                    }
                 }
             }
         }
@@ -12141,13 +12165,19 @@ public class Event3_7 : Event
     }
     public override bool SpecialCheck()
     {
-        if (Self.Character[4] >= 70)
+        if (Self.CurrentDep != null)
         {
-            if (Target.Character[4] >= 70)
+            if (Self.CurrentDep.DepFaith >= 70)
             {
-                if (EmpManager.Instance.FindBoss(Self) == Target | EmpManager.Instance.FindBoss(Target) == Self)
+                if (Target.CurrentDep != null)
                 {
-                    return true;
+                    if (Target.CurrentDep.DepFaith >= 70)
+                    {
+                        if (EmpManager.Instance.FindBoss(Self) == Target | EmpManager.Instance.FindBoss(Target) == Self)
+                        {
+                            return true;
+                        }
+                    }
                 }
             }
         }
@@ -12276,13 +12306,19 @@ public class Event3_8 : Event
     }
     public override bool SpecialCheck()
     {
-        if (Self.Character[4] >= 70)
+        if (Self.CurrentDep != null)
         {
-            if (Target.Character[4] >= 70)
+            if (Self.CurrentDep.DepFaith >= 70)
             {
-                if (EmpManager.Instance.FindColleague(Self).Contains(Target) == true)
+                if (Target.CurrentDep != null)
                 {
-                    return true;
+                    if (Target.CurrentDep.DepFaith >= 70)
+                    {
+                        if (EmpManager.Instance.FindColleague(Self).Contains(Target) == true)
+                        {
+                            return true;
+                        }
+                    }
                 }
             }
         }
