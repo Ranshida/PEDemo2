@@ -97,7 +97,7 @@ public class GameControl : MonoBehaviour
     public GameObject DepSelectPanel, StandbyButton, MessagePrefab, CEOSkillPanel, VacationPanel, GameOverPanel, OfficeModeSelectPanel,
         OfficeModeBuildingOptionButton, OfficeModeTalkOptionButton, DepModeSelectPanel, DepSkillConfirmPanel, SkillTreeSelectPanel,
         TrainingPanel;
-    public Text Text_Time, Text_TechResource, Text_MarketResource, Text_ProductResource, Text_Money, Text_Stamina, Text_Mentality, 
+    public Text Text_Time, Text_TechResource, Text_MarketResource, Text_MarketResource2, Text_ProductResource, Text_Money, Text_Stamina, Text_Mentality, 
         Text_Morale, Text_DepMode1, Text_DepMode2, Text_DepSkillDescribe;
     public Toggle WorkOvertimeToggle;
     public SkillControl SC;
@@ -397,7 +397,6 @@ public class GameControl : MonoBehaviour
             newDep.EmpLimit = 2;
             newDep.building.effectValue = 8;
             newDep.Mode2EffectValue = 12;
-            newDep.ModeChangeButton.gameObject.SetActive(false);
             newDep.ActiveButton.gameObject.SetActive(false);
         }
         else if (b.Type == BuildingType.心理咨询室)
@@ -928,17 +927,20 @@ public class GameControl : MonoBehaviour
     public void UpdateResourceInfo()
     {
         int[] C = FinishedTask;
-        Text_TechResource.text = "程序迭代: " + C[0] + "\n" +
-            "技术研发: " + C[1] + "\n" +
-            "可行性调研: " + C[2] + "\n";
+        //Text_TechResource.text = "程序迭代: " + C[0] + "\n" +
+        //    "技术研发: " + C[1] + "\n" +
+        //    "可行性调研: " + C[2] + "\n";
+        Text_TechResource.text = "程序迭代: " + C[0];
 
-        Text_MarketResource.text = "传播: " + C[3] + "\n" +
-            "营销文案: " + C[4] + "\n" +
-            "资源拓展: " + C[5] + "\n";
-
-        Text_ProductResource.text = "原型图: " + C[6] + "\n" +
-           "产品研究: " + C[7] + "\n" +
-           "用户访谈: " + C[8] + "\n";
+        //Text_MarketResource.text = "传播: " + C[3] + "\n" +
+        //    "营销文案: " + C[4] + "\n" +
+        //    "资源拓展: " + C[5] + "\n";
+        Text_MarketResource.text = "传播: " + C[3];
+        Text_MarketResource2.text = "营销文案: " + C[4];
+        //Text_ProductResource.text = "原型图: " + C[6] + "\n" +
+        //   "产品研究: " + C[7] + "\n" +
+        //   "用户访谈: " + C[8] + "\n";
+        Text_ProductResource.text = "原型图: " + C[6];
     }
 
     public void CreateMessage(string content)
@@ -963,6 +965,10 @@ public class GameControl : MonoBehaviour
                 ShowDepSelectPanel(CurrentDeps);
                 SelectMode = 6;
             }
+            else
+            {
+                CreateMessage("CEO体力上限不足");
+            }
         }
         else if (num == 2)
         {
@@ -976,12 +982,19 @@ public class GameControl : MonoBehaviour
         }
         else if (num == 3)
         {
-            SelectMode = 6;
-            CEOSkillNum = num;
-            CEOSkillPanel.SetActive(false);
-            TotalEmpContent.parent.parent.gameObject.SetActive(true);
-            Text_EmpSelectTip.gameObject.SetActive(true);
-            Text_EmpSelectTip.text = "选择一个员工";
+            if (CC.CEO.StaminaLimit >= 45)
+            {
+                SelectMode = 6;
+                CEOSkillNum = num;
+                CEOSkillPanel.SetActive(false);
+                TotalEmpContent.parent.parent.gameObject.SetActive(true);
+                Text_EmpSelectTip.gameObject.SetActive(true);
+                Text_EmpSelectTip.text = "选择一个员工";
+            }
+            else
+            {
+                CreateMessage("CEO体力上限不足");
+            }
             //CEOSkillNum = 3;
             //CEOSkillPanel.SetActive(false);
             //List<OfficeControl> TempOffices = new List<OfficeControl>();
@@ -1030,10 +1043,17 @@ public class GameControl : MonoBehaviour
 
     public void TrainEmp(int type)
     {
-        new EmpBuff(CurrentEmpInfo.emp, type);
-        new EmpBuff(CC.CEO, 16, -45);
-        CurrentEmpInfo.emp.InfoDetail.AddHistory("接受了CEO的培养");
-        CC.CEO.InfoDetail.AddHistory("培养了" + CurrentEmpInfo.emp.Name);
+        if (CC.CEO.StaminaLimit >= 45)
+        {
+            new EmpBuff(CurrentEmpInfo.emp, type);
+            new EmpBuff(CC.CEO, 16, -45);
+            CurrentEmpInfo.emp.InfoDetail.AddHistory("接受了CEO的培养");
+            CC.CEO.InfoDetail.AddHistory("培养了" + CurrentEmpInfo.emp.Name);
+        }
+        else
+        {
+            CreateMessage("CEO体力上限不足");
+        }
     }
 
     public void SetEmpVacationTime(int type)
@@ -1082,6 +1102,10 @@ public class GameControl : MonoBehaviour
         for(int i = 0; i < CurrentEmployees.Count; i++)
         {
             CurrentEmployees[i].InfoB.gameObject.SetActive(true);
+            CurrentEmployees[i].InfoB.MoveButton.GetComponentInChildren<Text>().text = "移动";
+            if (CurrentEmployees[i].isCEO == false)
+                CurrentEmployees[i].InfoB.FireButton.gameObject.SetActive(true);
+
         }
     }
 
@@ -1195,6 +1219,7 @@ public class GameControl : MonoBehaviour
         GameOverPanel.gameObject.SetActive(false);
     }
 
+    //一些提示框信息
     public void ShowCompayCost()
     {
         infoPanel.Text_Name.text = "";
@@ -1223,6 +1248,39 @@ public class GameControl : MonoBehaviour
         if (otherCost > 0)
             content += "\n待命员工工资:" + otherCost;
         infoPanel.Text_Description.text = content;
+        infoPanel.ShowPanel();
+        infoPanel.transform.position = Input.mousePosition;
+    }
+    public void ShowStatusDetail(int type)
+    {
+        if (type == 1)
+        {
+            infoPanel.Text_Name.text = "CEO本人的体力，可以通过提升CEO的强壮来提高上限";
+            infoPanel.Text_ExtraInfo.text = "";
+            string content = "初始体力上限:100";
+            content += "\nCEO强壮" + CC.CEO.Strength + "点:+" + (CC.CEO.Strength * 5);
+            foreach (EmpBuff buff in CC.CEO.CurrentBuffs)
+            {
+                if (buff.Type == 16)
+                    content += "\n技能影响:" + buff.Value + "(" + buff.Time + "时)";
+            }
+            infoPanel.Text_Description.text = content;
+        }
+        else if (type == 2)
+        {
+            infoPanel.Text_Name.text = "CEO本人的心力，可以通过提升CEO的坚韧来提高上限";
+            infoPanel.Text_ExtraInfo.text = "";
+            string content = "初始心力上限:100";
+            content += "\nCEO坚韧" + CC.CEO.Tenacity + "点:+" + (CC.CEO.Tenacity * 5);
+            infoPanel.Text_Description.text = content;
+        }
+        else if (type == 3)
+        {
+            infoPanel.Text_Name.text = "士气会影响CEO技能的成功率和部分事件的判定";
+            infoPanel.Text_Description.text = "士气越高，越容易出现正面的结果，可点击员工发生事件后头顶冒出的气泡查看规则";
+            infoPanel.Text_ExtraInfo.text = "可以从商战中消耗“传播”获取";
+        }
+
         infoPanel.ShowPanel();
         infoPanel.transform.position = Input.mousePosition;
     }

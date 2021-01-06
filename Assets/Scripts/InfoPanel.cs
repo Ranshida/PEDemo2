@@ -10,9 +10,24 @@ public class InfoPanel : MonoBehaviour
     public Text Text_Name, Text_Description, Text_ExtraInfo;
     public CanvasGroup CG;
 
+    RectTransform rect;
+
     private void Start()
     {
         CG = this.GetComponent<CanvasGroup>();
+        rect = GetComponent<RectTransform>();
+    }
+
+    private void Update()
+    {
+        if(Visible == true)
+        {
+            if (rect.anchoredPosition.x > 540)
+                rect.pivot = new Vector2(1, 1);
+            else
+                rect.pivot = new Vector2(0, 1);
+            transform.position = Input.mousePosition;
+        }
     }
 
     public void ShowPanel()

@@ -68,11 +68,11 @@ public class CEOControl : MonoBehaviour
             Text_Extra.text = AddText(2) + AddText(6);
             Text_OptionContent.text = "执行，成功率:" + CalcPosb() + "%";
         }
-        //删除10 改为 说服-胡搅蛮缠
+        //删除10 改为 说服-激怒
         else if (GC.CEOSkillNum == 10)
         {
             SuccessLimit = 8;
-            Text_Name.text = "与" + Target.Name + "胡搅蛮缠";
+            Text_Name.text = "激怒" + Target.Name;
             Text_SuccessContent.text = "使对方获得1层反感(浅红)情绪";
             Text_Requirement.text = "消耗体力:20";
             Text_Extra.text = AddText(2) + AddText(6);
@@ -635,7 +635,7 @@ public class CEOControl : MonoBehaviour
         {
             value += CalcExtra(2) + CalcExtra(6);
         }
-        //10挚友 改为 说服-胡搅蛮缠
+        //10挚友 改为 说服-激怒
         else if (GC.CEOSkillNum == 10)
         {
             value += CalcExtra(2) + CalcExtra(6);
@@ -886,7 +886,9 @@ public class CEOControl : MonoBehaviour
                 value += 2;
             else if (GC.Morale > 60)
                 value += 1;
-            else if (GC.Morale < 40)
+            else if (GC.Morale >= 40)
+                value += 0;
+            else if (GC.Morale >= 20)
                 value -= 1;
             else if (GC.Morale < 20)
                 value -= 2;

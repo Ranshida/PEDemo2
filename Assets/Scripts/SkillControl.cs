@@ -42,7 +42,7 @@ public class SkillControl : MonoBehaviour
     public DiceControl DicePrefab, TargetDice;
     public Transform DiceContent, SkillContent, SkillSelectContent, EmpContent;
     public Text Text_TotalValue, Text_CurrentSkillName, Text_EventDescription, Text_Point, Text_Tip, Text_BossHp, Text_BossLevel, 
-        Text_BossAction, Text_TurnLeft, Text_DotValue, Text_ExtraDamage;
+        Text_BossAction, Text_TurnLeft, Text_DotValue, Text_ExtraDamage, Text_Result;
     public Button RollButton, EndButton, SkillSetButton;
     public DepControl TargetDep = null;
     public EmpInfo EmpInfoPrefab;
@@ -54,7 +54,7 @@ public class SkillControl : MonoBehaviour
     public SkillInfo[] CSkillSetA = new SkillInfo[6], CSkillSetB = new SkillInfo[6], CSkillSetC = new SkillInfo[6];
 
     int DiceNum, totalValue, RequirePoint, BossLevel, NextBossSkill, SetNum;
-    bool FightStart = false;
+    bool FightStart = false, BossDefeat = false;
 
     Employee TargetEmployee; //Boss目标员工
 
@@ -209,9 +209,14 @@ public class SkillControl : MonoBehaviour
         if(FightStart == false)
         {
             GC.Morale -= 5;
-            GC.CreateMessage("直接放弃头脑风暴,士气-50");
+            GC.CreateMessage("直接放弃头脑风暴,士气-5");
             ExtraMajorSuccessRate = 0;
             ExtraSuccessRate = 0;
+        }
+        else if(BossDefeat == false)
+        {
+            GC.Morale -= 5;
+            GC.CreateMessage("中途放弃头脑风暴,士气-5");
         }
 
         FightStart = false;
@@ -416,6 +421,7 @@ public class SkillControl : MonoBehaviour
     //Boss回合
     public void BossTurn()
     {
+        BossDefeat = false;
         CauseDamage(DotValue);//先造成持续伤害
         if (BossHp <= 0)
             return;
@@ -691,6 +697,7 @@ public class SkillControl : MonoBehaviour
         SelectedDices.Clear();
         CreateDice(DiceNum);
         ExtraDiceNum = 0;
+        BossDefeat = true;
         DotValue = 0;//重置洞察
         ExtraDamage = 0;//重置想象力
         foreach(EmpInfo info in SelectedEmps)
@@ -733,6 +740,12 @@ public class SkillControl : MonoBehaviour
     {
         GC.TotalEmpContent.parent.parent.gameObject.SetActive(true);
         GC.ResetSelectMode();
+        foreach(Employee emp in GC.CurrentEmployees)
+        {
+            emp.InfoB.MoveButton.GetComponentInChildren<Text>().text = "加入";
+            if (emp.isCEO == false)
+                emp.InfoB.FireButton.gameObject.SetActive(false);
+        }
         foreach(EmpInfo info in SelectedEmps)
         {
             //移除不存在的部分
@@ -836,6 +849,25 @@ public class SkillControl : MonoBehaviour
             info.emp.InfoDetail.emp.Confidence = 0;
         }
         PresetPanel.SetActive(true);
+    }
+
+    //更新结果信息
+    public void SetResultText()
+    {
+        Text_Result.text = "";
+        if (FightStart == false)
+        {
+            Text_Result.text = "直接结束头脑风暴将会扣除5点士气，确定不继续挑战吗？";
+            return;
+        }
+        else if (BossDefeat == false)
+            Text_Result.text = "胜利前结束头脑风暴将会扣除5点士气";
+        Text_Result.text += "\n当前获得头脑风暴等级:" + BossLevel;
+        Text_Result.text += "\n所有办公室成功率+" + (ExtraSuccessRate * 100) + "%";
+        if (ExtraMajorSuccessRate > 0.001f)
+            Text_Result.text += ",大成功率+" + (ExtraMajorSuccessRate * 100) + "%";
+        if (ExtraMajorSuccessRate < 0.499f)
+            Text_Result.text += "\n继续挑战可以获得更高头脑风暴等级，确定不继续挑战吗？";
     }
 
 }

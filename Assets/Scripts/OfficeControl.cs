@@ -534,7 +534,9 @@ public class OfficeControl : MonoBehaviour
                         HireType ht = new HireType(0);
                         ht.SetHeadHuntStatus();
                         if (MajorSuccess == true)
-                            ht.MajorSuccess = true;
+                            ht.HireNum = 5;
+                        else
+                            ht.HireNum = 3;
                         GC.HC.AddHireTypes(ht);
                         GC.CreateMessage("(" + Text_OfficeName.text + ")完成了招聘");
                     }

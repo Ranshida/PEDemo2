@@ -1400,7 +1400,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u786E\u5B9A"
+  m_Text: "\u4E0B\u4E00\u8F6E"
 --- !u!1 &1803712313
 GameObject:
   m_ObjectHideFlags: 0
@@ -2091,7 +2091,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: -0.000017891438}
-  m_SizeDelta: {x: 320, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &3572393255269800659
 MonoBehaviour:
@@ -2304,7 +2304,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &3572393255585502614
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2402,6 +2402,7 @@ MonoBehaviour:
   Sp1Multiply: 0
   ExtraSuccessRate: 0
   ExtraMajorSuccessRate: 0
+  ExtraMajorFailureRate: 0
   DiceUseNum: 0
   DotValue: 0
   ExtraDamage: 0
@@ -2411,6 +2412,7 @@ MonoBehaviour:
   SkillLockBonus: 0
   TurnLeft: 0
   ExtraDiceNum: 0
+  MobLevel: 1
   NoStaminaCost: 0
   DoubleCost: 0
   CurrentSkill: {fileID: 0}
@@ -4398,7 +4400,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.0016784668, y: 351.03467}
+  m_AnchoredPosition: {x: 0.0016784668, y: 165.64963}
   m_SizeDelta: {x: 852.28, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &3572393256745175233
@@ -5882,7 +5884,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: -701.7}
+  m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!222 &4132149916523961152
 CanvasRenderer:

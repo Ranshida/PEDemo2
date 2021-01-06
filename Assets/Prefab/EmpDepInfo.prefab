@@ -550,6 +550,7 @@ MonoBehaviour:
   GC: {fileID: 0}
   HireButton: {fileID: 0}
   MoveButton: {fileID: 7304820795017196092}
+  FireButton: {fileID: 7644908701526381002}
   Text_Name: {fileID: 7304820794338048668}
   Text_Mentality: {fileID: 7304820794304870686}
   Text_Stamina: {fileID: 7304820793050914309}
@@ -599,16 +600,19 @@ MonoBehaviour:
   - {fileID: 0}
   - {fileID: 0}
   DetailInfo: {fileID: 0}
+  EmotionInfoPrefab: {fileID: 0}
   PerkContent: {fileID: 0}
   SkillContent: {fileID: 0}
   StrategyContent: {fileID: 0}
   RelationContent: {fileID: 0}
   HistoryContent: {fileID: 0}
+  EmotionContent: {fileID: 0}
   CurrentStrategy: {fileID: 0}
   ST: {fileID: 0}
   PerksInfo: []
   SkillsInfo: []
   StrategiesInfo: []
+  EmotionInfos: []
   InfoType: 1
 --- !u!114 &1923080826609381477
 MonoBehaviour:

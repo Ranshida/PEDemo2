@@ -9,6 +9,7 @@ public class HireControl : MonoBehaviour
 
     public GameControl GC;
     public Button HireRefreshButton;
+    public Text Text_HireButtonText;
     public EmpInfo EmpInfoPrefab, EmpDetailPrefab, CEOInfoPrefab;
 
     public EmpInfo[] HireInfos = new EmpInfo[5];
@@ -22,7 +23,7 @@ public class HireControl : MonoBehaviour
         AddHireTypes(new HireType(1));
         RefreshHire();
         //初始的员工
-        for(int i = 0; i < 5; i++)
+        for (int i = 0; i < 5; i++)
         {
             if (i < 2)
             {
@@ -57,6 +58,7 @@ public class HireControl : MonoBehaviour
     {
         HireTypes.Add(ht);
         HireRefreshButton.interactable = true;
+        Text_HireButtonText.color = Color.red;
     }
 
     //刷新招聘
@@ -95,7 +97,7 @@ public class HireControl : MonoBehaviour
                 HireInfos[i].StrategiesInfo.Clear();
                 HireInfos[i].CreateEmp(EType, HireTypes[0].HST, HireTypes[0].Level);
 
-                if(HireTypes[0].MajorSuccess == false && i > 2)
+                if(i > HireTypes[0].HireNum - 1)
                 {
                     HireInfos[i].gameObject.SetActive(false);
                 }
@@ -104,6 +106,8 @@ public class HireControl : MonoBehaviour
             if (HireTypes.Count < 1)
                 HireRefreshButton.interactable = false;
         }
+        if(HireTypes.Count == 0)
+            Text_HireButtonText.color = Color.black;
     }
 
     //(Hire)招聘后信息转移和创建信息面板
@@ -192,8 +196,8 @@ public class HireControl : MonoBehaviour
         EI1.transform.parent = GC.StandbyContent;
         emp.InitRelation();
         //创建特质和技能
-        emp.StarType = 11;//临时设定CEO技能树
-        emp.InitStar(11);
+        emp.StarType = 13;//临时设定CEO技能树
+        emp.InitStar(13);
         ED.InitSkillAndStrategy();
 
         //创建员工实体

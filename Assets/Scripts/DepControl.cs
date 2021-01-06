@@ -41,7 +41,7 @@ public class ProduceBuff
 }
 public class HireType
 {
-    public int Level = 0, Type; //Type目前已经没什么用了
+    public int Level = 0, Type, HireNum = 3; //Type目前已经没什么用了
     public bool MajorSuccess = false;
     public int[] HST = new int[15];
     public HireType(int type)
@@ -876,6 +876,10 @@ public class DepControl : MonoBehaviour
             }
             Text_DetailInfo.text += "\n(当前等级:" + value + ")";
         }
+        else if (type == 10)
+            Text_DetailInfo.text = "目前没有为此办公室指定上司或上司管理能力不足\n点击“详细信息”左侧面板中的“更换”可更换上司";
+        else if (type == 11)
+            Text_DetailInfo.text = "部门中每增加一名员工生产力+1";
         SRateDetailPanel.transform.position = Input.mousePosition;
         SRateDetailPanel.gameObject.SetActive(true);
         LayoutRebuilder.ForceRebuildLayoutImmediate(SRateDetailPanel.gameObject.GetComponent<RectTransform>());
@@ -911,11 +915,15 @@ public class DepControl : MonoBehaviour
         {
             building.effectValue = Mode1EffectValue;
             ProducePointLimit = int.Parse(building.Time_A);
+            if (building.Type == BuildingType.人力资源部)
+                Efficiency -= 0.1f;
         }
         else if (num == 2 && Mode2EffectValue != -1)
         {
             building.effectValue = Mode2EffectValue;
             ProducePointLimit = int.Parse(building.Time_B);
+            if (building.Type == BuildingType.人力资源部)
+                Efficiency += 0.1f;
         }
         UpdateUI();
     }
@@ -924,6 +932,10 @@ public class DepControl : MonoBehaviour
     public void StartActive()
     {
         GC.DepSkillConfirmPanel.SetActive(true);
+        if (BuildingMode == 1)
+            GC.Text_DepSkillDescribe.text = building.Description_A;
+        else if (BuildingMode == 2)
+            GC.Text_DepSkillDescribe.text = building.Description_B;
         GC.CurrentDep = this;
     }
 
@@ -958,8 +970,7 @@ public class DepControl : MonoBehaviour
             GC.SelectMode = 5;
             GC.ShowDepSelectPanel(AvailableDeps());
         }
-        if (building.Type == BuildingType.按摩房 || building.Type == BuildingType.健身房 || building.Type == BuildingType.宣传中心 ||
-            building.Type == BuildingType.科技工作坊 || building.Type == BuildingType.绩效考评中心 || building.Type == BuildingType.心理咨询室
+        if (building.Type == BuildingType.宣传中心 || building.Type == BuildingType.科技工作坊 || building.Type == BuildingType.绩效考评中心
             || building.Type == BuildingType.员工休息室 || building.Type == BuildingType.成人再教育所)
         {
             ShowAvailableEmps();
@@ -1114,7 +1125,19 @@ public class DepControl : MonoBehaviour
             HireType ht = new HireType(0);
             ht.SetHeadHuntStatus();
             if (MajorSuccess == true)
-                ht.MajorSuccess = true;
+            {
+                if (BuildingMode == 1)
+                    ht.HireNum = 5;
+                else
+                    ht.HireNum = 4;
+            }
+            else
+            {
+                if (BuildingMode == 1)
+                    ht.HireNum = 3;
+                else
+                    ht.HireNum = 2;
+            }
             GC.HC.AddHireTypes(ht);
         }
         else if (building.Type == BuildingType.公关营销部)
@@ -1161,21 +1184,21 @@ public class DepControl : MonoBehaviour
             if (BuildingMode == 1)
             {
                 if (MajorSuccess == true)
-                    GC.CurrentEmpInfo.emp.Mentality += (int)(GC.CurrentEmpInfo.emp.MentalityLimit * 0.25f);
+                    GC.CurrentEmpInfo.emp.Mentality += (int)(GC.CurrentEmpInfo.emp.MentalityLimit * 0.75f);
                 else
-                    GC.CurrentEmpInfo.emp.Mentality += (int)(GC.CurrentEmpInfo.emp.MentalityLimit * 0.1f);
+                    GC.CurrentEmpInfo.emp.Mentality += (int)(GC.CurrentEmpInfo.emp.MentalityLimit * 0.4f);
             }
             else if (BuildingMode == 2)
             {
                 int value = 0;
                 if (MajorSuccess == true)
                 {
-                    GC.CurrentEmpInfo.emp.Mentality += (int)(GC.CurrentEmpInfo.emp.MentalityLimit * 0.15f);
+                    GC.CurrentEmpInfo.emp.Mentality += (int)(GC.CurrentEmpInfo.emp.MentalityLimit * 0.6f);
                     value = 20;
                 }
                 else
                 {
-                    GC.CurrentEmpInfo.emp.Mentality += (int)(GC.CurrentEmpInfo.emp.MentalityLimit * 0.05f);
+                    GC.CurrentEmpInfo.emp.Mentality += (int)(GC.CurrentEmpInfo.emp.MentalityLimit * 0.25f);
                     value = 10;
                 }
                 for (int i = 0; i < CurrentEmps.Count; i++)
@@ -1230,16 +1253,16 @@ public class DepControl : MonoBehaviour
             if (BuildingMode == 1)
             {
                 if (MajorSuccess == true)
-                    GC.CurrentEmpInfo.emp.Mentality += (int)(GC.CurrentEmpInfo.emp.StaminaLimit * 0.25f);
+                    GC.CurrentEmpInfo.emp.Stamina += (int)(GC.CurrentEmpInfo.emp.StaminaLimit * 0.25f);
                 else
-                    GC.CurrentEmpInfo.emp.Mentality += (int)(GC.CurrentEmpInfo.emp.StaminaLimit * 0.1f);
+                    GC.CurrentEmpInfo.emp.Stamina += (int)(GC.CurrentEmpInfo.emp.StaminaLimit * 0.1f);
             }
             else if (BuildingMode == 2)
             {
                 if (MajorSuccess == true)
-                    GC.CurrentEmpInfo.emp.Mentality += (int)(GC.CurrentEmpInfo.emp.StaminaLimit * 0.15f);
+                    GC.CurrentEmpInfo.emp.Stamina += (int)(GC.CurrentEmpInfo.emp.StaminaLimit * 0.15f);
                 else
-                    GC.CurrentEmpInfo.emp.Mentality += (int)(GC.CurrentEmpInfo.emp.StaminaLimit * 0.05f);
+                    GC.CurrentEmpInfo.emp.Stamina += (int)(GC.CurrentEmpInfo.emp.StaminaLimit * 0.05f);
                 for (int i = 0; i < CurrentEmps.Count; i++)
                 {
                     CurrentEmps[i].ChangeRelation(GC.CurrentEmpInfo.emp, 10);
@@ -1255,23 +1278,23 @@ public class DepControl : MonoBehaviour
             {
                 if (MajorSuccess == true)
                 {
-                    GC.CurrentEmpInfo.emp.Mentality += (int)(GC.CurrentEmpInfo.emp.StaminaLimit * 0.15f);
+                    GC.CurrentEmpInfo.emp.Stamina += (int)(GC.CurrentEmpInfo.emp.StaminaLimit * 0.75f);
                     if (Random.Range(0.0f, 1.0f) < BuffPosb)
                         GC.CurrentEmpInfo.DetailInfo.AddPerk(new Perk35(GC.CurrentEmpInfo.emp), true);
                 }
                 else
-                    GC.CurrentEmpInfo.emp.Mentality += (int)(GC.CurrentEmpInfo.emp.StaminaLimit * 0.05f);
+                    GC.CurrentEmpInfo.emp.Stamina += (int)(GC.CurrentEmpInfo.emp.StaminaLimit * 0.4f);
             }
             else if (BuildingMode == 2)
             {
                 if (MajorSuccess == true)
                 {
-                    GC.CurrentEmpInfo.emp.Mentality += (int)(GC.CurrentEmpInfo.emp.StaminaLimit * 0.15f);
+                    GC.CurrentEmpInfo.emp.Stamina += (int)(GC.CurrentEmpInfo.emp.StaminaLimit * 0.75f);
                     if (Random.Range(0.0f, 1.0f) < BuffPosb)
                         GC.CurrentEmpInfo.DetailInfo.AddPerk(new Perk37(GC.CurrentEmpInfo.emp), true);
                 }
                 else
-                    GC.CurrentEmpInfo.emp.Mentality += (int)(GC.CurrentEmpInfo.emp.StaminaLimit * 0.05f);
+                    GC.CurrentEmpInfo.emp.Stamina += (int)(GC.CurrentEmpInfo.emp.StaminaLimit * 0.4f);
             }
         }
         else if (building.Type == BuildingType.宣传中心 && GC.CurrentEmpInfo != null)
@@ -1656,8 +1679,12 @@ public class DepControl : MonoBehaviour
             }
             if (GoodRelation == true)
                 AddPerk(new Perk99(null));
+            else
+                RemovePerk(99);
             if (BadRelation == true)
                 AddPerk(new Perk100(null));
+            else
+                RemovePerk(100);
 
             if (RPos == TempEmps.Count || RNeg == TempEmps.Count)
             {
@@ -1741,7 +1768,6 @@ public class DepControl : MonoBehaviour
     public void ToggleCheatMode(bool value)
     {
         CheatMode = value;
-        AddPerk(new Perk45(null));
     }
 
     //查找自己影响范围内的部门

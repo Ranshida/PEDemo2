@@ -77,29 +77,32 @@ public class FOEControl : MonoBehaviour
                 Companies[i].SetAction();
         }
 
-        //随机对玩家的两种伤害效果
-        if (Random.Range(0.0f, 1.0f) < 0.5f)
-        {
-            GC.Morale -= DamageA;
-            GC.CreateMessage("玩家的士气被对手削弱了" + DamageA + "点");
-        }
-        else
-        {
-            Perk p = new Perk116(null);
-            p.TempValue1 = DamageB * 5;
-
-            List<DepControl> deps = new List<DepControl>();
-            foreach (DepControl dep in GC.CurrentDeps)
+        if (DamageA > 0)
+        {//先判断是否有伤害
+            //随机对玩家的两种伤害效果
+            if (Random.Range(0.0f, 1.0f) < 0.5f)
             {
-                if (dep.building.Type == BuildingType.产品部门 || dep.building.Type == BuildingType.技术部门 || dep.building.Type == BuildingType.市场部门
-                     || dep.building.Type == BuildingType.公关营销部 || dep.building.Type == BuildingType.人力资源部)
-                    deps.Add(dep);
+                GC.Morale -= DamageA;
+                GC.CreateMessage("玩家的士气被对手削弱了" + DamageA + "点");
             }
-            if (deps.Count > 0)
+            else
             {
-                int num = Random.Range(0, deps.Count);
-                deps[num].AddPerk(p);
-                GC.CreateMessage(deps[num].Text_DepName.text + "受到对手干扰,信念-" + p.TempValue1);
+                Perk p = new Perk116(null);
+                p.TempValue1 = DamageB * 5;
+
+                List<DepControl> deps = new List<DepControl>();
+                foreach (DepControl dep in GC.CurrentDeps)
+                {
+                    if (dep.building.Type == BuildingType.产品部门 || dep.building.Type == BuildingType.技术部门 || dep.building.Type == BuildingType.市场部门
+                         || dep.building.Type == BuildingType.公关营销部 || dep.building.Type == BuildingType.人力资源部)
+                        deps.Add(dep);
+                }
+                if (deps.Count > 0)
+                {
+                    int num = Random.Range(0, deps.Count);
+                    deps[num].AddPerk(p);
+                    GC.CreateMessage(deps[num].Text_DepName.text + "受到对手干扰,信念-" + p.TempValue1);
+                }
             }
         }
     }

@@ -1493,6 +1493,7 @@ public class Employee
         if (isCEO == true)
         {
             InfoDetail.GC.CC.SkillButton.interactable = true;
+            InfoDetail.GC.CEOVacation = false;
             foreach(DepControl dep in InfoDetail.GC.CurrentDeps)
             {
                 dep.RemovePerk(115);

@@ -9,7 +9,7 @@ public class EmpInfo : MonoBehaviour
 
     public Employee emp;
     public GameControl GC;
-    public Button HireButton, MoveButton;
+    public Button HireButton, MoveButton, FireButton;
     public Text Text_Name, Text_Mentality, Text_Stamina, Text_Skill1, Text_Skill2, Text_Skill3,  Text_Ability, Text_Age;
     public Text Text_DepName, Text_Observation, Text_Tenacity, Text_Strength, Text_Manage, Text_HR, Text_Finance, Text_Decision,
         Text_Forecast, Text_Strategy, Text_Convince, Text_Charm, Text_Gossip, Text_SName1, Text_SName2, Text_SName3,
