@@ -491,6 +491,44 @@ public abstract class Event
                 green += e.Level;
             }
         }
+        if(Target!=null && HaveTarget)
+        {
+            foreach (Emotion e in Target.CurrentEmotions)
+            {
+                if (e.color == EColor.Red)
+                {
+                    dRed += e.Level;
+                }
+                else if (e.color == EColor.Yellow)
+                {
+                    dYellow += e.Level;
+                }
+                else if (e.color == EColor.Purple)
+                {
+                    dPurple += e.Level;
+                }
+                else if (e.color == EColor.Green)
+                {
+                    dGreen += e.Level;
+                }
+                else if (e.color == EColor.LRed)
+                {
+                    red += e.Level;
+                }
+                else if (e.color == EColor.LYellow)
+                {
+                    yellow += e.Level;
+                }
+                else if (e.color == EColor.LPurple)
+                {
+                    purple += e.Level;
+                }
+                else if (e.color == EColor.LGreen)
+                {
+                    green += e.Level;
+                }
+            }
+        }
         return dYellow * 2 - dRed * 2 - dPurple * 2 + dGreen * 2 + yellow - red - purple + green;
     }
     //特质点数判定
