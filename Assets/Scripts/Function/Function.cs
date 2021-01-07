@@ -319,6 +319,18 @@ public class IntValue
     }
 }
 
+public class BoolenValue
+{
+    public bool HasValue { get; set; } = false;
+    public bool Value { get; set; }
+
+    public BoolenValue(bool hasValue = false,bool value = false)
+    {
+        HasValue = hasValue;
+        Value = value;
+    }
+}
+
 public class Vector3Value
 {
     public bool HasValue { get; set; } = false;

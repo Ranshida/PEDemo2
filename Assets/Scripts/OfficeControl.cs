@@ -543,9 +543,9 @@ public class OfficeControl : MonoBehaviour
                     else if (OfficeMode == 5)
                     {
                         if (MajorSuccess == true)
-                            GC.BM.Lottery(3);
+                            GC.BM.Lottery(4);
                         else
-                            GC.BM.Lottery(2);
+                            GC.BM.Lottery(3);
                         GC.CreateMessage("(" + Text_OfficeName.text + ")完成了部门研究");
                     }
                 }

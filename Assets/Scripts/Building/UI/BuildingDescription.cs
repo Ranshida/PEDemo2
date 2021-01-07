@@ -36,12 +36,23 @@ public class BuildingDescription : MonoBehaviour
         str_Description3 = transform.Find("str_Description3").GetComponent<Text>();
     }
 
-    public void ShowInfo(LotteryBuilding lottery, Building building)
+    public void ShowInfo(LotteryBuilding lottery, Building building, BoolenValue right = null)
     {
-        if (lottery.transform.localPosition.x < 0) 
-            transform.localPosition = new Vector3(550, transform.localPosition.y);
+        if (right == null ||  !right.HasValue)
+        {
+            if (lottery.transform.localPosition.x < 0)
+                transform.localPosition = new Vector3(350, transform.localPosition.y);
+            else
+                transform.localPosition = new Vector3(-350, transform.localPosition.y);
+        }
         else
-            transform.localPosition = new Vector3(-550, transform.localPosition.y);
+        {
+            if (right.Value == true)
+                transform.localPosition = new Vector3(350, transform.localPosition.y);
+            else
+                transform.localPosition = new Vector3(-350, transform.localPosition.y);
+        }
+
 
         str_BuildingName.text = building.Name;
         str_BuildingSize.text = building.Size;

@@ -97,6 +97,7 @@ public class Building : MonoBehaviour
     //确定建造
     public void Build(List<Grid> grids)
     {
+        CanDismantle = false;
         BuildingSet = true;
         Moving = false;
         ContainsGrids = new List<Grid>();

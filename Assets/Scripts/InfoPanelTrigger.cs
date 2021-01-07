@@ -11,6 +11,11 @@ public class InfoPanelTrigger : MonoBehaviour
     float Timer = 0;
     bool ShowPanel;
 
+    public void Init()
+    {
+        info = GameControl.Instance.infoPanel;
+    }
+
     private void Start()
     {
         info = GameControl.Instance.infoPanel;

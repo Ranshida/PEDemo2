@@ -9,10 +9,12 @@ public class LotteryBuilding : MonoBehaviour, IPointerEnterHandler, IPointerExit
 {
     BuildingDescription Description;
     Building ThisBuilding;
+    BoolenValue Right;
 
-    public void Init(BuildingDescription desctiption, BuildingType building, Action clickAction)
+    public void Init(BuildingDescription desctiption, BuildingType building, Action clickAction, BoolenValue right = null)
     {
         Description = desctiption;
+        Right = right;
         if (BuildingManage.Instance.m_AllBuildingDict.TryGetValue(building,out GameObject go))
         {
             ThisBuilding = go.GetComponent<Building>();
@@ -41,7 +43,7 @@ public class LotteryBuilding : MonoBehaviour, IPointerEnterHandler, IPointerExit
         Description.gameObject.SetActive(true);
         if (ThisBuilding)
         {
-            Description.ShowInfo(this, ThisBuilding);
+            Description.ShowInfo(this, ThisBuilding, Right);
         }
         else
         {

@@ -64,6 +64,8 @@ public class BuildingManage : MonoBehaviour
     //屏幕射线位置
     public Vector3 AimingPosition = Vector3.zero;
 
+    InfoPanelTrigger m_PanelTrigger;
+
     private void Awake()
     {
         Instance = this;
@@ -117,15 +119,24 @@ public class BuildingManage : MonoBehaviour
         selectBuildingPanel = transform.Find("SelectBuilding");
         btn_FinishBuild = transform.Find("WarePanel/Btn_Finish").GetComponent<Button>();
         btn_Dismantle = transform.Find("WarePanel/Btn_Dismantle").GetComponent<Button>();
-        description = lotteryPanel.Find("BuildingDescriptionPanel").GetComponent<BuildingDescription>();
+        description = transform.Find("BuildingDescriptionPanel").GetComponent<BuildingDescription>();
         description.Init();
+        m_PanelTrigger = btn_FinishBuild.GetComponent<InfoPanelTrigger>();
+        m_PanelTrigger.Init();
 
-        warePanel.Find("Btn_技术部门").GetComponent<Button>().onClick.AddListener(() => { BuildBasicBuilding(BuildingType.技术部门); });
-        warePanel.Find("Btn_市场部门").GetComponent<Button>().onClick.AddListener(() => { BuildBasicBuilding(BuildingType.市场部门); });
-        warePanel.Find("Btn_产品部门").GetComponent<Button>().onClick.AddListener(() => { BuildBasicBuilding(BuildingType.产品部门); });
-        warePanel.Find("Btn_公关营销部").GetComponent<Button>().onClick.AddListener(() => { BuildBasicBuilding(BuildingType.公关营销部); });
-        warePanel.Find("Btn_高管办公室").GetComponent<Button>().onClick.AddListener(() => { BuildBasicBuilding(BuildingType.高管办公室); });
-        warePanel.Find("Btn_人力资源部").GetComponent<Button>().onClick.AddListener(() => { BuildBasicBuilding(BuildingType.人力资源部); });
+        warePanel.Find("Btn_技术部门").GetComponent<LotteryBuilding>().Init(description, BuildingType.技术部门, () => { BuildBasicBuilding(BuildingType.技术部门); }, new BoolenValue(true, false)) ;
+        warePanel.Find("Btn_市场部门").GetComponent<LotteryBuilding>().Init(description, BuildingType.市场部门, () => { BuildBasicBuilding(BuildingType.市场部门); }, new BoolenValue(true, false));
+        warePanel.Find("Btn_产品部门").GetComponent<LotteryBuilding>().Init(description, BuildingType.产品部门, () => { BuildBasicBuilding(BuildingType.产品部门); }, new BoolenValue(true, false));
+        warePanel.Find("Btn_公关营销部").GetComponent<LotteryBuilding>().Init(description, BuildingType.公关营销部, () => { BuildBasicBuilding(BuildingType.公关营销部); }, new BoolenValue(true, false));
+        warePanel.Find("Btn_高管办公室").GetComponent<LotteryBuilding>().Init(description, BuildingType.高管办公室, () => { BuildBasicBuilding(BuildingType.高管办公室); }, new BoolenValue(true, false));
+        warePanel.Find("Btn_人力资源部").GetComponent<LotteryBuilding>().Init(description, BuildingType.人力资源部, () => { BuildBasicBuilding(BuildingType.人力资源部); }, new BoolenValue(true, false));
+
+        //warePanel.Find("Btn_技术部门").GetComponent<Button>().onClick.AddListener(() => { BuildBasicBuilding(BuildingType.技术部门); });
+        //warePanel.Find("Btn_市场部门").GetComponent<Button>().onClick.AddListener(() => { BuildBasicBuilding(BuildingType.市场部门); });
+        //warePanel.Find("Btn_产品部门").GetComponent<Button>().onClick.AddListener(() => { BuildBasicBuilding(BuildingType.产品部门); });
+        //warePanel.Find("Btn_公关营销部").GetComponent<Button>().onClick.AddListener(() => { BuildBasicBuilding(BuildingType.公关营销部); });
+        //warePanel.Find("Btn_高管办公室").GetComponent<Button>().onClick.AddListener(() => { BuildBasicBuilding(BuildingType.高管办公室); });
+        //warePanel.Find("Btn_人力资源部").GetComponent<Button>().onClick.AddListener(() => { BuildBasicBuilding(BuildingType.人力资源部); });
             
         m_EffectHalo.SetActive(false);
         InitBuilding(BuildingType.CEO办公室, new Int2(3, 8));
@@ -178,7 +189,7 @@ public class BuildingManage : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.T))
         {
-            Lottery(3);
+            //Lottery(4);
         }
 
         //屏幕射线命中地面
@@ -202,9 +213,15 @@ public class BuildingManage : MonoBehaviour
         if (m_InBuildingMode)
         {
             if (warePanels.Count > 0 || temp_Building)
+            {
+                m_PanelTrigger.enabled = true;
                 btn_FinishBuild.interactable = false;
+            }
             else
+            {
+                m_PanelTrigger.enabled = false;
                 btn_FinishBuild.interactable = true;
+            }
             //尝试退出建造模式
             if (btn_FinishBuild.interactable && (Input.GetKeyDown(KeyCode.Mouse1) || Input.GetKeyDown(KeyCode.Escape)))
             {
@@ -290,9 +307,12 @@ public class BuildingManage : MonoBehaviour
                 else
                     temp_Building.transform.position = AimingPosition + new Vector3(-5, 0, -5);
 
-                btn_Dismantle.gameObject.SetActive(true);
-                btn_Dismantle.onClick.RemoveAllListeners();
-                btn_Dismantle.onClick.AddListener(() => { DismantleBuilding(temp_Building); });
+                if (temp_Building.CanDismantle)
+                {
+                    btn_Dismantle.gameObject.SetActive(true);
+                    btn_Dismantle.onClick.RemoveAllListeners();
+                    btn_Dismantle.onClick.AddListener(() => { DismantleBuilding(temp_Building); });
+                }
             }
         }
         //非建筑模式下
@@ -549,11 +569,11 @@ public class BuildingManage : MonoBehaviour
     {
         if (temp_Building)
             BuildCancel();
-
         m_SelectBuilding.Move();
         temp_Building = m_SelectBuilding;
         selectBuildingPanel.gameObject.SetActive(false);
         btn_EnterBuildMode.gameObject.SetActive(false);
+        m_SelectBuilding = null;
     }
 
     //拆除建筑
