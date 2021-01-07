@@ -1521,16 +1521,16 @@ public class Employee
             {
                 if (CurrentEmotions[i].color == EColor.LRed)
                 {
-                    AddEmotion(EColor.LOrange);
-                    AddEmotion(EColor.LOrange);
                     ReduceEmotion(CurrentEmotions[i]);
+                    AddEmotion(EColor.LOrange);
+                    AddEmotion(EColor.LOrange);
                     return;
                 }
                 else if (CurrentEmotions[i].color == EColor.LBlue)
                 {
-                    AddEmotion(EColor.LGreen);
-                    AddEmotion(EColor.LGreen);
                     ReduceEmotion(CurrentEmotions[i]);
+                    AddEmotion(EColor.LGreen);
+                    AddEmotion(EColor.LGreen);
                     return;
                 }
                 else if (CurrentEmotions[i].color == EColor.LPurple)
@@ -1540,7 +1540,7 @@ public class Employee
                 }
                 else if (CurrentEmotions[i].color == EColor.LYellow)
                 {
-                    if (CurrentEmotions[i].Level < 3)
+                    if (CurrentEmotions[i].Level < 2)
                         CurrentEmotions[i].Level += 1;
                     else
                     {
@@ -1557,16 +1557,16 @@ public class Employee
             {
                 if (CurrentEmotions[i].color == EColor.LYellow)
                 {
-                    AddEmotion(EColor.LOrange);
-                    AddEmotion(EColor.LOrange);
                     ReduceEmotion(CurrentEmotions[i]);
+                    AddEmotion(EColor.LOrange);
+                    AddEmotion(EColor.LOrange);
                     return;
                 }
                 else if (CurrentEmotions[i].color == EColor.LBlue)
                 {
-                    AddEmotion(EColor.LPurple);
-                    AddEmotion(EColor.LPurple);
                     ReduceEmotion(CurrentEmotions[i]);
+                    AddEmotion(EColor.LPurple);
+                    AddEmotion(EColor.LPurple);
                     return;
                 }
                 else if (CurrentEmotions[i].color == EColor.LGreen)
@@ -1576,7 +1576,7 @@ public class Employee
                 }
                 else if (CurrentEmotions[i].color == EColor.LRed)
                 {
-                    if (CurrentEmotions[i].Level < 3)
+                    if (CurrentEmotions[i].Level < 2)
                         CurrentEmotions[i].Level += 1;
                     else
                     {
@@ -1593,16 +1593,16 @@ public class Employee
             {
                 if (CurrentEmotions[i].color == EColor.LYellow)
                 {
-                    AddEmotion(EColor.LGreen);
-                    AddEmotion(EColor.LGreen);
                     ReduceEmotion(CurrentEmotions[i]);
+                    AddEmotion(EColor.LGreen);
+                    AddEmotion(EColor.LGreen);
                     return;
                 }
                 else if (CurrentEmotions[i].color == EColor.LRed)
                 {
-                    AddEmotion(EColor.LPurple);
-                    AddEmotion(EColor.LPurple);
                     ReduceEmotion(CurrentEmotions[i]);
+                    AddEmotion(EColor.LPurple);
+                    AddEmotion(EColor.LPurple);
                     return;
                 }
                 else if (CurrentEmotions[i].color == EColor.LOrange)
@@ -1612,7 +1612,7 @@ public class Employee
                 }
                 else if (CurrentEmotions[i].color == EColor.LBlue)
                 {
-                    if (CurrentEmotions[i].Level < 3)
+                    if (CurrentEmotions[i].Level < 2)
                         CurrentEmotions[i].Level += 1;
                     else
                     {
@@ -1629,7 +1629,7 @@ public class Employee
             {
                 if(CurrentEmotions[i].color == EColor.LOrange)
                 {
-                    if (CurrentEmotions[i].Level < 3)
+                    if (CurrentEmotions[i].Level < 2)
                         CurrentEmotions[i].Level += 1;
                     else
                     {
@@ -1651,7 +1651,7 @@ public class Employee
             {
                 if (CurrentEmotions[i].color == EColor.LPurple)
                 {
-                    if (CurrentEmotions[i].Level < 3)
+                    if (CurrentEmotions[i].Level < 2)
                         CurrentEmotions[i].Level += 1;
                     else
                     {
@@ -1673,7 +1673,7 @@ public class Employee
             {
                 if (CurrentEmotions[i].color == EColor.LGreen)
                 {
-                    if (CurrentEmotions[i].Level < 3)
+                    if (CurrentEmotions[i].Level < 2)
                         CurrentEmotions[i].Level += 1;
                     else
                     {
@@ -1695,16 +1695,16 @@ public class Employee
             {
                 if (CurrentEmotions[i].color == EColor.Red)
                 {
-                    AddEmotion(EColor.Orange);
-                    AddEmotion(EColor.Orange);
                     ReduceEmotion(CurrentEmotions[i]);
+                    AddEmotion(EColor.Orange);
+                    AddEmotion(EColor.Orange);
                     return;
                 }
                 else if (CurrentEmotions[i].color == EColor.Blue)
                 {
-                    AddEmotion(EColor.Green);
-                    AddEmotion(EColor.Green);
                     ReduceEmotion(CurrentEmotions[i]);
+                    AddEmotion(EColor.Green);
+                    AddEmotion(EColor.Green);
                     return;
                 }
                 else if (CurrentEmotions[i].color == EColor.Purple)
@@ -1725,16 +1725,16 @@ public class Employee
             {
                 if (CurrentEmotions[i].color == EColor.Yellow)
                 {
-                    AddEmotion(EColor.Orange);
-                    AddEmotion(EColor.Orange);
                     ReduceEmotion(CurrentEmotions[i]);
+                    AddEmotion(EColor.Orange);
+                    AddEmotion(EColor.Orange);
                     return;
                 }
                 else if (CurrentEmotions[i].color == EColor.Blue)
                 {
-                    AddEmotion(EColor.Purple);
-                    AddEmotion(EColor.Purple);
                     ReduceEmotion(CurrentEmotions[i]);
+                    AddEmotion(EColor.Purple);
+                    AddEmotion(EColor.Purple);
                     return;
                 }
                 else if (CurrentEmotions[i].color == EColor.Green)
@@ -1755,16 +1755,16 @@ public class Employee
             {
                 if (CurrentEmotions[i].color == EColor.Yellow)
                 {
-                    AddEmotion(EColor.Green);
-                    AddEmotion(EColor.Green);
                     ReduceEmotion(CurrentEmotions[i]);
+                    AddEmotion(EColor.Green);
+                    AddEmotion(EColor.Green);
                     return;
                 }
                 else if (CurrentEmotions[i].color == EColor.Red)
                 {
-                    AddEmotion(EColor.Purple);
-                    AddEmotion(EColor.Purple);
                     ReduceEmotion(CurrentEmotions[i]);
+                    AddEmotion(EColor.Purple);
+                    AddEmotion(EColor.Purple);
                     return;
                 }
                 else if (CurrentEmotions[i].color == EColor.Orange)

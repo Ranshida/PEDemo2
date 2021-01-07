@@ -138,7 +138,10 @@ public class GameControl : MonoBehaviour
             HourPass();
         }
         if (Input.GetKeyDown(KeyCode.I))
+        {
             Money += 1000;
+            Stamina += 100;
+        }
         if (Money < 0)
             GameOverPanel.SetActive(true);
 
@@ -1277,8 +1280,8 @@ public class GameControl : MonoBehaviour
         else if (type == 3)
         {
             infoPanel.Text_Name.text = "士气会影响CEO技能的成功率和部分事件的判定";
-            infoPanel.Text_Description.text = "士气越高，越容易出现正面的结果，可点击员工发生事件后头顶冒出的气泡查看规则";
-            infoPanel.Text_ExtraInfo.text = "可以从商战中消耗“传播”获取";
+            infoPanel.Text_Description.text = "可点击员工发生事件后头顶冒出的气泡查看规则";
+            infoPanel.Text_ExtraInfo.text = "士气越高，越容易出现正面的结果";
         }
 
         infoPanel.ShowPanel();
