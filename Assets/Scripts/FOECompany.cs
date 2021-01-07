@@ -5,15 +5,20 @@ using UnityEngine.UI;
 
 public class FOECompany : MonoBehaviour
 {
-    public int NeutralMarket = 60, ControledMarket = 0, TotalActionPoint = 18, CurrentActionPoint = 0, StoredActionPoint = 0, ExtraActionPoint;
+    public int NeutralMarket = 60, TotalActionPoint = 18, CurrentActionPoint = 0, StoredActionPoint = 0;
     public int SelfMarketAttackLimit = 0, FoeMarketAttackLimit = 0, NeutralSkillNum = -1, FOESkillNum = -1;//两种技能的释放数量;
 
-    public int ResourceA, ResourceB;//A程序迭代 B传播
-    public int Level = 0;
     public int Morale = 100;
-    public bool isPlayer = false;
 
-    public Text Text_Status;
+
+    //新版本所需变量
+    public int ResourceA, ResourceB, ControledMarket = 0, ExtraActionPoint;//A程序迭代 B传播
+    public int CostA = 1, CostB = 5, CostC; //A中立占领 B反占领 C护盾 
+    public int Level = 0, LevelPoint = 0, Shield = 0;
+    public bool isPlayer = false, ActionFinish = false;
+    public int Ranking = 1;
+
+    public Text Text_Status, Text_Name;
     public FOEControl FC;
 
     private void Start()
@@ -24,84 +29,183 @@ public class FOECompany : MonoBehaviour
     }
     private void Update()
     {
-        if (Morale <= 0)
+        //if (Morale <= 0)
+        //{
+        //    Text_Status.text = "已消灭";
+        //}
+        //else
+        //{
+        //    if (isPlayer == true)
+        //        Morale = FC.GC.Morale;
+        //    Text_Status.text = "中立市场:" + NeutralMarket + "\n控制市场:" + ControledMarket + "\n当前士气:" + Morale;
+        //}
+        Text_Status.text = "融资等级:";
+        if (Level == 0)
         {
-            Text_Status.text = "已消灭";
+            Text_Status.text += "--";
+            Text_Status.text += "\n升级还需积分:" + (5 - LevelPoint);
+        }
+        else if (Level == 1)
+        {
+            Text_Status.text += "天使轮";
+            Text_Status.text += "\n升级还需积分:" + (10 - LevelPoint);
+        }
+        else if (Level == 2)
+        {
+            Text_Status.text += "A轮";
+            Text_Status.text += "\n升级还需积分:" + (20 - LevelPoint);
+        }
+        else if (Level == 3)
+        {
+            Text_Status.text += "B轮";
+            Text_Status.text += "\n升级还需积分:" + (30 - LevelPoint);
+        }
+        else if (Level == 4)
+        { 
+            Text_Status.text += "C轮";
+            Text_Status.text += "\n升级还需积分:" + (50 - LevelPoint);
+        }
+        else if (Level == 5)
+        { 
+            Text_Status.text += "D轮";
+            Text_Status.text += "\n升级还需积分:--";
+        }
+        if (isPlayer == false)
+        {
+            Text_Status.text += "\n\n程序迭代:" + ResourceA;
+            Text_Status.text += "\n传播:" + ResourceB;
         }
         else
         {
-            if (isPlayer == true)
-                Morale = FC.GC.Morale;
-            Text_Status.text = "中立市场:" + NeutralMarket + "\n控制市场:" + ControledMarket + "\n当前士气:" + Morale;
+            Text_Status.text += "\n\n程序迭代:" + FC.GC.FinishedTask[0];
+            Text_Status.text += "\n传播:" + +FC.GC.FinishedTask[3];
         }
+        Text_Status.text += "\n\n当前市场数:" + ControledMarket;
+        Text_Status.text += "\n当前名次:" + Ranking;
+        Text_Status.text += "\n护盾层数:" + Shield;
     }
 
     public void SetAction()
     {
-        FOECompany Target = null;
-        ResetStatus();
-        ResourceB -= ExtraActionPoint;
-        ExtraActionPoint = 0;
-        while(Morale < 80 && ResourceB >= 3)
+        int ActionTime = Random.Range(1, 6);
+        int ShieldTime = 2, NeutralAttackTime = 3, FOEAttackTime = 3;
+        bool NoTarget = false;
+        CostA = 1;
+        CostB = 5;
+        CostC = 10;
+        while(ShieldTime > 0 && ActionTime > 0 && ResourceB >= CostC)
         {
-            ResourceB -= 3;
-            Morale += 5;
+            ResourceB -= CostC;
+            FC.Text_Info.text += "\n[第" + FC.Turn + "回合]" + Text_Name.text + "消耗" + CostC + "传播添加了一层护盾"; 
+            CostC += 10;
+            ActionTime -= 1;
+            ShieldTime -= 1;
+            Shield += 1;
         }
-        while(ResourceB >= 1)
+        while(NeutralAttackTime > 0 && FC.NeutralMarket > 0 && ActionTime > 0 && ResourceA >= CostA)
+        {
+            ResourceA -= CostA;
+            FC.Text_Info.text += "\n[第" + FC.Turn + "回合]" + Text_Name.text + "消耗" + CostA + "程序迭代占领了一个中立市场";
+            CostA *= 3;
+            FC.NeutralMarket -= 1;
+            ControledMarket += 1;
+            ActionTime -= 1;
+            NeutralAttackTime -= 1;            
+        }
+        while (FOEAttackTime > 0 && ActionTime > 0 && ResourceA >= CostB)
         {
             FOECompany target = FindTarget();
-            ResourceB -= 1;
-            int valueA = 5, valueB = 2;
-            if(Level <= 2)
+            if(target == null)
             {
-                valueA = 5;
-                valueB = 2;
-            }
-            else if (Level <= 4)
-            {
-                valueA = 8;
-                valueB = 3;
-            }
-            else if (Level > 4)
-            {
-                valueA = 10;
-                valueB = 4;
-            }
-            //对手士气减少
-            if (target.isPlayer == false)
-                target.Morale -= valueA;
-            else
-            {//玩家士气减少
-                FC.DamageA += valueA;
-                FC.DamageB += valueB;
-            }
-        }
-        while(NeutralMarket > 0 && ResourceA >= 3)
-        {//中立占领
-            ResourceA -= 3;
-            if (Random.Range(0.0f, 1.0f) < 0.5f)
-            {
-                NeutralMarket -= 1;
-                ControledMarket += 1;
-            }
-        }
-        while(ResourceA >= 5)
-        {//反占领
-            FOECompany target = FindTarget(2);
-            if (target != null)
-            {
-                ResourceA -= 5;
-                if (Random.Range(0.0f, 1.0f) < 0.2f)
-                {
-                    target.ControledMarket -= 1;
-                    ControledMarket += 1;
-                }
-            }
-            else
+                NoTarget = true;
                 break;
+            }
+            ResourceA -= CostB;
+            CostB += 5;
+            if (target.Shield > 0)
+            {
+                target.Shield -= 1;
+                FC.Text_Info.text += "\n[第" + FC.Turn + "回合]" + Text_Name.text + "消耗" + CostB + "程序迭代削弱了" + target.Text_Name.text + "一层护盾";
+            }
+            else
+            {
+                ControledMarket += 1;
+                target.ControledMarket -= 1;
+                FC.Text_Info.text += "\n[第" + FC.Turn + "回合]" + Text_Name.text + "消耗" + CostB + "程序迭代抢夺了" + target.Text_Name.text + "一个市场";
+            }
+            ActionTime -= 1;
+            NeutralAttackTime -= 1;
+        }
+        if(ResourceB < 10 && (ResourceA < 5 || NoTarget == true) && (ResourceA < 1 || FC.NeutralMarket == 0))
+        {
+            ActionFinish = true;
         }
 
         #region 旧商战
+        //FOECompany Target = null;
+        //ResetStatus();
+        //ResourceB -= ExtraActionPoint;
+        //ExtraActionPoint = 0;
+        //while (Morale < 80 && ResourceB >= 3)
+        //{
+        //    ResourceB -= 3;
+        //    Morale += 5;
+        //}
+        //while (ResourceB >= 1)
+        //{
+        //    FOECompany target = FindTarget();
+        //    ResourceB -= 1;
+        //    int valueA = 5, valueB = 2;
+        //    if (Level <= 2)
+        //    {
+        //        valueA = 5;
+        //        valueB = 2;
+        //    }
+        //    else if (Level <= 4)
+        //    {
+        //        valueA = 8;
+        //        valueB = 3;
+        //    }
+        //    else if (Level > 4)
+        //    {
+        //        valueA = 10;
+        //        valueB = 4;
+        //    }
+        //    //对手士气减少
+        //    if (target.isPlayer == false)
+        //        target.Morale -= valueA;
+        //    else
+        //    {//玩家士气减少
+        //        FC.DamageA += valueA;
+        //        FC.DamageB += valueB;
+        //    }
+        //}
+        //while (NeutralMarket > 0 && ResourceA >= 3)
+        //{//中立占领
+        //    ResourceA -= 3;
+        //    if (Random.Range(0.0f, 1.0f) < 0.5f)
+        //    {
+        //        NeutralMarket -= 1;
+        //        ControledMarket += 1;
+        //    }
+        //}
+        //while (ResourceA >= 5)
+        //{//反占领
+        //    FOECompany target = FindTarget(2);
+        //    if (target != null)
+        //    {
+        //        ResourceA -= 5;
+        //        if (Random.Range(0.0f, 1.0f) < 0.2f)
+        //        {
+        //            target.ControledMarket -= 1;
+        //            ControledMarket += 1;
+        //        }
+        //    }
+        //    else
+        //        break;
+        //}
+
+
         //CurrentActionPoint = TotalActionPoint - ExtraActionPoint;
         //ExtraActionPoint = 0;
         ////研发科技
@@ -172,6 +276,62 @@ public class FOECompany : MonoBehaviour
         #endregion
     }
 
+    public void AddPoint(int value)
+    {
+        LevelPoint += value;
+        //因为积分不会以此获得很多所以不用进行多级检测
+        if(Level == 0)
+        {
+            if (LevelPoint >= 5)
+            {
+                Level += 1;
+                LevelPoint -= 5;
+                if (isPlayer == true)
+                    FC.GC.Income = 100;
+            }
+        }
+        else if (Level == 1)
+        {
+            if (LevelPoint >= 10)
+            {
+                Level += 1;
+                LevelPoint -= 10;
+                if (isPlayer == true)
+                    FC.GC.Income = 200;
+            }
+        }
+        else if (Level == 2)
+        {
+            if (LevelPoint >= 20)
+            {
+                Level += 1;
+                LevelPoint -= 20;
+                if (isPlayer == true)
+                    FC.GC.Income = 400;
+            }
+        }
+        else if (Level == 3)
+        {
+            if (LevelPoint >= 30)
+            {
+                Level += 1;
+                LevelPoint -= 30;
+                if (isPlayer == true)
+                    FC.GC.Income = 600;
+            }
+        }
+        else if (Level == 4)
+        {
+            if (LevelPoint >= 50)
+            {
+                Level += 1;
+                LevelPoint -= 50;
+                if (isPlayer == true)
+                    FC.GC.Income = 900;
+            }
+        }
+    }
+
     #region 旧商战相关结算
     ////计算AI技能使用次数
     //int CalcSkillNum(bool NeutralTarget = true)
@@ -228,56 +388,49 @@ public class FOECompany : MonoBehaviour
         FoeMarketAttackLimit = 0;
         NeutralSkillNum = -1;
         FOESkillNum = -1;
-        if (ControledMarket < 10)
-            Level = 0;
-        else if (ControledMarket < 25)
-            Level = 1;
-        else if (ControledMarket < 40)
-            Level = 2;
-        else if (ControledMarket < 60)
-            Level = 3;
-        else if (ControledMarket < 80)
-            Level = 4;
-        else if (ControledMarket < 110)
-            Level = 5;
-        else if (ControledMarket >= 110)
-            Level = 6;
+
+        ControledMarket = 6;
+        CostA = 1;
+        CostB = 5;
+        CostC = 10;
+        ActionFinish = false;
 
         if (Level == 0)
         {
-            ResourceA = 15;
-            ResourceB = 2;
+            ResourceA = 10;
+            ResourceB = 0;
         }
         else if (Level == 1)
         {
             ResourceA = 20;
-            ResourceB = 3;
+            ResourceB = 10;
         }
         else if (Level == 2)
         {
-            ResourceA = 25;
-            ResourceB = 4;
+            ResourceA = 30;
+            ResourceB = 20;
         }
         else if (Level == 3)
         {
-            ResourceA = 30;
-            ResourceB = 5;
+            ResourceA = 60;
+            ResourceB = 30;
         }
         else if (Level == 4)
         {
-            ResourceA = 40;
-            ResourceB = 6;
+            ResourceA = 80;
+            ResourceB = 60;
         }
         else if (Level == 5)
         {
-            ResourceA = 55;
-            ResourceB = 7;
+            ResourceA = 100;
+            ResourceB = 90;
         }
-        else if (Level == 6)
-        {
-            ResourceA = 75;
-            ResourceB = 9;
-        }
+    }
+    public void ResetPlayerStatus()
+    {
+        CostA = 1;
+        CostB = 5;
+        CostC = 10;
     }
     FOECompany FindTarget(int type = 1)
     {
@@ -285,15 +438,13 @@ public class FOECompany : MonoBehaviour
         List<FOECompany> TList = new List<FOECompany>();
         foreach(FOECompany company in FC.Companies)
         {
-            if (company != this && company.Morale > 0)
+            if (company != this && company.ControledMarket > 0)
             {
-                if (type == 1)
-                    TList.Add(company);
-                else if (type == 2 && company.ControledMarket > 0)
-                    TList.Add(company);
+                TList.Add(company);
             }
         }
-        target = TList[Random.Range(0, TList.Count)];
+        if (TList.Count > 0)
+            target = TList[Random.Range(0, TList.Count)];
         return target;
     }
 }

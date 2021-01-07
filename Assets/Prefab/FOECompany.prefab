@@ -34,7 +34,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 67.1}
+  m_AnchoredPosition: {x: 0, y: 145}
   m_SizeDelta: {x: 207.8, y: 58.78}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6563258056047225642
@@ -113,8 +113,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -31.642}
-  m_SizeDelta: {x: 207.8, y: 126.24}
+  m_AnchoredPosition: {x: -0.98, y: -29.73}
+  m_SizeDelta: {x: 233.21, y: 279.7}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6563258057223545781
 CanvasRenderer:
@@ -157,7 +157,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u4E2D\u7ACB\u5E02\u573A\u6570:\n\u63A7\u5236\u5E02\u573A\u6570:"
+  m_Text: "\u878D\u8D44\u7B49\u7EA7:A\u8F6E\n\u5347\u7EA7\u8FD8\u9700\u79EF\u5206:10\n\n\u7A0B\u5E8F\u8FED\u4EE3:5\n\u4F20\u64AD:5\n\n\u5F53\u524D\u5E02\u573A\u6570:5\n\u5F53\u524D\u540D\u6B21:1\n\u62A4\u76FE\u5C42\u6570:1"
 --- !u!1 &6563258057267462205
 GameObject:
   m_ObjectHideFlags: 0
@@ -193,10 +193,10 @@ RectTransform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 1}
-  m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -238, y: -120.56}
-  m_SizeDelta: {x: 207.8, y: 189.52}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -218.2, y: 125.3}
+  m_SizeDelta: {x: 250, y: 350}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &6563258057267462177
 CanvasRenderer:
@@ -249,19 +249,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   NeutralMarket: 60
-  ControledMarket: 0
   TotalActionPoint: 18
   CurrentActionPoint: 0
   StoredActionPoint: 0
-  ExtraActionPoint: 0
   SelfMarketAttackLimit: 0
   FoeMarketAttackLimit: 0
   NeutralSkillNum: -1
   FOESkillNum: -1
+  Morale: 100
   ResourceA: 0
   ResourceB: 0
+  ControledMarket: 0
+  ExtraActionPoint: 0
+  CostA: 1
+  CostB: 5
+  CostC: 0
   Level: 0
-  Morale: 100
+  LevelPoint: 0
+  Shield: 0
   isPlayer: 0
+  ActionFinish: 0
+  Ranking: 1
   Text_Status: {fileID: 6563258057223545780}
+  Text_Name: {fileID: 6563258056047225641}
   FC: {fileID: 0}

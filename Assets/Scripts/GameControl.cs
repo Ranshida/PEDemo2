@@ -108,7 +108,7 @@ public class GameControl : MonoBehaviour
     public List<DepControl> CurrentDeps = new List<DepControl>();
     public List<OfficeControl> CurrentOffices = new List<OfficeControl>();
     public List<Employee> CurrentEmployees = new List<Employee>();
-    public int[] FinishedTask = new int[10];//0程序迭代 1技术研发 2可行性调研 3公关谈判 4营销文案 5资源拓展 6原型图 7产品研究 8用户访谈 9已删除
+    public int[] FinishedTask = new int[10];//0程序迭代 1技术研发 2可行性调研 3传播 4营销文案 5资源拓展 6原型图 7产品研究 8用户访谈 9已删除
     public int[] CEOSkillCD = new int[5];
 
     int Year = 1, Month = 1, Week = 1, Day = 1, Hour = 1, morale = 50;
@@ -235,6 +235,7 @@ public class GameControl : MonoBehaviour
         WeeklyEvent.Invoke();
         //Day += 1;
         //每周开始时的加班判定
+        Stamina += 10;
         if (WorkToggle == false)
             WorkOverTime = false;
         else

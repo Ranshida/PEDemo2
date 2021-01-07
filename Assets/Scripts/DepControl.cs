@@ -154,7 +154,17 @@ public class DepControl : MonoBehaviour
         //{
         //    Text_Efficiency.text = "动员等级:" + EfficiencyLevel;
         //}
-        if(DetailPanelOpened == true)
+        if (DepFaith >= 80)
+            Text_Progress.text = "每周体力+10";
+        else if (DepFaith >= 60)
+            Text_Progress.text = "每周体力+5";
+        else if (DepFaith >= 40)
+            Text_Progress.text = "每周体力-0";
+        else if (DepFaith >= 20)
+            Text_Progress.text = "每周体力-5";
+        else
+            Text_Progress.text = "每周体力-10";
+        if (DetailPanelOpened == true)
         {
             if (CommandingOffice != null)
             {
@@ -462,7 +472,6 @@ public class DepControl : MonoBehaviour
                 Text_Task.text = "当前任务:" + building.Function_A;
             else if (ActiveMode == 2)
                 Text_Task.text = "当前任务:" + building.Function_B;
-            Text_Progress.text = "生产力:" + Pp + "/时";
             //成功率计算
             Text_Quality.text = "成功率:" + Mathf.Round((DepBaseSuccessRate + CountSuccessRate(building.effectValue)) * 100) + "%";
 
@@ -475,7 +484,6 @@ public class DepControl : MonoBehaviour
         else
         {
             Text_Task.text = "当前任务: 无";
-            Text_Progress.text = "生产力:----";
             Text_Quality.text = "当前进度:----";
             Text_Time.text = "当前进度:----";
         }
@@ -770,6 +778,8 @@ public class DepControl : MonoBehaviour
             else if (DepFaith >= 60)
                 Text_DetailInfo.text += "\n——————\n每周员工心力+5";
             else if (DepFaith >= 40)
+                Text_DetailInfo.text += "\n——————\n每周员工心力+0";
+            else if(DepFaith >= 20)
                 Text_DetailInfo.text += "\n——————\n每周员工心力-5";
             else
                 Text_DetailInfo.text += "\n——————\n每周员工心力-10";
@@ -1731,10 +1741,12 @@ public class DepControl : MonoBehaviour
         else if (DepFaith >= 60)
             value = 5;
         else if (DepFaith >= 40)
+            value = 0;
+        else if (DepFaith >= 20)
             value = -5;
         else
             value = -10;
-        foreach(Employee emp in CurrentEmps)
+        foreach (Employee emp in CurrentEmps)
         {
             emp.Mentality += value;
         }
