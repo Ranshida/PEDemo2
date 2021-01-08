@@ -22,7 +22,6 @@ public class Building : MonoBehaviour
     public string Require_C;
     public string Description_C;
 
-
     public string EffectRange_str;                        //影响范围str
     public string Jobs;                             //岗位数量
 
@@ -109,7 +108,7 @@ public class Building : MonoBehaviour
 
         effect = new BuildingEffect(this);
 
-        Destroy(m_Decoration);
+        //Destroy(m_Decoration);
     }
 
     public void Move()

@@ -140,7 +140,7 @@ public class BuildingManage : MonoBehaviour
             
         m_EffectHalo.SetActive(false);
         InitBuilding(BuildingType.CEO办公室, new Int2(3, 8));
-        InitBuilding(BuildingType.人力资源部, new Int2(0, 8));
+        //InitBuilding(BuildingType.人力资源部, new Int2(0, 8));
     }
 
     //初始化默认建筑
@@ -189,7 +189,7 @@ public class BuildingManage : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.T))
         {
-            //Lottery(4);
+            Lottery(4);
         }
 
         //屏幕射线命中地面
@@ -242,7 +242,7 @@ public class BuildingManage : MonoBehaviour
                     {
                         if (grid.Type == Grid.GridType.已放置)
                         {
-                            m_SelectBuilding = GridContainer.Instance.GridDict[m_GridX][m_GridZ].BelongBuilding;
+                            SelectBuilding(GridContainer.Instance.GridDict[m_GridX][m_GridZ].BelongBuilding);
                             selectBuildingPanel.gameObject.SetActive(true);
                             selectBuildingPanel.Find("Text").GetComponent<Text>().text = m_SelectBuilding.Type.ToString();
                         }
@@ -256,7 +256,7 @@ public class BuildingManage : MonoBehaviour
                     BuildCancel();
                 //取消选中
                 if (m_SelectBuilding)
-                    m_SelectBuilding = null;
+                    UnselectBuilding();
             }
 
             //刷新临时建筑网格和字段
@@ -326,7 +326,7 @@ public class BuildingManage : MonoBehaviour
                     if (dict.TryGetValue(m_GridZ, out Grid grid))
                     {
                         if (grid.Type == Grid.GridType.已放置)
-                            m_SelectBuilding = GridContainer.Instance.GridDict[m_GridX][m_GridZ].BelongBuilding;
+                            SelectBuilding(GridContainer.Instance.GridDict[m_GridX][m_GridZ].BelongBuilding);
                     }
                 }
             }
@@ -335,27 +335,40 @@ public class BuildingManage : MonoBehaviour
             {
                 //取消选中
                 if (m_SelectBuilding)
-                    m_SelectBuilding = null;
+                    UnselectBuilding();
             }
         }
 
         //建筑的辐射范围光环
         if (m_SelectBuilding)
         {
-            m_EffectHalo.SetActive(true);
             m_EffectHalo.transform.position = m_SelectBuilding.transform.position + new Vector3(m_SelectBuilding.Length * 5, 0.2f, m_SelectBuilding.Width * 5);
             m_EffectHalo.transform.localScale = new Vector3(m_SelectBuilding.Length + m_SelectBuilding.EffectRange * 2, 1, m_SelectBuilding.Width + m_SelectBuilding.EffectRange * 2);
-            if (!m_InBuildingMode)
-                btn_EnterBuildMode.gameObject.SetActive(true);
-            else
-                btn_EnterBuildMode.gameObject.SetActive(false);
+        }
+    }
+    void SelectBuilding(Building building)
+    {
+        m_SelectBuilding = building;
+        m_EffectHalo.SetActive(true);
+
+        if (!m_InBuildingMode)
+        {
+            btn_EnterBuildMode.gameObject.SetActive(true);
+            description.gameObject.SetActive(true);
+            description.ShowInfo(m_SelectBuilding, false);
         }
         else
-        {
-            m_EffectHalo.SetActive(false);
-            selectBuildingPanel.gameObject.SetActive(false);
             btn_EnterBuildMode.gameObject.SetActive(false);
-        }
+
+      
+    }
+    void UnselectBuilding()
+    {
+        m_EffectHalo.SetActive(false);
+        selectBuildingPanel.gameObject.SetActive(false);
+        btn_EnterBuildMode.gameObject.SetActive(false);
+        description.gameObject.SetActive(false);
+        m_SelectBuilding = null;
     }
 
     //抽奖选择建筑
@@ -364,10 +377,9 @@ public class BuildingManage : MonoBehaviour
         if (lotteryUI.Count > 0)
         {
             Debug.LogError("已经在抽建筑了");
-            GiveUpLottery();
+            return;
         }
-
-        m_SelectBuilding = null;
+        UnselectBuilding();
         lotteryPanel.gameObject.SetActive(true);
         EnterBuildMode();
 
@@ -456,6 +468,8 @@ public class BuildingManage : MonoBehaviour
         {
             selectBuildingPanel.gameObject.SetActive(true);
             selectBuildingPanel.Find("Text").GetComponent<Text>().text = m_SelectBuilding.Type.ToString();
+
+            description.gameObject.SetActive(false);
         }
         m_InBuildingMode = true;
         AskPause();
@@ -469,7 +483,7 @@ public class BuildingManage : MonoBehaviour
             return;
         }
         m_InBuildingMode = false;
-        m_SelectBuilding = null;
+        UnselectBuilding();
         warePanel.gameObject.SetActive(false);
         lotteryPanel.gameObject.SetActive(false);
         selectBuildingPanel.gameObject.SetActive(false);
@@ -573,7 +587,7 @@ public class BuildingManage : MonoBehaviour
         temp_Building = m_SelectBuilding;
         selectBuildingPanel.gameObject.SetActive(false);
         btn_EnterBuildMode.gameObject.SetActive(false);
-        m_SelectBuilding = null;
+        UnselectBuilding();
     }
 
     //拆除建筑
