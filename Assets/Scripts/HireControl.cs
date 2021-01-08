@@ -27,6 +27,11 @@ public class HireControl : MonoBehaviour
         {
             if (i < 2)
             {
+                for(int j = 0; j <15; j++)
+                {
+                    HireInfos[i].emp.BaseAttributes[j] = Random.Range(0, 4);
+                }
+
                 //下面两个StarType是为了临时设定技能树
                 if (i == 0)
                 {
@@ -35,6 +40,7 @@ public class HireControl : MonoBehaviour
                     HireInfos[i].emp.Character[0] = GC.CurrentEmployees[0].Character[0];
                     HireInfos[i].emp.Character[1] = GC.CurrentEmployees[0].Character[1];
                     HireInfos[i].emp.ChangeCharacter(0, 0);
+                    HireInfos[i].emp.Skill1 = 4;
                 }
                 else if (i == 1)
                 {
@@ -43,10 +49,17 @@ public class HireControl : MonoBehaviour
                     HireInfos[i].emp.Character[0] = GC.CurrentEmployees[0].Character[0];
                     HireInfos[i].emp.Character[1] = GC.CurrentEmployees[0].Character[1];
                     HireInfos[i].emp.ChangeCharacter(0, 0);
+                    HireInfos[i].emp.HR = 4;
+                    HireInfos[i].emp.Manage = 6;
                 }
                 GC.CurrentEmpInfo = HireInfos[i];
                 SetInfoPanel();
                 GC.CurrentEmpInfo.emp.InfoA.transform.parent = GC.StandbyContent;
+                if (i == 0)
+                {
+                    GC.CurrentEmpInfo.emp.AddEmotion(EColor.Red);
+                    GC.CurrentEmpInfo.emp.AddEmotion(EColor.Red);
+                }
             }
             HireInfos[i].gameObject.SetActive(false);
         }

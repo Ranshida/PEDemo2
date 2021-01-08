@@ -8,16 +8,19 @@ public class FOEControl : MonoBehaviour
     public GameControl GC;
     public GameObject CloseButton, EndButton, ActionPanel, CloseButton2, SpyPanel;
     public CanvasGroup canvasGroup;
-    public Text Text_Info, Text_FightTime, Text_NeutralMarket, Text_Turn, Text_Result;
+    public Text Text_Info, Text_FightTime, Text_NeutralMarket, Text_Turn;
 
     public Text[] Text_Costs = new Text[5];
+    public Text[] Text_Ranking = new Text[4];
+    public Text[] Text_ResultButtons = new Text[3];
 
     public List<FOECompany> Companies = new List<FOECompany>(); //0位是玩家
 
     public int NeutralMarket = 20, Turn = 1;
 
+    int[] PlayerResultNum = new int[3];
     int FightTime = 96;
-    bool FightBegins = false;
+    bool FightBegins = false, ResultConfirmed = false;
 
     private void Start()
     {
@@ -67,6 +70,7 @@ public class FOEControl : MonoBehaviour
         CloseButton2.SetActive(false);
         GC.AskPause(this);
         FightBegins = true;
+        ResultConfirmed = false;
         Companies[0].ResetStatus();
         Companies[0].NeutralSkillNum = 0;
         Companies[0].FOESkillNum = 0;
@@ -122,99 +126,136 @@ public class FOEControl : MonoBehaviour
             print("死循环了");
         FightFinish();
     }
+
+    public void CreateResult()
+    {
+        foreach(Text text in Text_ResultButtons)
+        {
+            text.text = "?";
+        }
+        List<int> ResultPosb = new List<int>() { 1, 2, 3 };
+        int posb = Random.Range(0, 3);
+        PlayerResultNum[0] = ResultPosb[posb];
+        ResultPosb.RemoveAt(posb);
+
+        posb = Random.Range(0, 2);
+        PlayerResultNum[1] = ResultPosb[posb];
+        ResultPosb.RemoveAt(posb);
+
+        PlayerResultNum[2] = ResultPosb[0];
+
+    }
+
+    public void RandomResult(int posb)
+    {
+        if (ResultConfirmed == true)
+            return;
+
+        string[] ResultContents = new string[3];
+
+        int ResultNum = PlayerResultNum[posb - 1];
+        if (Companies[0].Ranking == 1)
+        {
+            ResultContents[0] = "士气+10";
+            ResultContents[1] = "士气+5";
+            ResultContents[2] = "无";
+            if (ResultNum == 1)
+            {
+                GC.Morale += 10;
+            }
+            else if (ResultNum == 2)
+            {
+                GC.Morale += 5;
+            }
+            else if (posb == 3)
+            {
+
+            }
+        }
+        else if (Companies[0].Ranking == 2)
+        {
+            ResultContents[0] = "士气+5";
+            ResultContents[1] = "士气-5";
+            ResultContents[2] = "无";
+            if (ResultNum == 1)
+            {
+                GC.Morale += 5;
+            }
+            else if (ResultNum == 2)
+            {
+                GC.Morale -= 5;
+            }
+            else if (posb == 3)
+            {
+
+            }
+        }
+        else if (Companies[0].Ranking == 3)
+        {
+            ResultContents[0] = "士气-5";
+            ResultContents[1] = "随机部门获得业务干扰状态";
+            ResultContents[2] = "无";
+            if (ResultNum == 1)
+            {
+                GC.Morale -= 5;
+            }
+            else if (ResultNum == 2)
+            {
+                AddDebuff();
+            }
+            else if (posb == 3)
+            {
+
+            }
+        }
+        else if (Companies[0].Ranking == 4)
+        {
+            ResultContents[0] = "士气-10";
+            ResultContents[1] = "士气-10";
+            ResultContents[2] = "随机部门获得业务干扰状态";
+            if (ResultNum == 1)
+            {
+                GC.Morale -= 10;
+            }
+            else if (ResultNum == 2)
+            {
+                GC.Morale -= 10;
+            }
+            else if (posb == 3)
+            {
+                AddDebuff();
+            }
+        }
+        Text_ResultButtons[0].text = ResultContents[PlayerResultNum[0] - 1];
+        Text_ResultButtons[1].text = ResultContents[PlayerResultNum[1] - 1];
+        Text_ResultButtons[2].text = ResultContents[PlayerResultNum[2] - 1];
+        ResultConfirmed = true;
+    }
+
     //商战结束
     public void FightFinish()
     {
         for (int i = 0; i < 4; i++)
         {
-            if (i == 0)
-                Text_Result.text = "名次:" + Companies[0].Ranking;
             if(Companies[i].Ranking == 1)
             {
                 Companies[i].AddPoint(4);
-                if(i == 0)
-                {
-                    Text_Result.text += "\n获得积分:4";
-                    int posb = Random.Range(1, 4);
-                    if (posb == 1)
-                    {
-                        GC.Morale += 10;
-                        Text_Result.text += "\n额外随机效果:士气+10";
-                    }
-                    else if (posb == 2)
-                    {
-                        GC.Morale += 5;
-                        Text_Result.text += "\n额外随机效果:士气+5";
-                    }
-                    else if (posb == 3)
-                        Text_Result.text += "\n额外随机效果:无";
-                }
+                Text_Ranking[0].text = Companies[i].Text_Name.text;
             }
             else if (Companies[i].Ranking == 2)
             {
                 Companies[i].AddPoint(3);
-                if (i == 0)
-                {
-                    Text_Result.text += "\n获得积分:4";
-                    int posb = Random.Range(1, 4);
-                    if (posb == 1)
-                    {
-                        GC.Morale += 5;
-                        Text_Result.text += "\n额外随机效果:士气+5";
-                    }
-                    else if (posb == 2)
-                    {
-                        GC.Morale -= 5;
-                        Text_Result.text += "\n额外随机效果:士气-5";
-                    }
-                    else if (posb == 3)
-                        Text_Result.text += "\n额外随机效果:无";
-                }
+                Text_Ranking[1].text = Companies[i].Text_Name.text;
             }
             else if (Companies[i].Ranking == 3)
             {
                 Companies[i].AddPoint(2);
-                if (i == 0)
-                {
-                    Text_Result.text += "\n获得积分:2";
-                    int posb = Random.Range(1, 4);
-                    if (posb == 1)
-                    {
-                        GC.Morale -= 5;
-                        Text_Result.text += "\n额外随机效果:士气-5";
-                    }
-                    else if (posb == 2)
-                    {
-                        AddDebuff();
-                        Text_Result.text += "\n额外随机效果:随机部门获得业务干扰状态";
-                    }
-                    else if (posb == 3)
-                        Text_Result.text += "\n额外随机效果:无";
-                }
+                Text_Ranking[2].text = Companies[i].Text_Name.text;
             }
             else if (Companies[i].Ranking == 4)
             {
                 Companies[i].AddPoint(1);
-                if (i == 0)
-                {
-                    Text_Result.text += "\n获得积分:1";
-                    int posb = Random.Range(1, 4);
-                    if (posb == 1)
-                    {
-                        GC.Morale -= 10;
-                        Text_Result.text += "\n额外随机效果:士气-10";
-                    }
-                    else if (posb == 2)
-                    {
-                        GC.Morale -= 10;
-                        Text_Result.text += "\n额外随机效果:士气-10";
-                    }
-                    else if (posb == 3)
-                    {
-                        AddDebuff();
-                        Text_Result.text += "\n额外随机效果:随机部门获得业务干扰状态";
-                    }
-                }
+                Text_Ranking[3].text = Companies[i].Text_Name.text;
             }
         }
         FightBegins = false;

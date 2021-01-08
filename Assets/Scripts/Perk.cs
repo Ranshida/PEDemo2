@@ -2357,7 +2357,7 @@ public class Perk115 : Perk
     }
 }
 
-//老板摸鱼
+//业务干扰
 public class Perk116 : Perk
 {
     public Perk116(Employee Emp) : base(Emp)
@@ -2376,6 +2376,28 @@ public class Perk116 : Perk
     {
         base.RemoveEffect();
         TargetDep.DepFaith += 30;
+    }
+}
+
+//亲自指导
+public class Perk117 : Perk
+{
+    public Perk117(Employee Emp) : base(Emp)
+    {
+        Name = "亲自指导";
+        Description = "部门成功率上升45%";
+        TimeLeft = 128;
+        Num = 117;
+        canStack = false;
+    }
+    public override void ImmEffect()
+    {
+        TargetDep.Efficiency += 0.45f;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDep.Efficiency -= 0.45f;
     }
 }
 

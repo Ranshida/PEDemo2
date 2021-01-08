@@ -878,7 +878,7 @@ public class GameControl : MonoBehaviour
         {
             if (CEOSkillNum == 1)
             {
-                new ProduceBuff(0.45f, depControl, 128);
+                depControl.AddPerk(new Perk117(null));
                 new EmpBuff(CC.CEO, 16, -45);
                 ResetSelectMode();
             }
@@ -1261,7 +1261,7 @@ public class GameControl : MonoBehaviour
         if (type == 1)
         {
             infoPanel.Text_Name.text = "CEO本人的体力，可以通过提升CEO的强壮来提高上限";
-            infoPanel.Text_ExtraInfo.text = "";
+            infoPanel.Text_ExtraInfo.text = "CEO每周回复10点体力";
             string content = "初始体力上限:100";
             content += "\nCEO强壮" + CC.CEO.Strength + "点:+" + (CC.CEO.Strength * 5);
             foreach (EmpBuff buff in CC.CEO.CurrentBuffs)

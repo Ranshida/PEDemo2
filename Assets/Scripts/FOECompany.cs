@@ -140,140 +140,6 @@ public class FOECompany : MonoBehaviour
         {
             ActionFinish = true;
         }
-
-        #region 旧商战
-        //FOECompany Target = null;
-        //ResetStatus();
-        //ResourceB -= ExtraActionPoint;
-        //ExtraActionPoint = 0;
-        //while (Morale < 80 && ResourceB >= 3)
-        //{
-        //    ResourceB -= 3;
-        //    Morale += 5;
-        //}
-        //while (ResourceB >= 1)
-        //{
-        //    FOECompany target = FindTarget();
-        //    ResourceB -= 1;
-        //    int valueA = 5, valueB = 2;
-        //    if (Level <= 2)
-        //    {
-        //        valueA = 5;
-        //        valueB = 2;
-        //    }
-        //    else if (Level <= 4)
-        //    {
-        //        valueA = 8;
-        //        valueB = 3;
-        //    }
-        //    else if (Level > 4)
-        //    {
-        //        valueA = 10;
-        //        valueB = 4;
-        //    }
-        //    //对手士气减少
-        //    if (target.isPlayer == false)
-        //        target.Morale -= valueA;
-        //    else
-        //    {//玩家士气减少
-        //        FC.DamageA += valueA;
-        //        FC.DamageB += valueB;
-        //    }
-        //}
-        //while (NeutralMarket > 0 && ResourceA >= 3)
-        //{//中立占领
-        //    ResourceA -= 3;
-        //    if (Random.Range(0.0f, 1.0f) < 0.5f)
-        //    {
-        //        NeutralMarket -= 1;
-        //        ControledMarket += 1;
-        //    }
-        //}
-        //while (ResourceA >= 5)
-        //{//反占领
-        //    FOECompany target = FindTarget(2);
-        //    if (target != null)
-        //    {
-        //        ResourceA -= 5;
-        //        if (Random.Range(0.0f, 1.0f) < 0.2f)
-        //        {
-        //            target.ControledMarket -= 1;
-        //            ControledMarket += 1;
-        //        }
-        //    }
-        //    else
-        //        break;
-        //}
-
-
-        //CurrentActionPoint = TotalActionPoint - ExtraActionPoint;
-        //ExtraActionPoint = 0;
-        ////研发科技
-        //while (StoredActionPoint >= 10)
-        //{
-        //    StoredActionPoint -= 10;
-        //    if (Random.Range(0.0f, 1.0f) < 0.35f)
-        //        NeutralMarket += 10;
-        //}
-        //while (CurrentActionPoint >= 13)
-        //{
-        //    //确定目标是中立还是敌人
-        //    if(NeutralMarket > 0)
-        //    {
-        //        if (NeutralSkillNum == -1)
-        //            NeutralSkillNum = CalcSkillNum();
-        //        CurrentActionPoint -= 3;
-        //        SelfMarketAttackLimit += 3;
-        //    }
-        //    else
-        //    {
-        //        //确定目标
-        //        foreach(FOECompany foe in FC.Companies)
-        //        {
-        //            if (foe == this)
-        //                continue;
-        //            else if (Target == null)
-        //                Target = foe;
-        //            else if (foe.ControledMarket > Target.ControledMarket)
-        //                Target = foe;
-        //        }
-        //        //没有可占领则直接返回
-        //        if (Target == null || Target.ControledMarket == 0)
-        //            break;
-        //        if (FOESkillNum == -1)
-        //            FOESkillNum = CalcSkillNum(false);
-        //        CurrentActionPoint -= 3;
-        //        FoeMarketAttackLimit += 3;
-        //    }
-
-        //    //中立占领判定
-        //    while(SelfMarketAttackLimit > 0 && CurrentActionPoint > 10 && NeutralMarket > 0)
-        //    {
-        //        SelfMarketAttackLimit -= 1;
-        //        CurrentActionPoint -= 10;
-        //        if(Random.Range(0.0f, 1.0f) < 0.5f + (0.1f * NeutralSkillNum))
-        //        {
-        //            ControledMarket += 1;
-        //            NeutralMarket -= 1;
-        //        }
-        //    }
-        //    //反占领判定
-        //    while(FoeMarketAttackLimit > 0 && CurrentActionPoint > 10 && Target.ControledMarket > 0)
-        //    {
-        //        FoeMarketAttackLimit -= 1;
-        //        CurrentActionPoint -= 10;
-        //        //因为Neutral的技能两种占领方式都会造成影响
-        //        if (NeutralSkillNum < 0)
-        //            NeutralSkillNum = 0;
-        //        if (Random.Range(0.0f, 1.0f) < 0.2f + (0.2f * FOESkillNum + (0.1f * NeutralSkillNum)))
-        //        {
-        //            ControledMarket += 1;
-        //            Target.ControledMarket -= 1;
-        //        }
-        //    }
-        //}
-        //StoredActionPoint += CurrentActionPoint;
-        #endregion
     }
 
     public void AddPoint(int value)
@@ -397,32 +263,32 @@ public class FOECompany : MonoBehaviour
 
         if (Level == 0)
         {
-            ResourceA = 10;
+            ResourceA = 20;
             ResourceB = 0;
         }
         else if (Level == 1)
         {
-            ResourceA = 20;
+            ResourceA = 30;
             ResourceB = 10;
         }
         else if (Level == 2)
         {
-            ResourceA = 30;
+            ResourceA = 40;
             ResourceB = 20;
         }
         else if (Level == 3)
         {
-            ResourceA = 60;
+            ResourceA = 70;
             ResourceB = 30;
         }
         else if (Level == 4)
         {
-            ResourceA = 80;
+            ResourceA = 90;
             ResourceB = 60;
         }
         else if (Level == 5)
         {
-            ResourceA = 100;
+            ResourceA = 110;
             ResourceB = 90;
         }
     }
