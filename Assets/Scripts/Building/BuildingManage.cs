@@ -662,19 +662,20 @@ public class BuildingManage : MonoBehaviour
         }
     }
 
-    int pauseCount = 0;
+    //int pauseCount = 0;
     private void AskPause()
     {
-        pauseCount++;
         GameControl.Instance.AskPause(this);
+        //pauseCount++;
     }
 
     private void RemovePause()
     {
-        pauseCount--;
-        if (pauseCount == 0)
-        {
-            GameControl.Instance.RemovePause(this);
-        }
+        GameControl.Instance.RemovePause(this);
+        //pauseCount--;
+        //if (pauseCount == 0)
+        //{
+            
+        //}
     }
 }
