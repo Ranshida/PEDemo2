@@ -163,7 +163,7 @@ public class DepControl : MonoBehaviour
         else if (DepFaith >= 20)
             Text_Progress.text = "每周心力-5";
         else
-            Text_Progress.text = "每周体力-10";
+            Text_Progress.text = "每周心力-10";
         if (DetailPanelOpened == true)
         {
             if (CommandingOffice != null)
