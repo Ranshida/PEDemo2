@@ -155,13 +155,13 @@ public class DepControl : MonoBehaviour
         //    Text_Efficiency.text = "动员等级:" + EfficiencyLevel;
         //}
         if (DepFaith >= 80)
-            Text_Progress.text = "每周体力+10";
+            Text_Progress.text = "每周心力+10";
         else if (DepFaith >= 60)
-            Text_Progress.text = "每周体力+5";
+            Text_Progress.text = "每周心力+5";
         else if (DepFaith >= 40)
-            Text_Progress.text = "每周体力-0";
+            Text_Progress.text = "每周心力-0";
         else if (DepFaith >= 20)
-            Text_Progress.text = "每周体力-5";
+            Text_Progress.text = "每周心力-5";
         else
             Text_Progress.text = "每周体力-10";
         if (DetailPanelOpened == true)
