@@ -37,7 +37,7 @@ public class BuildingManage : MonoBehaviour
     private GameObject CEOBuilding;
 
     //建造面板        
-    public Button btn_EnterBuildMode;
+    public GameObject SelectedPanel;
     public Button btn_NewArea;
     private Button btn_Dismantle;
     private Button btn_FinishBuild;
@@ -215,12 +215,15 @@ public class BuildingManage : MonoBehaviour
             if (warePanels.Count > 0 || temp_Building)
             {
                 m_PanelTrigger.enabled = true;
-                btn_FinishBuild.interactable = false;
+                btn_FinishBuild.interactable = false; 
+                btn_FinishBuild.GetComponent<PointingSelf>().StartPointing = () => { btn_FinishBuild.GetComponent<InfoPanelTrigger>().PointerEnter(); };
+                btn_FinishBuild.GetComponent<PointingSelf>().EndPointing = () => { btn_FinishBuild.GetComponent<InfoPanelTrigger>().PointerExit(); };
             }
             else
             {
                 m_PanelTrigger.enabled = false;
                 btn_FinishBuild.interactable = true;
+                btn_FinishBuild.GetComponent<PointingSelf>().ClearAll();
             }
             //尝试退出建造模式
             if (btn_FinishBuild.interactable && (Input.GetKeyDown(KeyCode.Mouse1) || Input.GetKeyDown(KeyCode.Escape)))
@@ -353,12 +356,19 @@ public class BuildingManage : MonoBehaviour
 
         if (!m_InBuildingMode)
         {
-            btn_EnterBuildMode.gameObject.SetActive(true);
-            description.gameObject.SetActive(true);
-            description.ShowInfo(m_SelectBuilding, false);
+            SelectedPanel.gameObject.SetActive(true);
+            SelectedPanel.transform.Find("Text").GetComponent<Text>().text = m_SelectBuilding.Type.ToString();
+            if (m_SelectBuilding.Department != null)
+            {
+                SelectedPanel.transform.Find("Btn_Detail").gameObject.SetActive(true);
+            }
+            else
+            {
+                SelectedPanel.transform.Find("Btn_Detail").gameObject.SetActive(false);
+            }
         }
         else
-            btn_EnterBuildMode.gameObject.SetActive(false);
+            SelectedPanel.gameObject.SetActive(false);
 
       
     }
@@ -366,9 +376,20 @@ public class BuildingManage : MonoBehaviour
     {
         m_EffectHalo.SetActive(false);
         selectBuildingPanel.gameObject.SetActive(false);
-        btn_EnterBuildMode.gameObject.SetActive(false);
-        description.gameObject.SetActive(false);
+        SelectedPanel.gameObject.SetActive(false);
         m_SelectBuilding = null;
+    }
+
+    public void OpenDetailPanel()
+    {
+        if (m_SelectBuilding && m_SelectBuilding.Department != null)
+        {
+            m_SelectBuilding.Department.ShowEmpInfoPanel();
+        }
+        else{
+            Debug.LogError("错误的调用位置");
+        }
+        UnselectBuilding();
     }
 
     //抽奖选择建筑
@@ -487,7 +508,7 @@ public class BuildingManage : MonoBehaviour
         warePanel.gameObject.SetActive(false);
         lotteryPanel.gameObject.SetActive(false);
         selectBuildingPanel.gameObject.SetActive(false);
-        btn_EnterBuildMode.gameObject.SetActive(false);
+        SelectedPanel.gameObject.SetActive(false);
         RemovePause();
     }
 
@@ -586,7 +607,7 @@ public class BuildingManage : MonoBehaviour
         m_SelectBuilding.Move();
         temp_Building = m_SelectBuilding;
         selectBuildingPanel.gameObject.SetActive(false);
-        btn_EnterBuildMode.gameObject.SetActive(false);
+        SelectedPanel.gameObject.SetActive(false);
         UnselectBuilding();
     }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 /// <summary>
 /// 相机控制器
@@ -20,6 +21,7 @@ public class CameraController : MonoBehaviour
     private Transform mainCamera;
 
     public static bool IsPointingUI { get { return EventSystem.current.IsPointerOverGameObject(); } }
+    private static Transform uiTrans;
     private Ray RayTerrain; 
     public static bool TerrainHit { get; private set; }
     public static bool BuildingHit { get; private set; }
@@ -30,7 +32,6 @@ public class CameraController : MonoBehaviour
     public static RaycastHit CharacterRaycast;   //与人物的碰撞
     public static RaycastHit ItemRaycast;   //与人物的碰撞
 
-
     private void Awake()
     {
         mainCamera = transform.Find("Main Camera");
@@ -39,8 +40,23 @@ public class CameraController : MonoBehaviour
         height = minHeight;
     }
 
+    public Transform Canvas;
     private void Update()
     {
+        uiTrans = null;
+        if (IsPointingUI)
+        {
+            PointerEventData pointerEventData = new PointerEventData(EventSystem.current);
+            pointerEventData.position = Input.mousePosition;
+            GraphicRaycaster gr = Canvas.GetComponent<GraphicRaycaster>();
+            List<RaycastResult> results = new List<RaycastResult>();
+            gr.Raycast(pointerEventData, results);
+            if (results.Count != 0)
+            {
+                uiTrans = results[0].gameObject.transform;
+            }
+        }
+
         focus.transform.position += new Vector3(Input.GetAxis("Horizontal") * m_SpeedSmooth, 0, Input.GetAxis("Vertical") * m_SpeedSmooth);
         if (focus.transform.position.x < GridContainer.Instance.MinX)
             focus.transform.position = new Vector3(GridContainer.Instance.MinX, focus.transform.position.y, focus.transform.position.z);
@@ -82,5 +98,21 @@ public class CameraController : MonoBehaviour
         m_TempHeight = Mathf.Lerp(m_TempHeight, height, Time.deltaTime * m_HeightSmooth);
         transform.position = focus.transform.position + Vector3.up * m_TempHeight;
         mainCamera.localPosition = new Vector3(0, 0, -m_TempHeight);                                                      
+    }
+
+    public static bool PointingSelf(Transform transform)
+    {
+        List<Transform> transList = Function.ReturnAllChildList(transform);
+        if (uiTrans != null) 
+        {
+            foreach (Transform tr in transList)
+            {
+                if (uiTrans == tr)
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

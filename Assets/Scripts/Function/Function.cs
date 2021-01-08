@@ -37,6 +37,15 @@ public static class Function
         }
         return list;
     }
+    public static List<Transform> ReturnAllChildList(Transform parent)
+    {
+        List<Transform> list = new List<Transform>();
+        foreach (Transform child in parent.GetComponentsInChildren<Transform>())
+        {
+            list.Add(child);
+        }
+        return list;
+    }
 
     //数组转列表
     public static List<T> Array2List<T>(T[] array)
