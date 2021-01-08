@@ -126,6 +126,7 @@ public class GameControl : MonoBehaviour
     private void Start()
     {
         HourEvent.AddListener(GCTimePass);
+        UpdateResourceInfo();
     }
 
     private void Update()
