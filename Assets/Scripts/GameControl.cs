@@ -203,7 +203,7 @@ public class GameControl : MonoBehaviour
                     AskPause(SC);
                     MobTime = 192;
                 }
-                Text_MobTime.text = "距离下次头脑风暴还剩" + MobTime + "时";
+                Text_MobTime.text = "距离下次头脑风暴还剩" + (MobTime / 8) + "周";
             }
         }
         //加班时间只进行工作和事件计算
@@ -705,6 +705,7 @@ public class GameControl : MonoBehaviour
         {
             HC.SetInfoPanel();
             CurrentEmpInfo.emp.InfoA.transform.parent = StandbyContent;
+            QC.Finish(8);
         }
         else if (SelectMode == 2)
         {
@@ -742,6 +743,7 @@ public class GameControl : MonoBehaviour
         }
         if (SelectMode == 1)
         {
+            QC.Finish(8);
             HC.SetInfoPanel();
             CurrentEmpInfo.emp.InfoA.transform.parent = StandbyContent;
             if (office.building.Type == BuildingType.CEO办公室 || office.building.Type == BuildingType.高管办公室)
@@ -845,6 +847,7 @@ public class GameControl : MonoBehaviour
     {
         if(SelectMode == 1)
         {
+            QC.Finish(8);
             HC.SetInfoPanel();
             depControl.CurrentEmps.Add(CurrentEmpInfo.emp);
             depControl.UpdateUI();
@@ -1233,20 +1236,20 @@ public class GameControl : MonoBehaviour
     //一些提示框信息
     public void ShowCompayCost()
     {
-        infoPanel.Text_Name.text = "";
+        infoPanel.Text_Name.text = "商战收入:+" + Income;
         infoPanel.Text_ExtraInfo.text = "";
         string content = "维护费用";
         foreach(DepControl dep in CurrentDeps)
         {
-            content += "\n" + dep.Text_DepName.text + "维护费:" + dep.CalcCost(2);
+            content += "\n" + dep.Text_DepName.text + "维护费:-" + dep.CalcCost(2);
             if (dep.CurrentEmps.Count > 0)
-                content += "\n" + dep.Text_DepName.text + "工资:" + dep.CalcCost(1);
+                content += "\n" + dep.Text_DepName.text + "工资:-" + dep.CalcCost(1);
         }
         foreach(OfficeControl office in CurrentOffices)
         {
-            content += "\n" + office.Text_OfficeName.text + "维护费:" + office.building.Pay;
+            content += "\n" + office.Text_OfficeName.text + "维护费:-" + office.building.Pay;
             if(office.CurrentManager != null)
-            content += "\n" + office.Text_OfficeName.text + "工资:" + (int)(office.CurrentManager.InfoDetail.CalcSalary() * TotalSalaryMultiply);
+            content += "\n" + office.Text_OfficeName.text + "工资:-" + (int)(office.CurrentManager.InfoDetail.CalcSalary() * TotalSalaryMultiply);
         }
         int otherCost = 0;
         foreach(Employee emp in CurrentEmployees)

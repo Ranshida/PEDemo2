@@ -196,7 +196,6 @@ public class EmpInfo : MonoBehaviour
         GC.CurrentEmpInfo = this;
         GC.SelectMode = 1;
         GC.ShowDepSelectPanel(emp.Type);
-        GC.QC.Finish(8);
     }
     public void StartMove()
     {

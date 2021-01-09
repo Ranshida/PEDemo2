@@ -60,7 +60,7 @@ public class Perk
             Level -= 1;
             TimeLeft = BaseTime;
         }
-        if (canStack == false || Level == 0)
+        if (canStack == false || Level == 0 || Num == 48 || Num == 50)
         {
             Info.RemovePerk();
             RemoveAllListeners();
@@ -1349,8 +1349,8 @@ public class Perk48 : Perk
     public Perk48(Employee Emp) : base(Emp)
     {
         Name = "顺利-进步";
-        Description = "每层进步+5% 部门成功率,持续到当前业务结束";
-        TimeLeft = 64;//持续到当前业务结束(旧，此功能已删)
+        Description = "每层进步+2% 部门成功率,持续时间结束后效果全部清空";
+        TimeLeft = 32;//持续到当前业务结束(旧，此功能已删)
         Num = 48;
         canStack = true;
     }
@@ -1358,7 +1358,8 @@ public class Perk48 : Perk
     {
         if (TargetDep != null)
         {
-            TargetDep.Efficiency += 0.05f;
+            TargetDep.Efficiency += 0.02f;
+            TempValue4 += 0.02f;
         }
     }
     public override void RemoveEffect()
@@ -1366,7 +1367,7 @@ public class Perk48 : Perk
         base.RemoveEffect();
         if (TargetDep != null)
         {
-            TargetDep.Efficiency -= 0.05f;
+            TargetDep.Efficiency -= TempValue4;
         }
     }
 }
@@ -1399,8 +1400,8 @@ public class Perk50 : Perk
     public Perk50(Employee Emp) : base(Emp)
     {
         Name = "悔恨-混乱";
-        Description = "每层混乱-5% 部门成功率,持续到当前业务结束";
-        TimeLeft = 64;//持续到当前业务结束(旧，此功能已删)
+        Description = "每层混乱-2% 部门成功率,持续时间结束后效果全部清空";
+        TimeLeft = 32;//持续到当前业务结束(旧，此功能已删)
         Num = 50;
         canStack = true;
     }
@@ -1408,7 +1409,8 @@ public class Perk50 : Perk
     {
         if (TargetDep != null)
         {
-            TargetDep.Efficiency -= 0.05f;
+            TargetDep.Efficiency -= 0.02f;
+            TempValue4 += 0.02f;
         }
     }
     public override void RemoveEffect()
@@ -1416,7 +1418,7 @@ public class Perk50 : Perk
         base.RemoveEffect();
         if (TargetDep != null)
         {
-            TargetDep.Efficiency += 0.05f;
+            TargetDep.Efficiency += TempValue4;
         }
     }
 }

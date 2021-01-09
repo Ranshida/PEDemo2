@@ -51,7 +51,7 @@ public class FOEControl : MonoBehaviour
             }
             FightStart();
         }
-        GC.Text_WarTime.text = "距离下次商战还剩" + FightTime + "时";
+        GC.Text_WarTime.text = "距离下次商战还剩" + (FightTime / 8) + "周";
     }
     //仅显示面板
     public void ShowPanel()

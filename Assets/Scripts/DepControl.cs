@@ -433,7 +433,7 @@ public class DepControl : MonoBehaviour
                         //大失败
                         GC.CreateMessage(Text_DepName.text + " 工作中发生重大失误");
                         AddPerk(new Perk105(null));
-                        GC.QC.Init(Text_DepName.text + "发生重大失误!\n(成功率:" + Mathf.Round(CountSuccessRate(building.effectValue) * 100) +
+                        GC.QC.Init(Text_DepName.text + "发生重大失误!\n(成功率:" + Mathf.Round((DepBaseSuccessRate + CountSuccessRate(building.effectValue)) * 100) +
                             "% 重大失误率:" + ((DepBaseMajorFailureRate + GC.SC.ExtraMajorFailureRate) * 100) + "%)\n部门信念严重降低");
                     }
                     else
@@ -443,7 +443,7 @@ public class DepControl : MonoBehaviour
                         if(TipShowed == false)
                         {
                             TipShowed = true;
-                            GC.QC.Init(Text_DepName.text + "业务生产失败!\n(成功率:" + Mathf.Round(CountSuccessRate(building.effectValue) * 100) + "%)");
+                            GC.QC.Init(Text_DepName.text + "业务生产失败!\n(成功率:" + Mathf.Round((DepBaseSuccessRate + CountSuccessRate(building.effectValue)) * 100) + "%)");
                         }
                     }
                 }
@@ -482,9 +482,9 @@ public class DepControl : MonoBehaviour
             }
             if (building.Type == BuildingType.技术部门 || building.Type == BuildingType.市场部门 || building.Type == BuildingType.产品部门)
                 Text_Task.text = "当前任务:基础资源生产";
-            else if (ActiveMode == 1)
+            else if (BuildingMode == 1)
                 Text_Task.text = "当前任务:" + building.Function_A;
-            else if (ActiveMode == 2)
+            else if (BuildingMode == 2)
                 Text_Task.text = "当前任务:" + building.Function_B;
             //成功率计算
             Text_Quality.text = "成功率:" + Mathf.Round((DepBaseSuccessRate + CountSuccessRate(building.effectValue)) * 100) + "%";
@@ -707,7 +707,7 @@ public class DepControl : MonoBehaviour
             Text_SRateDetail.text += "\n额外研发成功率:" + (GC.ResearchExtraSuccessRate * 100) + "%";
             BaseSuccessRate += GC.ResearchExtraSuccessRate;
         }
-        Text_SRateDetail.text += "\n——————\n每当生产的剩余时间归零的时候进行一次判定，如果判定成功则铲除当前正在进行的" +
+        Text_SRateDetail.text += "\n——————\n每当生产的剩余时间归零的时候进行一次判定，如果判定成功则产出当前正在进行的" +
     "业务，同时有一定几率出现大成功，如果失败则没有产出，同时还会有一定几率出现重大失误";
         return BaseSuccessRate + GC.SC.ExtraSuccessRate + Efficiency;
     }
@@ -786,7 +786,7 @@ public class DepControl : MonoBehaviour
                 else if (info.CurrentPerk.Num == 115)
                     Text_DetailInfo.text += "\n老板摸鱼 -35";
                 else if (info.CurrentPerk.Num == 116)
-                    Text_DetailInfo.text += "\n业务干扰 -" + info.CurrentPerk.TempValue1;
+                    Text_DetailInfo.text += "\n业务干扰 -30";
             }
             Text_DetailInfo.text += "\n——————\n部门中所有员工的心力都会受到部门信念的影响\n      信念>=80 心力每周+10\n" +
                 "80>信念>=60 心力每周+5\n40>信念>=20 心力每周-5\n      信念<=20 心力每周-10";
@@ -815,15 +815,15 @@ public class DepControl : MonoBehaviour
             Text_DetailInfo.text = "基础大成功率:" + Mathf.Round(DepBaseMajorSuccessRate * 100) + "%";
             if (GC.SC.ExtraMajorSuccessRate > 0.0001)
                 Text_DetailInfo.text += "\n额外动员效果:" + (GC.SC.ExtraMajorSuccessRate * 100) + "%";
-            Text_SRateDetail.text += "\n——————\n当部门生产成功时，有一定几率转化为大成功，部门中员工会的经验翻倍" +
+            Text_DetailInfo.text += "\n——————\n当部门生产成功时，有一定几率转化为大成功，部门中员工会的经验翻倍" +
                 "部分部门会同时生产出更多业务";
         }
         else if (type == 6)
         {
-            Text_DetailInfo.text += "基础重大失误率:" + Mathf.Round(DepBaseMajorFailureRate * 100) + "%";
+            Text_DetailInfo.text = "基础重大失误率:" + Mathf.Round(DepBaseMajorFailureRate * 100) + "%";
             if (GC.SC.ExtraMajorSuccessRate > 0.0001)
                 Text_DetailInfo.text += "\nKPI制度:" + (GC.SC.ExtraMajorFailureRate * 100) + "%";
-            Text_SRateDetail.text += "\n——————\n当部门生产失败时，有一定几率转化为重大失误，严重降低部门信念";
+            Text_DetailInfo.text += "\n——————\n当部门生产失败时，有一定几率转化为重大失误，严重降低部门信念";
         }
         else if (type == 7)
         {

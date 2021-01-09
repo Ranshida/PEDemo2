@@ -52,7 +52,7 @@ public class CEOControl : MonoBehaviour
         //删除8 改为 说服-批评责备
         else if (GC.CEOSkillNum == 8)
         {
-            SuccessLimit = 8;
+            SuccessLimit = 6;
             Text_Name.text = "批评责备" + Target.Name;
             Text_SuccessContent.text = "使对方获得1层苦涩(浅蓝)情绪";
             Text_Requirement.text = "消耗体力:20";
@@ -62,7 +62,7 @@ public class CEOControl : MonoBehaviour
         //删除9 改为 说服-点名表扬
         else if (GC.CEOSkillNum == 9)
         {
-            SuccessLimit = 8;
+            SuccessLimit = 6;
             Text_Name.text = "点名表扬" + Target.Name;
             Text_SuccessContent.text = "使对方获得1层愉悦(浅黄)情绪";
             Text_Requirement.text = "消耗体力:20";
@@ -72,7 +72,7 @@ public class CEOControl : MonoBehaviour
         //删除10 改为 说服-激怒
         else if (GC.CEOSkillNum == 10)
         {
-            SuccessLimit = 8;
+            SuccessLimit = 6;
             Text_Name.text = "激怒" + Target.Name;
             Text_SuccessContent.text = "使对方获得1层反感(浅红)情绪";
             Text_Requirement.text = "消耗体力:20";

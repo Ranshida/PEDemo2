@@ -543,7 +543,6 @@ public class OfficeControl : MonoBehaviour
                     }
                     else if (OfficeMode == 5)
                     {
-                        GC.QC.Finish(11);
                         if (MajorSuccess == true)
                             GC.BM.Lottery(4);
                         else
