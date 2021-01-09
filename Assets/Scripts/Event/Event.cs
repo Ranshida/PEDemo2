@@ -682,9 +682,9 @@ public abstract class Event
         if (BonusType == 1)
         {
             if (GC.Morale > 80)
-                Value += 3;
+                Value += 4;
             else if (GC.Morale > 60)
-                Value += 1;
+                Value += 2;
             else if (GC.Morale < 40)
                 Value -= 2;
             else if (GC.Morale < 20)
@@ -11588,16 +11588,16 @@ public class Event3_1 : Event
     }
     public override bool SpecialCheck()
     {
-        if (Self.CurrentDep != null)
-        {
-            if (Self.CurrentDep.DepFaith <= 30)
-            {
+        //if (Self.CurrentDep != null)
+        //{
+        //    if (Self.CurrentDep.DepFaith <= 30)
+        //    {
                 if (EmpManager.Instance.FindColleague(Self).Contains(Target) == true)
                 {
                     return true;
                 }
-            }
-        }
+        //    }
+        //}
         return false;
     }
     public override int ExtraValue()
@@ -11669,16 +11669,16 @@ public class Event3_2 : Event
     }
     public override bool SpecialCheck()
     {
-        if (Self.CurrentDep != null)
-        {
-            if (Self.CurrentDep.DepFaith <= 30)
-            {
+        //if (Self.CurrentDep != null)
+        //{
+        //    if (Self.CurrentDep.DepFaith <= 30)
+        //    {
                 if (EmpManager.Instance.FindBoss(Self) == Target | EmpManager.Instance.FindBoss(Target) == Self)
                 {
                     return true;
                 }
-            }
-        }
+        //    }
+        //}
         return false;
     }
     public override int ExtraValue()
@@ -11764,14 +11764,14 @@ public class Event3_3 : Event
     }
     public override bool SpecialCheck()
     {
-        if (Self.CurrentDep != null)
-        {
-            if (Self.CurrentDep.DepFaith <= 30)
-            {
+        //if (Self.CurrentDep != null)
+        //{
+        //    if (Self.CurrentDep.DepFaith <= 30)
+        //    {
                     return true;
-            }
-        }
-        return false;
+        //    }
+        //}
+        //return false;
     }
     public override int ExtraValue()
     {
@@ -11837,14 +11837,14 @@ public class Event3_4 : Event
     }
     public override bool SpecialCheck()
     {
-        if (Self.CurrentDep != null)
-        {
-            if (Self.CurrentDep.DepFaith <= 30)
-            {
+        //if (Self.CurrentDep != null)
+        //{
+        //    if (Self.CurrentDep.DepFaith <= 30)
+        //    {
                 return true;
-            }
-        }
-        return false;
+        //    }
+        //}
+        //return false;
     }
     public override void EventFinish()
     {
@@ -11918,22 +11918,22 @@ public class Event3_5 : Event
     }
     public override bool SpecialCheck()
     {
-        if (Self.CurrentDep != null)
-        {
-            if (Self.CurrentDep.DepFaith >= 30)
-            {
-                if (Target.CurrentDep != null)
-                {
-                    if (Target.CurrentDep.DepFaith >= 30)
-                    {
+        //if (Self.CurrentDep != null)
+        //{
+        //    if (Self.CurrentDep.DepFaith >= 30)
+        //    {
+        //        if (Target.CurrentDep != null)
+        //        {
+        //            if (Target.CurrentDep.DepFaith >= 30)
+        //            {
                         if (EmpManager.Instance.FindColleague(Self).Contains(Target))
                         {
                             return true;
                         }
-                    }
-                }
-            }
-        }
+        //            }
+        //        }
+        //    }
+        //}
         return false;
     }
     public override int ExtraValue()
@@ -11989,7 +11989,7 @@ public class Event3_5 : Event
                 }
             }
         }
-        if (huiyishi)
+        if (false)//原本是判断是否存在会议室
         {
             ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "与同事" + Target.Name + "在会议室一起讨论了工作，";
             ResultText += "双方就难点达成共识，双方获得事件状态 顺利*1，所在部门获得充分讨论*1";
@@ -12028,22 +12028,22 @@ public class Event3_6 : Event
     }
     public override bool SpecialCheck()
     {
-        if (Self.CurrentDep != null)
-        {
-            if (Self.CurrentDep.DepFaith >= 30)
-            {
-                if (Target.CurrentDep != null)
-                {
-                    if (Target.CurrentDep.DepFaith >= 30)
-                    {
+        //if (Self.CurrentDep != null)
+        //{
+        //    if (Self.CurrentDep.DepFaith >= 30)
+        //    {
+        //        if (Target.CurrentDep != null)
+        //        {
+        //            if (Target.CurrentDep.DepFaith >= 30)
+        //            {
                         if (EmpManager.Instance.FindBoss(Self) == Target | EmpManager.Instance.FindBoss(Target) == Self)
                         {
                             return true;
                         }
-                    }
-                }
-            }
-        }
+        //            }
+        //        }
+        //    }
+        //}
         return false;
     }
     public override int ExtraValue()
@@ -12108,7 +12108,7 @@ public class Event3_6 : Event
                 }
             }
         }
-        if (huiyishi)
+        if (false)//原本是判断是否存在会议室
         {
             if (EmpManager.Instance.FindBoss(Self) == Target)
             {
@@ -12203,22 +12203,22 @@ public class Event3_7 : Event
     }
     public override bool SpecialCheck()
     {
-        if (Self.CurrentDep != null)
-        {
-            if (Self.CurrentDep.DepFaith >= 70)
-            {
-                if (Target.CurrentDep != null)
-                {
-                    if (Target.CurrentDep.DepFaith >= 70)
-                    {
+        //if (Self.CurrentDep != null)
+        //{
+        //    if (Self.CurrentDep.DepFaith >= 70)
+        //    {
+        //        if (Target.CurrentDep != null)
+        //        {
+                    //if (Target.CurrentDep.DepFaith >= 70)
+                    //{
                         if (EmpManager.Instance.FindBoss(Self) == Target | EmpManager.Instance.FindBoss(Target) == Self)
                         {
                             return true;
                         }
-                    }
-                }
-            }
-        }
+                    //}
+        //        }
+        //    }
+        //}
         return false;
     }
     public override int ExtraValue()
@@ -12282,7 +12282,7 @@ public class Event3_7 : Event
                 }
             }
         }
-        if (huiyishi)
+        if (false)//原本是判断是否存在会议室
         {
             if (EmpManager.Instance.FindBoss(Self) == Target)
             {
@@ -12344,22 +12344,22 @@ public class Event3_8 : Event
     }
     public override bool SpecialCheck()
     {
-        if (Self.CurrentDep != null)
-        {
-            if (Self.CurrentDep.DepFaith >= 70)
-            {
-                if (Target.CurrentDep != null)
-                {
-                    if (Target.CurrentDep.DepFaith >= 70)
-                    {
+        //if (Self.CurrentDep != null)
+        //{
+        //    if (Self.CurrentDep.DepFaith >= 70)
+        //    {
+        //        if (Target.CurrentDep != null)
+        //        {
+        //            if (Target.CurrentDep.DepFaith >= 70)
+        //            {
                         if (EmpManager.Instance.FindColleague(Self).Contains(Target) == true)
                         {
                             return true;
                         }
-                    }
-                }
-            }
-        }
+        //            }
+        //        }
+        //    }
+        //}
         return false;
     }
     public override int ExtraValue()
@@ -12423,7 +12423,7 @@ public class Event3_8 : Event
                 }
             }
         }
-        if (huiyishi)
+        if (false)//原本是判断是否存在会议室
         {
             if (Target.CurrentDep != null)
                 Target.CurrentDep.AddPerk(new Perk71(null));
