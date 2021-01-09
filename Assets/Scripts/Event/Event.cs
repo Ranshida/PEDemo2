@@ -11644,7 +11644,7 @@ public class Event3_1 : Event
             Target.InfoDetail.AddPerk(new Perk49(Target), true);
         }
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "与同事" + Target.Name + "对于某个工作细节产生分歧，";
-        ResultText += "双方互相不停指责,双方获得事件状态 悔恨*4，双方心力下降10点";
+        ResultText += "双方互相不停指责,获得事件状态 悔恨*4，双方心力下降10点";
         GC.CreateMessage(Self.Name + "与同事" + Target.Name + "对于某个工作细节\n产生分歧，互相不停指责");
     }
     public override void Success(float Posb)
@@ -11722,7 +11722,7 @@ public class Event3_2 : Event
         for (int i = 0; i < 4; i++)
         {
             Self.InfoDetail.AddPerk(new Perk49(Self), true);
-            Target.InfoDetail.AddPerk(new Perk49(Target), true);
+            //Target.InfoDetail.AddPerk(new Perk49(Target), true);
         }
         if (EmpManager.Instance.FindBoss(Self) == Target)
         {
@@ -11732,7 +11732,7 @@ public class Event3_2 : Event
         {
             ResultText = "在" + SelfEntity.StandGridName() + "，下级" + Target.Name + "向上司" + Self.Name + "反应当前工作问题，";
         }
-        ResultText += "上司将责任完全推给下级，双方获得事件状态 悔恨*4，双方心力下降10点";
+        ResultText += "上司将责任完全推给下级，获得事件状态 悔恨*4，双方心力下降10点";
         GC.CreateMessage(Self.Name+"与"+Target.Name+"互相甩锅");
     }
     public override void Success(float Posb)
@@ -11898,7 +11898,7 @@ public class Event3_4 : Event
         Self.Mentality -= 3;
         Target.Mentality -= 3;
         ResultText = "在" + SelfEntity.StandGridName() + "，由于" + Self.Name + "进入一种狂想的状态，向附近的同事" + Target.Name + "说个不停，";
-        ResultText += Target.Name + "建议"+Self.Name+ "去看医生双方获得事件状态 悔恨*3，双方心力下降3点";
+        ResultText += Target.Name + "建议"+Self.Name+ "去看医生，获得事件状态 悔恨*3，双方心力下降3点";
         GC.CreateMessage(Self.Name + "产生了狂想");
     }
 }
@@ -11967,7 +11967,6 @@ public class Event3_5 : Event
     {
         base.Success(Posb);
         Self.InfoDetail.AddPerk(new Perk47(Self), true);
-        Target.InfoDetail.AddPerk(new Perk47(Target), true);
         bool huiyishi = false;
         for (int i = 0; i < GC.CurrentDeps.Count; i++)
         {
@@ -11992,7 +11991,7 @@ public class Event3_5 : Event
         if (false)//原本是判断是否存在会议室
         {
             ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "与同事" + Target.Name + "在会议室一起讨论了工作，";
-            ResultText += "双方就难点达成共识，双方获得事件状态 顺利*1，所在部门获得充分讨论*1";
+            ResultText += "双方就难点达成共识，获得事件状态 顺利*1，所在部门获得充分讨论*1";
             GC.CreateMessage(Self.Name + "与同事" + Target.Name + "就难点达成共识");
             if (Target.CurrentDep != null)
                 Target.CurrentDep.AddPerk(new Perk71(null));
@@ -12000,7 +11999,7 @@ public class Event3_5 : Event
         else
         {
             ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "与同事" + Target.Name + "一起讨论了工作，";
-            ResultText += "双方就难点达成共识，双方获得事件状态 顺利*1";
+            ResultText += "双方就难点达成共识，获得事件状态 顺利*1";
             GC.CreateMessage(Self.Name + "与同事" + Target.Name + "就难点达成共识");
         }
     }
@@ -12085,7 +12084,7 @@ public class Event3_6 : Event
         for (int i = 0; i < 2; i++)
         {
             Self.InfoDetail.AddPerk(new Perk47(Self), true);
-            Target.InfoDetail.AddPerk(new Perk47(Target), true);
+            //Target.InfoDetail.AddPerk(new Perk47(Target), true);
         }
         bool huiyishi = false;
         for (int i = 0; i < GC.CurrentDeps.Count; i++)
@@ -12124,14 +12123,14 @@ public class Event3_6 : Event
             {
                 if (Self.CurrentDep != null)
                     Self.CurrentDep.AddPerk(new Perk71(null));
-                ResultText += "下级" + Self.Name + "表示理解并认可，双方获得事件状态 顺利*2，所在部门获得充分讨论*1";
+                ResultText += "下级" + Self.Name + "表示理解并认可，获得事件状态 顺利*2，所在部门获得充分讨论*1";
                 shuchu += "给" + Self.Name + "分配工作并取得了认可";
             }
             else if (EmpManager.Instance.FindBoss(Target) == Self)
             {
                 if (Target.CurrentDep != null)
                     Target.CurrentDep.AddPerk(new Perk71(null));
-                ResultText += "下级" + Target.Name + "表示理解并认可，双方获得事件状态 顺利*2，所在部门获得充分讨论*1";
+                ResultText += "下级" + Target.Name + "表示理解并认可，获得事件状态 顺利*2，所在部门获得充分讨论*1";
                 shuchu += "给" + Target.Name + "分配工作并取得了认可";
             }
         }
@@ -12149,12 +12148,12 @@ public class Event3_6 : Event
             }
             if (EmpManager.Instance.FindBoss(Self) == Target)
             {
-                ResultText += "下级" + Self.Name + "表示理解并认可，双方获得事件状态 顺利*2";
+                ResultText += "下级" + Self.Name + "表示理解并认可，获得事件状态 顺利*2";
                 shuchu += "给" + Self.Name + "分配工作并取得了认可";
             }
             else if (EmpManager.Instance.FindBoss(Target) == Self)
             {
-                ResultText += "下级" + Target.Name + "表示理解并认可，双方获得事件状态 顺利*2";
+                ResultText += "下级" + Target.Name + "表示理解并认可，获得事件状态 顺利*2";
                 shuchu += "给" + Target.Name + "分配工作并取得了认可";
             }
         }
@@ -12259,7 +12258,7 @@ public class Event3_7 : Event
         for (int i = 0; i < 4; i++)
         {
             Self.InfoDetail.AddPerk(new Perk47(Self), true);
-            Target.InfoDetail.AddPerk(new Perk47(Target), true);
+            //Target.InfoDetail.AddPerk(new Perk47(Target), true);
         }
         bool huiyishi = false;
         for (int i = 0; i < GC.CurrentDeps.Count; i++)
@@ -12296,7 +12295,7 @@ public class Event3_7 : Event
                     Target.CurrentDep.AddPerk(new Perk71(null));
                 ResultText = "上司" + Self.Name + "约下级" + Target.Name + "在会议室商讨工作流程";
             }
-            ResultText += "双方进行极富成效地流程梳理！双方获得事件状态 顺利*4，下级所在部门获得充分讨论*1";
+            ResultText += "双方进行极富成效地流程梳理！获得事件状态 顺利*4，下级所在部门获得充分讨论*1";
             GC.CreateMessage(Self.Name + "与" + Target.Name + "进行了极富成效地流程梳理");
         }
         else
@@ -12309,7 +12308,7 @@ public class Event3_7 : Event
             {
                 ResultText = "上司" + Self.Name + "约下级" + Target.Name + "商讨工作流程，";
             }
-            ResultText += "双方进行极富成效地流程梳理！双方获得事件状态 顺利*4";
+            ResultText += "双方进行极富成效地流程梳理！获得事件状态 顺利*4";
             GC.CreateMessage(Self.Name + "与" + Target.Name + "进行了极富成效地流程梳理");
         }
     }
@@ -12400,7 +12399,7 @@ public class Event3_8 : Event
         for (int i = 0; i < 2; i++)
         {
             Self.InfoDetail.AddPerk(new Perk47(Self), true);
-            Target.InfoDetail.AddPerk(new Perk47(Target), true);
+            //Target.InfoDetail.AddPerk(new Perk47(Target), true);
         }
         bool huiyishi = false;
         for (int i = 0; i < GC.CurrentDeps.Count; i++)
@@ -12428,13 +12427,13 @@ public class Event3_8 : Event
             if (Target.CurrentDep != null)
                 Target.CurrentDep.AddPerk(new Perk71(null));
             ResultText = Self.Name + "约同事" + Target.Name + "在会议室商量工作计划";
-            ResultText += "双方分工明确，双方获得事件状态 顺利*2，所在部门获得充分讨论*1";
+            ResultText += "双方分工明确，获得事件状态 顺利*2，所在部门获得充分讨论*1";
             GC.CreateMessage(Self.Name + "约同事" + Target.Name + "\n在会议室商量工作计划\n双方分工明确");
         }
         else
         {
             ResultText = Self.Name + "约同事" + Target.Name + "商量工作计划";
-            ResultText += "双方分工明确，双方获得事件状态 顺利*2";
+            ResultText += "双方分工明确，获得事件状态 顺利*2";
             GC.CreateMessage(Self.Name + "约同事" + Target.Name + "\n在会议室商量工作计划\n双方分工明确");
         }
     }
