@@ -693,13 +693,13 @@ public abstract class Event
         else if (BonusType == 2)
         {
             if (GC.Morale > 80)
-                Value -= 3;
+                Value += 2;
             else if (GC.Morale > 60)
-                Value -= 1;
-            else if (GC.Morale < 40)
                 Value += 1;
+            else if (GC.Morale < 40)
+                Value -= 2;
             else if (GC.Morale < 20)
-                Value += 3;
+                Value -= 4;
         }
         else if (BonusType == 3)
         {
@@ -14155,7 +14155,7 @@ public class Event3_26 : Event
     public override int ExtraValue()
     {
         int Extra = 0;
-        Extra += CRBonus() + PerksBonus();
+        Extra += CRBonus() + PerksBonus()+MoraleBonus(2);
         return Extra;
     }
     public override int FindResult()
@@ -14238,7 +14238,7 @@ public class Event3_27 : Event
     public override int ExtraValue()
     {
         int Extra = 0;
-        Extra += CRBonus() + PerksBonus();
+        Extra += CRBonus() + PerksBonus() + MoraleBonus(2);
         return Extra;
     }
     public override int FindResult()
@@ -14407,7 +14407,7 @@ public class Event3_29 : Event
     public override int ExtraValue()
     {
         int Extra = 0;
-        Extra += CRBonus() + PerksBonus();
+        Extra += CRBonus() + PerksBonus() + MoraleBonus(2);
         return Extra;
     }
     public override int FindResult()
@@ -14492,7 +14492,7 @@ public class Event3_30 : Event
     public override int ExtraValue()
     {
         int Extra = 0;
-        Extra += CRBonus() + PerksBonus();
+        Extra += CRBonus() + PerksBonus() + MoraleBonus(2);
         return Extra;
     }
     public override int FindResult()
@@ -14580,7 +14580,7 @@ public class Event3_31 : Event
     public override int ExtraValue()
     {
         int Extra = 0;
-        Extra += CRBonus() + PerksBonus();
+        Extra += CRBonus() + PerksBonus() + MoraleBonus(2);
         return Extra;
     }
     public override int FindResult()
@@ -14665,7 +14665,7 @@ public class Event3_32 : Event
     public override int ExtraValue()
     {
         int Extra = 0;
-        Extra += CRBonus() + PerksBonus();
+        Extra += CRBonus() + PerksBonus() + MoraleBonus(2);
         return Extra;
     }
     public override int FindResult()
@@ -14749,7 +14749,7 @@ public class Event3_33 : Event
     public override int ExtraValue()
     {
         int Extra = 0;
-        Extra += CRBonus() + PerksBonus();
+        Extra += CRBonus() + PerksBonus() + MoraleBonus(2);
         return Extra;
     }
     public override int FindResult()
@@ -14837,7 +14837,7 @@ public class Event3_34 : Event
     public override int ExtraValue()
     {
         int Extra = 0;
-        Extra += CRBonus() + PerksBonus();
+        Extra += CRBonus() + PerksBonus() + MoraleBonus(2);
         return Extra;
     }
     public override int FindResult()
@@ -14924,7 +14924,7 @@ public class Event3_35 : Event
     public override int ExtraValue()
     {
         int Extra = 0;
-        Extra += CRBonus() + PerksBonus();
+        Extra += CRBonus() + PerksBonus() + MoraleBonus(2);
         return Extra;
     }
     public override int FindResult()
@@ -15012,7 +15012,7 @@ public class Event3_36 : Event
     public override int ExtraValue()
     {
         int Extra = 0;
-        Extra += CRBonus() + PerksBonus();
+        Extra += CRBonus() + PerksBonus() + MoraleBonus(2);
         return Extra;
     }
     public override int FindResult()
@@ -15099,7 +15099,7 @@ public class Event3_37 : Event
     public override int ExtraValue()
     {
         int Extra = 0;
-        Extra += CRBonus() + PerksBonus();
+        Extra += CRBonus() + PerksBonus() + MoraleBonus(2);
         return Extra;
     }
     public override int FindResult()
@@ -15229,7 +15229,7 @@ public class Event3_38 : Event
     public override int ExtraValue()
     {
         int Extra = 0;
-        Extra += CRBonus() + PerksBonus();
+        Extra += CRBonus() + PerksBonus() + MoraleBonus(2);
         return Extra;
     }
     public override int FindResult()
@@ -15348,7 +15348,7 @@ public class Event3_39 : Event
     public override int ExtraValue()
     {
         int Extra = 0;
-        Extra += CRBonus() + PerksBonus();
+        Extra += CRBonus() + PerksBonus() + MoraleBonus(2);
         return Extra;
     }
     public override int FindResult()
@@ -15451,7 +15451,7 @@ public class Event3_40 : Event
     public override int ExtraValue()
     {
         int Extra = 0;
-        Extra += CRBonus() + PerksBonus();
+        Extra += CRBonus() + PerksBonus() + MoraleBonus(2);
         return Extra;
     }
     public override int FindResult()
@@ -15551,7 +15551,7 @@ public class Event3_41 : Event
     public override int ExtraValue()
     {
         int Extra = 0;
-        Extra += CRBonus() + PerksBonus();
+        Extra += CRBonus() + PerksBonus() + MoraleBonus(2);
         return Extra;
     }
     public override int FindResult()
@@ -15656,7 +15656,7 @@ public class Event3_42 : JudgeEvent
     public override int ExtraValue()
     {
         int Extra = 0;
-        Extra += CRBonus() + PerksBonus();
+        Extra += CRBonus() + PerksBonus() + MoraleBonus(2);
         return Extra;
     }
     public override int FindResult()
@@ -15772,7 +15772,7 @@ public class Event3_43 : Event
     public override int ExtraValue()
     {
         int Extra = 0;
-        Extra += CRBonus() + PerksBonus();
+        Extra += CRBonus() + PerksBonus() + MoraleBonus(2);
         return Extra;
     }
     public override int FindResult()
@@ -15904,7 +15904,7 @@ public class Event3_44 : Event
     public override int ExtraValue()
     {
         int Extra = 0;
-        Extra += CRBonus() + PerksBonus();
+        Extra += CRBonus() + PerksBonus() + MoraleBonus(2);
         return Extra;
     }
     public override int FindResult()
@@ -15967,7 +15967,7 @@ public class Event3_45 : Event
     public override int ExtraValue()
     {
         int Extra = 0;
-        Extra += CRBonus() + PerksBonus();
+        Extra += CRBonus() + PerksBonus() + MoraleBonus(2);
         return Extra;
     }
     public override int FindResult()
@@ -16015,7 +16015,7 @@ public class Event3_46 : Event
     public override int ExtraValue()
     {
         int Extra = 0;
-        Extra += CRBonus() + PerksBonus();
+        Extra += CRBonus() + PerksBonus() + MoraleBonus(2);
         return Extra;
     }
     public override int FindResult()
@@ -16067,7 +16067,7 @@ public class Event3_47 : Event
     public override int ExtraValue()
     {
         int Extra = 0;
-        Extra += CRBonus() + PerksBonus();
+        Extra += CRBonus() + PerksBonus() + MoraleBonus(2);
         return Extra;
     }
     public override int FindResult()
@@ -16115,7 +16115,7 @@ public class Event3_48 : Event
     public override int ExtraValue()
     {
         int Extra = 0;
-        Extra += CRBonus() + PerksBonus();
+        Extra += CRBonus() + PerksBonus() + MoraleBonus(2);
         return Extra;
     }
     public override int FindResult()
