@@ -308,7 +308,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: edea084594d9b7f4e886f5ed251ffc70, type: 2}
+  - {fileID: 2100000, guid: 0d6cfd33512de1848993b260e3feba2e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -491,9 +491,13 @@ MonoBehaviour:
   Function_A: "\u53EF\u884C\u6027\u8C03\u7814"
   Require_A: "\u6280\u672F"
   Description_A: "\u5B8C\u6210\u53EF\u884C\u6027\u8C03\u7814\uFF0C\u7528\u4E8E\u89E3\u9501\u79D1\u6280"
+  Time_A: 
+  Result_A: 
   Function_B: "\u4EA7\u54C1\u7814\u7A76"
   Require_B: "\u4EA7\u54C1"
   Description_B: "\u5B8C\u6210\u4EA7\u54C1\u7814\u7A76\uFF0C\u7528\u4E8E\u89E3\u9501\u79D1\u6280"
+  Time_B: 
+  Result_B: 
   Function_C: /
   Require_C: /
   Description_C: /
@@ -505,15 +509,16 @@ MonoBehaviour:
   effectValue: 1
   StaminaRequest: 0
   Type: 6
+  Str_Type: 
   Pay: 0
-  BasicBuilding: 0
+  CanLottery: 0
+  CanDismantle: 1
   ContainsGrids: []
   Department: {fileID: 0}
   Office: {fileID: 0}
   effect:
     CurrentBuilding: {fileID: -2279394563660855739}
     AffectedBuildings: []
-  Text_DepName: {fileID: 0}
   WorkPos:
   - {fileID: 4300382068836437440}
   - {fileID: 8507360804254101020}
