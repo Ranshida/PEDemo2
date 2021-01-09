@@ -225,13 +225,36 @@ public class Employee
         get { return mentality; }
         set
         {
+            //低心力的效果
+            if (InfoDetail != null)
+            {
+                if (mentality >= 20 && value < 20)
+                {
+                    InfoDetail.AddPerk(new Perk119(this));
+
+                    if(CurrentDep == null || GameControl.Instance.SC.FightStart == true)
+                        QuestControl.Instance.Init(Name + "出现心力低下现象\n可以调节所在部门的信念或使用CEO技能“安抚”");
+                    else if (CurrentDep != null)
+                    {
+                        System.Action AgreeAction = () => { CurrentDep.ShowEmpInfoPanel(); };
+                        QuestControl.Instance.Init(Name + "出现心力低下现象\n可以调节所在部门的信念或使用CEO技能“安抚”\n点击“确认”" +
+                            "跳转至员工所在部门详细面板", AgreeAction);
+                    }
+                }
+                else if (mentality < 20 && value >= 20)
+                {
+                    InfoDetail.RemovePerk(119);
+                }
+            }
+
             mentality = value;
             if (mentality > MentalityLimit)
                 mentality = MentalityLimit;
             else if (mentality <= 0)
             {
                 mentality = 0;
-                Exhausted();
+                if (InfoA.GC.SC.FightStart == false)
+                    Exhausted();
             }
             if (mentality < 50 && WantLeave == true)
                 InfoA.Fire();
@@ -1958,6 +1981,18 @@ public class Employee
     //心力爆炸
     public void Exhausted()
     {
+        if (isCEO == false)
+        {
+            System.Action AgreeAction = () =>
+            {
+                MoneyRequest();
+            };
+            System.Action RefuseAction = () =>
+            {
+                InfoDetail.Fire(false);
+            };
+            QuestControl.Instance.Init(Name + "心力爆炸产生了崩溃，向您索赔金钱1000，如果不接受，该员工将会离职", AgreeAction, RefuseAction);
+        }
         Mentality += 50;
         if (ExhaustedCount.Count >= 4)
         {
@@ -1986,6 +2021,38 @@ public class Employee
         ExhaustedCount.Add(num);
         InfoDetail.GC.CreateMessage(Name + "心力爆炸,获得了" + InfoDetail.PerksInfo[InfoDetail.PerksInfo.Count - 1].CurrentPerk.Name);
         InfoDetail.AddHistory(Name + "心力爆炸,获得了" + InfoDetail.PerksInfo[InfoDetail.PerksInfo.Count - 1].CurrentPerk.Name);
+    }
+
+    //心力爆炸金钱需求
+    public void MoneyRequest()
+    {
+        if(GameControl.Instance.Money >= 1000)
+        {
+            GameControl.Instance.Money -= 1000;
+        }
+        else
+        {
+            System.Action AgreeAction = () =>
+            {
+                MoneyRequest();
+            };
+            System.Action RefuseAction = () =>
+            {
+                InfoDetail.Fire(false);
+            };
+            QuestControl.Instance.Init(Name + "心力爆炸产生了崩溃，向您索赔金钱1000，如果不接受，该员工将会离职", AgreeAction, RefuseAction);
+            GameControl.Instance.CreateMessage("金钱不足!");
+        }
+    }
+
+    public void DestroyAllInfos()
+    {
+        if (InfoA != null)
+            MonoBehaviour.Destroy(InfoA.gameObject);
+        if(InfoB != null)
+            MonoBehaviour.Destroy(InfoB.gameObject);
+        if (InfoDetail != null)
+            MonoBehaviour.Destroy(InfoDetail.gameObject);
     }
 }
 

@@ -1350,7 +1350,7 @@ public class Perk48 : Perk
     {
         Name = "顺利-进步";
         Description = "每层进步+5% 部门成功率,持续到当前业务结束";
-        TimeLeft = -1;//持续到当前业务结束
+        TimeLeft = 64;//持续到当前业务结束(旧，此功能已删)
         Num = 48;
         canStack = true;
     }
@@ -1400,7 +1400,7 @@ public class Perk50 : Perk
     {
         Name = "悔恨-混乱";
         Description = "每层混乱-5% 部门成功率,持续到当前业务结束";
-        TimeLeft = -1;//持续到当前业务结束
+        TimeLeft = 64;//持续到当前业务结束(旧，此功能已删)
         Num = 50;
         canStack = true;
     }
@@ -2398,6 +2398,19 @@ public class Perk117 : Perk
     {
         base.RemoveEffect();
         TargetDep.Efficiency -= 0.45f;
+    }
+}
+
+//心力低下
+public class Perk119 : Perk
+{
+    public Perk119(Employee Emp) : base(Emp)
+    {
+        Name = "心力低下";
+        Description = "员工心力<20";
+        TimeLeft = -1;
+        Num = 119;
+        canStack = false;
     }
 }
 

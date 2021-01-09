@@ -99,7 +99,7 @@ public class GameControl : MonoBehaviour
         OfficeModeBuildingOptionButton, OfficeModeTalkOptionButton, DepModeSelectPanel, DepSkillConfirmPanel, SkillTreeSelectPanel,
         TrainingPanel;
     public Text Text_Time, Text_TechResource, Text_MarketResource, Text_MarketResource2, Text_ProductResource, Text_Money, Text_Stamina, Text_Mentality, 
-        Text_Morale, Text_DepMode1, Text_DepMode2, Text_DepSkillDescribe;
+        Text_Morale, Text_DepMode1, Text_DepMode2, Text_DepSkillDescribe, Text_WarTime, Text_MobTime;
     public Toggle WorkOvertimeToggle;
     public SkillControl SC;
     [HideInInspector] public UnityEvent DailyEvent, WeeklyEvent, MonthlyEvent, HourEvent, YearEvent;
@@ -198,9 +198,12 @@ public class GameControl : MonoBehaviour
                 if (MobTime == 0)
                 {
                     SC.gameObject.SetActive(true);
+                    SC.FinishSign.SetActive(false);
                     SC.SkillSetButton.interactable = false;
                     AskPause(SC);
+                    MobTime = 192;
                 }
+                Text_MobTime.text = "距离下次头脑风暴还剩" + MobTime + "时";
             }
         }
         //加班时间只进行工作和事件计算
@@ -880,6 +883,7 @@ public class GameControl : MonoBehaviour
             if (CEOSkillNum == 1)
             {
                 depControl.AddPerk(new Perk117(null));
+                QC.Finish(5);
                 new EmpBuff(CC.CEO, 16, -45);
                 ResetSelectMode();
             }
@@ -1150,6 +1154,7 @@ public class GameControl : MonoBehaviour
                 CurrentOffice.Text_OfficeMode.text = "办公室模式:管理";
                 CurrentOffice.MaxProgress = 32;
                 CurrentOffice.building.effectValue = 7;
+                QC.Finish(4);
             }
             else if (num == 4)
             {

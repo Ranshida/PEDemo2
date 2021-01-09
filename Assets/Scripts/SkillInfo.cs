@@ -170,6 +170,11 @@ public class SkillInfo : MonoBehaviour
 
     public void SelectSkill()
     {
+        if (empInfo.emp.Mentality <= 0)
+        {
+            GameControl.Instance.CreateMessage("该员工已退场");
+            return;
+        }
         if (SC.SCSelectMode != 2)
         {
             SC.CurrentSkill = this;

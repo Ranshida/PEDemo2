@@ -35,9 +35,10 @@ public class SkillControl : MonoBehaviour
     public int MobLevel = 1;//当前动员等级
     public bool NoStaminaCost = false; //下一个技能无消耗buff
     public bool DoubleCost = false; //下一个技能消耗翻倍buff
+    public bool FightStart = false;//确定头脑风暴是否已经开始
 
     public SkillInfo CurrentSkill, SkillInfoPrefab, SkillInfoPrefab2, TargetSkill;//Prefab为技能预设选择,Prefab2为战斗中技能选择
-    public GameObject ConfirmPanel, EventPanel, SkillSelectPanel, BossPanel, VictoryPanel, SelectConfirmButton, PresetPanel;
+    public GameObject ConfirmPanel, EventPanel, SkillSelectPanel, BossPanel, VictoryPanel, SelectConfirmButton, PresetPanel, FinishSign;
     public GameControl GC;
     public DiceControl DicePrefab, TargetDice;
     public Transform DiceContent, SkillContent, SkillSelectContent, EmpContent;
@@ -54,7 +55,7 @@ public class SkillControl : MonoBehaviour
     public SkillInfo[] CSkillSetA = new SkillInfo[6], CSkillSetB = new SkillInfo[6], CSkillSetC = new SkillInfo[6];
 
     int DiceNum, totalValue, RequirePoint, BossLevel, NextBossSkill, SetNum;
-    bool FightStart = false, BossDefeat = false;
+    bool BossDefeat = false;
 
     Employee TargetEmployee; //Boss目标员工
 
@@ -172,7 +173,7 @@ public class SkillControl : MonoBehaviour
                 DiceNum = 6;
             CreateDice(DiceNum);
             FightStart = true;
-            RollButton.interactable = false;
+            RollButton.gameObject.SetActive(false);
         }
         BossPanel.SetActive(true);
         RandomBossSkill();
@@ -205,6 +206,7 @@ public class SkillControl : MonoBehaviour
     //清空面板，重置各项数值
     public void ClearPanel()
     {
+        GC.QC.Finish(1);
         //直接退出的Debuff
         if(FightStart == false)
         {
@@ -236,11 +238,14 @@ public class SkillControl : MonoBehaviour
             TotalSkills[i].skill.StaminaExtra = 0;
             Destroy(TotalSkills[i].gameObject);
         }
-        //重置信心
+        //重置信心和心力爆炸检测
         foreach(EmpInfo e in SelectedEmps)
         {
             if (e.emp != null)
+            {
                 e.emp.Confidence = 0;
+                e.emp.Mentality += 0;//进行心力爆炸检测
+            }
         }
         if (CurrentPoint >= RequirePoint)
         {
@@ -271,12 +276,11 @@ public class SkillControl : MonoBehaviour
         ExtraDiceNum = 0;
         DiceSelectType = 0;
 
-        RollButton.interactable = true;
+        RollButton.gameObject.SetActive(true);
         EndButton.interactable = true;
         BossPanel.SetActive(false);
         VictoryPanel.SetActive(false);
         PresetPanel.SetActive(false);
-        GC.MobTime = 192;
         GC.RemovePause(this);
         this.gameObject.SetActive(false);
     }
@@ -667,11 +671,13 @@ public class SkillControl : MonoBehaviour
         if (TurnLeft == 0)
         {
             EndButton.interactable = true;
+            FinishSign.SetActive(true);
             SkillSetButton.interactable = true;
         }
         else
         { 
             EndButton.interactable = false;
+            FinishSign.SetActive(false);
             SkillSetButton.interactable = false;
         }
         for (int i = 0; i < Dices.Count; i++)

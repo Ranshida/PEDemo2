@@ -135,6 +135,27 @@ public class BuildingEffect
     {
         BuildingType T = CurrentBuilding.Type;
         BuildingType T2 = building.Type;
+        if (T == BuildingType.CEO办公室 || T == BuildingType.高管办公室)
+        {
+            if ((building.Department != null && building.Department.CommandingOffice == CurrentBuilding.Office) ||
+                building.Office != null && building.Office.CommandingOffice == CurrentBuilding.Office)
+            {
+                foreach (DepControl dep in CurrentBuilding.Office.ControledDeps)
+                {
+                    dep.CommandingOffice = null;
+                    dep.canWork = false;
+                    dep.OfficeWarning.SetActive(true);
+                }
+                foreach (OfficeControl office in CurrentBuilding.Office.ControledOffices)
+                {
+                    office.CommandingOffice = null;
+                    office.CanWork = false;
+                    office.OfficeWarning.SetActive(true);
+                }
+                CurrentBuilding.Office.ControledOffices.Clear();
+                CurrentBuilding.Office.ControledDeps.Clear();
+            }
+        }
         if (T == BuildingType.CEO办公室)
         {
             if (building.Department != null)

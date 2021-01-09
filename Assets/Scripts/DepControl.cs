@@ -123,7 +123,7 @@ public class DepControl : MonoBehaviour
     private int CurrentFinishedTaskNum = 0, PreFinishedTaskNum = 0, NoEmpTime = 0;
     private bool NoEmp;
     private bool DetailPanelOpened = false;
-    private bool CheatMode = false;
+    private bool CheatMode = false, TipShowed = false;
 
     public Transform EmpContent, PerkContent, EmpPanel, LabPanel, SRateDetailPanel;
     public GameObject OfficeWarning;
@@ -286,7 +286,14 @@ public class DepControl : MonoBehaviour
             if (building.Type == BuildingType.技术部门)
             {
                 if (GC.FinishedTask[6] > 0)
+                {
                     SpProgress += Pp;
+                    QuestControl.Instance.Finish(2);
+                }
+            }
+            else if (building.Type == BuildingType.产品部门)
+            {
+                QuestControl.Instance.Finish(10);
             }
             else if (building.Type == BuildingType.公关营销部)
             {
@@ -426,11 +433,18 @@ public class DepControl : MonoBehaviour
                         //大失败
                         GC.CreateMessage(Text_DepName.text + " 工作中发生重大失误");
                         AddPerk(new Perk105(null));
+                        GC.QC.Init(Text_DepName.text + "发生重大失误!\n(成功率:" + Mathf.Round(CountSuccessRate(building.effectValue) * 100) +
+                            "% 重大失误率:" + ((DepBaseMajorFailureRate + GC.SC.ExtraMajorFailureRate) * 100) + "%)\n部门信念严重降低");
                     }
                     else
                     {
                         //失败
                         GC.CreateMessage(Text_DepName.text + " 工作失败");
+                        if(TipShowed == false)
+                        {
+                            TipShowed = true;
+                            GC.QC.Init(Text_DepName.text + "业务生产失败!\n(成功率:" + Mathf.Round(CountSuccessRate(building.effectValue) * 100) + "%)");
+                        }
                     }
                 }
                 RemoveSpecialBuffs();
@@ -1816,7 +1830,7 @@ public class DepControl : MonoBehaviour
         List<Perk> PerkList = new List<Perk>();
         foreach(PerkInfo perk in CurrentPerks)
         {
-            if (perk.CurrentPerk.Num == 48 || perk.CurrentPerk.Num == 50 || perk.CurrentPerk.Num == 71)
+            if (perk.CurrentPerk.Num == 71)
                 PerkList.Add(perk.CurrentPerk);
         }
         if (PerkList.Count > 0)

@@ -54,6 +54,9 @@ public class HireControl : MonoBehaviour
                 }
                 GC.CurrentEmpInfo = HireInfos[i];
                 SetInfoPanel();
+                //Skill NewSkill = new Skill32();
+                //NewSkill.TargetEmp = GC.CurrentEmpInfo.emp;
+                //GC.CurrentEmpInfo.emp.InfoDetail.AddSkill(NewSkill);
                 GC.CurrentEmpInfo.emp.InfoA.transform.parent = GC.StandbyContent;
                 if (i == 0)
                 {

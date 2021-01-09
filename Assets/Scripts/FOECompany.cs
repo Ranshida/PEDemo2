@@ -43,12 +43,12 @@ public class FOECompany : MonoBehaviour
         if (Level == 0)
         {
             Text_Status.text += "--";
-            Text_Status.text += "\n升级还需积分:" + (5 - LevelPoint);
+            Text_Status.text += "\n升级还需积分:" + (10 - LevelPoint);
         }
         else if (Level == 1)
         {
             Text_Status.text += "天使轮";
-            Text_Status.text += "\n升级还需积分:" + (10 - LevelPoint);
+            Text_Status.text += "\n升级还需积分:" + (15 - LevelPoint);
         }
         else if (Level == 2)
         {
@@ -148,7 +148,7 @@ public class FOECompany : MonoBehaviour
         //因为积分不会以此获得很多所以不用进行多级检测
         if(Level == 0)
         {
-            if (LevelPoint >= 5)
+            if (LevelPoint >= 10)
             {
                 Level += 1;
                 LevelPoint -= 5;
@@ -158,7 +158,7 @@ public class FOECompany : MonoBehaviour
         }
         else if (Level == 1)
         {
-            if (LevelPoint >= 10)
+            if (LevelPoint >= 15)
             {
                 Level += 1;
                 LevelPoint -= 10;
@@ -263,32 +263,32 @@ public class FOECompany : MonoBehaviour
 
         if (Level == 0)
         {
-            ResourceA = 20;
+            ResourceA = 15;
             ResourceB = 0;
         }
         else if (Level == 1)
         {
-            ResourceA = 30;
+            ResourceA = 20;
             ResourceB = 10;
         }
         else if (Level == 2)
         {
-            ResourceA = 40;
+            ResourceA = 30;
             ResourceB = 20;
         }
         else if (Level == 3)
         {
-            ResourceA = 70;
+            ResourceA = 60;
             ResourceB = 30;
         }
         else if (Level == 4)
         {
-            ResourceA = 90;
+            ResourceA = 80;
             ResourceB = 60;
         }
         else if (Level == 5)
         {
-            ResourceA = 110;
+            ResourceA = 100;
             ResourceB = 90;
         }
     }

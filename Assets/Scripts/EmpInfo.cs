@@ -9,6 +9,7 @@ public class EmpInfo : MonoBehaviour
 
     public Employee emp;
     public GameControl GC;
+    public GameObject MobDownSign;
     public Button HireButton, MoveButton, FireButton;
     public Text Text_Name, Text_Mentality, Text_Stamina, Text_Skill1, Text_Skill2, Text_Skill3,  Text_Ability, Text_Age;
     public Text Text_DepName, Text_Observation, Text_Tenacity, Text_Strength, Text_Manage, Text_HR, Text_Finance, Text_Decision,
@@ -55,6 +56,13 @@ public class EmpInfo : MonoBehaviour
                     Text_DepName.text = emp.CurrentOffice.Text_OfficeName.text;
                 else
                     Text_DepName.text = "无";
+                if(MobDownSign != null)
+                {
+                    if (emp.Mentality <= 0)
+                        MobDownSign.SetActive(true);
+                    else
+                        MobDownSign.SetActive(false);
+                }
             }
             //雇佣和详细面板通用部分
             else
@@ -188,6 +196,7 @@ public class EmpInfo : MonoBehaviour
         GC.CurrentEmpInfo = this;
         GC.SelectMode = 1;
         GC.ShowDepSelectPanel(emp.Type);
+        GC.QC.Finish(8);
     }
     public void StartMove()
     {
@@ -202,16 +211,14 @@ public class EmpInfo : MonoBehaviour
             GC.SC.InitEmpInfo(emp);
     }
 
-    public void Fire()
+    public void Fire(bool NeedVote = true)
     {
         //不能删CEO
         if (emp.isCEO == true)
             return;
-
         //会议未通过不能开除
-        if (GC.EC.ManagerVoteCheck(emp, true, true) == false)
+        if (NeedVote == true && GC.EC.ManagerVoteCheck(emp, true, true) == false)
             return;
-
         foreach (PerkInfo perk in emp.InfoDetail.PerksInfo)
         {
             perk.CurrentPerk.RemoveAllListeners();
@@ -228,11 +235,7 @@ public class EmpInfo : MonoBehaviour
         //删除员工实体
         emp.InfoDetail.Entity.RemoveEntity();
 
-        if (emp.InfoA == this)
-            Destroy(emp.InfoB.gameObject);
-        else
-            Destroy(emp.InfoA.gameObject);
-        Destroy(this.gameObject);
+        emp.DestroyAllInfos();
     }
 
     //选择Info后的各种行为
@@ -389,6 +392,17 @@ public class EmpInfo : MonoBehaviour
         if (AddEffect == true)
             newPerk.CurrentPerk.AddEffect();
     }
+    public void RemovePerk(int num)
+    {
+        foreach(PerkInfo info in PerksInfo)
+        {
+            if(info.CurrentPerk.Num == num)
+            {
+                info.CurrentPerk.RemoveEffect();
+                break;
+            }
+        }
+    }
     public void DepAddPerk(Perk perk)
     {
         if (emp.CurrentDep != null)
@@ -405,6 +419,12 @@ public class EmpInfo : MonoBehaviour
         newSkill.empInfo = this;
         newSkill.info = GC.infoPanel;
         SkillsInfo.Add(newSkill);
+        if (GameControl.Instance.CurrentEmployees.Contains(emp))
+            QuestControl.Instance.Init(emp.Name + "获得了新技能:" + skill.Name);
+        if(skill.Name == "发表看法")
+        {
+            QuestControl.Instance.Finish(3);
+        }
     }
     public void ReplaceSkill(Skill OriginSkill, Skill NewSkill)
     {
