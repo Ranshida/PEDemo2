@@ -36,7 +36,7 @@ public class SkillControl : MonoBehaviour
     public bool NoStaminaCost = false; //下一个技能无消耗buff
     public bool DoubleCost = false; //下一个技能消耗翻倍buff
 
-    public SkillInfo CurrentSkill, SkillInfoPrefab, SkillInfoPrefab2, TargetSkill;
+    public SkillInfo CurrentSkill, SkillInfoPrefab, SkillInfoPrefab2, TargetSkill;//Prefab为技能预设选择,Prefab2为战斗中技能选择
     public GameObject ConfirmPanel, EventPanel, SkillSelectPanel, BossPanel, VictoryPanel, SelectConfirmButton, PresetPanel;
     public GameControl GC;
     public DiceControl DicePrefab, TargetDice;
@@ -409,7 +409,7 @@ public class SkillControl : MonoBehaviour
         if (damage < 0)
             damage = 0;
         BossHp -= damage;
-        Text_BossHp.text = "Boss剩余血量:" + BossHp;
+        Text_BossHp.text = "议题怪剩余血量:" + BossHp;
 
         if(BossHp <= 0)
         {
@@ -503,29 +503,29 @@ public class SkillControl : MonoBehaviour
         //随机目标员工和技能
         TargetEmployee = InvolvedEmps[Random.Range(0, InvolvedEmps.Count)];
         if (NextBossSkill == 1)
-            Text_BossAction.text = "Boss下一个行为:全体降低15点心力";
+            Text_BossAction.text = "议题怪下一个技能:全体降低15点心力";
         else if (NextBossSkill == 2)
-            Text_BossAction.text = "Boss下一个行为:全体降低25点心力";
+            Text_BossAction.text = "议题怪下一个技能:全体降低25点心力";
         else if (NextBossSkill == 3)
-            Text_BossAction.text = "Boss下一个行为:全体降低30点心力";
+            Text_BossAction.text = "议题怪下一个技能:全体降低30点心力";
         else if (NextBossSkill == 4)
-            Text_BossAction.text = "Boss下一个行为:降低" + TargetEmployee.Name + "心力35点";
+            Text_BossAction.text = "议题怪下一个技能:降低" + TargetEmployee.Name + "心力35点";
         else if (NextBossSkill == 5)
-            Text_BossAction.text = "Boss下一个行为:降低" + TargetEmployee.Name + "心力40点";
+            Text_BossAction.text = "议题怪下一个技能:降低" + TargetEmployee.Name + "心力40点";
         else if (NextBossSkill == 6)
-            Text_BossAction.text = "Boss下一个行为:降低" + TargetEmployee.Name + "心力45点";
+            Text_BossAction.text = "议题怪下一个技能:降低" + TargetEmployee.Name + "心力45点";
         else if (NextBossSkill == 7)
-            Text_BossAction.text = "Boss下一个行为:降低" + TargetEmployee.Name + "心力55点";
+            Text_BossAction.text = "议题怪下一个技能:降低" + TargetEmployee.Name + "心力55点";
         else if (NextBossSkill == 8)
-            Text_BossAction.text = "Boss下一个行为:下一次技能的消耗翻倍";
+            Text_BossAction.text = "议题怪下一个技能:下一次技能的消耗翻倍";
         else if (NextBossSkill == 9)
-            Text_BossAction.text = "Boss下一个行为:禁用一个技能3回合";
+            Text_BossAction.text = "议题怪下一个技能:禁用一个技能3回合";
         else if (NextBossSkill == 10)
-            Text_BossAction.text = "Boss下一个行为:会议想象力-1";
+            Text_BossAction.text = "议题怪下一个技能:会议想象力-1";
         else if (NextBossSkill == 11)
-            Text_BossAction.text = "Boss下一个行为:下回合少获得n个骰子";
+            Text_BossAction.text = "议题怪下一个技能:下回合少获得n个骰子";
         else if (NextBossSkill == 12)
-            Text_BossAction.text = "Boss下一个行为:禁用" + TargetEmployee.Name + "技能5回合";
+            Text_BossAction.text = "议题怪下一个技能:禁用" + TargetEmployee.Name + "技能5回合";
     }
     //施展技能效果
     void ActiveBossSkill()
@@ -740,6 +740,8 @@ public class SkillControl : MonoBehaviour
     {
         GC.TotalEmpContent.parent.parent.gameObject.SetActive(true);
         GC.ResetSelectMode();
+        GC.Text_EmpSelectTip.gameObject.SetActive(true);
+        GC.Text_EmpSelectTip.text = "选择加入头脑风暴的员工，最多5人";
         foreach(Employee emp in GC.CurrentEmployees)
         {
             emp.InfoB.MoveButton.GetComponentInChildren<Text>().text = "加入";

@@ -7,7 +7,7 @@ public class OfficeControl : MonoBehaviour
 {
     static public float OfficeBaseSuccessRate = 1.0f;
     static public float OfficeBaseMajorSuccessRate = 0.2f;
-    static public float OfficeBaseMajorFailureRate = 0.5f;
+    static public float OfficeBaseMajorFailureRate = 0.4f;
 
     public bool CanWork = false;
     public int ManageValue = 0, Progress = 100, MaxProgress = 96;

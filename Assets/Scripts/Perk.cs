@@ -1327,7 +1327,7 @@ public class Perk47 : Perk
     public Perk47(Employee Emp) : base(Emp)
     {
         Name = "顺利";
-        Description = "解锁事件，并为所在部门附着进步状态，每个顺利+1进步";
+        Description = "解锁事件，并为所在部门附着进步状态，每层顺利+1进步";
         TimeLeft = 64;
         Num = 47;
         canStack = true;
@@ -1349,7 +1349,7 @@ public class Perk48 : Perk
     public Perk48(Employee Emp) : base(Emp)
     {
         Name = "顺利-进步";
-        Description = "每个进步+2% 部门成功率,持续到当前业务结束";
+        Description = "每层进步+5% 部门成功率,持续到当前业务结束";
         TimeLeft = -1;//持续到当前业务结束
         Num = 48;
         canStack = true;
@@ -1358,7 +1358,7 @@ public class Perk48 : Perk
     {
         if (TargetDep != null)
         {
-            TargetDep.Efficiency += 0.02f;
+            TargetDep.Efficiency += 0.05f;
         }
     }
     public override void RemoveEffect()
@@ -1366,7 +1366,7 @@ public class Perk48 : Perk
         base.RemoveEffect();
         if (TargetDep != null)
         {
-            TargetDep.Efficiency -= 0.02f;
+            TargetDep.Efficiency -= 0.05f;
         }
     }
 }
@@ -1377,7 +1377,7 @@ public class Perk49 : Perk
     public Perk49(Employee Emp) : base(Emp)
     {
         Name = "悔恨";
-        Description = "解锁事件，并为所在部门附着混乱状态，每个悔恨+1混乱";
+        Description = "解锁事件，并为所在部门附着混乱状态，每层悔恨+1混乱";
         TimeLeft = 64;
         Num = 49;
         canStack = true;
@@ -1399,7 +1399,7 @@ public class Perk50 : Perk
     public Perk50(Employee Emp) : base(Emp)
     {
         Name = "悔恨-混乱";
-        Description = "每个混乱-2% 部门成功率,持续到当前业务结束";
+        Description = "每层混乱-5% 部门成功率,持续到当前业务结束";
         TimeLeft = -1;//持续到当前业务结束
         Num = 50;
         canStack = true;
@@ -1408,7 +1408,7 @@ public class Perk50 : Perk
     {
         if (TargetDep != null)
         {
-            TargetDep.Efficiency -= 0.02f;
+            TargetDep.Efficiency -= 0.05f;
         }
     }
     public override void RemoveEffect()
@@ -1416,7 +1416,7 @@ public class Perk50 : Perk
         base.RemoveEffect();
         if (TargetDep != null)
         {
-            TargetDep.Efficiency += 0.02f;
+            TargetDep.Efficiency += 0.05f;
         }
     }
 }

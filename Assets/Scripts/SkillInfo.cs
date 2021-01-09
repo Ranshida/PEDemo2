@@ -82,7 +82,7 @@ public class SkillInfo : MonoBehaviour
         {
             Text_Name.text = "---";
             Text_EmpName.text = "---";
-            Text_Description.text = "---";
+            Text_Description.text = "点击此处选择技能";
         }
     }
 

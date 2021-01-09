@@ -298,6 +298,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   InfoType: 1
+  LockTime: 0
   Active: 1
   SC: {fileID: 0}
   empInfo: {fileID: 0}
@@ -600,4 +601,4 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: '----'
+  m_Text: "\u70B9\u51FB\u6B64\u5904\u9009\u62E9\u6280\u80FD"

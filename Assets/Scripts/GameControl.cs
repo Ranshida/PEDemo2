@@ -76,6 +76,7 @@ public class GameControl : MonoBehaviour
     [HideInInspector] public EmpInfo CurrentEmpInfo, CurrentEmpInfo2;//2主要用于需要两个员工的动员技能
     public DepControl CurrentDep, SelectedDep;
     [HideInInspector] public OfficeControl CurrentOffice;
+    public QuestControl QC;
     public EmpEntity EmpEntityPrefab;
     public PerkInfo PerkInfoPrefab;
     public SkillInfo SkillInfoPrefab;
@@ -1260,8 +1261,8 @@ public class GameControl : MonoBehaviour
     {
         if (type == 1)
         {
-            infoPanel.Text_Name.text = "CEO本人的体力，可以通过提升CEO的强壮来提高上限";
-            infoPanel.Text_ExtraInfo.text = "CEO每周回复10点体力";
+            infoPanel.Text_Name.text = "CEO本人的体力，每提高1点强壮增加5点体力上限";
+            infoPanel.Text_ExtraInfo.text = "CEO每周自动回复10点体力\n放假时每工时回复2点体力";
             string content = "初始体力上限:100";
             content += "\nCEO强壮" + CC.CEO.Strength + "点:+" + (CC.CEO.Strength * 5);
             foreach (EmpBuff buff in CC.CEO.CurrentBuffs)
@@ -1273,7 +1274,7 @@ public class GameControl : MonoBehaviour
         }
         else if (type == 2)
         {
-            infoPanel.Text_Name.text = "CEO本人的心力，可以通过提升CEO的坚韧来提高上限";
+            infoPanel.Text_Name.text = "CEO本人的心力，每提高1点坚韧增加5点心力上限";
             infoPanel.Text_ExtraInfo.text = "";
             string content = "初始心力上限:100";
             content += "\nCEO坚韧" + CC.CEO.Tenacity + "点:+" + (CC.CEO.Tenacity * 5);

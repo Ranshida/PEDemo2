@@ -111,7 +111,7 @@ public class DepControl : MonoBehaviour
     static public int StandardProducePoint = 50;
     static public float DepBaseSuccessRate = 1.0f;
     static public float DepBaseMajorSuccessRate = 0.2f;
-    static public float DepBaseMajorFailureRate = 0.2f;
+    static public float DepBaseMajorFailureRate = 0.4f;
     [HideInInspector] public int SpProgress = 0, SpTotalProgress, FailProgress = 0, EfficiencyLevel = 0, SpType;
     //BuildingMode用于区分建筑模式  ActiveMode用于区分激活方式 1直接激活 2选择员工 3选择部门
     [HideInInspector] public int EmpLimit, ProducePointLimit = 20, ActiveMode = 1, BuildingMode = 1, Mode1EffectValue = -1, Mode2EffectValue = -2;
@@ -693,7 +693,8 @@ public class DepControl : MonoBehaviour
             Text_SRateDetail.text += "\n额外研发成功率:" + (GC.ResearchExtraSuccessRate * 100) + "%";
             BaseSuccessRate += GC.ResearchExtraSuccessRate;
         }
-        
+        Text_SRateDetail.text += "\n——————\n每当生产的剩余时间归零的时候进行一次判定，如果判定成功则铲除当前正在进行的" +
+    "业务，同时有一定几率出现大成功，如果失败则没有产出，同时还会有一定几率出现重大失误";
         return BaseSuccessRate + GC.SC.ExtraSuccessRate + Efficiency;
     }
     //额外效果描述
@@ -773,16 +774,8 @@ public class DepControl : MonoBehaviour
                 else if (info.CurrentPerk.Num == 116)
                     Text_DetailInfo.text += "\n业务干扰 -" + info.CurrentPerk.TempValue1;
             }
-            if (DepFaith >= 80)
-                Text_DetailInfo.text += "\n——————\n每周员工心力+10";
-            else if (DepFaith >= 60)
-                Text_DetailInfo.text += "\n——————\n每周员工心力+5";
-            else if (DepFaith >= 40)
-                Text_DetailInfo.text += "\n——————\n每周员工心力+0";
-            else if(DepFaith >= 20)
-                Text_DetailInfo.text += "\n——————\n每周员工心力-5";
-            else
-                Text_DetailInfo.text += "\n——————\n每周员工心力-10";
+            Text_DetailInfo.text += "\n——————\n部门中所有员工的心力都会受到部门信念的影响\n      信念>=80 心力每周+10\n" +
+                "80>信念>=60 心力每周+5\n40>信念>=20 心力每周-5\n      信念<=20 心力每周-10";
         }
         else if (type == 2)
         {
@@ -808,12 +801,15 @@ public class DepControl : MonoBehaviour
             Text_DetailInfo.text = "基础大成功率:" + Mathf.Round(DepBaseMajorSuccessRate * 100) + "%";
             if (GC.SC.ExtraMajorSuccessRate > 0.0001)
                 Text_DetailInfo.text += "\n额外动员效果:" + (GC.SC.ExtraMajorSuccessRate * 100) + "%";
+            Text_SRateDetail.text += "\n——————\n当部门生产成功时，有一定几率转化为大成功，部门中员工会的经验翻倍" +
+                "部分部门会同时生产出更多业务";
         }
         else if (type == 6)
         {
-            Text_DetailInfo.text = "基础重大失误率:" + Mathf.Round(DepBaseMajorFailureRate * 100) + "%";
+            Text_DetailInfo.text += "基础重大失误率:" + Mathf.Round(DepBaseMajorFailureRate * 100) + "%";
             if (GC.SC.ExtraMajorSuccessRate > 0.0001)
                 Text_DetailInfo.text += "\nKPI制度:" + (GC.SC.ExtraMajorFailureRate * 100) + "%";
+            Text_SRateDetail.text += "\n——————\n当部门生产失败时，有一定几率转化为重大失误，严重降低部门信念";
         }
         else if (type == 7)
         {
