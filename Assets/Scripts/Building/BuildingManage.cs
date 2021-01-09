@@ -348,6 +348,25 @@ public class BuildingManage : MonoBehaviour
             m_EffectHalo.transform.position = m_SelectBuilding.transform.position + new Vector3(m_SelectBuilding.Length * 5, 0.2f, m_SelectBuilding.Width * 5);
             m_EffectHalo.transform.localScale = new Vector3(m_SelectBuilding.Length + m_SelectBuilding.EffectRange * 2, 1, m_SelectBuilding.Width + m_SelectBuilding.EffectRange * 2);
         }
+
+        if (GridContainer.Instance.GridDict.TryGetValue(m_GridX, out Dictionary<int, Grid> dicttt))
+        {
+            if (dicttt.TryGetValue(m_GridZ, out Grid grid))
+            {
+                if (grid.Type == Grid.GridType.已放置)
+                {
+                    Building mouseBuilding = GridContainer.Instance.GridDict[m_GridX][m_GridZ].BelongBuilding;
+                    if (mouseBuilding.Department)
+                    {
+                        DynamicWindow.Instance.SetEmpName(mouseBuilding.Department.Text_DepName.text, mouseBuilding.transform, Vector3.up * 15 + new Vector3(mouseBuilding.Length * 5, 0, mouseBuilding.Width * 5));
+                    }
+                    else if (mouseBuilding.Office)
+                    {
+                        DynamicWindow.Instance.SetEmpName(mouseBuilding.Office.Text_OfficeName.text, mouseBuilding.transform, Vector3.up * 15 + new Vector3(mouseBuilding.Length * 5, 0, mouseBuilding.Width * 5));
+                    }
+                }
+            }
+        }
     }
     void SelectBuilding(Building building)
     {
@@ -499,14 +518,13 @@ public class BuildingManage : MonoBehaviour
     public void TryQuitBuildMode()
     {
         //没有将全部建筑摆放完毕
-        if (temp_Building || warePanels.Count > 0) //  ||仓库不为空
+        if (temp_Building || lotteryPanel.gameObject.activeSelf || warePanels.Count > 0) //  ||仓库不为空
         {
             return;
         }
         m_InBuildingMode = false;
         UnselectBuilding();
         warePanel.gameObject.SetActive(false);
-        lotteryPanel.gameObject.SetActive(false);
         selectBuildingPanel.gameObject.SetActive(false);
         SelectedPanel.gameObject.SetActive(false);
         RemovePause();

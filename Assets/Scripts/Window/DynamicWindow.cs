@@ -46,6 +46,10 @@ public class DynamicWindow : MonoBehaviour
 
     public void SetEmpName(string name, Transform trans, Vector3 worldOffset = default)
     {
+        if (showName)
+        {
+            return;
+        }
         showName = true;
         empName.transform.position = Function.World2ScreenPoint(trans.position + worldOffset);
         empName.text = name;
