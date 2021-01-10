@@ -117,12 +117,37 @@ public class QuestControl : MonoBehaviour
     /// <param name="step">第几个任务</param>
     public void Finish(int step)
     {
-        if (step == currentQuest)
+        if (currentQuest!=step)
         {
-            ClearQuestPanel();
-            currentQuest = step + 1;
-            CoroutineSvc.Instance.WaitForAction(1.5f, () => { StartMission(currentQuest); });
+            return;
         }
+
+        ClearQuestPanel();
+        if (step == 2)
+        {
+            currentQuest = 5;
+        }
+        else if (step == 5)
+        {
+            currentQuest = 6;
+        }
+        else if (step == 6)
+        {
+            currentQuest = 4;
+        }
+        else if (step == 4)
+        {
+            currentQuest = 3;
+        }
+        else if (step == 3)
+        {
+            currentQuest = 7;
+        }
+        else
+        {
+            currentQuest++;
+        }
+        CoroutineSvc.Instance.WaitForAction(1.5f, () => { StartMission(currentQuest); });
     }
 
     /// <summary>
@@ -139,20 +164,16 @@ public class QuestControl : MonoBehaviour
             case 2:
                 ShowQuestPanel("建造部门生产程序迭代", "　　是时候为两名员工安排工作了，不如让你的团队帮你实现你之前的想法吧。\n　　点击<color=yellow>建造</color>创建技术部门，并点击<color=yellow>员工</color>按钮，将两名员工<color=yellow>转入</color>该部门，技术部门将会开始生产程序迭代，每次生产1个程序迭代，都会消耗1个原型图。记得将技术部门的上级设为CEO办公室，同时不要安排的太远，否则可没法开始工作哦。创建完成点击左下<color=yellow>完成建造</color>。不要频繁的让员工转岗哦，否则<color=yellow>生疏磨合</color>太多，部门信念会严重下降。（转入员工并设置好上级后工作会自动开始）", "达成条件：创建技术部门，并开始生产程序迭代");
                 break;
-            //case 3:
-            case 5:
+            case 3:
                 ShowQuestPanel("培养一名员工获得新技能", "　　为了下次头脑风暴胜利，你需要更多有能力的人才。查看<color=yellow>员工信息-技能树</color>，找到拥有技术技能树的员工，你会看到获得该技能的要求是<color=yellow>技术等级>5</color>。查看员工信息面板的<color=yellow>技术>5</color>技能，你会看到员工的<color=yellow>Exp</color>经验在增长，从事什么工作就会获得什么经验。", "达成条件：培养一名员工获得技能“发表看法”");
                 break;
-            //case 4:
-            case 6:
+            case 4:
                 ShowQuestPanel("查看技能树，改变CEO办公室的重心为 管理", "　　开会并不是件容易的事，好好说话可是个稀有的技能。\n　　同时，点击CEO办公室或高管办公室的上的<color=yellow>更改模式</color>，并改为<color=yellow>管理</color>，管理者会获得管理经验，而员工也会受到启发继而增加<color=yellow>热情</color>，这样升级就会快得多，热情为5比热情为1的经验多2倍。详情可查看技能列表上方的？查看详情。", "更改CEO办公室模式为管理");
                 break; 
-            //case 5:
-            case 4:
+            case 5:
                 ShowQuestPanel("使用CEO技能+部门成功率", "　　看到成功率了吗？点击技术部门<color=yellow>详细信息</color>按钮，查看当前<color=yellow>成功率</color>，如果团队成员能力太菜，工作成功率会非常低。比如在技术部门，若管理者的技术等级<6，该部门成功率下降15%，若其中员工技术等级<6，成功率也会下降15%，可想而知如果一个糊涂蛋带着四个外行，成功率接近0%。\n　　这时候不如使用屏幕右上角CEO的<color=yellow>技能</color>里的<color=yellow>亲自指导</color>，通力协作或许能创造奇迹~", "达成条件：发动CEO技能“亲自指导”");
                 break;
-            //case 6:
-            case 3:
+            case 6:
                 ShowQuestPanel("使用CEO技能调节情绪、改变文化信仰", "　　虽然成功率提高了，但是新团队看起来<color=yellow>信念</color>不大坚定啊。\n　　点击部门<color=yellow>详细信息</color>界面，<color=yellow>鼠标悬停查看信念</color>及<color=yellow>左侧状态栏</color>。看来是因为大家文化不同，信仰不一。特殊时刻，或许有必要使用CEO技能中的“<color=yellow>激怒</color>”和“<color=yellow>改变文化信仰</color>”来保障团队稳定。", "达成条件：发动CEO技能“激怒”、“改变文化信仰”（发动即可，无论成功失败）");
                 break;
             case 7:

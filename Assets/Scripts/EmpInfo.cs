@@ -422,8 +422,7 @@ public class EmpInfo : MonoBehaviour
             QuestControl.Instance.Init(emp.Name + "获得了新技能:" + skill.Name);
         if(skill.Name == "发表看法")
         {
-            QuestControl.Instance.Finish(5);
-            //QuestControl.Instance.Finish(3);
+            QuestControl.Instance.Finish(3);
         }
     }
     public void ReplaceSkill(Skill OriginSkill, Skill NewSkill)

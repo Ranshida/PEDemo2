@@ -377,13 +377,18 @@ public class BuildingManage : MonoBehaviour
         {
             SelectedPanel.gameObject.SetActive(true);
             SelectedPanel.transform.Find("Text").GetComponent<Text>().text = m_SelectBuilding.Type.ToString();
+            Transform detail = SelectedPanel.transform.Find("Btn_Detail");
+            detail.gameObject.SetActive(true);
             if (m_SelectBuilding.Department != null)
             {
-                SelectedPanel.transform.Find("Btn_Detail").gameObject.SetActive(true);
+                detail.GetComponent<Button>().interactable = true;
+                detail.GetComponent<PointingSelf>().ClearAll();
             }
             else
             {
-                SelectedPanel.transform.Find("Btn_Detail").gameObject.SetActive(false);
+                detail.GetComponent<Button>().interactable = false;
+                detail.GetComponent<PointingSelf>().StartPointing = () => { detail.GetComponent<InfoPanelTrigger>().PointerEnter(); };
+                detail.GetComponent<PointingSelf>().EndPointing = () => { detail.GetComponent<InfoPanelTrigger>().PointerExit(); };
             }
         }
         else
