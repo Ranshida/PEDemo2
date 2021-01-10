@@ -10,6 +10,7 @@ public class QuestControl : MonoBehaviour
 
     public GameObject MessagePrefab;     //弹窗 预制体
     public GameObject QuestPanel;       //任务引导面板
+    public Transform BottomContent;
 
     private int currentQuest = 0;
 
@@ -93,9 +94,16 @@ public class QuestControl : MonoBehaviour
     /// </summary>
     /// <param name="txt">文案</param>
     /// <param name="onAccept">确定后执行</param>
-    public void Init(string txt, Action onAccept)
+    public void Init(string txt, Action onAccept, bool TopInit = true)
     {
-        MessagePanel message = Instantiate(MessagePrefab, transform).GetComponent<MessagePanel>();
+        MessagePanel message;
+        if (TopInit == true)
+            message = Instantiate(MessagePrefab, transform).GetComponent<MessagePanel>();
+        else
+        {
+            message = Instantiate(MessagePrefab, BottomContent).GetComponent<MessagePanel>();
+            print("Show");
+        }
         message.Init(txt, onAccept);
     }
 
@@ -222,7 +230,7 @@ public class QuestControl : MonoBehaviour
             detailBtn.interactable = false;
         });
 
-        Init(title + "|" + info, () => { detailBtn.interactable = true; });
+        Init(title + "|" + info, () => { detailBtn.interactable = true; }, false);
         detailBtn.interactable = false;
     }
 
