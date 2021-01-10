@@ -99,6 +99,7 @@ public class EmpEntity : MonoBehaviour
     private bool m_ArriveWP;    //到达目标路点
     private float m_WPTimer;    //到达后计时
 
+    public EventBulle bulle;
 
     public string StandGridName()
     {

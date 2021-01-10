@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class EventBulle : MonoBehaviour
 {
+    public Event TempEvent { get { return m_TempEvent; } }
+   
     Event m_TempEvent;
     float m_Timer;
 
@@ -28,11 +30,11 @@ public class EventBulle : MonoBehaviour
 
     private void Update()
     {
-        m_Timer += Time.deltaTime;
-        if (m_Timer >= 10) 
-        {
-            Destroy(this.gameObject);
-        }
+        //m_Timer += Time.deltaTime;
+        //if (m_Timer >= 10) 
+        //{
+        //     Destroy(this.gameObject);
+        //}
     }
 
     public void OnRightClick()

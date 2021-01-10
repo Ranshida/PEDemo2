@@ -189,7 +189,7 @@ public class BuildingManage : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.T))
         {
-            Lottery(4);
+            //Lottery(4);
         }
 
         //屏幕射线命中地面
@@ -469,7 +469,7 @@ public class BuildingManage : MonoBehaviour
                 {
                     StartBuildNew(type);
                 }
-
+                QuestControl.Instance.Finish(11);
                 lotteryPanel.gameObject.SetActive(false);
                 warePanel.gameObject.SetActive(true);
                 foreach (Transform ui in lotteryUI)
@@ -485,6 +485,7 @@ public class BuildingManage : MonoBehaviour
     //放弃这次抽奖
     public void GiveUpLottery()
     {
+        QuestControl.Instance.Finish(11);
         TryQuitBuildMode();
         lotteryPanel.gameObject.SetActive(false);
         foreach (Transform ui in lotteryUI)

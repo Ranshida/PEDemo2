@@ -36,7 +36,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -123.02}
+  m_AnchoredPosition: {x: 0, y: -213}
   m_SizeDelta: {x: 160, y: 41.21}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5592243919623790033
@@ -158,7 +158,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -160, y: -117}
+  m_AnchoredPosition: {x: -160, y: -206.98001}
   m_SizeDelta: {x: 160, y: 41.21}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4461027844820175446
@@ -449,8 +449,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 32.4}
-  m_SizeDelta: {x: 715.4, y: 194.5}
+  m_AnchoredPosition: {x: 0, y: -14.6}
+  m_SizeDelta: {x: 715.4, y: 288.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8243962113023589798
 CanvasRenderer:
@@ -487,13 +487,13 @@ MonoBehaviour:
     m_BestFit: 0
     m_MinSize: 2
     m_MaxSize: 40
-    m_Alignment: 4
-    m_AlignByGeometry: 0
+    m_Alignment: 0
+    m_AlignByGeometry: 1
     m_RichText: 1
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u6807\u9898\u4E3B\u5E2D\u662F\u82E6\u74DC\u4E0D\u597D\u60F9\u53EF\u80FD\u4ED6\u4F1Av\u963F\u4F58\u5BF9\u65B9\u628A\u6211\u4E16\u754C\u7684\u7E41\u534E\u5DF4\u5C14\u5E72i\u4E0D\u4F1A\u54E6\u554A\u662F\u70ED\u706B\u7ED9"
+  m_Text: 
 --- !u!1 &4242761248639310593
 GameObject:
   m_ObjectHideFlags: 0
@@ -530,7 +530,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 160, y: -117}
+  m_AnchoredPosition: {x: 160, y: -206.98001}
   m_SizeDelta: {x: 160, y: 41.21}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4809107755605688579
@@ -767,8 +767,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 32.4}
-  m_SizeDelta: {x: 715.4, y: 194.5}
+  m_AnchoredPosition: {x: 0, y: -14.6}
+  m_SizeDelta: {x: 715.4, y: 288.4}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7087821788606860537
 CanvasRenderer:
@@ -805,7 +805,7 @@ MonoBehaviour:
     m_BestFit: 0
     m_MinSize: 2
     m_MaxSize: 40
-    m_Alignment: 4
+    m_Alignment: 0
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0

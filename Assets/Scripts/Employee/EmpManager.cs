@@ -48,6 +48,7 @@ public class EmpManager : MonoBehaviour
             {
                 GameObject itemGo = CameraController.ItemRaycast.collider.gameObject;
                 EventBulle bubble = itemGo.GetComponentInParent<EventBulle>();
+                bubble.TempEvent.SelfEntity.bulle = null;
                 if (bubble)
                 {
                     bubble.OnLeftClick();
@@ -57,6 +58,7 @@ public class EmpManager : MonoBehaviour
             {
                 GameObject itemGo = CameraController.ItemRaycast.collider.gameObject;
                 EventBulle bubble = itemGo.GetComponentInParent<EventBulle>();
+                bubble.TempEvent.SelfEntity.bulle = null;
                 if (bubble)
                 {
                     bubble.OnRightClick();
@@ -463,9 +465,16 @@ public class EmpManager : MonoBehaviour
 
     public void ShowEventBubble(Event thisEvent)
     {
+        if (thisEvent.SelfEntity.bulle != null)
+        {
+            thisEvent.SelfEntity.bulle.OnRightClick();
+        }
+
         GameObject bubble =  Instantiate(eventBubble, thisEvent.SelfEntity.Renderer.transform);
+        EventBulle eventBulle = bubble.GetComponent<EventBulle>();
         bubble.transform.localPosition = new Vector3(-8, 0, -6);
-        bubble.GetComponent<EventBulle>().Init(thisEvent);
+        eventBulle.Init(thisEvent);
+        thisEvent.SelfEntity.bulle = eventBulle;
         //thisEvent.selfEntity头上显示一个气泡
 
         //左键点气泡弹出事件面板
