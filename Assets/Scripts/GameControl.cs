@@ -886,7 +886,8 @@ public class GameControl : MonoBehaviour
             if (CEOSkillNum == 1)
             {
                 depControl.AddPerk(new Perk117(null));
-                QC.Finish(5);
+                QC.Finish(4);
+                //QC.Finish(5);
                 new EmpBuff(CC.CEO, 16, -45);
                 ResetSelectMode();
             }
@@ -1157,7 +1158,8 @@ public class GameControl : MonoBehaviour
                 CurrentOffice.Text_OfficeMode.text = "办公室模式:管理";
                 CurrentOffice.MaxProgress = 32;
                 CurrentOffice.building.effectValue = 7;
-                QC.Finish(4);
+                QC.Finish(6);
+                //QC.Finish(4);
             }
             else if (num == 4)
             {

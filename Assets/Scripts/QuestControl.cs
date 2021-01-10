@@ -20,7 +20,10 @@ public class QuestControl : MonoBehaviour
 
     private void Start()
     {
-        Action step4 = () => { StartMission(1); };
+        Action step4 = () => {
+            currentQuest = 1; 
+            StartMission(1); 
+        };
         Action step3 = () => { Init("　　点击键盘上的<color=yellow>WASD</color>或<color=yellow>←↑→↓</color>可上下左右<color=yellow>移动视角</color>，<color=yellow>鼠标滚轮</color>可调节<color=yellow>镜头距离</color>。\n　　点击确认，开始引导任务。", step4); };
         Action step2 = () => { Init("　　听说你开始创业，有两个人问询赶来加入，一位是志同道合的前同事，一位是前不久愤而辞职的熟人。\n　　获得2名<color=yellow>员工</color>。\n　　点击确认。", step3); };
         Init("　　经过风衣男的忽悠，你决定开始你的创业之旅，想办法赚6个亿恢复记忆。你设想了很多产品的功能，同时也想象着如何推广...\n　　获得 <color=yellow>产品原型图</color> * 20，<color=yellow>营销文案</color> * 10\n　　点击确认。", step2);
@@ -117,7 +120,8 @@ public class QuestControl : MonoBehaviour
         if (step == currentQuest)
         {
             ClearQuestPanel();
-            CoroutineSvc.Instance.WaitForAction(1.5f, () => { StartMission(step + 1); });
+            currentQuest = step + 1;
+            CoroutineSvc.Instance.WaitForAction(1.5f, () => { StartMission(currentQuest); });
         }
     }
 
@@ -127,7 +131,6 @@ public class QuestControl : MonoBehaviour
     /// <param name="step"></param>
     private void StartMission(int step)
     {
-        currentQuest = step;
         switch (step)
         {
             case 1:
@@ -136,16 +139,20 @@ public class QuestControl : MonoBehaviour
             case 2:
                 ShowQuestPanel("建造部门生产程序迭代", "　　是时候为两名员工安排工作了，不如让你的团队帮你实现你之前的想法吧。\n　　点击<color=yellow>建造</color>创建技术部门，并点击<color=yellow>员工</color>按钮，将两名员工<color=yellow>转入</color>该部门，技术部门将会开始生产程序迭代，每次生产1个程序迭代，都会消耗1个原型图。记得将技术部门的上级设为CEO办公室，同时不要安排的太远，否则可没法开始工作哦。创建完成点击左下<color=yellow>完成建造</color>。不要频繁的让员工转岗哦，否则<color=yellow>生疏磨合</color>太多，部门信念会严重下降。（转入员工并设置好上级后工作会自动开始）", "达成条件：创建技术部门，并开始生产程序迭代");
                 break;
-            case 3:
+            //case 3:
+            case 5:
                 ShowQuestPanel("培养一名员工获得新技能", "　　为了下次头脑风暴胜利，你需要更多有能力的人才。查看<color=yellow>员工信息-技能树</color>，找到拥有技术技能树的员工，你会看到获得该技能的要求是<color=yellow>技术等级>5</color>。查看员工信息面板的<color=yellow>技术>5</color>技能，你会看到员工的<color=yellow>Exp</color>经验在增长，从事什么工作就会获得什么经验。", "达成条件：培养一名员工获得技能“发表看法”");
                 break;
-            case 4:
+            //case 4:
+            case 6:
                 ShowQuestPanel("查看技能树，改变CEO办公室的重心为 管理", "　　开会并不是件容易的事，好好说话可是个稀有的技能。\n　　同时，点击CEO办公室或高管办公室的上的<color=yellow>更改模式</color>，并改为<color=yellow>管理</color>，管理者会获得管理经验，而员工也会受到启发继而增加<color=yellow>热情</color>，这样升级就会快得多，热情为5比热情为1的经验多2倍。详情可查看技能列表上方的？查看详情。", "更改CEO办公室模式为管理");
                 break; 
-            case 5:
+            //case 5:
+            case 4:
                 ShowQuestPanel("使用CEO技能+部门成功率", "　　看到成功率了吗？点击技术部门<color=yellow>详细信息</color>按钮，查看当前<color=yellow>成功率</color>，如果团队成员能力太菜，工作成功率会非常低。比如在技术部门，若管理者的技术等级<6，该部门成功率下降15%，若其中员工技术等级<6，成功率也会下降15%，可想而知如果一个糊涂蛋带着四个外行，成功率接近0%。\n　　这时候不如使用屏幕右上角CEO的<color=yellow>技能</color>里的<color=yellow>亲自指导</color>，通力协作或许能创造奇迹~", "达成条件：发动CEO技能“亲自指导”");
                 break;
-            case 6:
+            //case 6:
+            case 3:
                 ShowQuestPanel("使用CEO技能调节情绪、改变文化信仰", "　　虽然成功率提高了，但是新团队看起来<color=yellow>信念</color>不大坚定啊。\n　　点击部门<color=yellow>详细信息</color>界面，<color=yellow>鼠标悬停查看信念</color>及<color=yellow>左侧状态栏</color>。看来是因为大家文化不同，信仰不一。特殊时刻，或许有必要使用CEO技能中的“<color=yellow>激怒</color>”和“<color=yellow>改变文化信仰</color>”来保障团队稳定。", "达成条件：发动CEO技能“激怒”、“改变文化信仰”（发动即可，无论成功失败）");
                 break;
             case 7:
@@ -164,7 +171,8 @@ public class QuestControl : MonoBehaviour
                 ShowQuestPanel("CEO组织研究，造建筑", "　　下面就是最后一步啦！作为一个公司的创始人，除了管理团队、制定战略，你还需要思考应该将公司变成什么样，或许是996地狱？或许是创造力的游乐场？总之，对CEO办公室<color=yellow>更改模式</color>，改成<color=yellow>组织研究</color>试试吧~", "研究一次新办公室");
                 break;
             case 12:
-                Init("　　对了，有的时候屏幕上出现“成功”或“失败”的气泡可以点击哦，这样你就会知道到底发生了什么，之后也可以<color=yellow>点击某个员工</color>，查看当事人的<color=yellow>事件历史</color>进一步探索。\n　　叫你什么好呢？大老板、资本家、创始人？总之我相信你还有很多要做的，加大传播？继续迭代？占领市场？这些都很重要，不过更重要的是照顾好你的团队啊，千万别让他们心力爆炸，否则可能会造成难以挽回的可怕悲剧。当然，你也就可能无法恢复记忆了....");
+                Action action = () => { Init("恭喜您，引导任务已经全部完成，点击“确认”按钮开始自由探索。"); };
+                Init("　　对了，有的时候屏幕上出现“成功”或“失败”的气泡可以点击哦，这样你就会知道到底发生了什么，之后也可以<color=yellow>点击某个员工</color>，查看当事人的<color=yellow>事件历史</color>进一步探索。\n　　叫你什么好呢？大老板、资本家、创始人？总之我相信你还有很多要做的，加大传播？继续迭代？占领市场？这些都很重要，不过更重要的是照顾好你的团队啊，千万别让他们心力爆炸，否则可能会造成难以挽回的可怕悲剧。当然，你也就可能无法恢复记忆了....", action);
                 break;
             default:
                 break;

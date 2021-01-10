@@ -381,7 +381,8 @@ public class CEOControl : MonoBehaviour
                 //引导任务判定
                 ASkillUsed = true;
                 if (ASkillUsed == true && BSkillUsed == true)
-                    GC.QC.Finish(6);
+                    GC.QC.Finish(3);
+                    //GC.QC.Finish(6);
             }
             else if (GC.CEOSkillNum == 11)
             {
@@ -434,7 +435,8 @@ public class CEOControl : MonoBehaviour
                 //引导任务判定
                 BSkillUsed = true;
                 if (ASkillUsed == true && BSkillUsed == true)
-                    GC.QC.Finish(6);
+                    GC.QC.Finish(3);
+                    //GC.QC.Finish(6);
             }
             else if (GC.CEOSkillNum == 17)
             {
