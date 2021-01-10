@@ -194,7 +194,7 @@ public class FOEControl : MonoBehaviour
             {
                 GC.Morale -= 5;
             }
-            else if (posb == 3)
+            else if (ResultNum == 3)
             {
 
             }
@@ -212,7 +212,7 @@ public class FOEControl : MonoBehaviour
             {
                 AddDebuff();
             }
-            else if (posb == 3)
+            else if (ResultNum == 3)
             {
 
             }
@@ -230,7 +230,7 @@ public class FOEControl : MonoBehaviour
             {
                 GC.Morale -= 10;
             }
-            else if (posb == 3)
+            else if (ResultNum == 3)
             {
                 AddDebuff();
             }
