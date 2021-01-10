@@ -42,7 +42,7 @@ public class EmpManager : MonoBehaviour
         if (pointEmp && !pointEmp.Fired && Input.GetMouseButtonDown(0))
             pointEmp.ShowDetailPanel();
 
-        if (CameraController.ItemHit)
+        if (CameraController.ItemHit && !CameraController.IsPointingUI)
         {
             if (Input.GetMouseButtonDown(0))
             {

@@ -84,7 +84,7 @@ public class QuestControl : MonoBehaviour
     /// <param name="txt">文案</param>
     public void Init(string txt)
     {
-        MessagePanel message = Instantiate(MessagePrefab, transform).GetComponent<MessagePanel>();
+        MessagePanel message = Instantiate(MessagePrefab, transform.parent).GetComponent<MessagePanel>();
         message.Init(txt);
     }
 
@@ -192,6 +192,9 @@ public class QuestControl : MonoBehaviour
                 ShowQuestPanel("CEO组织研究，造建筑", "　　下面就是最后一步啦！作为一个公司的创始人，除了管理团队、制定战略，你还需要思考应该将公司变成什么样，或许是996地狱？或许是创造力的游乐场？总之，对CEO办公室<color=yellow>更改模式</color>，改成<color=yellow>组织研究</color>试试吧~", "研究一次新办公室");
                 break;
             case 12:
+                ShowQuestPanel("情绪合成", "　　你知道吗？情绪就像色彩一样可以合成。骄傲里包含愤怒和愉悦，而沮丧中裹藏悲伤和愤怒。如果不试着改变，情绪很久也不会变化。点击任一员工进入信息面板，查看情绪合成表，你就可以尝试影响别人的情绪了。那些带着负面情绪的员工更容易和人发生冲突，试着去改变这一切吧，先后使用CEO的技能“批评责备”“点名表扬”，看看会发生什么。","达成条件：使用CEO技能批评责备，点名表扬。");
+                break;
+            case 13:
                 Action action = () => { Init("恭喜您，引导任务已经全部完成，点击“确认”按钮开始自由探索。"); };
                 Init("　　对了，有的时候屏幕上出现“成功”或“失败”的气泡可以点击哦，这样你就会知道到底发生了什么，之后也可以<color=yellow>点击某个员工</color>，查看当事人的<color=yellow>事件历史</color>进一步探索。\n　　叫你什么好呢？大老板、资本家、创始人？总之我相信你还有很多要做的，加大传播？继续迭代？占领市场？这些都很重要，不过更重要的是照顾好你的团队啊，千万别让他们心力爆炸，否则可能会造成难以挽回的可怕悲剧。当然，你也就可能无法恢复记忆了....", action);
                 break;
