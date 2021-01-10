@@ -21,9 +21,9 @@ public class QuestControl : MonoBehaviour
     private void Start()
     {
         Action step4 = () => { StartMission(1); };
-        Action step3 = () => { Init("　　按wasd可上下左右移动视角，鼠标滚轮可缩放或放大。\n点击确定，弹出第一个任务，游戏时间恢复正常。", step4); };
-        Action step2 = () => { Init("　　听说你开始创业，有两个人问询赶来加入，一位是志同道合的前同事，一位是前不久愤而辞职的熟人。\n　　获得2名员工\n　　点击确定，弹出下一个窗口", step3); };
-        Init("　　经过风衣男的忽悠，你决定开始你的创业之旅，想办法赚6个亿恢复记忆。你设想了很多产品的功能，同时也想象着如何推广...\n　　获得产品原型图 * 20，营销文案 * 10\n　　点击确定，弹出下一个窗口", step2);
+        Action step3 = () => { Init("　　点击键盘上的<color=yellow>WASD</color>或<color=yellow>←↑→↓</color>可上下左右<color=yellow>移动视角</color>，<color=yellow>鼠标滚轮</color>可调节<color=yellow>镜头距离</color>。\n　　点击确认，开始引导任务。", step4); };
+        Action step2 = () => { Init("　　听说你开始创业，有两个人问询赶来加入，一位是志同道合的前同事，一位是前不久愤而辞职的熟人。\n　　获得2名<color=yellow>员工</color>。\n　　点击确认。", step3); };
+        Init("　　经过风衣男的忽悠，你决定开始你的创业之旅，想办法赚6个亿恢复记忆。你设想了很多产品的功能，同时也想象着如何推广...\n　　获得 <color=yellow>产品原型图</color> * 20，<color=yellow>营销文案</color> * 10\n　　点击确认。", step2);
     }
 
     private void Update()
@@ -131,7 +131,7 @@ public class QuestControl : MonoBehaviour
         switch (step)
         {
             case 1:
-                ShowQuestPanel("头脑风暴", "　　你们聚到一块儿，进行了公司的第一次头脑风暴，商量着最近一段时间的工作计划，其中的个别议题却难以达成共识，你究竟该怎么办呢？\n　　选择员工加入头脑风暴会议队列，确定后点击右侧方块可选择员工技能。你所能使用的骰子数量取决于管理能力最高者的管理能力。", "达成条件：完成头脑风暴");
+                ShowQuestPanel("头脑风暴", "　　你们聚到一块儿，进行了公司的第一次头脑风暴，商量着最近一段时间的工作计划，其中的个别议题却难以达成共识，你究竟该怎么办呢？\n　　选择员工加入头脑风暴会议队列，确定后点击右侧方块可选择员工技能。你所能使用的骰子数量取决于管理能力最高者的管理能力。\n　　（头脑风暴将在1工时后自动开始）", "达成条件：完成头脑风暴");
                 break;
             case 2:
                 ShowQuestPanel("建造部门生产程序迭代", "　　是时候为两名员工安排工作了，不如让你的团队帮你实现你之前的想法吧。\n　　点击<color=yellow>建造</color>创建技术部门，并点击<color=yellow>员工</color>按钮，将两名员工<color=yellow>转入</color>该部门，技术部门将会开始生产程序迭代，每次生产1个程序迭代，都会消耗1个原型图。记得将技术部门的上级设为CEO办公室，同时不要安排的太远，否则可没法开始工作哦。创建完成点击左下<color=yellow>完成建造</color>。不要频繁的让员工转岗哦，否则<color=yellow>生疏磨合</color>太多，部门信念会严重下降。（转入员工并设置好上级后工作会自动开始）", "达成条件：创建技术部门，并开始生产程序迭代");
@@ -146,7 +146,7 @@ public class QuestControl : MonoBehaviour
                 ShowQuestPanel("使用CEO技能+部门成功率", "　　看到成功率了吗？点击技术部门<color=yellow>详细信息</color>按钮，查看当前<color=yellow>成功率</color>，如果团队成员能力太菜，工作成功率会非常低。比如在技术部门，若管理者的技术等级<6，该部门成功率下降15%，若其中员工技术等级<6，成功率也会下降15%，可想而知如果一个糊涂蛋带着四个外行，成功率接近0%。\n　　这时候不如使用屏幕右上角CEO的<color=yellow>技能</color>里的<color=yellow>亲自指导</color>，通力协作或许能创造奇迹~", "达成条件：发动CEO技能“亲自指导”");
                 break;
             case 6:
-                ShowQuestPanel("使用CEO技能调节情绪、改变文化信仰", "　　虽然成功率提高了，但是新团队看起来<color=yellow>信念</color>不大坚定啊。\n　　点击部门<color=yellow>详细信息</color>界面，<color=yellow>鼠标悬停查看信念</color>及<color=yellow>左侧状态栏</color>。看来是因为大家文化不同，信仰不一。特殊时刻，或许有必要使用CEO技能中的“<color=yellow>激怒</color>”和“<color=yellow>改变文化信仰</color>”来保障团队稳定。", "达成条件：发动CEO技能“激怒”、“改变文化信仰”");
+                ShowQuestPanel("使用CEO技能调节情绪、改变文化信仰", "　　虽然成功率提高了，但是新团队看起来<color=yellow>信念</color>不大坚定啊。\n　　点击部门<color=yellow>详细信息</color>界面，<color=yellow>鼠标悬停查看信念</color>及<color=yellow>左侧状态栏</color>。看来是因为大家文化不同，信仰不一。特殊时刻，或许有必要使用CEO技能中的“<color=yellow>激怒</color>”和“<color=yellow>改变文化信仰</color>”来保障团队稳定。", "达成条件：发动CEO技能“激怒”、“改变文化信仰”（发动即可，无论成功失败）");
                 break;
             case 7:
                 ShowQuestPanel("商战成功", "　　每三个月都是你打商战的时刻，和对手抢夺市场吧，每次商战排名越高、<color=yellow>胜利积分</color>越多的公司融资越多。你可以抢夺自由市场，也可以抢夺别人手里的市场，每回合抢夺越多，所消耗的程序迭代越多，传播则可以免除一次被抢夺的结果。按照每场商战获取市场的不同排名，你可能会提高或降低士气。点击界面上的<color=yellow>？</color>查看详情。", "达成条件：完成一次商战");

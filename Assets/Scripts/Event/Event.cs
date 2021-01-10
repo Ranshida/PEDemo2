@@ -11641,7 +11641,6 @@ public class Event3_1 : Event
         for (int i = 0; i < 4; i++)
         {
             Self.InfoDetail.AddPerk(new Perk49(Self), true);
-            Target.InfoDetail.AddPerk(new Perk49(Target), true);
         }
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "与同事" + Target.Name + "对于某个工作细节产生分歧，";
         ResultText += "双方互相不停指责,获得事件状态 悔恨*4，双方心力下降10点";
