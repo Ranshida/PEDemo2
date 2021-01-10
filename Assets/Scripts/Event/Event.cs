@@ -11718,10 +11718,19 @@ public class Event3_2 : Event
         base.Failure(Posb);
         Self.Mentality -= 10;
         Target.Mentality -= 10;
-        for (int i = 0; i < 4; i++)
+        if(EmpManager.Instance.FindBoss(Self) == Target)
         {
-            Self.InfoDetail.AddPerk(new Perk49(Self), true);
-            //Target.InfoDetail.AddPerk(new Perk49(Target), true);
+            for (int i = 0; i < 4; i++)
+            {
+                Self.InfoDetail.AddPerk(new Perk49(Self), true);
+                //Target.InfoDetail.AddPerk(new Perk49(Target), true);
+            }
+        }else if(EmpManager.Instance.FindBoss(Target) == Self)
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                Target.InfoDetail.AddPerk(new Perk49(Target), true);
+            }
         }
         if (EmpManager.Instance.FindBoss(Self) == Target)
         {
@@ -11731,7 +11740,7 @@ public class Event3_2 : Event
         {
             ResultText = "在" + SelfEntity.StandGridName() + "，下级" + Target.Name + "向上司" + Self.Name + "反应当前工作问题，";
         }
-        ResultText += "上司将责任完全推给下级，获得事件状态 悔恨*4，双方心力下降10点";
+        ResultText += "上司将责任完全推给下级，下级获得事件状态 悔恨*4，双方心力下降10点";
         GC.CreateMessage(Self.Name+"与"+Target.Name+"互相甩锅");
     }
     public override void Success(float Posb)
@@ -12079,6 +12088,22 @@ public class Event3_6 : Event
     {
         string shuchu = "";
         base.Success(Posb);
+
+        if (EmpManager.Instance.FindBoss(Self) == Target)
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                Self.InfoDetail.AddPerk(new Perk47(Self), true);
+                //Target.InfoDetail.AddPerk(new Perk47(Target), true);
+            }
+        }
+        else if (EmpManager.Instance.FindBoss(Target) == Self)
+        {
+            for (int i = 0; i < 2; i++)
+            {
+                Target.InfoDetail.AddPerk(new Perk47(Target), true);
+            }
+        }
         for (int i = 0; i < 2; i++)
         {
             Self.InfoDetail.AddPerk(new Perk47(Self), true);
@@ -12121,14 +12146,14 @@ public class Event3_6 : Event
             {
                 if (Self.CurrentDep != null)
                     Self.CurrentDep.AddPerk(new Perk71(null));
-                ResultText += "下级" + Self.Name + "表示理解并认可，获得事件状态 顺利*2，所在部门获得充分讨论*1";
+                ResultText += "下级" + Self.Name + "表示理解并认可，下级获得事件状态 顺利*2，所在部门获得充分讨论*1";
                 shuchu += "给" + Self.Name + "分配工作并取得了认可";
             }
             else if (EmpManager.Instance.FindBoss(Target) == Self)
             {
                 if (Target.CurrentDep != null)
                     Target.CurrentDep.AddPerk(new Perk71(null));
-                ResultText += "下级" + Target.Name + "表示理解并认可，获得事件状态 顺利*2，所在部门获得充分讨论*1";
+                ResultText += "下级" + Target.Name + "表示理解并认可，下级获得事件状态 顺利*2，所在部门获得充分讨论*1";
                 shuchu += "给" + Target.Name + "分配工作并取得了认可";
             }
         }
@@ -12146,12 +12171,12 @@ public class Event3_6 : Event
             }
             if (EmpManager.Instance.FindBoss(Self) == Target)
             {
-                ResultText += "下级" + Self.Name + "表示理解并认可，获得事件状态 顺利*2";
+                ResultText += "下级" + Self.Name + "表示理解并认可，下级获得事件状态 顺利*2";
                 shuchu += "给" + Self.Name + "分配工作并取得了认可";
             }
             else if (EmpManager.Instance.FindBoss(Target) == Self)
             {
-                ResultText += "下级" + Target.Name + "表示理解并认可，获得事件状态 顺利*2";
+                ResultText += "下级" + Target.Name + "表示理解并认可，下级获得事件状态 顺利*2";
                 shuchu += "给" + Target.Name + "分配工作并取得了认可";
             }
         }
@@ -12253,10 +12278,21 @@ public class Event3_7 : Event
     public override void Success(float Posb)
     {
         base.Success(Posb);
-        for (int i = 0; i < 4; i++)
+
+        if (EmpManager.Instance.FindBoss(Self) == Target)
         {
-            Self.InfoDetail.AddPerk(new Perk47(Self), true);
-            //Target.InfoDetail.AddPerk(new Perk47(Target), true);
+            for (int i = 0; i < 4; i++)
+            {
+                Self.InfoDetail.AddPerk(new Perk47(Self), true);
+                //Target.InfoDetail.AddPerk(new Perk47(Target), true);
+            }
+        }
+        else if (EmpManager.Instance.FindBoss(Target) == Self)
+        {
+            for (int i = 0; i < 4; i++)
+            {
+                Target.InfoDetail.AddPerk(new Perk47(Target), true);
+            }
         }
         bool huiyishi = false;
         for (int i = 0; i < GC.CurrentDeps.Count; i++)
@@ -12293,7 +12329,7 @@ public class Event3_7 : Event
                     Target.CurrentDep.AddPerk(new Perk71(null));
                 ResultText = "上司" + Self.Name + "约下级" + Target.Name + "在会议室商讨工作流程";
             }
-            ResultText += "双方进行极富成效地流程梳理！获得事件状态 顺利*4，下级所在部门获得充分讨论*1";
+            ResultText += "双方进行极富成效地流程梳理！下级获得事件状态 顺利*4，下级所在部门获得充分讨论*1";
             GC.CreateMessage(Self.Name + "与" + Target.Name + "进行了极富成效地流程梳理");
         }
         else
@@ -12306,7 +12342,7 @@ public class Event3_7 : Event
             {
                 ResultText = "上司" + Self.Name + "约下级" + Target.Name + "商讨工作流程，";
             }
-            ResultText += "双方进行极富成效地流程梳理！获得事件状态 顺利*4";
+            ResultText += "双方进行极富成效地流程梳理！下级获得事件状态 顺利*4";
             GC.CreateMessage(Self.Name + "与" + Target.Name + "进行了极富成效地流程梳理");
         }
     }
@@ -13719,7 +13755,7 @@ public class Event3_21 : Event
     {
         EventName = "寻求安慰";
         HaveTarget = true;
-        Weight = 5;
+        Weight = 3;
         RelationRequire = 0;
         HaveTarget = false;
     }
@@ -13809,7 +13845,7 @@ public class Event3_22 : Event
     {
         EventName = "认可交谈";
         HaveTarget = true;
-        Weight = 5;
+        Weight = 3;
         RelationRequire = 0;
         HaveTarget = false;
     }
@@ -13883,7 +13919,7 @@ public class Event3_23 : Event
     {
         EventName = "分享日常";
         HaveTarget = true;
-        Weight = 5;
+        Weight = 3;
         RelationRequire = 0;
         HaveTarget = false;
     }
@@ -13957,7 +13993,7 @@ public class Event3_24 : Event
     {
         EventName = "深刻交谈";
         HaveTarget = true;
-        Weight = 5;
+        Weight = 3;
         RelationRequire = 0;
         HaveTarget = false;
     }
@@ -14544,12 +14580,12 @@ public class Event3_30 : Event
         {
             info.CurrentPerk.RemoveEffect();
         }
-        Self.AddEmotion(EColor.Blue);
+        Self.AddEmotion(EColor.LBlue);
         Self.ChangeRelation(Target, -15);
         Target.ChangeRelation(Self, -15);
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "正在向别人展示自己的成果，";
         ObjectText = ResultText + Target.Name + "嘲笑了"+Self.Name+"，双方好感度-15";
-        ResultText += Target.Name + "说建议上司开除，双方好感度-15，获得情绪状态：恐惧×1，消除事件状态：认可交谈×1";
+        ResultText += Target.Name + "说建议上司开除，双方好感度-15，获得情绪状态：辛酸×1，消除事件状态：认可交谈×1";
     }
 }
 public class Event3_31 : Event
@@ -14632,13 +14668,13 @@ public class Event3_31 : Event
         {
             info.CurrentPerk.RemoveEffect();
         }
-        Self.AddEmotion(EColor.Red);
-        Self.AddEmotion(EColor.Red);
+        Self.AddEmotion(EColor.LRed);
+        Self.AddEmotion(EColor.LRed);
         Self.ChangeRelation(Target, -15);
         Target.ChangeRelation(Self, -15);
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "情绪低落想要寻求安慰，";
         ObjectText = ResultText + Target.Name + "公开讥讽了"+Self.Name+"，双方好感度-15";
-        ResultText += Target.Name + "看到之后当众讥讽了"+Self.Name+"，双方好感度-15，获得情绪状态：愤怒×2，消除事件状态：寻求安慰×1";
+        ResultText += Target.Name + "看到之后当众讥讽了"+Self.Name+"，双方好感度-15，获得情绪状态：侮辱×2，消除事件状态：寻求安慰×1";
     }
 }
 public class Event3_32 : Event
@@ -14800,13 +14836,13 @@ public class Event3_33 : Event
         {
             info.CurrentPerk.RemoveEffect();
         }
-        Self.AddEmotion(EColor.Red);
-        Self.AddEmotion(EColor.Red);
+        Self.AddEmotion(EColor.LRed);
+        Self.AddEmotion(EColor.LRed);
         Self.ChangeRelation(Target, -15);
         Target.ChangeRelation(Self, -15);
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "向" + Target.Name + "寻求认可，";
         ObjectText = ResultText + Target.Name + "敷衍了"+Self.Name+"，双方好感度-15";
-        ResultText += Target.Name + "漫不经心地夸了两句"+Self.Name+"，双方好感度-15，获得情绪状态：愤怒×2，消除事件状态：认可交谈×1";
+        ResultText += Target.Name + "漫不经心地夸了两句"+Self.Name+"，双方好感度-15，获得情绪状态：反感×2，消除事件状态：认可交谈×1";
     }
 }
 public class Event3_34 : Event
@@ -15063,12 +15099,12 @@ public class Event3_36 : Event
         {
             info.CurrentPerk.RemoveEffect();
         }
-        Self.AddEmotion(EColor.Blue);
+        Self.AddEmotion(EColor.LBlue);
         Self.ChangeRelation(Target, -15);
         Target.ChangeRelation(Self, -15);
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "向挚友" + Target.Name + "寻求帮助，";
         ObjectText = ResultText + Target.Name + "推脱了，双方好感度-15";
-        ResultText += Target.Name + "声称自己有事，双方好感度-15，获得情绪状态：悲伤×1，消除事件状态：寻求安慰×1";
+        ResultText += Target.Name + "声称自己有事，双方好感度-15，获得情绪状态：苦涩×1，消除事件状态：寻求安慰×1";
     }
 }
 public class Event3_37 : Event
@@ -15128,12 +15164,12 @@ public class Event3_37 : Event
         {
             info.CurrentPerk.RemoveEffect();
         }
-        Self.AddEmotion(EColor.Yellow);
+        Self.AddEmotion(EColor.LYellow);
         Self.ChangeRelation(Target, 15);
         Target.ChangeRelation(Self, 15);
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "跟挚友" + Target.Name + "聊了很多心里话，";
         ObjectText = ResultText + Target.Name + "听完了，双方好感度+15";
-        ResultText += Target.Name + "温柔地听着"+Self.Name+"讲完，双方好感度+15，获得情绪状态：好奇×1，消除事件状态：深刻交谈×1";
+        ResultText += Target.Name + "温柔地听着"+Self.Name+"讲完，双方好感度+15，获得情绪状态：愉悦×1，消除事件状态：深刻交谈×1";
     }
     public override void Failure(float Posb)
     {
@@ -15325,22 +15361,23 @@ public class Event3_39 : Event
     {
         EventName = "闲聊";
         HaveTarget = true;
-        Weight = 3;
+        Weight = 2;
         RelationRequire =0;
     }
     public override bool SpecialCheck()
     {
-        if (Self.FindRelation(Target).KnowEachOther)
-        {
-            foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
-            {
-                if (p.CurrentPerk.Num == 64 & p.CurrentPerk.Level >= 1)
-                {//无聊×1
-                    return true;
-                }
-            }
-        }
-        return false;
+        //if (Self.FindRelation(Target).KnowEachOther)
+        //{
+        //    foreach (PerkInfo p in Self.InfoDetail.PerksInfo)
+        //    {
+        //        if (p.CurrentPerk.Num == 64 & p.CurrentPerk.Level >= 1)
+        //        {//无聊×1
+        //            return true;
+        //        }
+        //    }
+        //}
+        //return false;
+        return true;
     }
     public override int ExtraValue()
     {
@@ -15365,7 +15402,7 @@ public class Event3_39 : Event
     public override void Success(float Posb)
     {
         base.Success(Posb);
-        Self.AddEmotion(EColor.Yellow);
+        Self.AddEmotion(EColor.LYellow);
         Self.ChangeRelation(Target, 15);
         Target.ChangeRelation(Self, 15);
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "和" + Target.Name + "在走廊遇见闲聊了一会儿，";
@@ -15384,7 +15421,7 @@ public class Event3_39 : Event
                 info.CurrentPerk.RemoveEffect();
             }
             ObjectText = ResultText + "两人互相很有兴趣，双方好感度+15";
-            ResultText += "双方聊得挺高兴的，" + Self.Name + "对" + Target.Name + "更加好奇，双方好感度+15，获得情绪状态：好奇×1，消除事件状态：无聊×1";
+            ResultText += "双方聊得挺高兴的，" + Self.Name + "对" + Target.Name + "更加好奇，双方好感度+15，获得情绪状态：愉悦×1，消除事件状态：无聊×1";
         }
         else
         {
@@ -15568,7 +15605,7 @@ public class Event3_41 : Event
     public override void Success(float Posb)
     {
         base.Success(Posb);
-        Self.AddEmotion(EColor.Yellow);
+        Self.AddEmotion(EColor.LYellow);
         Self.ChangeRelation(Target, 15);
         Target.ChangeRelation(Self, 15);
         ResultText = Self.Name + "在" + SelfEntity.StandGridName() + "碰到了" + Target.Name + "，";
@@ -15673,7 +15710,7 @@ public class Event3_42 : JudgeEvent
     public override void Success(float Posb)
     {
         base.Success(Posb);
-        Self.AddEmotion(EColor.Yellow);
+        Self.AddEmotion(EColor.LYellow);
         if (Random.Range(0.0f, 1.0f) <= 0.5)
         {
             PerkInfo info = null;
@@ -15710,15 +15747,15 @@ public class Event3_42 : JudgeEvent
     }
     public override void OnRefuse()
     {
-        Self.AddEmotion(EColor.Blue);
-        GC.CreateMessage(Self.Name + "请假被CEO拒绝，获得悲伤情绪×1");
-        Self.InfoDetail.AddHistory(Self.Name + "请假被CEO拒绝，获得悲伤情绪×1");
+        Self.AddEmotion(EColor.LBlue);
+        GC.CreateMessage(Self.Name + "请假被CEO拒绝，获得辛酸情绪×1");
+        Self.InfoDetail.AddHistory(Self.Name + "请假被CEO拒绝，获得辛酸情绪×1");
     }
     public override void Failure(float Posb)
     {
         base.Failure(Posb);
-        Self.AddEmotion(EColor.Red);
-        Self.AddEmotion(EColor.Red);
+        Self.AddEmotion(EColor.LRed);
+        Self.AddEmotion(EColor.LRed);
         if (Random.Range(0.0f, 1.0f) <= 0.5)
         {
             PerkInfo info = null;
@@ -15734,12 +15771,12 @@ public class Event3_42 : JudgeEvent
                 info.CurrentPerk.RemoveEffect();
             }
             ResultText = Self.Name + "感到无聊想要请个假，";
-            ResultText += "上司回绝了" + Self.Name + "的请假请求，获得情绪状态：愤怒×2，消除事件状态：无聊×1";
+            ResultText += "上司回绝了" + Self.Name + "的请假请求，获得情绪状态：侮辱×2，消除事件状态：无聊×1";
         }
         else
         {
             ResultText = Self.Name + "感到无聊想要请个假，";
-            ResultText += "上司回绝了" + Self.Name + "的请假请求，获得情绪状态：愤怒×2";
+            ResultText += "上司回绝了" + Self.Name + "的请假请求，获得情绪状态：侮辱×2";
         }
     }
 }
@@ -15822,7 +15859,7 @@ public class Event3_43 : Event
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "想要约" + Target.Name + "周末一起出去玩";
         if (Random.Range(0,2) == 0)
         {
-            Self.AddEmotion(EColor.Red);
+            Self.AddEmotion(EColor.LRed);
             Self.ChangeRelation(Target, -15);
             Target.ChangeRelation(Self, -15);
             if (Random.Range(0.0f, 1.0f) <= 0.5)
@@ -15840,17 +15877,17 @@ public class Event3_43 : Event
                     info.CurrentPerk.RemoveEffect();
                 }
                 ObjectText = ResultText + Target.Name + "没有答应" + Self.Name + "，双方好感度-15";
-                ResultText += Target.Name + "没有接受，双方好感度-15，获得情绪状态：愤怒×1，消除事件状态：无聊×1";
+                ResultText += Target.Name + "没有接受，双方好感度-15，获得情绪状态：反感×1，消除事件状态：无聊×1";
             }
             else
             {
                 ObjectText = ResultText + Target.Name + "没有答应" + Self.Name + "，双方好感度-15";
-                ResultText += Target.Name + "没有接受，双方好感度-15，获得情绪状态：愤怒×1";
+                ResultText += Target.Name + "没有接受，双方好感度-15，获得情绪状态：反感×1";
             }
         }
         else
         {
-            Self.AddEmotion(EColor.Blue);
+            Self.AddEmotion(EColor.LBlue);
             Self.ChangeRelation(Target, -15);
             Target.ChangeRelation(Self, -15);
             if (Random.Range(0.0f, 1.0f) <= 0.5)
@@ -15868,12 +15905,12 @@ public class Event3_43 : Event
                     info.CurrentPerk.RemoveEffect();
                 }
                 ObjectText = ResultText + Target.Name + "没有答应" + Self.Name + "，双方好感度-15";
-                ResultText += Target.Name + "没有接受，双方好感度-15，获得情绪状态：悲伤×1，消除事件状态：无聊×1";
+                ResultText += Target.Name + "没有接受，双方好感度-15，获得情绪状态：苦涩×1，消除事件状态：无聊×1";
             }
             else
             {
                 ObjectText = ResultText + Target.Name + "没有答应" + Self.Name + "，双方好感度-15";
-                ResultText += Target.Name + "没有接受，双方好感度-15，获得情绪状态：悲伤×1";
+                ResultText += Target.Name + "没有接受，双方好感度-15，获得情绪状态：苦涩×1";
             }
         }
     }
@@ -16269,7 +16306,7 @@ static public class EventData
     //个人关系序列
     public static List<Event> RelationList = new List<Event>()
     {
-        new Event3_20(),new Event3_21(),new Event3_22(),new Event3_23(),new Event3_24(),new Event3_25(),new Event3_26(),new Event3_27(),new Event3_28(),new Event3_29(),new Event3_30(),new Event3_31(),new Event3_32(),new Event3_33(),new Event3_34(),new Event3_35(),new Event3_36(),new Event3_37(),new Event3_38(),new Event3_39(),new Event3_40(),new Event3_41(),new Event3_42(),new Event3_43(),new Event3_44(),new Event3_45(),new Event3_46(),new Event3_47(),new Event3_48(),new Event3_49()
+        new Event3_39(),new Event3_20(),new Event3_21(),new Event3_22(),new Event3_23(),new Event3_24(),new Event3_25(),new Event3_26(),new Event3_27(),new Event3_28(),new Event3_29(),new Event3_30(),new Event3_31(),new Event3_32(),new Event3_33(),new Event3_34(),new Event3_35(),new Event3_36(),new Event3_37(),new Event3_38(),new Event3_40(),new Event3_41(),new Event3_42(),new Event3_43(),new Event3_44(),new Event3_45(),new Event3_46(),new Event3_47(),new Event3_48(),new Event3_49()
     };
 
     //权重1-4事件链表

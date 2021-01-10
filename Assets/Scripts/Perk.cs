@@ -1350,7 +1350,7 @@ public class Perk48 : Perk
     {
         Name = "顺利-进步";
         Description = "每层进步+2% 部门成功率,持续时间结束后效果全部清空";
-        TimeLeft = 32;//持续到当前业务结束(旧，此功能已删)
+        TimeLeft = 64;//持续到当前业务结束(旧，此功能已删)
         Num = 48;
         canStack = true;
     }
@@ -1401,7 +1401,7 @@ public class Perk50 : Perk
     {
         Name = "悔恨-混乱";
         Description = "每层混乱-2% 部门成功率,持续时间结束后效果全部清空";
-        TimeLeft = 32;//持续到当前业务结束(旧，此功能已删)
+        TimeLeft = 64;//持续到当前业务结束(旧，此功能已删)
         Num = 50;
         canStack = true;
     }
