@@ -429,7 +429,7 @@ public class CEOControl : MonoBehaviour
 
                 if (ReligionValue == 1)
                     Target.ChangeCharacter(1, -50);
-                else if (CEO.Character[1] < 0)
+                else
                     Target.ChangeCharacter(1, 50);
                 //引导任务判定
                 BSkillUsed = true;

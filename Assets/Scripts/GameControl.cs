@@ -104,6 +104,7 @@ public class GameControl : MonoBehaviour
     [HideInInspector] public UnityEvent DailyEvent, WeeklyEvent, MonthlyEvent, HourEvent, YearEvent;
 
     public Button[] CEOSkillButton = new Button[5];
+    public Button[] TimeButtons = new Button[5];
     public Text[] Text_CEOSkillCD = new Text[5];
     public List<DepControl> CurrentDeps = new List<DepControl>();
     public List<OfficeControl> CurrentOffices = new List<OfficeControl>();
@@ -888,6 +889,7 @@ public class GameControl : MonoBehaviour
                 QC.Finish(5);
                 new EmpBuff(CC.CEO, 16, -45);
                 ResetSelectMode();
+                QC.Init("技能释放成功\n\n" + depControl.Text_DepName.text + "成功率上升45%");
             }
             else if (CEOSkillNum == 2)
             {
@@ -1061,6 +1063,7 @@ public class GameControl : MonoBehaviour
             new EmpBuff(CC.CEO, 16, -45);
             CurrentEmpInfo.emp.InfoDetail.AddHistory("接受了CEO的培养");
             CC.CEO.InfoDetail.AddHistory("培养了" + CurrentEmpInfo.emp.Name);
+            QC.Init("技能释放成功\n\n" + CurrentEmpInfo.emp.Name + "所选技能每回合无条件获得3点经验，持续4个月");
         }
         else
         {
@@ -1320,6 +1323,17 @@ public class GameControl : MonoBehaviour
         else
         {
             ForceTimePause = true;
+        }
+    }
+
+    public void SetButtonColor(int num)
+    {
+        for(int i = 0; i < 5; i++)
+        {
+            if (num == i)
+                TimeButtons[i].GetComponent<Image>().color = Color.gray;
+            else
+                TimeButtons[i].GetComponent<Image>().color = Color.white;
         }
     }
 }

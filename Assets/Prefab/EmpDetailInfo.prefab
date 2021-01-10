@@ -1636,7 +1636,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &4208278065186851679
 RectTransform:
   m_ObjectHideFlags: 0
@@ -9232,6 +9232,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Entity: {fileID: 0}
   GC: {fileID: 0}
+  MobDownSign: {fileID: 0}
   HireButton: {fileID: 0}
   MoveButton: {fileID: 0}
   FireButton: {fileID: 0}

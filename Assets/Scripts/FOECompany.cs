@@ -37,7 +37,7 @@ public class FOECompany : MonoBehaviour
         //{
         //    if (isPlayer == true)
         //        Morale = FC.GC.Morale;
-        //    Text_Status.text = "中立市场:" + NeutralMarket + "\n控制市场:" + ControledMarket + "\n当前士气:" + Morale;
+        //    Text_Status.text = "自由市场:" + NeutralMarket + "\n控制市场:" + ControledMarket + "\n当前士气:" + Morale;
         //}
         Text_Status.text = "融资等级:";
         if (Level == 0)
@@ -105,7 +105,7 @@ public class FOECompany : MonoBehaviour
         while(NeutralAttackTime > 0 && FC.NeutralMarket > 0 && ActionTime > 0 && ResourceA >= CostA)
         {
             ResourceA -= CostA;
-            FC.Text_Info.text += "\n[第" + FC.Turn + "回合]" + Text_Name.text + "消耗" + CostA + "程序迭代占领了一个中立市场";
+            FC.Text_Info.text += "\n[第" + FC.Turn + "回合]" + Text_Name.text + "消耗" + CostA + "程序迭代占领了一个自由市场";
             CostA *= 3;
             FC.NeutralMarket -= 1;
             ControledMarket += 1;
