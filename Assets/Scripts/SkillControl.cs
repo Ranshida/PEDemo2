@@ -210,7 +210,8 @@ public class SkillControl : MonoBehaviour
         if(FirstMob == false)
         {
             FirstMob = true;
-            GC.QC.Init("恭喜你完成头脑风暴，你或许会发现，体力空了。\n这个时候可以通过CEO的<color=yellow>技能</color>-放假，每周会回复16点体力，当然体力也会自动回复，每周回复10点。");
+            GC.QC.Init("恭喜你完成头脑风暴，你或许会发现，体力空了。\n这个时候可以通过CEO的<color=yellow>技能</color>-放假，每周会回复16" +
+                "点体力，当然体力也会自动回复，每周回复10点。\n作为新手奖励，直接帮你回满吧。\n点击确定");
             GC.CC.CEO.Stamina += 1000;
         }
         //直接退出的Debuff
@@ -319,6 +320,10 @@ public class SkillControl : MonoBehaviour
                 else
                     CurrentSkills[i].button.interactable = false;
             }
+            if (CurrentSkills[i].empInfo.emp.Mentality <= 0)
+                CurrentSkills[i].DeadSign.SetActive(true);
+            else
+                CurrentSkills[i].DeadSign.SetActive(false);
         }
     }
 
@@ -424,6 +429,7 @@ public class SkillControl : MonoBehaviour
         if(BossHp <= 0)
         {
             VictoryPanel.SetActive(true);
+            FinishSign.SetActive(true);
             BossPanel.SetActive(false);
         }
     }
@@ -602,7 +608,7 @@ public class SkillControl : MonoBehaviour
         {
             SkillInfo s = CurrentSkills[Random.Range(0, CurrentSkills.Count)];
             s.LockTime += 3;
-            s.gameObject.SetActive(false);
+            s.SkillLock(false);
             SkillLockBonusCheck();
         }
 
@@ -627,7 +633,7 @@ public class SkillControl : MonoBehaviour
                 if(CurrentSkills[i].empInfo.emp == TargetEmployee)
                 {
                     CurrentSkills[i].LockTime += 5;
-                    CurrentSkills[i].gameObject.SetActive(false);
+                    CurrentSkills[i].SkillLock(false);
                 }
             }
         }
@@ -664,7 +670,7 @@ public class SkillControl : MonoBehaviour
             {
                 CurrentSkills[i].LockTime -= 1;
                 if (CurrentSkills[i].LockTime == 0)
-                    CurrentSkills[i].gameObject.SetActive(true);
+                    CurrentSkills[i].SkillLock(true);
             }
         }
 
@@ -695,6 +701,7 @@ public class SkillControl : MonoBehaviour
         CreateDice(DiceNum + ExtraDiceNum);
         ExtraDiceNum = 0;
         RandomBossSkill();
+        SkillCheck();
     }
 
     //Boss战胜利
@@ -866,7 +873,7 @@ public class SkillControl : MonoBehaviour
     }
 
     //更新结果信息
-    public void SetResultText()
+    public void SetResultText(bool ContinueText = false)
     {
         Text_Result.text = "";
         if (FightStart == false)
@@ -881,7 +888,7 @@ public class SkillControl : MonoBehaviour
         if (ExtraMajorSuccessRate > 0.001f)
             Text_Result.text += ",大成功率+" + (ExtraMajorSuccessRate * 100) + "%";
         if (ExtraMajorSuccessRate < 0.499f)
-            Text_Result.text += "\n继续挑战可以获得更高头脑风暴等级，确定不继续挑战吗？";
+            Text_Result.text += "\n继续挑战可以获得更高头脑风暴等级，要继续挑战吗？";
     }
 
 }

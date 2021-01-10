@@ -42,7 +42,6 @@ public class GameControl : MonoBehaviour
         set
         {
             CurrentEmployees[0].Mentality = value;
-            Text_Mentality.text = "心力:" + CurrentEmployees[0].Mentality;
         }
     }
     public int Morale
@@ -159,8 +158,8 @@ public class GameControl : MonoBehaviour
                         + "    " + (Income - Salary - BuildingPay) + "/月";
         if (CurrentEmployees.Count > 0)
         {
-            Text_Stamina.text = "体力:" + CurrentEmployees[0].Stamina + "/" + CurrentEmployees[0].StaminaLimit;
-            Text_Mentality.text = "心力:" + CurrentEmployees[0].Mentality + "/" + CurrentEmployees[0].MentalityLimit;
+            Text_Stamina.text = "CEO体力:" + CurrentEmployees[0].Stamina + "/" + CurrentEmployees[0].StaminaLimit;
+            Text_Mentality.text = "CEO心力:" + CurrentEmployees[0].Mentality + "/" + CurrentEmployees[0].MentalityLimit;
         }
     }
 

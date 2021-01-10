@@ -987,7 +987,7 @@ public class Skill39 : Skill
     {
         base.StartEffect();
         TargetEmp.InfoDetail.GC.SC.TargetSkill.LockTime += 2;
-        TargetEmp.InfoDetail.GC.SC.TargetSkill.gameObject.SetActive(false);
+        TargetEmp.InfoDetail.GC.SC.TargetSkill.SkillLock(false);
         TargetEmp.InfoDetail.GC.SC.SkillLockBonusCheck();
 
         if (sc.Sp2Multiply > 0)
@@ -1177,7 +1177,7 @@ public class Skill47 : Skill
     {
         base.StartEffect();
         TargetEmp.InfoDetail.GC.SC.TargetSkill.LockTime += 2;
-        TargetEmp.InfoDetail.GC.SC.TargetSkill.gameObject.SetActive(false);
+        TargetEmp.InfoDetail.GC.SC.TargetSkill.SkillLock(false);
         TargetEmp.InfoDetail.GC.SC.SkillLockBonusCheck();
         TargetEmp.InfoDetail.GC.CurrentEmpInfo.emp.Confidence += 15;
     }

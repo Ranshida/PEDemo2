@@ -293,9 +293,10 @@ public class EmpInfo : MonoBehaviour
                 GC.CurrentEmpInfo = this;
                 GC.VacationPanel.SetActive(true);
             }
-            else if (GC.CEOSkillNum > 5 && emp.isCEO == false)
+            else if (GC.CEOSkillNum > 5)
             {
-                GC.CC.SetPanelContent(emp);
+                if (emp.isCEO == false || GC.CEOSkillNum == 18)
+                    GC.CC.SetPanelContent(emp);
             }
             if (GC.CEOSkillNum < 5)
                 GC.CC.CEOSkillConfirm();

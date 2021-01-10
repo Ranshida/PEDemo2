@@ -258,8 +258,6 @@ public class Employee
             }
             if (mentality < 50 && WantLeave == true)
                 InfoA.Fire();
-            if (isCEO == true)
-                GameControl.Instance.Text_Mentality.text = "心力:" + mentality;
         }
     }
     public int StaminaLimit { get { return 100 + (Strength * 5) + StaminaLimitExtra; } set { StaminaLimit = value;} } //体力上限

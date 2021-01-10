@@ -6,7 +6,8 @@ using UnityEngine.UI;
 public class SkillInfo : MonoBehaviour
 {
     public int InfoType, LockTime = 0;
-    public bool Active = true;
+    public bool Active = true;//目前用于禁用技能检测
+    public GameObject ForbidSign, DeadSign;
 
     public Skill skill;
     public SkillControl SC;
@@ -245,5 +246,20 @@ public class SkillInfo : MonoBehaviour
             }
         }
 
+    }
+
+    public void SkillLock(bool UnLock)
+    {
+        if(UnLock == false)
+        {
+            Active = false;
+            button.interactable = false;
+            ForbidSign.SetActive(true);
+        }
+        else
+        {
+            Active = true;
+            ForbidSign.SetActive(true);
+        }
     }
 }
