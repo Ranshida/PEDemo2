@@ -38,7 +38,7 @@ public class SkillControl : MonoBehaviour
     public bool FightStart = false;//确定头脑风暴是否已经开始
 
     public SkillInfo CurrentSkill, SkillInfoPrefab, SkillInfoPrefab2, TargetSkill;//Prefab为技能预设选择,Prefab2为战斗中技能选择
-    public GameObject ConfirmPanel, EventPanel, SkillSelectPanel, BossPanel, VictoryPanel, SelectConfirmButton, PresetPanel, FinishSign;
+    public GameObject ConfirmPanel, EventPanel, SkillSelectPanel, BossPanel, VictoryPanel, SelectConfirmButton, PresetPanel, FinishSign, EndTipPanel;
     public GameControl GC;
     public DiceControl DicePrefab, TargetDice;
     public Transform DiceContent, SkillContent, SkillSelectContent, EmpContent;
@@ -685,6 +685,8 @@ public class SkillControl : MonoBehaviour
             EndButton.interactable = true;
             FinishSign.SetActive(true);
             SkillSetButton.interactable = true;
+            SetResultText(true);
+            EndTipPanel.SetActive(true);
         }
         else
         { 
@@ -876,19 +878,30 @@ public class SkillControl : MonoBehaviour
     public void SetResultText(bool ContinueText = false)
     {
         Text_Result.text = "";
+        if(ContinueText == true)
+        {
+            Text_Result.text = "剩余回合数：0\n";
+        }
         if (FightStart == false)
         {
             Text_Result.text = "直接结束头脑风暴将会扣除5点士气，确定不继续挑战吗？";
             return;
         }
         else if (BossDefeat == false)
-            Text_Result.text = "胜利前结束头脑风暴将会扣除5点士气";
+                Text_Result.text += "胜利前结束头脑风暴将会扣除5点士气";
         Text_Result.text += "\n当前获得头脑风暴等级:" + BossLevel;
         Text_Result.text += "\n所有办公室成功率+" + (ExtraSuccessRate * 100) + "%";
         if (ExtraMajorSuccessRate > 0.001f)
             Text_Result.text += ",大成功率+" + (ExtraMajorSuccessRate * 100) + "%";
-        if (ExtraMajorSuccessRate < 0.499f)
-            Text_Result.text += "\n继续挑战可以获得更高头脑风暴等级，要继续挑战吗？";
+        if (ContinueText == false)
+        {
+            if (ExtraMajorSuccessRate < 0.499f)
+                Text_Result.text += "\n继续挑战可以获得更高头脑风暴等级，要继续挑战吗？";
+        }
+        else
+        {
+            Text_Result.text += "\n继续挑战后点击“下一回合”可以额外获得6个回合\n要继续挑战吗？";
+        }
     }
 
 }
