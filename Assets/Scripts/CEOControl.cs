@@ -17,7 +17,7 @@ public class CEOControl : MonoBehaviour
     public int CultureValue = 1, ReligionValue = 1, SkillValue = 1;
 
     int SuccessLimit = 10;
-    bool ASkillUsed = false, BSkillUsed = false;//引导任务专用判定
+    bool ASkillUsed = false, BSkillUsed = false, CSkillUsed = false, DSkillUsed = false;//引导任务专用判定
 
     private void Start()
     {
@@ -370,10 +370,16 @@ public class CEOControl : MonoBehaviour
             else if (GC.CEOSkillNum == 8)
             {
                 Target.AddEmotion(EColor.LBlue);
+                CSkillUsed = true;
+                if (CSkillUsed == true && DSkillUsed == true)
+                    GC.QC.Finish(12);
             }
             else if (GC.CEOSkillNum == 9)
             {
                 Target.AddEmotion(EColor.LYellow);
+                DSkillUsed = true;
+                if (CSkillUsed == true && DSkillUsed == true)
+                    GC.QC.Finish(12);
             }
             else if (GC.CEOSkillNum == 10)
             {

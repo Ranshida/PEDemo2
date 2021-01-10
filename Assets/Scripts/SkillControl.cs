@@ -32,7 +32,7 @@ public class SkillControl : MonoBehaviour
     public int SkillLockBonus = 0;//本回合每锁定一个技能额外生成两个骰子效果的层数
     public int TurnLeft = 0;//距离可以结束的回合数
     public int ExtraDiceNum = 0;//下回合额外获得的骰子数量
-    public int MobLevel = 1;//当前动员等级
+    public int MobLevel = 0;//当前动员等级
     public bool NoStaminaCost = false; //下一个技能无消耗buff
     public bool DoubleCost = false; //下一个技能消耗翻倍buff
     public bool FightStart = false;//确定头脑风暴是否已经开始
@@ -889,7 +889,7 @@ public class SkillControl : MonoBehaviour
         }
         else if (BossDefeat == false)
                 Text_Result.text += "胜利前结束头脑风暴将会扣除5点士气";
-        Text_Result.text += "\n当前获得头脑风暴等级:" + BossLevel;
+        Text_Result.text += "\n当前获得头脑风暴等级:" + MobLevel;
         Text_Result.text += "\n所有办公室成功率+" + (ExtraSuccessRate * 100) + "%";
         if (ExtraMajorSuccessRate > 0.001f)
             Text_Result.text += ",大成功率+" + (ExtraMajorSuccessRate * 100) + "%";
