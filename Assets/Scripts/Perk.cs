@@ -2066,7 +2066,7 @@ public class Perk101 : Perk
     public Perk101(Employee Emp) : base(Emp)
     {
         Name = "信仰不一";
-        Description = "部门信念-15";
+        Description = "同事和直属上级中存在信仰与其他人不同的，部门信念-15";
         TimeLeft = -1;
         Num = 101;
         canStack = false;
@@ -2088,7 +2088,7 @@ public class Perk102 : Perk
     public Perk102(Employee Emp) : base(Emp)
     {
         Name = "信仰一致";
-        Description = "部门信念+15";
+        Description = "同事和直属上级中信仰全部一致，部门信念+15";
         TimeLeft = -1;
         Num = 102;
         canStack = false;
@@ -2110,7 +2110,7 @@ public class Perk103 : Perk
     public Perk103(Employee Emp) : base(Emp)
     {
         Name = "文化不一";
-        Description = "部门信念-15";
+        Description = "同事和直属上级中存在文化与其他人不同的，部门信念-15";
         TimeLeft = -1;
         Num = 103;
         canStack = false;
@@ -2132,7 +2132,7 @@ public class Perk104 : Perk
     public Perk104(Employee Emp) : base(Emp)
     {
         Name = "文化一致";
-        Description = "部门信念+15";
+        Description = "同事和直属上级中文化全部一致，部门信念+15";
         TimeLeft = -1;
         Num = 104;
         canStack = false;
