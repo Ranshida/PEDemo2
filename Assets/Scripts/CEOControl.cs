@@ -305,7 +305,6 @@ public class CEOControl : MonoBehaviour
         {
             if (GC.Stamina >= 50)
             {
-                GC.Stamina -= 50;
                 CRChangePanel.SetActive(true);
             }
             else
@@ -346,6 +345,7 @@ public class CEOControl : MonoBehaviour
     public void ConfirmCRChange()
     {
         ActiveSkill();
+        GC.Stamina -= 50;
     }
 
     void ActiveSkill()

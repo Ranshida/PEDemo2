@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class FOEControl : MonoBehaviour
 {
     public GameControl GC;
-    public GameObject CloseButton, EndButton, ActionPanel, CloseButton2, SpyPanel;
+    public GameObject CloseButton, EndButton, ActionPanel, CloseButton2, SpyPanel, NeutralAttackSign;
     public CanvasGroup canvasGroup;
     public Text Text_Info, Text_FightTime, Text_NeutralMarket, Text_Turn;
 
@@ -29,7 +29,7 @@ public class FOEControl : MonoBehaviour
     private void Update()
     {
         Text_Turn.text = "第" + Turn + "回合";
-        Text_NeutralMarket.text = "剩余中立市场数:" + NeutralMarket;
+        Text_NeutralMarket.text = "剩余自由市场数:" + NeutralMarket;
         for(int i = 0; i < 3; i++)
         {
             Text_Costs[i].text = "消耗程序迭代:" + Companies[0].CostB;
@@ -86,6 +86,10 @@ public class FOEControl : MonoBehaviour
             Companies[i].ResetStatus();
             Companies[i].SetAction();
         }
+        if (NeutralMarket > 0)
+            NeutralAttackSign.SetActive(true);
+        else
+            NeutralAttackSign.SetActive(false);
         SetRank();
     }
 
@@ -102,6 +106,10 @@ public class FOEControl : MonoBehaviour
             if (Companies[i].ActionFinish == true)
                 FinishNum += 1;
         }
+        if (NeutralMarket > 0)
+            NeutralAttackSign.SetActive(true);
+        else
+            NeutralAttackSign.SetActive(false);
         SetRank();
         Companies[0].ResetPlayerStatus();
         if (FinishNum == 4)
@@ -278,11 +286,11 @@ public class FOEControl : MonoBehaviour
         }
         if (NeutralMarket < 1)
         {
-            GC.CreateMessage("中立市场不足");
+            GC.CreateMessage("自由市场不足");
             return;
         }
         GC.FinishedTask[0] -= Companies[0].CostA;
-        Text_Info.text += "\n[第" + Turn + "回合]玩家消耗" + Companies[0].CostA + "程序迭代占领了一个中立市场";
+        Text_Info.text += "\n[第" + Turn + "回合]玩家消耗" + Companies[0].CostA + "程序迭代占领了一个自由市场";
         Companies[0].CostA *= 3;
         Companies[0].ControledMarket += 1;
         NeutralMarket -= 1;

@@ -191,7 +191,7 @@ public class DepControl : MonoBehaviour
                 Text_DepMode.text = "部门模式:" + building.Function_A;
             else if (BuildingMode == 2)
                 Text_DepMode.text = "部门模式:" + building.Function_B;
-            Text_Efficiency.text = "动员等级:" + GC.SC.MobLevel;
+            Text_Efficiency.text = "头脑风暴等级:" + GC.SC.MobLevel;
             string skill = "";//1技术 2市场 3产品 4观察 5坚韧 6强壮 7管理 8人力 9财务 10决策 11行业 12谋略 13说服 14魅力 15八卦
             if (building.effectValue == 1)
                 skill = "技术";
@@ -293,7 +293,8 @@ public class DepControl : MonoBehaviour
             }
             else if (building.Type == BuildingType.产品部门)
             {
-                QuestControl.Instance.Finish(10);
+                if (CurrentEmps.Count > 0)
+                    QuestControl.Instance.Finish(10);
             }
             else if (building.Type == BuildingType.公关营销部)
             {
@@ -686,7 +687,7 @@ public class DepControl : MonoBehaviour
             ExtraEffectDescription(CommandingOffice.CurrentManager, true);
         }
         if (Mathf.Abs(GC.SC.ExtraSuccessRate) > 0.001f)
-            Text_SRateDetail.text += "\n动员效果:" + (GC.SC.ExtraSuccessRate * 100) + "%";
+            Text_SRateDetail.text += "\n头脑风暴效果:" + (GC.SC.ExtraSuccessRate * 100) + "%";
         if (Mathf.Abs(Efficiency) > 0.001f)
             Text_SRateDetail.text += "\n额外效果:" + (Efficiency * 100) + "%";
         if (building.Type == BuildingType.人力资源部 && GC.HireSuccessExtra > 0.001f)
@@ -748,7 +749,7 @@ public class DepControl : MonoBehaviour
         if (type == 0)
         {
             Text_DetailInfo.text = "成功率:" + (GC.SC.ExtraSuccessRate * 100) + "%";
-            Text_DetailInfo.text = "大成功率:" + (GC.SC.ExtraMajorSuccessRate * 100) + "%";
+            Text_DetailInfo.text += "大成功率:" + (GC.SC.ExtraMajorSuccessRate * 100) + "%";
         }
         else if (type == 1)
         {
@@ -814,7 +815,7 @@ public class DepControl : MonoBehaviour
         {
             Text_DetailInfo.text = "基础大成功率:" + Mathf.Round(DepBaseMajorSuccessRate * 100) + "%";
             if (GC.SC.ExtraMajorSuccessRate > 0.0001)
-                Text_DetailInfo.text += "\n额外动员效果:" + (GC.SC.ExtraMajorSuccessRate * 100) + "%";
+                Text_DetailInfo.text += "\n头脑风暴效果:" + (GC.SC.ExtraMajorSuccessRate * 100) + "%";
             Text_DetailInfo.text += "\n——————\n当部门生产成功时，有一定几率转化为大成功，部门中员工会的经验翻倍" +
                 "部分部门会同时生产出更多业务";
         }
