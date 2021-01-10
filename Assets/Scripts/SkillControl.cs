@@ -55,7 +55,7 @@ public class SkillControl : MonoBehaviour
     public SkillInfo[] CSkillSetA = new SkillInfo[6], CSkillSetB = new SkillInfo[6], CSkillSetC = new SkillInfo[6];
 
     int DiceNum, totalValue, RequirePoint, BossLevel, NextBossSkill, SetNum;
-    bool BossDefeat = false;
+    bool BossDefeat = false, FirstMob = false;
 
     Employee TargetEmployee; //Boss目标员工
 
@@ -207,6 +207,12 @@ public class SkillControl : MonoBehaviour
     public void ClearPanel()
     {
         GC.QC.Finish(1);
+        if(FirstMob == false)
+        {
+            FirstMob = true;
+            GC.QC.Init("恭喜你完成头脑风暴，你或许会发现，体力空了。\n这个时候可以通过CEO的<color=yellow>技能</color>-放假，每周会回复16点体力，当然体力也会自动回复，每周回复10点。");
+            GC.CC.CEO.Stamina += 1000;
+        }
         //直接退出的Debuff
         if(FightStart == false)
         {
