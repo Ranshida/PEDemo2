@@ -174,7 +174,7 @@ public class QuestControl : MonoBehaviour
                 ShowQuestPanel("使用CEO技能+部门成功率", "　　看到成功率了吗？点击技术部门<color=yellow>详细信息</color>按钮，查看当前<color=yellow>成功率</color>，如果团队成员能力太菜，工作成功率会非常低。比如在技术部门，若管理者的技术等级<6，该部门成功率下降15%，若其中员工技术等级<6，成功率也会下降15%，可想而知如果一个糊涂蛋带着四个外行，成功率接近0%。\n　　这时候不如使用屏幕右上角CEO的<color=yellow>技能</color>里的<color=yellow>亲自指导</color>，通力协作或许能创造奇迹~", "达成条件：发动CEO技能“亲自指导”");
                 break;
             case 6:
-                ShowQuestPanel("使用CEO技能调节情绪、改变文化信仰", "　　虽然成功率提高了，但是新团队看起来<color=yellow>信念</color>不大坚定啊。\n　　点击部门<color=yellow>详细信息</color>界面，<color=yellow>鼠标悬停查看信念</color>及<color=yellow>左侧状态栏</color>。看来是因为大家文化不同，信仰不一。特殊时刻，或许有必要使用CEO技能中的“<color=yellow>激怒</color>”和“<color=yellow>改变文化信仰</color>”来保障团队稳定。", "达成条件：发动CEO技能“激怒”、“改变文化信仰”（发动即可，无论成功失败）");
+                ShowQuestPanel("使用CEO技能调节情绪、改变文化信仰", "　　虽然成功率提高了，但是新团队看起来<color=yellow>信念</color>不大坚定啊。\n　　点击部门<color=yellow>详细信息</color>界面，<color=yellow>鼠标悬停查看信念</color>及<color=yellow>左侧状态栏</color>。看来是因为大家文化不同，信仰不一。特殊时刻，或许有必要使用CEO技能中的“<color=yellow>激怒</color>”和“<color=yellow>改变文化信仰</color>”来将信仰和文化中立的员工变得与X相同，保持团队稳定。", "达成条件：发动CEO技能“激怒”、“改变文化信仰”（发动即可，无论成功失败）");
                 break;
             case 7:
                 ShowQuestPanel("商战成功", "　　每三个月都是你打商战的时刻，和对手抢夺市场吧，每次商战排名越高、<color=yellow>胜利积分</color>越多的公司融资越多。你可以抢夺自由市场，也可以抢夺别人手里的市场，每回合抢夺越多，所消耗的程序迭代越多，传播则可以免除一次被抢夺的结果。按照每场商战获取市场的不同排名，你可能会提高或降低士气。点击界面上的<color=yellow>？</color>查看详情。", "达成条件：完成一次商战");

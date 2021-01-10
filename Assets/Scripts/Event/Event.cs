@@ -11881,9 +11881,8 @@ public class Event3_4 : Event
     {
         base.Success(Posb);
         Self.InfoDetail.AddPerk(new Perk53(Self), true);
-        Target.InfoDetail.AddPerk(new Perk53(Target), true);
         ResultText = "在" + SelfEntity.StandGridName() + "，由于" + Self.Name + "进入一种狂想的状态，向附近的同事" + Target.Name + "说个不停，";
-        ResultText += Target.Name + "隐约听到一些洞见，双方获得事件状态 顺利*1";
+        ResultText += Target.Name + "隐约听到一些洞见，获得事件状态 顺利*1";
         GC.CreateMessage(Self.Name + "产生了狂想");
     }
     public override void Failure(float Posb)
