@@ -515,7 +515,21 @@ public class CEOControl : MonoBehaviour
             CEO.InfoDetail.AddHistory(Text_Name.text + "失败," + Text_Result.text);
             if (Target != null)
                 Target.InfoDetail.AddHistory("CEO" + Text_Name.text + "失败," + Text_Result.text);
-            if (GC.CEOSkillNum == 11)
+            if(GC.CEOSkillNum == 10)
+            {
+                ASkillUsed = true;
+                if (ASkillUsed == true && BSkillUsed == true)
+                    GC.QC.Finish(3);
+            }
+            else if (GC.CEOSkillNum == 16)
+            {
+                //引导任务判定
+                BSkillUsed = true;
+                if (ASkillUsed == true && BSkillUsed == true)
+                    GC.QC.Finish(3);
+                //GC.QC.Finish(6);
+            }
+            else if (GC.CEOSkillNum == 11)
             {
                 GC.Text_EmpSelectTip.text = "选择第一个员工";
                 GC.CurrentEmpInfo2 = null;
