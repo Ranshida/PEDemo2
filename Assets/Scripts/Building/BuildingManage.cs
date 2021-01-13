@@ -491,13 +491,13 @@ public class BuildingManage : MonoBehaviour
     public void GiveUpLottery()
     {
         QuestControl.Instance.Finish(11);
-        TryQuitBuildMode();
         lotteryPanel.gameObject.SetActive(false);
         foreach (Transform ui in lotteryUI)
         {
             Destroy(ui.gameObject);
         }
         lotteryUI.Clear();
+        TryQuitBuildMode();
     }
 
     //建造基础建筑按钮
