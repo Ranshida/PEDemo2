@@ -1169,7 +1169,7 @@ public class GameControl : MonoBehaviour
             }
             else if (num == 5)
             {
-                CurrentOffice.Text_OfficeMode.text = "办公室模式:部门研究";
+                CurrentOffice.Text_OfficeMode.text = "办公室模式:组织研究";
                 CurrentOffice.MaxProgress = 48;
                 CurrentOffice.building.effectValue = 7;
             }

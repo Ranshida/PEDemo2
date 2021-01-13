@@ -121,7 +121,6 @@ public class FOECompany : MonoBehaviour
                 break;
             }
             ResourceA -= CostB;
-            CostB += 5;
             if (target.Shield > 0)
             {
                 target.Shield -= 1;
@@ -133,6 +132,7 @@ public class FOECompany : MonoBehaviour
                 target.ControledMarket -= 1;
                 FC.Text_Info.text += "\n[第" + FC.Turn + "回合]" + Text_Name.text + "消耗" + CostB + "程序迭代抢夺了" + target.Text_Name.text + "一个市场";
             }
+            CostB += 5;
             ActionTime -= 1;
             NeutralAttackTime -= 1;
         }
