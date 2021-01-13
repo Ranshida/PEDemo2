@@ -15426,7 +15426,7 @@ public class Event3_39 : Event
         else
         {
             ObjectText = ResultText + "两人互相很有兴趣，双方好感度+15";
-            ResultText += "双方聊得挺高兴的，" + Self.Name + "对" + Target.Name + "更加好奇，双方好感度+15，获得情绪状态：好奇×1";
+            ResultText += "双方聊得挺高兴的，" + Self.Name + "对" + Target.Name + "更加好奇，双方好感度+15，获得情绪状态：愉悦×1";
         }
     }
     public override void Failure(float Posb)
