@@ -153,7 +153,9 @@ public class FOECompany : MonoBehaviour
                 Level += 1;
                 LevelPoint -= 5;
                 if (isPlayer == true)
+                {
                     FC.GC.Income = 100;
+                }
             }
         }
         else if (Level == 1)

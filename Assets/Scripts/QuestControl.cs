@@ -102,7 +102,6 @@ public class QuestControl : MonoBehaviour
         else
         {
             message = Instantiate(MessagePrefab, BottomContent).GetComponent<MessagePanel>();
-            print("Show");
         }
         message.Init(txt, onAccept);
     }

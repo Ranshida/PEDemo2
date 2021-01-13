@@ -254,13 +254,13 @@ public class ProductControl : MonoBehaviour
 
     public void UserChange()
     {
-        int income = 0;
-        for(int i = 0; i < CurrentProduct.Count; i++)
-        {
-            CurrentProduct[i].AddUser();
-            income += CurrentProduct[i].TotalProfit;
-        }
-        GC.Income = income;
+        //int income = 0;
+        //for(int i = 0; i < CurrentProduct.Count; i++)
+        //{
+        //    CurrentProduct[i].AddUser();
+        //    income += CurrentProduct[i].TotalProfit;
+        //}
+        //GC.Income = income;
     }
 
     public void StartSpecialEvent()
