@@ -295,6 +295,7 @@ public class DepControl : MonoBehaviour
             {
                 if (CurrentEmps.Count > 0)
                     QuestControl.Instance.Finish(10);
+                SpProgress += Pp;
             }
             else if (building.Type == BuildingType.公关营销部)
             {
