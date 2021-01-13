@@ -547,7 +547,7 @@ public class OfficeControl : MonoBehaviour
                             GC.BM.Lottery(4);
                         else
                             GC.BM.Lottery(3);
-                        GC.CreateMessage("(" + Text_OfficeName.text + ")完成了部门研究");
+                        GC.CreateMessage("(" + Text_OfficeName.text + ")完成了组织研究");
                     }
                 }
 
