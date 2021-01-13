@@ -9,7 +9,7 @@ public class FOECompany : MonoBehaviour
     public int SelfMarketAttackLimit = 0, FoeMarketAttackLimit = 0, NeutralSkillNum = -1, FOESkillNum = -1;//两种技能的释放数量;
 
     public int Morale = 100;
-
+    public int NextLevelPoint = 5;
 
     //新版本所需变量
     public int ResourceA, ResourceB, ControledMarket = 0, ExtraActionPoint;//A程序迭代 B传播
@@ -29,60 +29,60 @@ public class FOECompany : MonoBehaviour
     }
     private void Update()
     {
-        //if (Morale <= 0)
-        //{
-        //    Text_Status.text = "已消灭";
-        //}
+        if (Morale <= 0)
+        {
+            Text_Status.text = "\n\n\n\n已破产";
+        }
         //else
         //{
         //    if (isPlayer == true)
         //        Morale = FC.GC.Morale;
         //    Text_Status.text = "自由市场:" + NeutralMarket + "\n控制市场:" + ControledMarket + "\n当前士气:" + Morale;
         //}
-        Text_Status.text = "融资等级:";
-        if (Level == 0)
-        {
-            Text_Status.text += "--";
-            Text_Status.text += "\n升级还需积分:" + (10 - LevelPoint);
-        }
-        else if (Level == 1)
-        {
-            Text_Status.text += "天使轮";
-            Text_Status.text += "\n升级还需积分:" + (15 - LevelPoint);
-        }
-        else if (Level == 2)
-        {
-            Text_Status.text += "A轮";
-            Text_Status.text += "\n升级还需积分:" + (20 - LevelPoint);
-        }
-        else if (Level == 3)
-        {
-            Text_Status.text += "B轮";
-            Text_Status.text += "\n升级还需积分:" + (30 - LevelPoint);
-        }
-        else if (Level == 4)
-        { 
-            Text_Status.text += "C轮";
-            Text_Status.text += "\n升级还需积分:" + (50 - LevelPoint);
-        }
-        else if (Level == 5)
-        { 
-            Text_Status.text += "D轮";
-            Text_Status.text += "\n升级还需积分:--";
-        }
-        if (isPlayer == false)
-        {
-            Text_Status.text += "\n\n程序迭代:" + ResourceA;
-            Text_Status.text += "\n传播:" + ResourceB;
-        }
         else
         {
-            Text_Status.text += "\n\n程序迭代:" + FC.GC.FinishedTask[0];
-            Text_Status.text += "\n传播:" + +FC.GC.FinishedTask[3];
+            Text_Status.text = "融资等级:";
+            if (Level < 5)
+            {
+                if (Level == 0)
+                    Text_Status.text += "--";
+                else if (Level == 1)
+                    Text_Status.text += "天使轮";
+                else if (Level == 2)
+                    Text_Status.text += "A轮";
+                else if (Level == 3)
+                    Text_Status.text += "B轮";
+                else if (Level == 4)
+                    Text_Status.text += "C轮";
+                Text_Status.text += "\n升级还需积分:" + (NextLevelPoint - LevelPoint);
+            }
+            else if (Level == 5)
+            {
+                Text_Status.text += "D轮";
+                Text_Status.text += "\n升级还需积分:--";
+            }
+
+            if (Morale > 100)
+                Morale = 100;
+            if (isPlayer == false)
+                Text_Status.text += "\n士气:" + Morale;
+            else
+                Text_Status.text += "\n士气:" + FC.GC.Morale;
+
+            if (isPlayer == false)
+            {
+                Text_Status.text += "\n\n程序迭代:" + ResourceA;
+                Text_Status.text += "\n传播:" + ResourceB;
+            }
+            else
+            {
+                Text_Status.text += "\n\n程序迭代:" + FC.GC.FinishedTask[0];
+                Text_Status.text += "\n传播:" + +FC.GC.FinishedTask[3];
+            }
+            Text_Status.text += "\n\n当前市场数:" + ControledMarket;
+            Text_Status.text += "\n当前名次:" + Ranking;
+            Text_Status.text += "\n护盾层数:" + Shield;
         }
-        Text_Status.text += "\n\n当前市场数:" + ControledMarket;
-        Text_Status.text += "\n当前名次:" + Ranking;
-        Text_Status.text += "\n护盾层数:" + Shield;
     }
 
     public void SetAction()
@@ -146,57 +146,53 @@ public class FOECompany : MonoBehaviour
     {
         LevelPoint += value;
         //因为积分不会以此获得很多所以不用进行多级检测
-        if(Level == 0)
+        if (LevelPoint >= NextLevelPoint && Level < 5)
         {
-            if (LevelPoint >= 10)
+            if (Level == 0)
             {
-                Level += 1;
-                LevelPoint -= 5;
+                NextLevelPoint = 15;
                 if (isPlayer == true)
                 {
                     FC.GC.Income = 100;
+                    QuestControl.Instance.Init("当前商战总积分:" + LevelPoint + "\n恭喜您获得天使轮融资" + "\n每月收入提升至:" + FC.GC.Income);
                 }
             }
-        }
-        else if (Level == 1)
-        {
-            if (LevelPoint >= 15)
+            else if (Level == 1)
             {
-                Level += 1;
-                LevelPoint -= 10;
+                NextLevelPoint = 20;
                 if (isPlayer == true)
+                {
                     FC.GC.Income = 200;
+                    QuestControl.Instance.Init("当前商战总积分:" + LevelPoint + "\n恭喜您获得A轮融资" + "\n每月收入提升至:" + FC.GC.Income);
+                }
             }
-        }
-        else if (Level == 2)
-        {
-            if (LevelPoint >= 20)
+            else if (Level == 2)
             {
-                Level += 1;
-                LevelPoint -= 20;
+                NextLevelPoint = 30;
                 if (isPlayer == true)
+                {
                     FC.GC.Income = 400;
+                    QuestControl.Instance.Init("当前商战总积分:" + LevelPoint + "\n恭喜您获得B轮融资" + "\n每月收入提升至:" + FC.GC.Income);
+                }
             }
-        }
-        else if (Level == 3)
-        {
-            if (LevelPoint >= 30)
+            else if (Level == 3)
             {
-                Level += 1;
-                LevelPoint -= 30;
+                NextLevelPoint = 50;
                 if (isPlayer == true)
+                {
                     FC.GC.Income = 600;
+                    QuestControl.Instance.Init("当前商战总积分:" + LevelPoint + "\n恭喜您获得C轮融资" + "\n每月收入提升至:" + FC.GC.Income);
+                }
             }
-        }
-        else if (Level == 4)
-        {
-            if (LevelPoint >= 50)
+            else if (Level == 4)
             {
-                Level += 1;
-                LevelPoint -= 50;
                 if (isPlayer == true)
+                {
                     FC.GC.Income = 900;
+                    QuestControl.Instance.Init("当前商战总积分:" + LevelPoint + "\n恭喜您获得D轮融资" + "\n每月收入提升至:" + FC.GC.Income);
+                }
             }
+            Level += 1;
         }
     }
 
@@ -265,33 +261,33 @@ public class FOECompany : MonoBehaviour
 
         if (Level == 0)
         {
-            ResourceA = 15;
+            ResourceA = 10;
             ResourceB = 0;
         }
         else if (Level == 1)
         {
-            ResourceA = 20;
+            ResourceA = 15;
             ResourceB = 10;
         }
         else if (Level == 2)
         {
-            ResourceA = 30;
+            ResourceA = 25;
             ResourceB = 20;
         }
         else if (Level == 3)
         {
-            ResourceA = 60;
+            ResourceA = 40;
             ResourceB = 30;
         }
         else if (Level == 4)
         {
-            ResourceA = 80;
-            ResourceB = 60;
+            ResourceA = 65;
+            ResourceB = 50;
         }
         else if (Level == 5)
         {
-            ResourceA = 100;
-            ResourceB = 90;
+            ResourceA = 90;
+            ResourceB = 70;
         }
     }
     public void ResetPlayerStatus()

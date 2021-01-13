@@ -157,7 +157,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u878D\u8D44\u7B49\u7EA7:A\u8F6E\n\u5347\u7EA7\u8FD8\u9700\u79EF\u5206:10\n\n\u7A0B\u5E8F\u8FED\u4EE3:5\n\u4F20\u64AD:5\n\n\u5F53\u524D\u5E02\u573A\u6570:5\n\u5F53\u524D\u540D\u6B21:1\n\u62A4\u76FE\u5C42\u6570:1"
+  m_Text: "\u878D\u8D44\u7B49\u7EA7:A\u8F6E\n\u5347\u7EA7\u8FD8\u9700\u79EF\u5206:10\n\n\u7A0B\u5E8F\u8FED\u4EE3:5\n\u4F20\u64AD:5\n\n\u5F53\u524D\u5E02\u573A\u6570:5\n\u5F53\u524D\u540D\u6B21:1\n\u62A4\u76FE\u5C42\u6570:1\n\u58EB\u6C14:100"
 --- !u!1 &6563258057267462205
 GameObject:
   m_ObjectHideFlags: 0
@@ -257,6 +257,7 @@ MonoBehaviour:
   NeutralSkillNum: -1
   FOESkillNum: -1
   Morale: 100
+  NextLevelPoint: 5
   ResourceA: 0
   ResourceB: 0
   ControledMarket: 0

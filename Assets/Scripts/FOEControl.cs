@@ -12,6 +12,7 @@ public class FOEControl : MonoBehaviour
 
     public Text[] Text_Costs = new Text[5];
     public Text[] Text_Ranking = new Text[4];
+    public Text[] Text_ExtraResult = new Text[4];
     public Text[] Text_ResultButtons = new Text[3];
 
     public List<FOECompany> Companies = new List<FOECompany>(); //0位是玩家
@@ -84,7 +85,8 @@ public class FOEControl : MonoBehaviour
         for (int i = 1; i < 4; i++)
         {
             Companies[i].ResetStatus();
-            Companies[i].SetAction();
+            if (Companies[i].Morale > 0)
+                Companies[i].SetAction();
         }
         if (NeutralMarket > 0)
             NeutralAttackSign.SetActive(true);
@@ -102,7 +104,14 @@ public class FOEControl : MonoBehaviour
             FinishNum = 1;
         for (int i = 1; i < 4; i++)
         {
-            Companies[i].SetAction();
+            if (Companies[i].Morale > 0)
+                Companies[i].SetAction();
+            else
+            {
+                FinishNum += 1;
+                Companies[i].ControledMarket = -1;
+                continue;
+            }
             if (Companies[i].ActionFinish == true)
                 FinishNum += 1;
         }
@@ -171,14 +180,16 @@ public class FOEControl : MonoBehaviour
             if (ResultNum == 1)
             {
                 GC.Morale += 10;
+                Text_ExtraResult[Companies[0].Ranking - 1].text += "士气+10";
             }
             else if (ResultNum == 2)
             {
                 GC.Morale += 5;
+                Text_ExtraResult[Companies[0].Ranking - 1].text += "士气+5";
             }
             else if (posb == 3)
             {
-
+                Text_ExtraResult[Companies[0].Ranking - 1].text += "无";
             }
         }
         else if (Companies[0].Ranking == 2)
@@ -189,14 +200,16 @@ public class FOEControl : MonoBehaviour
             if (ResultNum == 1)
             {
                 GC.Morale += 5;
+                Text_ExtraResult[Companies[0].Ranking - 1].text += "士气+5";
             }
             else if (ResultNum == 2)
             {
                 GC.Morale -= 5;
+                Text_ExtraResult[Companies[0].Ranking - 1].text += "士气-5";
             }
             else if (ResultNum == 3)
             {
-
+                Text_ExtraResult[Companies[0].Ranking - 1].text += "无";
             }
         }
         else if (Companies[0].Ranking == 3)
@@ -207,14 +220,16 @@ public class FOEControl : MonoBehaviour
             if (ResultNum == 1)
             {
                 GC.Morale -= 5;
+                Text_ExtraResult[Companies[0].Ranking - 1].text += "士气-5";
             }
             else if (ResultNum == 2)
             {
                 AddDebuff();
+                Text_ExtraResult[Companies[0].Ranking - 1].text += "业务干扰";
             }
             else if (ResultNum == 3)
             {
-
+                Text_ExtraResult[Companies[0].Ranking - 1].text += "无";
             }
         }
         else if (Companies[0].Ranking == 4)
@@ -225,14 +240,17 @@ public class FOEControl : MonoBehaviour
             if (ResultNum == 1)
             {
                 GC.Morale -= 10;
+                Text_ExtraResult[Companies[0].Ranking - 1].text += "士气-10";
             }
             else if (ResultNum == 2)
             {
                 GC.Morale -= 10;
+                Text_ExtraResult[Companies[0].Ranking - 1].text += "士气-10";
             }
             else if (ResultNum == 3)
             {
                 AddDebuff();
+                Text_ExtraResult[Companies[0].Ranking - 1].text += "业务干扰";
             }
         }
         Text_ResultButtons[0].text = ResultContents[PlayerResultNum[0] - 1];
@@ -246,25 +264,105 @@ public class FOEControl : MonoBehaviour
     {
         for (int i = 0; i < 4; i++)
         {
-            if(Companies[i].Ranking == 1)
+            if(i == 0)
+                Text_ExtraResult[Companies[i].Ranking - 1].text = "额外效果:";
+            if(Companies[i].Morale <= 0)
+            {
+                Text_ExtraResult[Companies[i].Ranking - 1].text = "";
+                continue;
+            }
+            if (Companies[i].Ranking == 1)
             {
                 Companies[i].AddPoint(4);
                 Text_Ranking[0].text = Companies[i].Text_Name.text;
+                if(i > 0)
+                {//非玩家才能这么弄
+                    int Posb = Random.Range(1, 4);
+                    if(Posb == 1)
+                    {
+                        Companies[i].Morale += 10;
+                        Text_ExtraResult[0].text = "额外效果:士气+10";
+                    }
+                    else if (Posb == 2)
+                    {
+                        Companies[i].Morale += 5;
+                        Text_ExtraResult[0].text = "额外效果:士气+5";
+                    }
+                    else if (Posb == 3)
+                    {
+                        Text_ExtraResult[0].text = "额外效果:无";
+                    }                    
+                }
             }
             else if (Companies[i].Ranking == 2)
             {
                 Companies[i].AddPoint(3);
                 Text_Ranking[1].text = Companies[i].Text_Name.text;
+                if (i > 0)
+                {//非玩家才能这么弄
+                    int Posb = Random.Range(1, 4);
+                    if (Posb == 1)
+                    {
+                        Companies[i].Morale += 5;
+                        Text_ExtraResult[1].text = "额外效果:士气+5";
+                    }
+                    else if (Posb == 2)
+                    {
+                        Companies[i].Morale -= 5;
+                        Text_ExtraResult[1].text = "额外效果:士气-5";
+                    }
+                    else if (Posb == 3)
+                    {
+                        Text_ExtraResult[1].text = "额外效果:无";
+                    }
+                }
             }
             else if (Companies[i].Ranking == 3)
             {
                 Companies[i].AddPoint(2);
                 Text_Ranking[2].text = Companies[i].Text_Name.text;
+                if (i > 0)
+                {//非玩家才能这么弄
+                    int Posb = Random.Range(1, 4);
+                    if (Posb == 1)
+                    {
+                        Companies[i].Morale -= 5;
+                        Text_ExtraResult[2].text = "额外效果:士气-5";
+                    }
+                    else if (Posb == 2)
+                    {
+                        Companies[i].Morale -= 5;
+                        Text_ExtraResult[2].text = "额外效果:士气-5";
+                    }
+                    else if (Posb == 3)
+                    {
+                        Text_ExtraResult[2].text = "额外效果:无";
+                    }
+                }
             }
             else if (Companies[i].Ranking == 4)
             {
                 Companies[i].AddPoint(1);
                 Text_Ranking[3].text = Companies[i].Text_Name.text;
+                if (i > 0)
+                {//非玩家才能这么弄
+                    int Posb = Random.Range(1, 4);
+                    if (Posb == 1)
+                    {
+                        Companies[i].Morale -= 10;
+                        Text_ExtraResult[3].text = "额外效果:士气-10";
+                    }
+                    else if (Posb == 2)
+                    {
+                        Companies[i].Morale -= 5;
+                        Text_ExtraResult[3].text = "额外效果:士气-5";
+                    }
+                    else if (Posb == 3)
+                    {
+                        Companies[i].Morale -= 10;
+                        Text_ExtraResult[3].text = "额外效果:士气-10";
+                    }
+                }
             }
         }
         FightBegins = false;
