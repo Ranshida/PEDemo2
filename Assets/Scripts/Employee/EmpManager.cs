@@ -454,12 +454,14 @@ public class EmpManager : MonoBehaviour
         if (boss != null) 
         {
             self.FindRelation(boss).KnowTarget();
+            boss.FindRelation(self).KnowTarget();
         }
 
         List<Employee> colleagues = FindColleague(self);
         foreach (Employee item in colleagues)
         {
             self.FindRelation(item).KnowTarget();
+            item.FindRelation(self).KnowTarget();
         }
     }
 
