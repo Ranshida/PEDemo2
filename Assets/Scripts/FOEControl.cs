@@ -7,7 +7,6 @@ public class FOEControl : MonoBehaviour
 {
     public GameControl GC;
     public GameObject CloseButton, EndButton, ActionPanel, CloseButton2, SpyPanel, NeutralAttackSign;
-    public CanvasGroup canvasGroup;
     public Text Text_Info, Text_FightTime, Text_NeutralMarket, Text_Turn;
 
     public Text[] Text_Costs = new Text[5];
@@ -54,21 +53,10 @@ public class FOEControl : MonoBehaviour
         }
         GC.Text_WarTime.text = "距离下次商战还剩" + (FightTime / 8) + "周";
     }
-    //仅显示面板
-    public void ShowPanel()
-    {
-        if(FightBegins == false)
-        {
-            canvasGroup.interactable = false;
-            ActionPanel.SetActive(true);
-            CloseButton2.SetActive(true);
-        }
-    }
 
     //商战开始
     void FightStart()
     {
-        canvasGroup.interactable = true;
         CloseButton2.SetActive(false);
         GC.AskPause(this);
         FightBegins = true;

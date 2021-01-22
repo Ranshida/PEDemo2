@@ -15740,7 +15740,7 @@ public class Event3_42 : JudgeEvent
     {
         //放假8工时
         GC.CurrentEmpInfo = Self.InfoDetail;
-        GC.SetEmpVacationTime(8);
+        GC.CC.SetEmpVacationTime(8);
         GC.CurrentEmpInfo = null;
         GC.CreateMessage(Self.Name + "请假成功，放假8个工时");
         Self.InfoDetail.AddHistory(Self.Name + "请假成功");

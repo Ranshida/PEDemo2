@@ -129,7 +129,6 @@ public class DepControl : MonoBehaviour
     public GameObject OfficeWarning;
     public Building building = null;
     public GameControl GC;
-    public Task CurrentTask;
     public DepSelect DS;
     public OfficeControl CommandingOffice;
     public Text Text_DepName, Text_Task, Text_Progress, Text_Quality, Text_Time, Text_Office, Text_Efficiency, Text_LevelDownTime, 
@@ -246,26 +245,6 @@ public class DepControl : MonoBehaviour
             Text_FinishedTaskNum.text = "上季度业务成功数:" + PreFinishedTaskNum + "\n\n" + "本季度业务成功数:" + CurrentFinishedTaskNum;
             Text_DepCost.text = "运营成本:" + (CalcCost(1) + CalcCost(2));
         }
-    }
-
-    public void StartTaskManage()
-    {
-        if (type != EmpType.HR)
-        {
-            GC.PC.gameObject.SetActive(true);
-            GC.PC.SetName(this);
-        }
-        else
-        {
-            GC.PC2.gameObject.SetActive(true);
-            GC.PC2.SetHire(this);
-        }
-    }
-
-    public void SetTask(Task task)
-    {
-        CurrentTask = task;
-        UpdateUI();
     }
 
     //目前不只是制作，还有很多别的跟事件相关的功能都写在这儿
@@ -743,6 +722,8 @@ public class DepControl : MonoBehaviour
         SRateDetailPanel.gameObject.SetActive(true);
         LayoutRebuilder.ForceRebuildLayoutImmediate(SRateDetailPanel.gameObject.GetComponent<RectTransform>());
     }
+
+    //显示细节面板并更新信息
     public void ShowDetailPanel(int type)
     {
         Text_DetailInfo.gameObject.SetActive(true);
@@ -907,7 +888,7 @@ public class DepControl : MonoBehaviour
         LayoutRebuilder.ForceRebuildLayoutImmediate(SRateDetailPanel.gameObject.GetComponent<RectTransform>());
 
     }
-
+    //关闭细节面板
     public void CloseSRateDetailPanel()
     {
         SRateDetailPanel.gameObject.SetActive(false);

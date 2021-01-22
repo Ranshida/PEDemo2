@@ -52,7 +52,7 @@ public class Strategy1_1 : Strategy
     public override void EffectRemove(GameControl GC)
     {
         base.EffectRemove(GC);
-        GC.PC2.HireCostRate -= 0.3f;
+        GC.HireSuccessExtra -= 0.3f;
     }
 }
 

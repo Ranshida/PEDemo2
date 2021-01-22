@@ -14,7 +14,7 @@ public class GameControl : MonoBehaviour
     public int SelectMode = 1; //1员工招聘时部门选择 2员工移动时部门选择 3部门的高管办公室选择 4发动动员技能时员工选择 
     //5发动建筑技能时员工选择 6CEO技能员工/部门选择 7选择两个员工发动动员技能 8普通办公室的上级(高管办公室)选择  9头脑风暴的员工选择
     //10选择两个员工的CEO技能
-    public int Money = 1000, CEOSkillNum = 0, DoubleMobilizeCost = 0, MeetingBlockTime = 0, MobTime = 192;
+    public int Money = 1000, DoubleMobilizeCost = 0, MeetingBlockTime = 0, MobTime = 192;
     public bool ForceTimePause = false;
     public int Stamina
     {
@@ -86,31 +86,25 @@ public class GameControl : MonoBehaviour
     public Text HistoryTextPrefab, Text_EmpSelectTip;
     public HireControl HC;
     public BuildingManage BM;
-    public ProduceControl PC, PC2;
-    public ProductControl PrC;
     public StrategyControl StrC;
     public FOEControl foeControl;
     public EventControl EC;
     public CEOControl CC;
-    public Transform HireContent, EmpPanelContent, DepContent, DepSelectContent, TotalEmpContent, StandbyContent, EmpDetailContent, MessageContent, SRateDetailContent;
+    public Transform EmpPanelContent, DepContent, DepSelectContent, TotalEmpContent, StandbyContent, EmpDetailContent, MessageContent, SRateDetailContent;
     public InfoPanel infoPanel;
-    public GameObject DepSelectPanel, StandbyButton, MessagePrefab, CEOSkillPanel, VacationPanel, GameOverPanel, OfficeModeSelectPanel,
-        OfficeModeBuildingOptionButton, OfficeModeTalkOptionButton, DepModeSelectPanel, DepSkillConfirmPanel, SkillTreeSelectPanel,
-        TrainingPanel;
+    public GameObject DepSelectPanel, StandbyButton, MessagePrefab, CEOSkillPanel, GameOverPanel, OfficeModeSelectPanel,
+        OfficeModeBuildingOptionButton, OfficeModeTalkOptionButton, DepModeSelectPanel, DepSkillConfirmPanel, SkillTreeSelectPanel;
     public Text Text_Time, Text_TechResource, Text_MarketResource, Text_MarketResource2, Text_ProductResource, Text_Money, Text_Stamina, Text_Mentality, 
         Text_Morale, Text_DepMode1, Text_DepMode2, Text_DepSkillDescribe, Text_WarTime, Text_MobTime;
     public Toggle WorkOvertimeToggle;
     public SkillControl SC;
     [HideInInspector] public UnityEvent DailyEvent, WeeklyEvent, MonthlyEvent, HourEvent, YearEvent;
 
-    public Button[] CEOSkillButton = new Button[5];
     public Button[] TimeButtons = new Button[5];
-    public Text[] Text_CEOSkillCD = new Text[5];
     public List<DepControl> CurrentDeps = new List<DepControl>();
     public List<OfficeControl> CurrentOffices = new List<OfficeControl>();
     public List<Employee> CurrentEmployees = new List<Employee>();
     public int[] FinishedTask = new int[10];//0程序迭代 1技术研发 2可行性调研 3传播 4营销文案 5资源拓展 6原型图 7产品研究 8用户访谈 9已删除
-    public int[] CEOSkillCD = new int[5];
 
     int Year = 1, Month = 1, Week = 1, Day = 1, Hour = 1, morale = 50;
     float Timer, MoneyCalcTimer;
@@ -126,7 +120,6 @@ public class GameControl : MonoBehaviour
 
     private void Start()
     {
-        HourEvent.AddListener(GCTimePass);
         UpdateResourceInfo();
     }
 
@@ -233,7 +226,6 @@ public class GameControl : MonoBehaviour
     }
     public void WeekPass()
     {
-        PrC.UserChange();
         DailyEvent.Invoke();
         Hour = 1;
         Week += 1;
@@ -288,6 +280,7 @@ public class GameControl : MonoBehaviour
         Text_Time.text = "年" + Year + " 月" + Month + " 周" + Week + " 时" + Hour;
     }
 
+    //计算支出
     void CalcTotalSalary()
     {
         Salary = 0;
@@ -314,6 +307,7 @@ public class GameControl : MonoBehaviour
         BuildingPay = value;
     }
 
+    //旧下班判定，现在没有太大用处
     void StartWorkEnd()
     {
         if (CurrentEmployees.Count > 0)
@@ -357,9 +351,6 @@ public class GameControl : MonoBehaviour
             newDep.building.effectValue = 1;
             newDep.ModeChangeButton.gameObject.SetActive(false);
             newDep.ActiveButton.gameObject.SetActive(false);
-            PC.SetName(newDep);
-            PC.TaskNum = 1;
-            PC.CreateTask();
         }
         else if (b.Type == BuildingType.市场部门)
         {
@@ -821,17 +812,6 @@ public class GameControl : MonoBehaviour
             office.ControledOffices.Add(CurrentOffice);
             office.CheckManage();
         }
-        //CEO技能
-        else if (SelectMode == 6)
-        {
-            if (CEOSkillNum == 3)
-            {
-                office.Progress = 100;
-                office.ActiveButton.interactable = true;
-                office.Text_Progress.text = "激活进度:" + office.Progress + "%";
-            }
-            CC.CEOSkillConfirm();
-        }
 
         //调动信息设定
         if (SelectMode == 1 || SelectMode == 2)
@@ -883,7 +863,7 @@ public class GameControl : MonoBehaviour
         //CEO技能
         else if (SelectMode == 6)
         {
-            if (CEOSkillNum == 1)
+            if (CC.CEOSkillNum == 1)
             {
                 depControl.AddPerk(new Perk117(null));
                 QC.Finish(5);
@@ -891,12 +871,6 @@ public class GameControl : MonoBehaviour
                 ResetSelectMode();
                 QC.Init("技能释放成功\n\n" + depControl.Text_DepName.text + "成功率上升45%");
             }
-            else if (CEOSkillNum == 2)
-            {
-                //  depControl.SpTime += 16;
-
-            }
-            CC.CEOSkillConfirm();
         }
         DepSelectPanel.SetActive(false);
         //调动信息
@@ -938,178 +912,45 @@ public class GameControl : MonoBehaviour
         }
     }
 
+    //更新资源面板
     public void UpdateResourceInfo()
     {
         int[] C = FinishedTask;
-        //Text_TechResource.text = "程序迭代: " + C[0] + "\n" +
-        //    "技术研发: " + C[1] + "\n" +
-        //    "可行性调研: " + C[2] + "\n";
         Text_TechResource.text = "程序迭代: " + C[0];
-
-        //Text_MarketResource.text = "传播: " + C[3] + "\n" +
-        //    "营销文案: " + C[4] + "\n" +
-        //    "资源拓展: " + C[5] + "\n";
         Text_MarketResource.text = "传播: " + C[3];
         Text_MarketResource2.text = "营销文案: " + C[4];
-        //Text_ProductResource.text = "原型图: " + C[6] + "\n" +
-        //   "产品研究: " + C[7] + "\n" +
-        //   "用户访谈: " + C[8] + "\n";
         Text_ProductResource.text = "原型图: " + C[6];
     }
 
+    //创建左侧信息栏内容
     public void CreateMessage(string content)
     {
         Text T = Instantiate(MessagePrefab, MessageContent).GetComponentInChildren<Text>();
         T.text = content;
     }
 
+    //设置时间流逝速度，由右上角面板的速度按钮调用
     public void SetTimeMultiply(int value)
     {
         TimeMultiply = value;
     }
-
-    public void SetCEOSkill(int num)
+    //调用同上，用于设置速度按钮颜色
+    public void SetButtonColor(int num)
     {
-        if (num == 1)
+        for (int i = 0; i < 5; i++)
         {
-            if (CC.CEO.StaminaLimit >= 45)
-            {
-                CEOSkillNum = 1;
-                CEOSkillPanel.SetActive(false);
-                ShowDepSelectPanel(CurrentDeps);
-                SelectMode = 6;
-            }
+            if (num == i)
+                TimeButtons[i].GetComponent<Image>().color = Color.gray;
             else
-            {
-                CreateMessage("CEO体力上限不足");
-            }
-        }
-        else if (num == 2)
-        {
-            if (Stamina >= 30)
-            {
-                CEOSkillNum = 2;
-                CEOSkillPanel.SetActive(false);
-                ShowDepSelectPanel(CurrentDeps);
-                SelectMode = 6;
-            }
-        }
-        else if (num == 3)
-        {
-            if (CC.CEO.StaminaLimit >= 45)
-            {
-                SelectMode = 6;
-                CEOSkillNum = num;
-                CEOSkillPanel.SetActive(false);
-                TotalEmpContent.parent.parent.gameObject.SetActive(true);
-                Text_EmpSelectTip.gameObject.SetActive(true);
-                Text_EmpSelectTip.text = "选择一个员工";
-            }
-            else
-            {
-                CreateMessage("CEO体力上限不足");
-            }
-            //CEOSkillNum = 3;
-            //CEOSkillPanel.SetActive(false);
-            //List<OfficeControl> TempOffices = new List<OfficeControl>();
-            //for(int i = 0; i < CurrentOffices.Count; i++)
-            //{
-            //    BuildingType T = CurrentOffices[i].building.Type;
-            //    if (T == BuildingType.目标修正小组 || T == BuildingType.档案管理室 || T == BuildingType.效能研究室 || T == BuildingType.财务部 
-            //        || T == BuildingType.战略咨询部B || T == BuildingType.精确标准委员会)
-            //    {
-            //        TempOffices.Add(CurrentOffices[i]);
-            //    }
-            //}
-            //ShowDepSelectPanel(TempOffices);
-            //SelectMode = 6;
-        }
-        else if (num == 4)
-        {
-            if (Stamina >= 20)
-            {
-                SelectMode = 6;
-                CEOSkillNum = 4;
-                CEOSkillPanel.SetActive(false);
-                TotalEmpContent.parent.parent.gameObject.SetActive(true);
-            }
-        }
-        else
-        {
-            CEOSkillNum = num;
-            SelectMode = 6;
-            if (CEOSkillNum == 11)
-                SelectMode = 10;
-            CEOSkillPanel.SetActive(false);
-            TotalEmpContent.parent.parent.gameObject.SetActive(true);
-            Text_EmpSelectTip.gameObject.SetActive(true);
-            Text_EmpSelectTip.text = "选择一个员工";
-            if (num == 5 || num == 19)
-            {
-                foreach (Employee e in CurrentEmployees)
-                {
-                    if (e.InfoDetail.Entity.OutCompany == true)
-                        e.InfoB.gameObject.SetActive(false);
-                }
-            }
+                TimeButtons[i].GetComponent<Image>().color = Color.white;
         }
     }
 
-    public void TrainEmp(int type)
-    {
-        if (CC.CEO.StaminaLimit >= 45)
-        {
-            new EmpBuff(CurrentEmpInfo.emp, type);
-            new EmpBuff(CC.CEO, 16, -45);
-            CurrentEmpInfo.emp.InfoDetail.AddHistory("接受了CEO的培养");
-            CC.CEO.InfoDetail.AddHistory("培养了" + CurrentEmpInfo.emp.Name);
-            QC.Init("技能释放成功\n\n" + CurrentEmpInfo.emp.Name + "所选技能每回合无条件获得3点经验，持续4个月");
-        }
-        else
-        {
-            CreateMessage("CEO体力上限不足");
-        }
-    }
-
-    public void SetEmpVacationTime(int type)
-    {
-        CurrentEmpInfo.emp.VacationTime = type;
-        CurrentEmpInfo.emp.InfoDetail.Entity.SetBusy();
-        CurrentEmpInfo.emp.InfoDetail.AddHistory("被安排放假" + type + "工时");
-        CC.CEO.InfoDetail.AddHistory("安排" + CurrentEmpInfo.emp.Name + "放假" + type + "工时");
-        if (CurrentEmpInfo.emp.isCEO == true)
-        {
-            ResetSelectMode();
-            CC.SkillButton.interactable = false;
-            CEOVacation = true;
-            foreach(DepControl dep in CurrentDeps)
-            {
-                dep.AddPerk(new Perk115(null));
-            }
-        }
-    }
-    void GCTimePass()
-    {
-        //CEO技能CD
-        for (int i = 0; i < CEOSkillCD.Length; i++)
-        {
-            if (CEOSkillCD[i] > 0)
-            {
-                CEOSkillCD[i] -= 1;
-                if (CEOSkillCD[i] == 0)
-                {
-                    CEOSkillButton[i].interactable = true;
-                    Text_CEOSkillCD[i].gameObject.SetActive(false);
-                }
-            }
-            Text_CEOSkillCD[i].text = "CD:" + CEOSkillCD[i] + "时";
-        }
-    }
-
+    //重置选择模式以及部分相关变量
     public void ResetSelectMode()
     {
         SelectMode = 0;
-        CEOSkillNum = 0;
+        CC.CEOSkillNum = 0;
         Text_EmpSelectTip.gameObject.SetActive(false);
         SC.SelectConfirmButton.SetActive(false);
         CC.SelectPanel.SetActive(false);
@@ -1124,16 +965,7 @@ public class GameControl : MonoBehaviour
         }
     }
 
-    public void SellTask(int num)
-    {
-        if (FinishedTask[num] > 0)
-        {
-            FinishedTask[num] -= 1;
-            Money += 100;
-            UpdateResourceInfo();
-        }
-    }
-
+    //设置办公室模式
     public void SetOfficeMode(int num)
     {
         if(CurrentOffice != null)
@@ -1175,7 +1007,7 @@ public class GameControl : MonoBehaviour
             }
         }
     }
-
+    //设置部门模式
     public void SetDepMode(int num)
     {
         if (CurrentDep != null)
@@ -1311,7 +1143,6 @@ public class GameControl : MonoBehaviour
             ForceTimePause = true;
         }
     }
-
     public void RemovePause(MonoBehaviour mono)
     {
         pauseMono.Remove(mono);
@@ -1326,14 +1157,4 @@ public class GameControl : MonoBehaviour
         }
     }
 
-    public void SetButtonColor(int num)
-    {
-        for(int i = 0; i < 5; i++)
-        {
-            if (num == i)
-                TimeButtons[i].GetComponent<Image>().color = Color.gray;
-            else
-                TimeButtons[i].GetComponent<Image>().color = Color.white;
-        }
-    }
 }

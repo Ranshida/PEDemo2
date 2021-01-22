@@ -276,30 +276,28 @@ public class EmpInfo : MonoBehaviour
             //        GC.CreateMessage("调查失败，无法了解" + emp.Name + "的成分");
             //    return;
             //}
-            if (GC.CEOSkillNum == 4)
+            if (GC.CC.CEOSkillNum == 4)
             {
                 emp.Mentality += (int)(10 * GC.HRBuildingMentalityExtra);
                 GC.TotalEmpContent.parent.parent.gameObject.SetActive(false);
                 emp.InfoDetail.AddHistory("收到CEO安抚,心力+" + (10 * GC.HRBuildingMentalityExtra));
                 GC.CC.CEO.InfoDetail.AddHistory("安抚了" + emp.Name + ",对方心力+" + (10 * GC.HRBuildingMentalityExtra));
             }
-            else if (GC.CEOSkillNum == 3)
+            else if (GC.CC.CEOSkillNum == 3)
             {
                 GC.CurrentEmpInfo = this;
-                GC.TrainingPanel.SetActive(true);
+                GC.CC.TrainingPanel.SetActive(true);
             }
-            else if (GC.CEOSkillNum == 5)
+            else if (GC.CC.CEOSkillNum == 5)
             {
                 GC.CurrentEmpInfo = this;
-                GC.VacationPanel.SetActive(true);
+                GC.CC.VacationPanel.SetActive(true);
             }
-            else if (GC.CEOSkillNum > 5)
+            else if (GC.CC.CEOSkillNum > 5)
             {
-                if (emp.isCEO == false || GC.CEOSkillNum == 18)
+                if (emp.isCEO == false || GC.CC.CEOSkillNum == 18)
                     GC.CC.SetPanelContent(emp);
             }
-            if (GC.CEOSkillNum < 5)
-                GC.CC.CEOSkillConfirm();
         }
         //选两个员工的动员技能
         else if(GC.SelectMode == 7 || GC.SelectMode == 10)
