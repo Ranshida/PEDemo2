@@ -34,7 +34,7 @@ public class EmpManager : MonoBehaviour
     {
         pointEmp = null;
 
-        if (CameraController.CharacterHit && !CameraController.IsPointingUI)
+        if (CameraController.CharacterHit && !UISvc.IsPointingUI)
         {
             pointEmp = CameraController.CharacterRaycast.collider.transform.parent.parent.GetComponentInChildren<EmpEntity>();
             DynamicWindow.Instance.SetEmpName(pointEmp.EmpName, pointEmp.transform, Vector3.up * 10);
@@ -42,7 +42,7 @@ public class EmpManager : MonoBehaviour
         if (pointEmp && !pointEmp.Fired && Input.GetMouseButtonDown(0))
             pointEmp.ShowDetailPanel();
 
-        if (CameraController.ItemHit && !CameraController.IsPointingUI)
+        if (CameraController.ItemHit && !UISvc.IsPointingUI)
         {
             if (Input.GetMouseButtonDown(0))
             {

@@ -498,7 +498,7 @@ MonoBehaviour:
   EffectRange: 0
   effectValue: 1
   StaminaRequest: 0
-  Type: 36
+  Type: 16
   Str_Type: 
   Pay: 0
   CanLottery: 0

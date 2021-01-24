@@ -15,7 +15,7 @@ public class PointingSelf : MonoBehaviour
     {
         if (!m_Pointing)
         {
-            if (CameraController.PointingSelf(transform))
+            if (UISvc.PointingSelf(transform))
             {
                 m_Pointing = true;
                 StartPointing?.Invoke();
@@ -23,7 +23,7 @@ public class PointingSelf : MonoBehaviour
         }
         else
         {
-            if (CameraController.PointingSelf(transform))
+            if (UISvc.PointingSelf(transform))
             {
                 OnPointing?.Invoke();
             }
