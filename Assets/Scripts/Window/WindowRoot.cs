@@ -4,33 +4,34 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
+/// <summary>
+/// UI面板基类
+/// </summary>
 public abstract class WindowRoot : MonoBehaviour
 {
     protected Transform thisTrans;
-    private Color selectColor_Img = new Color(0.8f,0.55f,0.3f);
-    private Color selectColor_txt = new Color(0.2f, 0.2f, 0.2f);
-    private Color unselectColor_Img = Color.white;
-    private Color unselectColor_Txt = Color.white;
-    private Color pressColor = new Color(1f, 0.75f, 0.4f, 1f);
-    private Color liftupColor = new Color(0.40f, 0.4f, 0.4f, 0.5f);
 
-    public Button[] buttons;
-    public Slider[] sliders;
+    public Button[] buttons;      //全部子物体按钮
+    public Slider[] sliders;      //全部子物体滑动条
+
+    //快速设置组件颜色
+    protected virtual Color selectColor_Img { get; set; } = new Color(0.8f, 0.55f, 0.3f);
+    protected virtual Color selectColor_txt { get; set; } = new Color(0.2f, 0.2f, 0.2f);
+    protected virtual Color unselectColor_Img { get; set; } = Color.white;
+    protected virtual Color unselectColor_Txt { get; set; } = Color.white;
+    protected virtual Color pressColor { get; set; } = new Color(1f, 0.75f, 0.4f, 1f);
+    protected virtual Color liftupColor { get; set; } = new Color(0.40f, 0.4f, 0.4f, 0.5f);
 
     protected virtual void Update()
     {
-        //每帧注册监听事件 
+        //每帧注册监听事件。如果不需要，需要重写Update
         SetUpAllButton(this.gameObject);
         SetUpAllSlider(this.gameObject);
-        //if (!GameController.Instance || (GameController.Instance && GameRoot.Instance.IsPause))
-        //{
-           
-        //}
     }
 
 
     /// <summary>
-    /// （在暂停或游戏外）每帧为子物体所有Button组件添加监听
+    /// 每帧为子物体所有Button组件添加监听
     /// </summary>
     /// <param name="go">自身</param>
     protected void SetUpAllButton(GameObject go)
@@ -101,13 +102,6 @@ public abstract class WindowRoot : MonoBehaviour
         {
             ClearWnd();
         }
-        Action<PointerEventData> action1 = (PointerEventData data) => { data.position = Vector3.zero; };
-        Action<PointerEventData> action2 = (PointerEventData data) => { Function(data); };
-        Action<PointerEventData> action3 = Function;
-    }
-    public void Function(PointerEventData data)
-    {
-
     }
 
     public bool GetWndState()
@@ -115,6 +109,9 @@ public abstract class WindowRoot : MonoBehaviour
         return gameObject.activeSelf;
     }
 
+    /// <summary>
+    /// 每次激活面板进行初始化
+    /// </summary>
     protected void InitWnd()
     {
         thisTrans = this.transform;
@@ -124,11 +121,13 @@ public abstract class WindowRoot : MonoBehaviour
     }
     protected virtual void InitSpecific() { }
 
+    /// <summary>
+    /// 每次关闭面板进行清理
+    /// </summary>
     private void ClearWnd()
     {
         ClearWindowSpecific();
     }
-
     protected virtual void ClearWindowSpecific() { }
     
     #region Tool Functions
@@ -193,6 +192,7 @@ public abstract class WindowRoot : MonoBehaviour
     #endregion
 
     #region ClickEvts
+
     public void OnClickDown(GameObject go, Action<PointerEventData> cb)
     {
         Listener listener = GetOrAddComponent<Listener>(go);
