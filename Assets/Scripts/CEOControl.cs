@@ -9,8 +9,7 @@ public class CEOControl : MonoBehaviour
     public Button SkillButton;
     //Text_Condition为旧的Text_Fail，用来显示失败效果
     public Text Text_Name, Text_Name2, Text_ConditionContent, Text_SuccessContent, Text_OptionContent, Text_Result, Text_Requirement, Text_Extra;
-    public GameObject SelectPanel, ResultPanel, WarningPanel, SuccessText, FailText, ResultCheckButton, ConvinceButtons, 
-        EmpSelectWarning, SpyButton, CRChangePanel, VacationPanel, TrainingPanel;
+    public GameObject SelectPanel, ResultPanel, WarningPanel, SuccessText, FailText, ResultCheckButton, CRChangePanel, VacationPanel, TrainingPanel;
     public Employee Target, Target2 ,CEO;
 
     //改变信仰的相关参数
@@ -89,42 +88,6 @@ public class CEOControl : MonoBehaviour
             Text_Extra.text = AddText(4) + AddText(6);
             Text_OptionContent.text = "执行，成功率:" + CalcPosb() + "%";
         }
-        //删除12
-        else if (CEOSkillNum == 12)
-        {
-            Text_Name.text = "与" + Target.Name + "结成仇人";
-            Text_SuccessContent.text = "双方结为仇人";
-            Text_ConditionContent.text = "对方信念-5";
-            Text_Requirement.text = "需要好感度<-40";
-            Text_OptionContent.text = "执行，成功率:" + CalcPosb() + "%";
-        }
-        //删除13 
-        else if (CEOSkillNum == 13)
-        {
-            Text_Name.text = "与" + Target.Name + "创建派系";
-            Text_SuccessContent.text = "双方创建一个派系";
-            Text_ConditionContent.text = "对方信念-5，好感度 - 10";
-            Text_Requirement.text = "双方都不属于某一派系";
-            Text_OptionContent.text = "执行，成功率:" + CalcPosb() + "%";
-        }
-        //删除14
-        else if (CEOSkillNum == 14)
-        {
-            Text_Name.text = "加入" + Target.Name + "的派系";
-            Text_SuccessContent.text = "加入对方所在的派系";
-            Text_ConditionContent.text = "对方信念-5，好感度 - 10";
-            Text_Requirement.text = "自己不属于某一派系，对方属于某一派系";
-            Text_OptionContent.text = "执行，成功率:" + CalcPosb() + "%";
-        }
-        //删除15
-        else if (CEOSkillNum == 15)
-        {
-            Text_Name.text = "加入" + Target.Name + "的派系";
-            Text_SuccessContent.text = "员工被说服，可以从说服的可执行列表中选择一项命令员工进行";
-            Text_ConditionContent.text = "好感度-5员工独裁文化倾向 + 10";
-            Text_Requirement.text = "体力20";
-            Text_OptionContent.text = "执行，成功率:" + CalcPosb() + "%";
-        }
         //改变信仰
         else if (CEOSkillNum == 16)
         {
@@ -167,9 +130,9 @@ public class CEOControl : MonoBehaviour
         }
         Text_ConditionContent.text = "一枚20面骰子，点数>=" + SuccessLimit;
         Text_Name2.text = Text_Name.text;
-        SelectPanel.SetActive(true);
+        SelectPanel.GetComponent<WindowBaseControl>().SetWndState(true);
         WarningPanel.SetActive(false);
-        ResultPanel.SetActive(false);
+        ResultPanel.GetComponent<WindowBaseControl>().SetWndState(false);
     }
 
     //确认发动技能时的条件检测
@@ -235,38 +198,6 @@ public class CEOControl : MonoBehaviour
             else
                 WarningPanel.SetActive(true);
         }
-        else if (CEOSkillNum == 12)
-        {
-            Relation r = CEO.FindRelation(Target);
-            if (r.RPoint < -40)
-                ActiveSkill();
-            else
-                WarningPanel.SetActive(true);
-        }
-        else if (CEOSkillNum == 13)
-        {
-            if (CEO.CurrentClique == null && Target.CurrentClique == null)
-                ActiveSkill();
-            else
-                WarningPanel.SetActive(true);
-        }
-        else if (CEOSkillNum == 14)
-        {
-            if (CEO.CurrentClique == null && Target.CurrentClique != null)
-                ActiveSkill();
-            else
-                WarningPanel.SetActive(true);
-        }
-        else if (CEOSkillNum == 15)
-        {
-            if (GC.Stamina >= 20)
-            {
-                GC.Stamina -= 20;
-                ActiveSkill();
-            }
-            else
-                WarningPanel.SetActive(true);
-        }
         else if (CEOSkillNum == 16)
         {
             if (GC.Stamina >= 50)
@@ -317,7 +248,7 @@ public class CEOControl : MonoBehaviour
     void ActiveSkill()
     {
         int num = CalcExtra() + Random.Range(1, 21);
-        SelectPanel.SetActive(false);
+        SelectPanel.GetComponent<WindowBaseControl>().SetWndState(false);
         if (num >= SuccessLimit)
         {
             Text_Result.text = Text_SuccessContent.text;
@@ -362,36 +293,6 @@ public class CEOControl : MonoBehaviour
                 GC.Text_EmpSelectTip.text = "选择第一个员工";
                 GC.CurrentEmpInfo2 = null;
             }
-            else if (CEOSkillNum == 12)
-            {
-                CEO.FindRelation(Target).FriendValue = -2;
-                Target.FindRelation(CEO).FriendValue = -2;
-            }
-            else if (CEOSkillNum == 13)
-            {
-                CEO.CurrentClique = new Clique();
-                Target.CurrentClique = CEO.CurrentClique;
-                CEO.CurrentClique.Members.Add(CEO);
-                CEO.CurrentClique.Members.Add(Target);
-            }
-            else if (CEOSkillNum == 14)
-            {
-                CEO.CurrentClique = Target.CurrentClique;
-                CEO.CurrentClique.Members.Add(CEO);
-            }
-            else if (CEOSkillNum == 15)
-            {
-                ResultCheckButton.SetActive(false);
-                ConvinceButtons.SetActive(true);
-                for (int i = 0; i < Target.InfoDetail.PerksInfo.Count; i++)
-                {
-                    if (Target.InfoDetail.PerksInfo[i].CurrentPerk.Num == 29)
-                    {
-                        SpyButton.SetActive(true);
-                        break;
-                    }
-                }
-            }
             else if (CEOSkillNum == 16)
             {
                 if (CultureValue == 1)
@@ -430,58 +331,6 @@ public class CEOControl : MonoBehaviour
             Text_Result.text = "技能使用失败";
             FailText.SetActive(true);
             SuccessText.SetActive(false);           
-            #region 旧失败效果
-            //if (CEOSkillNum == 6)
-            //{
-            //    CEO.ChangeRelation(Target, -5);
-            //    Target.ChangeRelation(CEO, -5);
-            //    Target.ChangeCharacter(0, -10);
-            //}
-            //else if (CEOSkillNum == 7)
-            //{
-            //    CEO.ChangeRelation(Target, -5);
-            //    Target.ChangeRelation(CEO, -5);
-            //    Target.ChangeCharacter(0, -5);
-            //}
-            //else if (CEOSkillNum == 8)
-            //{
-            //    CEO.ChangeRelation(Target, -20);
-            //    Target.ChangeRelation(CEO, -20);
-            //    Target.ChangeCharacter(0, -20);
-            //}
-            //else if (CEOSkillNum == 9)
-            //{
-            //    CEO.ChangeRelation(Target, -10);
-            //    Target.ChangeRelation(CEO, -10);
-            //}
-            //else if (CEOSkillNum == 10)
-            //{
-            //    CEO.ChangeRelation(Target, -10);
-            //    Target.ChangeRelation(CEO, -10);
-            //}
-            //else if (CEOSkillNum == 12)
-            //{
-            //    Target.ChangeCharacter(4, -5);
-            //}
-            //else if (CEOSkillNum == 13)
-            //{
-            //    CEO.ChangeRelation(Target, -10);
-            //    Target.ChangeRelation(CEO, -10);
-            //    Target.ChangeCharacter(4, -5);
-            //}
-            //else if (CEOSkillNum == 14)
-            //{
-            //    CEO.ChangeRelation(Target, -10);
-            //    Target.ChangeRelation(CEO, -10);
-            //    Target.ChangeCharacter(4, -5);
-            //}
-            //else if (CEOSkillNum == 15)
-            //{
-            //    CEO.ChangeRelation(Target, -5);
-            //    Target.ChangeRelation(CEO, -5);
-            //    Target.ChangeCharacter(0, -10);
-            //}
-            #endregion
             CEO.InfoDetail.AddHistory(Text_Name.text + "失败," + Text_Result.text);
             if (Target != null)
                 Target.InfoDetail.AddHistory("CEO" + Text_Name.text + "失败," + Text_Result.text);
@@ -505,55 +354,7 @@ public class CEOControl : MonoBehaviour
                 GC.CurrentEmpInfo2 = null;
             }
         }
-        ResultPanel.SetActive(true);
-    }
-
-    //旧的说服功能（已删）
-    public void SetConvinceNum(int num)
-    {
-        //17获取支持 18调查 19当间谍 20解除内鬼
-        if (num == 18 || num == 19)
-        {
-            //CEOSkillNum = num;
-            //GC.CurrentEmpInfo = Target.InfoDetail;
-            //if (num == 18)
-            //    EmpSelectWarning.SetActive(true);
-            //else if (num == 19 && Target.InfoDetail.Entity.SpyTarget == null)
-            //{
-            //    GC.foeControl.TargetSelectPanel.SetActive(true);
-            //    GC.TotalEmpContent.parent.parent.gameObject.SetActive(false);
-            //}
-        }
-        else if (num == 17)
-        {
-            Target.ObeyTime += 32;
-            GC.CreateMessage("从" + Target.Name + "处获取了支持");
-        }
-        else if (num == 20)
-        {
-            PerkInfo P = null;
-            for (int i = 0; i < Target.InfoDetail.PerksInfo.Count; i++)
-            {
-                if (Target.InfoDetail.PerksInfo[i].CurrentPerk.Num == 29)
-                {
-                    P = Target.InfoDetail.PerksInfo[i];
-                    break;
-                }
-            }
-            if(P != null)
-            {
-                Target.InfoDetail.PerksInfo.Remove(P);
-                Destroy(P.gameObject);
-                GC.CreateMessage("解除了" + Target.Name + "的内鬼状态");
-                Target.BaseMotivation[2] -= 50;
-                Target.isSpy = false;
-            }
-
-        }
-        ResultPanel.SetActive(false);
-        ResultCheckButton.SetActive(true);
-        SpyButton.SetActive(false);
-        ConvinceButtons.SetActive(false);
+        ResultPanel.GetComponent<WindowBaseControl>().SetWndState(true);
     }
 
     //改变信仰选项对应函数
@@ -639,86 +440,6 @@ public class CEOControl : MonoBehaviour
         else if (CEOSkillNum == 11)
         {
             value += CalcExtra(4) + CalcExtra(6);
-        }
-        //12仇人(删除)
-        else if (CEOSkillNum == 12)
-        {
-            if ((CEO.Character[0] >= 20 && Target.Character[0] >= 20) || (CEO.Character[0] <= -20 && Target.Character[0] <= -20))
-                value -= 1;
-            else if ((CEO.Character[0] >= 20 && Target.Character[0] <= -20) || (CEO.Character[0] <= -20 && Target.Character[0] >= 20))
-                value += 2;
-
-            if ((CEO.Character[1] >= 20 && Target.Character[1] >= 20) || (CEO.Character[1] <= -20 && Target.Character[1] <= -20))
-                value -= 1;
-            else if ((CEO.Character[1] >= 20 && Target.Character[1] <= -20) || (CEO.Character[1] <= -20 && Target.Character[1] >= 20))
-                value += 2;
-        }
-        //创建派系(删除)
-        else if (CEOSkillNum == 13)
-        {
-            if (r.FriendValue == 1)
-                value += 1;
-            else if (r.FriendValue == 2)
-                value += 3;
-            else if (r.FriendValue == -1)
-                value -= 2;
-            else if (r.FriendValue == -2)
-                value -= 4;
-
-            if ((CEO.Character[0] >= 20 && Target.Character[0] >= 20) || (CEO.Character[0] <= -20 && Target.Character[0] <= -20))
-                value += 1;
-            else if ((CEO.Character[0] >= 20 && Target.Character[0] <= -20) || (CEO.Character[0] <= -20 && Target.Character[0] >= 20))
-                value -= 2;
-
-            if ((CEO.Character[1] >= 20 && Target.Character[1] >= 20) || (CEO.Character[1] <= -20 && Target.Character[1] <= -20))
-                value += 1;
-            else if ((CEO.Character[1] >= 20 && Target.Character[1] <= -20) || (CEO.Character[1] <= -20 && Target.Character[1] >= 20))
-                value -= 2;
-
-            value += (int)(CEO.Charm * 0.2f);
-            value += (int)(CEO.Convince * 0.2f);
-        }
-        //加入派系(删除)
-        else if (CEOSkillNum == 14)
-        {
-            if (r.FriendValue == 1)
-                value += 1;
-            else if (r.FriendValue == 2)
-                value += 3;
-            else if (r.FriendValue == -1)
-                value -= 2;
-            else if (r.FriendValue == -2)
-                value -= 4;
-
-            if ((CEO.Character[0] >= 20 && Target.Character[0] >= 20) || (CEO.Character[0] <= -20 && Target.Character[0] <= -20))
-                value += 1;
-            else if ((CEO.Character[0] >= 20 && Target.Character[0] <= -20) || (CEO.Character[0] <= -20 && Target.Character[0] >= 20))
-                value -= 2;
-
-            if ((CEO.Character[1] >= 20 && Target.Character[1] >= 20) || (CEO.Character[1] <= -20 && Target.Character[1] <= -20))
-                value += 1;
-            else if ((CEO.Character[1] >= 20 && Target.Character[1] <= -20) || (CEO.Character[1] <= -20 && Target.Character[1] >= 20))
-                value -= 2;
-
-            value += (int)(CEO.Charm * 0.2f);
-            value += (int)(CEO.Convince * 0.2f);
-        }
-        //说服(删除)
-        else if (CEOSkillNum == 15)
-        {
-            if (r.FriendValue == 1)
-                value += 1;
-            else if (r.FriendValue == 2)
-                value += 3;
-            else if (r.FriendValue == -1)
-                value -= 2;
-            else if (r.FriendValue == -2)
-                value -= 4;
-
-            if (CEO.CurrentClique != null && Target.CurrentClique != null && CEO.CurrentClique == Target.CurrentClique)
-                value += 3;
-
-            value += (int)(CEO.Convince * 0.2f);
         }
         //改变信仰
         else if (CEOSkillNum == 16)
@@ -898,7 +619,6 @@ public class CEOControl : MonoBehaviour
             if (CEO.StaminaLimit >= 45)
             {
                 CEOSkillNum = 1;
-                GC.CEOSkillPanel.SetActive(false);
                 GC.ShowDepSelectPanel(GC.CurrentDeps);
                 GC.SelectMode = 6;
             }
@@ -912,7 +632,6 @@ public class CEOControl : MonoBehaviour
             if (CEO.Stamina >= 30)
             {
                 CEOSkillNum = 2;
-                GC.CEOSkillPanel.SetActive(false);
                 GC.ShowDepSelectPanel(GC.CurrentDeps);
                 GC.SelectMode = 6;
             }
@@ -923,8 +642,7 @@ public class CEOControl : MonoBehaviour
             {
                 GC.SelectMode = 6;
                 CEOSkillNum = num;
-                GC.CEOSkillPanel.SetActive(false);
-                GC.TotalEmpContent.parent.parent.gameObject.SetActive(true);
+                GC.TotalEmpPanel.SetWndState(true);
                 GC.Text_EmpSelectTip.gameObject.SetActive(true);
                 GC.Text_EmpSelectTip.text = "选择一个员工";
             }
@@ -939,8 +657,7 @@ public class CEOControl : MonoBehaviour
             {
                 GC.SelectMode = 6;
                 CEOSkillNum = 4;
-                GC.CEOSkillPanel.SetActive(false);
-                GC.TotalEmpContent.parent.parent.gameObject.SetActive(true);
+                GC.TotalEmpPanel.SetWndState(true);
             }
         }
         else
@@ -949,8 +666,7 @@ public class CEOControl : MonoBehaviour
             GC.SelectMode = 6;
             if (CEOSkillNum == 11)
                 GC.SelectMode = 10;
-            GC.CEOSkillPanel.SetActive(false);
-            GC.TotalEmpContent.parent.parent.gameObject.SetActive(true);
+            GC.TotalEmpPanel.SetWndState(true);
             GC.Text_EmpSelectTip.gameObject.SetActive(true);
             GC.Text_EmpSelectTip.text = "选择一个员工";
             if (num == 5 || num == 19)
@@ -962,6 +678,7 @@ public class CEOControl : MonoBehaviour
                 }
             }
         }
+        this.gameObject.GetComponent<WindowBaseControl>().SetWndState(false);
     }
 
     public void TrainEmp(int type)

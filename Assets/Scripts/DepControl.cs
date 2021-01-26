@@ -125,7 +125,7 @@ public class DepControl : MonoBehaviour
     private bool DetailPanelOpened = false;
     private bool CheatMode = false, TipShowed = false;
 
-    public Transform EmpContent, PerkContent, EmpPanel, LabPanel, SRateDetailPanel;
+    public Transform EmpContent, PerkContent, EmpPanel, SRateDetailPanel;
     public GameObject OfficeWarning;
     public Building building = null;
     public GameControl GC;
@@ -509,10 +509,10 @@ public class DepControl : MonoBehaviour
     {
         for (int i = 0; i < GC.CurrentDeps.Count; i++)
         {
-            GC.CurrentDeps[i].EmpPanel.gameObject.SetActive(false);
+            GC.CurrentDeps[i].EmpPanel.GetComponent<WindowBaseControl>().SetWndState(false);
             GC.CurrentDeps[i].DetailPanelOpened = false;
         }
-        EmpPanel.gameObject.SetActive(true);
+        EmpPanel.gameObject.GetComponent<WindowBaseControl>().SetWndState(true);
         DetailPanelOpened = true;
     }
 
@@ -584,8 +584,6 @@ public class DepControl : MonoBehaviour
             Destroy(SRateDetailPanel.gameObject);
         Destroy(DS.gameObject);
         Destroy(EmpPanel.gameObject);
-        if (LabPanel != null)
-            Destroy(LabPanel.gameObject);
         Destroy(this.gameObject);
     }
 
@@ -719,7 +717,7 @@ public class DepControl : MonoBehaviour
         Text_SRateDetail.gameObject.SetActive(true);
         CountSuccessRate(building.effectValue);
         SRateDetailPanel.transform.position = Input.mousePosition;
-        SRateDetailPanel.gameObject.SetActive(true);
+        SRateDetailPanel.gameObject.GetComponent<WindowBaseControl>().SetWndState(true);
         LayoutRebuilder.ForceRebuildLayoutImmediate(SRateDetailPanel.gameObject.GetComponent<RectTransform>());
     }
 
@@ -884,20 +882,20 @@ public class DepControl : MonoBehaviour
         else if (type == 11)
             Text_DetailInfo.text = "部门中每增加一名员工生产力+1";
         SRateDetailPanel.transform.position = Input.mousePosition;
-        SRateDetailPanel.gameObject.SetActive(true);
+        SRateDetailPanel.gameObject.GetComponent<WindowBaseControl>().SetWndState(true);
         LayoutRebuilder.ForceRebuildLayoutImmediate(SRateDetailPanel.gameObject.GetComponent<RectTransform>());
 
     }
     //关闭细节面板
     public void CloseSRateDetailPanel()
     {
-        SRateDetailPanel.gameObject.SetActive(false);
+        SRateDetailPanel.gameObject.GetComponent<WindowBaseControl>().SetWndState(false);
     }
 
     //展开部门模式改变面板
     public void StartChangeMode()
     {
-        GC.DepModeSelectPanel.SetActive(true);
+        GC.DepModeSelectPanel.GetComponent<WindowBaseControl>().SetWndState(true);
         GC.CurrentDep = this;
         GC.Text_DepMode1.text = building.Function_A;
         GC.Text_DepMode1.transform.parent.parent.GetComponent<Text>().text = "技能需求:" + building.Require_A + "\n生产周期:" + 
@@ -913,7 +911,7 @@ public class DepControl : MonoBehaviour
         BuildingMode = num;
         SpProgress = 0;
         ActiveButton.interactable = false;
-        GC.DepModeSelectPanel.SetActive(false);
+        GC.DepModeSelectPanel.GetComponent<WindowBaseControl>().SetWndState(false);
         if (num == 1)
         {
             building.effectValue = Mode1EffectValue;
@@ -934,7 +932,7 @@ public class DepControl : MonoBehaviour
     //展开确认面板并更新内容
     public void StartActive()
     {
-        GC.DepSkillConfirmPanel.SetActive(true);
+        GC.DepSkillConfirmPanel.GetComponent<WindowBaseControl>().SetWndState(true);
         if (BuildingMode == 1)
             GC.Text_DepSkillDescribe.text = building.Description_A;
         else if (BuildingMode == 2)
@@ -955,7 +953,7 @@ public class DepControl : MonoBehaviour
         }
 
         //关闭面板
-        GC.DepSkillConfirmPanel.SetActive(false);
+        GC.DepSkillConfirmPanel.GetComponent<WindowBaseControl>().SetWndState(true);
         if (ActiveMode == 1)
         {
             BuildingActive();
@@ -965,7 +963,7 @@ public class DepControl : MonoBehaviour
         {
             GC.CurrentDep = this;
             GC.SelectMode = 5;
-            GC.TotalEmpContent.parent.parent.gameObject.SetActive(true);
+            GC.TotalEmpPanel.SetWndState(true);
         }
         else if (ActiveMode == 3)
         {
@@ -1575,7 +1573,7 @@ public class DepControl : MonoBehaviour
         GC.SelectedDep = null;
         GC.CurrentDep = null;
         GC.CurrentEmpInfo = null;
-        GC.TotalEmpContent.parent.parent.gameObject.SetActive(false);
+        GC.TotalEmpPanel.SetWndState(false);
         ActiveButton.interactable = false;
         SpProgress = 0;
         GC.ResetSelectMode();

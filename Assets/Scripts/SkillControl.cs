@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SkillControl : MonoBehaviour
+public class SkillControl : WindowRoot
 {
     //选中的骰子点数
     public int TotalValue
@@ -289,7 +289,7 @@ public class SkillControl : MonoBehaviour
         VictoryPanel.SetActive(false);
         PresetPanel.SetActive(false);
         GC.RemovePause(this);
-        this.gameObject.SetActive(false);
+        SetWndState(false);
     }
 
     //检测当前点数（和体力）下可用的技能
@@ -380,7 +380,7 @@ public class SkillControl : MonoBehaviour
         GC.CurrentEmpInfo2 = null;
         GC.CurrentEmpInfo = null;
         GC.ResetSelectMode();
-        GC.TotalEmpContent.parent.parent.gameObject.SetActive(false);
+        GC.TotalEmpPanel.SetWndState(false);
         Text_Tip.gameObject.SetActive(false);
 
         Text_Point.text = "当前点数:" + CurrentPoint + "\n下一级所需点数:" + RequirePoint; 
@@ -759,7 +759,7 @@ public class SkillControl : MonoBehaviour
     //以下为全公司头脑风暴版本相关
     public void ShowEmpSelectPanel()
     {
-        GC.TotalEmpContent.parent.parent.gameObject.SetActive(true);
+        GC.TotalEmpPanel.SetWndState(true);
         GC.ResetSelectMode();
         GC.Text_EmpSelectTip.gameObject.SetActive(true);
         GC.Text_EmpSelectTip.text = "选择加入头脑风暴的员工，最多5人";
@@ -852,7 +852,7 @@ public class SkillControl : MonoBehaviour
             return;
         }
         GC.ResetSelectMode();
-        GC.TotalEmpContent.parent.parent.gameObject.SetActive(false);
+        GC.TotalEmpPanel.SetWndState(false);
         SelectConfirmButton.SetActive(false);
         foreach (EmpInfo info in SelectedEmps)
         {

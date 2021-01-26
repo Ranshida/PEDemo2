@@ -639,7 +639,7 @@ GameObject:
   - component: {fileID: 1280296115418673379}
   - component: {fileID: 7500916941935939270}
   m_Layer: 5
-  m_Name: Button (2)
+  m_Name: CloseButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -746,8 +746,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6102515751864992952}
-        m_MethodName: SetActive
+      - m_Target: {fileID: 8925940266414972502}
+        m_MethodName: SetWndState
         m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3374,6 +3374,7 @@ GameObject:
   - component: {fileID: 8462709804129838565}
   - component: {fileID: 1681300466881101259}
   - component: {fileID: 1729655005172942392}
+  - component: {fileID: 8925940266414972502}
   m_Layer: 5
   m_Name: EmpPanel
   m_TagString: Untagged
@@ -3443,6 +3444,21 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &8925940266414972502
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6102515751864992952}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2243020c232bcdb4e8a46e46cbdb162e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Layer: 2
+  buttons: []
+  sliders: []
 --- !u!1 &6345939958937439645
 GameObject:
   m_ObjectHideFlags: 0
@@ -3699,7 +3715,6 @@ MonoBehaviour:
   EmpContent: {fileID: 8823674}
   PerkContent: {fileID: 1129530101776680145}
   EmpPanel: {fileID: 8462709804129838565}
-  LabPanel: {fileID: 0}
   SRateDetailPanel: {fileID: 6286068424097834007}
   OfficeWarning: {fileID: 6013717149954132109}
   building: {fileID: 0}

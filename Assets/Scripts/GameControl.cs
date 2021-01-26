@@ -90,9 +90,11 @@ public class GameControl : MonoBehaviour
     public FOEControl foeControl;
     public EventControl EC;
     public CEOControl CC;
-    public Transform EmpPanelContent, DepContent, DepSelectContent, TotalEmpContent, StandbyContent, EmpDetailContent, MessageContent, SRateDetailContent;
+    public WindowBaseControl TotalEmpPanel;
+    public Transform DepContent, DepSelectContent, StandbyContent, MessageContent;
+    public Transform BottomLayer, FixedLayer, DynamicLayer, TopLayer;
     public InfoPanel infoPanel;
-    public GameObject DepSelectPanel, StandbyButton, MessagePrefab, CEOSkillPanel, GameOverPanel, OfficeModeSelectPanel,
+    public GameObject DepSelectPanel, StandbyButton, MessagePrefab, GameOverPanel, OfficeModeSelectPanel,
         OfficeModeBuildingOptionButton, OfficeModeTalkOptionButton, DepModeSelectPanel, DepSkillConfirmPanel, SkillTreeSelectPanel;
     public Text Text_Time, Text_TechResource, Text_MarketResource, Text_MarketResource2, Text_ProductResource, Text_Money, Text_Stamina, Text_Mentality, 
         Text_Morale, Text_DepMode1, Text_DepMode2, Text_DepSkillDescribe, Text_WarTime, Text_MobTime;
@@ -138,7 +140,7 @@ public class GameControl : MonoBehaviour
             Stamina += 100;
         }
         if (Money < 0)
-            GameOverPanel.SetActive(true);
+            GameOverPanel.GetComponent<WindowBaseControl>().SetWndState(true);
 
         //1秒算一次金钱
         MoneyCalcTimer += Time.deltaTime;
@@ -190,7 +192,7 @@ public class GameControl : MonoBehaviour
                 MobTime -= 1;
                 if (MobTime == 0)
                 {
-                    SC.gameObject.SetActive(true);
+                    SC.SetWndState(true);
                     SC.FinishSign.SetActive(false);
                     SC.SkillSetButton.interactable = false;
                     AskPause(SC);
@@ -333,11 +335,9 @@ public class GameControl : MonoBehaviour
     {
         DepControl newDep;
         newDep = Instantiate(DepPrefab, this.transform);
-        newDep.EmpPanel.parent = EmpPanelContent;
+        newDep.EmpPanel.parent = DynamicLayer;
         if (newDep.SRateDetailPanel != null)
-            newDep.SRateDetailPanel.parent = SRateDetailContent;
-        if (newDep.LabPanel != null)
-            newDep.LabPanel.parent = EmpPanelContent;
+            newDep.SRateDetailPanel.parent = TopLayer;
         newDep.transform.parent = DepContent;
         newDep.building = b;
 
@@ -567,14 +567,14 @@ public class GameControl : MonoBehaviour
         newOffice.DS.GC = this;
 
         if (newOffice.SRateDetailPanel != null)
-            newOffice.SRateDetailPanel.parent = SRateDetailContent;
+            newOffice.SRateDetailPanel.parent = TopLayer;
         return newOffice;
     }
 
     //招募的部门选择
     public void ShowDepSelectPanel(EmpType type)
     {
-        DepSelectPanel.SetActive(true);
+        DepSelectPanel.GetComponent<WindowBaseControl>().SetWndState(true);
         StandbyButton.SetActive(true);
         for(int i = 0; i < CurrentDeps.Count; i++)
         {
@@ -595,7 +595,7 @@ public class GameControl : MonoBehaviour
     //移动的部门选择
     public void ShowDepSelectPanel(Employee emp)
     {
-        DepSelectPanel.SetActive(true);
+        DepSelectPanel.GetComponent<WindowBaseControl>().SetWndState(true);
         StandbyButton.SetActive(true);
         for (int i = 0; i < CurrentDeps.Count; i++)
         {
@@ -618,7 +618,7 @@ public class GameControl : MonoBehaviour
     //部门领导选择
     public void ShowDepSelectPanel(DepControl dep)
     {
-        DepSelectPanel.SetActive(true);
+        DepSelectPanel.GetComponent<WindowBaseControl>().SetWndState(true);
         StandbyButton.SetActive(false);
         for (int i = 0; i < CurrentDeps.Count; i++)
         {
@@ -635,7 +635,7 @@ public class GameControl : MonoBehaviour
     //办公室领导选择
     public void ShowDepSelectPanel(OfficeControl office)
     {
-        DepSelectPanel.SetActive(true);
+        DepSelectPanel.GetComponent<WindowBaseControl>().SetWndState(true);
         StandbyButton.SetActive(false);
         for (int i = 0; i < CurrentDeps.Count; i++)
         {
@@ -652,7 +652,7 @@ public class GameControl : MonoBehaviour
     //显示所有相关部门
     public void ShowDepSelectPanel(List<DepControl> deps)
     {
-        DepSelectPanel.SetActive(true);
+        DepSelectPanel.GetComponent<WindowBaseControl>().SetWndState(true);
         StandbyButton.SetActive(false);
         for (int i = 0; i < CurrentDeps.Count; i++)
         {
@@ -669,7 +669,7 @@ public class GameControl : MonoBehaviour
     //显示所有相关办公室
     public void ShowDepSelectPanel(List<OfficeControl> offices)
     {
-        DepSelectPanel.SetActive(true);
+        DepSelectPanel.GetComponent<WindowBaseControl>().SetWndState(true);
         StandbyButton.SetActive(false);
         for (int i = 0; i < CurrentDeps.Count; i++)
         {
@@ -691,7 +691,7 @@ public class GameControl : MonoBehaviour
     //将移动或雇佣的员工放入待命室
     public void SelectDep()
     {
-        DepSelectPanel.SetActive(false);
+        DepSelectPanel.GetComponent<WindowBaseControl>().SetWndState(false);
         if (SelectMode == 1)
         {
             HC.SetInfoPanel();
@@ -724,7 +724,7 @@ public class GameControl : MonoBehaviour
     //将移动或雇佣的员工放入特定办公室 + 确定部门(办公室)领导者 + CEO技能发动
     public void SelectDep(OfficeControl office)
     {
-        DepSelectPanel.SetActive(false);
+        DepSelectPanel.GetComponent<WindowBaseControl>().SetWndState(false);
         if (office.CurrentManager != null && SelectMode < 3)
         {
             //这部分可能已经不需要了，因为筛选DepSelect按钮时已经剔除了有高管的办公室
@@ -825,7 +825,8 @@ public class GameControl : MonoBehaviour
     //将移动或雇佣的员工放入特定部门 + 选择部门发动建筑特效 + CEO技能发动
     public void SelectDep(DepControl depControl)
     {
-        if(SelectMode == 1)
+        DepSelectPanel.GetComponent<WindowBaseControl>().SetWndState(false);
+        if (SelectMode == 1)
         {
             QC.Finish(8);
             HC.SetInfoPanel();
@@ -872,7 +873,6 @@ public class GameControl : MonoBehaviour
                 QC.Init("技能释放成功\n\n" + depControl.Text_DepName.text + "成功率上升45%");
             }
         }
-        DepSelectPanel.SetActive(false);
         //调动信息
         if (SelectMode == 1 || SelectMode == 2)
         {
@@ -953,8 +953,8 @@ public class GameControl : MonoBehaviour
         CC.CEOSkillNum = 0;
         Text_EmpSelectTip.gameObject.SetActive(false);
         SC.SelectConfirmButton.SetActive(false);
-        CC.SelectPanel.SetActive(false);
-        CC.ResultPanel.SetActive(false);
+        CC.SelectPanel.GetComponent<WindowBaseControl>().SetWndState(false);
+        CC.ResultPanel.GetComponent<WindowBaseControl>().SetWndState(false); ;
         for(int i = 0; i < CurrentEmployees.Count; i++)
         {
             CurrentEmployees[i].InfoB.gameObject.SetActive(true);
@@ -971,7 +971,7 @@ public class GameControl : MonoBehaviour
         if(CurrentOffice != null)
         {
             CurrentOffice.OfficeMode = num;
-            OfficeModeSelectPanel.SetActive(false);
+            OfficeModeSelectPanel.GetComponent<WindowBaseControl>().SetWndState(false);
             CurrentOffice.Progress = 0;
             CurrentOffice.UpdateUI();
             if (num == 1)
@@ -1026,7 +1026,7 @@ public class GameControl : MonoBehaviour
     {
         if(SelectMode == 4)
         {
-            TotalEmpContent.parent.parent.gameObject.SetActive(false);
+            TotalEmpPanel.SetWndState(false);
             ResetSelectMode();
         }
         else if (SelectMode == 6)
@@ -1036,7 +1036,7 @@ public class GameControl : MonoBehaviour
             if(CurrentEmpInfo2 == null)
             {
                 if (SelectMode == 7)
-                    TotalEmpContent.parent.parent.gameObject.SetActive(false);
+                    TotalEmpPanel.SetWndState(false);
                 ResetSelectMode();
             }
             else
@@ -1057,14 +1057,14 @@ public class GameControl : MonoBehaviour
         if (CurrentEmpInfo != null)
             CurrentEmpInfo.emp.InfoDetail.ST.ChangeSkillTree(num);
         SkillTreeSelectPanel.SetActive(false);
-        TotalEmpContent.parent.parent.gameObject.SetActive(false);
+        TotalEmpPanel.SetWndState(false);
         ResetSelectMode();
     }
     //游戏结束后续钱继续
     public void GameReset()
     {
         Money += 10000;
-        GameOverPanel.gameObject.SetActive(false);
+        GameOverPanel.GetComponent<WindowBaseControl>().SetWndState(false);
     }
 
     //一些提示框信息

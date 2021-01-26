@@ -107,6 +107,7 @@ GameObject:
   - component: {fileID: 6147633502306821017}
   - component: {fileID: 8156611964377467785}
   - component: {fileID: 3422424252228816234}
+  - component: {fileID: 5415845740727048795}
   m_Layer: 5
   m_Name: SRateDetailPanel
   m_TagString: Untagged
@@ -212,6 +213,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_HorizontalFit: 0
   m_VerticalFit: 1
+--- !u!114 &5415845740727048795
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8712070146951918997}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2243020c232bcdb4e8a46e46cbdb162e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Layer: 3
+  buttons: []
+  sliders: []
 --- !u!1 &8871865279396869766
 GameObject:
   m_ObjectHideFlags: 0

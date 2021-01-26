@@ -6,8 +6,9 @@ using UnityEngine.UI;
 public class FOEControl : MonoBehaviour
 {
     public GameControl GC;
-    public GameObject CloseButton, EndButton, ActionPanel, CloseButton2, SpyPanel, NeutralAttackSign;
+    public GameObject CloseButton, EndButton, ActionPanel, SpyPanel, NeutralAttackSign;
     public Text Text_Info, Text_FightTime, Text_NeutralMarket, Text_Turn;
+    public CanvasGroup PanelCanvasGroup;
 
     public Text[] Text_Costs = new Text[5];
     public Text[] Text_Ranking = new Text[4];
@@ -57,17 +58,17 @@ public class FOEControl : MonoBehaviour
     //商战开始
     void FightStart()
     {
-        CloseButton2.SetActive(false);
         GC.AskPause(this);
         FightBegins = true;
         ResultConfirmed = false;
         Companies[0].ResetStatus();
         Companies[0].NeutralSkillNum = 0;
         Companies[0].FOESkillNum = 0;
-        ActionPanel.SetActive(true);
+        ActionPanel.GetComponent<WindowBaseControl>().SetWndState(true);
         Text_Info.text = "";
         NeutralMarket = 20;
         Turn = 1;
+        PanelCanvasGroup.interactable = true;
 
         //AI先行动
         for (int i = 1; i < 4; i++)
@@ -359,8 +360,9 @@ public class FOEControl : MonoBehaviour
     public void ResetTime()
     {
         GC.RemovePause(this);
-        ActionPanel.SetActive(false);
+        ActionPanel.GetComponent<WindowBaseControl>().SetWndState(false);
         GC.QC.Finish(7);
+        PanelCanvasGroup.interactable = false;
     }
 
     public void AttackNeutral()
@@ -445,10 +447,10 @@ public class FOEControl : MonoBehaviour
 
     public void ShowSpyPanel()
     {
-        SpyPanel.SetActive(true);
-        ActionPanel.SetActive(true);
-        if (FightTime > 0)
-            CloseButton2.SetActive(true);
+        SpyPanel.GetComponent<WindowBaseControl>().SetWndState(true);
+        ActionPanel.GetComponent<WindowBaseControl>().SetWndState(true);
+        if (FightBegins == false)
+            PanelCanvasGroup.interactable = false;
     }
     public void SetSpy(int num)
     {

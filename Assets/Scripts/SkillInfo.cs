@@ -188,7 +188,7 @@ public class SkillInfo : MonoBehaviour
             {
                 empInfo.GC.CurrentEmpInfo = null;
                 empInfo.GC.SelectMode = 4;
-                empInfo.GC.TotalEmpContent.parent.parent.gameObject.SetActive(true);
+                empInfo.GC.TotalEmpPanel.SetWndState(true);
                 empInfo.GC.Text_EmpSelectTip.gameObject.SetActive(true);
                 empInfo.GC.Text_EmpSelectTip.text = "选择一个员工";
             }
@@ -220,7 +220,7 @@ public class SkillInfo : MonoBehaviour
                 empInfo.GC.CurrentEmpInfo = null;
                 empInfo.GC.CurrentEmpInfo2 = null;
                 empInfo.GC.SelectMode = 7;
-                empInfo.GC.TotalEmpContent.parent.parent.gameObject.SetActive(true);
+                empInfo.GC.TotalEmpPanel.SetWndState(true);
                 empInfo.GC.Text_EmpSelectTip.gameObject.SetActive(true);
                 empInfo.GC.Text_EmpSelectTip.text = "选择第一个员工";
             }
@@ -240,7 +240,7 @@ public class SkillInfo : MonoBehaviour
                 SC.TargetSkill = this;
                 empInfo.GC.CurrentEmpInfo = null;
                 empInfo.GC.SelectMode = 4;
-                empInfo.GC.TotalEmpContent.parent.parent.gameObject.SetActive(true);
+                empInfo.GC.TotalEmpPanel.SetWndState(true);
                 empInfo.GC.Text_EmpSelectTip.gameObject.SetActive(true);
                 empInfo.GC.Text_EmpSelectTip.text = "选择一个员工";
             }

@@ -280,7 +280,7 @@ public class OfficeControl : MonoBehaviour
 
     public void ShowModeSelectPanel()
     {
-        GC.OfficeModeSelectPanel.SetActive(true);
+        GC.OfficeModeSelectPanel.GetComponent<WindowBaseControl>().SetWndState(true);
         GC.CurrentOffice = this;
         if (building.Type == BuildingType.CEO办公室)
         {
@@ -611,12 +611,12 @@ public class OfficeControl : MonoBehaviour
     {
         CountSuccessRate();
         SRateDetailPanel.transform.position = Input.mousePosition;
-        SRateDetailPanel.gameObject.SetActive(true);
+        SRateDetailPanel.gameObject.GetComponent<WindowBaseControl>().SetWndState(true);
         LayoutRebuilder.ForceRebuildLayoutImmediate(SRateDetailPanel.gameObject.GetComponent<RectTransform>());
     }
 
     public void CloseSRateDetailPanel()
     {
-        SRateDetailPanel.gameObject.SetActive(false);
+        SRateDetailPanel.gameObject.GetComponent<WindowBaseControl>().SetWndState(false);
     }
 }

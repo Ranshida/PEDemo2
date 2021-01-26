@@ -7,6 +7,7 @@ public class HireControl : MonoBehaviour
 {
     public int MaxHireNum = 1;
 
+    public Transform TotalEmpContent;
     public GameControl GC;
     public Button HireRefreshButton;
     public Text Text_HireButtonText;
@@ -131,13 +132,13 @@ public class HireControl : MonoBehaviour
     {
         GC.CurrentEmpInfo.HireButton.interactable = false;
 
-        EmpInfo ED = Instantiate(EmpDetailPrefab, GC.EmpDetailContent);
+        EmpInfo ED = Instantiate(EmpDetailPrefab, TotalEmpContent);
         GC.CurrentEmpInfo.CopyStatus(ED);
 
-        EmpInfo EI1 = Instantiate(EmpInfoPrefab, GC.TotalEmpContent);
+        EmpInfo EI1 = Instantiate(EmpInfoPrefab, TotalEmpContent);
         GC.CurrentEmpInfo.CopyStatus(EI1);
 
-        EmpInfo EI2 = Instantiate(EmpInfoPrefab, GC.TotalEmpContent);
+        EmpInfo EI2 = Instantiate(EmpInfoPrefab, TotalEmpContent);
         GC.CurrentEmpInfo.CopyStatus(EI2);
 
         EI1.DetailInfo = ED;
@@ -192,16 +193,16 @@ public class HireControl : MonoBehaviour
         Employee emp = new Employee();
         emp.InitCEOStatus();
 
-        EmpInfo ED = Instantiate(EmpDetailPrefab, GC.EmpDetailContent);
+        EmpInfo ED = Instantiate(EmpDetailPrefab, GC.DynamicLayer);
         ED.GC = GC;
         ED.emp = emp;
         ED.SetSkillName();
         GC.CC.CEO = emp;
 
-        EmpInfo EI1 = Instantiate(CEOInfoPrefab, GC.TotalEmpContent);
+        EmpInfo EI1 = Instantiate(CEOInfoPrefab, TotalEmpContent);
         ED.CopyStatus(EI1);
 
-        EmpInfo EI2 = Instantiate(CEOInfoPrefab, GC.TotalEmpContent);
+        EmpInfo EI2 = Instantiate(CEOInfoPrefab, TotalEmpContent);
         ED.CopyStatus(EI2);
 
         emp.InfoDetail = ED;

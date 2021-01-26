@@ -38,7 +38,7 @@ public class EventControl : MonoBehaviour
         int AgreeNum = 1;
         if (GC.CEOExtraVote == true)
             AgreeNum += 1;
-        ManageVotePanel.SetActive(true);
+        ManageVotePanel.GetComponent<WindowBaseControl>().SetWndState(true);
         for(int i = 0; i < VCells.Count; i++)
         {
             Destroy(VCells[i].gameObject);

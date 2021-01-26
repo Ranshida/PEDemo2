@@ -279,7 +279,7 @@ public class EmpInfo : MonoBehaviour
             if (GC.CC.CEOSkillNum == 4)
             {
                 emp.Mentality += (int)(10 * GC.HRBuildingMentalityExtra);
-                GC.TotalEmpContent.parent.parent.gameObject.SetActive(false);
+                GC.TotalEmpPanel.SetWndState(false);
                 emp.InfoDetail.AddHistory("收到CEO安抚,心力+" + (10 * GC.HRBuildingMentalityExtra));
                 GC.CC.CEO.InfoDetail.AddHistory("安抚了" + emp.Name + ",对方心力+" + (10 * GC.HRBuildingMentalityExtra));
             }
@@ -331,11 +331,11 @@ public class EmpInfo : MonoBehaviour
 
     public void ShowPanel()
     {
-        foreach (Transform child in GC.EmpDetailContent)
+        foreach (Employee emp in GC.CurrentEmployees)
         {
-            child.gameObject.SetActive(false);
+            emp.InfoDetail.GetComponent<WindowBaseControl>().SetWndState(false);
         }
-        gameObject.SetActive(true);
+        this.GetComponent<WindowBaseControl>().SetWndState(true);
         AdjustSize();
     }
 
