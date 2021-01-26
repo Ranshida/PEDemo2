@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class BuildingDescription : MonoBehaviour
+/// <summary>
+/// 建筑详细信息面板
+/// </summary>
+public class BuildingDescription : WindowRoot
 {
     public Text str_BuildingName;
     public Text str_BuildingSize;
@@ -19,7 +22,8 @@ public class BuildingDescription : MonoBehaviour
     public Text str_Require3;
     public Text str_Description3;
 
-    public void Init()
+
+    private void Awake()
     {
         str_BuildingName = transform.Find("str_BuildingName").GetComponent<Text>();
         str_BuildingSize = transform.Find("str_BuildingSize").GetComponent<Text>();
@@ -45,25 +49,7 @@ public class BuildingDescription : MonoBehaviour
 
         ShowInfo(building);
     }
-    public void ShowInfo(LotteryBuilding lottery, Building building, BoolenValue right = null)
-    {
-        if (right == null ||  !right.HasValue)
-        {
-            if (lottery.transform.localPosition.x < 0)
-                transform.localPosition = new Vector3(350, transform.localPosition.y);
-            else
-                transform.localPosition = new Vector3(-350, transform.localPosition.y);
-        }
-        else
-        {
-            if (right.Value == true)
-                transform.localPosition = new Vector3(350, transform.localPosition.y);
-            else
-                transform.localPosition = new Vector3(-350, transform.localPosition.y);
-        }
 
-        ShowInfo(building);
-    }
     void ShowInfo(Building building)
     {
         str_BuildingName.text = building.Name;
@@ -81,9 +67,9 @@ public class BuildingDescription : MonoBehaviour
         str_Description3.text = building.Description_C;
     }
 
-    public void ShowInfo_Decorate(LotteryBuilding lottery)
+    public void ShowInfo_Decorate(bool right)
     {
-        if (lottery.transform.localPosition.x < 0)
+        if (right)
             transform.localPosition = new Vector3(550, transform.localPosition.y);
         else
             transform.localPosition = new Vector3(-550, transform.localPosition.y);

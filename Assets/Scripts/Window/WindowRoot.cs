@@ -10,6 +10,8 @@ using UnityEngine.UI;
 public abstract class WindowRoot : MonoBehaviour
 {
     protected Transform thisTrans;
+    protected virtual bool AutoSetupButton { get; } = true;
+    public UILayer Layer;
 
     public Button[] buttons;      //全部子物体按钮
     public Slider[] sliders;      //全部子物体滑动条
@@ -22,12 +24,17 @@ public abstract class WindowRoot : MonoBehaviour
     protected virtual Color pressColor { get; set; } = new Color(1f, 0.75f, 0.4f, 1f);
     protected virtual Color liftupColor { get; set; } = new Color(0.40f, 0.4f, 0.4f, 0.5f);
 
-    protected virtual void Update()
+    protected void Update()
     {
-        //每帧注册监听事件。如果不需要，需要重写Update
-        SetUpAllButton(this.gameObject);
-        SetUpAllSlider(this.gameObject);
+        if (AutoSetupButton)
+        {
+            SetUpAllButton(this.gameObject);
+            SetUpAllSlider(this.gameObject);
+        }
+        UpdateSpecific();
     }
+
+    protected virtual void UpdateSpecific() { }
 
 
     /// <summary>
@@ -179,51 +186,12 @@ public abstract class WindowRoot : MonoBehaviour
         txt.color = col;
     }
 
-    protected T GetOrAddComponent<T>(GameObject go) where T : Component
-    {
-        T t = go.GetComponent<T>();
-        if (t == null)
-        {
-            t = go.AddComponent<T>();
-        }
-        return t;
-    }
 
     #endregion
 
     #region ClickEvts
 
-    public void OnClickDown(GameObject go, Action<PointerEventData> cb)
-    {
-        Listener listener = GetOrAddComponent<Listener>(go);
-        listener.onClickDown = cb;
-    }
-
-    public void OnClickUp(GameObject go, Action<PointerEventData> cb)
-    {
-        Listener listener = GetOrAddComponent<Listener>(go);
-        listener.onClickUp = cb;
-    }
-    public void OnDrag(GameObject go, Action<PointerEventData> cb)
-    {
-        Listener listener = GetOrAddComponent<Listener>(go);
-        listener.onDrag = cb;
-    }
-    public void OnPointerEnter(GameObject go, Action cb)
-    {
-        Listener listener = GetOrAddComponent<Listener>(go);
-        listener.onPointerEnter = cb;
-    }
-    public void OnpointerExit(GameObject go, Action cb)
-    {
-        Listener listener = GetOrAddComponent<Listener>(go);
-        listener.onPointerExit = cb;
-    }
-    public void OnPointing(GameObject go, Action cb)
-    {
-        Listener listener = GetOrAddComponent<Listener>(go);
-        listener.onPointing = cb;
-    }
+ 
 
     #endregion
 

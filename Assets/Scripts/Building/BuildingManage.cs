@@ -18,7 +18,13 @@ public class BuildingManage : MonoBehaviour
 {
     public static BuildingManage Instance;
     public Transform ExitPos;
-    public BuildingWindow BuildingWindow;
+    public List<WindowRoot> childWindows;
+    public BuildingWindow BuildingWindow;                //仓库建造
+    public LotteryWindow LotteryWindow;                  //抽建筑
+    public SelectBuildingWindow SelectBuildingWindow;    //选中建筑
+    public UnlockAreaWindow UnlockAreaWindow;    //选中建筑
+    public BuildingDescription Description;
+    //public 
 
     //初始化
     public GameObject[] buildingPrefabs;  //建筑预制体
@@ -78,11 +84,15 @@ public class BuildingManage : MonoBehaviour
         }
         //装饰建筑临时这样做
         SelectList.Add(BuildingType.空); SelectList.Add(BuildingType.空); SelectList.Add(BuildingType.空); SelectList.Add(BuildingType.空); SelectList.Add(BuildingType.空);
+
+        childWindows.Add(BuildingWindow);
+        childWindows.Add(LotteryWindow);
+        childWindows.Add(SelectBuildingWindow);
+        childWindows.Add(Description);
     }
 
     private void Start()
     {
-        BuildingWindow.SetWndState();
         m_EffectHalo.SetActive(false);
         InitBuilding(BuildingType.CEO办公室, new Int2(3, 8));
         //InitBuilding(BuildingType.人力资源部, new Int2(0, 8));
@@ -161,6 +171,10 @@ public class BuildingManage : MonoBehaviour
                 //确定建造当前建筑
                 if (Temp_Building && m_CanBuild)
                 {
+                    if (GameControl.Instance.Money < 100)
+                        return;
+                    GameControl.Instance.Money -= 100;
+
                     BuildConfirm(Temp_Building, temp_Grids);
                     Temp_Building = null;
                 }
@@ -287,19 +301,20 @@ public class BuildingManage : MonoBehaviour
             }
         }
     }
+
     void SelectABuilding(Building building)
     {
         SelectBuilding = building;
         m_EffectHalo.SetActive(true);
 
-        BuildingWindow.OnSelectBuilding(building);
+        SelectBuildingWindow.SetWndState(true);
     }
     void UnselectBuilding()
     {
         m_EffectHalo.SetActive(false);
 
-        BuildingWindow.OnUnselectBuilding();
         SelectBuilding = null;
+        SelectBuildingWindow.SetWndState(false);
     }
 
     public void OpenDetailPanel()
@@ -315,16 +330,18 @@ public class BuildingManage : MonoBehaviour
     }
 
     //抽奖选择建筑
+    public bool Lotterying { get; private set; }
     public void Lottery(int count)
     {
-        if (BuildingWindow.Lotterying)
+        if (Lotterying)
         {
             Debug.LogError("已经在抽建筑了");
             return;
         }
 
+        Lotterying = true;
         UnselectBuilding();
-        EnterBuildMode();
+        LotteryWindow.SetWndState();
 
         List<BuildingType> buildingList = new List<BuildingType>();     //临时存储所有可用的抽卡列表
         List<BuildingType> tempBuildings = new List<BuildingType>();    //可选的建筑 count个
@@ -343,7 +360,13 @@ public class BuildingManage : MonoBehaviour
             } 
         }
 
-        BuildingWindow.Lottery(tempBuildings);
+        LotteryWindow.Lottery(tempBuildings);
+    }
+
+    public void FinishLottery()
+    {
+        Lotterying = false;
+        LotteryWindow.SetWndState(false);
     }
 
     //建造基础建筑按钮
@@ -356,22 +379,34 @@ public class BuildingManage : MonoBehaviour
     //进入建造模式
     public void EnterBuildMode()
     {
-        BuildingWindow.OnEnterBuildMode();
+        BuildingWindow.SetWndState();
         InBuildMode = true;
+        foreach (WindowRoot item in childWindows)
+        {
+            item.SendMessage("OnEnterBuildMode", SendMessageOptions.DontRequireReceiver);
+        }
         AskPause();
     }
     //(尝试)退出建造模式
     public bool TryQuitBuildMode()
     {
+        if (Lotterying)
+        {
+            return false;
+        }
         //没有将全部建筑摆放完毕
         if (Temp_Building) //  ||仓库不为空
         {
             return false;
         }
         InBuildMode = false;
+        BuildingWindow.SetWndState(false);
+        foreach (WindowRoot item in childWindows)
+        {
+            item.SendMessage("OnQuitBuildMode", SendMessageOptions.DontRequireReceiver);
+        }
         UnselectBuilding();
         RemovePause();
-        ;
         return true;
     }
 
@@ -409,12 +444,8 @@ public class BuildingManage : MonoBehaviour
         //新的建筑
         if (!building.Moving)
         {
-            if (GameControl.Instance.Money < 100)
-                return;
-
             //在链表上保存新建筑
             ConstructedBuildings.Add(building);
-            GameControl.Instance.Money -= 100;
             //GameControl.Instance.BuildingPay += building.Pay;
 
             BuildingType T = building.Type;
@@ -495,6 +526,31 @@ public class BuildingManage : MonoBehaviour
         }
     }
 
+    public void AskUnlockArea()
+    {
+        UnlockAreaWindow.SetWndState();
+    }
+
+    //确定解锁新区域
+    public Button btn_AskUnlock;
+    private int m_Area = 0;
+    public void UnLockArea()
+    {
+        if (GameControl.Instance.Money < 2000)
+        {
+            Debug.Log("金钱不够");
+            return;
+        }
+        GameControl.Instance.Money -= 2000;
+        GridContainer.Instance.UnlockGrids(m_Area);
+        m_Area++;
+        if (m_Area >= 3)
+        {
+            btn_AskUnlock.gameObject.SetActive(false);
+        }
+        UnlockAreaWindow.SetWndState(false);
+    }
+
     //取消摆放
     public void BuildCancel()
     {
@@ -522,5 +578,34 @@ public class BuildingManage : MonoBehaviour
         //{
             
         //}
+    }
+
+    public void AddInfoListener(Transform UITrans, BuildingType type)
+    {
+        Building building = null;
+        if (m_AllBuildingPrefab.TryGetValue(type, out GameObject go))
+            building = go.GetComponent<Building>();
+
+        UIManager.Instance.OnPointerEnter(UITrans.gameObject, () =>
+        {
+            if (building)
+                ShowBuildingInfo(building, UITrans.localPosition.x < 0);
+            else
+                ShowDecorateInfo(UITrans.localPosition.x < 0);
+        });
+
+        UIManager.Instance.OnPointerExit(UITrans.gameObject, () => { Description.SetWndState(false); });
+    }
+
+    public void ShowBuildingInfo(Building building, bool right)
+    {
+        Description.SetWndState(true);
+        Description.ShowInfo(building, right);
+    }
+
+    public void ShowDecorateInfo(bool right)
+    {
+        Description.SetWndState(true);
+        Description.ShowInfo_Decorate(right);
     }
 }

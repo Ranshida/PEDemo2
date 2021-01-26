@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+
 /// <summary>
 /// ui事件监听插件
 /// </summary>
@@ -13,6 +14,7 @@ public class Listener : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
     public Action<PointerEventData> onDrag;
     public Action onPointerEnter;
     public Action onPointerExit;
+    public Action onDisable;
     public Action onPointing;
 
     bool m_Pointing = false;
@@ -38,6 +40,14 @@ public class Listener : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, I
                 m_Pointing = false;
                 onPointerExit?.Invoke();
             }
+        }
+    }
+
+    private void OnDisable()
+    {
+        if (m_Pointing)
+        {
+            onDisable?.Invoke();
         }
     }
 

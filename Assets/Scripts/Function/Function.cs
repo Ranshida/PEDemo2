@@ -196,6 +196,7 @@ public static class Function
         return transB.position - new Vector3(transA.position.x, transB.position.y, transA.position.z);
     }
 
+    //拷贝返回一个列表对象
     public static List<T> CopyList<T>(List<T> list)
     {
         List<T> newList = new List<T>();
@@ -204,8 +205,23 @@ public static class Function
             newList.Add(item);
         }
         return newList;
-    } 
+    }
 
+    /// <summary>
+    /// 尝试Get一个组件，没有就新生成一个
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="go"></param>
+    /// <returns></returns>
+    public static T GetOrAddComponent<T>(GameObject go) where T : Component
+    {
+        T t = go.GetComponent<T>();
+        if (t == null)
+        {
+            t = go.AddComponent<T>();
+        }
+        return t;
+    }
 }
 
 public class Int2
