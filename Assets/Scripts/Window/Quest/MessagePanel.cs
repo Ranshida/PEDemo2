@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MessagePanel : MonoBehaviour
+public class MessagePanel : WindowRoot
 {
     public Transform typeA;
     public Transform typeB;
@@ -12,6 +12,11 @@ public class MessagePanel : MonoBehaviour
     string m_Text;
     Action m_OnAccept;
     Action m_OnRefuse;
+
+    protected override void InitSpecific()
+    {
+        base.InitSpecific();
+    }
 
     /// <summary>
     /// 确定，确定之后接触暂停继续

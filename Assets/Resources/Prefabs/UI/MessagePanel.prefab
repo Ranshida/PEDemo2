@@ -413,6 +413,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d2ca147745ade445b92bea738902ac1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Layer: 3
+  buttons: []
+  sliders: []
   typeA: {fileID: 1675006773118091277}
   typeB: {fileID: 872365195500059536}
 --- !u!1 &4139040574559609460

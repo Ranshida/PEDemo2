@@ -15,9 +15,8 @@ public class EmpManager : MonoBehaviour
     private EmpEntity pointEmp;
     private GameObject eventBubble;
 
-    public Transform EventPanel;        //事件相关面板
-    private Transform JudgeEventPanel;   //矛盾事件
-    private Transform EventDetailPanel;
+    public JudgeEventWindow JudgeEventWindow;
+    public EventDetailWindow EventDetailWindow;
 
     private void Awake()
     {
@@ -25,9 +24,6 @@ public class EmpManager : MonoBehaviour
         empPrefabs = ResourcesLoader.LoadPrefab("Prefabs/Employee/Emp");
         empMaterials = ResourcesLoader.LoadAll<Material>("Image/Employee/Materials");
         eventBubble = ResourcesLoader.LoadPrefab("Prefabs/Employee/Bubble");
-
-        JudgeEventPanel = EventPanel.Find("JudgeEvent");
-        EventDetailPanel = EventPanel.Find("EventDetail");
     }
 
     private void Update()
@@ -73,43 +69,20 @@ public class EmpManager : MonoBehaviour
         //这个方法应当会导致游戏暂停
         //应该需要Instantiate一个新panel写，现在如果同时发生两次就顶掉一个
         GameControl.Instance.AskPause(this);
-        JudgeEventPanel.gameObject.SetActive(true);
-        Transform acceptBtn = JudgeEventPanel.Find("Btn_Accept");
-        Transform cantAccept = JudgeEventPanel.Find("Txt_CantAccept");
-        Button acceptbutton = acceptBtn.GetComponent<Button>();
-        Button refusebutton = JudgeEventPanel.Find("Btn_Refuse").GetComponent<Button>();
+        JudgeEventWindow.SetWndState();
+        JudgeEventWindow.AddEvent(currentEvent, canAccept);
+    }
 
-        JudgeEventPanel.Find("Txt_Title").GetComponent<Text>().text = currentEvent.EventName;
-        JudgeEventPanel.Find("Txt_Description").GetComponent<Text>().text = currentEvent.Self.Name + "发生了事件" + currentEvent.EventName;
+    public void AcceptJudgeEvent(Event judgeEvent)
+    {
+        (judgeEvent as JudgeEvent).OnAccept();
+        JudgeEventWindow.SetWndState(false);
+    }
 
-        //接受
-        if (canAccept) 
-        {
-            acceptBtn.gameObject.SetActive(true);
-            cantAccept.gameObject.SetActive(false);
-            acceptbutton.onClick.RemoveAllListeners();
-            acceptbutton.onClick.AddListener(() =>
-            {
-                GameControl.Instance.RemovePause(this);
-                JudgeEventPanel.gameObject.SetActive(false);
-                (currentEvent as JudgeEvent).OnAccept();
-            });
-        }
-        else
-        {
-            //无法接受
-            acceptBtn.gameObject.SetActive(false);
-            cantAccept.gameObject.SetActive(true);
-        }
-
-        //拒绝
-        refusebutton.onClick.RemoveAllListeners();
-        refusebutton.onClick.AddListener(() =>
-        {
-            GameControl.Instance.RemovePause(this);
-            JudgeEventPanel.gameObject.SetActive(false);
-            (currentEvent as JudgeEvent).OnRefuse();
-        });
+    public void RefuseJudgeEvent(Event judgeEvent)
+    {
+        (judgeEvent as JudgeEvent).OnRefuse();
+        JudgeEventWindow.SetWndState(false);
     }
 
     public EmpEntity CreateEmp(Vector3 position)
@@ -488,24 +461,7 @@ public class EmpManager : MonoBehaviour
 
     public void ShowEventDetail(Event thisEvent)
     {
-        EventDetailPanel.gameObject.SetActive(true);
-
-        if (thisEvent.result == 1 || thisEvent.result == 2) 
-        {  //失败  
-            EventDetailPanel.Find("Txt_Success").gameObject.SetActive(false);
-            EventDetailPanel.Find("Txt_Failure").gameObject.SetActive(true);
-        }
-        else
-        {  //成功
-            EventDetailPanel.Find("Txt_Success").gameObject.SetActive(true);
-            EventDetailPanel.Find("Txt_Failure").gameObject.SetActive(false);
-        }
-
-        EventDetailPanel.Find("Txt_EventName").GetComponent<Text>().text = thisEvent.EventName;
-        if (thisEvent.HaveTarget)
-            EventDetailPanel.Find("Txt_Entity").GetComponent<Text>().text = thisEvent.SelfEntity.EmpName + "与" + thisEvent.TargetEntity.EmpName;
-        else
-            EventDetailPanel.Find("Txt_Entity").GetComponent<Text>().text = thisEvent.SelfEntity.EmpName;
-        //EventDetailPanel.Find("Txt_Detail").GetComponent<Text>().text = thisEvent.ResultText;
+        EventDetailWindow.SetWndState();
+        EventDetailWindow.AddEvent(thisEvent);
     }
 }

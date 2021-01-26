@@ -8,9 +8,12 @@ public class QuestControl : MonoBehaviour
 {
     public static QuestControl Instance;
 
-    public GameObject MessagePrefab;     //弹窗 预制体
-    public GameObject QuestPanel;       //任务引导面板
+    public Transform mainCanvas;
     public Transform BottomContent;
+
+    public QuestWindow QuestWindow;
+
+    public GameObject MessagePrefab;     //弹窗 预制体
 
     private int currentQuest = 0;
 
@@ -21,6 +24,8 @@ public class QuestControl : MonoBehaviour
 
     private void Start()
     {
+        QuestWindow.SetWndState(false);
+
         Action step4 = () => {
             currentQuest = 1; 
             StartMission(1); 
@@ -78,14 +83,13 @@ public class QuestControl : MonoBehaviour
         //}
     }
         
-
     /// <summary>
     /// 确定，确定之后接触暂停继续
     /// </summary>
     /// <param name="txt">文案</param>
     public void Init(string txt)
     {
-        MessagePanel message = Instantiate(MessagePrefab, transform.parent).GetComponent<MessagePanel>();
+        MessagePanel message = Instantiate(MessagePrefab, mainCanvas).GetComponent<MessagePanel>();
         message.Init(txt);
     }
 
@@ -98,7 +102,7 @@ public class QuestControl : MonoBehaviour
     {
         MessagePanel message;
         if (TopInit == true)
-            message = Instantiate(MessagePrefab, transform).GetComponent<MessagePanel>();
+            message = Instantiate(MessagePrefab, mainCanvas).GetComponent<MessagePanel>();
         else
         {
             message = Instantiate(MessagePrefab, BottomContent).GetComponent<MessagePanel>();
@@ -114,7 +118,7 @@ public class QuestControl : MonoBehaviour
     /// <param name="onRefuse">拒绝后执行</param>
     public void Init(string txt, Action onAccept, Action onRefuse)
     {
-        MessagePanel message = Instantiate(MessagePrefab, transform).GetComponent<MessagePanel>();
+        MessagePanel message = Instantiate(MessagePrefab, mainCanvas).GetComponent<MessagePanel>();
         message.Init(txt, onAccept, onRefuse);
     }
 
@@ -129,7 +133,7 @@ public class QuestControl : MonoBehaviour
             return;
         }
 
-        ClearQuestPanel();
+        QuestWindow.SetWndState(false);
         if (step == 2)
         {
             currentQuest = 5;
@@ -218,23 +222,7 @@ public class QuestControl : MonoBehaviour
     /// <param name="condition"></param>
     private void ShowQuestPanel(string title, string info, string condition)
     {
-        QuestPanel.gameObject.SetActive(true);
-        QuestPanel.transform.Find("Txt_Title").GetComponent<Text>().text = title;
-        QuestPanel.transform.Find("Txt_Condition").GetComponent<Text>().text = condition;
-        Button detailBtn = QuestPanel.transform.Find("Btn_Detail").GetComponent<Button>();
-        detailBtn.onClick.RemoveAllListeners();
-        detailBtn.onClick.AddListener(() =>
-        {
-            Init(title + "|" + info, ()=> { detailBtn.interactable = true; });
-            detailBtn.interactable = false;
-        });
-
-        Init(title + "|" + info, () => { detailBtn.interactable = true; }, false);
-        detailBtn.interactable = false;
-    }
-
-    private void ClearQuestPanel()
-    {
-        QuestPanel.gameObject.SetActive(false);
+        QuestWindow.SetWndState();
+        QuestWindow.ShowQuestPanel(title, info, condition);
     }
 }
