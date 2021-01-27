@@ -11,7 +11,7 @@ public class QuestWindow : WindowRoot
     string m_Info;
     string m_Condition;
 
-    protected override void InitSpecific()
+    protected override void OnActive()
     {
         _Manage = QuestControl.Instance;
     }
@@ -32,7 +32,7 @@ public class QuestWindow : WindowRoot
         transform.Find("Txt_Condition").GetComponent<Text>().text = m_Condition;
         detailBtn = transform.Find("Btn_Detail").GetComponent<Button>();
 
-        _Manage.Init(m_Title + "|" + m_Info, () => { detailBtn.interactable = true; }, false);
+        _Manage.Init(m_Title + "|" + m_Info, () => { detailBtn.interactable = true; });
         detailBtn.interactable = false;
 
         detailBtn.onClick.RemoveAllListeners();

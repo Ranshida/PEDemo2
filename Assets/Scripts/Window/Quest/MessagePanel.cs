@@ -13,9 +13,9 @@ public class MessagePanel : WindowRoot
     Action m_OnAccept;
     Action m_OnRefuse;
 
-    protected override void InitSpecific()
+    protected override void OnActive()
     {
-        base.InitSpecific();
+        base.OnActive();
     }
 
     /// <summary>

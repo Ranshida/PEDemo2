@@ -32,7 +32,7 @@ public class BuildingWindow : WindowRoot
         btn_Dismantle = transform.Find("Btn_Dismantle").GetComponent<Button>();
     }
 
-    protected override void InitSpecific()
+    protected override void OnActive()
     {
         _Manage = BuildingManage.Instance;
 

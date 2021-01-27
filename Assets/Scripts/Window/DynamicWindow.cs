@@ -6,7 +6,7 @@ using UnityEngine.UI;
 /// <summary>
 /// 动态弹窗、消息提示面板
 /// </summary>
-public class DynamicWindow : MonoBehaviour
+public class DynamicWindow : WindowRoot
 {
     public static DynamicWindow Instance { get; private set; }
     private GameObject dialoguePrefab;
@@ -27,9 +27,8 @@ public class DynamicWindow : MonoBehaviour
         dialoguePrefab = ResourcesLoader.LoadPrefab("Prefabs/UI/Dialogue");
     }
 
-    private void Update()
+    protected override void UpdateSpecific()
     {
-
         if (!showName)
             empName.transform.position = new Vector3(-1000, 0, 0);
         showName = false;

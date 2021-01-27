@@ -12,7 +12,7 @@ public class UnlockAreaWindow : WindowRoot
 
     private Button btn_Yes;
 
-    protected override void InitSpecific()
+    protected override void OnActive()
     {
         _Manage = BuildingManage.Instance;
         btn_Yes = transform.Find("Btn_Yes").GetComponent<Button>();

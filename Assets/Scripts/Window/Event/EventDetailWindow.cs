@@ -8,9 +8,9 @@ using UnityEngine.UI;
 /// </summary>
 public class EventDetailWindow : WindowRoot
 {
-    protected override void InitSpecific()
+    protected override void OnActive()
     {
-        base.InitSpecific();
+        base.OnActive();
     }
     public void AddEvent(Event thisEvent)
     {

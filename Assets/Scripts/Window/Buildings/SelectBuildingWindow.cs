@@ -22,7 +22,7 @@ public class SelectBuildingWindow : WindowRoot
         btn_Move = transform.Find("Btn_Move");
     }
 
-    protected override void InitSpecific()
+    protected override void OnActive()
     {
         _Manage = BuildingManage.Instance;
 

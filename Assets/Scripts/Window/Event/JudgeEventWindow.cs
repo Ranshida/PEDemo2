@@ -13,7 +13,7 @@ public class JudgeEventWindow : WindowRoot
     Transform acceptBtn;
     Transform cantAccept;
 
-    protected override void InitSpecific()
+    protected override void OnActive()
     {
         _Manage = EmpManager.Instance;
 

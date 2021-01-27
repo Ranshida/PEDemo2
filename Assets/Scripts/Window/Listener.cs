@@ -9,13 +9,13 @@ using UnityEngine.EventSystems;
 /// </summary>
 public class Listener : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IDragHandler
 {
-    public Action<PointerEventData> onClickDown;
-    public Action<PointerEventData> onClickUp;
-    public Action<PointerEventData> onDrag;
-    public Action onPointerEnter;
-    public Action onPointerExit;
-    public Action onDisable;
-    public Action onPointing;
+    public Action<PointerEventData> onClickDown = null;
+    public Action<PointerEventData> onClickUp = null;
+    public Action<PointerEventData> onDrag = null;
+    public Action onPointerEnter = null;
+    public Action onPointerExit = null;
+    public Action onDisable = null;
+    public Action onPointing = null;
 
     bool m_Pointing = false;
 

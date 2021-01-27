@@ -19,7 +19,7 @@ public class LotteryWindow : WindowRoot
         lotteryBuilding = ResourcesLoader.LoadPrefab("Prefabs/UI/Building/LotteryBuilding");
     }
 
-    protected override void InitSpecific()
+    protected override void OnActive()
     {
         _Manage = BuildingManage.Instance;
         lotteryUI = new List<Transform>();

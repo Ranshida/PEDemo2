@@ -10,6 +10,7 @@ using UnityEngine.UI;
 public abstract class WindowRoot : MonoBehaviour
 {
     protected Transform thisTrans;
+    public RectTransform RectTrans { get; protected set; }
     protected virtual bool AutoSetupButton { get; } = true;
     public UILayer Layer;
 
@@ -24,6 +25,54 @@ public abstract class WindowRoot : MonoBehaviour
     protected virtual Color pressColor { get; set; } = new Color(1f, 0.75f, 0.4f, 1f);
     protected virtual Color liftupColor { get; set; } = new Color(0.40f, 0.4f, 0.4f, 0.5f);
 
+    /// <summary>
+    /// 开关面板
+    /// </summary>
+    /// <param name="isActive"></param>
+    public virtual void SetWndState(bool isActive = true)
+    {
+        if (gameObject.activeSelf != isActive)
+        {
+            SetActive(gameObject, isActive);
+        }
+        if (isActive)
+        {
+            ActiveWnd();
+        }
+        else
+        {
+            ClearWnd();
+        }
+    }
+
+    public bool GetWndState()
+    {
+        return gameObject.activeSelf;
+    }
+
+    /// <summary>
+    /// 每次激活面板进行初始化
+    /// </summary>
+    protected void ActiveWnd()
+    {
+        thisTrans = this.transform;
+        RectTrans = GetComponent<RectTransform>();
+        buttons = gameObject.GetComponentsInChildren<Button>(true);
+        sliders = gameObject.GetComponentsInChildren<Slider>(true);
+        OnActive();
+    }
+    protected virtual void OnActive() { }
+
+    /// <summary>
+    /// 每次关闭面板进行清理
+    /// </summary>
+    private void ClearWnd()
+    {
+        OnClear();
+    }
+    protected virtual void OnClear() { }
+
+
     protected void Update()
     {
         if (AutoSetupButton)
@@ -33,7 +82,6 @@ public abstract class WindowRoot : MonoBehaviour
         }
         UpdateSpecific();
     }
-
     protected virtual void UpdateSpecific() { }
 
 
@@ -90,52 +138,6 @@ public abstract class WindowRoot : MonoBehaviour
     {
        
     }
-    
-    /// <summary>
-    /// 开关面板
-    /// </summary>
-    /// <param name="isActive"></param>
-    public virtual void SetWndState(bool isActive = true)
-    {
-        if (gameObject.activeSelf != isActive)
-        {
-            SetActive(gameObject, isActive);
-        }
-        if (isActive)
-        {
-            InitWnd();
-        }
-        else
-        {
-            ClearWnd();
-        }
-    }
-
-    public bool GetWndState()
-    {
-        return gameObject.activeSelf;
-    }
-
-    /// <summary>
-    /// 每次激活面板进行初始化
-    /// </summary>
-    protected void InitWnd()
-    {
-        thisTrans = this.transform;
-        buttons = gameObject.GetComponentsInChildren<Button>(true);
-        sliders = gameObject.GetComponentsInChildren<Slider>(true);
-        InitSpecific();
-    }
-    protected virtual void InitSpecific() { }
-
-    /// <summary>
-    /// 每次关闭面板进行清理
-    /// </summary>
-    private void ClearWnd()
-    {
-        ClearWindowSpecific();
-    }
-    protected virtual void ClearWindowSpecific() { }
     
     #region Tool Functions
 

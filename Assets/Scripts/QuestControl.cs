@@ -89,7 +89,7 @@ public class QuestControl : MonoBehaviour
     /// <param name="txt">文案</param>
     public void Init(string txt)
     {
-        MessagePanel message = Instantiate(MessagePrefab, mainCanvas).GetComponent<MessagePanel>();
+        MessagePanel message = UIManager.Instance.NewWindow(MessagePrefab).GetComponent<MessagePanel>();
         message.Init(txt);
     }
 
@@ -98,15 +98,10 @@ public class QuestControl : MonoBehaviour
     /// </summary>
     /// <param name="txt">文案</param>
     /// <param name="onAccept">确定后执行</param>
-    public void Init(string txt, Action onAccept, bool TopInit = true)
+    public void Init(string txt, Action onAccept)
     {
         MessagePanel message;
-        if (TopInit == true)
-            message = Instantiate(MessagePrefab, mainCanvas).GetComponent<MessagePanel>();
-        else
-        {
-            message = Instantiate(MessagePrefab, BottomContent).GetComponent<MessagePanel>();
-        }
+        message = UIManager.Instance.NewWindow(MessagePrefab).GetComponent<MessagePanel>();
         message.Init(txt, onAccept);
     }
 
