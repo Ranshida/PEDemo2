@@ -11,6 +11,7 @@ public abstract class WindowRoot : MonoBehaviour
 {
     protected Transform thisTrans;
     public RectTransform RectTrans { get; protected set; }
+    private Vector3 DefaultPos;
     protected virtual bool AutoSetupButton { get; } = true;
     public UILayer Layer;
 
@@ -24,6 +25,11 @@ public abstract class WindowRoot : MonoBehaviour
     protected virtual Color unselectColor_Txt { get; set; } = Color.white;
     protected virtual Color pressColor { get; set; } = new Color(1f, 0.75f, 0.4f, 1f);
     protected virtual Color liftupColor { get; set; } = new Color(0.40f, 0.4f, 0.4f, 0.5f);
+
+    private void Start()
+    {//设置初始位置
+        DefaultPos = GetComponent<RectTransform>().anchoredPosition;
+    }
 
     /// <summary>
     /// 开关面板
@@ -42,6 +48,8 @@ public abstract class WindowRoot : MonoBehaviour
         else
         {
             ClearWnd();
+            if (Layer == UILayer.Dynamic)
+                GetComponent<RectTransform>().anchoredPosition = DefaultPos;
         }
     }
 

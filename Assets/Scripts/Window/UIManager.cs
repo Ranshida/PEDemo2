@@ -67,7 +67,7 @@ public class UIManager : MonoBehaviour
         return window;
     }
 
-    private void OnAddNewWindow(WindowRoot window)
+    public void OnAddNewWindow(WindowRoot window)
     {
         windowList.Add(window);
         switch (window.Layer)

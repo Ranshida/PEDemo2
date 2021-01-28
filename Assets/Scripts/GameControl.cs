@@ -92,7 +92,6 @@ public class GameControl : MonoBehaviour
     public CEOControl CC;
     public WindowBaseControl TotalEmpPanel;
     public Transform DepContent, DepSelectContent, StandbyContent, MessageContent;
-    public Transform BottomLayer, FixedLayer, DynamicLayer, TopLayer;
     public InfoPanel infoPanel;
     public GameObject DepSelectPanel, StandbyButton, MessagePrefab, GameOverPanel, OfficeModeSelectPanel,
         OfficeModeBuildingOptionButton, OfficeModeTalkOptionButton, DepModeSelectPanel, DepSkillConfirmPanel, SkillTreeSelectPanel;
@@ -335,9 +334,9 @@ public class GameControl : MonoBehaviour
     {
         DepControl newDep;
         newDep = Instantiate(DepPrefab, this.transform);
-        newDep.EmpPanel.parent = DynamicLayer;
+        UIManager.Instance.OnAddNewWindow(newDep.EmpPanel.GetComponent<WindowBaseControl>());
         if (newDep.SRateDetailPanel != null)
-            newDep.SRateDetailPanel.parent = TopLayer;
+            UIManager.Instance.OnAddNewWindow(newDep.SRateDetailPanel.GetComponent<WindowBaseControl>());
         newDep.transform.parent = DepContent;
         newDep.building = b;
 
@@ -567,7 +566,7 @@ public class GameControl : MonoBehaviour
         newOffice.DS.GC = this;
 
         if (newOffice.SRateDetailPanel != null)
-            newOffice.SRateDetailPanel.parent = TopLayer;
+            UIManager.Instance.OnAddNewWindow(newOffice.SRateDetailPanel.GetComponent<WindowBaseControl>());
         return newOffice;
     }
 

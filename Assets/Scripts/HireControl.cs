@@ -132,7 +132,7 @@ public class HireControl : MonoBehaviour
     {
         GC.CurrentEmpInfo.HireButton.interactable = false;
 
-        EmpInfo ED = Instantiate(EmpDetailPrefab, TotalEmpContent);
+        EmpInfo ED = UIManager.Instance.NewWindow(EmpDetailPrefab.gameObject).GetComponent<EmpInfo>();
         GC.CurrentEmpInfo.CopyStatus(ED);
 
         EmpInfo EI1 = Instantiate(EmpInfoPrefab, TotalEmpContent);
@@ -193,7 +193,7 @@ public class HireControl : MonoBehaviour
         Employee emp = new Employee();
         emp.InitCEOStatus();
 
-        EmpInfo ED = Instantiate(EmpDetailPrefab, GC.DynamicLayer);
+        EmpInfo ED = UIManager.Instance.NewWindow(EmpDetailPrefab.gameObject).GetComponent<EmpInfo>();
         ED.GC = GC;
         ED.emp = emp;
         ED.SetSkillName();
