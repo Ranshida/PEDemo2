@@ -48,14 +48,21 @@ public abstract class WindowRoot : MonoBehaviour
         else
         {
             ClearWnd();
-            if (Layer == UILayer.Dynamic)
-                GetComponent<RectTransform>().anchoredPosition = DefaultPos;
         }
     }
 
     public bool GetWndState()
     {
         return gameObject.activeSelf;
+    }
+
+    public void AskPause()
+    {
+        GameControl.Instance.AskPause(this);
+    }
+    public void RemovePause()
+    {
+        GameControl.Instance.RemovePause(this);
     }
 
     /// <summary>
@@ -67,6 +74,9 @@ public abstract class WindowRoot : MonoBehaviour
         RectTrans = GetComponent<RectTransform>();
         buttons = gameObject.GetComponentsInChildren<Button>(true);
         sliders = gameObject.GetComponentsInChildren<Slider>(true);
+        //打开面板时自动将面板设置到同layer的顶层
+        if (Layer != UILayer.Bottom)
+            UIManager.Instance.SetTop(this);
         OnActive();
     }
     protected virtual void OnActive() { }
@@ -76,6 +86,11 @@ public abstract class WindowRoot : MonoBehaviour
     /// </summary>
     private void ClearWnd()
     {
+        //移除暂停
+        GameControl.Instance.RemovePause(this);
+        if (Layer == UILayer.Dynamic)
+            GetComponent<RectTransform>().anchoredPosition = DefaultPos;
+
         OnClear();
     }
     protected virtual void OnClear() { }
