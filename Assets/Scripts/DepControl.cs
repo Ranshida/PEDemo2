@@ -262,6 +262,11 @@ public class DepControl : MonoBehaviour
                 if (e.InfoDetail.Entity.OutCompany == false)
                     Pp++;
             }
+            if(Pp == 0)
+            {//如果没有员工直接return，防止完成任务
+                UpdateUI();
+                return;
+            }
             if (building.Type == BuildingType.技术部门)
             {
                 if (GC.FinishedTask[6] > 0)

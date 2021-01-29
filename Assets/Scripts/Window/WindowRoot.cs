@@ -26,8 +26,8 @@ public abstract class WindowRoot : MonoBehaviour
     protected virtual Color pressColor { get; set; } = new Color(1f, 0.75f, 0.4f, 1f);
     protected virtual Color liftupColor { get; set; } = new Color(0.40f, 0.4f, 0.4f, 0.5f);
 
-    private void Start()
-    {//设置初始位置
+    public void SetDefaultPos()
+    {
         DefaultPos = GetComponent<RectTransform>().anchoredPosition;
     }
 

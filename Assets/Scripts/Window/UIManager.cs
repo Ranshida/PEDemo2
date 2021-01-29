@@ -92,6 +92,7 @@ public class UIManager : MonoBehaviour
             default:
                 break;
         }
+        window.SetDefaultPos();
     }
 
     /// <summary>
