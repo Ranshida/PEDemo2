@@ -48,7 +48,7 @@ public class BuildingManage : MonoBehaviour
     //屏幕射线位置
     public Vector3 AimingPosition = Vector3.zero;
 
-    private void Awake()
+    public void Init()
     {
         Instance = this;
         InBuildMode = false;
@@ -61,6 +61,7 @@ public class BuildingManage : MonoBehaviour
         buildingPrefabs = ResourcesLoader.LoadAll<GameObject>("Prefabs/Scene/Buildings");
         m_EffectHalo = Instantiate(ResourcesLoader.LoadPrefab("Prefabs/Scene/EffectHalo"), transform);
         BuildingExcelValue = ExcelTool.ReadAsString(Application.streamingAssetsPath + "/Excel/BuildingFunction.xlsx");
+        m_EffectHalo.SetActive(false);
 
         foreach (GameObject prefab in buildingPrefabs)
         {
@@ -91,11 +92,21 @@ public class BuildingManage : MonoBehaviour
         childWindows.Add(Description);
     }
 
-    private void Start()
+    //开始新游戏
+    public void OnNewGame()
     {
-        m_EffectHalo.SetActive(false);
         InitBuilding(BuildingType.CEO办公室, new Int2(3, 8));
-        //InitBuilding(BuildingType.人力资源部, new Int2(0, 8));
+    }
+
+    //加载存档数据
+    public void OnLoadGame(GameFiles file)
+    {
+        File_Building building = file.building;
+
+        foreach (Data_Building data in building.buildingList)
+        {
+            InitBuilding(data.Type, new Int2(data.X, data.Y));
+        }
     }
 
     //初始化默认建筑
