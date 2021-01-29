@@ -121,6 +121,38 @@ public class Building : MonoBehaviour
         }
     }
 
+    public Grid LeftDownGrid()
+    {
+        int gridX = -1;
+        int gridZ = -1;
+        foreach (Grid item in ContainsGrids)
+        {
+            if (gridX == -1)
+            {
+                gridX = item.X;
+            }
+            else
+            {
+                if (item.X<gridX)
+                {
+                    gridX = item.X;
+                }
+            }
+            if (gridZ == -1)
+            {
+                gridZ = item.Z;
+            }
+            else
+            {
+                if (item.Z < gridZ)
+                {
+                    gridZ = item.Z;
+                }
+            }
+        }
+        return GridContainer.Instance.GridDict[gridX][gridZ];
+    }
+
     //拆除
     public bool Dismantle()
     {

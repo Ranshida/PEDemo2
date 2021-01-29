@@ -29,6 +29,6 @@ public class File_Building
 public class Data_Building
 {
     public int X;
-    public int Y;
+    public int Z;
     public BuildingType Type;
 }

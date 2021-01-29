@@ -48,7 +48,7 @@ public class BuildingManage : MonoBehaviour
     //屏幕射线位置
     public Vector3 AimingPosition = Vector3.zero;
 
-    public void Init()
+    private void Awake()
     {
         Instance = this;
         InBuildMode = false;
@@ -92,6 +92,11 @@ public class BuildingManage : MonoBehaviour
         childWindows.Add(Description);
     }
 
+    public void Init()
+    {
+       
+    }
+
     //开始新游戏
     public void OnNewGame()
     {
@@ -105,8 +110,25 @@ public class BuildingManage : MonoBehaviour
 
         foreach (Data_Building data in building.buildingList)
         {
-            InitBuilding(data.Type, new Int2(data.X, data.Y));
+            InitBuilding(data.Type, new Int2(data.X, data.Z));
         }
+    }
+
+    public File_Building Save()
+    {
+        File_Building files = new File_Building();
+
+        foreach (Building building in ConstructedBuildings)
+        {
+            Data_Building data = new Data_Building();
+            data.X = building.LeftDownGrid().X;
+            data.Z = building.LeftDownGrid().Z;
+            Debug.LogError(data.X + "," + data.Z);
+            data.Type = building.Type;
+            files.buildingList.Add(data);
+        }
+
+        return files;
     }
 
     //初始化默认建筑
@@ -142,7 +164,7 @@ public class BuildingManage : MonoBehaviour
         }
         else
         {
-            Debug.LogError("无法建造，检查坐标");
+            Debug.LogError("无法建造，检查坐标" + leftDownGird.X.ToString() + "," + leftDownGird.Y.ToString());
         }
         temp_Grids.Clear();
         Temp_Building = null;
@@ -155,7 +177,7 @@ public class BuildingManage : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.T))
         {
-            Lottery(4);
+            //Lottery(4);
         }
 
         //屏幕射线命中地面

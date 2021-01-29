@@ -8,14 +8,16 @@ using UnityEngine.UI;
 public class GameRoot : MonoBehaviour
 {
     public static string Key_Files = "FilesKey";      //总Key
-    public bool GameActive;
-    public GameObject fileGo;
+    public bool GameActive { get; private set; }
 
+    public GameObject fileGo;
+    public bool QuickEnter;
     public Transform fileContent;
 
     private void Awake()
     {
         GameActive = false;
+        StaticAutoRoot.IsGameRootScene = true;
         DontDestroyOnLoad(this.gameObject);
     }
 
@@ -28,7 +30,7 @@ public class GameRoot : MonoBehaviour
             {
                 ES3.DeleteKey(key);
             }
-            Debug.LogError("清除存档");
+            Debug.Log("清除存档");
         }
 
         if (GameActive)
@@ -45,39 +47,14 @@ public class GameRoot : MonoBehaviour
         }
     }
 
-    public void FilesPanel()
+    private void Start()
     {
-        foreach (Transform child in Function.ReturnChildList(fileContent))
+        if (QuickEnter)
         {
-            Destroy(child.gameObject);
-        }
-       
-        //首次存档
-        if (!ES3.KeyExists(Key_Files))
-        {
-            FilesKey newFilesKey = new FilesKey();
-            ES3.Save(Key_Files, newFilesKey);
-        }
-        FilesKey files = ES3.Load(Key_Files) as FilesKey;
-        for (int i = 0; i < files.allFiles.Length; i++)
-        {
-            GameObject go = Instantiate(fileGo, fileContent);
-
-            if (files.allFiles[i] == false)
-            {  //没有存档
-                go.transform.Find("Txt_Key").GetComponent<Text>().text = "空";
-                go.transform.Find("Txt_Time").GetComponent<Text>().text = "";
-            }
-            else
-            {  //已有存档
-                int index = i;
-                Debug.LogError(files.KeysDict[index].FileKey);
-                go.GetComponent<Button>().onClick.AddListener(() => { LoadGame(index); });
-                go.transform.Find("Txt_Key").GetComponent<Text>().text = files.KeysDict[index].FileKey;
-                go.transform.Find("Txt_Time").GetComponent<Text>().text = files.KeysDict[index].Date;
-            }
+            NewGame();
         }
     }
+
 
     //开始新游戏
     public void NewGame()
@@ -108,7 +85,7 @@ public class GameRoot : MonoBehaviour
         string key = filesKey.KeysDict[fileIndex].FileKey;
 
         GameFiles gameFiles = ES3.Load(key) as GameFiles;
-        Debug.LogError("读取存档：" + fileIndex);
+        Debug.Log("读取存档：" + fileIndex);
 
         Action action = () =>
         {
@@ -124,6 +101,39 @@ public class GameRoot : MonoBehaviour
         GameControl.Instance.Money = files.main.Money;
     }
 
+    //打开存档面板
+    public void FilesPanel()
+    {
+        foreach (Transform child in Function.ReturnChildList(fileContent))
+        {
+            Destroy(child.gameObject);
+        }
+
+        //首次存档
+        if (!ES3.KeyExists(Key_Files))
+        {
+            FilesKey newFilesKey = new FilesKey();
+            ES3.Save(Key_Files, newFilesKey);
+        }
+        FilesKey files = ES3.Load(Key_Files) as FilesKey;
+        for (int i = 0; i < files.allFiles.Length; i++)
+        {
+            GameObject go = Instantiate(fileGo, fileContent);
+
+            if (files.allFiles[i] == false)
+            {  //没有存档
+                go.transform.Find("Txt_Key").GetComponent<Text>().text = "空";
+                go.transform.Find("Txt_Time").GetComponent<Text>().text = "";
+            }
+            else
+            {  //已有存档
+                int index = i;
+                go.GetComponent<Button>().onClick.AddListener(() => { LoadGame(index); });
+                go.transform.Find("Txt_Key").GetComponent<Text>().text = files.KeysDict[index].FileKey;
+                go.transform.Find("Txt_Time").GetComponent<Text>().text = files.KeysDict[index].Date;
+            }
+        }
+    }
 
     public void Save()
     {
@@ -132,12 +142,12 @@ public class GameRoot : MonoBehaviour
             return;
         }
 
-        Debug.LogError("Save");
+        Debug.Log("Save");
 
         //首次存档
         if (!ES3.KeyExists(Key_Files))
         {
-            Debug.LogError("First");
+            Debug.Log("First");
             FilesKey newTest = new FilesKey();
             ES3.Save(Key_Files, newTest);
         }
@@ -153,7 +163,7 @@ public class GameRoot : MonoBehaviour
                 FilesData fileData = new FilesData();
                 fileData.Init(key);
                 test.KeysDict.Add(i, fileData);
-                Debug.LogError(i + "  " + test.KeysDict[i].FileName);
+                Debug.Log(i + "  " + test.KeysDict[i].FileName);
                 ES3.Save(Key_Files, test);
 
                 //游戏的数据
