@@ -301,18 +301,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ExitPos: {fileID: 1498200387}
-  btn_FinishBuild: {fileID: 0}
-  btn_EnterBuildMode: {fileID: 0}
-  lotteryPanel: {fileID: 0}
-  lotteryUI: []
-  warePanels: []
-  wareBuildings: []
-  warePanel: {fileID: 0}
-  wareBuildingsPanel: {fileID: 0}
-  selectBuildingPanel: {fileID: 0}
-  CEOPositionX: 13
-  CEOPositionZ: 1
+  childWindows: []
+  BuildingWindow: {fileID: 0}
+  LotteryWindow: {fileID: 0}
+  SelectBuildingWindow: {fileID: 0}
+  UnlockAreaWindow: {fileID: 0}
+  Description: {fileID: 0}
+  buildingPrefabs: []
+  SelectList: 
+  InBuildMode: 0
   CEOOffice: {fileID: 1051092804}
+  AimingPosition: {x: 0, y: 0, z: 0}
+  btn_AskUnlock: {fileID: 0}
 --- !u!1 &1498200386
 GameObject:
   m_ObjectHideFlags: 0
@@ -503,17 +503,17 @@ PrefabInstance:
     - target: {fileID: 8205797266917151895, guid: c56c09a7e0b7ccc4eac9c70aff4f410d,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8205797266917151895, guid: c56c09a7e0b7ccc4eac9c70aff4f410d,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8205797266917151895, guid: c56c09a7e0b7ccc4eac9c70aff4f410d,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -57.64
       objectReference: {fileID: 0}
     - target: {fileID: 8205797266917151895, guid: c56c09a7e0b7ccc4eac9c70aff4f410d,
         type: 3}
@@ -528,17 +528,17 @@ PrefabInstance:
     - target: {fileID: 8205797267353838563, guid: c56c09a7e0b7ccc4eac9c70aff4f410d,
         type: 3}
       propertyPath: m_AnchorMin.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8205797267353838563, guid: c56c09a7e0b7ccc4eac9c70aff4f410d,
         type: 3}
       propertyPath: m_AnchorMax.y
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8205797267353838563, guid: c56c09a7e0b7ccc4eac9c70aff4f410d,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -67.64
       objectReference: {fileID: 0}
     - target: {fileID: 8205797267353838563, guid: c56c09a7e0b7ccc4eac9c70aff4f410d,
         type: 3}
@@ -564,6 +564,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_SizeDelta.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 500598435890608879, guid: c56c09a7e0b7ccc4eac9c70aff4f410d,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 427.30646
       objectReference: {fileID: 0}
     - target: {fileID: 8205797266959034195, guid: c56c09a7e0b7ccc4eac9c70aff4f410d,
         type: 3}
@@ -805,6 +810,7 @@ MonoBehaviour:
   m_HeightSmooth: 10
   m_SpeedSmooth: 1
   height: 120
+  Canvas: {fileID: 0}
 --- !u!1 &2530477103645694766
 GameObject:
   m_ObjectHideFlags: 0
@@ -23813,6 +23819,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a3afe75681993d4c84cea8dc43277cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  JudgeEventWindow: {fileID: 0}
+  EventDetailWindow: {fileID: 0}
 --- !u!4 &3187402727958478035
 Transform:
   m_ObjectHideFlags: 0
@@ -24327,6 +24335,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   xInput: 28
   zInput: 16
+  MinX: 0
+  MaxX: 0
+  MinZ: 0
+  MaxZ: 0
+  WayPoint: {fileID: 0}
   GridList:
   - {fileID: 3187402727259839983}
   - {fileID: 3187402727966206227}
