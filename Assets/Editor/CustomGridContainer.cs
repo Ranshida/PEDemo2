@@ -7,6 +7,7 @@ using UnityEditor;
 public class CustomGridContainer : Editor
 {
     GridContainer script;
+
     public override void OnInspectorGUI()
     {
         script = (GridContainer)target;
@@ -23,6 +24,7 @@ public class CustomGridContainer : Editor
         {
             NewGrid();
         }
+        serializedObject.ApplyModifiedProperties();
     }
 
     private void CheckGrid()

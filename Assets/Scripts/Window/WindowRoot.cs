@@ -96,7 +96,7 @@ public abstract class WindowRoot : MonoBehaviour
     protected virtual void OnClear() { }
 
 
-    protected void Update()
+    public void Update()
     {
         if (AutoSetupButton)
         {
@@ -106,7 +106,6 @@ public abstract class WindowRoot : MonoBehaviour
         UpdateSpecific();
     }
     protected virtual void UpdateSpecific() { }
-
 
     /// <summary>
     /// 每帧为子物体所有Button组件添加监听

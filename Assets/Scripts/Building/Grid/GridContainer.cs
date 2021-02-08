@@ -21,11 +21,13 @@ public class GridContainer : MonoBehaviour
     public Transform WayPoint;
     public List<Grid> GridList;                               //包含所有单元格的列表
     public Dictionary<int, Dictionary<int, Grid>> GridDict;   //包含所有单元格的二重字典（x,z）
-    public List<Grid> LockGrids_0;
+    public List<Grid> LockGrids_0;     //需解锁的区域A
     public List<Grid> LockGrids_1;
     public List<Grid> LockGrids_2;
     public List<WayPoint> AllWayPoint { get; private set; }
     
+    public Areas Areas { get; private set; }      //按区域划分的格子列表
+
     private void Awake()
     {
         Instance = this;
@@ -46,6 +48,7 @@ public class GridContainer : MonoBehaviour
                 GridDict[grid.X].Add(grid.Z, grid);
             }
             grid.RefreshGrid();
+
         }
 
         //激活可用的寻路点
@@ -62,7 +65,8 @@ public class GridContainer : MonoBehaviour
         MaxX = 135;
         MinZ = 85;
         MaxZ = 155;
-
+        Areas = GetComponent<Areas>();
+        Areas.Init();
     }
 
     //根据坐标返回所处网格

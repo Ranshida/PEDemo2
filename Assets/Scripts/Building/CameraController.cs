@@ -72,15 +72,17 @@ public class CameraController : MonoBehaviour
             {
                 BuildingHit = Physics.Raycast(RayTerrain, out BuildingRaycast, 1000, 1 << 8);
             }
-        }
+        }  
     }
 
     private float m_TempHeight;   //临时高度变量，像height靠拢
-    private void LateUpdate()
+
+
+    public void LateUpdate()
     {
         //相机处理在LateUpdate进行
         m_TempHeight = Mathf.Lerp(m_TempHeight, height, Time.deltaTime * m_HeightSmooth);
         transform.position = focus.transform.position + Vector3.up * m_TempHeight;
-        mainCamera.localPosition = new Vector3(0, 0, -m_TempHeight);                                                      
+        mainCamera.localPosition = new Vector3(0, 0, -m_TempHeight);
     }
 }
