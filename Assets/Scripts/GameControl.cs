@@ -239,6 +239,17 @@ public class GameControl : MonoBehaviour
         else
             WorkOverTime = true;
 
+        //部门的每周体力buff判定
+        for (int i = 0; i < CurrentDeps.Count; i++)
+        {
+            if(CurrentDeps[i].StaminaExtra != 0)
+            {
+                foreach(Employee e in CurrentDeps[i].CurrentEmps)
+                {
+                    e.Stamina += CurrentDeps[i].StaminaExtra;
+                }
+            }
+        }
 
         if (Week > 4)
         {

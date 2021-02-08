@@ -9,7 +9,7 @@ public enum EffectType
 //基类
 public class Perk
 {
-    public int TimeLeft, Num = 0, Level = 1, BaseTime;  //Time单位时,BaseTime用于可叠加Perk清除层数时重置时间
+    public int TimeLeft, Num = 0, Level = 1, BaseTime;  //Time单位小时,BaseTime用于可叠加Perk清除层数时重置时间
     public bool Positive = true, canStack = false;
     public string Name, Description;
     public EffectType effectType;
@@ -2413,6 +2413,192 @@ public class Perk119 : Perk
         TimeLeft = -1;
         Num = 119;
         canStack = false;
+    }
+}
+
+//放轻松
+public class Perk120 : Perk
+{
+    public Perk120(Employee Emp) : base(Emp)
+    {
+        Name = "放轻松";
+        Description = "成功率上升10%";
+        TimeLeft = 32;
+        Num = 120;
+        canStack = false;
+    }
+
+    public override void ImmEffect()
+    {
+        TargetDep.Efficiency += 0.1f;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDep.Efficiency -= 0.1f;
+    }
+}
+
+//勇气赞歌
+public class Perk121 : Perk
+{
+    public Perk121(Employee Emp) : base(Emp)
+    {
+        Name = "勇气赞歌";
+        Description = "信念+15";
+        TimeLeft = 32;
+        Num = 121;
+        canStack = false;
+    }
+
+    public override void ImmEffect()
+    {
+        TargetDep.DepFaith += 15;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDep.DepFaith -= 15;
+    }
+}
+
+//加班加班
+public class Perk122 : Perk
+{
+    public Perk122(Employee Emp) : base(Emp)
+    {
+        Name = "加班加班";
+        Description = "成功率上升10%";
+        TimeLeft = 32;
+        Num = 122;
+        canStack = false;
+    }
+
+    public override void ImmEffect()
+    {
+        TargetDep.Efficiency += 0.1f;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDep.Efficiency -= 0.1f;
+    }
+}
+
+//流程优化
+public class Perk123 : Perk
+{
+    public Perk123(Employee Emp) : base(Emp)
+    {
+        Name = "流程优化";
+        Description = "部门成本-25%";
+        TimeLeft = 32;
+        Num = 123;
+        canStack = false;
+    }
+
+    public override void ImmEffect()
+    {
+        TargetDep.SalaryMultiply -= 0.25f;
+        TargetDep.BuildingPayMultiply -= 0.25f;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDep.SalaryMultiply += 0.25f;
+        TargetDep.BuildingPayMultiply += 0.25f;
+    }
+}
+
+//无意义争执
+public class Perk124 : Perk
+{
+    public Perk124(Employee Emp) : base(Emp)
+    {
+        Name = "无意义争执";
+        Description = "信念-30";
+        TimeLeft = 32;
+        Num = 124;
+        canStack = false;
+    }
+
+    public override void ImmEffect()
+    {
+        TargetDep.DepFaith -= 30;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDep.DepFaith += 30;
+    }
+}
+
+//单领导指令
+public class Perk125 : Perk
+{
+    public Perk125(Employee Emp) : base(Emp)
+    {
+        Name = "单领导指令";
+        Description = "部门内全部员工每周结束时体力-10";
+        TimeLeft = 32;
+        Num = 125;
+        canStack = false;
+    }
+
+    public override void ImmEffect()
+    {
+        TargetDep.StaminaExtra -= 10;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDep.StaminaExtra += 10;
+    }
+}
+
+//双领导指令
+public class Perk126 : Perk
+{
+    public Perk126(Employee Emp) : base(Emp)
+    {
+        Name = "单领导指令";
+        Description = "部门内全部员工每周结束时体力-20";
+        TimeLeft = 32;
+        Num = 126;
+        canStack = false;
+    }
+
+    public override void ImmEffect()
+    {
+        TargetDep.StaminaExtra -= 20;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDep.StaminaExtra += 20;
+    }
+}
+
+//三领导指令
+public class Perk127 : Perk
+{
+    public Perk127(Employee Emp) : base(Emp)
+    {
+        Name = "单领导指令";
+        Description = "部门内全部员工每周结束时体力-30";
+        TimeLeft = 32;
+        Num = 127;
+        canStack = false;
+    }
+
+    public override void ImmEffect()
+    {
+        TargetDep.StaminaExtra -= 30;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDep.StaminaExtra += 30;
     }
 }
 

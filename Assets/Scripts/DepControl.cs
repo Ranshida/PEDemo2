@@ -117,6 +117,7 @@ public class DepControl : MonoBehaviour
     [HideInInspector] public int EmpLimit, ProducePointLimit = 20, ActiveMode = 1, BuildingMode = 1, Mode1EffectValue = -1, Mode2EffectValue = -2;
     [HideInInspector] public bool SurveyStart = false;
     public int DepFaith = 50;
+    public int StaminaExtra = 0;//特质导致的每周体力buff
     public float Efficiency = 0, SalaryMultiply = 1.0f, BuildingPayMultiply = 1.0f;
     public bool MajorSuccess = false, canWork = false;
 
@@ -773,6 +774,10 @@ public class DepControl : MonoBehaviour
                     Text_DetailInfo.text += "\n老板摸鱼 -35";
                 else if (info.CurrentPerk.Num == 116)
                     Text_DetailInfo.text += "\n业务干扰 -30";
+                else if (info.CurrentPerk.Num == 121)
+                    Text_DetailInfo.text += "\n勇气赞歌 +15";
+                else if (info.CurrentPerk.Num == 124)
+                    Text_DetailInfo.text += "\n无意义争执 -30";
             }
             Text_DetailInfo.text += "\n——————\n部门中所有员工的心力都会受到部门信念的影响\n      信念>=80 心力每周+10\n" +
                 "80>信念>=60 心力每周+5\n40>信念>=20 心力每周-5\n      信念<=20 心力每周-10";
