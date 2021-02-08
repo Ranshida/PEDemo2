@@ -49,13 +49,13 @@ public class CrystalArea : MonoBehaviour
     /// <param name="type"></param>
     public bool TryPutCrystal(Transform self, CrystalType type)
     {
-        foreach (var item in CrystalDict)
-        {
-            if (item.Value == type)
-            {  //已有同类
-                return false;
-            }
-        }
+        //foreach (var item in CrystalDict)
+        //{
+        //    if (item.Value == type)
+        //    {  //已有同类
+        //        return false;
+        //    }
+        //}
 
         if (CrystalDict[self] != CrystalType.None)
         {
