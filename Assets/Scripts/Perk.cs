@@ -2426,16 +2426,18 @@ public class Perk120 : Perk
         TimeLeft = 32;
         Num = 120;
         canStack = false;
+        TempValue4 = 0.1f;
     }
 
     public override void ImmEffect()
     {
-        TargetDep.Efficiency += 0.1f;
+        TargetDep.Efficiency += TempValue4;
+        Description = "成功率上升" + (TempValue4 * 100) +"%";
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDep.Efficiency -= 0.1f;
+        TargetDep.Efficiency -= TempValue4;
     }
 }
 
@@ -2449,16 +2451,18 @@ public class Perk121 : Perk
         TimeLeft = 32;
         Num = 121;
         canStack = false;
+        TempValue1 = 15;
     }
 
     public override void ImmEffect()
     {
-        TargetDep.DepFaith += 15;
+        TargetDep.DepFaith += TempValue1;
+        Description = "信念+" + TempValue1;
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDep.DepFaith -= 15;
+        TargetDep.DepFaith -= TempValue1;
     }
 }
 
@@ -2472,16 +2476,18 @@ public class Perk122 : Perk
         TimeLeft = 32;
         Num = 122;
         canStack = false;
+        TempValue4 = 0.1f;
     }
 
     public override void ImmEffect()
     {
-        TargetDep.Efficiency += 0.1f;
+        TargetDep.Efficiency += TempValue4;
+        Description = "成功率上升" + (TempValue4 * 100) + "%";
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDep.Efficiency -= 0.1f;
+        TargetDep.Efficiency -= TempValue4;
     }
 }
 
@@ -2495,18 +2501,20 @@ public class Perk123 : Perk
         TimeLeft = 32;
         Num = 123;
         canStack = false;
+        TempValue4 = 0.25f;
     }
 
     public override void ImmEffect()
     {
-        TargetDep.SalaryMultiply -= 0.25f;
-        TargetDep.BuildingPayMultiply -= 0.25f;
+        TargetDep.SalaryMultiply -= TempValue4;
+        TargetDep.BuildingPayMultiply -= TempValue4;
+        Description = "部门成本-" + (TempValue4 * 100) + "%";
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDep.SalaryMultiply += 0.25f;
-        TargetDep.BuildingPayMultiply += 0.25f;
+        TargetDep.SalaryMultiply += TempValue4;
+        TargetDep.BuildingPayMultiply += TempValue4;
     }
 }
 
@@ -2520,16 +2528,18 @@ public class Perk124 : Perk
         TimeLeft = 32;
         Num = 124;
         canStack = false;
+        TempValue1 = 30;
     }
 
     public override void ImmEffect()
     {
-        TargetDep.DepFaith -= 30;
+        TargetDep.DepFaith -= TempValue1;
+        Description = "信念-" + TempValue1;
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDep.DepFaith += 30;
+        TargetDep.DepFaith += TempValue1;
     }
 }
 

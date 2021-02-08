@@ -193,12 +193,69 @@ public class MonthMeeting : MonoBehaviour
                 break;
             }
 
-         
-
+            //各色水晶数量
+            int NumA = 0, NumB = 0, NumC = 0, NumD = 0, NumE = 0;
             foreach (CrystalType crystal in crystals)
             {
-                AddPerk(dep, crystal);
+                switch (crystal)
+                {
+                    case CrystalType.None:
+                        break;
+                    case CrystalType.White:
+                        NumA += 1;
+                        break;
+                    case CrystalType.Orange:
+                        NumB += 1;
+                        break;
+                    case CrystalType.Gray:
+                        NumC += 1;
+                        break;
+                    case CrystalType.Blue:
+                        NumD += 1;
+                        break;
+                    case CrystalType.Black:
+                        NumE += 1;
+                        break;
+                    default:
+                        break;
+                }
             }
+            if (NumA > 0)
+            {
+                Debug.Log(dep.name + "获得白色水晶");
+                Perk newPerk = new Perk120(null);
+                newPerk.TempValue4 = 0.1f * NumA;
+                dep.AddPerk(newPerk);
+            }
+            if (NumB > 0)
+            {
+                Debug.Log(dep.name + "获得橙色水晶");
+                Perk newPerk = new Perk121(null);
+                newPerk.TempValue1 = 15 * NumB;
+                dep.AddPerk(newPerk);
+            }
+            if (NumC > 0)
+            {
+                Debug.Log(dep.name + "获得灰色水晶");
+                Perk newPerk = new Perk122(null);
+                newPerk.TempValue4 = 0.1f * NumC;
+                dep.AddPerk(newPerk);
+            }
+            if (NumD > 0)
+            {
+                Debug.Log(dep.name + "获得蓝色水晶");
+                Perk newPerk = new Perk123(null);
+                newPerk.TempValue4 = 0.25f * NumD;
+                dep.AddPerk(newPerk);
+            }
+            if (NumE > 0)
+            {
+                Debug.Log(dep.name + "获得黑色水晶");
+                Perk newPerk = new Perk124(null);
+                newPerk.TempValue1 = 30 * NumE;
+                dep.AddPerk(newPerk);
+            }
+
 
             if (crystals.Count == 1)
             {
@@ -215,36 +272,6 @@ public class MonthMeeting : MonoBehaviour
                 Debug.Log(dep.name + "三指令");
                 dep.AddPerk(new Perk125(null));
             }
-        }
-    }
-    void AddPerk(DepControl dep, CrystalType type)
-    {
-        switch (type)
-        {
-            case CrystalType.None:
-                break;
-            case CrystalType.White:
-                Debug.Log(dep.name + "获得白色水晶");
-                dep.AddPerk(new Perk120(null));
-                break;
-            case CrystalType.Orange:
-                Debug.Log(dep.name + "获得橙色水晶");
-                dep.AddPerk(new Perk121(null));
-                break;
-            case CrystalType.Gray:
-                Debug.Log(dep.name + "获得灰色水晶");
-                dep.AddPerk(new Perk122(null));
-                break;
-            case CrystalType.Blue:
-                Debug.Log(dep.name + "获得蓝色水晶");
-                dep.AddPerk(new Perk123(null));
-                break;
-            case CrystalType.Black:
-                Debug.Log(dep.name + "获得黑色水晶");
-                dep.AddPerk(new Perk124(null));
-                break;
-            default:
-                break;
         }
     }
 
