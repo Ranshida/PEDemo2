@@ -13,8 +13,7 @@ public class EmpInfo : MonoBehaviour
     public Button HireButton, MoveButton, FireButton;
     public Text Text_Name, Text_Mentality, Text_Stamina, Text_Skill1, Text_Skill2, Text_Skill3,  Text_Ability, Text_Age;
     public Text Text_DepName, Text_Observation, Text_Tenacity, Text_Strength, Text_Manage, Text_HR, Text_Finance, Text_Decision,
-        Text_Forecast, Text_Strategy, Text_Convince, Text_Charm, Text_Gossip, Text_SName1, Text_SName2, Text_SName3,
-         Text_Motiv_Study, Text_Motiv_Recover, Text_Motive_Ambition, Text_Motiv_Social, Text_Emotion, Text_RTarget;
+        Text_Forecast, Text_Strategy, Text_Convince, Text_Charm, Text_Gossip, Text_SName1, Text_SName2, Text_SName3, Text_Emotion, Text_RTarget;
     public Text[] Text_Stars = new Text[5], Text_Exps = new Text[5];
     public Scrollbar[] Scrollbar_Character = new Scrollbar[5];
     public EmpInfo DetailInfo;
@@ -47,8 +46,8 @@ public class EmpInfo : MonoBehaviour
                     Text_Mentality.text += "/" + emp.Confidence;
                 }
 
-                Text_Skill1.text = "职业技能: " + (emp.Skill1 + emp.SkillExtra1) + " / " + (emp.Skill2 + emp.SkillExtra2) + 
-                    " / " + (emp.Skill3 + emp.SkillExtra3);
+                Text_Skill1.text = "职业技能: " + emp.Skill1 + " / " + emp.Skill2 + 
+                    " / " + emp.Skill3;
                 Text_Manage.text = "管理能力:" + emp.Manage;
                 if (emp.CurrentDep != null)
                     Text_DepName.text = emp.CurrentDep.Text_DepName.text;
@@ -68,9 +67,9 @@ public class EmpInfo : MonoBehaviour
             else
             {
                 Text_Age.text = emp.Age + "岁";
-                Text_Skill1.text = (emp.Skill1 + emp.SkillExtra1).ToString();
-                Text_Skill2.text = (emp.Skill2 + emp.SkillExtra2).ToString();
-                Text_Skill3.text = (emp.Skill3 + emp.SkillExtra3).ToString();
+                Text_Skill1.text = emp.Skill1.ToString();
+                Text_Skill2.text = emp.Skill2.ToString();
+                Text_Skill3.text = emp.Skill3.ToString();
                 Text_Observation.text = emp.Observation.ToString();
                 Text_Tenacity.text = emp.Tenacity.ToString();
                 Text_Strength.text = emp.Strength.ToString();
@@ -86,7 +85,7 @@ public class EmpInfo : MonoBehaviour
                 UpdateCharacterUI();
                 for(int i = 0; i < 5; i++)
                 {
-                    Text_Stars[i].text = "热情 " + emp.Stars[i] + "/" + emp.StarLimit[i];
+                    Text_Stars[i].text = "天赋 " + "0/" + emp.StarLimit[i];
                 }
             }
             //详细面板
@@ -152,11 +151,11 @@ public class EmpInfo : MonoBehaviour
     }
 
     //新建一个Employee并初始化数值
-    public void CreateEmp(EmpType type, int[] Hst, int AgeRange)
+    public void CreateEmp()
     {       
         emp = new Employee();
         emp.InfoA = this;
-        emp.InitStatus(type, Hst, AgeRange);
+        emp.InitStatus();
         HireButton.interactable = true;
         SetSkillName();
         InitSkillAndStrategy();
@@ -195,7 +194,7 @@ public class EmpInfo : MonoBehaviour
     {
         GC.CurrentEmpInfo = this;
         GC.SelectMode = 1;
-        GC.ShowDepSelectPanel(emp.Type);
+        GC.ShowDepSelectPanel();
     }
     public void StartMove()
     {
@@ -572,14 +571,6 @@ public class EmpInfo : MonoBehaviour
                 break;
             }
         }
-    }
-
-    public void UpdateMotivationPanel()
-    {
-        Text_Motiv_Study.text = emp.CheckMotivationContent(0);
-        Text_Motiv_Recover.text = emp.CheckMotivationContent(1);
-        Text_Motive_Ambition.text = emp.CheckMotivationContent(2);
-        Text_Motiv_Social.text = emp.CheckMotivationContent(3);
     }
 
     public void UpdateEmotionPanel()

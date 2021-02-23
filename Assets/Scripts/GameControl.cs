@@ -582,7 +582,7 @@ public class GameControl : MonoBehaviour
     }
 
     //招募的部门选择
-    public void ShowDepSelectPanel(EmpType type)
+    public void ShowDepSelectPanel()
     {
         DepSelectPanel.GetComponent<WindowBaseControl>().SetWndState(true);
         StandbyButton.SetActive(true);

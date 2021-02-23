@@ -21,7 +21,7 @@ public class HireControl : MonoBehaviour
     private void Start()
     {
         InitCEO();
-        AddHireTypes(new HireType(1));
+        AddHireTypes(new HireType());
         RefreshHire();
         //初始的员工
         for (int i = 0; i < 5; i++)
@@ -84,15 +84,6 @@ public class HireControl : MonoBehaviour
         if (HireTypes.Count > 0)
         {
             CurrentHireNum = 0;
-            EmpType EType;
-            if (HireTypes[0].Type == 1)
-                EType = EmpType.Tech;
-            else if (HireTypes[0].Type == 2)
-                EType = EmpType.Market;
-            else if (HireTypes[0].Type == 3)
-                EType = EmpType.Product;
-            else
-                EType = EmpType.Operate;
 
             for (int i = 0; i < 5; i++)
             {
@@ -112,7 +103,7 @@ public class HireControl : MonoBehaviour
                 HireInfos[i].PerksInfo.Clear();
                 HireInfos[i].SkillsInfo.Clear();
                 HireInfos[i].StrategiesInfo.Clear();
-                HireInfos[i].CreateEmp(EType, HireTypes[0].HST, HireTypes[0].Level);
+                HireInfos[i].CreateEmp();
 
                 if(i > HireTypes[0].HireNum - 1)
                 {

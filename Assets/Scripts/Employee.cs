@@ -37,7 +37,7 @@ public class EmpItem
 
 public class Employee
 {
-    static public int HeadHuntLevel = 11, AttributeLimit = 25;
+    static public int AttributeLimit = 10;
 
     //1技术 2市场 3产品 Ob观察 Te坚韧 Str强壮 Ma管理 HR人力 Fi财务 De决策 Fo行业 St谋略 Co说服 Ch魅力 Go八卦
     #region 所有属性
@@ -256,37 +256,33 @@ public class Employee
                 if (InfoA.GC.SC.FightStart == false)
                     Exhausted();
             }
-            if (mentality < 50 && WantLeave == true)
+            if (mentality < 50)
                 InfoA.Fire();
         }
     }
     public int StaminaLimit { get { return 100 + (Strength * 5) + StaminaLimitExtra; } set { StaminaLimit = value;} } //体力上限
     public int MentalityLimit { get { return 100 + (Tenacity * 5) + MentalityLimitExtra; } set { MentalityLimit = value; } } // 心力上限
     public int StaminaLimitExtra = 0; //体力上限额外值
-    public int MentalityLimitExtra = 0; //心理上限额外值
+    public int MentalityLimitExtra = 0; //心力上限额外值
     #endregion
 
-    public int SkillExtra1, SkillExtra2, SkillExtra3, SalaryExtra = 0, Age, EventTime, ObeyTime, NoPromotionTime = 0, NoMarriageTime = 0,
+    public int SalaryExtra = 0, Age, EventTime, ObeyTime, NoPromotionTime = 0, NoMarriageTime = 0,
         VacationTime = 0, SpyTime = 0, StarType = 0;
     public int Confidence;//信心，头脑风暴中的护盾
     public int NewRelationTargetTime = 1;
     public float ExtraSuccessRate = 0, SalaryMultiple = 1.0f;
 
 
-    public int[] BaseAttributes = new int[15];
-    public int[] ExtraAttributes = new int[15];
-    public int[] Stars = new int[5];
+    public int[] BaseAttributes = new int[15]; 
+    public int[] ExtraAttributes = new int[15];//基础和额外属性的数组存储,便于一些情况下的查找和使用
     public int[] StarLimit = new int[5];
     public int[] SkillExp = new int[15];
     public int[] Levels = new int[5]; //0职业(业务) 1基础 2经营 3战略 4社交
     public int[] CharacterTendency = new int[4];//(0文化 -独裁 +开源) (1信仰-机械 +人文) (2道德-功利主义 +绝对律令) (3行事-随心所欲 +严格守序)
     public float[] Character = new float[5]; //0文化 1信仰 2道德 3行事 4信念
-    public float[] Request = new float[4];
-    public int[] BaseMotivation = new int[4];//0工作学习 1心体恢复 2谋划野心 3关系交往
 
     public string Name;
-    public bool WantLeave = false, isCEO = false, canWork = true, SupportCEO, isSpy = false; //WantLeave没有在使用
-    public EmpType Type;
+    public bool isCEO = false, SupportCEO;
 
     public EmpInfo InfoA, InfoB, InfoDetail;
     public DepControl CurrentDep;
@@ -305,7 +301,7 @@ public class Employee
     private int mentality, stamina;
 
     //初始化员工属性
-    public void InitStatus(EmpType type, int[] Hst, int AgeRange)
+    public void InitStatus()
     {
         int[] Nst = new int[15];
         #region
@@ -355,8 +351,6 @@ public class Employee
         }
 
         #endregion
-
-        Type = type;
 
         //初始化技能树类型
 
@@ -490,12 +484,6 @@ public class Employee
         else if (Nst[14] == 2)
             Gossip = Random.Range(5, 10);
         Levels[4] = Convince + Charm + Gossip;
-
-        //确定年龄
-        if (AgeRange == 0)
-            Age = Random.Range(20, 25);
-        else
-            Age = 25 + AgeRange * 5;
 
         InitStar();
         //确定倾向
@@ -643,16 +631,6 @@ public class Employee
         if (Age > 23)
             AgePenalty = (Age - 23) * 0.05f;
         int ExtraValue = 0;
-        if (Stars[SNum] == 1)
-            ExtraValue = 1;
-        else if (Stars[SNum] == 2)
-            ExtraValue = 3;
-        else if (Stars[SNum] == 3)
-            ExtraValue = 6;
-        else if (Stars[SNum] == 4)
-            ExtraValue = 10;
-        else if (Stars[SNum] >= 5)
-            ExtraValue = 15;
 
         SkillExp[type - 1] += (value + ExtraValue);
 
@@ -774,23 +752,6 @@ public class Employee
         }
     }
 
-    public void EventCheck()
-    {
-        //Request[0] += (300 - stamina - mentality - InfoDetail.GC.Morale) * 0.05f;
-        //Request[1] += Mathf.Abs(Character[0]) + Mathf.Abs(Character[4]);
-        //Request[2] += Mathf.Abs(Character[2]) + Mathf.Abs(Character[3]) + Mathf.Abs(Character[4]);
-        //Request[3] += Mathf.Abs(Character[1]) + Mathf.Abs(Character[3]) + Mathf.Abs(Character[4]);
-        //for(int i = 0; i < 4; i++)
-        //{
-        //    if(Request[i] >= 100)
-        //    {
-        //        InfoDetail.Entity.AddEvent(i + 1);
-        //        Request[i] = 0;
-        //        break;
-        //    }
-        //}
-    }
-
     public void InitRelation()
     {
         for(int i = 0; i < InfoDetail.GC.CurrentEmployees.Count; i++)
@@ -892,31 +853,6 @@ public class Employee
         return null;
     }
 
-    EmpEntity RandomEventTarget()
-    {
-        EmpEntity E = null;
-        List<Employee> EL = new List<Employee>();
-        for(int i = 0; i < RelationTargets.Count; i++)
-        {
-            EL.Add(RelationTargets[i]);
-        }
-        if (CurrentDep != null)
-        {
-            for (int i = 0; i < CurrentDep.CurrentEmps.Count; i++)
-            {
-                if (CurrentDep.CurrentEmps[i] != this)
-                    EL.Add(CurrentDep.CurrentEmps[i]);
-            }
-            if (CurrentDep.CommandingOffice != null && CurrentDep.CommandingOffice.CurrentManager != null)
-                EL.Add(CurrentDep.CommandingOffice.CurrentManager);
-        }
-        else if (CurrentOffice != null && CurrentOffice.CommandingOffice != null && CurrentOffice.CommandingOffice.CurrentManager != null)
-            EL.Add(CurrentOffice.CommandingOffice.CurrentManager);
-        if (EL.Count > 0)
-            E = EL[Random.Range(0, EL.Count)].InfoDetail.Entity;
-        return E;
-    }
-
     //改变跟目标的好感度并检查关系
     public void ChangeRelation(Employee target, int value)
     {
@@ -931,6 +867,7 @@ public class Employee
         //    r.RPoint = 0;
         //r.RelationCheck();
     }
+
     //找到跟目标的关系
     public Relation FindRelation(Employee t)
     {
@@ -995,6 +932,8 @@ public class Employee
                 Character[4] = 0;
         }
     }
+
+    //检测性格信仰数值是否达到临界值
     void CheckCharacter()
     {
         if (Character[0] >= 20)
@@ -1028,399 +967,7 @@ public class Employee
             CurrentDep.FaithRelationCheck();
     }
 
-    public int CheckMotivation(int type)
-    {
-        //0工作学习 1心体恢复 2谋划野心 3关系交往
-        int value = 0;
-        if(type == 0)
-        {
-            if (CurrentDep != null)
-            {
-                //同事亦朋友&同事即仇敌
-                for (int i = 0; i < CurrentDep.CurrentEmps.Count; i++)
-                {
-                    if (CurrentDep.CurrentEmps[i] == this)
-                        continue;
-                    else
-                    {
-                        int num = FindRelation(CurrentDep.CurrentEmps[i]).FriendValue;
-                        if (num < 0)
-                            value -= 10;
-                        else if (num > 0)
-                            value += 10;
-                    }
-                }
-            }
-            //严格守序偏好
-            if (Character[3] > 0)
-                value += (int)(Character[3] * 0.25f);
-            //开源文化倾向
-            if (Character[1] > 0)
-                value += (int)(Character[1] * 0.25f);
-            value += BaseMotivation[0];
-        }
-        else if (type == 1)
-        {
-            //心力体力数值
-            if (Mentality < 20)
-                value += 50;
-            else if (Mentality < 40)
-                value += 15;
-            if (Stamina < 20)
-                value += 20;
-            else if (Stamina < 40)
-                value += 10;
-            //独裁文化倾向
-            if (Character[0] < 0)
-                value += (int)(Mathf.Abs(Character[0]) * 0.25f);
-            //严格守序偏好
-            if (Character[3] > 0)
-                value += (int)(Character[3] * 0.25f);
-            value += BaseMotivation[1];
-        }
-        else if (type == 2)
-        {
-            //和上级关系
-            if (CurrentDep != null && CurrentDep.CommandingOffice != null && CurrentDep.CommandingOffice.CurrentManager != null)
-            {
-                int num = FindRelation(CurrentDep.CommandingOffice.CurrentManager).FriendValue;
-                if (num == -2)
-                    value += 15;
-                else if (num == -1)
-                    value += 5;
-            }
-            //随心所欲偏好
-            if (Character[3] < 0)
-                value += (int)(Mathf.Abs(Character[3]) * 0.25f);
-            //低于平均工资
-            if (isCEO == false && InfoDetail.CalcSalary() < InfoDetail.GC.Salary / (InfoDetail.GC.CurrentEmployees.Count - 1))
-                value += 10;
-            //一年之内无晋升-----------
-            if (NoPromotionTime >= 384)
-                value += 10;
-            //独裁文化倾向
-            if (Character[0] < 0)
-                value += (int)(Mathf.Abs(Character[0]) * 0.25f);
-            value += BaseMotivation[2];
-        }
-        else if (type == 3)
-        {
-            //开源文化倾向
-            if (Character[0] > 0)
-                value += (int)(Character[0] * 0.25f);
-            //没有朋友
-            if (Relations.Count == 0)
-                value += 10;
-            for (int i = 0; i < Relations.Count; i++)
-            {
-                if (Relations[i].FriendValue > 0)
-                    break;
-                if (i == Relations.Count - 1)
-                    value += 10;
-            }
-            //办公室中独自一人
-            if (CurrentDep != null && CurrentDep.CurrentEmps.Count == 1)
-                value += 25;
-            else if (CurrentOffice != null)
-                value += 25;
-            //随心所以偏好
-            if (Character[3] < 0)
-                value += (int)(Mathf.Abs(Character[3]) * 0.25f);
-            //单身5年以上
-            if (NoMarriageTime >= 1920)
-                value += 15;
-            value += BaseMotivation[3];
-        }
-
-        return value;
-    }
-    public string CheckMotivationContent(int type)
-    {
-        //0工作学习 1心体恢复 2谋划野心 3关系交往
-        string Content = "";
-        int value = 0;
-        if (type == 0)
-        {
-            //同事亦朋友&同事即仇敌
-            if (CurrentDep != null)
-            {
-                int ValueA = 0, ValueB = 0;
-                for (int i = 0; i < CurrentDep.CurrentEmps.Count; i++)
-                {
-                    if (CurrentDep.CurrentEmps[i] == this)
-                        continue;
-                    else
-                    {
-                        int num = FindRelation(CurrentDep.CurrentEmps[i]).FriendValue;
-                        if (num < 0)
-                        {
-                            value -= 10;
-                            ValueA += 10;
-                        }
-                        else if (num > 0)
-                        {
-                            value += 10;
-                            ValueB += 10;
-                        }
-                    }
-                }
-                if (ValueA > 0)
-                    Content += "  同事即仇敌+" + ValueA;
-                if (ValueB > 0)
-                    Content += "  同事亦朋友+" + ValueB;
-            }
-            //严格守序偏好
-            if (Character[3] > 0)
-            {
-                value += (int)(Character[3] * 0.25f);
-                Content += "  严格守序偏好+" + (int)(Character[3] * 0.25f);
-            }
-            //开源文化倾向
-            if (Character[1] > 0)
-            { 
-                value += (int)(Character[1] * 0.25f);
-                Content += "  开源文化倾向+" + (int)(Character[1] * 0.25f);
-            }
-            for(int i = 0; i < InfoDetail.PerksInfo.Count; i++)
-            {
-                if (InfoDetail.PerksInfo[i].CurrentPerk.Num == 5)
-                    Content += "  奋斗逼+15";
-                else if (InfoDetail.PerksInfo[i].CurrentPerk.Num == 6)
-                    Content += "  欧洲人-15";
-                else if (InfoDetail.PerksInfo[i].CurrentPerk.Num == 7)
-                    Content += "  抑郁-20";
-            }
-            value += BaseMotivation[0];
-            Content = "工作学习场景:" + value + "\n" + Content;
-        }
-        else if (type == 1)
-        {
-            //心力体力数值
-            if (Mentality < 20)
-            {
-                value += 50;
-                Content += "  心力小于20 +50";
-            }
-            else if (Mentality < 40)
-            { 
-                value += 15;
-                Content += "  心力小于40 +15";
-            }
-            if (Stamina < 20)
-            { 
-                value += 20;
-                Content += "  体力小于20 +20";
-            }
-            else if (Stamina < 40)
-            { 
-                value += 10;
-                Content += "  体力小于40 +10";
-            }
-            //独裁文化倾向
-            if (Character[0] < 0)
-            {
-                value += (int)(Mathf.Abs(Character[0]) * 0.25f);
-                Content += "  独裁文化倾向+" + (int)(Mathf.Abs(Character[0]) * 0.25f);
-            }
-            //严格守序偏好
-            if (Character[3] > 0)
-            {
-                value += (int)(Character[3] * 0.25f);
-                Content += "  严格守序偏好+" + (int)(Character[3] * 0.25f);
-            }
-            for (int i = 0; i < InfoDetail.PerksInfo.Count; i++)
-            {
-                if (InfoDetail.PerksInfo[i].CurrentPerk.Num == 9)
-                    Content += "  元气满满+15";
-                else if (InfoDetail.PerksInfo[i].CurrentPerk.Num == 10)
-                    Content += "  狂热-15";
-            }
-            value += BaseMotivation[1];
-            Content = "心体恢复场景:" + value + "\n" + Content;
-        }
-        else if (type == 2)
-        {
-            //和上级关系
-            if (CurrentDep != null && CurrentDep.CommandingOffice != null && CurrentDep.CommandingOffice.CurrentManager != null)
-            {
-                int num = FindRelation(CurrentDep.CommandingOffice.CurrentManager).FriendValue;
-                if (num == -2)
-                {
-                    value += 15;
-                    Content += "  与上级关系仇人+15";
-                }
-                else if (num == -1)
-                {
-                    value += 5;
-                    Content += "  与上级关系陌路+5";
-                }
-            }
-            //随心所欲偏好
-            if (Character[3] < 0)
-            {
-                value += (int)(Mathf.Abs(Character[3]) * 0.25f);
-                Content += "  随心所欲偏好+" + (int)(Mathf.Abs(Character[3]) * 0.25f);
-            }
-            //低于平均工资
-            if (isCEO == false && InfoDetail.CalcSalary() < InfoDetail.GC.Salary / (InfoDetail.GC.CurrentEmployees.Count - 1))
-            {
-                value += 10;
-                Content += "低于平均工资+10";
-            }
-            //一年之内无晋升
-            if (NoPromotionTime >= 384)
-            {
-                value += 10;
-                Content += "  一年之内无晋升+10";
-            }
-            //独裁文化倾向
-            if (Character[0] < 0)
-            {
-                value += (int)(Mathf.Abs(Character[0]) * 0.25f);
-                Content += "  独裁文化倾向+" + (int)(Mathf.Abs(Character[0]) * 0.25f);
-            }
-            for (int i = 0; i < InfoDetail.PerksInfo.Count; i++)
-            {
-                if (InfoDetail.PerksInfo[i].CurrentPerk.Num == 12)
-                    Content += "  鹰视狼顾+20";
-                else if (InfoDetail.PerksInfo[i].CurrentPerk.Num == 13)
-                    Content += "  平凡之路-15";
-                else if (InfoDetail.PerksInfo[i].CurrentPerk.Num == 14)
-                    Content += "  复仇者+15";
-            }
-            value += BaseMotivation[2];
-            Content = "谋划野心场景:" + value + "\n" + Content;
-        }
-        else if (type == 3)
-        {
-            //开源文化倾向
-            if (Character[0] > 0)
-            {
-                value += (int)(Character[0] * 0.25f);
-                Content += "  开源文化倾向+" + (int)(Character[0] * 0.25f);
-            }
-            //没有朋友
-            if(Relations.Count == 0)
-            {
-                value += 10;
-                Content += "没有朋友+10";
-            }
-            for (int i = 0; i < Relations.Count; i++)
-            {
-                if (Relations[i].FriendValue > 0)
-                    break;
-                if (i == Relations.Count - 1)
-                {
-                    value += 10;
-                    Content += "没有朋友+10";
-                }
-            }
-            //办公室中独自一人
-            if (CurrentDep != null && CurrentDep.CurrentEmps.Count == 1)
-            {
-                value += 25;
-                Content += "  部门中独自一人+25";
-            }
-            else if (CurrentOffice != null)
-            {
-                value += 25;
-                Content += "  办公室中独自一人+25";
-            }
-            //随心所以偏好
-            if (Character[3] < 0)
-            {
-                value += (int)(Mathf.Abs(Character[3]) * 0.25f);
-                Content += "  随心所欲偏好+" + (int)(Mathf.Abs(Character[3]) * 0.25f);
-            }
-            //单身5年以上
-            if (NoMarriageTime >= 1920)
-            {
-                value += 15;
-                Content += "单身5年以上+15";
-            }
-            for (int i = 0; i < InfoDetail.PerksInfo.Count; i++)
-            {
-                if (InfoDetail.PerksInfo[i].CurrentPerk.Num == 16)
-                    Content += "  好色+15";
-                else if (InfoDetail.PerksInfo[i].CurrentPerk.Num == 17)
-                    Content += "  社交狂人+20";
-                else if (InfoDetail.PerksInfo[i].CurrentPerk.Num == 22)
-                    Content += "  友尽-10";
-                else if (InfoDetail.PerksInfo[i].CurrentPerk.Num == 24)
-                    Content += "  我恋爱了+25";
-            }
-            value += BaseMotivation[3];
-            Content = "关系交往场景:" + value + "\n" + Content;
-        }
-
-        return Content;
-    }
-
-    public void AddEvent()
-    {
-        int value1 = CheckMotivation(0), value2 = CheckMotivation(1), value3 = CheckMotivation(2), value4 = CheckMotivation(3), Motiv = 0;
-        int Posb = Random.Range(1, (value1 + value2 + value3 + value4));
-        List<Event> EF = new List<Event>(), E = new List<Event>();
-
-        if (Posb < value1)
-        {
-            EventData.CopyList(EF, EventData.StudyForceEvents);
-            EventData.CopyList(E, EventData.StudyEvents);
-            Motiv = value1;
-            InfoDetail.Entity.ShowTips(2);
-        }
-        else if (Posb < value2)
-        {
-            EventData.CopyList(EF, EventData.RecoverForceEvent);
-            EventData.CopyList(E, EventData.RecoverEvent);
-            Motiv = value2;
-            InfoDetail.Entity.ShowTips(3);
-        }
-        else if (Posb < value3)
-        {
-            EventData.CopyList(EF, EventData.AmbitionForceEvent);
-            EventData.CopyList(E, EventData.AmbitionEvent);
-            Motiv = value3;
-            InfoDetail.Entity.ShowTips(1);
-        }
-        else
-        {
-            EventData.CopyList(EF, EventData.SocialForceEvent);
-            EventData.CopyList(E, EventData.SocialEvent);
-            Motiv = value4;
-            InfoDetail.Entity.ShowTips(4);
-        }
-        //先检测排他事件
-        while (EF.Count > 0)
-        {
-            Event e = EF[Random.Range(0, EF.Count)];
-            e.Self = this;
-            if (e.ConditionCheck(Motiv) == true)
-            {
-                InfoDetail.Entity.AddEvent(e);
-                return;
-            }
-            else
-            {
-                EF.Remove(e);
-            }
-        }
-        while (E.Count > 0)
-        {
-            Event e = E[Random.Range(0, E.Count)];
-            e.Self = this;
-            if (e.ConditionCheck(Motiv) == true)
-            {
-                InfoDetail.Entity.AddEvent(e);
-                return;
-            }
-            else
-            {
-                E.Remove(e);
-            }
-        }
-    }
-
+    //时间流逝后部分基础属性判定
     public void TimePass()
     {
         EventTimePass();
@@ -1490,6 +1037,8 @@ public class Employee
             RemoveBonus.Clear();
         }
     }
+
+    //事件相关时间判定
     public void EventTimePass()
     {
         EventTime -= 1;
@@ -1507,6 +1056,7 @@ public class Employee
         }
     }
 
+    //假期结束后的相关判定
     void EndVacation()
     {
         VacationTime = 0;
@@ -1862,118 +1412,12 @@ public class Employee
             }
         }
     }
-    //减层数
+    //情绪减层数
     void ReduceEmotion(Emotion E)
     {
         E.Level -= 1;
         if (E.Level <= 0)
             InfoDetail.RemoveEmotionInfo(E);
-    }
-
-    //根据已知目标确定一个事件
-    public Event RandomEvent(Employee e)
-    {
-        Event NewEvent = null;
-        List<Event> AddEvents = new List<Event>();
-        List<Event> TempEvents = new List<Event>();
-        List<Event> PosbEvents = new List<Event>();
-        for (int i = 0; i < 4; i++)
-        {
-            if (i == 0)
-                PosbEvents = EventData.E4;
-            else if (i == 1)
-                PosbEvents = EventData.E3;
-            else if (i == 2)
-                PosbEvents = EventData.E2;
-            else
-                PosbEvents = EventData.E1;
-            for (int j = 0; j < PosbEvents.Count; j++)
-            {
-                PosbEvents[j].Self = this;
-                PosbEvents[j].Target = e;
-                if (PosbEvents[j].ConditionCheck(-1) == true)
-                {
-                    TempEvents.Add(PosbEvents[j].Clone());
-                }
-                PosbEvents[j].Self = null;
-                PosbEvents[j].Target = null;
-            }
-            if (TempEvents.Count > 0)
-            {
-                int num = 5 - AddEvents.Count;
-                if (TempEvents.Count < num)
-                    num = TempEvents.Count;
-                for (int j = 0; j < num; j++)
-                {
-                    AddEvents.Add(TempEvents[Random.Range(0, num)]);
-                }
-            }
-            if (AddEvents.Count >= 5)
-                break;
-            TempEvents.Clear();
-        }
-        if (AddEvents.Count > 0)
-        {
-            float MaxPosb = 0, Posb = 0;
-            if (AddEvents.Count == 1)
-            {
-                NewEvent = AddEvents[0];
-                return NewEvent;
-            }
-            else if (AddEvents.Count == 2)
-                MaxPosb = 0.7f;
-            else if (AddEvents.Count == 3)
-                MaxPosb = 0.8f;
-            else if (AddEvents.Count == 4)
-                MaxPosb = 0.9f;
-            else if (AddEvents.Count == 5)
-                MaxPosb = 1.0f;
-            Posb = Random.Range(0.0f, MaxPosb);
-            if (Posb < 0.5f)
-                NewEvent = AddEvents[0];
-            else if (Posb < 0.7f)
-                NewEvent = AddEvents[1];
-            else if (Posb < 0.8f)
-                NewEvent = AddEvents[2];
-            else if (Posb < 0.9f)
-                NewEvent = AddEvents[3];
-            else if (Posb < 1.0f)
-                NewEvent = AddEvents[4];
-        }
-        //子事件检测
-        if (NewEvent != null)
-        {
-            Event TempEvent = NewEvent.SubEventCheck();
-            if (TempEvent != null)
-                NewEvent = TempEvent.Clone();
-        }
-        if (NewEvent == null)
-            MonoBehaviour.print("无合适事件");
-        return NewEvent;
-    }
-
-    //寻找其他可用员工
-    public List<Employee> FindAnotherEmp()
-    {
-        List<Employee> EL = new List<Employee>();
-        if(CurrentOffice == null && CurrentDep == null)
-        {
-            for(int i = 0; i < GameControl.Instance.CurrentEmployees.Count; i++)
-            {
-                if (GameControl.Instance.CurrentEmployees[i].CurrentOffice == null && 
-                    GameControl.Instance.CurrentEmployees[i].CurrentDep == null && GameControl.Instance.CurrentEmployees[i] != this)
-                    EL.Add(GameControl.Instance.CurrentEmployees[i]);
-            }
-        }
-        else if (CurrentDep != null)
-        {
-            for(int i = 0; i < CurrentDep.CurrentEmps.Count; i++)
-            {
-                if (CurrentDep.CurrentEmps[i] != this)
-                    EL.Add(CurrentDep.CurrentEmps[i]);
-            }
-        }
-        return EL;
     }
 
     //心力爆炸

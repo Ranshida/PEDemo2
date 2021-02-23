@@ -532,8 +532,7 @@ public class OfficeControl : MonoBehaviour
                     }
                     else if (OfficeMode == 4)
                     {
-                        HireType ht = new HireType(0);
-                        ht.SetHeadHuntStatus();
+                        HireType ht = new HireType();
                         if (MajorSuccess == true)
                             ht.HireNum = 5;
                         else

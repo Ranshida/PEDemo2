@@ -41,69 +41,9 @@ public class ProduceBuff
 }
 public class HireType
 {
-    public int Level = 0, Type, HireNum = 3; //Type目前已经没什么用了
+    public int HireNum = 3; //Type目前已经没什么用了
     public bool MajorSuccess = false;
-    public int[] HST = new int[15];
-    public HireType(int type)
-    {
-        Type = type;
-    }
 
-    //此处为原本的猎头相关功能
-    //public void SetHeadHuntStatus(int[] Hst)
-    public void SetHeadHuntStatus()
-    {
-        ////旧的招聘筛选
-        //for(int i = 0; i < HeadHuntStatus.Length; i++)
-        //{
-        //    HST[i] = Hst[i];
-        //    if (Hst[i] == 1)
-        //        Level += 1;
-        //}
-
-        int r1 = Random.Range(0, 5), r2 = Random.Range(0, 5);
-        while (r1 == r2)
-        {
-            r2 = Random.Range(0, 5);
-        }
-        int count1 = 4, count2 = 2;
-
-        //HST = 0  (0,3)随机技能
-        //HST = 1  (0,2)随机技能
-        //HST = 2  (5,9)随机技能
-        for (int i = 0; i < 6; i++)
-        {
-            if (i < 3)
-                i = r1 * 3 + i;
-            else
-                i = r2 * 3 + i - 3;
-
-            if (count1 > 0 && count2 > 0)
-            {
-                int c = Random.Range(1, 3);
-                if (c == 1)
-                {
-                    HST[i] = 1;
-                    count1 -= 1;
-                }
-                else
-                {
-                    HST[i] = 2;
-                    count2 -= 1;
-                }
-            }
-            else if (count1 > 0)
-            {
-                HST[i] = 1;
-                count1 -= 1;
-            }
-            else
-            {
-                HST[i] = 2;
-                count2 -= 1;
-            }
-        }
-    }
 }
 
 public class DepControl : MonoBehaviour
@@ -1133,8 +1073,7 @@ public class DepControl : MonoBehaviour
         }
         else if (building.Type == BuildingType.人力资源部)
         {
-            HireType ht = new HireType(0);
-            ht.SetHeadHuntStatus();
+            HireType ht = new HireType();
             if (MajorSuccess == true)
             {
                 if (BuildingMode == 1)
