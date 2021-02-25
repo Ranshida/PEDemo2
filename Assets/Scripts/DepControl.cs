@@ -1455,10 +1455,10 @@ public class DepControl : MonoBehaviour
         //
         else if (building.Type == BuildingType.职业再发展中心 && GC.CurrentEmpInfo != null)
         {
-            if (MajorSuccess == false)
-                GC.CurrentEmpInfo.emp.InfoDetail.ST.ChangeSkillTree();
-            else
-                GC.SkillTreeSelectPanel.SetActive(true);
+            //if (MajorSuccess == false)
+            //    GC.CurrentEmpInfo.emp.InfoDetail.ST.ChangeSkillTree();
+            //else
+            //    GC.SkillTreeSelectPanel.SetActive(true);
         }
         else if (building.Type == BuildingType.中央监控室 && GC.SelectedDep != null)
         {

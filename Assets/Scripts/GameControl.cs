@@ -78,7 +78,6 @@ public class GameControl : MonoBehaviour
     public QuestControl QC;
     public EmpEntity EmpEntityPrefab;
     public PerkInfo PerkInfoPrefab;
-    public SkillInfo SkillInfoPrefab;
     public DepControl DepPrefab, HRDepPrefab;
     public OfficeControl OfficePrefab;
     public DepSelect DepSelectButtonPrefab, OfficeSelectButtonPrefab;
@@ -94,7 +93,7 @@ public class GameControl : MonoBehaviour
     public Transform DepContent, DepSelectContent, StandbyContent, MessageContent;
     public InfoPanel infoPanel;
     public GameObject DepSelectPanel, StandbyButton, MessagePrefab, GameOverPanel, OfficeModeSelectPanel,
-        OfficeModeBuildingOptionButton, OfficeModeTalkOptionButton, DepModeSelectPanel, DepSkillConfirmPanel, SkillTreeSelectPanel;
+        OfficeModeBuildingOptionButton, OfficeModeTalkOptionButton, DepModeSelectPanel, DepSkillConfirmPanel;
     public Text Text_Time, Text_TechResource, Text_MarketResource, Text_MarketResource2, Text_ProductResource, Text_Money, Text_Stamina, Text_Mentality, 
         Text_Morale, Text_DepMode1, Text_DepMode2, Text_DepSkillDescribe, Text_WarTime, Text_MobTime;
     public Toggle WorkOvertimeToggle;
@@ -105,6 +104,7 @@ public class GameControl : MonoBehaviour
     public List<DepControl> CurrentDeps = new List<DepControl>();
     public List<OfficeControl> CurrentOffices = new List<OfficeControl>();
     public List<Employee> CurrentEmployees = new List<Employee>();
+    public List<CompanyItem> Items = new List<CompanyItem>();
     public int[] FinishedTask = new int[10];//0程序迭代 1技术研发 2可行性调研 3传播 4营销文案 5资源拓展 6原型图 7产品研究 8用户访谈 9已删除
 
     int Year = 1, Month = 1, Week = 1, Day = 1, Hour = 1, morale = 50;
@@ -191,10 +191,10 @@ public class GameControl : MonoBehaviour
                 MobTime -= 1;
                 if (MobTime == 0)
                 {
-                    SC.SetWndState(true);
-                    SC.FinishSign.SetActive(false);
-                    SC.SkillSetButton.interactable = false;
-                    AskPause(SC);
+                    //SC.SetWndState(true);
+                    //SC.FinishSign.SetActive(false);
+                    //SC.SkillSetButton.interactable = false;
+                    //AskPause(SC);
                     MobTime = 192;
                 }
                 Text_MobTime.text = "距离下次头脑风暴还剩" + (MobTime / 8) + "周";
@@ -1060,15 +1060,6 @@ public class GameControl : MonoBehaviour
     public void ToggleWorkHour(bool value)
     {
         WorkToggle = value;
-    }
-    //手动分配技能树
-    public void SetSkillTree(int num)
-    {
-        if (CurrentEmpInfo != null)
-            CurrentEmpInfo.emp.InfoDetail.ST.ChangeSkillTree(num);
-        SkillTreeSelectPanel.SetActive(false);
-        TotalEmpPanel.SetWndState(false);
-        ResetSelectMode();
     }
     //游戏结束后续钱继续
     public void GameReset()

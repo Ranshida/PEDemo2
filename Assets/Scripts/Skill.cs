@@ -5,6 +5,17 @@ using UnityEngine;
 public enum SkillType
 { Basic, Defense, Upgrade}
 
+
+
+
+//此技能系统为旧版头脑风暴相关
+//目前相关玩法均已删除
+//此脚本仅留作参考
+
+#region 旧技能
+
+
+
 public class Skill
 {
     public SkillType Type = SkillType.Basic;
@@ -928,20 +939,4 @@ public class Skill68 : Skill
     }
 }
 
-public static class SkillData
-{
-    public static List<Skill> Skills = new List<Skill>()
-    {
-        //new Skill1(), new Skill2(), new Skill3(), new Skill4(), new Skill5(), new Skill6(), new Skill7(),
-        //new Skill8(), new Skill9(), new Skill10(), new Skill11(), new Skill12(), new Skill13(), new Skill14(),
-        //new Skill5(), new Skill6(), new Skill7(), new Skill8(), new Skill9(), new Skill20(),
-        //new Skill21(), new Skill22(), new Skill23(), new Skill24(), new Skill25(), new Skill26(), new Skill27(),
-        //new Skill28(), new Skill29(), new Skill30(), new Skill31()
-                new Skill32(), new Skill33(), new Skill34(), new Skill35(), new Skill36(), new Skill37(), new Skill38(),
-        new Skill39(), new Skill40(), new Skill41(), new Skill42(), new Skill43(), new Skill44(), new Skill45(),
-        new Skill46(), new Skill47(), new Skill48(), new Skill49(), new Skill50(), new Skill51(),
-        new Skill52(), new Skill53(), new Skill54(), new Skill55(), new Skill56(), new Skill57(), new Skill58(),
-        new Skill59(), new Skill60(), new Skill61(), new Skill62(), new Skill63(), new Skill64(), new Skill65(),
-        new Skill66(), new Skill67(), new Skill68()
-    };
-}
+#endregion

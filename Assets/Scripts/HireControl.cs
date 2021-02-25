@@ -141,8 +141,6 @@ public class HireControl : MonoBehaviour
         ED.emp.InitRelation();
         GC.HourEvent.AddListener(ED.emp.TimePass);
         ED.SetSkillName();
-        //检测技能
-        ED.ST.InitSkill();
 
         //创建员工实体
         ED.Entity = EmpManager.Instance.CreateEmp(BuildingManage.Instance.ExitPos.position);
@@ -206,7 +204,7 @@ public class HireControl : MonoBehaviour
         //创建特质和技能
         emp.StarType = 13;//临时设定CEO技能树
         emp.InitStar(13);
-        ED.InitSkillAndStrategy();
+        ED.InitStrategy();
 
         //创建员工实体
         ED.Entity = EmpManager.Instance.CreateEmp(BuildingManage.Instance.ExitPos.position);

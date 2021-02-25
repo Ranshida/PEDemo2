@@ -748,7 +748,6 @@ public class Employee
                 SkillName = "八卦";
             }
             InfoDetail.GC.CreateMessage(Name + "的 " + SkillName + " 技能提升了");
-            InfoDetail.ST.SkillCheck();
         }
     }
 

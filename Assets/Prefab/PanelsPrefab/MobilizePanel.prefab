@@ -4198,6 +4198,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97103db88a33abc44bac69926068403a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Layer: 1
+  buttons: []
+  sliders: []
   AdvanceMobilize: 0
   SelectNum: 0
   CurrentPoint: 0
@@ -4219,7 +4222,7 @@ MonoBehaviour:
   SkillLockBonus: 0
   TurnLeft: 0
   ExtraDiceNum: 0
-  MobLevel: 1
+  MobLevel: 0
   NoStaminaCost: 0
   DoubleCost: 0
   FightStart: 0

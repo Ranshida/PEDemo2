@@ -20,7 +20,6 @@ public class EmpInfo : MonoBehaviour
     public EmotionInfo EmotionInfoPrefab;
     public Transform PerkContent, SkillContent, StrategyContent, RelationContent, HistoryContent, EmotionContent;
     public StrategyInfo CurrentStrategy;
-    public SkillTree ST;
 
     public List<PerkInfo> PerksInfo = new List<PerkInfo>();
     public List<SkillInfo> SkillsInfo = new List<SkillInfo>();
@@ -158,27 +157,12 @@ public class EmpInfo : MonoBehaviour
         emp.InitStatus();
         HireButton.interactable = true;
         SetSkillName();
-        InitSkillAndStrategy();
+        InitStrategy();
     }
 
     //初始化头脑风暴技能和战略
-    public void InitSkillAndStrategy()
+    public void InitStrategy()
     {
-        //for (int i = 0; i < SkillData.Skills.Count; i++)
-        //{
-        //    //int Snum = Random.Range(20, SkillData.Skills.Count);
-        //    int Snum = i;
-        //    Skill NewSkill = SkillData.Skills[Snum].Clone();
-        //    NewSkill.TargetEmp = this.emp;
-        //    AddSkill(NewSkill);
-        //}
-        if (emp.isCEO == true)
-        {
-            Skill NewSkill = new Skill32();
-            NewSkill.TargetEmp = this.emp;
-            AddSkill(NewSkill);
-        }
-        ST.InitSkill();
         AddThreeRandomStrategy();
         AddRandomPerk();
     }
@@ -405,53 +389,6 @@ public class EmpInfo : MonoBehaviour
         if (emp.CurrentDep != null)
             emp.CurrentDep.AddPerk(perk);
     }
-
-    //增减头脑风暴技能
-    public void AddSkill(Skill skill)
-    {
-        SkillInfo newSkill = Instantiate(GC.SkillInfoPrefab, SkillContent);
-        newSkill.skill = skill;
-        newSkill.skill.TargetEmp = emp;
-        newSkill.Text_Name.text = skill.Name;
-        newSkill.empInfo = this;
-        newSkill.info = GC.infoPanel;
-        SkillsInfo.Add(newSkill);
-        if (GameControl.Instance.CurrentEmployees.Contains(emp))
-            QuestControl.Instance.Init(emp.Name + "获得了新技能:" + skill.Name);
-        if(skill.Name == "发表看法")
-        {
-            QuestControl.Instance.Finish(3);
-        }
-    }
-    public void ReplaceSkill(Skill OriginSkill, Skill NewSkill)
-    {
-        for (int i = 0; i < SkillsInfo.Count; i++)
-        {
-            if (SkillsInfo[i].skill.Name == OriginSkill.Name)
-            {
-                SkillsInfo[i].skill = NewSkill;
-                SkillsInfo[i].skill.TargetEmp = emp;
-                SkillsInfo[i].Text_Name.text = NewSkill.Name;
-                return;
-            }
-        }
-        //如果没找到替换技能
-        AddSkill(NewSkill);
-    }
-    public void RemoveSkill(Skill skill)
-    {
-        for(int i = 0; i < SkillsInfo.Count; i++)
-        {
-            if(SkillsInfo[i].skill == skill)
-            {
-                SkillInfo s = SkillsInfo[i];
-                SkillsInfo.RemoveAt(i);
-                Destroy(s.gameObject);
-                break;
-            }
-        }
-    }
-
     public void AddStrategy(int num)
     {
         StrategyInfo newStrategy = Instantiate(GC.StrC.InfoPrefabA, StrategyContent);
@@ -499,33 +436,33 @@ public class EmpInfo : MonoBehaviour
     public int CalcSalary()
     {//暂时定为25
         return 25;
-        int type = emp.InfoDetail.ST.SkillType;
-        int salary = emp.SalaryExtra + emp.Manage + emp.Skill1 + emp.Skill2 + emp.Skill3 + emp.Observation + emp.Tenacity + emp.Strength
-             + emp.HR + emp.Finance + emp.Decision + emp.Forecast + emp.Strategy + emp.Convince + emp.Charm + emp.Gossip;
-        if (type == 1)
-            salary = emp.Observation;
-        else if (type == 2)
-            salary += emp.Skill1;
-        else if (type == 3)
-            salary += emp.Skill3;
-        else if (type == 4)
-            salary += emp.Skill2;
-        else if (type == 5)
-            salary += emp.Finance;
-        else if (type == 6)
-            salary += emp.HR;
-        else if (type == 7)
-            salary += emp.Strength;
-        else if (type == 8)
-            salary += emp.Tenacity;
-        else if (type == 9)
-            salary += emp.Forecast;
-        else if (type == 10)
-            salary += emp.Strategy;
-        else
-            salary += emp.Manage;
-        salary = (int)(salary * emp.SalaryMultiple);
-        return salary;
+        //int type = emp.InfoDetail.ST.SkillType;
+        //int salary = emp.SalaryExtra + emp.Manage + emp.Skill1 + emp.Skill2 + emp.Skill3 + emp.Observation + emp.Tenacity + emp.Strength
+        //     + emp.HR + emp.Finance + emp.Decision + emp.Forecast + emp.Strategy + emp.Convince + emp.Charm + emp.Gossip;
+        //if (type == 1)
+        //    salary = emp.Observation;
+        //else if (type == 2)
+        //    salary += emp.Skill1;
+        //else if (type == 3)
+        //    salary += emp.Skill3;
+        //else if (type == 4)
+        //    salary += emp.Skill2;
+        //else if (type == 5)
+        //    salary += emp.Finance;
+        //else if (type == 6)
+        //    salary += emp.HR;
+        //else if (type == 7)
+        //    salary += emp.Strength;
+        //else if (type == 8)
+        //    salary += emp.Tenacity;
+        //else if (type == 9)
+        //    salary += emp.Forecast;
+        //else if (type == 10)
+        //    salary += emp.Strategy;
+        //else
+        //    salary += emp.Manage;
+        //salary = (int)(salary * emp.SalaryMultiple);
+        //return salary;
     }
 
     void UpdateCharacterUI()
@@ -714,9 +651,4 @@ public class EmpInfo : MonoBehaviour
         //}
     }
 
-    //显示技能树
-    public void ShowSkillTree()
-    {
-        ST.gameObject.SetActive(true);
-    }
 }
