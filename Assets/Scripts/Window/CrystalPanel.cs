@@ -181,6 +181,7 @@ public class CrystalPanel : WindowRoot
     {
         tempSeat = null;
         tempArea = null;
+
         PutButton.gameObject.SetActive(false);
         foreach (CrystalArea item in CrystalAreaList)
         {

@@ -9,9 +9,11 @@ using UnityEngine.UI;
 public class CrystalArea : MonoBehaviour
 {
     public CrystalPanel parentPanel;
+    public DynamicWindow dynamicWindow;
     public Areas.Area Area;
 
     List<Transform> buttons;
+    Text txt_;        //体力消耗
     public Dictionary<Transform, CrystalType> CrystalDict;
 
     public void Init(CrystalPanel parent, Areas.Area area)
@@ -23,6 +25,7 @@ public class CrystalArea : MonoBehaviour
         buttons.Add(transform.Find("Btn_1"));
         buttons.Add(transform.Find("Btn_2"));
         buttons.Add(transform.Find("Btn_3"));
+        txt_ = transform.Find("Text").GetComponent<Text>();
 
         CrystalDict = new Dictionary<Transform, CrystalType>();
         foreach (Transform item in buttons)
@@ -34,7 +37,16 @@ public class CrystalArea : MonoBehaviour
 
     public void OnLateUpdate()
     {
-        transform.position = Function.World2ScreenPoint(Area.centerPosition);
+        transform.position = Function.World2ScreenPoint(Area.topPosition + new Vector3(0, 0, 5));
+        int count = 0;
+        foreach (CrystalType type in CrystalDict.Values)
+        {
+            if (type != CrystalType.None)
+            {
+                count++;
+            }
+        }
+        txt_.text = "区域体力：+" + count + "0/月";
     }
 
     public void SelectCrystal(Transform self)

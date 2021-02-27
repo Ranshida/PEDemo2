@@ -222,6 +222,12 @@ public static class Function
         }
         return t;
     }
+
+    //判断n是奇数
+    public static bool IsOdd(int n)
+    {
+        return System.Convert.ToBoolean(n % 2);
+    }
 }
 
 public class Int2

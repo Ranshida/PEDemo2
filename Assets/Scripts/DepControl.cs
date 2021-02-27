@@ -534,7 +534,7 @@ public class DepControl : MonoBehaviour
     }
 
     //计算生产成功率
-    float CountSuccessRate(int type)
+    public float CountSuccessRate(int type)
     {
         //1-3职业技能 4观察 5坚韧 6强壮 7管理 8人力 9财务 10决策 11行业 12谋略 13说服 14魅力 15八卦
         float BaseSuccessRate = 0;

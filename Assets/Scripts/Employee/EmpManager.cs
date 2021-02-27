@@ -33,7 +33,7 @@ public class EmpManager : MonoBehaviour
         if (CameraController.CharacterHit && !UISvc.IsPointingUI)
         {
             pointEmp = CameraController.CharacterRaycast.collider.transform.parent.parent.GetComponentInChildren<EmpEntity>();
-            DynamicWindow.Instance.SetEmpName(pointEmp.EmpName, pointEmp.transform, Vector3.up * 10);
+            DynamicWindow.Instance.ShowName(pointEmp.EmpName, pointEmp.transform, Vector3.up * 10);
         }
         if (pointEmp && !pointEmp.Fired && Input.GetMouseButtonDown(0))
             pointEmp.ShowDetailPanel();

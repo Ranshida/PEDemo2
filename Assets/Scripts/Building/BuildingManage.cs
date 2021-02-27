@@ -291,11 +291,13 @@ public class BuildingManage : MonoBehaviour
                     Building mouseBuilding = GridContainer.Instance.GridDict[m_GridX][m_GridZ].BelongBuilding;
                     if (mouseBuilding.Department)
                     {
-                        DynamicWindow.Instance.SetEmpName(mouseBuilding.Department.Text_DepName.text, mouseBuilding.transform, Vector3.up * 15 + new Vector3(mouseBuilding.Length * 5, 0, mouseBuilding.Width * 5));
+                        DynamicWindow.Instance.ShowName(mouseBuilding.Department.Text_DepName.text, mouseBuilding.transform, Vector3.up * 15 + new Vector3(mouseBuilding.Length * 5, 0, mouseBuilding.Width * 5));
+                        DynamicWindow.Instance.ShowBuildingInfo(mouseBuilding);
                     }
                     else if (mouseBuilding.Office)
                     {
-                        DynamicWindow.Instance.SetEmpName(mouseBuilding.Office.Text_OfficeName.text, mouseBuilding.transform, Vector3.up * 15 + new Vector3(mouseBuilding.Length * 5, 0, mouseBuilding.Width * 5));
+                        DynamicWindow.Instance.ShowName(mouseBuilding.Office.Text_OfficeName.text, mouseBuilding.transform, Vector3.up * 15 + new Vector3(mouseBuilding.Length * 5, 0, mouseBuilding.Width * 5));
+                        DynamicWindow.Instance.ShowBuildingInfo(mouseBuilding);
                     }
                 }
             }
