@@ -2,22 +2,59 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class InfoPanelTrigger : MonoBehaviour
 {
     public InfoPanel info;
+    public float ShowTime = 0.25f;
     public string ContentA = "", ContentB = "", ContentC = "";
+
+    private Button button;
 
     float Timer = 0;
     bool ShowPanel;
-
-    public void Init()
-    {
-        info = GameControl.Instance.infoPanel;
-    }
+    bool ExitEventSet = false;//用于检测是否已经对已有的按钮设置过离开事件
 
     private void Start()
     {
+        SetEvent();
+    }
+    private void OnEnter(BaseEventData pointData)
+    {
+        PointerEnter();
+    }
+    private void OnExit(BaseEventData pointData)
+    {
+        PointerExit();
+    }
+
+    void SetEvent()
+    {
+        print("Set");
+        button = this.GetComponent<Button>();
+        if (button != null)
+            button.onClick.AddListener(PointerExit);
+        
+        info = GameControl.Instance.infoPanel;
+        EventTrigger tr = this.gameObject.AddComponent<EventTrigger>();
+
+        EventTrigger.Entry entry = new EventTrigger.Entry();
+
+        // 鼠标进入
+        entry.eventID = EventTriggerType.PointerEnter;
+        entry.callback = new EventTrigger.TriggerEvent();
+        entry.callback.AddListener(OnEnter);
+        tr.triggers.Add(entry);
+
+        EventTrigger.Entry entry2 = new EventTrigger.Entry();
+
+        // 鼠标离开
+        entry2.eventID = EventTriggerType.PointerExit;
+        entry2.callback = new EventTrigger.TriggerEvent();
+        entry2.callback.AddListener(OnExit);
+        tr.triggers.Add(entry2);
+
         info = GameControl.Instance.infoPanel;
     }
 
@@ -27,7 +64,7 @@ public class InfoPanelTrigger : MonoBehaviour
             info = GameControl.Instance.infoPanel;
         if (ShowPanel == true)
         {
-            if (Timer < 0.25f)
+            if (Timer < ShowTime)
                 Timer += Time.deltaTime;
             else
             {

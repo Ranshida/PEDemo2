@@ -128,6 +128,25 @@ public class CEOControl : MonoBehaviour
             Text_Extra.text = AddText(2) + "对方“忠诚”状态 +2\n" + AddText(6); 
             Text_OptionContent.text = "执行，成功率:" + CalcPosb() + "%";
         }
+        //加入核心团队说服
+        else if (CEOSkillNum == 20)
+        {
+            SuccessLimit = 8;
+            Text_Name.text = "说服" + Target.Name + "加入核心团队";
+            Text_SuccessContent.text = "成功后对方会加入核心团队";
+            Text_Requirement.text = "无额外消耗";
+            Text_Extra.text = "暂时为空";
+            Text_OptionContent.text = "执行，成功率:" + CalcPosb() + "%";
+        }
+        else if (CEOSkillNum == 21)
+        {
+            SuccessLimit = 14;
+            Text_Name.text = "说服" + Target.Name + "离开核心团队";
+            Text_SuccessContent.text = "成功后对方会离开核心团队";
+            Text_Requirement.text = "无额外消耗";
+            Text_Extra.text = "暂时为空";
+            Text_OptionContent.text = "执行，成功率:" + CalcPosb() + "%";
+        }
         Text_ConditionContent.text = "一枚20面骰子，点数>=" + SuccessLimit;
         Text_Name2.text = Text_Name.text;
         SelectPanel.GetComponent<WindowBaseControl>().SetWndState(true);
@@ -237,6 +256,10 @@ public class CEOControl : MonoBehaviour
             else
                 WarningPanel.SetActive(true);
         }
+        else if (CEOSkillNum == 20 || CEOSkillNum == 21)
+        {
+            ActiveSkill();
+        }
     }
     //信仰改变技能确认
     public void ConfirmCRChange()
@@ -322,6 +345,16 @@ public class CEOControl : MonoBehaviour
                 GC.CurrentEmpInfo = Target.InfoDetail;
                 GC.foeControl.ShowSpyPanel();
             }
+            else if (CEOSkillNum == 20)
+            {
+                GC.BSC.CurrentBSInfo.EmpJoin(Target);
+                GC.TotalEmpPanel.SetWndState(false);
+                GC.ResetSelectMode();
+            }
+            else if (CEOSkillNum == 21)
+            {
+                GC.BSC.CurrentBSInfo.EmpLeft();
+            }
             CEO.InfoDetail.AddHistory(Text_Name.text + "成功," + Text_Result.text);
             if (Target != null)
                 Target.InfoDetail.AddHistory("CEO" + Text_Name.text + "成功," + Text_Result.text);
@@ -352,6 +385,13 @@ public class CEOControl : MonoBehaviour
             {
                 GC.Text_EmpSelectTip.text = "选择第一个员工";
                 GC.CurrentEmpInfo2 = null;
+            }
+            else if (CEOSkillNum == 20 || CEOSkillNum == 21)
+            {
+                GC.BSC.CurrentBSInfo = null;
+                Target.CoreMemberTime += 96;
+                GC.TotalEmpPanel.SetWndState(false);
+                GC.ResetSelectMode();
             }
         }
         ResultPanel.GetComponent<WindowBaseControl>().SetWndState(true);
@@ -496,6 +536,16 @@ public class CEOControl : MonoBehaviour
                 }
             }
             value += CalcExtra(2) + CalcExtra(6);
+        }
+        //20核心成员加入说服
+        else if (CEOSkillNum == 20)
+        {
+
+        }
+        //21核心成员离开说服
+        else if (CEOSkillNum == 21)
+        {
+
         }
         return value;
     }
@@ -660,6 +710,11 @@ public class CEOControl : MonoBehaviour
                 GC.TotalEmpPanel.SetWndState(true);
             }
         }
+        else if (num == 21)
+        {
+            CEOSkillNum = num;
+            SetPanelContent(GC.BSC.CurrentBSInfo.emp);
+        }
         else
         {
             CEOSkillNum = num;
@@ -674,6 +729,14 @@ public class CEOControl : MonoBehaviour
                 foreach (Employee e in GC.CurrentEmployees)
                 {
                     if (e.InfoDetail.Entity.OutCompany == true)
+                        e.InfoB.gameObject.SetActive(false);
+                }
+            }
+            else if (num == 20)
+            {
+                foreach (Employee e in GC.CurrentEmployees)
+                {
+                    if (e.isCEO == true || e.CoreMemberTime > 0 || GC.BSC.CoreMembers.Contains(e))
                         e.InfoB.gameObject.SetActive(false);
                 }
             }

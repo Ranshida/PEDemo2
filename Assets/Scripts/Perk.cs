@@ -1921,11 +1921,192 @@ public class Perk127 : Perk
     }
 }
 
+//身体羸弱
+public class Perk128 : Perk
+{
+    public Perk128(Employee Emp) : base(Emp)
+    {
+        Name = "身体羸弱";
+        Description = "强壮-2";
+        TimeLeft = -1;
+        Num = 128;
+        canStack = false;
+    }
+
+    public override void ImmEffect()
+    {
+        TargetEmp.Strength -= 2;
+        if (TargetEmp.Strength < 0)
+            TargetEmp.Strength = 0;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetEmp.Strength += 2;
+
+    }
+}
+
+//狮子之心
+public class Perk129 : Perk
+{
+    public Perk129(Employee Emp) : base(Emp)
+    {
+        Name = "狮子之心";
+        Description = "坚韧+2";
+        TimeLeft = -1;
+        Num = 129;
+        canStack = false;
+    }
+
+    public override void ImmEffect()
+    {
+        TargetEmp.Tenacity -= 2;
+        if (TargetEmp.Tenacity < 0)
+            TargetEmp.Tenacity = 0;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetEmp.Tenacity += 2;
+
+    }
+}
+
+//热爱运动
+public class Perk130 : Perk
+{
+    public Perk130(Employee Emp) : base(Emp)
+    {
+        Name = "热爱运动";
+        Description = "强壮+2";
+        TimeLeft = -1;
+        Num = 130;
+        canStack = false;
+    }
+
+    public override void ImmEffect()
+    {
+        TargetEmp.Strength += 2;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetEmp.Strength -= 2;
+        if (TargetEmp.Strength < 0)
+            TargetEmp.Strength = 0;
+    }
+}
+
+//养尊处优
+public class Perk131 : Perk
+{
+    public Perk131(Employee Emp) : base(Emp)
+    {
+        Name = "养尊处优";
+        Description = "坚韧-2";
+        TimeLeft = -1;
+        Num = 131;
+        canStack = false;
+    }
+
+    public override void ImmEffect()
+    {
+        TargetEmp.Tenacity -= 2;
+        if (TargetEmp.Tenacity < 0)
+            TargetEmp.Tenacity = 0;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetEmp.Tenacity += 2;
+
+    }
+}
+
+//结构化思维
+public class Perk132 : Perk
+{
+    public Perk132(Employee Emp) : base(Emp)
+    {
+        Name = "结构化思维";
+        Description = "决策+1";
+        TimeLeft = -1;
+        Num = 132;
+        canStack = false;
+    }
+
+    public override void ImmEffect()
+    {
+        TargetEmp.Decision -= 2;
+        if (TargetEmp.Decision < 0)
+            TargetEmp.Decision = 0;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetEmp.Decision += 2;
+    }
+}
+
+//孤僻
+public class Perk133 : Perk
+{
+    public Perk133(Employee Emp) : base(Emp)
+    {
+        Name = "孤僻";
+        Description = "管理-1，第一份工作技能等级+1";
+        TimeLeft = -1;
+        Num = 133;
+        canStack = false;
+    }
+
+    public override void ImmEffect()
+    {
+        TargetEmp.Manage -= 2;
+        if (TargetEmp.Manage < 0)
+            TargetEmp.Manage = 0;
+        TargetEmp.BaseAttributes[TargetEmp.Professions[0] - 1] += 1;
+        if (TargetEmp.BaseAttributes[TargetEmp.Professions[0] - 1] > Employee.AttributeLimit)
+            TargetEmp.BaseAttributes[TargetEmp.Professions[0] - 1] = Employee.AttributeLimit;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetEmp.Manage += 2;
+        TargetEmp.BaseAttributes[TargetEmp.Professions[0] - 1] -= 1;
+        if (TargetEmp.BaseAttributes[TargetEmp.Professions[0] - 1] < 0)
+            TargetEmp.BaseAttributes[TargetEmp.Professions[0] - 1] = 0;
+    }
+}
+
+//瓶颈
+public class Perk142 : Perk
+{
+    public Perk142(Employee Emp) : base(Emp)
+    {
+        Name = "瓶颈";
+        Description = "每拥有1层“瓶颈”特质，升级时所需经验增加800点";
+        TimeLeft = -1;
+        Num = 142;
+        canStack = true;
+    }
+
+    public override void ImmEffect()
+    {
+        TargetEmp.ExtraExp += AdjustData.BottleneckValue;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetEmp.ExtraExp -= AdjustData.BottleneckValue;
+    }
+}
+
 public static class PerkData
 {
     public static List<Perk> PerkList = new List<Perk>()
     {
-        new Perk42(null), new Perk43(null), new Perk82(null), new Perk83(null), new Perk84(null), new Perk85(null), new Perk86(null),
-        new Perk87(null), new Perk88(null), new Perk89(null), new Perk90(null), new Perk91(null), new Perk92(null)
+        new Perk128(null), new Perk129(null), new Perk130(null), new Perk131(null), new Perk132(null), new Perk133(null)
     };
 }

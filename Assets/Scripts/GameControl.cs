@@ -98,6 +98,7 @@ public class GameControl : MonoBehaviour
         Text_Morale, Text_DepMode1, Text_DepMode2, Text_DepSkillDescribe, Text_WarTime, Text_MobTime;
     public Toggle WorkOvertimeToggle;
     public SkillControl SC;
+    public BrainStormControl BSC;
     [HideInInspector] public UnityEvent DailyEvent, WeeklyEvent, MonthlyEvent, HourEvent, YearEvent;
 
     public Button[] TimeButtons = new Button[5];
@@ -195,6 +196,8 @@ public class GameControl : MonoBehaviour
                     //SC.FinishSign.SetActive(false);
                     //SC.SkillSetButton.interactable = false;
                     //AskPause(SC);
+                    BSC.GetComponent<WindowBaseControl>().SetWndState(true);
+                    BSC.PrepareBS();
                     MobTime = 192;
                 }
                 Text_MobTime.text = "距离下次头脑风暴还剩" + (MobTime / 8) + "周";

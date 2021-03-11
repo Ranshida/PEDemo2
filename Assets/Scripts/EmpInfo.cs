@@ -9,22 +9,23 @@ public class EmpInfo : MonoBehaviour
 
     public Employee emp;
     public GameControl GC;
-    public GameObject MobDownSign;
+    public GameObject MobDownSign, SkillPointSelector;
     public Button HireButton, MoveButton, FireButton;
-    public Text Text_Name, Text_Mentality, Text_Stamina, Text_Skill1, Text_Skill2, Text_Skill3,  Text_Ability, Text_Age;
-    public Text Text_DepName, Text_Observation, Text_Tenacity, Text_Strength, Text_Manage, Text_HR, Text_Finance, Text_Decision,
-        Text_Forecast, Text_Strategy, Text_Convince, Text_Charm, Text_Gossip, Text_SName1, Text_SName2, Text_SName3, Text_Emotion, Text_RTarget;
-    public Text[] Text_Stars = new Text[5], Text_Exps = new Text[5];
-    public Scrollbar[] Scrollbar_Character = new Scrollbar[5];
+    public Text Text_Name, Text_Mentality, Text_Stamina, Text_Skill1, Text_Ability, Text_Age, Text_School, Text_Major;
+    public Text Text_DepName, Text_Tenacity, Text_Strength, Text_Manage, Text_Decision, Text_Emotion, Text_RTarget;
     public EmpInfo DetailInfo;
     public EmotionInfo EmotionInfoPrefab;
-    public Transform PerkContent, SkillContent, StrategyContent, RelationContent, HistoryContent, EmotionContent;
+    public Transform PerkContent, SkillContent, StrategyContent, RelationContent, HistoryContent, EmotionContent, MarkerContent;
     public StrategyInfo CurrentStrategy;
 
+    public GameObject[] LevelUpButtons = new GameObject[4];
+    public Text[] Text_Stars = new Text[5], Text_Exps = new Text[5], Text_SkillNames = new Text[3], Text_SkillValues = new Text[3];
+    public Scrollbar[] Scrollbar_Character = new Scrollbar[5];
     public List<PerkInfo> PerksInfo = new List<PerkInfo>();
     public List<SkillInfo> SkillsInfo = new List<SkillInfo>();
     public List<StrategyInfo> StrategiesInfo = new List<StrategyInfo>();
     public List<EmotionInfo> EmotionInfos = new List<EmotionInfo>();
+    public List<BSSkillMarker> SkillMarkers = new List<BSSkillMarker>();
 
     public int InfoType;
 
@@ -45,8 +46,8 @@ public class EmpInfo : MonoBehaviour
                     Text_Mentality.text += "/" + emp.Confidence;
                 }
 
-                Text_Skill1.text = "职业技能: " + emp.Skill1 + " / " + emp.Skill2 + 
-                    " / " + emp.Skill3;
+                Text_Skill1.text = "职业技能: " + emp.BaseAttributes[emp.Professions[0] - 1] + " / " + emp.BaseAttributes[emp.Professions[1] - 1] + 
+                    " / " + emp.BaseAttributes[emp.Professions[2] - 1];
                 Text_Manage.text = "管理能力:" + emp.Manage;
                 if (emp.CurrentDep != null)
                     Text_DepName.text = emp.CurrentDep.Text_DepName.text;
@@ -62,29 +63,77 @@ public class EmpInfo : MonoBehaviour
                         MobDownSign.SetActive(false);
                 }
             }
+            //头脑风暴面板
+            else if (InfoType == 3)
+            {
+
+            }
             //雇佣和详细面板通用部分
             else
             {
-                Text_Age.text = emp.Age + "岁";
-                Text_Skill1.text = emp.Skill1.ToString();
-                Text_Skill2.text = emp.Skill2.ToString();
-                Text_Skill3.text = emp.Skill3.ToString();
-                Text_Observation.text = emp.Observation.ToString();
+                Text_Age.text = emp.Age + "岁";                
                 Text_Tenacity.text = emp.Tenacity.ToString();
                 Text_Strength.text = emp.Strength.ToString();
                 Text_Manage.text = emp.Manage.ToString();
-                Text_HR.text = emp.HR.ToString(); 
-                Text_Finance.text = emp.Finance.ToString();
                 Text_Decision.text = emp.Decision.ToString();
-                Text_Forecast.text = emp.Forecast.ToString();
-                Text_Strategy.text = emp.Strategy.ToString();
-                Text_Convince.text = emp.Convince.ToString();
-                Text_Charm.text = emp.Charm.ToString();
-                Text_Gossip.text = emp.Gossip.ToString();
-                UpdateCharacterUI();
-                for(int i = 0; i < 5; i++)
+
+                for(int i = 0; i < 3; i++)
                 {
-                    Text_Stars[i].text = "天赋 " + "0/" + emp.StarLimit[i];
+                    if (emp.Professions[i] == 1)
+                    {
+                        Text_SkillNames[i].text = "技术技能";
+                        Text_SkillValues[i].text = emp.Tech.ToString();
+                    }
+                    else if (emp.Professions[i] == 2)
+                    { 
+                        Text_SkillNames[i].text = "市场技能";
+                        Text_SkillValues[i].text = emp.Market.ToString();
+                    }
+                    else if (emp.Professions[i] == 3)
+                    { 
+                        Text_SkillNames[i].text = "产品技能";
+                        Text_SkillValues[i].text = emp.Product.ToString();
+                    }
+                    else if (emp.Professions[i] == 8)
+                    { 
+                        Text_SkillNames[i].text = "人力技能";
+                        Text_SkillValues[i].text = emp.HR.ToString();
+                    }
+                    else if (emp.Professions[i] == 9)
+                    { 
+                        Text_SkillNames[i].text = "财务技能";
+                        Text_SkillValues[i].text = emp.Finance.ToString();
+                    }
+                    else if (emp.Professions[i] == 11)
+                    { 
+                        Text_SkillNames[i].text = "行业技能";
+                        Text_SkillValues[i].text = emp.Forecast.ToString();
+                    }
+                    else if (emp.Professions[i] == 12)
+                    { 
+                        Text_SkillNames[i].text = "谋略技能";
+                        Text_SkillValues[i].text = emp.Strategy.ToString();
+                    }
+                    else if (emp.Professions[i] == 13)
+                    { 
+                        Text_SkillNames[i].text = "说服技能";
+                        Text_SkillValues[i].text = emp.Convince.ToString();
+                    }
+                    else if (emp.Professions[i] == 15)
+                    { 
+                        Text_SkillNames[i].text = "八卦技能";
+                        Text_SkillValues[i].text = emp.Gossip.ToString();
+                    }
+                    else if (emp.Professions[i] == 16)
+                    { 
+                        Text_SkillNames[i].text = "行政技能";
+                        Text_SkillValues[i].text = emp.Admin.ToString();
+                    }
+                }
+                UpdateCharacterUI();
+                for(int i = 0; i < 3; i++)
+                {
+                    Text_Stars[i].text = emp.StarLimit[i].ToString();
                 }
             }
             //详细面板
@@ -98,16 +147,16 @@ public class EmpInfo : MonoBehaviour
                     Text_DepName.text = "所属部门:" + emp.CurrentOffice.Text_OfficeName.text;
                 else
                     Text_DepName.text = "所属部门:无";
-                for (int i = 0; i < 15; i++)
+                for (int i = 0; i < 3; i++)
                 {
                     int Exp = 0, SkillLevel = 0;
                     #region 设定等级
                     if (i == 0)
-                        SkillLevel = emp.Skill1;
+                        SkillLevel = emp.Tech;
                     else if (i == 1)
-                        SkillLevel = emp.Skill2;
+                        SkillLevel = emp.Market;
                     else if (i == 2)
-                        SkillLevel = emp.Skill3;
+                        SkillLevel = emp.Product;
                     else if (i == 3)
                         SkillLevel = emp.Observation;
                     else if (i == 4)
@@ -133,17 +182,8 @@ public class EmpInfo : MonoBehaviour
                     else if (i == 14)
                         SkillLevel = emp.Gossip;
                     #endregion
-                    //旧的经验值显示
-                    //if (SkillLevel < 10)
-                    //    Exp = 50 + 50 * (SkillLevel - 0);
-                    //else if (SkillLevel < 15)
-                    //    Exp = 500 + 100 * (SkillLevel - 10);                    
-                    //else if (SkillLevel < 20)
-                    //    Exp = 1000 + 200 * (SkillLevel - 15);
-                    //else
-                    //    Exp = 2000 + 300 * (SkillLevel - 20);
                     Exp = SkillLevel * 50;
-                    Text_Exps[i].text = "Exp " + emp.SkillExp[i] + "/" + Exp;
+                    Text_Exps[i].text = "Exp " + emp.SkillExp[emp.Professions[i] - 1] + "/" + Exp;
                 }
             }
         }
@@ -158,6 +198,59 @@ public class EmpInfo : MonoBehaviour
         HireButton.interactable = true;
         SetSkillName();
         InitStrategy();
+
+        //根据学校和专业设定特效
+        if(emp.SchoolType == 1)
+        {
+            Text_School.text = "名牌大学";
+            Text_School.GetComponent<InfoPanelTrigger>().ContentB = "第一份工作技能等级+1";
+        }
+        else if(emp.SchoolType == 2)
+        {
+            Text_School.text = "普通院校";
+            Text_School.GetComponent<InfoPanelTrigger>().ContentB = "无特效";
+        }
+        else if (emp.SchoolType == 3)
+        {
+            Text_School.text = "普通院校";
+            Text_School.GetComponent<InfoPanelTrigger>().ContentB = "第一份工作技能等级-1，坚韧+2";
+        }
+
+        int[] Nst = { 1, 2, 3, 8, 9, 11, 12, 13, 15, 16 };//Nst:几个专业技能对应的编号
+        int major = Random.Range(0, 10);
+        major = Nst[major];
+
+        for(int i = 0; i < 3; i++)
+        {
+            if(major == emp.Professions[i])
+            {
+                Text_Major.GetComponent<InfoPanelTrigger>().ContentB = "大学所选专业与工作内容相匹配，对应技能等级+2";
+                break;
+            }
+            if(i == 2)
+                Text_Major.GetComponent<InfoPanelTrigger>().ContentB = "无额外效果";
+        }
+        if (major == 1)
+            Text_Major.text = "技术专业";
+        else if (major == 2)
+            Text_Major.text = "市场专业";
+        else if (major == 3)
+            Text_Major.text = "产品专业";
+        else if (major == 8)
+            Text_Major.text = "人力专业";
+        else if (major == 9)
+            Text_Major.text = "财务专业";
+        else if (major == 11)
+            Text_Major.text = "行业专业";
+        else if (major == 12)
+            Text_Major.text = "谋略专业";
+        else if (major == 13)
+            Text_Major.text = "说服专业";
+        else if (major == 15)
+            Text_Major.text = "八卦专业";
+        else if (major == 16)
+            Text_Major.text = "行政专业";
+
     }
 
     //初始化头脑风暴技能和战略
@@ -201,6 +294,17 @@ public class EmpInfo : MonoBehaviour
         //会议未通过不能开除
         if (NeedVote == true && GC.EC.ManagerVoteCheck(emp, true, true) == false)
             return;
+
+        //如果是核心成员则离开核心团队
+        foreach(EmpBSInfo info in GC.BSC.EmpSelectInfos)
+        {
+            if(info.emp == emp)
+            {
+                info.EmpLeft();
+                break;
+            }
+        }
+
         foreach (PerkInfo perk in emp.InfoDetail.PerksInfo)
         {
             perk.CurrentPerk.RemoveAllListeners();
@@ -208,7 +312,9 @@ public class EmpInfo : MonoBehaviour
 
         GC.CC.CEO.InfoDetail.AddHistory("解雇了" + emp.Name);
 
+        //这个函数调用要删
         ClearSkillPreset();
+
         GC.ResetOldAssignment(emp);
         emp.ClearRelations();//清空所有关系
         GC.HourEvent.RemoveListener(emp.TimePass);
@@ -227,7 +333,10 @@ public class EmpInfo : MonoBehaviour
         if (GC.SelectMode == 4)
         {
             GC.CurrentEmpInfo = DetailInfo;
-            GC.SC.ConfirmPanel.SetActive(true);
+            //GC.SC.ConfirmPanel.SetActive(true);
+            GC.BSC.UseSkillOnSelectedEmp(emp);
+            GC.TotalEmpPanel.SetWndState(false);
+            GC.ResetSelectMode();
         }
         //发动建筑技能
         else if(GC.SelectMode == 5)
@@ -320,6 +429,47 @@ public class EmpInfo : MonoBehaviour
         }
         this.GetComponent<WindowBaseControl>().SetWndState(true);
         AdjustSize();
+        SkillPointCheck();
+        CheckMarker();
+    }
+
+    public void UseSkillPoint(int type)
+    {
+        if (type == 1)
+        {
+            emp.Tenacity += 1;
+            if (emp.Tenacity == 10)
+                LevelUpButtons[0].SetActive(false);
+        }
+        else if (type == 2)
+        {
+            emp.Strength += 1;
+            if (emp.Strength == 10)
+                LevelUpButtons[1].SetActive(false);
+        }
+        else if (type == 3)
+        {
+            emp.Manage += 1;
+            if (emp.Manage == 5)
+                LevelUpButtons[2].SetActive(false);
+        }
+        else if (type == 4)
+        {
+            emp.Decision += 1;
+            if (emp.Decision == 5)
+                LevelUpButtons[3].SetActive(false);
+        }
+        emp.SkillPoint -= 1;
+        SkillPointCheck();
+    }
+
+    public void SkillPointCheck()
+    {
+        if (emp.SkillPoint > 0)
+            SkillPointSelector.SetActive(true);
+        else
+            SkillPointSelector.SetActive(false);
+        SkillPointSelector.GetComponent<Text>().text = "剩余技能点" + emp.SkillPoint;
     }
 
     public void SetSkillName()
@@ -417,19 +567,27 @@ public class EmpInfo : MonoBehaviour
     }
     void AddRandomPerk()
     {
-        int numA, numB;
-        numA = Random.Range(0, PerkData.PerkList.Count);
-        numB = Random.Range(0, PerkData.PerkList.Count);
+        float Posb = Random.Range(0.0f, 1.0f);
+        //20%几率没特质
+        if (Posb < 0.2f)
+            return;
+
+        int numA = Random.Range(0, PerkData.PerkList.Count);      
+        Perk perk1 = PerkData.PerkList[numA].Clone();
+        perk1.TargetEmp = emp;
+        AddPerk(perk1, true);
+
+        //60%几率只有一个特质
+        if (Posb < 0.8f)
+            return;
+
+        int numB = Random.Range(0, PerkData.PerkList.Count); ;
         while (numB == numA)
         {
             numB = Random.Range(0, PerkData.PerkList.Count);
         }
-        Perk perk1 = PerkData.PerkList[numA].Clone();
         Perk perk2 = PerkData.PerkList[numB].Clone();
-        perk1.TargetEmp = emp;
         perk2.TargetEmp = emp;
-
-        AddPerk(perk1, true);
         AddPerk(perk2, true);
     }
 
@@ -649,6 +807,51 @@ public class EmpInfo : MonoBehaviour
         //    Destroy(CurrentStrategy.gameObject);
         //    CurrentStrategy = null;
         //}
+    }
+
+    public void CheckMarker()
+    {
+        for (int i = 0; i < SkillMarkers.Count; i++)
+        {
+            Destroy(SkillMarkers[i].gameObject);
+        }
+        SkillMarkers.Clear();
+        foreach (int num in emp.Professions)
+        {
+            //技能为0则不继续算
+            if (emp.BaseAttributes[num - 1] == 0)
+                continue;
+
+            int type = 0;
+            if (num == 8)
+                type = 0;
+            else if (num == 9)
+                type = 1;
+            else if (num == 16)
+                type = 2;
+            else if (num == 1 || num == 3 || num == 11)
+                type = 3;
+            else if (num == 2 || num == 13)
+                type = 4;
+            else if (num == 12 || num == 15)
+                type = 5;
+
+            if (emp.BaseAttributes[num - 1] > 3)
+            {
+                for (int i = 0; i < emp.BaseAttributes[num - 1] / 3; i++)
+                {
+                    BSSkillMarker m = Instantiate(GC.BSC.MarkerPrefab, MarkerContent).GetComponent<BSSkillMarker>();
+                    m.SetInfo(type, 3);
+                    SkillMarkers.Add(m);
+                }
+            }
+            if (emp.BaseAttributes[num - 1] % 3 > 0)
+            {
+                BSSkillMarker m = Instantiate(GC.BSC.MarkerPrefab, MarkerContent).GetComponent<BSSkillMarker>();
+                m.SetInfo(type, emp.BaseAttributes[num - 1] % 3);
+                SkillMarkers.Add(m);
+            }
+        }
     }
 
 }

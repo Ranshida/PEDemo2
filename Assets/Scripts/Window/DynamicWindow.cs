@@ -8,6 +8,7 @@ using UnityEngine.UI;
 /// </summary>
 public class DynamicWindow : WindowRoot
 {
+    [SerializeField]static public int shit = 0;
     public static DynamicWindow Instance { get; private set; }
     private GameObject dialoguePrefab;
 

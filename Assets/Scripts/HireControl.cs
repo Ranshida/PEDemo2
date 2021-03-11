@@ -33,31 +33,74 @@ public class HireControl : MonoBehaviour
                     HireInfos[i].emp.BaseAttributes[j] = Random.Range(0, 4);
                 }
 
-                //下面两个StarType是为了临时设定技能树
+                //设定初始获得的两个员工的属性
                 if (i == 0)
                 {
-                    HireInfos[i].emp.StarType = 2;
-                    HireInfos[i].emp.InitStar(2);
                     HireInfos[i].emp.Character[0] = 0;
                     HireInfos[i].emp.Character[1] = 0;
                     HireInfos[i].emp.ChangeCharacter(0, 0);
-                    HireInfos[i].emp.Skill1 = 4;
+                    HireInfos[i].emp.Tech = 4;
+                    HireInfos[i].emp.Professions[0] = 1;
                 }
                 else if (i == 1)
                 {
-                    HireInfos[i].emp.StarType = 6;
-                    HireInfos[i].emp.InitStar(6);
                     HireInfos[i].emp.Character[0] = GC.CurrentEmployees[0].Character[0];
                     HireInfos[i].emp.Character[1] = GC.CurrentEmployees[0].Character[1];
                     HireInfos[i].emp.ChangeCharacter(0, 0);
                     HireInfos[i].emp.HR = 4;
-                    HireInfos[i].emp.Manage = 6;
+                    HireInfos[i].emp.Professions[0] = 8;
                 }
+
+                //再次随机剩下的两个专业技能类型并设为0级
+                int[] Nst = { 1, 2, 3, 8, 9, 11, 12, 13, 15, 16 };//Nst:几个专业技能对应的编号
+                int r1 = HireInfos[i].emp.Professions[0], r2 = Random.Range(0, 10), r3 = Random.Range(0, 10);
+                while (r1 == r2)
+                {
+                    r2 = Random.Range(0, 10);
+                }
+                while (r3 == r2 || r3 == r1)
+                    r3 = Random.Range(0, 10);
+
+                r2 = Nst[r2];
+                r3 = Nst[r3];
+                HireInfos[i].emp.Professions[1] = r2;
+                HireInfos[i].emp.Professions[2] = r3;
+                HireInfos[i].emp.SetAttributes(r2, 0);
+                HireInfos[i].emp.SetAttributes(r3, 0);
+
+                //重新随机天赋
+                for (int j = 0; j < 3; j++)
+                {
+                    int type = 0;
+                    if (j == 0)
+                        type = r1;
+                    else if (j == 1)
+                        type = r2;
+                    else
+                        type = r3;
+                    float Posb = Random.Range(0.0f, 1.0f);
+                    if (Posb < 0.4f)
+                        HireInfos[j].emp.StarLimit[type - 1] = 0;
+                    else if (Posb < 0.7f)
+                        HireInfos[j].emp.StarLimit[type - 1] = 1;
+                    else if (Posb < 0.9f)
+                        HireInfos[j].emp.StarLimit[type - 1] = 2;
+                    else
+                        HireInfos[j].emp.StarLimit[type - 1] = 3;
+                }
+
+                //随机分配技能点
+                HireInfos[i].emp.SkillPoint = 7;
+                HireInfos[i].emp.RandomSkillAssign();
+
+                //设定一些固定属性
+                HireInfos[i].emp.Age = 24;
+                HireInfos[i].emp.SchoolType = 2;
+                HireInfos[i].emp.MajorType = Random.Range(0, 10);
+                HireInfos[i].emp.MajorType = Nst[HireInfos[i].emp.MajorType];
+
                 GC.CurrentEmpInfo = HireInfos[i];
                 SetInfoPanel();
-                //Skill NewSkill = new Skill32();
-                //NewSkill.TargetEmp = GC.CurrentEmpInfo.emp;
-                //GC.CurrentEmpInfo.emp.InfoDetail.AddSkill(NewSkill);
                 GC.CurrentEmpInfo.emp.InfoA.transform.parent = GC.StandbyContent;
                 if (i == 0)
                 {
@@ -157,6 +200,9 @@ public class HireControl : MonoBehaviour
         }
         GC.CurrentEmpInfo.PerksInfo.Clear();
 
+        //检查是否存在瓶颈
+        ED.emp.BottleNeckCheck();
+
         //删除展示用能力
         for (int i = 0; i < GC.CurrentEmpInfo.SkillsInfo.Count; i++)
         {
@@ -202,8 +248,6 @@ public class HireControl : MonoBehaviour
         EI1.transform.parent = GC.StandbyContent;
         emp.InitRelation();
         //创建特质和技能
-        emp.StarType = 13;//临时设定CEO技能树
-        emp.InitStar(13);
         ED.InitStrategy();
 
         //创建员工实体
@@ -216,6 +260,9 @@ public class HireControl : MonoBehaviour
         GC.CurrentOffices[0].CurrentManager = emp;
         GC.CurrentOffices[0].SetOfficeStatus();
         GC.HourEvent.AddListener(emp.TimePass);
+
+        //将CEO添加到核心团队
+        GC.BSC.CEOInfo.EmpJoin(emp);
     }
 
     //招聘后隐藏其它选项
