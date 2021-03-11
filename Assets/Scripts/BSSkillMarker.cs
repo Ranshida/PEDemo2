@@ -10,7 +10,6 @@ public class BSSkillMarker : MonoBehaviour
 
     public void SetInfo(int type, int num)
     {
-        print(type);
         for(int i = 0; i < 6; i++)
         {
             if (i == type)

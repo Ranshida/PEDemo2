@@ -472,13 +472,10 @@ public class Employee
     public void InitCEOStatus()
     {
         isCEO = true;
-        Convince = 4;
         Age = 24;
         Name = "X";
         Tenacity = 3;
         Strength = 3;
-        Manage = 0;
-        Decision = 0;
         SkillPoint = 7;
 
         //确定倾向
@@ -498,17 +495,21 @@ public class Employee
 
         //再次随机剩下的两个专业技能类型并设为0级
         int[] Nst = { 1, 2, 3, 8, 9, 11, 12, 13, 15, 16 };//Nst:几个专业技能对应的编号
-        Professions[0] = 13;
+        Professions[0] = AdjustData.CEOProfessionType;
+        SetAttributes(Professions[0], AdjustData.CEOProfessionValue);
         int r1 = Professions[0], r2 = Random.Range(0, 10), r3 = Random.Range(0, 10);
+        r2 = Nst[r2];
+        r3 = Nst[r3];
         while (r1 == r2)
         {
             r2 = Random.Range(0, 10);
+            r2 = Nst[r2];
         }
         while (r3 == r2 || r3 == r1)
+        {
             r3 = Random.Range(0, 10);
-
-        r2 = Nst[r2];
-        r3 = Nst[r3];
+            r3 = Nst[r3];
+        }
         Professions[1] = r2;
         Professions[2] = r3;
         SetAttributes(r2, 0);

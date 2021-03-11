@@ -31,7 +31,6 @@ public class InfoPanelTrigger : MonoBehaviour
 
     void SetEvent()
     {
-        print("Set");
         button = this.GetComponent<Button>();
         if (button != null)
             button.onClick.AddListener(PointerExit);

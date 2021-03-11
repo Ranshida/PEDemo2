@@ -28,10 +28,6 @@ public class HireControl : MonoBehaviour
         {
             if (i < 2)
             {
-                for(int j = 0; j <15; j++)
-                {
-                    HireInfos[i].emp.BaseAttributes[j] = Random.Range(0, 4);
-                }
 
                 //设定初始获得的两个员工的属性
                 if (i == 0)
@@ -39,30 +35,33 @@ public class HireControl : MonoBehaviour
                     HireInfos[i].emp.Character[0] = 0;
                     HireInfos[i].emp.Character[1] = 0;
                     HireInfos[i].emp.ChangeCharacter(0, 0);
-                    HireInfos[i].emp.Tech = 4;
-                    HireInfos[i].emp.Professions[0] = 1;
+                    HireInfos[i].emp.Professions[0] = AdjustData.EmpAProfessionType;
+                    HireInfos[i].emp.SetAttributes(HireInfos[i].emp.Professions[0], AdjustData.EmpAProfessionValue);
                 }
                 else if (i == 1)
                 {
                     HireInfos[i].emp.Character[0] = GC.CurrentEmployees[0].Character[0];
                     HireInfos[i].emp.Character[1] = GC.CurrentEmployees[0].Character[1];
                     HireInfos[i].emp.ChangeCharacter(0, 0);
-                    HireInfos[i].emp.HR = 4;
-                    HireInfos[i].emp.Professions[0] = 8;
+                    HireInfos[i].emp.Professions[0] = AdjustData.EmpBProfessionType;
+                    HireInfos[i].emp.SetAttributes(HireInfos[i].emp.Professions[0], AdjustData.EmpBProfessionValue);
                 }
 
                 //再次随机剩下的两个专业技能类型并设为0级
                 int[] Nst = { 1, 2, 3, 8, 9, 11, 12, 13, 15, 16 };//Nst:几个专业技能对应的编号
                 int r1 = HireInfos[i].emp.Professions[0], r2 = Random.Range(0, 10), r3 = Random.Range(0, 10);
+                r2 = Nst[r2];
+                r3 = Nst[r3];
                 while (r1 == r2)
                 {
                     r2 = Random.Range(0, 10);
+                    r2 = Nst[r2];
                 }
                 while (r3 == r2 || r3 == r1)
+                {
                     r3 = Random.Range(0, 10);
-
-                r2 = Nst[r2];
-                r3 = Nst[r3];
+                    r3 = Nst[r3];
+                }
                 HireInfos[i].emp.Professions[1] = r2;
                 HireInfos[i].emp.Professions[2] = r3;
                 HireInfos[i].emp.SetAttributes(r2, 0);
