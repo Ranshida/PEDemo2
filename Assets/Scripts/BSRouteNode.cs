@@ -8,6 +8,7 @@ public class BSRouteNode : MonoBehaviour
     public bool isEnd = false;  //是否为会议结束节点
     public bool isElite = false;//是否为精英节点
     public int NodeType = 1;//0无功能节点 1工作状态（成功率？）  2预算（支出）  3信念  4效率  5休息
+    public int NodeLevel = 1;
 
     public Text Text_Name;
     public GameObject EliteMarker;
@@ -36,15 +37,19 @@ public class BSRouteNode : MonoBehaviour
         }
     }
 
+    //选择一个节点
     public void SelectNode()
     {
-        if (isEnd == true)
-        {
-            BSC.EndBS();
-            return;
-        }
+        BSC.CurrentNode = this;
+        BSC.ShowRouteNotice();
+    }
+
+    //确认选择该节点
+    public void ConfirmNode()
+    {
+        BSC.StageCount += 1;
         //先设定按钮状态
-        foreach(BSRouteNode node in NextNodes)
+        foreach (BSRouteNode node in NextNodes)
         {
             node.SelectButton.interactable = true;
         }
@@ -56,7 +61,6 @@ public class BSRouteNode : MonoBehaviour
             }
         }
         SelectButton.interactable = false;
-        BSC.CurrentNode = this;
 
         //休息的效果
         if (NodeType == 5)
@@ -68,7 +72,7 @@ public class BSRouteNode : MonoBehaviour
         }
 
         if (isElite == false)
-            BSC.SetBossLevel(Random.Range(1, 3));
+            BSC.SetBossLevel(NodeLevel);
         else
             BSC.SetBossLevel(3);
     }
@@ -82,27 +86,31 @@ public class BSRouteNode : MonoBehaviour
     void SetNodeName()
     {
         InfoPanelTrigger info = this.GetComponent<InfoPanelTrigger>();
+        if (isElite == true)
+            NodeLevel = 3;
+        else
+            NodeLevel = Random.Range(1, 3);
         if (NodeType == 1)
         {
-            Text_Name.text = "成功率";
+            Text_Name.text = NodeLevel + "级成功率";
             info.ContentB = "胜利后获得物品《胜利开发者的全新计划》，使用后可施加“胜利开发”的部门状态，" +
                 "持续到下一次头脑风暴，并提升其工作状态1点，可叠加";
         }
         else if (NodeType == 2)
         {
-            Text_Name.text = "支出";
+            Text_Name.text = NodeLevel + "级支出";
             info.ContentB = "胜利后获得物品《预算新编》，使用后可施加“节省支出”的部门状态，" +
                 "持续到下一次头脑风暴，并降低人员工资10%，可叠加";
         }
         else if (NodeType == 3)
         {
-            Text_Name.text = "信念";
+            Text_Name.text = NodeLevel + "级信念";
             info.ContentB = "胜利后获得物品《致全体同事的一封信》，使用后施加“信仰充值”的部门状态，" +
                 "持续到下一次头脑风暴，并提升信念5点，可叠加";
         }
         else if (NodeType == 4)
         {
-            Text_Name.text = "效率";
+            Text_Name.text = NodeLevel + "级效率";
             info.ContentB = "胜利后获得物品《加班技术大全》，使用后施加“效率至上”的部门状态，" +
                 "持续到下一次头脑风暴，并提升效率5%，可叠加";
         }

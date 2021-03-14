@@ -440,33 +440,47 @@ public class EmpInfo : MonoBehaviour
             emp.Tenacity += 1;
             if (emp.Tenacity == 10)
                 LevelUpButtons[0].SetActive(false);
+            emp.SkillPoint -= 1;
         }
         else if (type == 2)
         {
             emp.Strength += 1;
             if (emp.Strength == 10)
                 LevelUpButtons[1].SetActive(false);
+            emp.SkillPoint -= 1;
         }
         else if (type == 3)
         {
             emp.Manage += 1;
             if (emp.Manage == 5)
                 LevelUpButtons[2].SetActive(false);
+            emp.SkillPoint -= emp.Manage;
         }
         else if (type == 4)
         {
             emp.Decision += 1;
             if (emp.Decision == 5)
                 LevelUpButtons[3].SetActive(false);
+            emp.SkillPoint -= emp.Decision;
         }
-        emp.SkillPoint -= 1;
         SkillPointCheck();
     }
 
     public void SkillPointCheck()
     {
         if (emp.SkillPoint > 0)
+        {
             SkillPointSelector.SetActive(true);
+            if (emp.SkillPoint > emp.Manage)
+                LevelUpButtons[2].SetActive(true);
+            else
+                LevelUpButtons[2].SetActive(false);
+
+            if (emp.SkillPoint > emp.Decision)
+                LevelUpButtons[3].SetActive(true);
+            else
+                LevelUpButtons[3].SetActive(false);
+        }
         else
             SkillPointSelector.SetActive(false);
         SkillPointSelector.GetComponent<Text>().text = "剩余技能点" + emp.SkillPoint;

@@ -133,18 +133,19 @@ public class CEOControl : MonoBehaviour
         {
             SuccessLimit = 8;
             Text_Name.text = "说服" + Target.Name + "加入核心团队";
-            Text_SuccessContent.text = "成功后对方会加入核心团队";
+            Text_SuccessContent.text = "对方加入核心团队";
             Text_Requirement.text = "无额外消耗";
-            Text_Extra.text = "暂时为空";
+            Text_Extra.text = AddText(5);
             Text_OptionContent.text = "执行，成功率:" + CalcPosb() + "%";
         }
+        //离开核心团队说服
         else if (CEOSkillNum == 21)
         {
             SuccessLimit = 14;
             Text_Name.text = "说服" + Target.Name + "离开核心团队";
-            Text_SuccessContent.text = "成功后对方会离开核心团队";
+            Text_SuccessContent.text = "对方离开核心团队";
             Text_Requirement.text = "无额外消耗";
-            Text_Extra.text = "暂时为空";
+            Text_Extra.text = AddText(7);
             Text_OptionContent.text = "执行，成功率:" + CalcPosb() + "%";
         }
         Text_ConditionContent.text = "一枚20面骰子，点数>=" + SuccessLimit;
@@ -540,12 +541,12 @@ public class CEOControl : MonoBehaviour
         //20核心成员加入说服
         else if (CEOSkillNum == 20)
         {
-
+            value += CalcExtra(5);
         }
         //21核心成员离开说服
         else if (CEOSkillNum == 21)
         {
-
+            value += CalcExtra(7);
         }
         return value;
     }
@@ -567,6 +568,9 @@ public class CEOControl : MonoBehaviour
                        "1个愤怒（红色）情绪 -2 \n1个沮丧（紫色）情绪 -2 \n1个反感（浅红）情绪 -1 \n1个委屈（浅紫）情绪 -1\n";
         else if (type == 6)
             content += "士气>80时 +2 \n士气 > 60时 +1 \n士气 < 40时 -1 \n士气 < 20时 -2\n";
+        else if (type == 7)
+            content += "对方身上具有: \n1个好奇（黄色）情绪 -2 \n1个沉思（绿色）情绪 -2 \n1个愉悦（浅黄）情绪 -1 \n1个敬畏（浅绿）情绪 -1 \n" +
+                       "1个愤怒（红色）情绪 +2 \n1个沮丧（紫色）情绪 +2 \n1个反感（浅红）情绪 +1 \n1个委屈（浅紫）情绪+1\n";
 
         return content;
     }
@@ -658,6 +662,20 @@ public class CEOControl : MonoBehaviour
                 value -= 1;
             else if (GC.Morale < 20)
                 value -= 2;
+        }
+        else if (type == 7)
+        {
+            foreach (Emotion e in Target.CurrentEmotions)
+            {
+                if (e.color == EColor.Yellow || e.color == EColor.Green)
+                    value -= (e.Level * 2);
+                else if (e.color == EColor.LYellow || e.color == EColor.LGreen)
+                    value -= e.Level;
+                else if (e.color == EColor.LRed || e.color == EColor.LPurple)
+                    value += e.Level;
+                else if (e.color == EColor.Red || e.color == EColor.Purple)
+                    value += (e.Level * 2);
+            }
         }
         return value;
     }

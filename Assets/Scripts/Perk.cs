@@ -1961,14 +1961,14 @@ public class Perk129 : Perk
 
     public override void ImmEffect()
     {
-        TargetEmp.Tenacity -= 2;
+        TargetEmp.Tenacity += 2;
         if (TargetEmp.Tenacity < 0)
             TargetEmp.Tenacity = 0;
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetEmp.Tenacity += 2;
+        TargetEmp.Tenacity -= 2;
 
     }
 }
@@ -2038,14 +2038,14 @@ public class Perk132 : Perk
 
     public override void ImmEffect()
     {
-        TargetEmp.Decision -= 2;
+        TargetEmp.Decision += 1;
         if (TargetEmp.Decision < 0)
             TargetEmp.Decision = 0;
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetEmp.Decision += 2;
+        TargetEmp.Decision -= 1;
     }
 }
 

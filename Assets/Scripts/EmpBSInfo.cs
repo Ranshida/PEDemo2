@@ -12,7 +12,7 @@ public class EmpBSInfo : MonoBehaviour
     public Employee emp;
     public Transform MarkerContent;
     public GameObject EmpStatus, EmpSetSign;
-    public Text Text_Name, Text_Mentality;
+    public Text Text_Name, Text_Mentality, Text_Dead, Text_SkillLimit;
     public List<BSSkillMarker> SkillMarkers = new List<BSSkillMarker>();
 
 
@@ -22,6 +22,23 @@ public class EmpBSInfo : MonoBehaviour
         {
             Text_Name.text = emp.Name;
             Text_Mentality.text = "心力" + emp.Mentality + "/" + emp.MentalityLimit;
+            //显示退场时就不显示禁用了
+            if (emp.Mentality == 0)
+            {
+                Text_Dead.gameObject.SetActive(true);
+                Text_SkillLimit.gameObject.SetActive(false);
+            }
+            else
+            {
+                Text_Dead.gameObject.SetActive(false);
+                if (emp.SkillLimitTime > 0)
+                {
+                    Text_SkillLimit.text = "技能被禁用(" + emp.SkillLimitTime + "回合)";
+                    Text_SkillLimit.gameObject.SetActive(true);
+                }
+                else
+                    Text_SkillLimit.gameObject.SetActive(false);
+            }
         }
     }
 
