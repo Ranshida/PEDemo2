@@ -67,20 +67,16 @@ public class GameControl : MonoBehaviour
     [HideInInspector] public bool CEOExtraVote = false;//CEO投票是否有额外加成
     [HideInInspector] public bool ResearchExtraMentality = false;//科研额外心力恢复
     [HideInInspector] public bool CEOVacation = false;
-    [HideInInspector] public float ResearchExtraSuccessRate = 0;//研发业务额外成功率
-    [HideInInspector] public int ResearchExtraTimeBoost = 0;//科研业务时间增益
     bool WorkOverTime = false;//是否已经处于加班状态
     #endregion
 
     [HideInInspector] public EmpInfo CurrentEmpInfo, CurrentEmpInfo2;//2主要用于需要两个员工的动员技能
     public DepControl CurrentDep, SelectedDep;
-    [HideInInspector] public OfficeControl CurrentOffice;
     public QuestControl QC;
     public EmpEntity EmpEntityPrefab;
     public PerkInfo PerkInfoPrefab;
     public DepControl DepPrefab, HRDepPrefab;
-    public OfficeControl OfficePrefab;
-    public DepSelect DepSelectButtonPrefab, OfficeSelectButtonPrefab;
+    public DepSelect DepSelectButtonPrefab;
     public RelationInfo RelationInfoPrefab;
     public Text HistoryTextPrefab, Text_EmpSelectTip;
     public HireControl HC;
@@ -92,8 +88,7 @@ public class GameControl : MonoBehaviour
     public WindowBaseControl TotalEmpPanel;
     public Transform DepContent, DepSelectContent, StandbyContent, MessageContent;
     public InfoPanel infoPanel;
-    public GameObject DepSelectPanel, StandbyButton, MessagePrefab, GameOverPanel, OfficeModeSelectPanel,
-        OfficeModeBuildingOptionButton, OfficeModeTalkOptionButton, DepModeSelectPanel, DepSkillConfirmPanel;
+    public GameObject DepSelectPanel, StandbyButton, MessagePrefab, GameOverPanel, DepModeSelectPanel, DepSkillConfirmPanel;
     public Text Text_Time, Text_TechResource, Text_MarketResource, Text_MarketResource2, Text_ProductResource, Text_Money, Text_Stamina, Text_Mentality, 
         Text_Morale, Text_DepMode1, Text_DepMode2, Text_DepSkillDescribe, Text_WarTime, Text_MobTime;
     public Toggle WorkOvertimeToggle;
@@ -103,12 +98,12 @@ public class GameControl : MonoBehaviour
 
     public Button[] TimeButtons = new Button[5];
     public List<DepControl> CurrentDeps = new List<DepControl>();
-    public List<OfficeControl> CurrentOffices = new List<OfficeControl>();
     public List<Employee> CurrentEmployees = new List<Employee>();
     public List<CompanyItem> Items = new List<CompanyItem>();
     public int[] FinishedTask = new int[10];//0程序迭代 1技术研发 2可行性调研 3传播 4营销文案 5资源拓展 6原型图 7产品研究 8用户访谈 9已删除
 
     int Year = 1, Month = 1, Week = 1, Day = 1, Hour = 1, morale = 50;
+    int TempHireHour = 64;//临时的每2月刷新一次招聘
     float Timer, MoneyCalcTimer;
     bool TimePause = false; //现在仅用来判断是否处于下班状态，用于其他功能时需检查WorkEndCheck()和WeekStart
 
@@ -192,15 +187,19 @@ public class GameControl : MonoBehaviour
                 MobTime -= 1;
                 if (MobTime == 0)
                 {
-                    //SC.SetWndState(true);
-                    //SC.FinishSign.SetActive(false);
-                    //SC.SkillSetButton.interactable = false;
-                    //AskPause(SC);
                     BSC.GetComponent<WindowBaseControl>().SetWndState(true);
                     BSC.PrepareBS();
                     MobTime = 192;
                 }
                 Text_MobTime.text = "距离下次头脑风暴还剩" + (MobTime / 8) + "周";
+            }
+
+            //临时招聘
+            TempHireHour -= 1;
+            if(TempHireHour == 0)
+            {
+                TempHireHour = 64;
+                HC.AddHireTypes(new HireType());
             }
         }
         //加班时间只进行工作和事件计算
@@ -209,10 +208,6 @@ public class GameControl : MonoBehaviour
             foreach(DepControl dep in CurrentDeps)
             {
                 dep.Produce();
-            }
-            foreach(OfficeControl office in CurrentOffices)
-            {
-                office.TimePass();
             }
             foreach(Employee emp in CurrentEmployees)
             {
@@ -230,6 +225,18 @@ public class GameControl : MonoBehaviour
     }
     public void WeekPass()
     {
+        //部门的每周体力buff判定
+        foreach(DepControl dep in CurrentDeps)
+        {
+            if (dep.StaminaExtra != 0)
+            {
+                foreach (Employee e in dep.CurrentEmps)
+                {
+                    e.Stamina += (int)(dep.StaminaExtra * dep.StaminaCostRate);
+                }
+            }
+        }
+
         DailyEvent.Invoke();
         Hour = 1;
         Week += 1;
@@ -242,18 +249,6 @@ public class GameControl : MonoBehaviour
         else
             WorkOverTime = true;
 
-        //部门的每周体力buff判定
-        for (int i = 0; i < CurrentDeps.Count; i++)
-        {
-            if(CurrentDeps[i].StaminaExtra != 0)
-            {
-                foreach(Employee e in CurrentDeps[i].CurrentEmps)
-                {
-                    e.Stamina += CurrentDeps[i].StaminaExtra;
-                }
-            }
-        }
-
         if (Week > 4)
         {
             Month += 1;
@@ -262,7 +257,6 @@ public class GameControl : MonoBehaviour
             MonthlyEvent.Invoke();
             for (int i = 0; i < CurrentDeps.Count; i++)
             {
-                CurrentDeps[i].FailCheck();
                 if(ResearchExtraMentality == true && CurrentDeps[i].building.Type == BuildingType.研发部门)
                 {
                     foreach(Employee emp in CurrentDeps[i].CurrentEmps)
@@ -315,10 +309,6 @@ public class GameControl : MonoBehaviour
         {
             value += dep.CalcCost(2);
         }
-        foreach(OfficeControl office in CurrentOffices)
-        {
-            value += office.building.Pay;
-        }
         BuildingPay = value;
     }
 
@@ -348,194 +338,44 @@ public class GameControl : MonoBehaviour
     {
         DepControl newDep;
         newDep = Instantiate(DepPrefab, this.transform);
-        UIManager.Instance.OnAddNewWindow(newDep.EmpPanel.GetComponent<WindowBaseControl>());
-        if (newDep.SRateDetailPanel != null)
-            UIManager.Instance.OnAddNewWindow(newDep.SRateDetailPanel.GetComponent<WindowBaseControl>());
         newDep.transform.parent = DepContent;
         newDep.building = b;
 
+        if (b.Type == BuildingType.茶水间)
+        {
+            newDep.SubDepValue = 0;
+            newDep.ActiveButton.gameObject.SetActive(false);
+            newDep.OfficeWarning.SetActive(false);
+            newDep.Text_Task.gameObject.SetActive(false);
+            newDep.Text_Progress.gameObject.SetActive(false);
+            newDep.Text_Time.gameObject.SetActive(false);
+            newDep.EmpPanel = newDep.SubDepPanel;
+            WeeklyEvent.AddListener(newDep.SubDepEffect);
+        }
+
+        UIManager.Instance.OnAddNewWindow(newDep.EmpPanel.GetComponent<WindowBaseControl>());
+        if (newDep.SRateDetailPanel != null)
+            UIManager.Instance.OnAddNewWindow(newDep.SRateDetailPanel.GetComponent<WindowBaseControl>());
+
         //部门命名
         string newDepName = b.Type.ToString();
+
+            
+
+        //根据Excel设置
+        //设置员工上限
+        newDep.EmpLimit = int.Parse(b.Jobs);
+        //设置信念基础值
+        newDep.DepFaith += int.Parse(b.FaithBonus);
+        //设置管理消耗值
+        newDep.ManageUse = int.Parse(b.Manage);
+        //设置大成功和失败率
+        newDep.DepBaseMajorFailureRate = float.Parse(b.Failure_str);
+        newDep.DepBaseMajorSuccessRate = float.Parse(b.MajorSuccess_str);
+        //设置基础工作状态
+        newDep.BaseWorkStatus = int.Parse(b.WorkStatus_str);
+        //设置工时
         newDep.ProducePointLimit = int.Parse(b.Time_A);
-        if (b.Type == BuildingType.技术部门)
-        {
-            newDep.type = EmpType.Tech;
-            newDep.EmpLimit = 4;
-            newDep.building.effectValue = 1;
-            newDep.ModeChangeButton.gameObject.SetActive(false);
-            newDep.ActiveButton.gameObject.SetActive(false);
-        }
-        else if (b.Type == BuildingType.市场部门)
-        {
-            newDep.type = EmpType.Market;
-            newDep.EmpLimit = 4;
-            newDep.building.effectValue = 2;
-            newDep.ModeChangeButton.gameObject.SetActive(false);
-            newDep.ActiveButton.gameObject.SetActive(false);
-        }
-        else if (b.Type == BuildingType.产品部门)
-        {
-            newDep.type = EmpType.Product;
-            newDep.EmpLimit = 4;
-            newDep.building.effectValue = 3;
-            newDep.ModeChangeButton.gameObject.SetActive(false);
-            newDep.ActiveButton.gameObject.SetActive(false);
-        }
-        else if (b.Type == BuildingType.公关营销部)
-        {            
-            newDep.EmpLimit = 2;
-            newDep.building.effectValue = 2;
-            newDep.Mode2EffectValue = 10;
-            newDep.ActiveMode = 1;
-            newDep.ActiveButton.gameObject.SetActive(false);
-        }
-        else if (b.Type == BuildingType.研发部门)
-        {
-            newDep.EmpLimit = 2;
-            newDep.building.effectValue = 1;
-            newDep.Mode2EffectValue = 3;
-            newDep.ModeChangeButton.gameObject.SetActive(false);
-            newDep.ActiveButton.gameObject.SetActive(false);
-        }
-        else if (b.Type == BuildingType.智库小组)
-        {
-            newDep.EmpLimit = 2;
-            newDep.building.effectValue = 11;
-            newDep.Mode2EffectValue = 9;
-            newDep.ActiveMode = 3;
-        }
-        else if (b.Type == BuildingType.人力资源部)
-        {
-            newDep.type = EmpType.HR;
-            newDep.EmpLimit = 2;
-            newDep.building.effectValue = 8;
-            newDep.Mode2EffectValue = 12;
-            newDep.ActiveButton.gameObject.SetActive(false);
-        }
-        else if (b.Type == BuildingType.心理咨询室)
-        {
-            newDep.EmpLimit = 2;
-            newDep.building.effectValue = 8;
-            newDep.Mode2EffectValue = 14;
-            newDep.ActiveMode = 2;
-        }
-        else if (b.Type == BuildingType.财务部)
-        {
-            newDep.EmpLimit = 2;
-            newDep.building.effectValue = 9;
-            newDep.ActiveMode = 3;
-        }
-        else if (b.Type == BuildingType.体能研究室)
-        {
-            newDep.EmpLimit = 4;
-            newDep.building.effectValue = 10;
-            newDep.Mode2EffectValue = 4;
-            newDep.ActiveMode = 3;
-        }
-        else if (b.Type == BuildingType.按摩房)
-        {
-            newDep.EmpLimit = 1;
-            newDep.building.effectValue = 6;
-            newDep.Mode2EffectValue = 14;
-            newDep.ActiveMode = 2;
-        }
-        else if (b.Type == BuildingType.健身房)
-        {
-            newDep.EmpLimit = 2;
-            newDep.building.effectValue = 6;
-            newDep.Mode2EffectValue = 5;
-            newDep.ActiveMode = 2;
-        }
-        else if (b.Type == BuildingType.宣传中心)
-        {
-            newDep.EmpLimit = 1;
-            newDep.building.effectValue = 15;
-            newDep.Mode2EffectValue = 12;
-            newDep.ActiveMode = 2;
-        }
-        else if (b.Type == BuildingType.科技工作坊)
-        {
-            newDep.EmpLimit = 1;
-            newDep.building.effectValue = 1;
-            newDep.Mode2EffectValue = 3;
-            newDep.ActiveMode = 2;
-        }
-        else if (b.Type == BuildingType.绩效考评中心)
-        {
-            newDep.EmpLimit = 1;
-            newDep.building.effectValue = 4;
-            newDep.Mode2EffectValue = 11;
-            newDep.ActiveMode = 2;
-        }
-        else if (b.Type == BuildingType.员工休息室)
-        {
-            newDep.EmpLimit = 1;
-            newDep.building.effectValue = 5;
-            newDep.Mode2EffectValue = 9;
-            newDep.Mode2EffectValue = 10;
-            newDep.ActiveMode = 2;
-        }
-        else if (b.Type == BuildingType.人文沙龙)
-        {
-            newDep.EmpLimit = 2;
-            newDep.building.effectValue = 8;
-            newDep.Mode2EffectValue = 14;
-        }
-        else if (b.Type == BuildingType.兴趣社团)
-        {
-            newDep.EmpLimit = 2;
-            newDep.building.effectValue = 8;
-            newDep.Mode2EffectValue = 15;
-            newDep.ActiveMode = 3;
-            newDep.ModeChangeButton.gameObject.SetActive(false);
-        }
-        else if (b.Type == BuildingType.电子科技展)
-        {
-            newDep.EmpLimit = 2;
-            newDep.building.effectValue = 1;
-            newDep.Mode2EffectValue = 14;
-        }
-        else if (b.Type == BuildingType.冥想室)
-        {
-            newDep.EmpLimit = 1;
-            newDep.building.effectValue = 5;
-            newDep.Mode2EffectValue = 13;
-            newDep.ActiveMode = 2;
-        }
-        else if (b.Type == BuildingType.特别秘书处)
-        {
-            newDep.EmpLimit = 1;
-            newDep.building.effectValue = 12;
-            newDep.Mode2EffectValue = 15;
-            newDep.ActiveMode = 2;
-        }
-        else if (b.Type == BuildingType.成人再教育所)
-        {
-            newDep.EmpLimit = 1;
-            newDep.building.effectValue = 13;
-            newDep.Mode2EffectValue = 6;
-            newDep.ActiveMode = 2;
-        }
-        else if (b.Type == BuildingType.职业再发展中心)
-        {
-            newDep.EmpLimit = 1;
-            newDep.building.effectValue = 12;
-            newDep.Mode2EffectValue = 8;
-            newDep.ActiveMode = 2;
-        }
-        else if (b.Type == BuildingType.中央监控室)
-        {
-            newDep.EmpLimit = 3;
-            newDep.building.effectValue = 15;
-            newDep.ModeChangeButton.gameObject.SetActive(false);
-        }
-        else if (b.Type == BuildingType.谍战中心)
-        {
-            newDep.EmpLimit = 2;
-            newDep.building.effectValue = 12;
-            newDep.Mode2EffectValue = 6;
-            newDep.ActiveMode = 2;
-        }
 
         newDep.Mode1EffectValue = b.effectValue;
 
@@ -563,27 +403,6 @@ public class GameControl : MonoBehaviour
         return newDep;
     }
 
-    public OfficeControl CreateOffice(Building b)
-    {
-        OfficeControl newOffice = Instantiate(OfficePrefab, this.transform);
-        newOffice.transform.parent = DepContent;
-        newOffice.building = b;
-        newOffice.GC = this;
-        newOffice.SetName();
-        CurrentOffices.Add(newOffice);
-        b.effectValue = 10;
-
-        //创建对应按钮
-        newOffice.DS = Instantiate(OfficeSelectButtonPrefab, DepSelectContent);
-        newOffice.DS.Text_DepName.text = newOffice.Text_OfficeName.text;
-        newOffice.DS.OC = newOffice;
-        newOffice.DS.GC = this;
-
-        if (newOffice.SRateDetailPanel != null)
-            UIManager.Instance.OnAddNewWindow(newOffice.SRateDetailPanel.GetComponent<WindowBaseControl>());
-        return newOffice;
-    }
-
     //招募的部门选择
     public void ShowDepSelectPanel()
     {
@@ -596,14 +415,6 @@ public class GameControl : MonoBehaviour
             else
                 CurrentDeps[i].DS.gameObject.SetActive(true);
         }
-        for (int i = 0; i < CurrentOffices.Count; i++)
-        {
-            if (CurrentOffices[i].CurrentManager != null)
-                CurrentOffices[i].DS.gameObject.SetActive(false);
-            else
-                CurrentOffices[i].DS.gameObject.SetActive(true);
-        }
-
     }
     //移动的部门选择
     public void ShowDepSelectPanel(Employee emp)
@@ -612,20 +423,18 @@ public class GameControl : MonoBehaviour
         StandbyButton.SetActive(true);
         for (int i = 0; i < CurrentDeps.Count; i++)
         {
-            if (CurrentDeps[i] == emp.CurrentDep || CurrentDeps[i].CheckEmpNum() == false)
+            //先显示所有办公室
+            if((CurrentDeps[i].building.Type == BuildingType.CEO办公室 || CurrentDeps[i].building.Type == BuildingType.高管办公室)
+                && CurrentDeps[i].Manager == null)
+            {
+                CurrentDeps[i].DS.gameObject.SetActive(true);
+                continue;
+            }
+
+            if (CurrentDeps[i] == emp.CurrentDep || CurrentDeps[i].CheckEmpNum() == false || CurrentDeps[i].CheckSkillType(emp) == false)
                 CurrentDeps[i].DS.gameObject.SetActive(false);
             else
                 CurrentDeps[i].DS.gameObject.SetActive(true);
-        }
-        for (int i = 0; i < CurrentOffices.Count; i++)
-        {
-            //（旧）用来隐藏CEO办公室
-            //if (CurrentOffices[i].DS.gameObject.tag == "HideSelect")
-            //    CurrentOffices[i].DS.gameObject.SetActive(false);
-            if (CurrentOffices[i].CurrentManager != null)
-                CurrentOffices[i].DS.gameObject.SetActive(false);
-            else
-                CurrentOffices[i].DS.gameObject.SetActive(true);
         }
     }
     //部门领导选择
@@ -635,33 +444,13 @@ public class GameControl : MonoBehaviour
         StandbyButton.SetActive(false);
         for (int i = 0; i < CurrentDeps.Count; i++)
         {
-            CurrentDeps[i].DS.gameObject.SetActive(false);
-        }
-            for (int i = 0; i < CurrentOffices.Count; i++)
-        {
-            if (dep.InRangeOffices.Contains(CurrentOffices[i]))
-                CurrentOffices[i].DS.gameObject.SetActive(true);
+            if (dep.InRangeOffices.Contains(CurrentDeps[i]))
+                CurrentDeps[i].DS.gameObject.SetActive(true);
             else
-                CurrentOffices[i].DS.gameObject.SetActive(false);
+                CurrentDeps[i].DS.gameObject.SetActive(false);
         }
     }
-    //办公室领导选择
-    public void ShowDepSelectPanel(OfficeControl office)
-    {
-        DepSelectPanel.GetComponent<WindowBaseControl>().SetWndState(true);
-        StandbyButton.SetActive(false);
-        for (int i = 0; i < CurrentDeps.Count; i++)
-        {
-            CurrentDeps[i].DS.gameObject.SetActive(false);
-        }
-        for (int i = 0; i < CurrentOffices.Count; i++)
-        {
-            if (office.InRangeOffices.Contains(CurrentOffices[i]) && office.ControledOffices.Contains(CurrentOffices[i]) == false)
-                CurrentOffices[i].DS.gameObject.SetActive(true);
-            else
-                CurrentOffices[i].DS.gameObject.SetActive(false);
-        }
-    }
+
     //显示所有相关部门
     public void ShowDepSelectPanel(List<DepControl> deps)
     {
@@ -673,27 +462,6 @@ public class GameControl : MonoBehaviour
                 CurrentDeps[i].DS.gameObject.SetActive(true);
             else
                 CurrentDeps[i].DS.gameObject.SetActive(false);
-        }
-        for(int i = 0; i < CurrentOffices.Count; i++)
-        {
-            CurrentOffices[i].DS.gameObject.SetActive(false);
-        }
-    }
-    //显示所有相关办公室
-    public void ShowDepSelectPanel(List<OfficeControl> offices)
-    {
-        DepSelectPanel.GetComponent<WindowBaseControl>().SetWndState(true);
-        StandbyButton.SetActive(false);
-        for (int i = 0; i < CurrentDeps.Count; i++)
-        {
-            CurrentDeps[i].DS.gameObject.SetActive(false);
-        }
-        for (int i = 0; i < CurrentOffices.Count; i++)
-        {
-            if (offices.Contains(CurrentOffices[i]) == true)
-                CurrentOffices[i].DS.gameObject.SetActive(true);
-            else
-                CurrentOffices[i].DS.gameObject.SetActive(false);
         }
     }
 
@@ -713,7 +481,7 @@ public class GameControl : MonoBehaviour
         }
         else if (SelectMode == 2)
         {
-            if(CurrentEmpInfo.emp.CurrentOffice != null && (CurrentEmpInfo.emp.CurrentOffice.building.Type == BuildingType.CEO办公室 || CurrentEmpInfo.emp.CurrentOffice.building.Type == BuildingType.高管办公室))
+            if(CurrentEmpInfo.emp.CurrentDep != null && CurrentEmpInfo.emp.CurrentDep.Manager == CurrentEmpInfo.emp)
             {
                 //离任高管投票检测
                 if (EC.ManagerVoteCheck(CurrentEmpInfo.emp, true) == false)
@@ -734,108 +502,7 @@ public class GameControl : MonoBehaviour
         }
     }
 
-    //将移动或雇佣的员工放入特定办公室 + 确定部门(办公室)领导者 + CEO技能发动
-    public void SelectDep(OfficeControl office)
-    {
-        DepSelectPanel.GetComponent<WindowBaseControl>().SetWndState(false);
-        if (office.CurrentManager != null && SelectMode < 3)
-        {
-            //这部分可能已经不需要了，因为筛选DepSelect按钮时已经剔除了有高管的办公室
-            office.CurrentManager.InfoDetail.TempDestroyStrategy();
-            office.CurrentManager.CurrentOffice = null;
-            //office.CurrentManager.InfoDetail.Entity.FindWorkPos();
-        }
-        if (SelectMode == 1)
-        {
-            QC.Finish(8);
-            HC.SetInfoPanel();
-            CurrentEmpInfo.emp.InfoA.transform.parent = StandbyContent;
-            if (office.building.Type == BuildingType.CEO办公室 || office.building.Type == BuildingType.高管办公室)
-            {
-                //就任高管投票检测
-                if (EC.ManagerVoteCheck(CurrentEmpInfo.emp) == false)
-                {
-                    return;
-                }
-            }
-            office.CurrentManager = CurrentEmpInfo.emp;
-            CurrentEmpInfo.emp.CurrentOffice = office;
-            office.SetOfficeStatus();
-            //给部门添加临时状态
-            foreach(DepControl dep in office.ControledDeps)
-            {
-                dep.AddPerk(new Perk108(null));
-                dep.FaithRelationCheck();
-            }
-        }
-        else if (SelectMode == 2)
-        {
-            if (office.building.Type == BuildingType.CEO办公室 || office.building.Type == BuildingType.高管办公室)
-            {
-                //就任高管投票检测
-                if (EC.ManagerVoteCheck(CurrentEmpInfo.emp) == false)
-                    return;
-            }
-            else if (CurrentEmpInfo.emp.CurrentOffice != null && (CurrentEmpInfo.emp.CurrentOffice.building.Type == BuildingType.CEO办公室 || CurrentEmpInfo.emp.CurrentOffice.building.Type == BuildingType.高管办公室))
-            {
-                //离任高管投票检测
-                if (EC.ManagerVoteCheck(CurrentEmpInfo.emp, true) == false)
-                    return;
-            }
-            if (CurrentEmpInfo == CurrentEmpInfo.emp.InfoB)
-                CurrentEmpInfo = CurrentEmpInfo.emp.InfoA;
-            CurrentEmpInfo.transform.parent = StandbyContent;
-            ResetOldAssignment();
-            CurrentEmpInfo.emp.CurrentOffice = office;
-            office.CurrentManager = CurrentEmpInfo.emp;
-            office.SetOfficeStatus();
-            //给部门添加临时状态
-            foreach (DepControl dep in office.ControledDeps)
-            {
-                dep.AddPerk(new Perk108(null));
-                dep.FaithRelationCheck();
-            }
-        }
-        //确定部门领导者
-        else if (SelectMode == 3)
-        {
-            if(CurrentDep.CommandingOffice != null)
-            {
-                CurrentDep.CommandingOffice.ControledDeps.Remove(CurrentDep);
-                CurrentDep.CommandingOffice.CheckManage();
-                CurrentDep.AddPerk(new Perk110(null));
-            }
-            CurrentDep.CommandingOffice = office;
-            office.ControledDeps.Add(CurrentDep);
-            office.CheckManage();
-            //加额外状态
-            if(office.CurrentManager != null)
-                CurrentDep.AddPerk(new Perk108(null));
-            CurrentDep.FaithRelationCheck();
-        }
-        //确定办公室的部门领导者
-        else if (SelectMode == 8)
-        {
-            if (CurrentOffice.CommandingOffice != null)
-            {
-                CurrentOffice.CommandingOffice.ControledOffices.Remove(CurrentOffice);
-                CurrentOffice.CommandingOffice.CheckManage();
-            }
-            CurrentOffice.CommandingOffice = office;
-            office.ControledOffices.Add(CurrentOffice);
-            office.CheckManage();
-        }
-
-        //调动信息设定
-        if (SelectMode == 1 || SelectMode == 2)
-        {
-            CurrentEmpInfo.emp.InfoDetail.AddHistory("调动至" + office.Text_OfficeName.text);
-            if (CurrentEmpInfo.emp.isCEO == false)
-                CC.CEO.InfoDetail.AddHistory("将" + CurrentEmpInfo.emp.Name + "调动至" + office.Text_OfficeName.text);
-        }
-    }
-
-    //将移动或雇佣的员工放入特定部门 + 选择部门发动建筑特效 + CEO技能发动
+    //将移动或雇佣的员工放入特定部门 + 选择部门发动建筑特效 + CEO技能发动 + 确认领导部门(3)
     public void SelectDep(DepControl depControl)
     {
         DepSelectPanel.GetComponent<WindowBaseControl>().SetWndState(false);
@@ -843,30 +510,54 @@ public class GameControl : MonoBehaviour
         {
             QC.Finish(8);
             HC.SetInfoPanel();
-            depControl.CurrentEmps.Add(CurrentEmpInfo.emp);
-            depControl.UpdateUI();
-            CurrentEmpInfo.emp.CurrentDep = depControl;
-            CurrentEmpInfo.emp.CurrentDep.EmpMove(false);
+            CurrentEmpInfo.emp.InfoA.transform.parent = StandbyContent;//不管后面有无投票，投票结果如何都先把infoA放好
+            //就任高管投票检测
+            if (depControl.building.Type == BuildingType.CEO办公室 || depControl.building.Type == BuildingType.高管办公室)
+            {
+                if (EC.ManagerVoteCheck(CurrentEmpInfo.emp) == false)
+                {
+                    return;
+                }
+            }
             CurrentEmpInfo.emp.InfoA.transform.parent = depControl.EmpContent;
         }
         else if(SelectMode == 2)
         {
-            if (CurrentEmpInfo.emp.CurrentOffice != null && (CurrentEmpInfo.emp.CurrentOffice.building.Type == BuildingType.CEO办公室 || CurrentEmpInfo.emp.CurrentOffice.building.Type == BuildingType.高管办公室))
+            //离任高管投票检测
+            if (CurrentEmpInfo.emp.CurrentDep != null && CurrentEmpInfo.emp.CurrentDep.Manager == CurrentEmpInfo.emp)
             {
-                //离任高管投票检测
                 if (EC.ManagerVoteCheck(CurrentEmpInfo.emp, true) == false)
                     return;
+            }
+            //就任高管投票检测
+            if (depControl.building.Type == BuildingType.CEO办公室 || depControl.building.Type == BuildingType.高管办公室)
+            {
+                if (EC.ManagerVoteCheck(CurrentEmpInfo.emp) == false)
+                {
+                    return;
+                }
             }
             if (CurrentEmpInfo == CurrentEmpInfo.emp.InfoB)
                 CurrentEmpInfo = CurrentEmpInfo.emp.InfoA;
             CurrentEmpInfo.transform.parent = depControl.EmpContent;
-
             ResetOldAssignment();
-            //修改新部门生产力显示
-            CurrentEmpInfo.emp.CurrentDep = depControl;
-            depControl.CurrentEmps.Add(CurrentEmpInfo.emp);
-            CurrentEmpInfo.emp.CurrentDep.EmpMove(false);
-            depControl.UpdateUI();
+        }
+        //确定部门领导者
+        else if (SelectMode == 3)
+        {
+            if (CurrentDep.CommandingOffice != null)
+            {
+                CurrentDep.CommandingOffice.ControledDeps.Remove(CurrentDep);
+                CurrentDep.CommandingOffice.CheckManage();
+                CurrentDep.AddPerk(new Perk110(null));
+            }
+            CurrentDep.CommandingOffice = depControl;
+            depControl.ControledDeps.Add(CurrentDep);
+            depControl.CheckManage();
+            //加额外状态
+            if (depControl.Manager != null)
+                CurrentDep.AddPerk(new Perk108(null));
+            CurrentDep.FaithRelationCheck();
         }
         //选择部门发动建筑特效
         else if(SelectMode == 5)
@@ -886,10 +577,27 @@ public class GameControl : MonoBehaviour
                 QC.Init("技能释放成功\n\n" + depControl.Text_DepName.text + "成功率上升45%");
             }
         }
-        //调动信息
+        //调动信息设置
         if (SelectMode == 1 || SelectMode == 2)
         {
-            //调动信息设定
+            CurrentEmpInfo.emp.CurrentDep = depControl;
+            depControl.CurrentEmps.Add(CurrentEmpInfo.emp);
+            CurrentEmpInfo.emp.CurrentDep.EmpMove(false);
+            if (depControl.building.Type == BuildingType.CEO办公室 || depControl.building.Type == BuildingType.高管办公室)
+            {
+                depControl.Manager = CurrentEmpInfo.emp;
+                depControl.SetOfficeStatus();
+                //给部门添加临时状态
+                foreach (DepControl dep in depControl.ControledDeps)
+                {
+                    dep.AddPerk(new Perk108(null));
+                    dep.FaithRelationCheck();
+                }
+            }
+            else
+                depControl.UpdateUI(); //因为上面SetOfficeStatus里有UpdateUI了
+
+            //调动信息历史添加
             CurrentEmpInfo.emp.InfoDetail.AddHistory("调动至" + depControl.Text_DepName.text);
             if (CurrentEmpInfo.emp.isCEO == false)
                 CC.CEO.InfoDetail.AddHistory("将" + CurrentEmpInfo.emp.Name + "调动至" + depControl.Text_DepName.text);
@@ -907,21 +615,19 @@ public class GameControl : MonoBehaviour
             //修改生产力显示
             emp.CurrentDep.UpdateUI();
             CurrentEmpInfo.emp.CurrentDep.EmpMove(true);
-            emp.CurrentDep = null;
-        }
-        if (emp.CurrentOffice != null)
-        {
-            foreach (DepControl dep in emp.CurrentOffice.ControledDeps)
+            if (emp.CurrentDep.building.Type == BuildingType.CEO办公室 || emp.CurrentDep.building.Type == BuildingType.高管办公室)
             {
-                dep.AddPerk(new Perk110(null));
-                dep.FaithRelationCheck();
+                foreach (DepControl dep in emp.CurrentDep.ControledDeps)
+                {
+                    dep.AddPerk(new Perk110(null));
+                    dep.FaithRelationCheck();
+                }
+                emp.InfoDetail.TempDestroyStrategy();//旧版战略
+                emp.CurrentDep.Manager = null;
+                emp.CurrentDep.SetOfficeStatus();
+                emp.CurrentDep.CheckManage();
             }
-            if (emp.CurrentOffice.building.Type == BuildingType.高管办公室 || emp.CurrentOffice.building.Type == BuildingType.CEO办公室)
-                emp.InfoDetail.TempDestroyStrategy();
-            emp.CurrentOffice.CurrentManager = null;
-            emp.CurrentOffice.SetOfficeStatus();
-            emp.CurrentOffice.CheckManage();
-            emp.CurrentOffice = null;
+            emp.CurrentDep = null;
         }
     }
 
@@ -975,49 +681,6 @@ public class GameControl : MonoBehaviour
             if (CurrentEmployees[i].isCEO == false)
                 CurrentEmployees[i].InfoB.FireButton.gameObject.SetActive(true);
 
-        }
-    }
-
-    //设置办公室模式
-    public void SetOfficeMode(int num)
-    {
-        if(CurrentOffice != null)
-        {
-            CurrentOffice.OfficeMode = num;
-            OfficeModeSelectPanel.GetComponent<WindowBaseControl>().SetWndState(false);
-            CurrentOffice.Progress = 0;
-            CurrentOffice.UpdateUI();
-            if (num == 1)
-            {
-                CurrentOffice.Text_OfficeMode.text = "办公室模式:决策";
-                CurrentOffice.MaxProgress = 96;
-                CurrentOffice.building.effectValue = 10;
-            }
-            else if (num == 2)
-            {
-                CurrentOffice.Text_OfficeMode.text = "办公室模式:人力";
-                CurrentOffice.MaxProgress = 24;
-                CurrentOffice.building.effectValue = 8;
-            }
-            else if (num == 3)
-            {
-                CurrentOffice.Text_OfficeMode.text = "办公室模式:管理";
-                CurrentOffice.MaxProgress = 32;
-                CurrentOffice.building.effectValue = 7;
-                QC.Finish(4);
-            }
-            else if (num == 4)
-            {
-                CurrentOffice.Text_OfficeMode.text = "办公室模式:招聘";
-                CurrentOffice.MaxProgress = 24;
-                CurrentOffice.building.effectValue = 8;
-            }
-            else if (num == 5)
-            {
-                CurrentOffice.Text_OfficeMode.text = "办公室模式:组织研究";
-                CurrentOffice.MaxProgress = 48;
-                CurrentOffice.building.effectValue = 7;
-            }
         }
     }
     //设置部门模式
@@ -1083,16 +746,10 @@ public class GameControl : MonoBehaviour
             if (dep.CurrentEmps.Count > 0)
                 content += "\n" + dep.Text_DepName.text + "工资:-" + dep.CalcCost(1);
         }
-        foreach(OfficeControl office in CurrentOffices)
-        {
-            content += "\n" + office.Text_OfficeName.text + "维护费:-" + office.building.Pay;
-            if(office.CurrentManager != null)
-            content += "\n" + office.Text_OfficeName.text + "工资:-" + (int)(office.CurrentManager.InfoDetail.CalcSalary() * TotalSalaryMultiply);
-        }
         int otherCost = 0;
         foreach(Employee emp in CurrentEmployees)
         {
-            if(emp.CurrentDep == null && emp.CurrentOffice == null)
+            if(emp.CurrentDep == null)
             {
                 otherCost += (int)(emp.InfoDetail.CalcSalary() * TotalSalaryMultiply);
             }

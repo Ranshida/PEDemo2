@@ -9,9 +9,12 @@ using UnityEngine.UI;
 public enum BuildingType
 {
     技术部门, 市场部门, 产品部门, 公关营销部, 高管办公室, CEO办公室, 研发部门, 会议室, 智库小组, 人力资源部,
-    心理咨询室, 财务部, 体能研究室, 按摩房, 健身房, 宣传中心, 科技工作坊, 绩效考评中心, 员工休息室, 人文沙龙,
-    兴趣社团, 电子科技展, 冥想室, 特别秘书处, 成人再教育所, 职业再发展中心, 中央监控室, 谍战中心, 室内温室, 整修楼顶,
+    心理咨询室, 会计办公室, 体能研究室, 茶水间, 中央厨房, 宣传中心, 机械检修中心, 绩效考评中心, 员工休息室, 脑机实验室,
+    兴趣社团, 电子科技展, 冥想室, 特别秘书处, 成人再教育所, 秘书处, 中央监控室, 谍战中心, 室内温室, 整修楼顶,
     游戏厅, 营养师定制厨房, 咖啡bar, 花盆, 长椅, 自动贩卖机, 空
+
+        ,前端小组, 后端小组, 算法小组, 用户访谈室, 原型图画室, 行为分析室, 文案小组, 传单小队, 派对小组, 公关小组,
+    食物3D打印机, 机械自动化中心, 私人安保, 混沌创意营, 自由之翼学院
 }
 
 public class BuildingManage : MonoBehaviour
@@ -43,7 +46,7 @@ public class BuildingManage : MonoBehaviour
     private GameObject m_EffectHalo;   //选中的建筑的影响范围
 
     public List<Building> ConstructedBuildings { get; private set; } = new List<Building>(); //所有已建建筑列表
-    public OfficeControl CEOOffice;    //默认建筑（CEO办公室）
+    public DepControl CEOOffice;    //默认建筑（CEO办公室）
 
     //屏幕射线位置
     public Vector3 AimingPosition = Vector3.zero;
@@ -76,14 +79,13 @@ public class BuildingManage : MonoBehaviour
         {
             Building building = prefab.GetComponent<Building>();
 
-            if (building.Type == BuildingType.心理咨询室 || building.Type == BuildingType.健身房 || building.Type == BuildingType.绩效考评中心
-                || building.Type == BuildingType.员工休息室 || building.Type == BuildingType.冥想室 || building.Type == BuildingType.宣传中心 || building.Type == BuildingType.兴趣社团)
+            if (building.Type != BuildingType.CEO办公室 || building.Type != BuildingType.高管办公室 || building.Type != BuildingType.茶水间)
             {
                 SelectList.Add(building.Type);
             }
         }
         //装饰建筑临时这样做
-        SelectList.Add(BuildingType.空); SelectList.Add(BuildingType.空); SelectList.Add(BuildingType.空); SelectList.Add(BuildingType.空); SelectList.Add(BuildingType.空);
+        //SelectList.Add(BuildingType.空); SelectList.Add(BuildingType.空); SelectList.Add(BuildingType.空); SelectList.Add(BuildingType.空); SelectList.Add(BuildingType.空);
 
         childWindows.Add(BuildingWindow);
         childWindows.Add(LotteryWindow);
@@ -94,7 +96,9 @@ public class BuildingManage : MonoBehaviour
     private void Start()
     {
         m_EffectHalo.SetActive(false);
-        InitBuilding(BuildingType.CEO办公室, new Int2(3, 8));
+        InitBuilding(BuildingType.CEO办公室, new Int2(6, 11));
+        InitBuilding(BuildingType.用户访谈室, new Int2(2, 11));
+        InitBuilding(BuildingType.前端小组, new Int2(10, 11));
         //InitBuilding(BuildingType.人力资源部, new Int2(0, 8));
     }
 
@@ -294,11 +298,6 @@ public class BuildingManage : MonoBehaviour
                         DynamicWindow.Instance.ShowName(mouseBuilding.Department.Text_DepName.text, mouseBuilding.transform, Vector3.up * 15 + new Vector3(mouseBuilding.Length * 5, 0, mouseBuilding.Width * 5));
                         DynamicWindow.Instance.ShowBuildingInfo(mouseBuilding);
                     }
-                    else if (mouseBuilding.Office)
-                    {
-                        DynamicWindow.Instance.ShowName(mouseBuilding.Office.Text_OfficeName.text, mouseBuilding.transform, Vector3.up * 15 + new Vector3(mouseBuilding.Length * 5, 0, mouseBuilding.Width * 5));
-                        DynamicWindow.Instance.ShowBuildingInfo(mouseBuilding);
-                    }
                 }
             }
         }
@@ -451,28 +450,19 @@ public class BuildingManage : MonoBehaviour
             //GameControl.Instance.BuildingPay += building.Pay;
 
             BuildingType T = building.Type;
-            //生产部门创建
-            if (T == BuildingType.技术部门 || T == BuildingType.市场部门 || T == BuildingType.产品部门 || T == BuildingType.公关营销部
-                || T == BuildingType.研发部门 || T == BuildingType.智库小组 || T == BuildingType.人力资源部
-                || T == BuildingType.心理咨询室 || T == BuildingType.财务部 || T == BuildingType.体能研究室
-                || T == BuildingType.按摩房 || T == BuildingType.健身房 || T == BuildingType.宣传中心 || T == BuildingType.科技工作坊
-                || T == BuildingType.绩效考评中心 || T == BuildingType.员工休息室 || T == BuildingType.人文沙龙 || T == BuildingType.兴趣社团
-                || T == BuildingType.电子科技展 || T == BuildingType.冥想室 || T == BuildingType.特别秘书处 || T == BuildingType.成人再教育所
-                || T == BuildingType.职业再发展中心 || T == BuildingType.中央监控室 || T == BuildingType.谍战中心)
+            //部门创建
+            if (T != BuildingType.茶水间)
             {
-                building.Department = GameControl.Instance.CreateDep(building);//根据Type创建对应的生产部门面板
-            }
-            //办公室创建
-            else if (T == BuildingType.高管办公室)
-            {
-                building.Office = GameControl.Instance.CreateOffice(building);
-                building.effectValue = 10;
-            }
-            else if (T == BuildingType.CEO办公室)
-            {
-                building.Office = CEOOffice;    //互相引用
-                CEOOffice.building = building;  //互相引用
-                building.effectValue = 10;
+                if (T != BuildingType.CEO办公室)
+                {
+                    building.Department = GameControl.Instance.CreateDep(building);//根据Type创建对应的生产部门面板
+                }
+                else
+                {
+                    building.Department = CEOOffice;    //互相引用
+                    CEOOffice.building = building;  //互相引用
+                    building.effectValue = 10;
+                }
             }
         }
 
@@ -481,6 +471,17 @@ public class BuildingManage : MonoBehaviour
         foreach (Building temp in ConstructedBuildings)
         {
             temp.effect.FindAffect();
+        }
+
+        //茶水间相关的距离检测
+        if (building.Type == BuildingType.茶水间)
+            building.Department.SubDepDistanceCheck();
+        if (building.Department != null && building.Department.SubDeps.Count > 0)
+        {
+            foreach(DepControl dep in building.Department.SubDeps)
+            {
+                dep.SubDepDistanceCheck();
+            }
         }
 
         //获取建筑相互影响情况

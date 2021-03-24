@@ -218,7 +218,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8621982910418966314}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2446906829985023639
 GameObject:
@@ -248,7 +248,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8621982910418966314}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2989862615834628900
 GameObject:
@@ -400,7 +400,7 @@ GameObject:
   - component: {fileID: 876988828179824846}
   - component: {fileID: -2279394563660855739}
   m_Layer: 0
-  m_Name: "04\u5E02\u573A\u90E8\u95E8"
+  m_Name: "10\u4F20\u5355\u5C0F\u961F"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -441,15 +441,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fbf92dd024df3634eb7e2476cd848a6b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ID: 4
+  ID: 10
   Name: 
   Size: 
   Function_A: 
   Require_A: 
   Description_A: 
+  Time_A: 
+  Result_A: 
   Function_B: 
   Require_B: 
   Description_B: 
+  Time_B: 
+  Result_B: 
   Function_C: 
   Require_C: 
   Description_C: 
@@ -458,23 +462,24 @@ MonoBehaviour:
   Length: 2
   Width: 4
   EffectRange: 0
+  EffectRangeType: 2
   effectValue: 1
   StaminaRequest: 0
-  Type: 1
+  Type: 44
+  Str_Type: 
   Pay: 0
-  BasicBuilding: 0
+  CanLottery: 0
+  CanDismantle: 1
   ContainsGrids: []
   Department: {fileID: 0}
-  Office: {fileID: 0}
   effect:
     CurrentBuilding: {fileID: -2279394563660855739}
     AffectedBuildings: []
-  Text_DepName: {fileID: 0}
   WorkPos:
-  - {fileID: 1999213285601742398}
+  - {fileID: 0}
   - {fileID: 4711665732059446377}
   - {fileID: 907345908338410564}
-  - {fileID: 2018921269134887314}
+  - {fileID: 0}
   EffectBuildings: []
 --- !u!1 &4736052767377885791
 GameObject:
@@ -694,36 +699,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!1 &6572129991833793589
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2018921269134887314}
-  m_Layer: 0
-  m_Name: Position
-  m_TagString: Untagged
-  m_Icon: {fileID: -5442936267250999957, guid: 0000000000000000d000000000000000, type: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2018921269134887314
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6572129991833793589}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 12.24, y: 0, z: 17.55}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 8621982910418966314}
-  m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6629285576780382341
 GameObject:
   m_ObjectHideFlags: 0
@@ -1032,10 +1007,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 1999213285601742398}
   - {fileID: 4711665732059446377}
   - {fileID: 907345908338410564}
-  - {fileID: 2018921269134887314}
   m_Father: {fileID: 876988828179824846}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1117,33 +1090,3 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!1 &8644666416129850776
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1999213285601742398}
-  m_Layer: 0
-  m_Name: Position
-  m_TagString: Untagged
-  m_Icon: {fileID: -5442936267250999957, guid: 0000000000000000d000000000000000, type: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1999213285601742398
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8644666416129850776}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5.87, y: 0, z: 17.72}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 8621982910418966314}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

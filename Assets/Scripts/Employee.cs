@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public enum EmpType
-{
-    Tech, Market, Product, Operate, Science, HR
+public enum ProfessionType
+{//{1, 2, 3, 8, 9, 11, 12, 13, 15, 16};//Nst:几个专业技能对应的编号
+    技术, 市场, 产品, 观察, 坚韧, 强壮, 管理, 人力, 财务, 决策, 行业, 谋略, 说服, 魅力, 八卦, 行政
 }
 public enum EColor
 {//L开头为对应1级浅色情绪
@@ -35,6 +35,7 @@ public class EmpItem
     }
 }
 
+[System.Serializable]
 public class Employee
 {
     static public int AttributeLimit = 10;
@@ -50,6 +51,8 @@ public class Employee
             int Num = BaseAttributes[0] + ExtraAttributes[0];
             if (Num > AttributeLimit)
                 Num = AttributeLimit;
+            if (Num < 0)
+                Num = 0;
             return Num;
         }
         set { BaseAttributes[0] = value; }
@@ -61,6 +64,8 @@ public class Employee
             int Num = BaseAttributes[1] + ExtraAttributes[1];
             if (Num > AttributeLimit)
                 Num = AttributeLimit;
+            if (Num < 0)
+                Num = 0;
             return Num;
         }
         set { BaseAttributes[1] = value; }
@@ -72,6 +77,8 @@ public class Employee
             int Num = BaseAttributes[2] + ExtraAttributes[2];
             if (Num > AttributeLimit)
                 Num = AttributeLimit;
+            if (Num < 0)
+                Num = 0;
             return Num;
         }
         set { BaseAttributes[2] = value; }
@@ -83,6 +90,8 @@ public class Employee
             int Num = BaseAttributes[3] + ExtraAttributes[3];
             if (Num > AttributeLimit)
                 Num = AttributeLimit;
+            if (Num < 0)
+                Num = 0;
             return Num;
         }
         set { BaseAttributes[3] = value; }
@@ -94,6 +103,8 @@ public class Employee
             int Num = BaseAttributes[4] + ExtraAttributes[4];
             if (Num > AttributeLimit)
                 Num = AttributeLimit;
+            if (Num < 0)
+                Num = 0;
             return Num;
         }
         set { BaseAttributes[4] = value; }
@@ -105,6 +116,8 @@ public class Employee
             int Num = BaseAttributes[5] + ExtraAttributes[5];
             if (Num > AttributeLimit)
                 Num = AttributeLimit;
+            if (Num < 0)
+                Num = 0;
             return Num;
         }
         set { BaseAttributes[5] = value; }
@@ -116,6 +129,8 @@ public class Employee
             int Num = BaseAttributes[6] + ExtraAttributes[6];
             if (Num > AttributeLimit)
                 Num = AttributeLimit;
+            if (Num < 0)
+                Num = 0;
             return Num;
         }
         set { BaseAttributes[6] = value; }
@@ -127,6 +142,8 @@ public class Employee
             int Num = BaseAttributes[7] + ExtraAttributes[7];
             if (Num > AttributeLimit)
                 Num = AttributeLimit;
+            if (Num < 0)
+                Num = 0;
             return Num;
         }
         set { BaseAttributes[7] = value; }
@@ -138,6 +155,8 @@ public class Employee
             int Num = BaseAttributes[8] + ExtraAttributes[8];
             if (Num > AttributeLimit)
                 Num = AttributeLimit;
+            if (Num < 0)
+                Num = 0;
             return Num;
         }
         set { BaseAttributes[8] = value; }
@@ -149,6 +168,8 @@ public class Employee
             int Num = BaseAttributes[9] + ExtraAttributes[9];
             if (Num > 5)
                 Num = 5;
+            if (Num < 0)
+                Num = 0;
             return Num;
         }
         set { BaseAttributes[9] = value; }
@@ -160,6 +181,8 @@ public class Employee
             int Num = BaseAttributes[10] + ExtraAttributes[10];
             if (Num > AttributeLimit)
                 Num = AttributeLimit;
+            if (Num < 0)
+                Num = 0;
             return Num;
         }
         set { BaseAttributes[10] = value; }
@@ -171,6 +194,8 @@ public class Employee
             int Num = BaseAttributes[11] + ExtraAttributes[11];
             if (Num > AttributeLimit)
                 Num = AttributeLimit;
+            if (Num < 0)
+                Num = 0;
             return Num;
         }
         set { BaseAttributes[11] = value; }
@@ -182,6 +207,8 @@ public class Employee
             int Num = BaseAttributes[12] + ExtraAttributes[12];
             if (Num > AttributeLimit)
                 Num = AttributeLimit;
+            if (Num < 0)
+                Num = 0;
             return Num;
         }
         set { BaseAttributes[12] = value; }
@@ -193,6 +220,8 @@ public class Employee
             int Num = BaseAttributes[13] + ExtraAttributes[13];
             if (Num > AttributeLimit)
                 Num = AttributeLimit;
+            if (Num < 0)
+                Num = 0;
             return Num;
         }
         set { BaseAttributes[13] = value; }
@@ -204,6 +233,8 @@ public class Employee
             int Num = BaseAttributes[14] + ExtraAttributes[14];
             if (Num > AttributeLimit)
                 Num = AttributeLimit;
+            if (Num < 0)
+                Num = 0;
             return Num;
         }
         set { BaseAttributes[14] = value; }
@@ -215,6 +246,8 @@ public class Employee
             int Num = BaseAttributes[15] + ExtraAttributes[15];
             if (Num > AttributeLimit)
                 Num = AttributeLimit;
+            if (Num < 0)
+                Num = 0;
             return Num;
         }
         set { BaseAttributes[15] = value; }
@@ -226,8 +259,8 @@ public class Employee
         set
         {
             stamina = value;
-            if (stamina > StaminaLimit)
-                stamina = StaminaLimit;
+            if (stamina > StaminaLimit + StaminaLimitExtra)
+                stamina = StaminaLimit + StaminaLimitExtra;
             else if (stamina < 0)
                 stamina = 0;
         }
@@ -260,8 +293,8 @@ public class Employee
             }
 
             mentality = value;
-            if (mentality > MentalityLimit)
-                mentality = MentalityLimit;
+            if (mentality > MentalityLimit + MentalityLimitExtra)
+                mentality = MentalityLimit + MentalityLimitExtra;
             else if (mentality <= 0)
             {
                 mentality = 0;
@@ -305,7 +338,6 @@ public class Employee
 
     public EmpInfo InfoA, InfoB, InfoDetail;
     public DepControl CurrentDep;
-    public OfficeControl CurrentOffice;
     public Employee Master, Lover, RTarget;
     public Clique CurrentClique;
 
@@ -418,7 +450,10 @@ public class Employee
         //1.随机学校
         SchoolType = Random.Range(1, 4);
         if (SchoolType == 1)
-            SetAttributes(r1, BaseAttributes[r1 - 1] + 1);
+        {
+            if (BaseAttributes[r1 - 1] < 10)
+                SetAttributes(r1, BaseAttributes[r1 - 1] + 1);
+        }
         else if (SchoolType == 3)
         {
             if (BaseAttributes[r1 - 1] > 0)
@@ -429,13 +464,21 @@ public class Employee
         //2.随机专业
         MajorType = Random.Range(0, 10);
         MajorType = Nst[MajorType];
-        if(r1 == MajorType)
-            SetAttributes(r1, BaseAttributes[r1 - 1] + 2);
+        if (r1 == MajorType)
+        {
+            if (BaseAttributes[r1 - 1] < 9)
+                SetAttributes(r1, BaseAttributes[r1 - 1] + 2);
+        }
         else if (r2 == MajorType)
-            SetAttributes(r2, BaseAttributes[r2 - 1] + 2);
+        {
+            if (BaseAttributes[r2 - 1] < 9)
+                SetAttributes(r2, BaseAttributes[r2 - 1] + 2);
+        }
         else if (r3 == MajorType)
-            SetAttributes(r3, BaseAttributes[r3 - 1] + 2);
-
+        {
+            if (BaseAttributes[r3 - 1] < 9)
+                SetAttributes(r3, BaseAttributes[r3 - 1] + 2);
+        }
 
         //设定姓名并检查是否重名
         bool nameCheck = false;
@@ -609,12 +652,20 @@ public class Employee
             SkillLevel = Gossip;
         #endregion
 
-        SkillExp[type - 1] += value;
+        int pValue = value;//计算天赋
+        if (StarLimit[type - 1] == 1)
+            pValue = (int)(pValue * 1.5f);
+        else if (StarLimit[type - 1] == 2)
+            pValue = (int)(pValue * 2.5f);
+        else if (StarLimit[type - 1] == 3)
+            pValue = pValue * 4;
+
+        SkillExp[type - 1] += pValue;
 
         //达到上限后不继续判断
         if (SkillLevel >= AttributeLimit)
             return;
-        if (SkillExp[type - 1] >= AdjustData.ExpLimit[SkillLevel])
+        if (SkillExp[type - 1] >= AdjustData.ExpLimit[SkillLevel] + ExtraExp)
         {
             InfoDetail.AddPerk(new Perk58(this), true);
             SkillExp[type - 1] = 0;
@@ -655,8 +706,8 @@ public class Employee
             { 
                 Manage += 1;
                 SkillName = "管理";
-                if (CurrentOffice != null)
-                    CurrentOffice.CheckManage();
+                if (CurrentDep != null && CurrentDep.Manager == this)
+                    CurrentDep.SetOfficeStatus();
             }
             else if (type == 8)
             { 
@@ -1008,9 +1059,9 @@ public class Employee
                 InfoDetail.Entity.SetFree();
         }
 
-        if (CurrentOffice == null)
+        if (CurrentDep == null)
             NoPromotionTime += 1;
-        else if (CurrentOffice.building.Type != BuildingType.CEO办公室 || CurrentOffice.building.Type != BuildingType.高管办公室)
+        else if (CurrentDep.building.Type != BuildingType.CEO办公室 || CurrentDep.building.Type != BuildingType.高管办公室)
             NoPromotionTime += 1;
 
         if (Lover == null)

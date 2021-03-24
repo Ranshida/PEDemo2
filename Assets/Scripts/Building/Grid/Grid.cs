@@ -22,6 +22,7 @@ public class Grid : MonoBehaviour
     public GridType Type;
     public int[,] Location { get { return new int[X, Z]; } }
 
+    public Area BelongedArea;
     public Building BelongBuilding { get; private set; } = null;
 
     public void Build(Building building)

@@ -15,12 +15,7 @@ public class BuildingDescription : WindowRoot
     public Text str_Func1;
     public Text str_Require1;
     public Text str_Description1;
-    public Text str_Func2;
     public Text str_Require2;
-    public Text str_Description2;
-    public Text str_Func3;
-    public Text str_Require3;
-    public Text str_Description3;
 
 
     private void Awake()
@@ -32,12 +27,7 @@ public class BuildingDescription : WindowRoot
         str_Func1 = transform.Find("str_Func1").GetComponent<Text>();
         str_Require1 = transform.Find("str_Require1").GetComponent<Text>();
         str_Description1 = transform.Find("str_Description1").GetComponent<Text>();
-        str_Func2 = transform.Find("str_Func2").GetComponent<Text>();
         str_Require2 = transform.Find("str_Require2").GetComponent<Text>();
-        str_Description2 = transform.Find("str_Description2").GetComponent<Text>();
-        str_Func3 = transform.Find("str_Func3").GetComponent<Text>();
-        str_Require3 = transform.Find("str_Require3").GetComponent<Text>();
-        str_Description3 = transform.Find("str_Description3").GetComponent<Text>();
     }
 
     public void ShowInfo(Building building, bool right = true)
@@ -59,12 +49,7 @@ public class BuildingDescription : WindowRoot
         str_Func1.text = building.Function_A;
         str_Require1.text = building.Require_A;
         str_Description1.text = building.Description_A;
-        str_Func2.text = building.Function_B;
         str_Require2.text = building.Require_B;
-        str_Description2.text = building.Description_B;
-        str_Func3.text = building.Function_C;
-        str_Require3.text = building.Require_C;
-        str_Description3.text = building.Description_C;
     }
 
     public void ShowInfo_Decorate(bool right)
@@ -81,11 +66,6 @@ public class BuildingDescription : WindowRoot
         str_Func1.text = "随机装饰建筑";
         str_Require1.text = "无";
         str_Description1.text = "随机获得一个装饰建筑物，不同的装饰建筑物可以解锁不同事件";
-        str_Func2.text = "";
         str_Require2.text = "";
-        str_Description2.text = "";
-        str_Func3.text = "";
-        str_Require3.text = "";
-        str_Description3.text = "";
     }
 }

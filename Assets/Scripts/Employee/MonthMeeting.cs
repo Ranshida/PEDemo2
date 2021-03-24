@@ -49,11 +49,11 @@ public class MonthMeeting : MonoBehaviour
     {
         //统计所有管理成员
         List<Employee> managers = new List<Employee>();
-        foreach (OfficeControl office in GameControl.Instance.CurrentOffices)
+        foreach (DepControl dep in GameControl.Instance.CurrentDeps)
         {
-            if (office.CurrentManager != null)
+            if (dep.Manager != null)
             {
-                managers.Add(office.CurrentManager);
+                managers.Add(dep.Manager);
             }
         }
 
@@ -222,7 +222,7 @@ public class MonthMeeting : MonoBehaviour
     }
 
     //结算水晶
-    public void SettleArea(List<CrystalType> crystals, Areas.Area area)
+    public void SettleArea(List<CrystalType> crystals, Area area)
     {
         dynamicWindow.HideAllBuildingInfo();
         List<Building> buildings = new List<Building>();

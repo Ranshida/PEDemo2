@@ -255,9 +255,10 @@ public class HireControl : MonoBehaviour
 
         GC.CurrentEmployees.Add(emp);
 
-        emp.CurrentOffice = GC.CurrentOffices[0];
-        GC.CurrentOffices[0].CurrentManager = emp;
-        GC.CurrentOffices[0].SetOfficeStatus();
+        emp.CurrentDep = GC.CurrentDeps[0];
+        GC.CurrentDeps[0].CurrentEmps.Add(emp);
+        GC.CurrentDeps[0].Manager = emp;
+        GC.CurrentDeps[0].SetOfficeStatus();
         GC.HourEvent.AddListener(emp.TimePass);
 
         //将CEO添加到核心团队

@@ -913,7 +913,7 @@ GameObject:
   - component: {fileID: 876988828179824846}
   - component: {fileID: -2279394563660855739}
   m_Layer: 0
-  m_Name: "22\u4EBA\u6587\u6C99\u9F99"
+  m_Name: "22\u8111\u673A\u5B9E\u9A8C\u5BA4"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -964,7 +964,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ID: 22
-  Name: "\u4E2D\u592E\u76D1\u63A7\u5BA4"
+  Name: "\u8111\u673A\u5B9E\u9A8C\u5BA4"
   Size: "4\xD74"
   Function_A: "\u884C\u4E3A\u68C0\u67E5"
   Require_A: "\u516B\u5366"
@@ -984,16 +984,16 @@ MonoBehaviour:
   Length: 4
   Width: 4
   EffectRange: 0
+  EffectRangeType: 2
   effectValue: 1
   StaminaRequest: 0
-  Type: 26
+  Type: 19
   Str_Type: 
   Pay: 0
   CanLottery: 0
   CanDismantle: 1
   ContainsGrids: []
   Department: {fileID: 0}
-  Office: {fileID: 0}
   effect:
     CurrentBuilding: {fileID: -2279394563660855739}
     AffectedBuildings: []

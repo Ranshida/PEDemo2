@@ -6,7 +6,7 @@ static public class AdjustData
 {
     static public int BottleneckValue = 800; //每层瓶颈提供的额外经验需求
 
-    static public int[] ExpLimit = { 400,600,800,1000,1200,1400,1600,1800,2000,2200}; //各等级(1-10)升级所需经验
+    static public int[] ExpLimit = { 400,600,800,1000,1200,1400,1600,1800,2000,2200, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}; //各等级(1-10)升级所需经验
 
     //1.技术 2.市场 3.产品 8.HR人力 9.Fi财务 11.Fo行业 12.St谋略 13.Co说服 15.Go八卦 16.Ad行政
     static public int CEOProfessionType = 13; //CEO专场能力类型（编号见上面）
@@ -17,4 +17,7 @@ static public class AdjustData
 
     static public int EmpBProfessionType = 8; //默认员工B专场能力类型（编号见上面）
     static public int EmpBProfessionValue = 4; //默认员工B专场能力数值（编号见上面）
+
+    static public int EmpExpObtain = 5;//有一个技能符合时工作1工时获得的经验
+    static public int EmpExpDoubleSkillObtain = 3;//有两个技能符合时工作1工时获得的经验
 }

@@ -65,24 +65,6 @@ public class OfficeControl : MonoBehaviour
                 CheckManage();
                 UpdateUI();
             }
-            //1-3职业技能 4观察 5坚韧 6强壮 7管理 8人力 9财务 10决策 11行业 12谋略 13说服 14魅力 15八卦
-            //else if (building.effectValue == 1)
-            //    Text_MAbility.text = "人力:" + CurrentManager.HR;
-            //else if (building.effectValue == 2)
-            //    Text_MAbility.text = "八卦:" + CurrentManager.Gossip;
-            //else if (building.effectValue == 3)
-            //    Text_MAbility.text = "强壮:" + CurrentManager.Strength;
-            //else if (building.effectValue == 4)
-            //    Text_MAbility.text = "谋略:" + CurrentManager.Strategy;
-            //else if (building.effectValue == 5)
-            //    Text_MAbility.text = "行业:" + CurrentManager.Forecast;
-            //else if (building.effectValue == 6)
-            //    Text_MAbility.text = "决策:" + CurrentManager.Decision;
-            //else if (building.effectValue == 7)
-            //    Text_MAbility.text = "财务:" + CurrentManager.Finance;
-            //else if (building.effectValue == 8)
-            //    Text_MAbility.text = "管理:" + CurrentManager.Finance;
-
         }
         else
         {
@@ -166,11 +148,6 @@ public class OfficeControl : MonoBehaviour
             Text_TimeLeft.gameObject.SetActive(false);
             num = 1;
         }
-        for (int i = 0; i < GC.CurrentOffices.Count; i++)
-        {
-            if (GC.CurrentOffices[i].building.Type == building.Type)
-                num += 1;
-        }
         Text_OfficeName.text = building.Type.ToString() + num;
 
     }
@@ -188,7 +165,7 @@ public class OfficeControl : MonoBehaviour
         {
             //还没写！
         }
-        else if (building.Type == BuildingType.按摩房)
+        else if (building.Type == BuildingType.茶水间)
         {
             List<DepControl> TDep = new List<DepControl>();
             for (int i = 0; i < building.effect.AffectedBuildings.Count; i++)
@@ -215,7 +192,7 @@ public class OfficeControl : MonoBehaviour
             if (TDep.Count == 0)
                 ActiveSuccess = false;
         }
-        else if (building.Type == BuildingType.健身房)
+        else if (building.Type == BuildingType.中央厨房)
         {
             List<DepControl> TDep = new List<DepControl>();
             for (int i = 0; i < building.effect.AffectedBuildings.Count; i++)
@@ -259,8 +236,8 @@ public class OfficeControl : MonoBehaviour
     {
         if (GC.Stamina >= building.StaminaRequest)
         {
-            GC.CurrentOffice = this;
-            GC.SelectMode = 5;
+            //GC.CurrentOffice = this;
+            //GC.SelectMode = 5;
             //if (building.Type == BuildingType.人力资源部A)
             //    GC.ShowDepSelectPanel(GC.CurrentDeps);
             //else if (building.Type == BuildingType.高级财务部B)
@@ -274,24 +251,24 @@ public class OfficeControl : MonoBehaviour
     public void ShowAvailableOffices()
     {
         GC.SelectMode = 8;
-        GC.ShowDepSelectPanel(this);
-        GC.CurrentOffice = this;
+        //GC.ShowDepSelectPanel(this);
+        //GC.CurrentOffice = this;
     }
 
     public void ShowModeSelectPanel()
     {
-        GC.OfficeModeSelectPanel.GetComponent<WindowBaseControl>().SetWndState(true);
-        GC.CurrentOffice = this;
-        if (building.Type == BuildingType.CEO办公室)
-        {
-            GC.OfficeModeBuildingOptionButton.SetActive(true);
-            GC.OfficeModeTalkOptionButton.SetActive(false);
-        }
-        else
-        {
-            GC.OfficeModeBuildingOptionButton.SetActive(false);
-            GC.OfficeModeTalkOptionButton.SetActive(true);
-        }
+        //GC.OfficeModeSelectPanel.GetComponent<WindowBaseControl>().SetWndState(true);
+        //GC.CurrentOffice = this;
+        //if (building.Type == BuildingType.CEO办公室)
+        //{
+        //    GC.OfficeModeBuildingOptionButton.SetActive(true);
+        //    GC.OfficeModeTalkOptionButton.SetActive(false);
+        //}
+        //else
+        //{
+        //    GC.OfficeModeBuildingOptionButton.SetActive(false);
+        //    GC.OfficeModeTalkOptionButton.SetActive(true);
+        //}
     }
 
     public float CountSuccessRate()
@@ -599,7 +576,7 @@ public class OfficeControl : MonoBehaviour
             CommandingOffice.CheckManage();
         }
         GC.HourEvent.RemoveListener(TimePass);
-        GC.CurrentOffices.Remove(this);
+        //GC.CurrentOffices.Remove(this);
         if (SRateDetailPanel != null)
             Destroy(SRateDetailPanel.gameObject);
         Destroy(DS.gameObject);

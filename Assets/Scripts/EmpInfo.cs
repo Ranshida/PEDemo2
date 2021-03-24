@@ -46,13 +46,12 @@ public class EmpInfo : MonoBehaviour
                     Text_Mentality.text += "/" + emp.Confidence;
                 }
 
-                Text_Skill1.text = "职业技能: " + emp.BaseAttributes[emp.Professions[0] - 1] + " / " + emp.BaseAttributes[emp.Professions[1] - 1] + 
-                    " / " + emp.BaseAttributes[emp.Professions[2] - 1];
+                Text_Skill1.text = "职业技能: " + (emp.BaseAttributes[emp.Professions[0] - 1] + emp.ExtraAttributes[emp.Professions[0] - 1]) 
+                    + " / " + (emp.BaseAttributes[emp.Professions[1] - 1] + emp.ExtraAttributes[emp.Professions[1] - 1]) + 
+                    " / " + (emp.BaseAttributes[emp.Professions[2] - 1] + emp.ExtraAttributes[emp.Professions[2] - 1]);
                 Text_Manage.text = "管理能力:" + emp.Manage;
                 if (emp.CurrentDep != null)
                     Text_DepName.text = emp.CurrentDep.Text_DepName.text;
-                else if (emp.CurrentOffice != null)
-                    Text_DepName.text = emp.CurrentOffice.Text_OfficeName.text;
                 else
                     Text_DepName.text = "无";
                 if(MobDownSign != null)
@@ -63,11 +62,7 @@ public class EmpInfo : MonoBehaviour
                         MobDownSign.SetActive(false);
                 }
             }
-            //头脑风暴面板
-            else if (InfoType == 3)
-            {
 
-            }
             //雇佣和详细面板通用部分
             else
             {
@@ -133,7 +128,7 @@ public class EmpInfo : MonoBehaviour
                 UpdateCharacterUI();
                 for(int i = 0; i < 3; i++)
                 {
-                    Text_Stars[i].text = emp.StarLimit[i].ToString();
+                    Text_Stars[i].text = emp.StarLimit[emp.Professions[i] - 1].ToString();
                 }
             }
             //详细面板
@@ -143,46 +138,11 @@ public class EmpInfo : MonoBehaviour
                 Text_Stamina.text = "体力:" + emp.Stamina;
                 if (emp.CurrentDep != null)
                     Text_DepName.text = "所属部门:" + emp.CurrentDep.Text_DepName.text;
-                else if (emp.CurrentOffice != null)
-                    Text_DepName.text = "所属部门:" + emp.CurrentOffice.Text_OfficeName.text;
                 else
                     Text_DepName.text = "所属部门:无";
                 for (int i = 0; i < 3; i++)
                 {
-                    int Exp = 0, SkillLevel = 0;
-                    #region 设定等级
-                    if (i == 0)
-                        SkillLevel = emp.Tech;
-                    else if (i == 1)
-                        SkillLevel = emp.Market;
-                    else if (i == 2)
-                        SkillLevel = emp.Product;
-                    else if (i == 3)
-                        SkillLevel = emp.Observation;
-                    else if (i == 4)
-                        SkillLevel = emp.Tenacity;
-                    else if (i == 5)
-                        SkillLevel = emp.Strength;
-                    else if (i == 6)
-                        SkillLevel = emp.Manage;
-                    else if (i == 7)
-                        SkillLevel = emp.HR;
-                    else if (i == 8)
-                        SkillLevel = emp.Finance;
-                    else if (i == 9)
-                        SkillLevel = emp.Decision;
-                    else if (i == 10)
-                        SkillLevel = emp.Forecast;
-                    else if (i == 11)
-                        SkillLevel = emp.Strategy;
-                    else if (i == 12)
-                        SkillLevel = emp.Convince;
-                    else if (i == 13)
-                        SkillLevel = emp.Charm;
-                    else if (i == 14)
-                        SkillLevel = emp.Gossip;
-                    #endregion
-                    Exp = SkillLevel * 50;
+                    int Exp = AdjustData.ExpLimit[emp.BaseAttributes[emp.Professions[i] - 1]] + emp.ExtraExp;
                     Text_Exps[i].text = "Exp " + emp.SkillExp[emp.Professions[i] - 1] + "/" + Exp;
                 }
             }
@@ -454,6 +414,8 @@ public class EmpInfo : MonoBehaviour
             emp.Manage += 1;
             if (emp.Manage == 5)
                 LevelUpButtons[2].SetActive(false);
+            if (emp.CurrentDep != null && emp.CurrentDep.Manager == emp)
+                emp.CurrentDep.SetOfficeStatus();
             emp.SkillPoint -= emp.Manage;
         }
         else if (type == 4)
@@ -502,7 +464,7 @@ public class EmpInfo : MonoBehaviour
         LayoutRebuilder.ForceRebuildLayoutImmediate(HistoryContent.gameObject.GetComponent<RectTransform>());
     }
 
-    public void AddPerk(Perk perk, bool AddEffect = false)
+    public void AddPerk(Perk perk, bool AddEffect = true)
     {
         //同类Perk检测
         foreach (PerkInfo p in PerksInfo)
@@ -603,6 +565,15 @@ public class EmpInfo : MonoBehaviour
         Perk perk2 = PerkData.PerkList[numB].Clone();
         perk2.TargetEmp = emp;
         AddPerk(perk2, true);
+
+        //额外的金色特质
+        if(Random.Range(0.0f, 1.0f) < 0.02)
+        {
+            numA = Random.Range(0, PerkData.GoldenPerkList.Count);
+            Perk perk3 = PerkData.PerkList[numA].Clone();
+            perk3.TargetEmp = emp;
+            AddPerk(perk3, true);
+        }
     }
 
     public int CalcSalary()

@@ -46,6 +46,12 @@ public class FOEControl : MonoBehaviour
         if(FightTime == 0)
         {
             FightTime = 96;
+            //此处为临时添加建筑随机的部分
+            GC.BM.Lottery(3);
+            return;
+
+
+
             foreach(DepControl dep in GC.CurrentDeps)
             {
                 dep.ResetFinishedTaskNum();
@@ -355,7 +361,7 @@ public class FOEControl : MonoBehaviour
             }
         }
         FightBegins = false;
-
+        GC.BM.Lottery(3);
     }
     public void ResetTime()
     {

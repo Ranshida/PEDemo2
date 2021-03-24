@@ -120,16 +120,6 @@ public abstract class Event
                 }
             }
         }
-        for (int i = 0; i < GC.CurrentOffices.Count; i++)
-        {
-            foreach (BuildingType type in BuildingRequires)
-            {
-                if (GC.CurrentOffices[i].building.Type == type)
-                {
-                    return true;
-                }
-            }
-        }
         return false;
 
 
@@ -1243,16 +1233,6 @@ public class Event3_5 : Event
                 }
             }
         }
-        for (int i = 0; i < GC.CurrentOffices.Count; i++)
-        {
-            foreach (BuildingType type in BuildingRequires)
-            {
-                if (GC.CurrentOffices[i].building.Type == BuildingType.会议室)
-                {
-                    huiyishi = true;
-                }
-            }
-        }
         if (false)//原本是判断是否存在会议室
         {
             ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "与同事" + Target.Name + "在会议室一起讨论了工作，";
@@ -1373,16 +1353,6 @@ public class Event3_6 : Event
             foreach (BuildingType type in BuildingRequires)
             {
                 if (GC.CurrentDeps[i].building.Type == BuildingType.会议室)
-                {
-                    huiyishi = true;
-                }
-            }
-        }
-        for (int i = 0; i < GC.CurrentOffices.Count; i++)
-        {
-            foreach (BuildingType type in BuildingRequires)
-            {
-                if (GC.CurrentOffices[i].building.Type == BuildingType.会议室)
                 {
                     huiyishi = true;
                 }
@@ -1563,16 +1533,6 @@ public class Event3_7 : Event
                 }
             }
         }
-        for (int i = 0; i < GC.CurrentOffices.Count; i++)
-        {
-            foreach (BuildingType type in BuildingRequires)
-            {
-                if (GC.CurrentOffices[i].building.Type == BuildingType.会议室)
-                {
-                    huiyishi = true;
-                }
-            }
-        }
         if (false)//原本是判断是否存在会议室
         {
             if (EmpManager.Instance.FindBoss(Self) == Target)
@@ -1699,16 +1659,6 @@ public class Event3_8 : Event
             foreach (BuildingType type in BuildingRequires)
             {
                 if (GC.CurrentDeps[i].building.Type == BuildingType.会议室)
-                {
-                    huiyishi = true;
-                }
-            }
-        }
-        for (int i = 0; i < GC.CurrentOffices.Count; i++)
-        {
-            foreach (BuildingType type in BuildingRequires)
-            {
-                if (GC.CurrentOffices[i].building.Type == BuildingType.会议室)
                 {
                     huiyishi = true;
                 }

@@ -111,16 +111,16 @@ public class SkillControl : WindowRoot
         Employee CurrentManager = null;
         foreach(SkillInfo i in s)
         {
-            if(i.skill != null && i.skill.TargetEmp.CurrentOffice != null)
-            {
-                if(i.skill.TargetEmp.CurrentOffice.building.Type == BuildingType.CEO办公室 || i.skill.TargetEmp.CurrentOffice.building.Type == BuildingType.高管办公室)
-                {
-                    if (CurrentManager == null)
-                        CurrentManager = i.skill.TargetEmp;
-                    else if (i.skill.TargetEmp.Manage > CurrentManager.Manage)
-                        CurrentManager = i.skill.TargetEmp; 
-                }
-            }
+            //if(i.skill != null && i.skill.TargetEmp.CurrentOffice != null)
+            //{
+            //    if(i.skill.TargetEmp.CurrentOffice.building.Type == BuildingType.CEO办公室 || i.skill.TargetEmp.CurrentOffice.building.Type == BuildingType.高管办公室)
+            //    {
+            //        if (CurrentManager == null)
+            //            CurrentManager = i.skill.TargetEmp;
+            //        else if (i.skill.TargetEmp.Manage > CurrentManager.Manage)
+            //            CurrentManager = i.skill.TargetEmp; 
+            //    }
+            //}
         }
         if (CurrentManager == null)
         {
@@ -167,7 +167,7 @@ public class SkillControl : WindowRoot
         {
             BossLevel = 1;
             SetStatus();
-            DiceNum = CurrentManager.CurrentOffice.ManageValue + 1;
+            //DiceNum = CurrentManager.CurrentDep.ManageValue + 1;
             DiceNum += GC.ExtraDice;
             if (DiceNum > 6)
                 DiceNum = 6;
@@ -837,9 +837,9 @@ public class SkillControl : WindowRoot
         bool HaveManager = false;
         foreach(EmpInfo info in SelectedEmps)
         {
-            if(info.emp.CurrentOffice != null)
+            if(info.emp.CurrentDep != null)
             {
-                if(info.emp.CurrentOffice.building.Type == BuildingType.CEO办公室 || info.emp.CurrentOffice.building.Type == BuildingType.高管办公室)
+                if(info.emp.CurrentDep.building.Type == BuildingType.CEO办公室 || info.emp.CurrentDep.building.Type == BuildingType.高管办公室)
                 {
                     HaveManager = true;
                     break;

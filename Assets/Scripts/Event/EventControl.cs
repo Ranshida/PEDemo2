@@ -52,11 +52,11 @@ public class EventControl : MonoBehaviour
         if (Fire == true)
             Text_MeetingName.text = "开除员工" + emp.Name + "会议投票结果";
 
-        for (int i = 0; i < GC.CurrentOffices.Count; i++)
+        for (int i = 0; i < GC.CurrentDeps.Count; i++)
         {
-            if ((GC.CurrentOffices[i].building.Type == BuildingType.CEO办公室 || GC.CurrentOffices[i].building.Type == BuildingType.高管办公室) && GC.CurrentOffices[i].CurrentManager != null)
+            if ((GC.CurrentDeps[i].building.Type == BuildingType.CEO办公室 || GC.CurrentDeps[i].building.Type == BuildingType.高管办公室) && GC.CurrentDeps[i].Manager != null)
             {
-                Employee E = GC.CurrentOffices[i].CurrentManager, CEO = GC.CurrentEmployees[0];
+                Employee E = GC.CurrentDeps[i].Manager, CEO = GC.CurrentEmployees[0];
                 //CEO和自己不投票
                 if (E.isCEO == true || E == emp)
                     continue;

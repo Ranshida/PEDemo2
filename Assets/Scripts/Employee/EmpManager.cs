@@ -100,9 +100,9 @@ public class EmpManager : MonoBehaviour
         if (!self.CurrentDep)
             return null;
 
-        if (self.CurrentDep.CommandingOffice != null && self.CurrentDep.CommandingOffice.CurrentManager != null) 
+        if (self.CurrentDep.CommandingOffice != null && self.CurrentDep.CommandingOffice.Manager != null) 
         {
-            Employee boss = self.CurrentDep.CommandingOffice.CurrentManager;
+            Employee boss = self.CurrentDep.CommandingOffice.Manager;
             if (boss != self) 
             {
                 return boss;
@@ -129,21 +129,17 @@ public class EmpManager : MonoBehaviour
     //寻找员工的下属
     public List<Employee> FindMembers(Employee self)
     {
-        if (!self.CurrentOffice)
+        if (self.CurrentDep == null)
+            return new List<Employee>();
+        else if (self.CurrentDep.building.Type != BuildingType.CEO办公室 && self.CurrentDep.building.Type != BuildingType.高管办公室)
             return new List<Employee>();
 
         List<Employee> members = new List<Employee>();
-        if (self.CurrentOffice != null) 
+        foreach (DepControl dep in self.CurrentDep.ControledDeps)
         {
-            if (self.CurrentOffice.building.Type == BuildingType.CEO办公室 || self.CurrentOffice.building.Type == BuildingType.高管办公室) 
+            foreach (Employee employee in dep.CurrentEmps)
             {
-                foreach (DepControl dep in self.CurrentOffice.ControledDeps) 
-                {
-                    foreach (Employee employee in dep.CurrentEmps)
-                    {
-                        members.Add(employee);
-                    }
-                }
+                members.Add(employee);
             }
         }
         return members;

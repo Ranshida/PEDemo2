@@ -37,14 +37,6 @@ public class BuildingInfo : MonoBehaviour
             txt_Efficiency.gameObject.SetActive(true);
             txt_Cost.gameObject.SetActive(true);
         }
-        if (thisBuilding.Office)
-        {
-            m_Office = thisBuilding.Office;
-            img_Faith.gameObject.SetActive(false);
-            img_Success.gameObject.SetActive(true);
-            txt_Efficiency.gameObject.SetActive(false);
-            txt_Cost.gameObject.SetActive(true);
-        }
     }
 
     public void OnUpdate()
@@ -56,22 +48,6 @@ public class BuildingInfo : MonoBehaviour
         }
 
         transform.position = Function.World2ScreenPoint(thisBuilding.transform.position + new Vector3(thisBuilding.Length * 7.5f, 0, thisBuilding.Width * 5));
-
-        //办公室建筑
-        if (m_Office)
-        {
-            Color successColor;
-            float success = m_Office.CountSuccessRate();
-            if (success >= 1)
-                successColor = Color.green;
-            else if (success >= 0.8f)
-                successColor = Color.yellow;
-            else
-                successColor = Color.green;
-
-            img_Success.color = successColor;
-            txt_Cost.text = thisBuilding.Pay.ToString();
-        }
         //部门建筑
         if (m_Dep)
         {
@@ -84,7 +60,7 @@ public class BuildingInfo : MonoBehaviour
                 faithColor = Color.green; 
             
             Color successColor;
-            float success = DepControl.DepBaseSuccessRate + m_Dep.CountSuccessRate(thisBuilding.effectValue);
+            float success = m_Dep.CountSuccessRate();
             if (success >= 1)
                 successColor = Color.green;
             else if (success >= 0.8f)

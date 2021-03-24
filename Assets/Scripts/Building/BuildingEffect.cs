@@ -26,46 +26,65 @@ public class BuildingEffect
 
     public void FindAffect()
     {
-        //当前建筑覆盖的角落网格
-        Int2 minLocation = null;   //左下角坐标
-        Int2 maxLocation = null;   //右上角坐标
-        foreach (Grid temp_Grid in CurrentBuilding.ContainsGrids)
-        {
-            if (minLocation == null)
-                minLocation = new Int2(temp_Grid.X, temp_Grid.Z);
-            else
-            {
-                if (temp_Grid.X < minLocation.X)
-                    minLocation.X = temp_Grid.X;
-                if (temp_Grid.Z < minLocation.Y)
-                    minLocation.Y = temp_Grid.Z;
-            }
+        ////当前建筑覆盖的角落网格
+        //Int2 minLocation = null;   //左下角坐标
+        //Int2 maxLocation = null;   //右上角坐标
+        //foreach (Grid temp_Grid in CurrentBuilding.ContainsGrids)
+        //{
+        //    if (minLocation == null)
+        //        minLocation = new Int2(temp_Grid.X, temp_Grid.Z);
+        //    else
+        //    {
+        //        if (temp_Grid.X < minLocation.X)
+        //            minLocation.X = temp_Grid.X;
+        //        if (temp_Grid.Z < minLocation.Y)
+        //            minLocation.Y = temp_Grid.Z;
+        //    }
 
-            if (maxLocation == null)
-                maxLocation = new Int2(temp_Grid.X, temp_Grid.Z);
-            else
-            {
-                if (temp_Grid.X > maxLocation.X)
-                    maxLocation.X = temp_Grid.X;
-                if (temp_Grid.Z > maxLocation.Y)
-                    maxLocation.Y = temp_Grid.Z;
-            }
-        }
+        //    if (maxLocation == null)
+        //        maxLocation = new Int2(temp_Grid.X, temp_Grid.Z);
+        //    else
+        //    {
+        //        if (temp_Grid.X > maxLocation.X)
+        //            maxLocation.X = temp_Grid.X;
+        //        if (temp_Grid.Z > maxLocation.Y)
+        //            maxLocation.Y = temp_Grid.Z;
+        //    }
+        //}
 
-        //辐射到的网格
-        Dictionary<int, Grid> gridDict;
+        ////辐射到的网格
+        //Dictionary<int, Grid> gridDict;
+        //List<Grid> effectGirds = new List<Grid>();
+        //for (int i = minLocation.X - AffectRange; i < maxLocation.X + AffectRange; i++)
+        //{
+        //    if (GridContainer.Instance.GridDict.TryGetValue(i, out gridDict))
+        //    {
+        //        for (int j = minLocation.Y - AffectRange; j < maxLocation.Y + AffectRange; j++)
+        //        {
+        //            if (gridDict.TryGetValue(j, out Grid grid))
+        //            {
+        //                effectGirds.Add(grid);
+        //            }
+        //        }
+        //    }
+        //}
+
         List<Grid> effectGirds = new List<Grid>();
-        for (int i = minLocation.X - AffectRange; i < maxLocation.X + AffectRange; i++)
+        if (CurrentBuilding.EffectRangeType > 0)
         {
-            if (GridContainer.Instance.GridDict.TryGetValue(i, out gridDict))
+            if (CurrentBuilding.EffectRangeType > 1)
             {
-                for (int j = minLocation.Y - AffectRange; j < maxLocation.Y + AffectRange; j++)
+                foreach (Area a in CurrentBuilding.ContainsGrids[0].BelongedArea.NeighborAreas)
                 {
-                    if (gridDict.TryGetValue(j, out Grid grid))
+                    foreach (Grid grid in a.gridList)
                     {
                         effectGirds.Add(grid);
                     }
                 }
+            }
+            foreach (Grid grid in CurrentBuilding.ContainsGrids[0].BelongedArea.gridList)
+            {
+                effectGirds.Add(grid);
             }
         }
 
@@ -105,75 +124,56 @@ public class BuildingEffect
         AffectedBuildings.Clear();
     }
 
-    //影响到了这个建筑
+    //自己影响到了目标
     public void OnAffectNew(Building building)
     {
-        BuildingType T = CurrentBuilding.Type;
-        BuildingType T2 = building.Type;
-        if(T == BuildingType.CEO办公室)
-        {
-            if (building.Department != null)
-                building.Department.InRangeOffices.Add(CurrentBuilding.Office);
-            else if (building.Office != null)
-                building.Office.InRangeOffices.Add(CurrentBuilding.Office);
-        }
-        else if (T == BuildingType.高管办公室 && T2 != BuildingType.CEO办公室)
-        {
-            if (building.Department != null)
-                building.Department.InRangeOffices.Add(CurrentBuilding.Office);
-            else if (building.Office != null)
-                building.Office.InRangeOffices.Add(CurrentBuilding.Office);
-        }
-        if (CurrentBuilding.Department != null && building.Department == null && building.Office == null)
-            ActiveBuildingEffect(CurrentBuilding, building);
-        if(CurrentBuilding.Department == null && CurrentBuilding.Office == null && building.Department != null)
-            ActiveBuildingEffect(building, CurrentBuilding);
-    }
-
-    //不在影响这个建筑
-    public void OnRemoveAffect(Building building)
-    {
-        BuildingType T = CurrentBuilding.Type;
-        BuildingType T2 = building.Type;
+        BuildingType T = CurrentBuilding.Type; //自己
+        BuildingType T2 = building.Type;       //目标
         if (T == BuildingType.CEO办公室 || T == BuildingType.高管办公室)
         {
-            if ((building.Department != null && building.Department.CommandingOffice == CurrentBuilding.Office) ||
-                building.Office != null && building.Office.CommandingOffice == CurrentBuilding.Office)
+            if (T2 != BuildingType.CEO办公室 && building.Department != null)
+                building.Department.InRangeOffices.Add(CurrentBuilding.Department);
+        }
+        else
+        {
+            //装饰建筑效果
+            if (CurrentBuilding.Department != null && building.Department == null)
+                ActiveBuildingEffect(CurrentBuilding, building);
+            if (CurrentBuilding.Department == null && building.Department != null)
+                ActiveBuildingEffect(building, CurrentBuilding);
+        }
+    }
+
+    //自己不再影响目标
+    public void OnRemoveAffect(Building building)
+    {
+        BuildingType T = CurrentBuilding.Type;  //自己
+        BuildingType T2 = building.Type;        //目标
+        if (T == BuildingType.CEO办公室 || T == BuildingType.高管办公室)
+        {
+            if (building.Department != null && T2 != BuildingType.CEO办公室)
             {
-                foreach (DepControl dep in CurrentBuilding.Office.ControledDeps)
+                building.Department.InRangeOffices.Remove(CurrentBuilding.Department);
+                if (building.Department.CommandingOffice == CurrentBuilding.Department)
                 {
-                    dep.CommandingOffice = null;
-                    dep.canWork = false;
-                    dep.OfficeWarning.SetActive(true);
+                    foreach (DepControl dep in CurrentBuilding.Department.ControledDeps)
+                    {
+                        dep.CommandingOffice = null;
+                        dep.canWork = false;
+                        dep.OfficeWarning.SetActive(true);
+                    }
+                    CurrentBuilding.Department.ControledDeps.Clear();
                 }
-                foreach (OfficeControl office in CurrentBuilding.Office.ControledOffices)
-                {
-                    office.CommandingOffice = null;
-                    office.CanWork = false;
-                    office.OfficeWarning.SetActive(true);
-                }
-                CurrentBuilding.Office.ControledOffices.Clear();
-                CurrentBuilding.Office.ControledDeps.Clear();
             }
         }
-        if (T == BuildingType.CEO办公室)
+        else
         {
-            if (building.Department != null)
-                building.Department.InRangeOffices.Remove(CurrentBuilding.Office);
-            else if (building.Office != null)
-                building.Office.InRangeOffices.Remove(CurrentBuilding.Office);
+            //装饰建筑效果
+            if (CurrentBuilding.Department != null && building.Department == null)
+                RemoveBuildingEffect(CurrentBuilding, building);
+            if (CurrentBuilding.Department == null && building.Department != null)
+                RemoveBuildingEffect(building, CurrentBuilding);
         }
-        else if (T == BuildingType.高管办公室 && T2 != BuildingType.CEO办公室)
-        {
-            if (building.Department != null)
-                building.Department.InRangeOffices.Remove(CurrentBuilding.Office);
-            else if (building.Office != null)
-                building.Office.InRangeOffices.Remove(CurrentBuilding.Office);
-        }
-        if (CurrentBuilding.Department != null && building.Department == null && building.Office == null)
-            RemoveBuildingEffect(CurrentBuilding, building);
-        if (CurrentBuilding.Department == null && CurrentBuilding.Office == null && building.Department != null)
-            RemoveBuildingEffect(building, CurrentBuilding);
     }
 
     //添加/移除装饰性建筑效果

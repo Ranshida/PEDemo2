@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public class DepSelect : MonoBehaviour
 {
     public DepControl DC;
-    public OfficeControl OC;
     public GameControl GC;
     public Text Text_DepName;
 
@@ -18,10 +17,5 @@ public class DepSelect : MonoBehaviour
     public void Select2()
     {
         GC.SelectDep();
-    }
-
-    public void Select3()
-    {
-        GC.SelectDep(OC);
     }
 }

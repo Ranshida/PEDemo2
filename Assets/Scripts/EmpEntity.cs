@@ -49,10 +49,6 @@ public class EmpEntity : MonoBehaviour
             {
                 return ThisEmp.InfoDetail.emp.CurrentDep.building;
             }
-            else if (ThisEmp.InfoDetail.emp.CurrentOffice != null)
-            {
-                return ThisEmp.InfoDetail.emp.CurrentOffice.building;
-            }
             return null;
         }
     }        //员工工作的建筑
@@ -65,10 +61,6 @@ public class EmpEntity : MonoBehaviour
                 if (WorkBuilding.Department)
                 {
                     return new Vector3Value(true, WorkBuilding.WorkPos[ThisEmp.CurrentDep.CurrentEmps.IndexOf(ThisEmp)].position);
-                }
-                if (WorkBuilding.Office)
-                {
-                    return new Vector3Value(true, WorkBuilding.WorkPos[0].position);
                 }
             }
             return new Vector3Value(false);

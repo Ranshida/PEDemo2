@@ -48,7 +48,7 @@ public class CrystalPanel : WindowRoot
          AreaPrefab = ResourcesLoader.LoadPrefab("Prefabs/UI/Meeting/CrystalArea");
 
         CrystalAreaList = new List<CrystalArea>();
-        foreach (Areas.Area area in GridContainer.Instance.Areas.AreaLists)
+        foreach (Area area in GridContainer.Instance.Areas.AreaLists)
         {
             CrystalArea crystalArea = Instantiate(AreaPrefab, Areas).GetComponent<CrystalArea>();
             crystalArea.Init(this, area);

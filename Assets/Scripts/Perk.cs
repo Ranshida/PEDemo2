@@ -120,8 +120,6 @@ public class Perk3 : Perk
         Name = "启发";
         if (TargetEmp.CurrentDep != null)
             Value = TargetEmp.CurrentDep.building.effectValue - 1;
-        else if (TargetEmp.CurrentOffice != null)
-            Value = TargetEmp.CurrentOffice.building.effectValue - 1;
         Description = "增加当前工作领域1点热情";
         TimeLeft = 64;
         Num = 3;
@@ -1298,8 +1296,8 @@ public class Perk99 : Perk
             {
                 TempEmps.Add(emp);
             }
-            if (TargetDep.CommandingOffice != null && TargetDep.CommandingOffice.CurrentManager != null)
-                TempEmps.Add(TargetDep.CommandingOffice.CurrentManager);
+            if (TargetDep.CommandingOffice != null && TargetDep.CommandingOffice.Manager != null)
+                TempEmps.Add(TargetDep.CommandingOffice.Manager);
             for (int i = 0; i < TempEmps.Count; i++)
             {
                 for(int j = i + 1; j < TempEmps.Count; j++)
@@ -1348,8 +1346,8 @@ public class Perk100 : Perk
             {
                 TempEmps.Add(emp);
             }
-            if (TargetDep.CommandingOffice != null && TargetDep.CommandingOffice.CurrentManager != null)
-                TempEmps.Add(TargetDep.CommandingOffice.CurrentManager);
+            if (TargetDep.CommandingOffice != null && TargetDep.CommandingOffice.Manager != null)
+                TempEmps.Add(TargetDep.CommandingOffice.Manager);
             for (int i = 0; i < TempEmps.Count; i++)
             {
                 for (int j = i + 1; j < TempEmps.Count; j++)
@@ -1880,7 +1878,7 @@ public class Perk126 : Perk
 {
     public Perk126(Employee Emp) : base(Emp)
     {
-        Name = "单领导指令";
+        Name = "双领导指令";
         Description = "部门内全部员工每周结束时体力-20";
         TimeLeft = 32;
         Num = 126;
@@ -1903,7 +1901,7 @@ public class Perk127 : Perk
 {
     public Perk127(Employee Emp) : base(Emp)
     {
-        Name = "单领导指令";
+        Name = "三领导指令";
         Description = "部门内全部员工每周结束时体力-30";
         TimeLeft = 32;
         Num = 127;
@@ -2080,6 +2078,191 @@ public class Perk133 : Perk
     }
 }
 
+
+//魔鬼筋肉人(金色特质)
+public class Perk134 : Perk
+{
+    public Perk134(Employee Emp) : base(Emp)
+    {
+        Name = "魔鬼筋肉人(金)";
+        Description = "成为核心团队成员后生效，增加CEO强壮2点";
+        TimeLeft = -1;
+        Num = 134;
+        canStack = false;
+    }
+
+    public override void ImmEffect()
+    {
+
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+
+    }
+}
+
+
+//智囊(金色特质)
+public class Perk135 : Perk
+{
+    public Perk135(Employee Emp) : base(Emp)
+    {
+        Name = "智囊(金)";
+        Description = "成为核心团队成员后生效，增加CEO决策2点";
+        TimeLeft = -1;
+        Num = 135;
+        canStack = false;
+    }
+
+    public override void ImmEffect()
+    {
+
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+
+    }
+}
+
+//脱口秀演员(金色特质)
+public class Perk136 : Perk
+{
+    public Perk136(Employee Emp) : base(Emp)
+    {
+        Name = "脱口秀演员(金)";
+        Description = "成为核心团队成员后生效，增加CEO坚韧2点";
+        TimeLeft = -1;
+        Num = 136;
+        canStack = false;
+    }
+
+    public override void ImmEffect()
+    {
+
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+
+    }
+}
+
+//管理咨询师(金色特质)
+public class Perk137 : Perk
+{
+    public Perk137(Employee Emp) : base(Emp)
+    {
+        Name = "管理咨询师(金)";
+        Description = "成为核心团队成员后生效，增加CEO管理2点";
+        TimeLeft = -1;
+        Num = 137;
+        canStack = false;
+    }
+
+    public override void ImmEffect()
+    {
+
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+
+    }
+}
+
+//怠惰(金色特质)
+public class Perk138 : Perk
+{
+    public Perk138(Employee Emp) : base(Emp)
+    {
+        Name = "怠惰(金)";
+        Description = "成为核心团队成员后生效，减少CEO强壮2点";
+        TimeLeft = -1;
+        Num = 138;
+        canStack = false;
+    }
+
+    public override void ImmEffect()
+    {
+
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+
+    }
+}
+
+//神经质(金色特质)
+public class Perk139 : Perk
+{
+    public Perk139(Employee Emp) : base(Emp)
+    {
+        Name = "神经质(金)";
+        Description = "成为核心团队成员后生效，减少CEO坚韧2点";
+        TimeLeft = -1;
+        Num = 139;
+        canStack = false;
+    }
+
+    public override void ImmEffect()
+    {
+
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+
+    }
+}
+
+//独断专行(金色特质)
+public class Perk140 : Perk
+{
+    public Perk140(Employee Emp) : base(Emp)
+    {
+        Name = "独断专行(金)";
+        Description = "自身管理-1，成为核心团队成员后生效，减少CEO管理2点";
+        TimeLeft = -1;
+        Num = 140;
+        canStack = false;
+    }
+
+    public override void ImmEffect()
+    {
+        TargetEmp.ExtraAttributes[6] -= 1;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetEmp.ExtraAttributes[6] += 1;
+    }
+}
+
+//选择困难症(金色特质)
+public class Perk141 : Perk
+{
+    public Perk141(Employee Emp) : base(Emp)
+    {
+        Name = "选择困难症(金)";
+        Description = "成为核心团队成员后生效，减少CEO决策2点";
+        TimeLeft = -1;
+        Num = 141;
+        canStack = false;
+    }
+
+    public override void ImmEffect()
+    {
+
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+    }
+}
+
 //瓶颈
 public class Perk142 : Perk
 {
@@ -2103,10 +2286,216 @@ public class Perk142 : Perk
     }
 }
 
+//混乱与创造
+public class Perk143 : Perk
+{
+    public Perk143(Employee Emp) : base(Emp)
+    {
+        Name = "混乱与创造";
+        Description = "部门工作状态-3，大成功率增加30%";
+        TimeLeft = 64;
+        Num = 143;
+        canStack = false;
+    }
+
+    public override void ImmEffect()
+    {
+        TargetDep.BaseWorkStatus -= 3;
+        TargetDep.DepBaseMajorSuccessRate += 0.3f;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDep.BaseWorkStatus += 3;
+        TargetDep.DepBaseMajorSuccessRate -= 0.3f;
+    }
+}
+
+
+//必胜信念
+public class Perk144 : Perk
+{
+    public Perk144(Employee Emp) : base(Emp)
+    {
+        Name = "必胜信念";
+        Description = "部门信念下降30，工作状态+2";
+        TimeLeft = 64;
+        Num = 144;
+        canStack = false;
+    }
+
+    public override void ImmEffect()
+    {
+        TargetDep.BaseWorkStatus += 2;
+        TargetDep.DepFaith -= 30;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDep.BaseWorkStatus -= 2;
+        TargetDep.DepFaith += 30;
+    }
+}
+
+//机器人员工
+public class Perk145 : Perk
+{
+    public Perk145(Employee Emp) : base(Emp)
+    {
+        Name = "机器人员工";
+        Description = "部门效率上升25%";
+        TimeLeft = 64;
+        Num = 145;
+        canStack = false;
+    }
+
+    public override void ImmEffect()
+    {
+        TargetDep.Efficiency += 0.25f;
+        //Perk146额外检测
+        foreach (PerkInfo perk in TargetDep.CurrentPerks)
+        {
+            if (perk.CurrentPerk.Num == 146)
+            {
+                TargetDep.Efficiency += 0.15f;
+                break;
+            }
+        }
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDep.Efficiency -= 0.25f;
+        //Perk146额外检测
+        foreach (PerkInfo perk in TargetDep.CurrentPerks)
+        {
+            if (perk.CurrentPerk.Num == 146)
+            {
+                TargetDep.Efficiency -= 0.15f;
+                break;
+            }
+        }
+    }
+}
+
+//机械检修
+public class Perk146 : Perk
+{
+    public Perk146(Employee Emp) : base(Emp)
+    {
+        Name = "机械检修";
+        Description = "拥有机器人员工时效率额外+15%";
+        TimeLeft = 64;
+        Num = 146;
+        canStack = false;
+    }
+
+    public override void ImmEffect()
+    {
+        foreach(PerkInfo perk in TargetDep.CurrentPerks)
+        {
+            if(perk.CurrentPerk.Num == 145)
+            {
+                TargetDep.Efficiency += 0.15f;
+                break;
+            }
+        }
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        foreach (PerkInfo perk in TargetDep.CurrentPerks)
+        {
+            if (perk.CurrentPerk.Num == 145)
+            {
+                TargetDep.Efficiency -= 0.15f;
+                break;
+            }
+        }
+    }
+}
+
+//肌体强化
+public class Perk147 : Perk
+{
+    public Perk147(Employee Emp) : base(Emp)
+    {
+        Name = "肌体强化";
+        Description = "部门内员工每周体力消耗减少30%";
+        TimeLeft = 64;
+        Num = 147;
+        canStack = false;
+    }
+
+    public override void ImmEffect()
+    {
+        TargetDep.StaminaCostRate -= 0.3f;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDep.StaminaCostRate += 0.3f;
+    }
+}
+
+//自由之翼
+public class Perk148 : Perk
+{
+    public Perk148(Employee Emp) : base(Emp)
+    {
+        Name = "自由之翼";
+        Description = "随机增加1点天赋";
+        TimeLeft = 64;
+        Num = 148;
+        canStack = false;
+    }
+
+    public override void ImmEffect()
+    {
+        TempValue1 = Random.Range(0, 3);
+        TargetEmp.StarLimit[TargetEmp.Professions[TempValue1] - 1] += 1;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetEmp.StarLimit[TargetEmp.Professions[TempValue1] - 1] -= 1;
+    }
+}
+
+//脑机芯片
+public class Perk149 : Perk
+{
+    public Perk149(Employee Emp) : base(Emp)
+    {
+        Name = "脑机芯片";
+        Description = "随机一项职业技能增加3点";
+        TimeLeft = 64;
+        Num = 149;
+        canStack = false;
+    }
+
+    public override void ImmEffect()
+    {
+        TempValue1 = Random.Range(0, 3);
+        TargetEmp.ExtraAttributes[TargetEmp.Professions[TempValue1] - 1] += 3;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetEmp.ExtraAttributes[TargetEmp.Professions[TempValue1] - 1] -= 3;
+    }
+}
+
 public static class PerkData
 {
     public static List<Perk> PerkList = new List<Perk>()
     {
         new Perk128(null), new Perk129(null), new Perk130(null), new Perk131(null), new Perk132(null), new Perk133(null)
+    };
+
+    public static List<Perk> GoldenPerkList = new List<Perk>()
+    {
+        new Perk134(null), new Perk135(null), new Perk136(null), new Perk137(null), new Perk138(null), new Perk139(null),
+        new Perk140(null), new Perk141(null)
     };
 }

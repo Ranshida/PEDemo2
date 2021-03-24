@@ -750,13 +750,13 @@ public class Strategy5_1 : Strategy
     public override void Effect(GameControl GC)
     {
         base.Effect(GC);
-        GC.ResearchExtraSuccessRate += 0.1f;
+        //GC.ResearchExtraSuccessRate += 0.1f;
     }
 
     public override void EffectRemove(GameControl GC)
     {
         base.EffectRemove(GC);
-        GC.ResearchExtraSuccessRate -= 0.1f;
+        //GC.ResearchExtraSuccessRate -= 0.1f;
     }
 }
 
@@ -773,13 +773,13 @@ public class Strategy5_2 : Strategy
     public override void Effect(GameControl GC)
     {
         base.Effect(GC);
-        GC.ResearchExtraTimeBoost += 4;
+        //GC.ResearchExtraTimeBoost += 4;
     }
 
     public override void EffectRemove(GameControl GC)
     {
         base.EffectRemove(GC);
-        GC.ResearchExtraTimeBoost -= 4;
+        //GC.ResearchExtraTimeBoost -= 4;
     }
 }
 
@@ -796,13 +796,13 @@ public class Strategy5_3 : Strategy
     public override void Effect(GameControl GC)
     {
         base.Effect(GC);
-        GC.ResearchExtraSuccessRate += 0.2f;
+        //GC.ResearchExtraSuccessRate += 0.2f;
     }
 
     public override void EffectRemove(GameControl GC)
     {
         base.EffectRemove(GC);
-        GC.ResearchExtraSuccessRate -= 0.2f;
+        //GC.ResearchExtraSuccessRate -= 0.2f;
     }
 }
 
@@ -819,15 +819,15 @@ public class Strategy5_4 : Strategy
     public override void Effect(GameControl GC)
     {
         base.Effect(GC);
-        GC.ResearchExtraSuccessRate += 0.15f;
-        GC.ResearchExtraTimeBoost += 2;
+        //GC.ResearchExtraSuccessRate += 0.15f;
+        //GC.ResearchExtraTimeBoost += 2;
     }
 
     public override void EffectRemove(GameControl GC)
     {
         base.EffectRemove(GC);
-        GC.ResearchExtraSuccessRate -= 0.15f;
-        GC.ResearchExtraTimeBoost -= 2;
+        //GC.ResearchExtraSuccessRate -= 0.15f;
+        //  GC.ResearchExtraTimeBoost -= 2;
     }
 }
 

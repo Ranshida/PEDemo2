@@ -10,13 +10,13 @@ public class CrystalArea : MonoBehaviour
 {
     public CrystalPanel parentPanel;
     public DynamicWindow dynamicWindow;
-    public Areas.Area Area;
+    public Area Area;
 
     List<Transform> buttons;
     Text txt_;        //体力消耗
     public Dictionary<Transform, CrystalType> CrystalDict;
 
-    public void Init(CrystalPanel parent, Areas.Area area)
+    public void Init(CrystalPanel parent, Area area)
     {
         parentPanel = parent;
         Area = area;

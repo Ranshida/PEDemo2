@@ -61,6 +61,27 @@ public class EmpBSInfo : MonoBehaviour
             BSC.CurrentBSInfo = null;
         }
         CheckMarker();
+
+        //金色特质检测
+        foreach(PerkInfo p in target.InfoDetail.PerksInfo)
+        {
+            if (p.CurrentPerk.Num == 134)
+                BSC.GC.CC.CEO.ExtraAttributes[5] += 2;
+            else if (p.CurrentPerk.Num == 135)
+                BSC.GC.CC.CEO.ExtraAttributes[9] += 2;
+            else if (p.CurrentPerk.Num == 136)
+                BSC.GC.CC.CEO.ExtraAttributes[4] += 2;
+            else if (p.CurrentPerk.Num == 137)
+                BSC.GC.CC.CEO.ExtraAttributes[6] += 2;
+            else if (p.CurrentPerk.Num == 138)
+                BSC.GC.CC.CEO.ExtraAttributes[5] -= 2;
+            else if (p.CurrentPerk.Num == 139)
+                BSC.GC.CC.CEO.ExtraAttributes[4] -= 2;
+            else if (p.CurrentPerk.Num == 140)
+                BSC.GC.CC.CEO.ExtraAttributes[6] -= 2;
+            else if (p.CurrentPerk.Num == 141)
+                BSC.GC.CC.CEO.ExtraAttributes[9] -= 2;
+        }
     }
 
     //开始说服员工离开
@@ -81,6 +102,25 @@ public class EmpBSInfo : MonoBehaviour
         {
             BSC.CoreMembers.Remove(emp);
             BSC.CurrentBSInfo = null;
+        }
+        foreach (PerkInfo p in emp.InfoDetail.PerksInfo)
+        {
+            if (p.CurrentPerk.Num == 134)
+                BSC.GC.CC.CEO.ExtraAttributes[5] -= 2;
+            else if (p.CurrentPerk.Num == 135)
+                BSC.GC.CC.CEO.ExtraAttributes[9] -= 2;
+            else if (p.CurrentPerk.Num == 136)
+                BSC.GC.CC.CEO.ExtraAttributes[4] -= 2;
+            else if (p.CurrentPerk.Num == 137)
+                BSC.GC.CC.CEO.ExtraAttributes[6] -= 2;
+            else if (p.CurrentPerk.Num == 138)
+                BSC.GC.CC.CEO.ExtraAttributes[5] += 2;
+            else if (p.CurrentPerk.Num == 139)
+                BSC.GC.CC.CEO.ExtraAttributes[4] += 2;
+            else if (p.CurrentPerk.Num == 140)
+                BSC.GC.CC.CEO.ExtraAttributes[6] += 2;
+            else if (p.CurrentPerk.Num == 141)
+                BSC.GC.CC.CEO.ExtraAttributes[9] += 2;
         }
         emp = null;
         EmpStatus.SetActive(false);

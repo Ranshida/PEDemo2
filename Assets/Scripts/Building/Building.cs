@@ -13,24 +13,26 @@ public class Building : MonoBehaviour
     public string Description_A;               //建筑功能1的描述
     public string Time_A;                      //建筑功能1的基础生产周期
     public string Result_A;                    //建筑功能1具体效果描述
-    public string Function_B;
     public string Require_B;
-    public string Description_B;
-    public string Time_B;
-    public string Result_B;
-    public string Function_C;
-    public string Require_C;
-    public string Description_C;
+    public string BuildingPay;                 //维护费
+    public string Manage;                      //占用管理
+    public string FaithBonus;                  //信念减益  
+    public string WorkStatus_str;              //工作状态
+    public string MajorSuccess_str;            //大成功率
+    public string Failure_str;                 //失误率
 
     public string EffectRange_str;                        //影响范围str
     public string Jobs;                             //岗位数量
 
+    public int X10, Z10;//建筑中点位坐标值*10
     public int Length;
     public int Width;
     public int EffectRange;
+    public int EffectRangeType = 2;//0无范围 1自身范围 2自身+邻居
     public bool BuildingSet { get; private set; } = false;   //设置完毕不再动
     public bool Moving { get; private set; } = false;        //移动中
-    public int effectValue = 1;//1技术 2市场 3产品 4观察 5坚韧 6强壮 7管理 8人力 9财务 10决策 11行业 12谋略 13说服 14魅力 15八卦
+    public int effectValue = 0, effectValue2 = 0;//1技术 2市场 3产品 4观察 5坚韧 6强壮 7管理 8人力 9财务 10决策 11行业 12谋略 13说服 14魅力 15八卦 16行政
+
     public int StaminaRequest = 0;
     public BuildingType Type;    //现在是创建时赋值，需改为预制体赋值或子类构造
     public string Str_Type;
@@ -41,7 +43,6 @@ public class Building : MonoBehaviour
     public bool CanDismantle = true;
     public List<Grid> ContainsGrids;   //所包含的格子
     public DepControl Department; //BM赋值
-    public OfficeControl Office;  //BM赋值
     public BuildingEffect effect;
     public List<Transform> WorkPos;
     public List<BuildingEffect> EffectBuildings = new List<BuildingEffect>();
@@ -54,30 +55,64 @@ public class Building : MonoBehaviour
 
         if (ID < 3)
             return;
-        Name = value[ID, 1];
-        Str_Type = value[ID, 2];
-        Size = value[ID, 5];
-        EffectRange_str = value[ID, 6];
-        Jobs = value[ID, 4];
-        Function_A = value[ID, 11];
-        Require_A = value[ID, 13];
-        Description_A = value[ID, 14];
-        Time_A = value[ID, 12];
-        Result_A = value[ID, 15];
-        Function_B = value[ID, 16];
+        Name = value[ID, 2];
+        Str_Type = value[ID, 3];
+        Jobs = value[ID, 5];
+        Manage = value[ID, 6];
+        Size = value[ID, 7];
+        EffectRange_str = value[ID, 8];
+        BuildingPay = value[ID, 9];
+        Time_A = value[ID, 11];
+        FaithBonus = value[ID, 12];
+        WorkStatus_str = value[ID, 13];
+        MajorSuccess_str = value[ID, 14];
+        Failure_str = value[ID, 15];
+        Function_A = value[ID, 16];
+        Require_A = value[ID, 17];
         Require_B = value[ID, 18];
-        Description_B = value[ID, 19];
-        Time_B = value[ID, 17];
-        Result_B = value[ID, 20];
-        Function_C = value[ID, 21];
-        Require_C = value[ID, 23];
-        Description_C = value[ID, 24];
+        Description_A = value[ID, 19];
+        Result_A = value[ID, 20];
 
-        Type = (BuildingType)System.Enum.Parse(typeof(BuildingType), Name);
+        //工作状态转化
+        if (WorkStatus_str == "/")
+            WorkStatus_str = "0";
+
+        //信念减益字符的转化
+        if (FaithBonus == "/")
+            FaithBonus = "0";
+
+        //维护费转化
+        if (BuildingPay == "/")
+            BuildingPay = "0";
+
+        //影响范围转化
+        EffectRangeType = int.Parse(EffectRange_str);
+
+        //大成功率和失败率转化
+        if (MajorSuccess_str == "/")
+        {
+            MajorSuccess_str = "0";
+        }
+        if (Failure_str == "/")
+        {
+            Failure_str = "0";
+        }
+
+        //工时转化
+        if (Time_A == "/")
+            Time_A = "0";
+
+        //技能需求转化
+        if (Require_A != "/")
+            effectValue = (int)(System.Enum.Parse(typeof(ProfessionType), Require_A)) + 1;
+        if (Require_B != "/")
+            effectValue2 = (int)(System.Enum.Parse(typeof(ProfessionType), Require_B)) + 1;
+
+        //Type = (BuildingType)System.Enum.Parse(typeof(BuildingType), Name);
         string[] size = Size.Split('×');
         Length = int.Parse(size[0]);
         Width = int.Parse(size[1]);
-        Pay = 10;
+        Pay = int.Parse(BuildingPay);
         CanLottery = Str_Type != "基础办公室" && Type != BuildingType.CEO办公室 && Type != BuildingType.人力资源部;
         if (!int.TryParse(EffectRange_str, out EffectRange))
         {
@@ -86,7 +121,7 @@ public class Building : MonoBehaviour
             if (EffectRange_str == "全公司")
                 EffectRange = 999;
         }
-
+       
         if (Type == BuildingType.CEO办公室)
         {
             CanDismantle = false;
@@ -96,15 +131,26 @@ public class Building : MonoBehaviour
     //确定建造
     public void Build(List<Grid> grids)
     {
-        CanDismantle = false;
         BuildingSet = true;
         Moving = false;
         ContainsGrids = new List<Grid>();
+        int xMax = grids[0].X, xMin = grids[0].X, zMax = grids[0].Z, zMin = grids[0].Z;
         foreach (Grid grid in grids)
         {
             ContainsGrids.Add(grid);
             grid.Build(this);
+
+            if (grid.X > xMax)
+                xMax = grid.X;
+            if (grid.X < xMin)
+                xMin = grid.X;
+            if (grid.Z > zMax)
+                zMax = grid.Z;
+            if (grid.Z < zMin)
+                zMin = grid.Z;
         }
+        X10 = ((xMax - xMin) * 10 / 2) + (xMin * 10);
+        Z10 = ((zMax - zMin) * 10 / 2) + (zMin * 10);
 
         effect = new BuildingEffect(this);
 
@@ -144,10 +190,6 @@ public class Building : MonoBehaviour
         if (Department)
         {
             Department.ClearDep();
-        }
-        if (Office)
-        {
-            Office.ClearOffice();
         }
 
         Destroy(gameObject);
