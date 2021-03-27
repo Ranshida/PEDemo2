@@ -374,6 +374,15 @@ public class EmpInfo : MonoBehaviour
             }
         }
 
+        //使用物品
+        else if (GC.SelectMode == 11)
+        {
+            GC.CurrentItem.TargetEmp = emp.InfoDetail;
+            GC.CurrentItem.UseItem();
+            GC.ResetSelectMode();
+            GC.TotalEmpPanel.SetWndState(false);
+        }
+
         //显示员工详细信息
         else
         {
@@ -570,7 +579,7 @@ public class EmpInfo : MonoBehaviour
         if(Random.Range(0.0f, 1.0f) < 0.02)
         {
             numA = Random.Range(0, PerkData.GoldenPerkList.Count);
-            Perk perk3 = PerkData.PerkList[numA].Clone();
+            Perk perk3 = PerkData.GoldenPerkList[numA].Clone();
             perk3.TargetEmp = emp;
             AddPerk(perk3, true);
         }

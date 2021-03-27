@@ -5,7 +5,8 @@ using UnityEngine.UI;
 
 public class HireControl : MonoBehaviour
 {
-    public int MaxHireNum = 1;
+    public int MaxHireNum = 1;//单次招聘最多选择的人数
+    public int ExtraHireOption = 0;//刷新时额外提供的人选数量，单次最多3，多余的下次继承
 
     public Transform TotalEmpContent;
     public GameControl GC;
@@ -16,7 +17,7 @@ public class HireControl : MonoBehaviour
     public EmpInfo[] HireInfos = new EmpInfo[5];
     List<HireType> HireTypes = new List<HireType>();
 
-    int CurrentHireNum;
+    int CurrentHireNum;//用于计算单次招聘已选择的人数
 
     private void Start()
     {
@@ -126,6 +127,16 @@ public class HireControl : MonoBehaviour
         if (HireTypes.Count > 0)
         {
             CurrentHireNum = 0;
+            if(ExtraHireOption > 3)
+            {
+                HireTypes[0].HireNum += 3;
+                ExtraHireOption -= 3;
+            }
+            else
+            {
+                HireTypes[0].HireNum += ExtraHireOption;
+                ExtraHireOption = 0;
+            }
 
             for (int i = 0; i < 5; i++)
             {

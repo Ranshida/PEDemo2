@@ -16,19 +16,18 @@ public class MeetingWindow : WindowRoot
     public Transform DialogueContent;         //对话框容器
     public Transform ItemContent;         //对话框容器
     public Transform CrystalResult;         //水晶框容器
+    public GameObject crystalPrefab;
     public Text txt_Result;
 
-    private GameObject crystalPrefab;
-    private GameObject ItemButtonPrefab;
+    public List<GameObject> crystalList;
+
     private List<GameObject> dialogueList;
-    private List<GameObject> crystalList;
 
     protected override void OnActive()
     {
         Manager = MonthMeeting.Instance;
         dialoguePrefab_Right = ResourcesLoader.LoadPrefab("Prefabs/UI/Meeting/MeetingDialogue1");
         dialoguePrefab_Left = ResourcesLoader.LoadPrefab("Prefabs/UI/Meeting/MeetingDialogue2");
-        ItemButtonPrefab = ResourcesLoader.LoadPrefab("Prefabs/UI/Meeting/Btn_Item");
         crystalPrefab = ResourcesLoader.LoadPrefab("Prefabs/UI/Meeting/Img_Crystal");
         dialogueIndex = 1;
         StartPanel.gameObject.SetActive(true);
@@ -142,40 +141,10 @@ public class MeetingWindow : WindowRoot
                     GameObject go = Instantiate(crystalPrefab, CrystalResult);
                     crystalList.Add(go);
                     go.GetComponent<Image>().color = MonthMeeting.GetCrystalColor(item.Key);
+                    go.GetComponent<Crystal>().type = item.Key;
                 }
             }
         }
-
-        //txt_Result.text = "结果统计： ";
-        //foreach (KeyValuePair<CrystalType,int> item in CrystalDict)
-        //{
-        //    txt_Result.text += MonthMeeting.GetCrystalChineseName(item.Key) + " × " + item.Value + "   ";
-        //}
-
-        //物品按钮
-        List<Button> itemButtons = new List<Button>();
-        foreach (CompanyItem item in GameControl.Instance.Items)
-        {
-            if (item.Type == CompanyItemType.MonthMeeting)
-            {
-                itemButtons.Add(Instantiate(ItemButtonPrefab, ItemContent).GetComponent<Button>());
-            }
-        }
-
-        //Dictionary<CrystalType, List<Crystal>> resultDict = new Dictionary<CrystalType, List<Crystal>>();
-        //foreach (Crystal crystal in allCrystal)
-        //{
-        //    if (!resultDict.ContainsKey(crystal.Type))
-        //    {
-        //        resultDict.Add(crystal.Type, new List<Crystal>());
-        //    }
-        //    resultDict[crystal.Type].Add(crystal);
-        //}
-
-        //foreach (KeyValuePair<CrystalType, List<Crystal>> item in resultDict)
-        //{
-        //    txt_Result.text += Crystal.GetChineseName(item.Key) + " × " + item.Value.Count + "\n";
-        //}
     }
 
     public void EndMeeting()

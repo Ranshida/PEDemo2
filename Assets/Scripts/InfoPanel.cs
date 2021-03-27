@@ -22,10 +22,16 @@ public class InfoPanel : MonoBehaviour
     {
         if(Visible == true)
         {
+            int pX = 1, pY = 1;
             if (rect.anchoredPosition.x > 540)
-                rect.pivot = new Vector2(1, 1);
+                pX = 1;
             else
-                rect.pivot = new Vector2(0, 1);
+                pX = 0;
+            if (rect.sizeDelta.y - rect.anchoredPosition.y > 540)
+                pY = 0;
+            else
+                pY = 1;
+            rect.pivot = new Vector2(pX, pY);
             transform.position = Input.mousePosition;
         }
     }

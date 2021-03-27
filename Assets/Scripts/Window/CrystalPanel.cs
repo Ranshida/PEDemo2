@@ -51,6 +51,7 @@ public class CrystalPanel : WindowRoot
         foreach (Area area in GridContainer.Instance.Areas.AreaLists)
         {
             CrystalArea crystalArea = Instantiate(AreaPrefab, Areas).GetComponent<CrystalArea>();
+            area.CA = crystalArea;
             crystalArea.Init(this, area);
             CrystalAreaList.Add(crystalArea);
 
@@ -187,6 +188,11 @@ public class CrystalPanel : WindowRoot
         {
             item.Settle();
             Destroy(item.gameObject);
+        }
+        foreach (CompanyItem item in GameControl.Instance.Items)
+        {
+            if (item.Type == CompanyItemType.MonthMeeting)
+                item.button.interactable = false;
         }
         Manager.EndPutting();
     }

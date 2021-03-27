@@ -8,14 +8,23 @@ public class AreaSelect : MonoBehaviour
 
     private void Update()
     {
-        //if (area != null)
-        //{
-        //    transform.position = Function.World2ScreenPoint(area.centerPosition);
-        //}
+        if (area != null)
+        {
+            transform.position = Function.World2ScreenPoint(area.centerPosition);
+        }
     }
 
     public void SelectArea()
     {
 
+        if (GameControl.Instance.AreaSelectMode == 1)
+            GameControl.Instance.CurrentDep.SelectTarget(area);
+        else if (GameControl.Instance.AreaSelectMode == 2)
+        {
+            GameControl.Instance.CurrentItem.TargetArea = area;
+            GameControl.Instance.CurrentItem.UseItem();
+        }
+        //选择后关闭所有按钮
+        GameControl.Instance.AC.CloseAllAS();
     }
 }

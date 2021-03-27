@@ -7,13 +7,15 @@ using UnityEngine;
 /// </summary>
 public class MonthMeeting : MonoBehaviour
 {
+    public bool MeetingStart = false;
+
     public static MonthMeeting Instance;
 
     public DynamicWindow dynamicWindow;
     public MeetingWindow MeetingWindow;
     public CrystalPanel CrystalPanel;
 
-    public Dictionary<CrystalType, int> CrystalDict { get; private set; }
+    public Dictionary<CrystalType, int> CrystalDict;
 
     private void Awake()
     {
@@ -43,6 +45,12 @@ public class MonthMeeting : MonoBehaviour
     {
         //开始月会
         MeetingWindow.SetWndState();
+        MeetingStart = true;
+        foreach(CompanyItem item in GameControl.Instance.Items)
+        {
+            if (item.Type == CompanyItemType.MonthMeeting && item.ActiveType != 2)
+                item.button.interactable = true;
+        }
     }
 
     public void OnStartMeeting()
@@ -72,7 +80,7 @@ public class MonthMeeting : MonoBehaviour
 
             if (success)
             {
-                bool major = Random.Range(0f, 1f) < 0.2f;
+                bool major = Random.Range(0f, 1f) < 1;
                 result = 1;
                 crystal = GetCrystal_Success(employee);
                 managerCrystalDict.Add(employee, new List<CrystalType>() { crystal});
@@ -208,6 +216,17 @@ public class MonthMeeting : MonoBehaviour
     {
         CrystalPanel.SetWndState();
         dynamicWindow.ShowAllBuildingInfo(BuildingManage.Instance.ConstructedBuildings);
+        MeetingStart = false;
+        foreach (CompanyItem item in GameControl.Instance.Items)
+        {
+            if (item.Type == CompanyItemType.MonthMeeting)
+            {
+                if (item.ActiveType == 2)
+                    item.button.interactable = true;
+                else
+                    item.button.interactable = false;
+            }
+        }
     }
 
     //将一个水晶放到位置上

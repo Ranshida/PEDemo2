@@ -10,12 +10,13 @@ public enum EffectType
 public class Perk
 {
     public int TimeLeft, Num = 0, Level = 1, BaseTime;  //Time单位小时,BaseTime用于可叠加Perk清除层数时重置时间
-    public bool Positive = true, canStack = false;
+    public bool canStack = false;//是否可叠加
     public string Name, Description;
     public EffectType effectType;
 
     public Employee TargetEmp;
     public DepControl TargetDep;
+    public DepControl ProvideDep;//生成该状态的部门
     public PerkInfo Info;
 
     public int TempValue1, TempValue2, TempValue3;//用于检测和保存的一些数值
@@ -571,12 +572,13 @@ public class Perk44 : Perk
         TimeLeft = 64;
         Num = 44;
         canStack = true;
+        TempValue1 = 1;
     }
     public override void ImmEffect()
     {
         if (TargetDep != null)
         {
-            TargetDep.SalaryMultiply -= 0.05f;
+            TargetDep.SalaryMultiply -= 0.05f * TempValue1;
         }
     }
     public override void RemoveEffect()
@@ -584,7 +586,7 @@ public class Perk44 : Perk
         base.RemoveEffect();
         if (TargetDep != null)
         {
-            TargetDep.SalaryMultiply += 0.05f;
+            TargetDep.SalaryMultiply += 0.05f * TempValue1;
         }
     }
 }
@@ -2296,18 +2298,19 @@ public class Perk143 : Perk
         TimeLeft = 64;
         Num = 143;
         canStack = false;
+        TempValue1 = 1;
     }
 
     public override void ImmEffect()
     {
-        TargetDep.BaseWorkStatus -= 3;
-        TargetDep.DepBaseMajorSuccessRate += 0.3f;
+        TargetDep.BaseWorkStatus -= 3 * TempValue1;
+        TargetDep.DepBaseMajorSuccessRate += 0.3f * TempValue1;
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDep.BaseWorkStatus += 3;
-        TargetDep.DepBaseMajorSuccessRate -= 0.3f;
+        TargetDep.BaseWorkStatus += 3 * TempValue1;
+        TargetDep.DepBaseMajorSuccessRate -= 0.3f * TempValue1;
     }
 }
 
@@ -2319,21 +2322,22 @@ public class Perk144 : Perk
     {
         Name = "必胜信念";
         Description = "部门信念下降30，工作状态+2";
-        TimeLeft = 64;
+        TimeLeft = -1;
         Num = 144;
         canStack = false;
+        TempValue1 = 1;
     }
 
     public override void ImmEffect()
     {
-        TargetDep.BaseWorkStatus += 2;
-        TargetDep.DepFaith -= 30;
+        TargetDep.BaseWorkStatus += 2 * TempValue1;
+        TargetDep.DepFaith -= 30 * TempValue1;
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDep.BaseWorkStatus -= 2;
-        TargetDep.DepFaith += 30;
+        TargetDep.BaseWorkStatus -= 2 * TempValue1;
+        TargetDep.DepFaith += 30 * TempValue1;
     }
 }
 
@@ -2347,17 +2351,18 @@ public class Perk145 : Perk
         TimeLeft = 64;
         Num = 145;
         canStack = false;
+        TempValue1 = 1;
     }
 
     public override void ImmEffect()
     {
-        TargetDep.Efficiency += 0.25f;
+        TargetDep.Efficiency += 0.25f * TempValue1;
         //Perk146额外检测
         foreach (PerkInfo perk in TargetDep.CurrentPerks)
         {
             if (perk.CurrentPerk.Num == 146)
             {
-                TargetDep.Efficiency += 0.15f;
+                TargetDep.Efficiency += 0.15f * perk.CurrentPerk.TempValue1;
                 break;
             }
         }
@@ -2365,13 +2370,13 @@ public class Perk145 : Perk
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDep.Efficiency -= 0.25f;
+        TargetDep.Efficiency -= 0.25f * TempValue1;
         //Perk146额外检测
         foreach (PerkInfo perk in TargetDep.CurrentPerks)
         {
             if (perk.CurrentPerk.Num == 146)
             {
-                TargetDep.Efficiency -= 0.15f;
+                TargetDep.Efficiency -= 0.15f * perk.CurrentPerk.TempValue1;
                 break;
             }
         }
@@ -2385,9 +2390,10 @@ public class Perk146 : Perk
     {
         Name = "机械检修";
         Description = "拥有机器人员工时效率额外+15%";
-        TimeLeft = 64;
+        TimeLeft = -1;
         Num = 146;
         canStack = false;
+        TempValue1 = 1;
     }
 
     public override void ImmEffect()
@@ -2396,7 +2402,7 @@ public class Perk146 : Perk
         {
             if(perk.CurrentPerk.Num == 145)
             {
-                TargetDep.Efficiency += 0.15f;
+                TargetDep.Efficiency += 0.15f * TempValue1;
                 break;
             }
         }
@@ -2408,7 +2414,7 @@ public class Perk146 : Perk
         {
             if (perk.CurrentPerk.Num == 145)
             {
-                TargetDep.Efficiency -= 0.15f;
+                TargetDep.Efficiency -= 0.15f * TempValue1;
                 break;
             }
         }
@@ -2422,19 +2428,20 @@ public class Perk147 : Perk
     {
         Name = "肌体强化";
         Description = "部门内员工每周体力消耗减少30%";
-        TimeLeft = 64;
+        TimeLeft = -1;
         Num = 147;
         canStack = false;
+        TempValue1 = 1;
     }
 
     public override void ImmEffect()
     {
-        TargetDep.StaminaCostRate -= 0.3f;
+        TargetDep.StaminaCostRate -= 0.3f * TempValue1;
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDep.StaminaCostRate += 0.3f;
+        TargetDep.StaminaCostRate += 0.3f * TempValue1;
     }
 }
 
@@ -2445,20 +2452,21 @@ public class Perk148 : Perk
     {
         Name = "自由之翼";
         Description = "随机增加1点天赋";
-        TimeLeft = 64;
+        TimeLeft = -1;
         Num = 148;
         canStack = false;
+        TempValue1 = 1;
     }
 
     public override void ImmEffect()
     {
         TempValue1 = Random.Range(0, 3);
-        TargetEmp.StarLimit[TargetEmp.Professions[TempValue1] - 1] += 1;
+        TargetEmp.StarLimit[TargetEmp.Professions[TempValue1] - 1] += 1 * TempValue1;
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetEmp.StarLimit[TargetEmp.Professions[TempValue1] - 1] -= 1;
+        TargetEmp.StarLimit[TargetEmp.Professions[TempValue1] - 1] -= 1 * TempValue1;
     }
 }
 
@@ -2472,17 +2480,110 @@ public class Perk149 : Perk
         TimeLeft = 64;
         Num = 149;
         canStack = false;
+        TempValue1 = 1;
     }
 
     public override void ImmEffect()
     {
         TempValue1 = Random.Range(0, 3);
-        TargetEmp.ExtraAttributes[TargetEmp.Professions[TempValue1] - 1] += 3;
+        TargetEmp.ExtraAttributes[TargetEmp.Professions[TempValue1] - 1] += 3 * TempValue1;
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetEmp.ExtraAttributes[TargetEmp.Professions[TempValue1] - 1] -= 3;
+        TargetEmp.ExtraAttributes[TargetEmp.Professions[TempValue1] - 1] -= 3 * TempValue1;
+    }
+}
+
+//胜利开发
+public class Perk150 : Perk
+{
+    public Perk150(Employee Emp) : base(Emp)
+    {
+        Name = "胜利开发";
+        Description = "提升其工作状态1点，持续到下一次头脑风暴";
+        TimeLeft = -1;
+        Num = 150;
+        canStack = true;
+    }
+
+    public override void ImmEffect()
+    {
+        TargetDep.BaseWorkStatus += 1;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDep.BaseWorkStatus -= 1;
+    }
+}
+
+//节省支出
+public class Perk151 : Perk
+{
+    public Perk151(Employee Emp) : base(Emp)
+    {
+        Name = "节省支出";
+        Description = "降低人员工资10%，持续到下一次头脑风暴";
+        TimeLeft = -1;
+        Num = 151;
+        canStack = true;
+    }
+
+    public override void ImmEffect()
+    {
+        TargetDep.SalaryMultiply -= 0.1f;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDep.SalaryMultiply += 0.1f;
+    }
+}
+
+//信仰充值
+public class Perk152 : Perk
+{
+    public Perk152(Employee Emp) : base(Emp)
+    {
+        Name = "信仰充值";
+        Description = "提升信念5点，持续到下一次头脑风暴";
+        TimeLeft = -1;
+        Num = 152;
+        canStack = true;
+    }
+
+    public override void ImmEffect()
+    {
+        TargetDep.DepFaith += 5;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDep.DepFaith -= 5;
+    }
+}
+
+//效率至上
+public class Perk153 : Perk
+{
+    public Perk153(Employee Emp) : base(Emp)
+    {
+        Name = "效率至上";
+        Description = "提升效率5%，持续到下一次头脑风暴";
+        TimeLeft = -1;
+        Num = 153;
+        canStack = true;
+    }
+
+    public override void ImmEffect()
+    {
+        TargetDep.Efficiency += 0.05f;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDep.Efficiency -= 0.05f;
     }
 }
 

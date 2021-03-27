@@ -85,6 +85,11 @@ public class BrainStormControl : MonoBehaviour
         {
             AcquiredItem[i] = 0;
         }
+        //重置相关perk
+        foreach(DepControl dep in GC.CurrentDeps)
+        {
+            dep.RemoveSpecialBuffs(1);
+        }
 
         //核心成员信息传递
         for (int i = 0; i < 6; i++)
@@ -708,7 +713,15 @@ public class BrainStormControl : MonoBehaviour
         {
             //根据节点类型产生具体结果(暂时只加数)
             AcquiredItem[CurrentNode.NodeType - 1] += 1;
-            
+            if (CurrentNode.NodeType == 1)
+                GC.CreateItem(7);
+            else if (CurrentNode.NodeType == 2)
+                GC.CreateItem(8);
+            else if (CurrentNode.NodeType == 3)
+                GC.CreateItem(9);
+            else if (CurrentNode.NodeType == 4)
+                GC.CreateItem(10);
+
             System.Action AgreeAction = () =>
             {
                 RouteSelectPanel.SetActive(true);

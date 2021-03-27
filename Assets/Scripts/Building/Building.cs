@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class Building : MonoBehaviour
 {
+    public BuildingType Type;    //现在是创建时赋值，需改为预制体赋值或子类构造
+
     public int ID;                             //见建筑物Excel中的行数
     public string Name;   
     public string Size;                        //尺寸str（a×b）
@@ -20,30 +22,30 @@ public class Building : MonoBehaviour
     public string WorkStatus_str;              //工作状态
     public string MajorSuccess_str;            //大成功率
     public string Failure_str;                 //失误率
-
     public string EffectRange_str;                        //影响范围str
     public string Jobs;                             //岗位数量
+    public string Str_Type;
 
     public int X10, Z10;//建筑中点位坐标值*10
     public int Length;
     public int Width;
     public int EffectRange;
     public int EffectRangeType = 2;//0无范围 1自身范围 2自身+邻居
+    public int StaminaRequest = 0;
+    public int effectValue = 0, effectValue2 = 0;//1技术 2市场 3产品 4观察 5坚韧 6强壮 7管理 8人力 9财务 10决策 11行业 12谋略 13说服 14魅力 15八卦 16行政
     public bool BuildingSet { get; private set; } = false;   //设置完毕不再动
     public bool Moving { get; private set; } = false;        //移动中
-    public int effectValue = 0, effectValue2 = 0;//1技术 2市场 3产品 4观察 5坚韧 6强壮 7管理 8人力 9财务 10决策 11行业 12谋略 13说服 14魅力 15八卦 16行政
 
-    public int StaminaRequest = 0;
-    public BuildingType Type;    //现在是创建时赋值，需改为预制体赋值或子类构造
-    public string Str_Type;
-    private Transform m_Decoration;   //修饰物，建造后删除
     public int Pay;               //维护费用
     public bool CanLottery;    //基础建筑物，可以直接建造
-
     public bool CanDismantle = true;
-    public List<Grid> ContainsGrids;   //所包含的格子
+
+    public Area CurrentArea;
     public DepControl Department; //BM赋值
     public BuildingEffect effect;
+    private Transform m_Decoration;   //修饰物，建造后删除
+
+    public List<Grid> ContainsGrids;   //所包含的格子
     public List<Transform> WorkPos;
     public List<BuildingEffect> EffectBuildings = new List<BuildingEffect>();
 
@@ -161,6 +163,24 @@ public class Building : MonoBehaviour
     {
         effect.RemoveAffect();
         Moving = true;
+        if(Department != null)
+        {
+            Department.RemoveAllProvidePerk();
+            List<Perk> RemovePerks = new List<Perk>();
+            foreach(PerkInfo perkinfo in Department.CurrentPerks)
+            {
+                if(perkinfo.CurrentPerk.ProvideDep != null)
+                {
+                    perkinfo.CurrentPerk.ProvideDep.PreAffectedDeps.Remove(Department);
+                    RemovePerks.Add(perkinfo.CurrentPerk);
+                }
+            }
+            foreach(Perk perk in RemovePerks)
+            {
+                perk.RemoveEffect();
+            }
+            RemovePerks.Clear();
+        }
         foreach (Grid grid in ContainsGrids)
         {
             grid.Dismantle();

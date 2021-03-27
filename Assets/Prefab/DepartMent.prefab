@@ -591,7 +591,7 @@ GameObject:
   - component: {fileID: 8966224042877054767}
   - component: {fileID: 2688034953373109261}
   m_Layer: 5
-  m_Name: ActiveButton
+  m_Name: TargetSelectButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -675,7 +675,7 @@ MonoBehaviour:
     m_SelectOnRight: {fileID: 0}
   m_Transition: 1
   m_Colors:
-    m_NormalColor: {r: 1, g: 0.8608516, b: 0, a: 1}
+    m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
     m_PressedColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 1}
     m_SelectedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -693,13 +693,13 @@ MonoBehaviour:
     m_PressedTrigger: Pressed
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
-  m_Interactable: 0
+  m_Interactable: 1
   m_TargetGraphic: {fileID: 8966224042877054767}
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 8290254732809842710}
-        m_MethodName: StartActive
+        m_MethodName: StartTargetSelect
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4441,7 +4441,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u6FC0\u6D3B"
+  m_Text: "\u9009\u62E9\u76EE\u6807"
 --- !u!1 &6102515751864992952
 GameObject:
   m_ObjectHideFlags: 0
@@ -4909,14 +4909,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d529da900fe3e642988e4470df3a3a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SpProgress: 0
-  SpTotalProgress: 0
+  DepBaseMajorSuccessRate: 0
+  DepBaseMajorFailureRate: 0
   FailProgress: 0
   EfficiencyLevel: 0
   SpType: 0
   ProducePointLimit: 20
   ActiveMode: 1
-  BuildingMode: 1
   Mode1EffectValue: -1
   Mode2EffectValue: -2
   SurveyStart: 0
@@ -4926,12 +4925,22 @@ MonoBehaviour:
   ManageUse: 0
   EmpLimit: 0
   SubDepValue: 100
+  BaseWorkStatus: 0
   Efficiency: 0
   SalaryMultiply: 1
   BuildingPayMultiply: 1
+  SpProgress: 0
+  StaminaCostRate: 1
   MajorSuccess: 0
   canWork: 0
   DefautDep: 0
+  TargetArea:
+    NeighborIndex: 
+    NeighborAreas: []
+    gridList: []
+    AS: {fileID: 0}
+    centerPosition: {x: 0, y: 0, z: 0}
+    topPosition: {x: 0, y: 0, z: 0}
   EmpContent: {fileID: 8823674}
   PerkContent: {fileID: 1129530101776680145}
   EmpPanel: {fileID: 8462709804129838565}
@@ -4969,7 +4978,7 @@ MonoBehaviour:
   Text_DepCost: {fileID: 5229331070543396462}
   Text_TotalSubValue: {fileID: 8800117843672380169}
   Text_CurrentSubValue: {fileID: 6181738854489149986}
-  ActiveButton: {fileID: 2688034953373109261}
+  TargetSelectButton: {fileID: 2688034953373109261}
   ModeChangeButton: {fileID: 2065814805621198585}
   SubDeps: []
   InRangeOffices: []

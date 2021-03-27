@@ -13,7 +13,8 @@ public class GameControl : MonoBehaviour
         BaseDepExtraSuccessRate = 0;
     public int SelectMode = 1; //1员工招聘时部门选择 2员工移动时部门选择 3部门的高管办公室选择 4发动动员技能时员工选择 
     //5发动建筑技能时员工选择 6CEO技能员工/部门选择 7选择两个员工发动动员技能 8普通办公室的上级(高管办公室)选择  9头脑风暴的员工选择
-    //10选择两个员工的CEO技能
+    //10选择两个员工的CEO技能 11部门/员工的物品使用
+    public int AreaSelectMode = 1;//1部门目标区域的选择  2物品目标区域的选择
     public int Money = 1000, DoubleMobilizeCost = 0, MeetingBlockTime = 0, MobTime = 192;
     public bool ForceTimePause = false;
     public int Stamina
@@ -79,18 +80,20 @@ public class GameControl : MonoBehaviour
     public DepSelect DepSelectButtonPrefab;
     public RelationInfo RelationInfoPrefab;
     public Text HistoryTextPrefab, Text_EmpSelectTip;
+    public CompanyItem ItemPrefab, CurrentItem;
     public HireControl HC;
     public BuildingManage BM;
     public StrategyControl StrC;
     public FOEControl foeControl;
     public EventControl EC;
     public CEOControl CC;
+    public Areas AC;
     public WindowBaseControl TotalEmpPanel;
-    public Transform DepContent, DepSelectContent, StandbyContent, MessageContent;
+    public Transform DepContent, DepSelectContent, StandbyContent, MessageContent, ItemContent;
     public InfoPanel infoPanel;
-    public GameObject DepSelectPanel, StandbyButton, MessagePrefab, GameOverPanel, DepModeSelectPanel, DepSkillConfirmPanel;
-    public Text Text_Time, Text_TechResource, Text_MarketResource, Text_MarketResource2, Text_ProductResource, Text_Money, Text_Stamina, Text_Mentality, 
-        Text_Morale, Text_DepMode1, Text_DepMode2, Text_DepSkillDescribe, Text_WarTime, Text_MobTime;
+    public GameObject DepSelectPanel, StandbyButton, MessagePrefab, GameOverPanel;
+    public Text Text_Time, Text_TechResource, Text_MarketResource, Text_MarketResource2, Text_ProductResource, Text_Money, 
+        Text_Stamina, Text_Mentality, Text_Morale, Text_WarTime, Text_MobTime;
     public Toggle WorkOvertimeToggle;
     public SkillControl SC;
     public BrainStormControl BSC;
@@ -344,7 +347,6 @@ public class GameControl : MonoBehaviour
         if (b.Type == BuildingType.茶水间)
         {
             newDep.SubDepValue = 0;
-            newDep.ActiveButton.gameObject.SetActive(false);
             newDep.OfficeWarning.SetActive(false);
             newDep.Text_Task.gameObject.SetActive(false);
             newDep.Text_Progress.gameObject.SetActive(false);
@@ -352,6 +354,16 @@ public class GameControl : MonoBehaviour
             newDep.EmpPanel = newDep.SubDepPanel;
             WeeklyEvent.AddListener(newDep.SubDepEffect);
         }
+
+        //部分需要选择区域的建筑
+        if(b.Type == BuildingType.兴趣社团 || b.Type == BuildingType.心理咨询室 || b.Type == BuildingType.会计办公室 || b.Type == BuildingType.机械检修中心
+            || b.Type == BuildingType.体能研究室)
+        {
+            newDep.ActiveMode = 4;
+        }
+        if (newDep.ActiveMode != 4)
+            newDep.TargetSelectButton.gameObject.SetActive(false);
+
 
         UIManager.Instance.OnAddNewWindow(newDep.EmpPanel.GetComponent<WindowBaseControl>());
         if (newDep.SRateDetailPanel != null)
@@ -502,7 +514,7 @@ public class GameControl : MonoBehaviour
         }
     }
 
-    //将移动或雇佣的员工放入特定部门 + 选择部门发动建筑特效 + CEO技能发动 + 确认领导部门(3)
+    //将移动或雇佣的员工放入特定部门 + 选择部门发动建筑特效 + CEO技能发动 + 确认领导部门(3) + 物品选择(11)
     public void SelectDep(DepControl depControl)
     {
         DepSelectPanel.GetComponent<WindowBaseControl>().SetWndState(false);
@@ -521,7 +533,7 @@ public class GameControl : MonoBehaviour
             }
             CurrentEmpInfo.emp.InfoA.transform.parent = depControl.EmpContent;
         }
-        else if(SelectMode == 2)
+        else if (SelectMode == 2)
         {
             //离任高管投票检测
             if (CurrentEmpInfo.emp.CurrentDep != null && CurrentEmpInfo.emp.CurrentDep.Manager == CurrentEmpInfo.emp)
@@ -560,7 +572,7 @@ public class GameControl : MonoBehaviour
             CurrentDep.FaithRelationCheck();
         }
         //选择部门发动建筑特效
-        else if(SelectMode == 5)
+        else if (SelectMode == 5)
         {
             SelectedDep = depControl;
             CurrentDep.BuildingActive();
@@ -576,6 +588,13 @@ public class GameControl : MonoBehaviour
                 ResetSelectMode();
                 QC.Init("技能释放成功\n\n" + depControl.Text_DepName.text + "成功率上升45%");
             }
+        }
+        //物品使用
+        else if (SelectMode == 11)
+        {
+            CurrentItem.TargetDep = depControl;
+            CurrentItem.UseItem();
+            ResetSelectMode();
         }
         //调动信息设置
         if (SelectMode == 1 || SelectMode == 2)
@@ -683,24 +702,11 @@ public class GameControl : MonoBehaviour
 
         }
     }
-    //设置部门模式
-    public void SetDepMode(int num)
-    {
-        if (CurrentDep != null)
-            CurrentDep.ChangeBuildingMode(num);
-    }
-
-    //激活部门效果
-    public void ActiveDepSkill()
-    {
-        if (CurrentDep != null)
-            CurrentDep.ConfirmActive();
-    }
 
     //选两个员工时取消选择
     public void CancelEmpSelect()
     {
-        if(SelectMode == 4)
+        if(SelectMode == 4 || SelectMode == 11)
         {
             TotalEmpPanel.SetWndState(false);
             ResetSelectMode();
@@ -792,6 +798,21 @@ public class GameControl : MonoBehaviour
 
         infoPanel.ShowPanel();
         infoPanel.transform.position = Input.mousePosition;
+    }
+
+    //生成物品
+    public void CreateItem(int num)
+    {
+        //不能持有超过6个物品
+        if (Items.Count >= 6)
+            return;
+        else
+        {
+            CompanyItem newItem = Instantiate(ItemPrefab, ItemContent);
+            newItem.GC = this;
+            newItem.SetType(num);
+            Items.Add(newItem);
+        }
     }
 
     //暂停检测相关

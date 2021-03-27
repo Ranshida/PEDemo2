@@ -35,7 +35,6 @@ public class EmpItem
     }
 }
 
-[System.Serializable]
 public class Employee
 {
     static public int AttributeLimit = 10;

@@ -22,9 +22,13 @@ public class CrystalArea : MonoBehaviour
         Area = area;
 
         buttons = new List<Transform>();
-        buttons.Add(transform.Find("Btn_1"));
-        buttons.Add(transform.Find("Btn_2"));
-        buttons.Add(transform.Find("Btn_3"));
+        for(int i = 1; i < 10; i++)
+        {
+            string name = "Btn_" + i;
+            buttons.Add(transform.Find(name));
+            if (i > 3)
+                buttons[i - 1].gameObject.SetActive(false);
+        }
         txt_ = transform.Find("Text").GetComponent<Text>();
 
         CrystalDict = new Dictionary<Transform, CrystalType>();
@@ -114,5 +118,18 @@ public class CrystalArea : MonoBehaviour
             }
         }
         parentPanel.Manager.SettleArea(types, Area);
+    }
+
+    //增加一个槽位
+    public void AddOption()
+    {
+        foreach(Transform button in buttons)
+        {
+            if(button.gameObject.activeSelf == false)
+            {
+                button.gameObject.SetActive(true);
+                break;
+            }
+        }
     }
 }

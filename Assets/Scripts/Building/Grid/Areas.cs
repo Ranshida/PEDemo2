@@ -7,21 +7,48 @@ using UnityEngine;
 /// </summary>
 public class Areas : MonoBehaviour
 {
-    public List<Area> AreaLists;
     public AreaSelect ASPrefab;
+    public Transform ASContent;
+    public GameObject CancelButton;
+
+    public List<Area> AreaLists;
+    public List<AreaSelect> ASList = new List<AreaSelect>();
 
     public void Init()
     {
         foreach (Area area in AreaLists)
         {
             area.Init();
-            //AreaSelect AS = Instantiate(ASPrefab, ASContent);
-            //AS.area = area;
+            AreaSelect AS = Instantiate(ASPrefab, ASContent);
+            AS.area = area;
+            area.AS = AS;
+            AS.gameObject.SetActive(false);
+            ASList.Add(AS);
             foreach (int index in area.NeighborIndex)
             {
                 area.NeighborAreas.Add(AreaLists[index]);
             }
         }
+    }
+
+    public void CloseAllAS()
+    {
+        foreach (AreaSelect index in ASList)
+        {
+            index.gameObject.SetActive(false);
+        }
+        CancelButton.SetActive(false);
+    }
+
+    //显示可用的选项
+    public void ShowAvailableAS()
+    {
+        foreach (AreaSelect index in ASList)
+        {
+            if (index.area.gridList[0].Lock == false)
+                index.gameObject.SetActive(true);
+        }
+        CancelButton.SetActive(true);
     }
 }
 [System.Serializable]
@@ -31,6 +58,8 @@ public class Area
     public List<Area> NeighborAreas;
     public List<Grid> gridList;
 
+    public CrystalArea CA;
+    public AreaSelect AS;
     public Vector3 centerPosition;
     public Vector3 topPosition;
 

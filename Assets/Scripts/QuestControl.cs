@@ -26,13 +26,13 @@ public class QuestControl : MonoBehaviour
     {
         QuestWindow.SetWndState(false);
 
-        Action step4 = () => {
-            currentQuest = 1; 
-            StartMission(1); 
-        };
-        Action step3 = () => { Init("　　点击键盘上的<color=yellow>WASD</color>或<color=yellow>←↑→↓</color>可上下左右<color=yellow>移动视角</color>，<color=yellow>鼠标滚轮</color>可调节<color=yellow>镜头距离</color>。\n　　点击确认，开始引导任务。", step4); };
-        Action step2 = () => { Init("　　听说你开始创业，有两个人问询赶来加入，一位是志同道合的前同事，一位是前不久愤而辞职的熟人。\n　　获得2名<color=yellow>员工</color>。\n　　点击确认。", step3); };
-        Init("　　经过风衣男的忽悠，你决定开始你的创业之旅，想办法赚6个亿恢复记忆。你设想了很多产品的功能，同时也想象着如何推广...\n　　获得 <color=yellow>产品原型图</color> * 20，<color=yellow>营销文案</color> * 10\n　　点击确认。", step2);
+        //Action step4 = () => {
+        //    currentQuest = 1; 
+        //    StartMission(1); 
+        //};
+        //Action step3 = () => { Init("　　点击键盘上的<color=yellow>WASD</color>或<color=yellow>←↑→↓</color>可上下左右<color=yellow>移动视角</color>，<color=yellow>鼠标滚轮</color>可调节<color=yellow>镜头距离</color>。\n　　点击确认，开始引导任务。", step4); };
+        //Action step2 = () => { Init("　　听说你开始创业，有两个人问询赶来加入，一位是志同道合的前同事，一位是前不久愤而辞职的熟人。\n　　获得2名<color=yellow>员工</color>。\n　　点击确认。", step3); };
+        //Init("　　经过风衣男的忽悠，你决定开始你的创业之旅，想办法赚6个亿恢复记忆。你设想了很多产品的功能，同时也想象着如何推广...\n　　获得 <color=yellow>产品原型图</color> * 20，<color=yellow>营销文案</color> * 10\n　　点击确认。", step2);
     }
 
     private void Update()
