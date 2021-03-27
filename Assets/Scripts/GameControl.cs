@@ -121,6 +121,7 @@ public class GameControl : MonoBehaviour
     private void Start()
     {
         UpdateResourceInfo();
+        HC.AddHireTypes(new HireType());
     }
 
     private void Update()
@@ -415,20 +416,7 @@ public class GameControl : MonoBehaviour
         return newDep;
     }
 
-    //招募的部门选择
-    public void ShowDepSelectPanel()
-    {
-        DepSelectPanel.GetComponent<WindowBaseControl>().SetWndState(true);
-        StandbyButton.SetActive(true);
-        for(int i = 0; i < CurrentDeps.Count; i++)
-        {
-            if (CurrentDeps[i].CheckEmpNum() == false)
-                CurrentDeps[i].DS.gameObject.SetActive(false);
-            else
-                CurrentDeps[i].DS.gameObject.SetActive(true);
-        }
-    }
-    //移动的部门选择
+    //员工招聘和移动时部门选择
     public void ShowDepSelectPanel(Employee emp)
     {
         DepSelectPanel.GetComponent<WindowBaseControl>().SetWndState(true);

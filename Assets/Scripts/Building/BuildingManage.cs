@@ -79,7 +79,7 @@ public class BuildingManage : MonoBehaviour
         {
             Building building = prefab.GetComponent<Building>();
 
-            if (building.Type != BuildingType.CEO办公室 || building.Type != BuildingType.高管办公室 || building.Type != BuildingType.茶水间)
+            if (building.Type != BuildingType.CEO办公室 && building.Type != BuildingType.茶水间)
             {
                 SelectList.Add(building.Type);
             }

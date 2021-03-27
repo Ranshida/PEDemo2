@@ -57,7 +57,7 @@ public class BuildingInfo : MonoBehaviour
             else if (m_Dep.DepFaith >=50)
                 faithColor = Color.yellow;
             else
-                faithColor = Color.green; 
+                faithColor = Color.red; 
             
             Color successColor;
             float success = m_Dep.CountSuccessRate();
@@ -66,7 +66,7 @@ public class BuildingInfo : MonoBehaviour
             else if (success >= 0.8f)
                 successColor = Color.yellow;
             else
-                successColor = Color.green;
+                successColor = Color.red;
 
             img_Faith.color = faithColor;
             img_Success.color = successColor;

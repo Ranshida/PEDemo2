@@ -2183,7 +2183,6 @@ GameObject:
   - component: {fileID: 6235402640472635248}
   - component: {fileID: 5711296343968231210}
   - component: {fileID: 5755944399192103572}
-  - component: {fileID: 5262629843330867855}
   m_Layer: 5
   m_Name: Text_Efficiency
   m_TagString: Untagged
@@ -2207,7 +2206,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -378.19, y: 236.51}
+  m_AnchoredPosition: {x: -308.8, y: 217.4}
   m_SizeDelta: {x: 198.34, y: 34.97}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5711296343968231210
@@ -2251,54 +2250,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u52A8\u5458\u7B49\u7EA7:0"
---- !u!114 &5262629843330867855
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2849119488894044488}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Delegates:
-  - eventID: 0
-    callback:
-      m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 8290254732809842710}
-          m_MethodName: ShowDetailPanel
-          m_Mode: 3
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
-      m_TypeName: UnityEngine.EventSystems.EventTrigger+TriggerEvent, UnityEngine.UI,
-        Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  - eventID: 1
-    callback:
-      m_PersistentCalls:
-        m_Calls:
-        - m_Target: {fileID: 8290254732809842710}
-          m_MethodName: CloseSRateDetailPanel
-          m_Mode: 1
-          m_Arguments:
-            m_ObjectArgument: {fileID: 0}
-            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-            m_IntArgument: 0
-            m_FloatArgument: 0
-            m_StringArgument: 
-            m_BoolArgument: 0
-          m_CallState: 2
-      m_TypeName: UnityEngine.EventSystems.EventTrigger+TriggerEvent, UnityEngine.UI,
-        Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  m_Text: "\u5DE5\u4F5C\u72B6\u6001:0"
 --- !u!1 &3174278025989601559
 GameObject:
   m_ObjectHideFlags: 0
@@ -4938,6 +4890,7 @@ MonoBehaviour:
     NeighborIndex: 
     NeighborAreas: []
     gridList: []
+    CA: {fileID: 0}
     AS: {fileID: 0}
     centerPosition: {x: 0, y: 0, z: 0}
     topPosition: {x: 0, y: 0, z: 0}
@@ -4983,6 +4936,7 @@ MonoBehaviour:
   SubDeps: []
   InRangeOffices: []
   ControledDeps: []
+  PreAffectedDeps: []
   CurrentPerks: []
   DepHeadHuntStatus: 000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 --- !u!1 &7651724578862709991

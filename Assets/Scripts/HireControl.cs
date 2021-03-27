@@ -29,7 +29,11 @@ public class HireControl : MonoBehaviour
         {
             if (i < 2)
             {
-
+                //先重置所有专业
+                for(int j = 0; j < HireInfos[i].emp.Professions.Length; j++)
+                {
+                    HireInfos[i].emp.Professions[j] = 0;
+                }
                 //设定初始获得的两个员工的属性
                 if (i == 0)
                 {

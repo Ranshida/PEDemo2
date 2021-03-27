@@ -80,7 +80,7 @@ public class MonthMeeting : MonoBehaviour
 
             if (success)
             {
-                bool major = Random.Range(0f, 1f) < 1;
+                bool major = Random.Range(0f, 1f) < 0.2f;
                 result = 1;
                 crystal = GetCrystal_Success(employee);
                 managerCrystalDict.Add(employee, new List<CrystalType>() { crystal});

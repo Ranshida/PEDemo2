@@ -526,7 +526,10 @@ public class BrainStormControl : MonoBehaviour
             Shield += 2;
         //暂时没写 需要选择
         else if (SkillType == 3)
+        {
             StartSelectEmp();
+            return;
+        }
         else if (SkillType == 4)
             Shield += 4;
         else if (SkillType == 5)
@@ -549,7 +552,10 @@ public class BrainStormControl : MonoBehaviour
             Shield += 5;
         //选择
         else if (SkillType == 10)
+        {
             StartSelectEmp();
+            return;
+        }
         else if (SkillType == 11)
             CauseDamage(12);
         //选择
@@ -586,7 +592,10 @@ public class BrainStormControl : MonoBehaviour
         }
         //也要选择？
         else if (SkillType == 18)
+        {
             StartSelectEmp();
+            return;
+        }
         else if (SkillType == 19)
         {
             if (GC.Money < 50)
@@ -641,6 +650,18 @@ public class BrainStormControl : MonoBehaviour
             target.Mentality += 25;
         else if (SkillType == 18)
             target.Mentality += 15;
+
+
+        //重置已选择骰子
+        for (int i = 0; i < SelectedDices.Count; i++)
+        {
+            CurrentDices.Remove(SelectedDices[i]);
+            Destroy(SelectedDices[i].gameObject);
+        }
+        SelectedDices.Clear();
+        CheckSkillType();
+        if (CurrentBoss != null)
+            CurrentBoss.UpdateUI();
     }
 
     //高亮可选的骰子

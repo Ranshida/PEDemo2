@@ -115,6 +115,7 @@ public class DepControl : MonoBehaviour
         //{
         //    Text_Efficiency.text = "动员等级:" + EfficiencyLevel;
         //}
+        Text_Efficiency.text = "工作状态:" + BaseWorkStatus;
         if (DepFaith >= 80)
             Text_Progress.text = "每周心力<color=green>+10</color>";
         else if (DepFaith >= 60)
@@ -491,7 +492,7 @@ public class DepControl : MonoBehaviour
     {
         //1-3职业技能 4观察 5坚韧 6强壮 7管理 8人力 9财务 10决策 11行业 12谋略 13说服 14魅力 15八卦
         int WorkStatus = BaseWorkStatus;
-        Text_SRateDetail.text = "基础工作状态:" + BaseWorkStatus;
+        Text_SRateDetail.text = "";
         //技能影响
         for (int i = 0; i < CurrentEmps.Count; i++)
         {

@@ -231,7 +231,7 @@ public class EmpInfo : MonoBehaviour
     {
         GC.CurrentEmpInfo = this;
         GC.SelectMode = 1;
-        GC.ShowDepSelectPanel();
+        GC.ShowDepSelectPanel(emp);
     }
     public void StartMove()
     {

@@ -45,7 +45,7 @@ public class FOEControl : MonoBehaviour
         FightTime -= 1;
         if(FightTime == 0)
         {
-            FightTime = 96;
+            FightTime = 97;
             //此处为临时添加建筑随机的部分
             GC.BM.Lottery(3);
             return;
