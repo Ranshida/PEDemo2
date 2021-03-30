@@ -344,7 +344,7 @@ public class CEOControl : MonoBehaviour
             else if (CEOSkillNum == 19)
             {
                 GC.CurrentEmpInfo = Target.InfoDetail;
-                GC.foeControl.ShowSpyPanel();
+                //GC.foeControl.ShowSpyPanel();
             }
             else if (CEOSkillNum == 20)
             {

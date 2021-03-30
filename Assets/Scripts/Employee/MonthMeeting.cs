@@ -216,7 +216,6 @@ public class MonthMeeting : MonoBehaviour
     {
         CrystalPanel.SetWndState();
         dynamicWindow.ShowAllBuildingInfo(BuildingManage.Instance.ConstructedBuildings);
-        MeetingStart = false;
         foreach (CompanyItem item in GameControl.Instance.Items)
         {
             if (item.Type == CompanyItemType.MonthMeeting)
@@ -243,6 +242,7 @@ public class MonthMeeting : MonoBehaviour
     //结算水晶
     public void SettleArea(List<CrystalType> crystals, Area area)
     {
+        MeetingStart = false;
         dynamicWindow.HideAllBuildingInfo();
         List<Building> buildings = new List<Building>();
         foreach (Grid grid in area.gridList)
@@ -292,7 +292,7 @@ public class MonthMeeting : MonoBehaviour
             {
                 Debug.Log(dep.name + "获得白色水晶");
                 Perk newPerk = new Perk120(null);
-                newPerk.TempValue4 = 0.1f * NumA;
+                newPerk.TempValue1 = NumA;
                 dep.AddPerk(newPerk);
             }
             if (NumB > 0)
@@ -306,7 +306,7 @@ public class MonthMeeting : MonoBehaviour
             {
                 Debug.Log(dep.name + "获得灰色水晶");
                 Perk newPerk = new Perk122(null);
-                newPerk.TempValue4 = 0.1f * NumC;
+                newPerk.TempValue4 = 0.25f * NumC;
                 dep.AddPerk(newPerk);
             }
             if (NumD > 0)
@@ -333,12 +333,12 @@ public class MonthMeeting : MonoBehaviour
             else if (crystals.Count == 2)
             {
                 Debug.Log(dep.name + "二指令");
-                dep.AddPerk(new Perk125(null));
+                dep.AddPerk(new Perk126(null));
             }
             else if (crystals.Count == 3)
             {
                 Debug.Log(dep.name + "三指令");
-                dep.AddPerk(new Perk125(null));
+                dep.AddPerk(new Perk127(null));
             }
         }
     }

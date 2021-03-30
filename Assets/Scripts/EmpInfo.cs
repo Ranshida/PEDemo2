@@ -46,9 +46,11 @@ public class EmpInfo : MonoBehaviour
                     Text_Mentality.text += "/" + emp.Confidence;
                 }
 
-                Text_Skill1.text = "职业技能: " + (emp.BaseAttributes[emp.Professions[0] - 1] + emp.ExtraAttributes[emp.Professions[0] - 1]) 
-                    + " / " + (emp.BaseAttributes[emp.Professions[1] - 1] + emp.ExtraAttributes[emp.Professions[1] - 1]) + 
-                    " / " + (emp.BaseAttributes[emp.Professions[2] - 1] + emp.ExtraAttributes[emp.Professions[2] - 1]);
+                Text_Skill1.text = "职业技能: " + (emp.BaseAttributes[emp.Professions[0] - 1] + emp.ExtraAttributes[emp.Professions[0] - 1]);
+                if (emp.Professions[1] > 0)
+                    Text_Skill1.text += " / " + (emp.BaseAttributes[emp.Professions[1] - 1] + emp.ExtraAttributes[emp.Professions[1] - 1]);
+                if (emp.Professions[2] > 0)
+                    Text_Skill1.text += " / " + (emp.BaseAttributes[emp.Professions[2] - 1] + emp.ExtraAttributes[emp.Professions[2] - 1]);
                 Text_Manage.text = "管理能力:" + emp.Manage;
                 if (emp.CurrentDep != null)
                     Text_DepName.text = emp.CurrentDep.Text_DepName.text;
@@ -74,7 +76,13 @@ public class EmpInfo : MonoBehaviour
 
                 for(int i = 0; i < 3; i++)
                 {
-                    if (emp.Professions[i] == 1)
+                    if (emp.Professions[i] == 0)
+                    {
+                        Text_SkillNames[i].gameObject.SetActive(false);
+                        Text_SkillValues[i].gameObject.SetActive(false);
+                        continue;
+                    }
+                    else if (emp.Professions[i] == 1)
                     {
                         Text_SkillNames[i].text = "技术技能";
                         Text_SkillValues[i].text = emp.Tech.ToString();
@@ -128,7 +136,10 @@ public class EmpInfo : MonoBehaviour
                 UpdateCharacterUI();
                 for(int i = 0; i < 3; i++)
                 {
-                    Text_Stars[i].text = emp.StarLimit[emp.Professions[i] - 1].ToString();
+                    if (emp.Professions[i] != 0)
+                        Text_Stars[i].text = emp.StarLimit[emp.Professions[i] - 1].ToString();
+                    else
+                        Text_Stars[i].text = "";
                 }
             }
             //详细面板
@@ -142,6 +153,11 @@ public class EmpInfo : MonoBehaviour
                     Text_DepName.text = "所属部门:无";
                 for (int i = 0; i < 3; i++)
                 {
+                    if(emp.Professions[i] == 0)
+                    {
+                        Text_Exps[i].gameObject.SetActive(false);
+                        continue;
+                    }
                     int Exp = AdjustData.ExpLimit[emp.BaseAttributes[emp.Professions[i] - 1]] + emp.ExtraExp;
                     Text_Exps[i].text = "Exp " + emp.SkillExp[emp.Professions[i] - 1] + "/" + Exp;
                 }
@@ -812,6 +828,8 @@ public class EmpInfo : MonoBehaviour
         SkillMarkers.Clear();
         foreach (int num in emp.Professions)
         {
+            if (num == 0)
+                continue;
             //技能为0则不继续算
             if (emp.BaseAttributes[num - 1] == 0)
                 continue;

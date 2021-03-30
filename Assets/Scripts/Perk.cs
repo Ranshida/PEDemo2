@@ -1732,21 +1732,21 @@ public class Perk120 : Perk
     {
         Name = "放轻松";
         Description = "成功率上升10%";
-        TimeLeft = 32;
+        TimeLeft = 31;
         Num = 120;
         canStack = false;
-        TempValue4 = 0.1f;
+        TempValue1 = 1;
     }
 
     public override void ImmEffect()
     {
-        TargetDep.Efficiency += TempValue4;
-        Description = "成功率上升" + (TempValue4 * 100) +"%";
+        TargetDep.BaseWorkStatus += TempValue1;
+        Description = "成功率上升" + TempValue1 + "点";
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDep.Efficiency -= TempValue4;
+        TargetDep.BaseWorkStatus -= TempValue1;
     }
 }
 
@@ -1757,7 +1757,7 @@ public class Perk121 : Perk
     {
         Name = "勇气赞歌";
         Description = "信念+15";
-        TimeLeft = 32;
+        TimeLeft = 31;
         Num = 121;
         canStack = false;
         TempValue1 = 15;
@@ -1781,17 +1781,17 @@ public class Perk122 : Perk
     public Perk122(Employee Emp) : base(Emp)
     {
         Name = "加班加班";
-        Description = "成功率上升10%";
-        TimeLeft = 32;
+        Description = "效率上升25%";
+        TimeLeft = 31;
         Num = 122;
         canStack = false;
-        TempValue4 = 0.1f;
+        TempValue4 = 0.25f;
     }
 
     public override void ImmEffect()
     {
         TargetDep.Efficiency += TempValue4;
-        Description = "成功率上升" + (TempValue4 * 100) + "%";
+        Description = "效率上升" + (TempValue4 * 100) + "%";
     }
     public override void RemoveEffect()
     {
@@ -1807,7 +1807,7 @@ public class Perk123 : Perk
     {
         Name = "流程优化";
         Description = "部门成本-25%";
-        TimeLeft = 32;
+        TimeLeft = 31;
         Num = 123;
         canStack = false;
         TempValue4 = 0.25f;
@@ -1834,7 +1834,7 @@ public class Perk124 : Perk
     {
         Name = "无意义争执";
         Description = "信念-30";
-        TimeLeft = 32;
+        TimeLeft = 31;
         Num = 124;
         canStack = false;
         TempValue1 = 30;
@@ -1859,7 +1859,7 @@ public class Perk125 : Perk
     {
         Name = "单领导指令";
         Description = "部门内全部员工每周结束时体力-10";
-        TimeLeft = 32;
+        TimeLeft = 31;
         Num = 125;
         canStack = false;
     }
@@ -1882,7 +1882,7 @@ public class Perk126 : Perk
     {
         Name = "双领导指令";
         Description = "部门内全部员工每周结束时体力-20";
-        TimeLeft = 32;
+        TimeLeft = 31;
         Num = 126;
         canStack = false;
     }
@@ -1905,7 +1905,7 @@ public class Perk127 : Perk
     {
         Name = "三领导指令";
         Description = "部门内全部员工每周结束时体力-30";
-        TimeLeft = 32;
+        TimeLeft = 31;
         Num = 127;
         canStack = false;
     }
@@ -2485,7 +2485,13 @@ public class Perk149 : Perk
 
     public override void ImmEffect()
     {
-        TempValue1 = Random.Range(0, 3);
+        int limit = 0;
+        foreach(int a in TargetEmp.Professions)
+        {
+            if (a != 0)
+                limit++;
+        }
+        TempValue1 = Random.Range(0, limit);
         TargetEmp.ExtraAttributes[TargetEmp.Professions[TempValue1] - 1] += 3 * TempValue1;
     }
     public override void RemoveEffect()

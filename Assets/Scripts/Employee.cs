@@ -316,6 +316,7 @@ public class Employee
 
     public int SalaryExtra = 0, Age, EventTime, ObeyTime, NoPromotionTime = 0, NoMarriageTime = 0,
         VacationTime = 0, SpyTime = 0, CoreMemberTime;//放假时间、间谍时间、核心成员说服CD时间
+    public int ManagerExp;//作为高管的经验值，属下员工技能升级时经验+1，攒够10点获得一个技能点数
     public int Confidence;//信心，头脑风暴中的护盾
     public int SkillLimitTime;//头脑风暴中技能禁用的回合数
     public int NewRelationTargetTime = 1;
@@ -385,6 +386,8 @@ public class Employee
         {
             SetAttributes(r1, WorkYear);
             SkillPoint = WorkYear * 2;
+            Professions[1] = 0;
+            Professions[2] = 0;
         }
         else if (WorkYear < 7)
         {
@@ -399,6 +402,7 @@ public class Employee
                 SetAttributes(r2, WorkYear - SkillAValue);
             }
             SkillPoint = WorkYear + 3;
+            Professions[2] = 0;
         }
         else
         {
@@ -539,23 +543,24 @@ public class Employee
         int[] Nst = { 1, 2, 3, 8, 9, 11, 12, 13, 15, 16 };//Nst:几个专业技能对应的编号
         Professions[0] = AdjustData.CEOProfessionType;
         SetAttributes(Professions[0], AdjustData.CEOProfessionValue);
-        int r1 = Professions[0], r2 = Random.Range(0, 10), r3 = Random.Range(0, 10);
+        int r1 = Professions[0], r2 = Random.Range(0, 10);
+        //int r3 = Random.Range(0, 10);
         r2 = Nst[r2];
-        r3 = Nst[r3];
+        //r3 = Nst[r3];
         while (r1 == r2)
         {
             r2 = Random.Range(0, 10);
             r2 = Nst[r2];
         }
-        while (r3 == r2 || r3 == r1)
-        {
-            r3 = Random.Range(0, 10);
-            r3 = Nst[r3];
-        }
+        //while (r3 == r2 || r3 == r1)
+        //{
+        //    r3 = Random.Range(0, 10);
+        //    r3 = Nst[r3];
+        //}
         Professions[1] = r2;
-        Professions[2] = r3;
+        //Professions[2] = r3;
         SetAttributes(r2, 0);
-        SetAttributes(r3, 0);
+        //SetAttributes(r3, 0);
 
         //随机天赋
         for (int j = 0; j < 3; j++)
@@ -566,7 +571,9 @@ public class Employee
             else if (j == 1)
                 type = r2;
             else
-                type = r3;
+                continue;
+            //else
+            //    type = r3;
             float Posb = Random.Range(0.0f, 1.0f);
             if (Posb < 0.4f)
                 StarLimit[type - 1] = 0;
@@ -758,12 +765,32 @@ public class Employee
             SkillPoint += 1;
             if (InfoDetail != null)
                 InfoDetail.CheckMarker();
+
+            //上司经验获取
+            if (CurrentDep != null && CurrentDep.CommandingOffice != null)
+            {
+                if (CurrentDep.CommandingOffice.Manager != null)
+                {
+                    CurrentDep.CommandingOffice.Manager.ManagerExp += 1;
+                    if (CurrentDep.CommandingOffice.Manager.ManagerExp >= 10)
+                    {
+                        CurrentDep.CommandingOffice.Manager.SkillPoint += 1;
+                        CurrentDep.CommandingOffice.Manager.ManagerExp = 0;
+                        CurrentDep.CommandingOffice.Manager.InfoDetail.SkillPointCheck();
+                    }
+                }
+            }
         }
     }
 
     public void BottleNeckCheck()
     {
-        int pValue = BaseAttributes[Professions[0] - 1] + BaseAttributes[Professions[1] - 1] + BaseAttributes[Professions[2] - 1];
+        int pValue = 0;
+        foreach (int a in Professions)
+        {
+            if (a != 0)
+                pValue += BaseAttributes[a - 1];
+        }
         if (InfoDetail == null)
         {
             Debug.Log("无InfoDetail时获取经验");

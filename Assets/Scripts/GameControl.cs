@@ -8,7 +8,7 @@ public class GameControl : MonoBehaviour
 {
     public static GameControl Instance;
     [HideInInspector] public int Salary, Income, BuildingPay, MobilizeExtraMent = 0, ExtraDice = 0, TimeMultiply = 1, WorkEndEmpCount = 0;
-    [HideInInspector] public float EfficiencyExtraNormal = 0, EfficiencyExtraScience = 0, ExtrafailRate = 0, TotalSalaryMultiply = 1.0f,
+    [HideInInspector] public float EfficiencyExtraScience = 0, ExtrafailRate = 0, TotalSalaryMultiply = 1.0f,
         HRBuildingMentalityExtra = 1.0f, BuildingSkillSuccessExtra = 0, TotalBuildingPayMultiply = 1.0f, HireSuccessExtra = 0, 
         BaseDepExtraSuccessRate = 0;
     public int SelectMode = 1; //1员工招聘时部门选择 2员工移动时部门选择 3部门的高管办公室选择 4发动动员技能时员工选择 
@@ -89,7 +89,7 @@ public class GameControl : MonoBehaviour
     public CEOControl CC;
     public Areas AC;
     public WindowBaseControl TotalEmpPanel;
-    public Transform DepContent, DepSelectContent, StandbyContent, MessageContent, ItemContent;
+    public Transform DepContent, SubDepContent, DepSelectContent, StandbyContent, MessageContent, ItemContent;
     public InfoPanel infoPanel;
     public GameObject DepSelectPanel, StandbyButton, MessagePrefab, GameOverPanel;
     public Text Text_Time, Text_TechResource, Text_MarketResource, Text_MarketResource2, Text_ProductResource, Text_Money, 
@@ -344,6 +344,8 @@ public class GameControl : MonoBehaviour
         newDep = Instantiate(DepPrefab, this.transform);
         newDep.transform.parent = DepContent;
         newDep.building = b;
+        if (b.Type != BuildingType.CEO办公室 && b.Type != BuildingType.高管办公室)
+            newDep.Efficiency = 0.75f;
 
         if (b.Type == BuildingType.茶水间)
         {
@@ -354,6 +356,7 @@ public class GameControl : MonoBehaviour
             newDep.Text_Time.gameObject.SetActive(false);
             newDep.EmpPanel = newDep.SubDepPanel;
             WeeklyEvent.AddListener(newDep.SubDepEffect);
+            newDep.transform.parent = SubDepContent;
         }
 
         //部分需要选择区域的建筑
@@ -642,10 +645,11 @@ public class GameControl : MonoBehaviour
     public void UpdateResourceInfo()
     {
         int[] C = FinishedTask;
-        Text_TechResource.text = "程序迭代: " + C[0];
-        Text_MarketResource.text = "传播: " + C[3];
-        Text_MarketResource2.text = "营销文案: " + C[4];
-        Text_ProductResource.text = "原型图: " + C[6];
+        Text_TechResource.text = "迭代: " + C[0] + "\n升级架构:" + C[1] + "\n大数据:" + C[2];
+        Text_ProductResource.text = "访谈: " + C[3] + "\n原型图B:" + C[4] + "\n原型图C:" + C[5];
+        Text_MarketResource.text = "营销: " + C[6] + "\n很多传单:" + C[7] + "\n地推:" + C[8];
+        Text_MarketResource2.text = "曝光: " + C[9];
+
     }
 
     //创建左侧信息栏内容

@@ -576,6 +576,7 @@ MonoBehaviour:
   RelationContent: {fileID: 0}
   HistoryContent: {fileID: 0}
   EmotionContent: {fileID: 0}
+  MarkerContent: {fileID: 0}
   CurrentStrategy: {fileID: 0}
   LevelUpButtons:
   - {fileID: 0}
@@ -612,6 +613,7 @@ MonoBehaviour:
   SkillsInfo: []
   StrategiesInfo: []
   EmotionInfos: []
+  SkillMarkers: []
   InfoType: 1
 --- !u!114 &1923080826609381477
 MonoBehaviour:

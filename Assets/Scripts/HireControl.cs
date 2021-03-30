@@ -54,34 +54,25 @@ public class HireControl : MonoBehaviour
 
                 //再次随机剩下的两个专业技能类型并设为0级
                 int[] Nst = { 1, 2, 3, 8, 9, 11, 12, 13, 15, 16 };//Nst:几个专业技能对应的编号
-                int r1 = HireInfos[i].emp.Professions[0], r2 = Random.Range(0, 10), r3 = Random.Range(0, 10);
+                int r1 = HireInfos[i].emp.Professions[0], r2 = Random.Range(0, 10);
                 r2 = Nst[r2];
-                r3 = Nst[r3];
                 while (r1 == r2)
                 {
                     r2 = Random.Range(0, 10);
                     r2 = Nst[r2];
                 }
-                while (r3 == r2 || r3 == r1)
-                {
-                    r3 = Random.Range(0, 10);
-                    r3 = Nst[r3];
-                }
                 HireInfos[i].emp.Professions[1] = r2;
-                HireInfos[i].emp.Professions[2] = r3;
+                HireInfos[i].emp.Professions[2] = 0;
                 HireInfos[i].emp.SetAttributes(r2, 0);
-                HireInfos[i].emp.SetAttributes(r3, 0);
 
                 //重新随机天赋
-                for (int j = 0; j < 3; j++)
+                for (int j = 0; j < 2; j++)
                 {
                     int type = 0;
                     if (j == 0)
                         type = r1;
                     else if (j == 1)
                         type = r2;
-                    else
-                        type = r3;
                     float Posb = Random.Range(0.0f, 1.0f);
                     if (Posb < 0.4f)
                         HireInfos[j].emp.StarLimit[type - 1] = 0;
@@ -131,10 +122,10 @@ public class HireControl : MonoBehaviour
         if (HireTypes.Count > 0)
         {
             CurrentHireNum = 0;
-            if(ExtraHireOption > 3)
+            if(ExtraHireOption > 2)
             {
-                HireTypes[0].HireNum += 3;
-                ExtraHireOption -= 3;
+                HireTypes[0].HireNum += 2;
+                ExtraHireOption -= 2;
             }
             else
             {

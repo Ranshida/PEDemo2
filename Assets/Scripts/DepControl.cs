@@ -41,7 +41,7 @@ public class ProduceBuff
 }
 public class HireType
 {
-    public int HireNum = 2;
+    public int HireNum = 3;
     public bool MajorSuccess = false;
 
 }
@@ -79,8 +79,8 @@ public class DepControl : MonoBehaviour
     public GameControl GC;
     public DepSelect DS;
     public DepControl CommandingOffice;
-    public Text Text_DepName, Text_Task, Text_Progress, Text_Quality, Text_Time, Text_Office, Text_Efficiency, Text_LevelDownTime, 
-        Text_SRateDetail, Text_DetailInfo, Text_ManagerStatus, Text_SubDepCreate, Text_SubDepStatusA, Text_SubDepStatusB;
+    public Text Text_DepName, Text_Task, Text_Progress, Text_Quality, Text_Time, Text_Office, Text_Efficiency, Text_WorkStatus, Text_LevelDownTime, 
+        Text_SRateDetail, Text_DetailInfo, Text_ManagerStatus, Text_SubDepCreate;
     public Text Text_DepFaith, Text_DepMode, Text_SkillRequire, Text_TaskTime, Text_SRate, Text_MSRate, Text_MFRate, Text_FinishedTaskNum, 
         Text_DepCost, Text_TotalSubValue, Text_CurrentSubValue;
     public Button TargetSelectButton, ModeChangeButton;
@@ -115,7 +115,19 @@ public class DepControl : MonoBehaviour
         //{
         //    Text_Efficiency.text = "动员等级:" + EfficiencyLevel;
         //}
-        Text_Efficiency.text = "工作状态:" + BaseWorkStatus;
+        if (building == null)
+            return;
+
+        if (building.Type != BuildingType.CEO办公室 && building.Type != BuildingType.高管办公室)
+            Text_Efficiency.text = "效率:" + Mathf.Round(Efficiency * 100) + "%";
+        else
+        {
+            if (Manager != null)
+                Text_Efficiency.text = "高管经验: " + Manager.ManagerExp + "/10";
+            else
+                Text_Efficiency.text = "高管经验: ---";
+        }
+        Text_WorkStatus.text = "工作状态:" + BaseWorkStatus;
         if (DepFaith >= 80)
             Text_Progress.text = "每周心力<color=green>+10</color>";
         else if (DepFaith >= 60)
@@ -237,15 +249,8 @@ public class DepControl : MonoBehaviour
             }
             //基础经验获取
             EmpsGetExp();
-            //进度增加，部分建筑资源不足时暂停
-            float Pp = 0.75f + Efficiency;
-            foreach (Employee e in CurrentEmps)
-            {
-                if (e.InfoDetail.Entity.OutCompany == false)
-                    Pp += 0.25f;
-            }
-
-            SpProgress += Pp;
+            //进度增加
+            SpProgress += Efficiency;
 
             if (SpProgress >= ProducePointLimit)
             {
@@ -266,7 +271,7 @@ public class DepControl : MonoBehaviour
                         //额外经验获取
                         if (CurrentEmps.Count > 0)
                         {
-                            for (int i = 0; i < (int)(ProducePointLimit / Pp); i++)
+                            for (int i = 0; i < (int)(ProducePointLimit / Efficiency); i++)
                             {
                                 EmpsGetExp();
                             }
@@ -358,7 +363,7 @@ public class DepControl : MonoBehaviour
         GC.CurrentDep = this;
     }
 
-    int calcTime(float pp, float total)
+    public int calcTime(float pp, float total)
     {
         float time = 0;
         if (pp != 0)
@@ -409,6 +414,8 @@ public class DepControl : MonoBehaviour
             int type1 = 0, type2 = 0;
             foreach(int a in CurrentEmps[i].Professions)
             {
+                if (a == 0)
+                    continue;
                 if (a == building.effectValue)
                     type1 = a;
                 if (a == building.effectValue2)
@@ -500,6 +507,8 @@ public class DepControl : MonoBehaviour
             int EValue = 0;
             foreach (int a in CurrentEmps[i].Professions)
             {
+                if (a == 0)
+                    continue;
                 if(a == building.effectValue || a == building.effectValue2)
                 {
                     value = CurrentEmps[i].BaseAttributes[a - 1] + CurrentEmps[i].ExtraAttributes[a - 1];
@@ -530,6 +539,8 @@ public class DepControl : MonoBehaviour
             int EValue = 0;
             foreach (int a in CommandingOffice.Manager.Professions)
             {
+                if (a == 0)
+                    continue;
                 if (a == building.effectValue || a == building.effectValue2)
                 {
                     value = CommandingOffice.Manager.BaseAttributes[a - 1] + CommandingOffice.Manager.ExtraAttributes[a - 1];
@@ -841,11 +852,12 @@ public class DepControl : MonoBehaviour
 
     public void BuildingActive()
     {
+        int value = 1;
+        if (MajorSuccess == true)
+            value = 2;
+
         if (ActiveMode == 4)
         {
-            int value = 1;
-            if (MajorSuccess == true)
-                value = 2;
             //先清除旧perk再找目标
             RemoveAllProvidePerk();
             foreach(Building b in building.effect.AffectedBuildings)
@@ -917,7 +929,27 @@ public class DepControl : MonoBehaviour
         }
         else
         {
-            if (building.Type == BuildingType.混沌创意营)
+            if (building.Type == BuildingType.前端小组)
+                GC.FinishedTask[0] += value;
+            else if (building.Type == BuildingType.后端小组)
+                GC.FinishedTask[1] += value;
+            else if (building.Type == BuildingType.算法小组)
+                GC.FinishedTask[2] += value;
+            else if (building.Type == BuildingType.用户访谈室)
+                GC.FinishedTask[3] += value;
+            else if (building.Type == BuildingType.原型图画室)
+                GC.FinishedTask[4] += value;
+            else if (building.Type == BuildingType.行为分析室)
+                GC.FinishedTask[5] += value;
+            else if (building.Type == BuildingType.文案小组)
+                GC.FinishedTask[6] += value;
+            else if (building.Type == BuildingType.传单小队)
+                GC.FinishedTask[7] += value;
+            else if (building.Type == BuildingType.派对小组)
+                GC.FinishedTask[8] += value;
+            else if (building.Type == BuildingType.公关小组)
+                GC.FinishedTask[9] += value;
+            else if (building.Type == BuildingType.混沌创意营)
             {
                 GC.CreateItem(5);
                 if(MajorSuccess == true)
@@ -959,6 +991,7 @@ public class DepControl : MonoBehaviour
                 if (MajorSuccess == true)
                     GC.HC.ExtraHireOption += 1;
             }
+            GC.UpdateResourceInfo();
         }
 
         GC.SelectedDep = null;
@@ -1165,10 +1198,14 @@ public class DepControl : MonoBehaviour
     public void EmpMove(bool MoveOut)
     {
         if (MoveOut == true)
+        {
             AddPerk(new Perk110(null));
+            Efficiency -= 0.25f;
+        }
         else
         {
             AddPerk(new Perk108(null));
+            Efficiency += 0.25f;
             //设定空置部门状态
             if (NoEmp == true)
             {
@@ -1260,20 +1297,38 @@ public class DepControl : MonoBehaviour
         }
     }
 
-    public int CalcCost(int type)
+    public int CalcCost(int type, bool CalcMeetingResult = false)
     {
         int value = 0;
         //工资
         if (type == 1)
         {
+            float multiply;
+
+            //计算月会临时效果（显示用）
+            if (CalcMeetingResult == true && building.CurrentArea.CA != null && building.CurrentArea.CA.BlueCount > 0)
+                multiply = GC.TotalSalaryMultiply * (SalaryMultiply - (0.25f * building.CurrentArea.CA.BlueCount));
+            else
+                multiply = GC.TotalSalaryMultiply * SalaryMultiply;
+
             foreach (Employee emp in CurrentEmps)
             {
-                value += (int)(emp.InfoDetail.CalcSalary() * GC.TotalSalaryMultiply * SalaryMultiply);
+                value += (int)(emp.InfoDetail.CalcSalary() * multiply);
             }
         }
         //维护费
         else if (type == 2)
-            value = (int)(building.Pay * GC.TotalBuildingPayMultiply * BuildingPayMultiply);
+        {
+            float multiply;
+
+            //计算月会临时效果（显示用）
+            if (CalcMeetingResult == true && building.CurrentArea.CA != null && building.CurrentArea.CA.BlueCount > 0)
+                multiply = GC.TotalSalaryMultiply * (BuildingPayMultiply - (0.25f * building.CurrentArea.CA.BlueCount));
+            else
+                multiply = GC.TotalBuildingPayMultiply * BuildingPayMultiply;
+
+            value = (int)(building.Pay * multiply);
+        }
         return value;
     }
 

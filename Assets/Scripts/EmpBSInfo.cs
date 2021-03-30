@@ -133,6 +133,9 @@ public class EmpBSInfo : MonoBehaviour
     {
         foreach(int num in emp.Professions)
         {
+            //没有对应技能不继续算
+            if (num == 0)
+                continue;
             //技能为0则不继续算
             if (emp.BaseAttributes[num - 1] == 0)
                 continue;
@@ -180,6 +183,9 @@ public class EmpBSInfo : MonoBehaviour
         SkillMarkers.Clear();
         foreach (int num in emp.Professions)
         {
+            //没有对应技能不继续算
+            if (num == 0)
+                continue;
             //技能为0则不继续算
             if (emp.BaseAttributes[num - 1] == 0)
                 continue;

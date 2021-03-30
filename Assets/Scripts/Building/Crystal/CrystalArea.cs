@@ -8,6 +8,8 @@ using UnityEngine.UI;
 /// </summary>
 public class CrystalArea : MonoBehaviour
 {
+    public int BlueCount, WhiteCount, OrangeCount, GrayCount, BlackCount;
+
     public CrystalPanel parentPanel;
     public DynamicWindow dynamicWindow;
     public Area Area;
@@ -43,12 +45,27 @@ public class CrystalArea : MonoBehaviour
     {
         transform.position = Function.World2ScreenPoint(Area.topPosition + new Vector3(0, 0, 5));
         int count = 0;
+        BlueCount = 0;
+        GrayCount = 0;
+        OrangeCount = 0;
+        WhiteCount = 0;
+        BlackCount = 0;
         foreach (CrystalType type in CrystalDict.Values)
         {
             if (type != CrystalType.None)
             {
                 count++;
             }
+            if (type == CrystalType.Blue)
+                BlueCount++;
+            else if (type == CrystalType.Gray)
+                GrayCount++;
+            else if (type == CrystalType.Orange)
+                OrangeCount++;
+            else if (type == CrystalType.White)
+                WhiteCount++;
+            else if (type == CrystalType.Black)
+                BlackCount++;
         }
         txt_.text = "区域体力：+" + count + "0/月";
     }
