@@ -320,6 +320,7 @@ public class Employee
     public int Confidence;//信心，头脑风暴中的护盾
     public int SkillLimitTime;//头脑风暴中技能禁用的回合数
     public int NewRelationTargetTime = 1;
+    public int ManageExp = 0, DecisionExp = 0;//管理和决策的经验值
     public float ExtraSuccessRate = 0, SalaryMultiple = 1.0f;
 
 
@@ -394,12 +395,15 @@ public class Employee
             if(Random.Range(1, 11) <= 2)
             {
                 SetAttributes(r1, WorkYear);
+                Professions[1] = 0;
+                Professions[2] = 0;
             }
             else
             {
                 int SkillAValue = Random.Range(1, WorkYear + 1);
                 SetAttributes(r1, SkillAValue);
                 SetAttributes(r2, WorkYear - SkillAValue);
+                Professions[2] = 0;
             }
             SkillPoint = WorkYear + 3;
             Professions[2] = 0;
@@ -409,12 +413,15 @@ public class Employee
             if (Random.Range(1, 11) <= 2)
             {
                 SetAttributes(r1, WorkYear);
+                Professions[1] = 0;
+                Professions[2] = 0;
             }
             else if (Random.Range(1, 11) <= 2)
             {
                 int SkillAValue = Random.Range(1, WorkYear + 1);
                 SetAttributes(r1, SkillAValue);
                 SetAttributes(r2, WorkYear - SkillAValue);
+                Professions[2] = 0;
             }
             else
             {
@@ -431,11 +438,13 @@ public class Employee
         {
             int type = 0;
             if (i == 0)
-                type = r1;
+                type = Professions[0];
             else if (i == 1)
-                type = r2;
+                type = Professions[1];
             else
-                type = r3;
+                type = Professions[2];
+            if (type == 0)
+                continue;
             float Posb = Random.Range(0.0f, 1.0f);
             if (Posb < 0.4f)
                 StarLimit[type - 1] = 0;
@@ -545,33 +554,31 @@ public class Employee
         SetAttributes(Professions[0], AdjustData.CEOProfessionValue);
         int r1 = Professions[0], r2 = Random.Range(0, 10);
         //int r3 = Random.Range(0, 10);
-        r2 = Nst[r2];
+        //r2 = Nst[r2];
         //r3 = Nst[r3];
-        while (r1 == r2)
-        {
-            r2 = Random.Range(0, 10);
-            r2 = Nst[r2];
-        }
+        //while (r1 == r2)
+        //{
+        //    r2 = Random.Range(0, 10);
+        //    r2 = Nst[r2];
+        //}
         //while (r3 == r2 || r3 == r1)
         //{
         //    r3 = Random.Range(0, 10);
         //    r3 = Nst[r3];
         //}
-        Professions[1] = r2;
+        //Professions[1] = r2;
         //Professions[2] = r3;
-        SetAttributes(r2, 0);
+        //SetAttributes(r2, 0);
         //SetAttributes(r3, 0);
 
         //随机天赋
-        for (int j = 0; j < 3; j++)
+        for (int j = 0; j < 1; j++)
         {
             int type = 0;
             if (j == 0)
                 type = r1;
-            else if (j == 1)
-                type = r2;
-            else
-                continue;
+            //else if (j == 1)
+            //    type = r2;
             //else
             //    type = r3;
             float Posb = Random.Range(0.0f, 1.0f);

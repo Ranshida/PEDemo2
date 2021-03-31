@@ -80,7 +80,7 @@ public class DepControl : MonoBehaviour
     public DepSelect DS;
     public DepControl CommandingOffice;
     public Text Text_DepName, Text_Task, Text_Progress, Text_Quality, Text_Time, Text_Office, Text_Efficiency, Text_WorkStatus, Text_LevelDownTime, 
-        Text_SRateDetail, Text_DetailInfo, Text_ManagerStatus, Text_SubDepCreate;
+        Text_SRateDetail, Text_DetailInfo, Text_ManagerStatus, Text_SubDepCreate, Text_DepName2;
     public Text Text_DepFaith, Text_DepMode, Text_SkillRequire, Text_TaskTime, Text_SRate, Text_MSRate, Text_MFRate, Text_FinishedTaskNum, 
         Text_DepCost, Text_TotalSubValue, Text_CurrentSubValue;
     public Button TargetSelectButton, ModeChangeButton;
@@ -119,7 +119,7 @@ public class DepControl : MonoBehaviour
             return;
 
         if (building.Type != BuildingType.CEO办公室 && building.Type != BuildingType.高管办公室)
-            Text_Efficiency.text = "效率:" + Mathf.Round(Efficiency * 100) + "%";
+            Text_Efficiency.text = "效率:" + Mathf.Round(Efficiency * 100) + "%" + "                               员工数量:" + CurrentEmps.Count + "/" + EmpLimit;
         else
         {
             if (Manager != null)
@@ -212,13 +212,15 @@ public class DepControl : MonoBehaviour
                 else
                     Text_SkillRequire.text += "/" + skill;
             }
-            Text_TaskTime.text = "生产周期:" + ProducePointLimit;
+            int ptime = calcTime(Efficiency, ProducePointLimit);
+            Text_TaskTime.text = "生产周期:" + ptime / 8 + "周 " + ptime % 8 + "时";
 
             Text_SRate.text = "成功率:" + Mathf.Round((CountSuccessRate()) * 100) + "%";
             Text_MSRate.text = "大成功率:" + ((DepBaseMajorSuccessRate) * 100) + "%";
             Text_MFRate.text = "重大失误率:" + ((DepBaseMajorFailureRate) * 100) + "%";
             Text_FinishedTaskNum.text = "上季度业务成功数:" + PreFinishedTaskNum + "\n\n" + "本季度业务成功数:" + CurrentFinishedTaskNum;
-            Text_DepCost.text = "运营成本:" + (CalcCost(1) + CalcCost(2));
+            Text_DepCost.text = "运营成本:" + (CalcCost(1) + CalcCost(2)) + "/月\n\n员工工资:" + CalcCost(1) + 
+                "/月                             维护费用:" + CalcCost(2) +"/月";
         }
     }
 
@@ -537,13 +539,24 @@ public class DepControl : MonoBehaviour
         {
             int value = 0;
             int EValue = 0;
+
+            bool HaveRequiredSkill = false;//是否有对应技能效果的提示
+            Text_ManagerStatus.text = "业务能力等级:";
             foreach (int a in CommandingOffice.Manager.Professions)
             {
                 if (a == 0)
                     continue;
                 if (a == building.effectValue || a == building.effectValue2)
                 {
+                    if (HaveRequiredSkill == false)
+                        HaveRequiredSkill = true;
+                    else
+                        Text_ManagerStatus.text += "/";
+
                     value = CommandingOffice.Manager.BaseAttributes[a - 1] + CommandingOffice.Manager.ExtraAttributes[a - 1];
+
+                    Text_ManagerStatus.text += value.ToString();
+
                     if (value == 0)
                         EValue -= 1;
                     else if (value <= 3)
@@ -556,8 +569,12 @@ public class DepControl : MonoBehaviour
                         EValue += 3;
                 }
             }
-            //文字显示
-            Text_SRateDetail.text += "高管" + CommandingOffice.Manager.Name + "技能:" + EValue;
+            if (HaveRequiredSkill == false)
+                Text_ManagerStatus.text = "业务能力等级:——";
+            Text_ManagerStatus.text += "      工作状态加成:" + EValue;
+
+                //文字显示
+                Text_SRateDetail.text += "高管" + CommandingOffice.Manager.Name + "技能:" + EValue;
             //员工额外效果B
             ExtraEffectDescription(CommandingOffice.Manager);
             Text_SRateDetail.text += "\n";
@@ -719,14 +736,10 @@ public class DepControl : MonoBehaviour
             Text_DetailInfo.text += "\n——————\n部门中所有员工的心力都会受到部门信念的影响\n      信念>=80 心力每周+10\n" +
                 "80>信念>=60 心力每周+5\n40>信念>=20 心力每周-5\n      信念<=20 心力每周-10";
         }
-        else if (type == 2)
-        {
-            int limit = ProducePointLimit;
-            Text_DetailInfo.text = "标准生产周期:" + limit;
-            Text_DetailInfo.text += "\n" + building.Description_A;
-        }
+        else if (type == 2)        
+            Text_DetailInfo.text += building.Description_A;
         else if (type == 3)
-            Text_DetailInfo.text = "生产周期 = 业务生产周期 / 部门员工数";
+            Text_DetailInfo.text = "标准生产周期:" + ProducePointLimit / 8 + "周 " + ProducePointLimit % 8 + "时";
         else if (type == 4)
         {
             ShowSRateDetailPanel();
@@ -877,7 +890,6 @@ public class DepControl : MonoBehaviour
                 {
                     Perk45 newperk = new Perk45(null);
                     newperk.ProvideDep = this;
-                    newperk.TargetDep = dep;
                     newperk.TempValue1 = value;
                     dep.AddPerk(newperk);
                 }
@@ -888,7 +900,6 @@ public class DepControl : MonoBehaviour
                 {
                     Perk144 newperk = new Perk144(null);
                     newperk.ProvideDep = this;
-                    newperk.TargetDep = dep;
                     newperk.TempValue1 = value;
                     dep.AddPerk(newperk);
                 }
@@ -897,7 +908,7 @@ public class DepControl : MonoBehaviour
             {
                 foreach (DepControl dep in PreAffectedDeps)
                 {
-                    Perk44 newperk = new Perk44(null);
+                    Perk newperk = new Perk44(null);
                     newperk.ProvideDep = this;
                     newperk.TargetDep = dep;
                     newperk.TempValue1 = value;
@@ -910,7 +921,6 @@ public class DepControl : MonoBehaviour
                 {
                     Perk146 newperk = new Perk146(null);
                     newperk.ProvideDep = this;
-                    newperk.TargetDep = dep;
                     newperk.TempValue1 = value;
                     dep.AddPerk(newperk);
                 }
@@ -921,7 +931,6 @@ public class DepControl : MonoBehaviour
                 {
                     Perk147 newperk = new Perk147(null);
                     newperk.ProvideDep = this;
-                    newperk.TargetDep = dep;
                     newperk.TempValue1 = value;
                     dep.AddPerk(newperk);
                 }
@@ -1016,6 +1025,13 @@ public class DepControl : MonoBehaviour
     //添加Perk
     public void AddPerk(Perk perk)
     {
+        //效率和工作状态相关的状态无法被添加至办公室
+        if (building != null && (building.Type == BuildingType.CEO办公室 || building.Type == BuildingType.高管办公室))
+        {
+            if (perk.perkColor == PerkColor.White || perk.perkColor == PerkColor.Grey)
+                return;
+        }
+
         //同类Perk检测
         foreach (PerkInfo p in CurrentPerks)
         {
@@ -1055,6 +1071,9 @@ public class DepControl : MonoBehaviour
         newPerk.info = GC.infoPanel;
         CurrentPerks.Add(newPerk);
         newPerk.CurrentPerk.AddEffect();
+        newPerk.SetColor();
+
+        PerkSort();
 
         //部门状态添加临时判定
         if (perk.Num >= 143 && perk.Num <= 149)
@@ -1088,6 +1107,36 @@ public class DepControl : MonoBehaviour
         }
         PreAffectedDeps.Clear();
     }
+
+    //状态排序
+    void PerkSort()
+    {
+        if (CurrentPerks.Count == 0)
+            return;
+        List<PerkInfo> newPerkList = new List<PerkInfo>();
+        for(int i = 0; i < 5; i++)
+        {
+            PerkColor c = PerkColor.None;
+            if (i == 0)
+                c = PerkColor.White;
+            else if (i == 1)
+                c = PerkColor.Orange;
+            else if (i == 2)
+                c = PerkColor.Grey;
+            else if (i == 3)
+                c = PerkColor.Blue;
+            foreach(PerkInfo p in CurrentPerks)
+            {
+                if (p.CurrentPerk.perkColor == c)
+                    newPerkList.Add(p);
+            }
+        }
+        for(int i = 0; i < newPerkList.Count; i++)
+        {
+            newPerkList[i].transform.SetSiblingIndex(i);
+        }
+    }
+
     //检测信念
     public void FaithRelationCheck()
     {

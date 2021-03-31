@@ -6,6 +6,10 @@ public enum EffectType
 {
     Imm, Dayily, Weekly, Monthly
 }
+public enum PerkColor
+{
+    None, White, Orange, Grey, Blue
+}
 //基类
 public class Perk
 {
@@ -13,6 +17,7 @@ public class Perk
     public bool canStack = false;//是否可叠加
     public string Name, Description;
     public EffectType effectType;
+    public PerkColor perkColor = PerkColor.None;
 
     public Employee TargetEmp;
     public DepControl TargetDep;
@@ -211,6 +216,7 @@ public class Perk33 : Perk
         Description = "生产和办公室技能充能成功率+5%";
         TimeLeft = 32;
         Num = 33;
+        perkColor = PerkColor.White;
     }
     public override void ImmEffect()
     {
@@ -234,6 +240,7 @@ public class Perk34 : Perk
         TimeLeft = 32;
         Num = 34;
         canStack = true;
+        perkColor = PerkColor.Blue;
     }
     public override void ImmEffect()
     {
@@ -568,26 +575,24 @@ public class Perk44 : Perk
     public Perk44(Employee Emp) : base(Emp)
     {
         Name = "结构优化";
-        Description = "员工工资-5%";
+        Description = "降低人员工资和建筑维护费用25%";
         TimeLeft = 64;
         Num = 44;
-        canStack = true;
+        canStack = false;
+        perkColor = PerkColor.Blue;
         TempValue1 = 1;
     }
     public override void ImmEffect()
     {
-        if (TargetDep != null)
-        {
-            TargetDep.SalaryMultiply -= 0.05f * TempValue1;
-        }
+        TargetDep.SalaryMultiply -= 0.25f * TempValue1;
+        TargetDep.BuildingPayMultiply -= 0.25f * TempValue1;
+        Description = "降低人员工资和建筑维护费用" + 25 * TempValue1 + "%";
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        if (TargetDep != null)
-        {
-            TargetDep.SalaryMultiply += 0.05f * TempValue1;
-        }
+        TargetDep.SalaryMultiply += 0.25f * TempValue1;
+        TargetDep.BuildingPayMultiply += 0.25f * TempValue1;
     }
 }
 
@@ -601,6 +606,7 @@ public class Perk45 : Perk
         TimeLeft = 64;
         Num = 45;
         canStack = false;
+        perkColor = PerkColor.Orange;
     }
     public override void ImmEffect()
     {
@@ -662,6 +668,7 @@ public class Perk48 : Perk
         TimeLeft = 64;//持续到当前业务结束(旧，此功能已删)
         Num = 48;
         canStack = true;
+        perkColor = PerkColor.White;
     }
     public override void ImmEffect()
     {
@@ -713,6 +720,7 @@ public class Perk50 : Perk
         TimeLeft = 64;//持续到当前业务结束(旧，此功能已删)
         Num = 50;
         canStack = true;
+        perkColor = PerkColor.White;
     }
     public override void ImmEffect()
     {
@@ -1002,6 +1010,7 @@ public class Perk71 : Perk
         TimeLeft = -1;//持续到当前业务结束
         Num = 71;
         canStack = true;
+        perkColor = PerkColor.White;
     }
     public override void ImmEffect()
     {
@@ -1244,6 +1253,7 @@ public class Perk97 : Perk
         TimeLeft = 96;
         Num = 97;
         canStack = true;
+        perkColor = PerkColor.Orange;
     }
     public override void ImmEffect()
     {
@@ -1266,6 +1276,7 @@ public class Perk98 : Perk
         TimeLeft = 96;
         Num = 98;
         canStack = true;
+        perkColor = PerkColor.Orange;
     }
     public override void ImmEffect()
     {
@@ -1288,6 +1299,7 @@ public class Perk99 : Perk
         TimeLeft = -1;
         Num = 99;
         canStack = false;
+        perkColor = PerkColor.Orange;
     }
     public override void ImmEffect()
     {
@@ -1338,6 +1350,7 @@ public class Perk100 : Perk
         TimeLeft = -1;
         Num = 100;
         canStack = false;
+        perkColor = PerkColor.Orange;
     }
     public override void ImmEffect()
     {
@@ -1379,6 +1392,7 @@ public class Perk101 : Perk
         TimeLeft = -1;
         Num = 101;
         canStack = false;
+        perkColor = PerkColor.Orange;
     }
     public override void ImmEffect()
     {
@@ -1401,6 +1415,7 @@ public class Perk102 : Perk
         TimeLeft = -1;
         Num = 102;
         canStack = false;
+        perkColor = PerkColor.Orange;
     }
     public override void ImmEffect()
     {
@@ -1423,6 +1438,7 @@ public class Perk103 : Perk
         TimeLeft = -1;
         Num = 103;
         canStack = false;
+        perkColor = PerkColor.Orange;
     }
     public override void ImmEffect()
     {
@@ -1445,6 +1461,7 @@ public class Perk104 : Perk
         TimeLeft = -1;
         Num = 104;
         canStack = false;
+        perkColor = PerkColor.Orange;
     }
     public override void ImmEffect()
     {
@@ -1467,6 +1484,7 @@ public class Perk105 : Perk
         TimeLeft = 96;
         Num = 105;
         canStack = true;
+        perkColor = PerkColor.Orange;
     }
     public override void ImmEffect()
     {
@@ -1489,6 +1507,7 @@ public class Perk106 : Perk
         TimeLeft = 64;
         Num = 106;
         canStack = true;
+        perkColor = PerkColor.Orange;
     }
     public override void ImmEffect()
     {
@@ -1524,6 +1543,7 @@ public class Perk108 : Perk
         TimeLeft = 16;
         Num = 108;
         canStack = true;
+        perkColor = PerkColor.Orange;
     }
     public override void ImmEffect()
     {
@@ -1546,6 +1566,7 @@ public class Perk110 : Perk
         TimeLeft = 16;
         Num = 110;
         canStack = true;
+        perkColor = PerkColor.Orange;
     }
     public override void ImmEffect()
     {
@@ -1568,6 +1589,7 @@ public class Perk111 : Perk
         TimeLeft = -1;
         Num = 111;
         canStack = false;
+        perkColor = PerkColor.Orange;
     }
     public override void ImmEffect()
     {
@@ -1590,6 +1612,7 @@ public class Perk112 : Perk
         TimeLeft = 16;
         Num = 112;
         canStack = true;
+        perkColor = PerkColor.Orange;
     }
     public override void ImmEffect()
     {
@@ -1612,6 +1635,7 @@ public class Perk113 : Perk
         TimeLeft = 16;
         Num = 113;
         canStack = true;
+        perkColor = PerkColor.Orange;
     }
     public override void ImmEffect()
     {
@@ -1634,6 +1658,7 @@ public class Perk114 : Perk
         TimeLeft = -1;
         Num = 114;
         canStack = true;
+        perkColor = PerkColor.Orange;
     }
     public override void ImmEffect()
     {
@@ -1656,6 +1681,7 @@ public class Perk115 : Perk
         TimeLeft = -1;
         Num = 115;
         canStack = false;
+        perkColor = PerkColor.Orange;
     }
     public override void ImmEffect()
     {
@@ -1678,6 +1704,7 @@ public class Perk116 : Perk
         TimeLeft = 96;
         Num = 116;
         canStack = false;
+        perkColor = PerkColor.Orange;
     }
     public override void ImmEffect()
     {
@@ -1700,6 +1727,7 @@ public class Perk117 : Perk
         TimeLeft = 128;
         Num = 117;
         canStack = false;
+        perkColor = PerkColor.White;
     }
     public override void ImmEffect()
     {
@@ -1736,6 +1764,7 @@ public class Perk120 : Perk
         Num = 120;
         canStack = false;
         TempValue1 = 1;
+        perkColor = PerkColor.White;
     }
 
     public override void ImmEffect()
@@ -1761,6 +1790,7 @@ public class Perk121 : Perk
         Num = 121;
         canStack = false;
         TempValue1 = 15;
+        perkColor = PerkColor.Orange;
     }
 
     public override void ImmEffect()
@@ -1786,6 +1816,7 @@ public class Perk122 : Perk
         Num = 122;
         canStack = false;
         TempValue4 = 0.25f;
+        perkColor = PerkColor.Grey;
     }
 
     public override void ImmEffect()
@@ -1811,6 +1842,7 @@ public class Perk123 : Perk
         Num = 123;
         canStack = false;
         TempValue4 = 0.25f;
+        perkColor = PerkColor.Blue;
     }
 
     public override void ImmEffect()
@@ -1838,6 +1870,7 @@ public class Perk124 : Perk
         Num = 124;
         canStack = false;
         TempValue1 = 30;
+        perkColor = PerkColor.Orange;
     }
 
     public override void ImmEffect()
@@ -2299,6 +2332,7 @@ public class Perk143 : Perk
         Num = 143;
         canStack = false;
         TempValue1 = 1;
+        perkColor = PerkColor.White;
     }
 
     public override void ImmEffect()
@@ -2326,6 +2360,7 @@ public class Perk144 : Perk
         Num = 144;
         canStack = false;
         TempValue1 = 1;
+        perkColor = PerkColor.White;
     }
 
     public override void ImmEffect()
@@ -2352,6 +2387,7 @@ public class Perk145 : Perk
         Num = 145;
         canStack = false;
         TempValue1 = 1;
+        perkColor = PerkColor.Grey;
     }
 
     public override void ImmEffect()
@@ -2394,6 +2430,7 @@ public class Perk146 : Perk
         Num = 146;
         canStack = false;
         TempValue1 = 1;
+        perkColor = PerkColor.Grey;
     }
 
     public override void ImmEffect()
@@ -2511,6 +2548,7 @@ public class Perk150 : Perk
         TimeLeft = -1;
         Num = 150;
         canStack = true;
+        perkColor = PerkColor.White;
     }
 
     public override void ImmEffect()
@@ -2534,6 +2572,7 @@ public class Perk151 : Perk
         TimeLeft = -1;
         Num = 151;
         canStack = true;
+        perkColor = PerkColor.Blue;
     }
 
     public override void ImmEffect()
@@ -2557,6 +2596,7 @@ public class Perk152 : Perk
         TimeLeft = -1;
         Num = 152;
         canStack = true;
+        perkColor = PerkColor.Orange;
     }
 
     public override void ImmEffect()
@@ -2580,6 +2620,7 @@ public class Perk153 : Perk
         TimeLeft = -1;
         Num = 153;
         canStack = true;
+        perkColor = PerkColor.Grey;
     }
 
     public override void ImmEffect()

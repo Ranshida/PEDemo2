@@ -31158,6 +31158,11 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1129530101776680145, guid: c20ba0b26ce89bb49bd197453dcf791e,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -3.1725464
+      objectReference: {fileID: 0}
     - target: {fileID: 8462709804129838565, guid: c20ba0b26ce89bb49bd197453dcf791e,
         type: 3}
       propertyPath: m_LocalRotation.x
@@ -123103,8 +123108,6 @@ MonoBehaviour:
   EmpInfoPrefab: {fileID: 7304820793347005819, guid: 671384b74ac3e7347a313249295ab128,
     type: 3}
   EmpDetailPrefab: {fileID: 2202406373417226232, guid: 80fbda3e29195274bbfe986050b05c70,
-    type: 3}
-  CEOInfoPrefab: {fileID: 7304820793347005819, guid: 41206b73ce4e2eb4ebb585f3bec92b19,
     type: 3}
   HireInfos:
   - {fileID: 4154988284128726017}

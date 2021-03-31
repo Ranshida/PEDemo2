@@ -126,6 +126,8 @@ public class GameControl : MonoBehaviour
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.P))
+            HC.AddHireTypes(new HireType());
         if (TimePause == false && ForceTimePause == false)
             Timer += Time.deltaTime * TimeMultiply;
         if(Timer >= 10)
@@ -346,6 +348,8 @@ public class GameControl : MonoBehaviour
         newDep.building = b;
         if (b.Type != BuildingType.CEO办公室 && b.Type != BuildingType.高管办公室)
             newDep.Efficiency = 0.75f;
+        else
+            newDep.Text_WorkStatus.gameObject.SetActive(false);
 
         if (b.Type == BuildingType.茶水间)
         {
@@ -402,6 +406,7 @@ public class GameControl : MonoBehaviour
                 num += 1;
         }
         newDep.Text_DepName.text = newDepName + num;
+        newDep.Text_DepName2.text = newDepName + num;
         newDep.GC = this;
         HourEvent.AddListener(newDep.Produce);
         WeeklyEvent.AddListener(newDep.FaithEffect);

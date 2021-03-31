@@ -36,7 +36,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: -57.00036, y: 107.9254}
-  m_SizeDelta: {x: 114, y: 0}
+  m_SizeDelta: {x: 85, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &490276495
 CanvasRenderer:
@@ -63,7 +63,7 @@ MonoBehaviour:
     m_Right: 0
     m_Top: 0
     m_Bottom: 0
-  m_ChildAlignment: 0
+  m_ChildAlignment: 1
   m_Spacing: 0
   m_ChildForceExpandWidth: 0
   m_ChildForceExpandHeight: 0
@@ -3372,6 +3372,7 @@ MonoBehaviour:
   Entity: {fileID: 0}
   GC: {fileID: 0}
   MobDownSign: {fileID: 0}
+  SkillPointSelector: {fileID: 0}
   HireButton: {fileID: 2106852022763094879}
   MoveButton: {fileID: 0}
   FireButton: {fileID: 0}
@@ -3383,6 +3384,7 @@ MonoBehaviour:
   Text_Age: {fileID: 4754005177259638075}
   Text_School: {fileID: 3768349767423217850}
   Text_Major: {fileID: 6256576279881607583}
+  Text_SkillPoint: {fileID: 0}
   Text_DepName: {fileID: 0}
   Text_Tenacity: {fileID: 3354914438688233744}
   Text_Strength: {fileID: 5178448239630979050}
@@ -3390,6 +3392,21 @@ MonoBehaviour:
   Text_Decision: {fileID: 2578408190290541907}
   Text_Emotion: {fileID: 0}
   Text_RTarget: {fileID: 0}
+  DetailInfo: {fileID: 0}
+  EmotionInfoPrefab: {fileID: 0}
+  PerkContent: {fileID: 490276492}
+  SkillContent: {fileID: 714173306}
+  StrategyContent: {fileID: 8716338156462324699}
+  RelationContent: {fileID: 0}
+  HistoryContent: {fileID: 0}
+  EmotionContent: {fileID: 0}
+  MarkerContent: {fileID: 0}
+  CurrentStrategy: {fileID: 0}
+  LevelUpButtons:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   Text_Stars:
   - {fileID: 8655365211691208923}
   - {fileID: 8877576161429663250}
@@ -3414,19 +3431,11 @@ MonoBehaviour:
   - {fileID: 636131317713973888}
   - {fileID: 6031511839865387464}
   - {fileID: 6302743916916614724}
-  DetailInfo: {fileID: 0}
-  EmotionInfoPrefab: {fileID: 0}
-  PerkContent: {fileID: 490276492}
-  SkillContent: {fileID: 714173306}
-  StrategyContent: {fileID: 8716338156462324699}
-  RelationContent: {fileID: 0}
-  HistoryContent: {fileID: 0}
-  EmotionContent: {fileID: 0}
-  CurrentStrategy: {fileID: 0}
   PerksInfo: []
   SkillsInfo: []
   StrategiesInfo: []
   EmotionInfos: []
+  SkillMarkers: []
   InfoType: 3
 --- !u!1 &4154988285259529997
 GameObject:

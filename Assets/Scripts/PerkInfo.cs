@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class PerkInfo : MonoBehaviour
@@ -60,5 +58,23 @@ public class PerkInfo : MonoBehaviour
 
         info.ClosePanel();
         Destroy(this.gameObject);
+    }
+
+    public void SetColor()
+    {
+        if (CurrentPerk == null)
+            return;
+
+        if (CurrentPerk.perkColor != PerkColor.None)
+            GetComponent<Outline>().enabled = true;
+
+        if (CurrentPerk.perkColor == PerkColor.Blue)
+            Text_Name.color = Color.blue;
+        else if (CurrentPerk.perkColor == PerkColor.Grey)
+            Text_Name.color = Color.grey;
+        else if (CurrentPerk.perkColor == PerkColor.White)
+            Text_Name.color = Color.white;
+        else if (CurrentPerk.perkColor == PerkColor.Orange)
+            Text_Name.color = new Color(1, 0.6f, 0);
     }
 }

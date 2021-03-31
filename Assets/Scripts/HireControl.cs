@@ -12,7 +12,7 @@ public class HireControl : MonoBehaviour
     public GameControl GC;
     public Button HireRefreshButton;
     public Text Text_HireButtonText;
-    public EmpInfo EmpInfoPrefab, EmpDetailPrefab, CEOInfoPrefab;
+    public EmpInfo EmpInfoPrefab, EmpDetailPrefab;
 
     public EmpInfo[] HireInfos = new EmpInfo[5];
     List<HireType> HireTypes = new List<HireType>();
@@ -54,25 +54,25 @@ public class HireControl : MonoBehaviour
 
                 //再次随机剩下的两个专业技能类型并设为0级
                 int[] Nst = { 1, 2, 3, 8, 9, 11, 12, 13, 15, 16 };//Nst:几个专业技能对应的编号
-                int r1 = HireInfos[i].emp.Professions[0], r2 = Random.Range(0, 10);
-                r2 = Nst[r2];
-                while (r1 == r2)
-                {
-                    r2 = Random.Range(0, 10);
-                    r2 = Nst[r2];
-                }
-                HireInfos[i].emp.Professions[1] = r2;
-                HireInfos[i].emp.Professions[2] = 0;
-                HireInfos[i].emp.SetAttributes(r2, 0);
+                //int r1 = HireInfos[i].emp.Professions[0], r2 = Random.Range(0, 10);
+                //r2 = Nst[r2];
+                //while (r1 == r2)
+                //{
+                //    r2 = Random.Range(0, 10);
+                //    r2 = Nst[r2];
+                //}
+                //HireInfos[i].emp.Professions[1] = r2;
+                //HireInfos[i].emp.Professions[2] = 0;
+                //HireInfos[i].emp.SetAttributes(r2, 0);
 
                 //重新随机天赋
-                for (int j = 0; j < 2; j++)
+                for (int j = 0; j < 1; j++)
                 {
                     int type = 0;
                     if (j == 0)
-                        type = r1;
-                    else if (j == 1)
-                        type = r2;
+                        type = HireInfos[i].emp.Professions[0];
+                    //else if (j == 1)
+                    //    type = r2;
                     float Posb = Random.Range(0.0f, 1.0f);
                     if (Posb < 0.4f)
                         HireInfos[j].emp.StarLimit[type - 1] = 0;
@@ -199,8 +199,11 @@ public class HireControl : MonoBehaviour
         //复制特质
         for (int i = 0; i < GC.CurrentEmpInfo.PerksInfo.Count; i++)
         {
-            GC.CurrentEmpInfo.PerksInfo[i].CurrentPerk.AddEffect();
-            GC.CurrentEmpInfo.PerksInfo[i].transform.parent = ED.PerkContent;
+            int Num = GC.CurrentEmpInfo.PerksInfo[i].CurrentPerk.Num;
+            if (Num >= 128 && Num <= 141)
+                GC.CurrentEmpInfo.PerksInfo[i].transform.parent = ED.PerkContent2;
+            else
+                GC.CurrentEmpInfo.PerksInfo[i].transform.parent = ED.PerkContent;
             ED.PerksInfo.Add(GC.CurrentEmpInfo.PerksInfo[i]);
         }
         GC.CurrentEmpInfo.PerksInfo.Clear();
@@ -239,11 +242,13 @@ public class HireControl : MonoBehaviour
         ED.SetSkillName();
         GC.CC.CEO = emp;
 
-        EmpInfo EI1 = Instantiate(CEOInfoPrefab, TotalEmpContent);
+        EmpInfo EI1 = Instantiate(EmpInfoPrefab, TotalEmpContent);
         ED.CopyStatus(EI1);
+        EI1.FireButton.gameObject.SetActive(false);
 
-        EmpInfo EI2 = Instantiate(CEOInfoPrefab, TotalEmpContent);
+        EmpInfo EI2 = Instantiate(EmpInfoPrefab, TotalEmpContent);
         ED.CopyStatus(EI2);
+        EI2.FireButton.gameObject.SetActive(false);
 
         emp.InfoDetail = ED;
         emp.InfoA = EI1;

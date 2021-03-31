@@ -460,6 +460,7 @@ public class BuildingManage : MonoBehaviour
                 else
                 {
                     building.Department = CEOOffice;    //互相引用
+                    CEOOffice.Text_WorkStatus.gameObject.SetActive(false);
                     CEOOffice.building = building;  //互相引用
                     building.effectValue = 10;
                 }
