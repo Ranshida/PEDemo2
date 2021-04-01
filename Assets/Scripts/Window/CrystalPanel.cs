@@ -15,7 +15,9 @@ public class CrystalPanel : WindowRoot
     public Transform Areas;
     public Transform PutButton;
 
+    public Button btn_ShowPanel;
     private Button btn_Finish;
+    private Button btn_Back;
     private Text txt_WhiteChys;
     private Text txt_OrangeChys;
     private Text txt_GrayChys;
@@ -30,22 +32,33 @@ public class CrystalPanel : WindowRoot
     protected override void OnActive()
     {
         base.OnActive();
-        Manager = MonthMeeting.Instance;
-        txt_WhiteChys = BG.Find("Img_White").GetComponentInChildren<Text>();
-        txt_OrangeChys = BG.Find("Img_Orange").GetComponentInChildren<Text>();
-        txt_GrayChys = BG.Find("Img_Gray").GetComponentInChildren<Text>();
-        txt_BlueChys = BG.Find("Img_Blue").GetComponentInChildren<Text>();
-        txt_BlackChys = BG.Find("Img_Black").GetComponentInChildren<Text>();
-        btn_Finish = transform.Find("Btn_Finish").GetComponent<Button>();
-        putCrystalDict = new Dictionary<CrystalType, Transform>();
-        putCrystalDict.Add(CrystalType.Black, PutButton.Find("Btn_Black"));
-        putCrystalDict.Add(CrystalType.Blue, PutButton.Find("Btn_Blue"));
-        putCrystalDict.Add(CrystalType.Gray, PutButton.Find("Btn_Gray"));
-        putCrystalDict.Add(CrystalType.Orange, PutButton.Find("Btn_Orange"));
-        putCrystalDict.Add(CrystalType.White, PutButton.Find("Btn_White"));
-        putCrystalDict.Add(CrystalType.None, PutButton.Find("Btn_None"));
 
-         AreaPrefab = ResourcesLoader.LoadPrefab("Prefabs/UI/Meeting/CrystalArea");
+        if (Manager.MeetingStart == true)
+        {
+            btn_Finish.gameObject.SetActive(true);
+            btn_Back.gameObject.SetActive(false);
+            BG.gameObject.SetActive(true);
+            foreach(CrystalArea area in CrystalAreaList)
+            {
+                area.ResetAllCrystal();
+            }
+            AskPause();
+        }
+        else
+        {
+            btn_Finish.gameObject.SetActive(false);
+            btn_Back.gameObject.SetActive(true);
+            BG.gameObject.SetActive(false);
+        }
+        foreach (CrystalArea item in CrystalAreaList)
+        {
+            item.gameObject.SetActive(true);
+        }
+    }
+
+    public void InitCrystalPanel()
+    {
+        AreaPrefab = ResourcesLoader.LoadPrefab("Prefabs/UI/Meeting/CrystalArea");
 
         CrystalAreaList = new List<CrystalArea>();
         foreach (Area area in GridContainer.Instance.Areas.AreaLists)
@@ -54,14 +67,27 @@ public class CrystalPanel : WindowRoot
             area.CA = crystalArea;
             crystalArea.Init(this, area);
             CrystalAreaList.Add(crystalArea);
-
+            crystalArea.gameObject.SetActive(false);
             //每个区域中心在UI上显示三个槽位，供放置水晶
             //每个绑定一个按钮，记录水晶类型
             //结束时结算Buff
             //area.centerPosition
         }
-
-        AskPause();
+        Manager = MonthMeeting.Instance;
+        txt_WhiteChys = BG.Find("Img_White").GetComponentInChildren<Text>();
+        txt_OrangeChys = BG.Find("Img_Orange").GetComponentInChildren<Text>();
+        txt_GrayChys = BG.Find("Img_Gray").GetComponentInChildren<Text>();
+        txt_BlueChys = BG.Find("Img_Blue").GetComponentInChildren<Text>();
+        txt_BlackChys = BG.Find("Img_Black").GetComponentInChildren<Text>();
+        btn_Finish = transform.Find("Btn_Finish").GetComponent<Button>();
+        btn_Back = transform.Find("Btn_Back").GetComponent<Button>();
+        putCrystalDict = new Dictionary<CrystalType, Transform>();
+        putCrystalDict.Add(CrystalType.Black, PutButton.Find("Btn_Black"));
+        putCrystalDict.Add(CrystalType.Blue, PutButton.Find("Btn_Blue"));
+        putCrystalDict.Add(CrystalType.Gray, PutButton.Find("Btn_Gray"));
+        putCrystalDict.Add(CrystalType.Orange, PutButton.Find("Btn_Orange"));
+        putCrystalDict.Add(CrystalType.White, PutButton.Find("Btn_White"));
+        putCrystalDict.Add(CrystalType.None, PutButton.Find("Btn_None"));
     }
 
     protected override void OnClear()
@@ -113,6 +139,9 @@ public class CrystalPanel : WindowRoot
                 break;
             case "Btn_Finish":
                 EndMeeting();
+                break;
+            case "Btn_Back":
+                StopObserve();
                 break;
             default:
                 break;
@@ -184,10 +213,11 @@ public class CrystalPanel : WindowRoot
         tempArea = null;
 
         PutButton.gameObject.SetActive(false);
+        btn_ShowPanel.interactable = true;
         foreach (CrystalArea item in CrystalAreaList)
         {
             item.Settle();
-            Destroy(item.gameObject);
+            item.gameObject.SetActive(false);
         }
         foreach (CompanyItem item in GameControl.Instance.Items)
         {
@@ -195,5 +225,12 @@ public class CrystalPanel : WindowRoot
                 item.button.interactable = false;
         }
         Manager.EndPutting();
+    }
+
+    //停止观察
+    private void StopObserve()
+    {
+        SetWndState(false);
+        btn_ShowPanel.interactable = true;
     }
 }

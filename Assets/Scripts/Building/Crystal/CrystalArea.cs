@@ -72,6 +72,9 @@ public class CrystalArea : MonoBehaviour
 
     public void SelectCrystal(Transform self)
     {
+        //观察模式下不能选
+        if (MonthMeeting.Instance.MeetingStart == false)
+            return;
         parentPanel.SelectSeat(this, self);
     }
 
@@ -102,6 +105,15 @@ public class CrystalArea : MonoBehaviour
         parentPanel.Manager.PutCrystal(type);
         CrystalDict[self] = type;
         return true;
+    }
+
+    public void ResetAllCrystal()
+    {
+        foreach (Transform item in buttons)
+        {
+            Image img = item.Find("Crystal").GetComponent<Image>();
+            img.gameObject.SetActive(false);
+        }
     }
 
     /// <summary>

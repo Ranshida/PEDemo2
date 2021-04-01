@@ -29,6 +29,7 @@ public class Areas : MonoBehaviour
                 area.NeighborAreas.Add(AreaLists[index]);
             }
         }
+        MonthMeeting.Instance.CrystalPanel.InitCrystalPanel();
     }
 
     public void CloseAllAS()

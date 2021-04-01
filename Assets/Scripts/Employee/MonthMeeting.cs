@@ -46,6 +46,7 @@ public class MonthMeeting : MonoBehaviour
         //开始月会
         MeetingWindow.SetWndState();
         MeetingStart = true;
+        CrystalPanel.btn_ShowPanel.interactable = false;
         foreach(CompanyItem item in GameControl.Instance.Items)
         {
             if (item.Type == CompanyItemType.MonthMeeting && item.ActiveType != 2)
@@ -244,6 +245,7 @@ public class MonthMeeting : MonoBehaviour
     {
         MeetingStart = false;
         dynamicWindow.HideAllBuildingInfo();
+        CrystalPanel.SetWndState(false);
         List<Building> buildings = new List<Building>();
         foreach (Grid grid in area.gridList)
         {
