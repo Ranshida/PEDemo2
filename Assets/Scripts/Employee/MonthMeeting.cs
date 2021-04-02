@@ -216,7 +216,8 @@ public class MonthMeeting : MonoBehaviour
     public void EndMeeting()
     {
         CrystalPanel.SetWndState();
-        dynamicWindow.ShowAllBuildingInfo(BuildingManage.Instance.ConstructedBuildings);
+        if (CrystalPanel.BuildingInfoShowed == false)
+            dynamicWindow.ShowAllBuildingInfo(BuildingManage.Instance.ConstructedBuildings);
         foreach (CompanyItem item in GameControl.Instance.Items)
         {
             if (item.Type == CompanyItemType.MonthMeeting)

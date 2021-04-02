@@ -8,8 +8,9 @@ using UnityEngine.UI;
 /// </summary>
 public class CrystalPanel : WindowRoot
 {
-    public MonthMeeting Manager;
+    public bool BuildingInfoShowed = false;//是否已经显示了建筑信息
 
+    public MonthMeeting Manager;
     public List<Areas> UnlockedAreaList;
     public Transform BG;
     public Transform Areas;
@@ -49,6 +50,8 @@ public class CrystalPanel : WindowRoot
             btn_Finish.gameObject.SetActive(false);
             btn_Back.gameObject.SetActive(true);
             BG.gameObject.SetActive(false);
+            Manager.dynamicWindow.ShowAllBuildingInfo(BuildingManage.Instance.ConstructedBuildings);
+            BuildingInfoShowed = true;
         }
         foreach (CrystalArea item in CrystalAreaList)
         {
@@ -232,5 +235,7 @@ public class CrystalPanel : WindowRoot
     {
         SetWndState(false);
         btn_ShowPanel.interactable = true;
+        Manager.dynamicWindow.HideAllBuildingInfo();
+        BuildingInfoShowed = false;
     }
 }

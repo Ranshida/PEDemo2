@@ -13622,6 +13622,7 @@ MonoBehaviour:
   Layer: 1
   buttons: []
   sliders: []
+  BuildingInfoShowed: 0
   Manager: {fileID: 0}
   UnlockedAreaList: []
   BG: {fileID: 47792763}
