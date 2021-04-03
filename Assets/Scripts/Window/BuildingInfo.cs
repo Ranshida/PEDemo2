@@ -50,6 +50,8 @@ public class BuildingInfo : MonoBehaviour
         }
 
         transform.position = Function.World2ScreenPoint(thisBuilding.transform.position + new Vector3(thisBuilding.Length * 7.5f, 0, thisBuilding.Width * 5));
+        float scale = Mathf.Lerp(2.2f, 1, CameraController.Instance.height / CameraController.Instance.maxHeight);
+        transform.localScale = new Vector3(scale, scale, scale);
         //部门建筑
         if (m_Dep)
         {

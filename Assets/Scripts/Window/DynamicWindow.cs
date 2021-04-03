@@ -20,7 +20,7 @@ public class DynamicWindow : WindowRoot
     private List<BuildingInfo> allBuildingInfos = new List<BuildingInfo>();   //所有建筑的信息列表，在分配水晶时全部显示
     private GameObject buildingInfoPrefab;        //预制体
 
-    private bool m_ShowAllBuildingInfo = false;   //正在显示所有建筑信息
+    public bool m_ShowAllBuildingInfo = false;   //正在显示所有建筑信息
     private Text m_EmpName;
     private bool m_ShowName;
 

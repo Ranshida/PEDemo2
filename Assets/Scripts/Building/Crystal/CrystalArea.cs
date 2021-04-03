@@ -41,7 +41,7 @@ public class CrystalArea : MonoBehaviour
         }
     }
 
-    public void OnLateUpdate()
+    private void Update()
     {
         transform.position = Function.World2ScreenPoint(Area.topPosition + new Vector3(0, 0, 5));
         int count = 0;

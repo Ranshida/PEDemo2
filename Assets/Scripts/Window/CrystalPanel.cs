@@ -8,17 +8,14 @@ using UnityEngine.UI;
 /// </summary>
 public class CrystalPanel : WindowRoot
 {
-    public bool BuildingInfoShowed = false;//是否已经显示了建筑信息
-
     public MonthMeeting Manager;
     public List<Areas> UnlockedAreaList;
     public Transform BG;
     public Transform Areas;
     public Transform PutButton;
 
-    public Button btn_ShowPanel;
+    public Toggle toggle_ShowPanel;
     private Button btn_Finish;
-    private Button btn_Back;
     private Text txt_WhiteChys;
     private Text txt_OrangeChys;
     private Text txt_GrayChys;
@@ -37,7 +34,6 @@ public class CrystalPanel : WindowRoot
         if (Manager.MeetingStart == true)
         {
             btn_Finish.gameObject.SetActive(true);
-            btn_Back.gameObject.SetActive(false);
             BG.gameObject.SetActive(true);
             foreach(CrystalArea area in CrystalAreaList)
             {
@@ -48,15 +44,10 @@ public class CrystalPanel : WindowRoot
         else
         {
             btn_Finish.gameObject.SetActive(false);
-            btn_Back.gameObject.SetActive(true);
             BG.gameObject.SetActive(false);
             Manager.dynamicWindow.ShowAllBuildingInfo(BuildingManage.Instance.ConstructedBuildings);
-            BuildingInfoShowed = true;
         }
-        foreach (CrystalArea item in CrystalAreaList)
-        {
-            item.gameObject.SetActive(true);
-        }
+        Areas.gameObject.SetActive(true);
     }
 
     public void InitCrystalPanel()
@@ -70,7 +61,6 @@ public class CrystalPanel : WindowRoot
             area.CA = crystalArea;
             crystalArea.Init(this, area);
             CrystalAreaList.Add(crystalArea);
-            crystalArea.gameObject.SetActive(false);
             //每个区域中心在UI上显示三个槽位，供放置水晶
             //每个绑定一个按钮，记录水晶类型
             //结束时结算Buff
@@ -83,7 +73,6 @@ public class CrystalPanel : WindowRoot
         txt_BlueChys = BG.Find("Img_Blue").GetComponentInChildren<Text>();
         txt_BlackChys = BG.Find("Img_Black").GetComponentInChildren<Text>();
         btn_Finish = transform.Find("Btn_Finish").GetComponent<Button>();
-        btn_Back = transform.Find("Btn_Back").GetComponent<Button>();
         putCrystalDict = new Dictionary<CrystalType, Transform>();
         putCrystalDict.Add(CrystalType.Black, PutButton.Find("Btn_Black"));
         putCrystalDict.Add(CrystalType.Blue, PutButton.Find("Btn_Blue"));
@@ -143,9 +132,6 @@ public class CrystalPanel : WindowRoot
             case "Btn_Finish":
                 EndMeeting();
                 break;
-            case "Btn_Back":
-                StopObserve();
-                break;
             default:
                 break;
         }
@@ -153,11 +139,6 @@ public class CrystalPanel : WindowRoot
 
     private void LateUpdate()
     {
-        foreach (CrystalArea area in CrystalAreaList)
-        {
-            area.OnLateUpdate();
-        }
-
         if (PutButton.gameObject.activeSelf)
         {
             PutButton.transform.position = tempSeat.position - Vector3.up * 100;
@@ -216,12 +197,14 @@ public class CrystalPanel : WindowRoot
         tempArea = null;
 
         PutButton.gameObject.SetActive(false);
-        btn_ShowPanel.interactable = true;
+
         foreach (CrystalArea item in CrystalAreaList)
         {
             item.Settle();
-            item.gameObject.SetActive(false);
         }
+        //约会结束时如果之前没有手动打开水晶面板时再关闭
+        if (toggle_ShowPanel.isOn == false)
+            Areas.gameObject.SetActive(false);
         foreach (CompanyItem item in GameControl.Instance.Items)
         {
             if (item.Type == CompanyItemType.MonthMeeting)
@@ -230,12 +213,16 @@ public class CrystalPanel : WindowRoot
         Manager.EndPutting();
     }
 
-    //停止观察
-    private void StopObserve()
+    //显示水晶面板
+    public void ToggleBuildingInfos(bool show)
     {
-        SetWndState(false);
-        btn_ShowPanel.interactable = true;
-        Manager.dynamicWindow.HideAllBuildingInfo();
-        BuildingInfoShowed = false;
+        if (show == false)
+        {
+            SetWndState(false);
+            Manager.dynamicWindow.HideAllBuildingInfo();
+            Areas.gameObject.SetActive(false);
+        }
+        else if (Manager.dynamicWindow.m_ShowAllBuildingInfo == false)
+            SetWndState();
     }
 }

@@ -17,7 +17,7 @@ public class CameraController : MonoBehaviour
     [Tooltip("最低视野")]public float minHeight = 140;
     [Tooltip("高度平滑度")] [SerializeField] private float m_HeightSmooth = 10;
     [Tooltip("移动平滑度")] [SerializeField] private float m_SpeedSmooth = 1;
-    [HideInInspector]public float height;    //高度参数
+    public float height;    //高度参数
     private Transform mainCamera;
 
     private Ray RayTerrain; 
@@ -32,6 +32,7 @@ public class CameraController : MonoBehaviour
 
     private void Awake()
     {
+        Instance = this;
         mainCamera = transform.Find("Main Camera");
         focus = Instantiate(ResourcesLoader.LoadPrefab("Prefabs/Scene/FucosGo"));
         focus.transform.position = new Vector3(75, 0, 115);
