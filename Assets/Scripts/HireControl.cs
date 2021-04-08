@@ -149,7 +149,6 @@ public class HireControl : MonoBehaviour
                     Destroy(child.gameObject);
                 }
                 HireInfos[i].PerksInfo.Clear();
-                HireInfos[i].SkillsInfo.Clear();
                 HireInfos[i].StrategiesInfo.Clear();
                 HireInfos[i].CreateEmp();
 
@@ -210,13 +209,6 @@ public class HireControl : MonoBehaviour
 
         //检查是否存在瓶颈
         ED.emp.BottleNeckCheck();
-
-        //删除展示用能力
-        for (int i = 0; i < GC.CurrentEmpInfo.SkillsInfo.Count; i++)
-        {
-            Destroy(GC.CurrentEmpInfo.SkillsInfo[i].gameObject);
-        }
-        GC.CurrentEmpInfo.SkillsInfo.Clear();
         //复制战略
         for (int i = 0; i < GC.CurrentEmpInfo.StrategiesInfo.Count; i++)
         {

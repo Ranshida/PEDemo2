@@ -10,7 +10,6 @@ public class BuildingInfo : MonoBehaviour
 {
     public Building thisBuilding;
     private DepControl m_Dep;
-    private OfficeControl m_Office;
 
     private Image img_Faith;        //信念
     private Image img_Success;      //成功率

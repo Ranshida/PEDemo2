@@ -169,14 +169,14 @@ public class Strategy2_1 : Strategy
     public override void Effect(GameControl GC)
     {
         base.Effect(GC);
-        GC.SC.AdvanceMobilize = true;
+        //GC.SC.AdvanceMobilize = true;
         //GC.MobilizeExtraMent += 10;
     }
 
     public override void EffectRemove(GameControl GC)
     {
         base.EffectRemove(GC);
-        GC.SC.AdvanceMobilize = false;
+        //GC.SC.AdvanceMobilize = false;
         //GC.MobilizeExtraMent -= 10;
     }
 }
@@ -439,13 +439,13 @@ public class Strategy3_4 : Strategy
     public override void Effect(GameControl GC)
     {
         base.Effect(GC);
-        GC.SC.ExtraMajorFailureRate -= 0.3f;
+        //GC.SC.ExtraMajorFailureRate -= 0.3f;
     }
 
     public override void EffectRemove(GameControl GC)
     {
         base.EffectRemove(GC);
-        GC.SC.ExtraMajorFailureRate += 0.3f;
+        //GC.SC.ExtraMajorFailureRate += 0.3f;
     }
 }
 

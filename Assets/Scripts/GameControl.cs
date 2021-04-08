@@ -95,7 +95,6 @@ public class GameControl : MonoBehaviour
     public Text Text_Time, Text_TechResource, Text_MarketResource, Text_MarketResource2, Text_ProductResource, Text_Money, 
         Text_Stamina, Text_Mentality, Text_Morale, Text_WarTime, Text_MobTime;
     public Toggle WorkOvertimeToggle;
-    public SkillControl SC;
     public BrainStormControl BSC;
     [HideInInspector] public UnityEvent DailyEvent, WeeklyEvent, MonthlyEvent, HourEvent, YearEvent;
 
@@ -687,7 +686,6 @@ public class GameControl : MonoBehaviour
         SelectMode = 0;
         CC.CEOSkillNum = 0;
         Text_EmpSelectTip.gameObject.SetActive(false);
-        SC.SelectConfirmButton.SetActive(false);
         CC.SelectPanel.GetComponent<WindowBaseControl>().SetWndState(false);
         CC.ResultPanel.GetComponent<WindowBaseControl>().SetWndState(false); ;
         for(int i = 0; i < CurrentEmployees.Count; i++)

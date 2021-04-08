@@ -276,7 +276,7 @@ public class Employee
                 {
                     InfoDetail.AddPerk(new Perk119(this));
 
-                    if(CurrentDep == null || GameControl.Instance.SC.FightStart == true)
+                    if(CurrentDep == null)
                         QuestControl.Instance.Init(Name + "出现心力低下现象\n可以调节所在部门的信念或使用CEO技能“安抚”");
                     else if (CurrentDep != null)
                     {

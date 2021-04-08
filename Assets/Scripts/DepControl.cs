@@ -511,7 +511,7 @@ public class DepControl : MonoBehaviour
             {
                 if (a == 0)
                     continue;
-                if(a == building.effectValue || a == building.effectValue2)
+                if (a == building.effectValue || a == building.effectValue2)
                 {
                     value = CurrentEmps[i].BaseAttributes[a - 1] + CurrentEmps[i].ExtraAttributes[a - 1];
                     if (value == 0)
@@ -533,7 +533,7 @@ public class DepControl : MonoBehaviour
             Text_SRateDetail.text += "\n";
             WorkStatus += EValue;
         }
-        
+
         //高管技能影响
         if (CommandingOffice != null && CommandingOffice.Manager != null)
         {
@@ -573,68 +573,13 @@ public class DepControl : MonoBehaviour
                 Text_ManagerStatus.text = "业务能力等级:——";
             Text_ManagerStatus.text += "      工作状态加成:" + EValue;
 
-                //文字显示
-                Text_SRateDetail.text += "高管" + CommandingOffice.Manager.Name + "技能:" + EValue;
+            //文字显示
+            Text_SRateDetail.text += "高管" + CommandingOffice.Manager.Name + "技能:" + EValue;
             //员工额外效果B
             ExtraEffectDescription(CommandingOffice.Manager);
             Text_SRateDetail.text += "\n";
             WorkStatus += EValue;
-            #region 旧判定
-            //int value = 0;
-            //value = CommandingOffice.Manager.BaseAttributes[type - 1];
-            //float EValue = 0;
-            //if (value <= 5)
-            //{
-            //    EValue -= 0.15f;
-            //    Text_ManagerStatus.text = "上司业务能力等级:草包管理";
-            //}
-            //else if (value <= 9)
-            //{
-            //    EValue -= 0.1f;
-            //    Text_ManagerStatus.text = "上司业务能力等级:胡乱指挥";
-            //}
-            //else if (value <= 13)
-            //{
-            //    EValue += 0.05f;
-            //    Text_ManagerStatus.text = "上司业务能力等级:外行领导";
-            //}
-            //else if (value <= 17)
-            //{
-            //    EValue += 0;
-            //    Text_ManagerStatus.text = "上司业务能力等级:普通管理者";
-            //}
-            //else if (value <= 21)
-            //{
-            //    EValue += 0.04f;
-            //    Text_ManagerStatus.text = "上司业务能力等级:优秀管理";
-            //}
-            //else if (value > 21)
-            //{
-            //    EValue += 0.08f;
-            //    Text_ManagerStatus.text = "上司业务能力等级:业界领袖";
-            //}
-            //BaseWorkStatus += EValue;
-            //BaseWorkStatus += CommandingOffice.Manager.ExtraSuccessRate;
-            #endregion
-
         }
-        //if (Mathf.Abs(GC.SC.ExtraSuccessRate) > 0.001f)
-        //    Text_SRateDetail.text += "\n头脑风暴效果:" + (GC.SC.ExtraSuccessRate * 100) + "%";
-        //if (Mathf.Abs(Efficiency) > 0.001f)
-        //    Text_SRateDetail.text += "\n额外效果:" + (Efficiency * 100) + "%";
-        //if (building.Type == BuildingType.人力资源部 && GC.HireSuccessExtra > 0.001f)
-        //{
-        //    Text_SRateDetail.text += "\n额外招聘成功率:" + (GC.HireSuccessExtra * 100) + "%";
-        //    BaseWorkStatus += GC.HireSuccessExtra;
-        //}
-        //if (Mathf.Abs(GC.BaseDepExtraSuccessRate) > 0.001f)
-        //{
-        //    if (building.Type == BuildingType.技术部门 || building.Type == BuildingType.市场部门 || building.Type == BuildingType.产品部门 || building.Type == BuildingType.公关营销部)
-        //    {
-        //        Text_SRateDetail.text += "\n额外业务成功率:" + (GC.BaseDepExtraSuccessRate * 100) + "%";
-        //        BaseWorkStatus += GC.BaseDepExtraSuccessRate;
-        //    }
-        //}
         Text_SRateDetail.text += "\n——————\n每当生产的剩余时间归零的时候进行一次判定，如果判定成功则产出当前正在进行的" +
     "业务，同时有一定几率出现大成功，如果失败则没有产出，同时还会有一定几率出现重大失误";
 
@@ -688,7 +633,7 @@ public class DepControl : MonoBehaviour
         Text_SRateDetail.gameObject.SetActive(false);
         if (type == 0)
         {
-            Text_DetailInfo.text = "成功率:" + (GC.SC.ExtraSuccessRate * 100) + "%";
+            Text_DetailInfo.text = "成功率:" + (CountSuccessRate() * 100) + "%";
             Text_DetailInfo.text += "大成功率:" + (DepBaseMajorSuccessRate * 100) + "%";
         }
         else if (type == 1)

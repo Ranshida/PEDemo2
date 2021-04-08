@@ -24,7 +24,6 @@ public class EmpInfo : MonoBehaviour
     public Text[] Text_Stars = new Text[5], Text_Exps = new Text[5], Text_SkillNames = new Text[3], Text_SkillValues = new Text[3];
     public Scrollbar[] Scrollbar_Character = new Scrollbar[5];
     public List<PerkInfo> PerksInfo = new List<PerkInfo>();
-    public List<SkillInfo> SkillsInfo = new List<SkillInfo>();
     public List<StrategyInfo> StrategiesInfo = new List<StrategyInfo>();
     public List<EmotionInfo> EmotionInfos = new List<EmotionInfo>();
     public List<BSSkillMarker> SkillMarkers = new List<BSSkillMarker>();
@@ -290,9 +289,6 @@ public class EmpInfo : MonoBehaviour
             GC.SelectMode = 2;
             GC.ShowDepSelectPanel(emp);
         }
-        //头脑风暴初始
-        else
-            GC.SC.InitEmpInfo(emp);
     }
 
     public void Fire(bool NeedVote = true)
@@ -320,9 +316,6 @@ public class EmpInfo : MonoBehaviour
         }
 
         GC.CC.CEO.InfoDetail.AddHistory("解雇了" + emp.Name);
-
-        //这个函数调用要删
-        ClearSkillPreset();
 
         GC.ResetOldAssignment(emp);
         emp.ClearRelations();//清空所有关系
@@ -412,8 +405,8 @@ public class EmpInfo : MonoBehaviour
             {
                 if (GC.SelectMode == 7)
                 {
-                    GC.CurrentEmpInfo = DetailInfo;
-                    GC.SC.ConfirmPanel.SetActive(true);
+                    //GC.CurrentEmpInfo = DetailInfo;
+                    //GC.SC.ConfirmPanel.SetActive(true);
                 }
                 else if (GC.SelectMode == 10)
                 {
@@ -677,40 +670,6 @@ public class EmpInfo : MonoBehaviour
         }
     }
 
-    public void ClearSkillPreset()
-    {
-        for(int i = 0; i < 6; i++)
-        {
-            if (GC.SC.CSkillSetA[i].skill != null && GC.SC.CSkillSetA[i].skill.TargetEmp == emp)
-            {
-                GC.SC.CSkillSetA[i].skill = null;
-                GC.SC.CSkillSetA[i].empInfo = null;
-                GC.SC.CSkillSetA[i].UpdateUI();
-            }
-            if (GC.SC.CSkillSetB[i].skill != null && GC.SC.CSkillSetB[i].skill.TargetEmp == emp)
-            {
-                GC.SC.CSkillSetB[i].skill = null;
-                GC.SC.CSkillSetB[i].empInfo = null;
-                GC.SC.CSkillSetB[i].UpdateUI();
-            }
-            if (GC.SC.CSkillSetC[i].skill != null && GC.SC.CSkillSetC[i].skill.TargetEmp == emp)
-            {
-                GC.SC.CSkillSetC[i].skill = null;
-                GC.SC.CSkillSetC[i].empInfo = null;
-                GC.SC.CSkillSetC[i].UpdateUI();
-            }
-        }
-        foreach(EmpInfo i in GC.SC.SelectedEmps)
-        {
-            if(i.emp == emp)
-            {
-                GC.SC.SelectedEmps.Remove(i);
-                Destroy(i.gameObject);
-                break;
-            }
-        }
-    }
-
     public void UpdateEmotionPanel()
     {
         Text_Emotion.text = "当前情绪:";
@@ -750,13 +709,6 @@ public class EmpInfo : MonoBehaviour
         {
             Text_RTarget.text += "  " + emp.RelationTargets[i].Name;
         }
-    }
-
-    //从头脑风暴员工列表中移除
-    public void MobInfoRemove()
-    {
-        emp.InfoDetail.ClearSkillPreset();
-        GameControl.Instance.SC.RemoveEmpInfo(this);
     }
 
     //以下四个函数为战略充能相关
