@@ -67,6 +67,7 @@ public class UIManager : MonoBehaviour
         return window;
     }
 
+    //添加窗口至对应层级
     public void OnAddNewWindow(WindowRoot window)
     {
         windowList.Add(window);

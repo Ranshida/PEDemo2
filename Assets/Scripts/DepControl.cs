@@ -1,49 +1,13 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class ProduceBuff
-{
-    public float Value;
-    public int TimeLeft;
-    public bool SpecialCheck = false;//用于检测持续到业务结束才消除的Buff
-    public DepControl TargetDep;
-
-    public ProduceBuff(float value, DepControl Dep, int Time = 32)
-    {
-        Value = value;
-        TimeLeft = Time;
-        TargetDep = Dep;
-        Dep.produceBuffs.Add(this);
-        Dep.Efficiency += Value;
-        TargetDep.GC.HourEvent.AddListener(TimePass);
-        //持续到业务结束的检测
-        if (Time == -1)
-            SpecialCheck = true;
-    }
-
-    public void TimePass()
-    {
-        if (SpecialCheck == true)
-            return;
-        TimeLeft -= 1;
-        if (TimeLeft < 1)
-            RemoveBuff();
-    }
-
-    public void RemoveBuff()
-    {
-        TargetDep.GC.HourEvent.RemoveListener(TimePass);
-        TargetDep.produceBuffs.Remove(this);
-        TargetDep.Efficiency -= Value;
-    }
-}
 public class HireType
 {
     public int HireNum = 3;
     public bool MajorSuccess = false;
-
 }
 
 public class DepControl : MonoBehaviour
@@ -51,7 +15,7 @@ public class DepControl : MonoBehaviour
     public float DepBaseMajorSuccessRate = 0;
     public float DepBaseMajorFailureRate = 0;
     [HideInInspector] public int FailProgress = 0, EfficiencyLevel = 0, SpType;
-    //BuildingMode用于区分建筑模式  ActiveMode用于区分激活方式 1直接激活 2选择员工 3选择部门 4选择区域
+    //BuildingMode用于区分建筑模式  ActiveMode用于区分激活方式 0无法激活 1直接激活 2选择员工 3选择部门 4选择区域 5卡牌生产
     [HideInInspector] public int ProducePointLimit = 20, ActiveMode = 1, Mode1EffectValue = -1, Mode2EffectValue = -2;
     [HideInInspector] public bool SurveyStart = false;
     public int DepFaith = 50;
@@ -59,39 +23,37 @@ public class DepControl : MonoBehaviour
     public int ManageValue;//管理值
     public int ManageUse;//作为下属时的管理值消耗
     public int EmpLimit;
-    public int SubDepValue;//附加建筑作用效果值
     public int BaseWorkStatus;//基本工作状态
+    public int ExtraEfficiency = 0;//提供给事业部的额外效率加成
+    public int ExtraProduceLimit = 0;//额外生产/充能周期
     public float Efficiency = 0, SalaryMultiply = 1.0f, BuildingPayMultiply = 1.0f, SpProgress = 0;
     public float StaminaCostRate = 1.0f;//体力消耗率（默认100%）
     public bool MajorSuccess = false, canWork = false, DefautDep = false;
 
-    private int CurrentFinishedTaskNum = 0, PreFinishedTaskNum = 0, NoEmpTime = 0;
-    private int SubDepLimit = 2;
+    private int NoEmpTime = 0;
     private bool NoEmp;
-    private bool DetailPanelOpened = false;
-    private bool CheatMode = false, TipShowed = false;
+    private bool CheatMode = false, TipShowed = false, isWeakend = false;
 
+    Action WeakAction;
+    Action UnWeakAction;
     public Area TargetArea;
     public Employee Manager;
-    public Transform EmpContent, PerkContent, EmpPanel, SRateDetailPanel, SubDepPanel;
-    public GameObject OfficeWarning, DetailButton, RangeWarning;
+    public Transform EmpContent, PerkContent, EmpPanel, DivPanel, EmpMarkerContent, EmpEffectContent;
+    public GameObject EmpEffectPrefab, EmpEffect2Prefab, EmpMarkerPrefab;
+    public Button ActiveButton;
     public Building building = null;
     public GameControl GC;
     public DepSelect DS;
     public DepControl CommandingOffice;
-    public Text Text_DepName, Text_Task, Text_Progress, Text_Quality, Text_Time, Text_Office, Text_Efficiency, Text_WorkStatus, Text_LevelDownTime, 
-        Text_SRateDetail, Text_DetailInfo, Text_ManagerStatus, Text_SubDepCreate, Text_DepName2;
-    public Text Text_DepFaith, Text_DepMode, Text_SkillRequire, Text_TaskTime, Text_SRate, Text_MSRate, Text_MFRate, Text_FinishedTaskNum, 
-        Text_DepCost, Text_TotalSubValue, Text_CurrentSubValue;
-    public Button TargetSelectButton, ModeChangeButton;
+    public DivisionControl CurrentDivision;
+    public Text Text_DepName, Text_DepName2, Text_DepName3, Text_WeakEffect, Text_InfoProgress, Text_DivProgress;
 
-    public List<DepControl> SubDeps = new List<DepControl>();//附属建筑，现在用于中央厨房和茶水间
-    public List<ProduceBuff> produceBuffs = new List<ProduceBuff>();
     public List<Employee> CurrentEmps = new List<Employee>();
     public List<DepControl> InRangeOffices = new List<DepControl>();
     public List<DepControl> ControledDeps = new List<DepControl>();
-    public List<DepControl> PreAffectedDeps = new List<DepControl>();//在上一轮作用中影响到的部门
     public List<PerkInfo> CurrentPerks = new List<PerkInfo>();
+    public List<Image> EmpMarkers = new List<Image>();
+    public List<Image> EmpEffectMarkers = new List<Image>();
     public int[] DepHeadHuntStatus = new int[15];
 
     private void Start()
@@ -100,128 +62,17 @@ public class DepControl : MonoBehaviour
         if (DefautDep)
         {
             UIManager.Instance.OnAddNewWindow(EmpPanel.GetComponent<WindowBaseControl>());
-            if (SRateDetailPanel != null)
-                UIManager.Instance.OnAddNewWindow(SRateDetailPanel.GetComponent<WindowBaseControl>());
         }
     }
 
     private void Update()
     {
-        //if (type == EmpType.Science)
-        //    Text_Efficiency.text = "效率:" + (Efficiency + GC.EfficiencyExtraScience) * 100 + "%";
-        //else if (type != EmpType.HR)
-        //    Text_Efficiency.text = "效率:" + (Efficiency + GC.EfficiencyExtraNormal) * 100 + "%";
-        //if (type != EmpType.HR)
-        //{
-        //    Text_Efficiency.text = "动员等级:" + EfficiencyLevel;
-        //}
         if (building == null)
             return;
 
-        if (building.Type != BuildingType.CEO办公室 && building.Type != BuildingType.高管办公室)
-            Text_Efficiency.text = "效率:" + Mathf.Round(Efficiency * 100) + "%" + "                               员工数量:" + CurrentEmps.Count + "/" + EmpLimit;
-        else
-        {
-            if (Manager != null)
-                Text_Efficiency.text = "高管经验: " + Manager.ManagerExp + "/10";
-            else
-                Text_Efficiency.text = "高管经验: ---";
-        }
-        Text_WorkStatus.text = "工作状态:" + BaseWorkStatus;
-        if (DepFaith >= 80)
-            Text_Progress.text = "每周心力<color=green>+10</color>";
-        else if (DepFaith >= 60)
-            Text_Progress.text = "每周心力<color=green>+5</color>";
-        else if (DepFaith >= 40)
-            Text_Progress.text = "每周心力-0";
-        else if (DepFaith >= 20)
-            Text_Progress.text = "每周心力<color=red>-5</color>";
-        else
-            Text_Progress.text = "每周心力<color=red>-10</color>";
-        if (DetailPanelOpened == true)
-        {
-            if (CommandingOffice != null)
-            {
-                if (CommandingOffice.Manager != null)
-                {
-                    int TotalNum = 0;
-                    foreach(DepControl dep in CommandingOffice.ControledDeps)
-                    {
-                        TotalNum += dep.ManageUse;
-                    }
-                    int LimitNum = CommandingOffice.ManageValue;
-                    Text_Office.text = "由 " + CommandingOffice.Manager.Name + "(" + TotalNum + "/" + LimitNum + ")" +
-                        "(" + CommandingOffice.Text_DepName.text + ") 管理";
-                }
-                else
-                {
-                    Text_Office.text = "由 " + CommandingOffice.Text_DepName.text + "(空) 管理";
-                    Text_ManagerStatus.text = "上司业务能力等级:——";
-                }
-
-                //茶水间特殊文字描述
-                Text_TotalSubValue.text = "剩余可分配体力供给:" + CommandingOffice.SubDepValue;
-                Text_CurrentSubValue.text = "当前供给体力:" + SubDepValue;
-            }
-            else
-            {
-                Text_Office.text = "无管理者";
-                Text_ManagerStatus.text = "上司业务能力等级:——";
-            }
-            Text_DepFaith.text = "部门信念:" + DepFaith;
-            Text_DepMode.text = "部门模式:" + building.Function_A;
-            string skill = "";//1技术 2市场 3产品 4观察 5坚韧 6强壮 7管理 8人力 9财务 10决策 11行业 12谋略 13说服 14魅力 15八卦
-            for (int i = 0; i < 2; i++)
-            {
-                int type = building.effectValue;
-                if (i == 1)
-                    type = building.effectValue2;
-
-                if (type == 1)
-                    skill = "技术";
-                else if (type == 2)
-                    skill = "市场";
-                else if (type == 3)
-                    skill = "产品";
-                else if (type == 4)
-                    skill = "观察";
-                else if (type == 5)
-                    skill = "坚韧";
-                else if (type == 6)
-                    skill = "强壮";
-                else if (type == 7)
-                    skill = "管理";
-                else if (type == 8)
-                    skill = "人力";
-                else if (type == 9)
-                    skill = "财务";
-                else if (type == 10)
-                    skill = "决策";
-                else if (type == 11)
-                    skill = "行业";
-                else if (type == 12)
-                    skill = "谋略";
-                else if (type == 13)
-                    skill = "说服";
-                else if (type == 14)
-                    skill = "魅力";
-                else if (type == 15)
-                    skill = "八卦";
-                if (i == 0)
-                    Text_SkillRequire.text = "所需技能:" + skill;
-                else
-                    Text_SkillRequire.text += "/" + skill;
-            }
-            int ptime = calcTime(Efficiency, ProducePointLimit);
-            Text_TaskTime.text = "生产周期:" + ptime / 8 + "周 " + ptime % 8 + "时";
-
-            Text_SRate.text = "成功率:" + Mathf.Round((CountSuccessRate()) * 100) + "%";
-            Text_MSRate.text = "大成功率:" + ((DepBaseMajorSuccessRate) * 100) + "%";
-            Text_MFRate.text = "重大失误率:" + ((DepBaseMajorFailureRate) * 100) + "%";
-            Text_FinishedTaskNum.text = "上季度业务成功数:" + PreFinishedTaskNum + "\n\n" + "本季度业务成功数:" + CurrentFinishedTaskNum;
-            Text_DepCost.text = "运营成本:" + (CalcCost(1) + CalcCost(2)) + "/月\n\n员工工资:" + CalcCost(1) + 
-                "/月                             维护费用:" + CalcCost(2) +"/月";
-        }
+        transform.position = Function.World2ScreenPoint(building.transform.position + new Vector3(building.Length * 7.5f, 0, building.Width * 5));
+        float scale = Mathf.Lerp(2.2f, 1, CameraController.Instance.height / CameraController.Instance.maxHeight);
+        transform.localScale = new Vector3(scale, scale, scale);
     }
 
     //目前不只是制作，还有很多别的跟事件相关的功能都写在这儿
@@ -242,118 +93,94 @@ public class DepControl : MonoBehaviour
         //工作结算
         if (canWork == true)
         {
-            //没有员工或在需要目标时没有目标的情况下直接return，防止完成任务
-            if ((ActiveMode == 4 && TargetArea == null) || CurrentEmps.Count == 0)
-            {
-                UpdateUI();
-                RemoveAllProvidePerk();
+            //没有员工的情况下直接return，防止完成任务
+            if (CurrentEmps.Count == 0)
                 return;
-            }
             //基础经验获取
             EmpsGetExp();
             //进度增加
-            SpProgress += Efficiency;
+            if (SpProgress < (ProducePointLimit + ExtraProduceLimit))
+                SpProgress += 1;
 
-            if (SpProgress >= ProducePointLimit)
+            if (SpProgress >= (ProducePointLimit + ExtraProduceLimit))
             {
-                //完成生产
-                float BaseSuccessRate = CountSuccessRate();
-                float Posb = Random.Range(0.0f, 1.0f);
-                //作弊模式必定成功
-                if (CheatMode == true)
-                    Posb = BaseSuccessRate - 1;
-                //成功和大成功
-                if (Posb <= BaseSuccessRate)
-                {
-                    CurrentFinishedTaskNum += 1;
-                    if (Random.Range(0.0f, 1.0f) < DepBaseMajorSuccessRate)
-                    {
-                        //大成功
-                        MajorSuccess = true;
-                        //额外经验获取
-                        if (CurrentEmps.Count > 0)
-                        {
-                            for (int i = 0; i < (int)(ProducePointLimit / Efficiency); i++)
-                            {
-                                EmpsGetExp();
-                            }
-                        }
-                        BuildingActive();
-                    }
-                    else
-                    {
-                        MajorSuccess = false;
-                        BuildingActive();
-                    }
+                #region 旧生产判定
+                ////完成生产
+                //float BaseSuccessRate = CountSuccessRate();
+                //float Posb = Random.Range(0.0f, 1.0f);
+                ////作弊模式必定成功
+                //if (CheatMode == true)
+                //    Posb = BaseSuccessRate - 1;
+                ////成功和大成功
+                //if (Posb <= BaseSuccessRate)
+                //{
+                //    if (Random.Range(0.0f, 1.0f) < DepBaseMajorSuccessRate)
+                //    {
+                //        //大成功
+                //        MajorSuccess = true;
+                //        //额外经验获取
+                //        if (CurrentEmps.Count > 0)
+                //        {
+                //            for (int i = 0; i < (int)(ProducePointLimit / Efficiency); i++)
+                //            {
+                //                EmpsGetExp();
+                //            }
+                //        }
+                //        BuildingActive();
+                //    }
+                //    else
+                //    {
+                //        MajorSuccess = false;
+                //        BuildingActive();
+                //    }
 
-                }
-                //失败和大失败
-                else
-                {
-                    SpProgress = 0;
-                    float Posb2 = Random.Range(0.0f, 1.0f);
-                    if (Posb2 < DepBaseMajorFailureRate)
-                    {
-                        //大失败
-                        GC.CreateMessage(Text_DepName.text + " 工作中发生重大失误");
-                        AddPerk(new Perk105(null));
-                        GC.QC.Init(Text_DepName.text + "发生重大失误!\n(成功率:" + Mathf.Round((CountSuccessRate()) * 100) +
-                            "% 重大失误率:" + ((DepBaseMajorFailureRate) * 100) + "%)\n部门信念严重降低");
-                    }
-                    else
-                    {
-                        //失败
-                        GC.CreateMessage(Text_DepName.text + " 工作失败");
-                        if (TipShowed == false)
-                        {
-                            TipShowed = true;
-                            GC.QC.Init(Text_DepName.text + "业务生产失败!\n(成功率:" + Mathf.Round((CountSuccessRate()) * 100) + "%)");
-                        }
-                    }
-                }
+                //}
+                ////失败和大失败
+                //else
+                //{
+                //    SpProgress = 0;
+                //    float Posb2 = Random.Range(0.0f, 1.0f);
+                //    if (Posb2 < DepBaseMajorFailureRate)
+                //    {
+                //        //大失败
+                //        GC.CreateMessage(Text_DepName.text + " 工作中发生重大失误");
+                //        AddPerk(new Perk105(null));
+                //        GC.QC.Init(Text_DepName.text + "发生重大失误!\n(成功率:" + Mathf.Round((CountSuccessRate()) * 100) +
+                //            "% 重大失误率:" + ((DepBaseMajorFailureRate) * 100) + "%)\n部门信念严重降低");
+                //    }
+                //    else
+                //    {
+                //        //失败
+                //        GC.CreateMessage(Text_DepName.text + " 工作失败");
+                //        if (TipShowed == false)
+                //        {
+                //            TipShowed = true;
+                //            GC.QC.Init(Text_DepName.text + "业务生产失败!\n(成功率:" + Mathf.Round((CountSuccessRate()) * 100) + "%)");
+                //        }
+                //    }
+                //}
+                #endregion
+                if (ActiveMode == 1)
+                    BuildingActive();
+                else if (ActiveMode != 5)
+                    ActiveButton.interactable = true;
                 RemoveSpecialBuffs();
             }
-
-            UpdateUI();
         }
-        else
-            RemoveAllProvidePerk();
+        UpdateUI();
     }
 
     public void UpdateUI()
     {
-        if (building.Type == BuildingType.茶水间)
-        {//茶水间的特殊信息设定
-            Text_Quality.text = "体力供给:" + SubDepValue + "/周";
-            return;
-        }
-        if (canWork == true)
+        if(ActiveMode == 1)
         {
-            float Pp = 0;
-            if (CurrentEmps.Count > 0)
-            {
-                Pp = 0.75f + Efficiency;
-                foreach (Employee e in CurrentEmps)
-                {
-                    if (e.InfoDetail != null && e.InfoDetail.Entity != null)
-                    {
-                        if (e.InfoDetail.Entity.OutCompany == false)
-                            Pp += 0.25f;
-                    }
-                }
-            }
-            Text_Task.text = "当前任务:" + building.Function_A;
-            //成功率计算
-            Text_Quality.text = "成功率:" + Mathf.Round((CountSuccessRate()) * 100) + "%";
-
-            int limit = ProducePointLimit;
-            Text_Time.text = "剩余时间:" + calcTime(Pp, limit - SpProgress) + "时";
+            Text_InfoProgress.text = "生产进度:" + SpProgress + "/" + (ProducePointLimit + ExtraProduceLimit);
+            Text_DivProgress.text = "生产进度:" + SpProgress + "/" + (ProducePointLimit + ExtraProduceLimit);
         }
-        else
+        else if (ActiveMode == 2 || ActiveMode == 3 || ActiveMode == 4)
         {
-            Text_Task.text = "当前任务: 无";
-            Text_Quality.text = "当前进度:----";
-            Text_Time.text = "当前进度:----";
+            Text_InfoProgress.text = "充能进度:" + SpProgress + "/" + (ProducePointLimit + ExtraProduceLimit);
+            Text_DivProgress.text = "充能进度:" + SpProgress + "/" + (ProducePointLimit + ExtraProduceLimit);
         }
     }
 
@@ -383,10 +210,21 @@ public class DepControl : MonoBehaviour
         for (int i = 0; i < GC.CurrentDeps.Count; i++)
         {
             GC.CurrentDeps[i].EmpPanel.GetComponent<WindowBaseControl>().SetWndState(false);
-            GC.CurrentDeps[i].DetailPanelOpened = false;
         }
         EmpPanel.gameObject.GetComponent<WindowBaseControl>().SetWndState(true);
-        DetailPanelOpened = true;
+    }
+
+    //显示当前所处的事业部面板并关闭其他事业部面板
+    public void ShowDivisionPanel()
+    {
+        if(CurrentDivision != null)
+        {
+            for (int i = 0; i < GC.CurrentDivisions.Count; i++)
+            {
+                GC.CurrentDivisions[i].SetDetailPanel(false);
+            }
+            CurrentDivision.SetDetailPanel(true);
+        }
     }
 
     //部门人数和技能需求检测
@@ -401,7 +239,7 @@ public class DepControl : MonoBehaviour
     {
         foreach(int type in emp.Professions)
         {
-            if (type == building.effectValue || type == building.effectValue2)
+            if (type == building.effectValue)
                 return true;
         }
         return false;
@@ -441,7 +279,6 @@ public class DepControl : MonoBehaviour
     //删除建筑时重置所有相关数据
     public void ClearDep()
     {
-        RemoveAllProvidePerk();//清除所有可能提供的perk
         //清空员工
         List<Employee> ED = new List<Employee>();
         for (int i = 0; i < CurrentEmps.Count; i++)
@@ -455,32 +292,11 @@ public class DepControl : MonoBehaviour
             GC.ResetOldAssignment();
         }
 
-        //附加建筑引用删除
-        if(building.Type == BuildingType.茶水间 && CommandingOffice != null)
-        {
-            CommandingOffice.RemoveSubDep(this);
-        }
-        //目前仅有中央厨房有附加建筑
-        if(SubDeps.Count > 0)
-        {
-            List<DepControl> d = new List<DepControl>();
-            foreach(DepControl dep in SubDeps)
-            {
-                d.Add(dep);
-            }
-            foreach(DepControl dep in d)
-            {
-                GC.BM.DismantleBuilding(dep.building);
-            }
-        }
-
         GC.HourEvent.RemoveListener(Produce);
         GC.WeeklyEvent.RemoveListener(FaithEffect);
         foreach(PerkInfo perk in CurrentPerks)
         {
             perk.CurrentPerk.RemoveAllListeners();
-            if (perk.CurrentPerk.ProvideDep != null)
-                perk.CurrentPerk.ProvideDep.PreAffectedDeps.Remove(this);
         }
 
         GC.CurrentDeps.Remove(this);
@@ -489,323 +305,33 @@ public class DepControl : MonoBehaviour
             CommandingOffice.ControledDeps.Remove(this);
             CommandingOffice.CheckManage();
         }
-        if (SRateDetailPanel != null)
-            Destroy(SRateDetailPanel.gameObject);
+        if (CurrentDivision != null)
+            CurrentDivision.CurrentDeps.Remove(this);
         Destroy(DS.gameObject);
         Destroy(EmpPanel.gameObject);
+        Destroy(DivPanel);
         Destroy(this.gameObject);
     }
 
     //计算生产成功率
     public float CountSuccessRate()
     {
-        //1-3职业技能 4观察 5坚韧 6强壮 7管理 8人力 9财务 10决策 11行业 12谋略 13说服 14魅力 15八卦
-        int WorkStatus = BaseWorkStatus;
-        Text_SRateDetail.text = "";
-        //技能影响
-        for (int i = 0; i < CurrentEmps.Count; i++)
-        {
-            int value = 0;
-            int EValue = 0;
-            foreach (int a in CurrentEmps[i].Professions)
-            {
-                if (a == 0)
-                    continue;
-                if (a == building.effectValue || a == building.effectValue2)
-                {
-                    value = CurrentEmps[i].BaseAttributes[a - 1] + CurrentEmps[i].ExtraAttributes[a - 1];
-                    if (value == 0)
-                        EValue -= 1;
-                    else if (value <= 3)
-                        EValue += 0;
-                    else if (value <= 6)
-                        EValue += 1;
-                    else if (value <= 9)
-                        EValue += 2;
-                    else if (value >= 10)
-                        EValue += 3;
-                }
-            }
-            //文字显示
-            Text_SRateDetail.text += CurrentEmps[i].Name + "技能:" + EValue;
-            //员工额外效果B
-            ExtraEffectDescription(CurrentEmps[i]);
-            Text_SRateDetail.text += "\n";
-            WorkStatus += EValue;
-        }
-
-        //高管技能影响
-        if (CommandingOffice != null && CommandingOffice.Manager != null)
-        {
-            int value = 0;
-            int EValue = 0;
-
-            bool HaveRequiredSkill = false;//是否有对应技能效果的提示
-            Text_ManagerStatus.text = "业务能力等级:";
-            foreach (int a in CommandingOffice.Manager.Professions)
-            {
-                if (a == 0)
-                    continue;
-                if (a == building.effectValue || a == building.effectValue2)
-                {
-                    if (HaveRequiredSkill == false)
-                        HaveRequiredSkill = true;
-                    else
-                        Text_ManagerStatus.text += "/";
-
-                    value = CommandingOffice.Manager.BaseAttributes[a - 1] + CommandingOffice.Manager.ExtraAttributes[a - 1];
-
-                    Text_ManagerStatus.text += value.ToString();
-
-                    if (value == 0)
-                        EValue -= 1;
-                    else if (value <= 3)
-                        EValue += 0;
-                    else if (value <= 6)
-                        EValue += 1;
-                    else if (value <= 9)
-                        EValue += 2;
-                    else if (value >= 10)
-                        EValue += 3;
-                }
-            }
-            if (HaveRequiredSkill == false)
-                Text_ManagerStatus.text = "业务能力等级:——";
-            Text_ManagerStatus.text += "      工作状态加成:" + EValue;
-
-            //文字显示
-            Text_SRateDetail.text += "高管" + CommandingOffice.Manager.Name + "技能:" + EValue;
-            //员工额外效果B
-            ExtraEffectDescription(CommandingOffice.Manager);
-            Text_SRateDetail.text += "\n";
-            WorkStatus += EValue;
-        }
-        Text_SRateDetail.text += "\n——————\n每当生产的剩余时间归零的时候进行一次判定，如果判定成功则产出当前正在进行的" +
-    "业务，同时有一定几率出现大成功，如果失败则没有产出，同时还会有一定几率出现重大失误";
-
+        //目前旧的部分全删了
         float SRate = 0.4f;
-        if (WorkStatus <= 1)
-            SRate = 0.4f;
-        else if (WorkStatus <= 4)
-            SRate = 0.6f;
-        else if (WorkStatus <= 7)
-            SRate = 0.8f;
-        else
-            SRate = 1.0f;
 
         return SRate;
     }
-    //额外效果描述
-    void ExtraEffectDescription(Employee emp, bool isManager = false)
-    {
-        if(Mathf.Abs(emp.ExtraSuccessRate) > 0.001f)
-        {
-            foreach (PerkInfo perk in emp.InfoDetail.PerksInfo)
-            {
-                int a = perk.CurrentPerk.Num;
-                string eName = "";
-                if (isManager == true)
-                    eName = "高管";
-                eName += emp.Name;
-                if (a == 30 || a == 31 || a == 33 || a == 38 || a == 94)
-                {
-                    Text_SRateDetail.text += "\n" + eName + perk.CurrentPerk.Name + "状态: " + (perk.CurrentPerk.TempValue4 * perk.CurrentPerk.Level * 100) + "%";
-                }
-            }
-        }
-    }
 
-    //详细信息显示
-    public void ShowSRateDetailPanel()
+    //手动激活部门技能
+    public void StartBuildingActive()
     {
-        Text_DetailInfo.gameObject.SetActive(false);
-        Text_SRateDetail.gameObject.SetActive(true);
-        CountSuccessRate();
-        SRateDetailPanel.transform.position = Input.mousePosition;
-        SRateDetailPanel.gameObject.GetComponent<WindowBaseControl>().SetWndState(true);
-        LayoutRebuilder.ForceRebuildLayoutImmediate(SRateDetailPanel.gameObject.GetComponent<RectTransform>());
-    }
-
-    //显示细节面板并更新信息
-    public void ShowDetailPanel(int type)
-    {
-        Text_DetailInfo.gameObject.SetActive(true);
-        Text_SRateDetail.gameObject.SetActive(false);
-        if (type == 0)
+        GC.CurrentDep = this;
+        if (ActiveMode == 2)
         {
-            Text_DetailInfo.text = "成功率:" + (CountSuccessRate() * 100) + "%";
-            Text_DetailInfo.text += "大成功率:" + (DepBaseMajorSuccessRate * 100) + "%";
+            GC.SelectMode = 5;
+            GC.Text_EmpSelectTip.text = "选择一个员工";
+            GC.TotalEmpPanel.SetWndState(true);
         }
-        else if (type == 1)
-        {
-            Text_DetailInfo.text = "信念基础值:" + (int.Parse(building.FaithBonus) + 50);
-            foreach (PerkInfo info in CurrentPerks)
-            {
-                if (info.CurrentPerk.Num == 97)
-                    Text_DetailInfo.text += "\n转岗无望 -" + (info.CurrentPerk.Level * 15);
-                else if (info.CurrentPerk.Num == 98)
-                    Text_DetailInfo.text += "\n升职无望 -" + (info.CurrentPerk.Level * 15);
-                else if (info.CurrentPerk.Num == 99)
-                    Text_DetailInfo.text += "\n并肩作战 +" + info.CurrentPerk.TempValue1;
-                else if (info.CurrentPerk.Num == 100)
-                    Text_DetailInfo.text += "\n同室操戈 -" + info.CurrentPerk.TempValue1;
-                else if (info.CurrentPerk.Num == 101)
-                    Text_DetailInfo.text += "\n信仰不一 -15";
-                else if (info.CurrentPerk.Num == 102)
-                    Text_DetailInfo.text += "\n信仰一致 +15";
-                else if (info.CurrentPerk.Num == 103)
-                    Text_DetailInfo.text += "\n文化不一 -15";
-                else if (info.CurrentPerk.Num == 104)
-                    Text_DetailInfo.text += "\n文化一致 +15";
-                else if (info.CurrentPerk.Num == 104)
-                    Text_DetailInfo.text += "\n文化一致 +15";
-                else if (info.CurrentPerk.Num == 105)
-                    Text_DetailInfo.text += "\n重大失误 -" + (info.CurrentPerk.Level * 20);
-                else if (info.CurrentPerk.Num == 106)
-                    Text_DetailInfo.text += "\n心理咨询 +25";
-                else if (info.CurrentPerk.Num == 108)
-                    Text_DetailInfo.text += "\n生疏磨合 -" + (info.CurrentPerk.Level * 15);
-                else if (info.CurrentPerk.Num == 110)
-                    Text_DetailInfo.text += "\n紧急调离 -" + (info.CurrentPerk.Level * 15);
-                else if (info.CurrentPerk.Num == 111)
-                    Text_DetailInfo.text += "\n空置部门 -30";
-                else if (info.CurrentPerk.Num == 115)
-                    Text_DetailInfo.text += "\n老板摸鱼 -35";
-                else if (info.CurrentPerk.Num == 116)
-                    Text_DetailInfo.text += "\n业务干扰 -30";
-                else if (info.CurrentPerk.Num == 121)
-                    Text_DetailInfo.text += "\n勇气赞歌 +15";
-                else if (info.CurrentPerk.Num == 124)
-                    Text_DetailInfo.text += "\n无意义争执 -30";
-            }
-            Text_DetailInfo.text += "\n——————\n部门中所有员工的心力都会受到部门信念的影响\n      信念>=80 心力每周+10\n" +
-                "80>信念>=60 心力每周+5\n40>信念>=20 心力每周-5\n      信念<=20 心力每周-10";
-        }
-        else if (type == 2)        
-            Text_DetailInfo.text += building.Description_A;
-        else if (type == 3)
-            Text_DetailInfo.text = "标准生产周期:" + ProducePointLimit / 8 + "周 " + ProducePointLimit % 8 + "时";
-        else if (type == 4)
-        {
-            ShowSRateDetailPanel();
-            return;
-        }
-        else if (type == 5)
-        {
-            Text_DetailInfo.text = "基础大成功率:" + Mathf.Round(DepBaseMajorSuccessRate * 100) + "%";
-            Text_DetailInfo.text += "\n——————\n当部门生产成功时，有一定几率转化为大成功，部门中员工会的经验翻倍" +
-                "部分部门会同时生产出更多业务";
-        }
-        else if (type == 6)
-        {
-            Text_DetailInfo.text = "基础重大失误率:" + Mathf.Round(DepBaseMajorFailureRate * 100) + "%";
-            Text_DetailInfo.text += "\n——————\n当部门生产失败时，有一定几率转化为重大失误，严重降低部门信念";
-        }
-        else if (type == 7)
-        {
-            Text_DetailInfo.text = "建筑维护费:" + CalcCost(2) + "\n员工工资:" + CalcCost(1);
-        }
-        else if (type == 8)
-        {
-            if (CommandingOffice == null)
-                return;
-            if (CommandingOffice.Manager == null)
-                return;
-            Text_DetailInfo.text = "管理能力:" + CommandingOffice.Manager.Manage;
-            if (CommandingOffice.Manager.Manage < 6)
-                Text_DetailInfo.text += "\n管理等级:组长 (管理能力 < 6)";
-            else if (CommandingOffice.Manager.Manage < 11)
-                Text_DetailInfo.text += "\n管理等级:初级管理者 (6 <= 管理能力 < 11)";
-            else if (CommandingOffice.Manager.Manage < 16)
-                Text_DetailInfo.text += "\n管理等级:中层管理者 (11 <= 管理能力 < 16)";
-            else if (CommandingOffice.Manager.Manage < 21)
-                Text_DetailInfo.text += "\n管理等级:精英管理者 (16 <= 管理能力 < 21)";
-            else
-                Text_DetailInfo.text += "\n管理等级:管理大师 (21 <= 管理能力)";
-            Text_DetailInfo.text += "\n管理能力:" + CommandingOffice.Manager.Manage;
-            Text_DetailInfo.text += "\n直属下属:";
-            foreach (DepControl dep in CommandingOffice.ControledDeps)
-            {
-                Text_DetailInfo.text += "\n" + dep.Text_DepName.text;
-            }
-        }
-        else if (type == 9)
-        {
-            if (CommandingOffice == null)
-                return;
-            if (CommandingOffice.Manager == null)
-                return;
-            int value = 0;
-            value = CommandingOffice.Manager.BaseAttributes[building.effectValue - 1] + CommandingOffice.Manager.ExtraAttributes[building.effectValue - 1];
-            if (value <= 5)
-            {
-                Text_DetailInfo.text = "部门成功率:-15%";
-                Text_DetailInfo.text += "\n当前生产所需技能 <= 5";
-            }
-            else if (value <= 9)
-            {
-                Text_DetailInfo.text = "部门成功率:-5%";
-                Text_DetailInfo.text += "\n5 <当前生产所需技能 <= 9";
-            }
-            else if (value <= 13)
-            {
-                Text_DetailInfo.text = "部门成功率:+0%";
-                Text_DetailInfo.text += "\n9 <当前生产所需技能 <= 13";
-            }
-            else if (value <= 17)
-            {
-                Text_DetailInfo.text = "部门成功率:+5%";
-                Text_DetailInfo.text += "\n13 <当前生产所需技能 <= 17";
-            }
-            else if (value <= 21)
-            {
-                Text_DetailInfo.text = "部门成功率:+15%";
-                Text_DetailInfo.text += "\n17 <当前生产所需技能 <= 21";
-            }
-            else if (value > 21)
-            {
-                Text_DetailInfo.text = "部门成功率:+20%";
-                Text_DetailInfo.text += "\n当前生产所需技能 > 21";
-            }
-            Text_DetailInfo.text += "\n(当前等级:" + value + ")";
-        }
-        else if (type == 10)
-            Text_DetailInfo.text = "目前没有为此办公室指定上司或上司管理能力不足\n点击“详细信息”左侧面板中的“更换”可更换上司";
-        else if (type == 11)
-            Text_DetailInfo.text = "部门中每增加一名员工生产力+1";
-        SRateDetailPanel.transform.position = Input.mousePosition;
-        SRateDetailPanel.gameObject.GetComponent<WindowBaseControl>().SetWndState(true);
-        LayoutRebuilder.ForceRebuildLayoutImmediate(SRateDetailPanel.gameObject.GetComponent<RectTransform>());
-
-    }
-    //关闭细节面板
-    public void CloseSRateDetailPanel()
-    {
-        SRateDetailPanel.gameObject.GetComponent<WindowBaseControl>().SetWndState(false);
-    }
-
-    //部门目标的选择
-    public void StartTargetSelect()
-    {
-        if (ActiveMode == 4)
-        {
-            foreach(Area a in building.CurrentArea.NeighborAreas)
-            {
-                if (a.gridList[0].Lock == false)
-                    a.AS.gameObject.SetActive(true);
-            }
-            building.CurrentArea.AS.gameObject.SetActive(true);
-            GC.AC.CancelButton.SetActive(true);
-            GC.AreaSelectMode = 1;
-            GC.CurrentDep = this;
-        }
-    }
-
-    //确定选择
-    public void SelectTarget(Area a)
-    {
-        TargetArea = a;
-        UpdateUI();
     }
 
     public void BuildingActive()
@@ -814,157 +340,22 @@ public class DepControl : MonoBehaviour
         if (MajorSuccess == true)
             value = 2;
 
-        if (ActiveMode == 4)
-        {
-            //先清除旧perk再找目标
-            RemoveAllProvidePerk();
-            foreach(Building b in building.effect.AffectedBuildings)
-            {
-                if(b.CurrentArea == TargetArea)
-                {
-                    PreAffectedDeps.Add(b.Department);
-                }
-            }
-            //确定自己是否在范围内
-            if (building.CurrentArea == TargetArea)
-                PreAffectedDeps.Add(this);
+        SpProgress = 0;
+        ActiveButton.interactable = false;
 
-            if (building.Type == BuildingType.兴趣社团)
-            {
-                foreach(DepControl dep in PreAffectedDeps)
-                {
-                    Perk45 newperk = new Perk45(null);
-                    newperk.ProvideDep = this;
-                    newperk.TempValue1 = value;
-                    dep.AddPerk(newperk);
-                }
-            }
-            else if (building.Type == BuildingType.心理咨询室)
-            {
-                foreach (DepControl dep in PreAffectedDeps)
-                {
-                    Perk144 newperk = new Perk144(null);
-                    newperk.ProvideDep = this;
-                    newperk.TempValue1 = value;
-                    dep.AddPerk(newperk);
-                }
-            }
-            else if (building.Type == BuildingType.会计办公室)
-            {
-                foreach (DepControl dep in PreAffectedDeps)
-                {
-                    Perk newperk = new Perk44(null);
-                    newperk.ProvideDep = this;
-                    newperk.TargetDep = dep;
-                    newperk.TempValue1 = value;
-                    dep.AddPerk(newperk);
-                }
-            }
-            else if (building.Type == BuildingType.机械检修中心)
-            {
-                foreach (DepControl dep in PreAffectedDeps)
-                {
-                    Perk146 newperk = new Perk146(null);
-                    newperk.ProvideDep = this;
-                    newperk.TempValue1 = value;
-                    dep.AddPerk(newperk);
-                }
-            }
-            else if (building.Type == BuildingType.体能研究室)
-            {
-                foreach (DepControl dep in PreAffectedDeps)
-                {
-                    Perk147 newperk = new Perk147(null);
-                    newperk.ProvideDep = this;
-                    newperk.TempValue1 = value;
-                    dep.AddPerk(newperk);
-                }
-            }
-        }
-        else
-        {
-            if (building.Type == BuildingType.前端小组)
-                GC.FinishedTask[0] += value;
-            else if (building.Type == BuildingType.后端小组)
-                GC.FinishedTask[1] += value;
-            else if (building.Type == BuildingType.算法小组)
-                GC.FinishedTask[2] += value;
-            else if (building.Type == BuildingType.用户访谈室)
-                GC.FinishedTask[3] += value;
-            else if (building.Type == BuildingType.原型图画室)
-                GC.FinishedTask[4] += value;
-            else if (building.Type == BuildingType.行为分析室)
-                GC.FinishedTask[5] += value;
-            else if (building.Type == BuildingType.文案小组)
-                GC.FinishedTask[6] += value;
-            else if (building.Type == BuildingType.传单小队)
-                GC.FinishedTask[7] += value;
-            else if (building.Type == BuildingType.派对小组)
-                GC.FinishedTask[8] += value;
-            else if (building.Type == BuildingType.公关小组)
-                GC.FinishedTask[9] += value;
-            else if (building.Type == BuildingType.混沌创意营)
-            {
-                GC.CreateItem(5);
-                if(MajorSuccess == true)
-                    GC.CreateItem(5);
-            }
-            else if (building.Type == BuildingType.机械自动化中心)
-            {
-                GC.CreateItem(6);
-                if (MajorSuccess == true)
-                    GC.CreateItem(6);
-            }
-            else if (building.Type == BuildingType.秘书处)
-            {
-                GC.CreateItem(1);
-                if (MajorSuccess == true)
-                    GC.CreateItem(1);
-            }
-            else if (building.Type == BuildingType.私人安保)
-            {
-                GC.CreateItem(2);
-                if (MajorSuccess == true)
-                    GC.CreateItem(2);
-            }
-            else if (building.Type == BuildingType.智库小组)
-            {
-                GC.CreateItem(3);
-                if (MajorSuccess == true)
-                    GC.CreateItem(3);
-            }
-            else if (building.Type == BuildingType.脑机实验室)
-            {
-                GC.CreateItem(4);
-                if (MajorSuccess == true)
-                    GC.CreateItem(4);
-            }
-            else if (building.Type == BuildingType.人力资源部)
-            {
-                GC.HC.ExtraHireOption += 1;
-                if (MajorSuccess == true)
-                    GC.HC.ExtraHireOption += 1;
-            }
-            GC.UpdateResourceInfo();
-        }
+        if (building.Type == BuildingType.心理咨询室)
+            GC.CurrentEmpInfo.emp.Mentality += 20;
+        else if (building.Type == BuildingType.智库小组)
+            GC.CreateItem(3);
 
+        GC.UpdateResourceInfo();
         GC.SelectedDep = null;
         GC.CurrentDep = null;
         GC.CurrentEmpInfo = null;
         GC.TotalEmpPanel.SetWndState(false);
         SpProgress = 0;
         GC.ResetSelectMode();
-    }
-
-    //完成的业务数量整理
-    public void ResetFinishedTaskNum()
-    {
-        PreFinishedTaskNum = CurrentFinishedTaskNum;
-        CurrentFinishedTaskNum = 0;
-    }
-    public void SetDetailPanelOpened(bool value)
-    {
-        DetailPanelOpened = value;
+        UpdateUI();
     }
 
     //添加Perk
@@ -992,18 +383,8 @@ public class DepControl : MonoBehaviour
                 //不可叠加的清除
                 else
                 {
-                    //普通状态的消除
-                    if (p.CurrentPerk.ProvideDep == null)
-                    {
-                        p.CurrentPerk.RemoveEffect();
-                        break;
-                    }
-                    //如果是建筑提供的状态，且提供者是自己时才消除
-                    else if (p.CurrentPerk.ProvideDep == perk.ProvideDep)
-                    {
-                        p.CurrentPerk.RemoveEffect();
-                        break;
-                    }
+                    p.CurrentPerk.RemoveEffect();
+                    break;
                 }
             }
         }
@@ -1019,10 +400,6 @@ public class DepControl : MonoBehaviour
         newPerk.SetColor();
 
         PerkSort();
-
-        //部门状态添加临时判定
-        if (perk.Num >= 143 && perk.Num <= 149)
-            newPerk.CurrentPerk.ProvideDep = this;
     }
     //移除Perk
     public void RemovePerk(int num)
@@ -1035,22 +412,6 @@ public class DepControl : MonoBehaviour
                 break;
             }
         }
-    }
-    //移除所有自身提供的Perk
-    public void RemoveAllProvidePerk()
-    {
-        foreach(DepControl dep in PreAffectedDeps)
-        {
-            foreach(PerkInfo info in dep.CurrentPerks)
-            {
-                if(info.CurrentPerk.ProvideDep == this)
-                {
-                    info.CurrentPerk.RemoveEffect();
-                    break;
-                }
-            }
-        }
-        PreAffectedDeps.Clear();
     }
 
     //状态排序
@@ -1215,44 +576,177 @@ public class DepControl : MonoBehaviour
             NoEmp = false;
             NoEmpTime = 0;
         }
-        FaithRelationCheck();
+
+        EmpEffectCheck();
     }
+
+    //检测员工技能和数量效果
+    public void EmpEffectCheck()
+    {
+        bool weak = false;
+        //设置人员数量效果图标
+        for (int i = 0; i < EmpLimit; i++)
+        {
+            if (CurrentEmps.Count > i)
+            {
+                //符合技能需求的标绿
+                if (CheckSkillType(CurrentEmps[i]) == true)
+                {
+                    EmpEffectMarkers[i].color = Color.green;
+                    EmpMarkers[i].color = Color.green;
+                }
+                //不符合的标红
+                else
+                {
+                    EmpEffectMarkers[i].color = Color.red;
+                    EmpMarkers[i].color = Color.red;
+                    weak = true;
+                }
+            }
+            //超出人数的标白
+            else
+            {
+                EmpEffectMarkers[i].color = Color.white;
+                EmpMarkers[i].color = Color.white;
+            }
+        }
+        //检测削弱效果
+        if (weak != isWeakend)
+        {
+            isWeakend = weak;
+            if (weak == true)
+            {
+                WeakAction();
+                Text_WeakEffect.gameObject.SetActive(true);
+                print("Weak");
+            }
+            else
+            {
+                UnWeakAction();
+                Text_WeakEffect.gameObject.SetActive(false);
+                print("UnWeak");
+            }
+        }
+        #region 具体建筑效果
+        int num = CurrentEmps.Count;
+        //没人的时候都没法工作
+        if (num == 0)
+        {
+            canWork = false;
+            ProducePointLimit = 0;
+            UpdateUI();
+            return;
+        }
+        else
+            canWork = true;
+        if (building.Type == BuildingType.机械自动化中心)
+        {
+            if (num == 1)
+                ExtraEfficiency = 1;
+            else if (num == 2)
+                ExtraEfficiency = 2;
+            else if (num == 4)
+                ExtraEfficiency = 4;
+        }
+        else if (building.Type == BuildingType.心理咨询室)
+        {
+            if (num == 1)
+                ProducePointLimit = 4;
+            else if (num == 2)
+                ProducePointLimit = 2;
+        }
+        else if (building.Type == BuildingType.智库小组)
+        {
+            if (num == 1)
+                ProducePointLimit = 6;
+            else if (num == 2)
+                ProducePointLimit = 3;
+        }
+        else if (building.Type == BuildingType.前端小组)
+        {
+            if (num >= 2)
+                canWork = true;
+            else
+                canWork = false;
+        }
+        #endregion
+
+        CurrentDivision.DepExtraEffectCheck();
+        UpdateUI();
+    }
+
+    //设置人员上限和人员标记以及一些额外效果
+    public void SetDepStatus(int empLimit)
+    {
+        EmpLimit = empLimit;
+        for (int i = 0; i < empLimit; i++)
+        {
+            Image image = Instantiate(EmpMarkerPrefab, EmpMarkerContent).GetComponent<Image>();
+            EmpMarkers.Add(image);
+        }
+
+        if (building.Type == BuildingType.机械自动化中心)
+        {
+            InitMarker("事业部效率+1");
+            InitMarker("事业部效率+1");
+            InitDoubleMarker("事业部效率+2");
+            Text_WeakEffect.text = "事业部效率-1";
+            WeakAction = () => { ExtraEfficiency -= 1; };
+            UnWeakAction = () => { ExtraEfficiency += 1; };
+            ActiveMode = 0;
+        }
+        else if (building.Type == BuildingType.心理咨询室)
+        {
+            InitMarker("充能周期:4");
+            InitMarker("充能周期:2");
+            Text_WeakEffect.text = "充能周期+1回合";
+            WeakAction = () => { ExtraProduceLimit += 1; };
+            UnWeakAction = () => { ExtraProduceLimit -= 1; };
+            ActiveMode = 2;
+        }
+        else if (building.Type == BuildingType.智库小组)
+        {
+            InitMarker("充能周期:6");
+            InitMarker("充能周期:3");
+            Text_WeakEffect.text = "生产周期+1回合";
+            WeakAction = () => { ExtraProduceLimit += 1; };
+            UnWeakAction = () => { ExtraProduceLimit -= 1; };
+            ActiveMode = 1;
+        }
+        else if (building.Type == BuildingType.前端小组)
+        {
+            InitDoubleMarker("生产商战牌-迭代");
+            InitDoubleMarker("");
+            Text_WeakEffect.text = "事业部效率-2";
+            WeakAction = () => { ExtraEfficiency -= 2; };
+            UnWeakAction = () => { ExtraEfficiency += 2; };
+            ActiveMode = 5;
+        }
+
+        //需要手动激活的才显示激活按钮
+        if (ActiveMode == 2 || ActiveMode == 3 || ActiveMode == 4)
+            ActiveButton.gameObject.SetActive(true);
+    }
+    //生成单图标记
+    void InitMarker(string describe)
+    {
+        EmpEffect effect = Instantiate(EmpEffectPrefab, EmpEffectContent).GetComponent<EmpEffect>();
+        effect.text.text = describe;
+        EmpEffectMarkers.Add(effect.Marker1);
+    }
+    //生成双图标记
+    void InitDoubleMarker(string describe)
+    {
+        EmpEffect effect = Instantiate(EmpEffect2Prefab, EmpEffectContent).GetComponent<EmpEffect>();
+        effect.text.text = describe;
+        EmpEffectMarkers.Add(effect.Marker1);
+        EmpEffectMarkers.Add(effect.Marker2);
+    }
+
     //作弊模式
     public void ToggleCheatMode(bool value)
     {
         CheatMode = value;
-    }
-
-    //查找自己影响范围内的部门
-    List<DepControl> AvailableDeps()
-    {
-        List<DepControl> L = new List<DepControl>();
-        for(int i = 0; i < building.effect.AffectedBuildings.Count; i++)
-        {
-            if (building.effect.AffectedBuildings[i].Department != null)
-                L.Add(building.effect.AffectedBuildings[i].Department);
-        }
-        return L;
-    }
-    //显示影响范围内部门的员工的面板
-    void ShowAvailableEmps()
-    {
-        List<DepControl> Deps = AvailableDeps();
-        List<Employee> Emps = new List<Employee>();
-        for(int i = 0; i < Deps.Count; i++)
-        {
-            for(int j = 0; j < Deps[i].CurrentEmps.Count; j++)
-            {
-                Emps.Add(Deps[i].CurrentEmps[j]);
-            }
-        }
-        for(int i = 0; i < GC.CurrentEmployees.Count; i++)
-        {
-            if (Emps.Contains(GC.CurrentEmployees[i]) == true)
-                GC.CurrentEmployees[i].InfoB.gameObject.SetActive(true);
-            else
-                GC.CurrentEmployees[i].InfoB.gameObject.SetActive(false);
-        }
     }
 
     //删除持续时间为业务时间和头脑风暴时间的perk
@@ -1326,110 +820,6 @@ public class DepControl : MonoBehaviour
         return value;
     }
 
-    //附加建筑(茶水间)相关功能
-    //附加建筑建造
-    public void CreateSubDep()
-    {
-        if (SubDeps.Count == 2)
-            return;
-        GC.BM.EnterBuildMode();
-        GC.BM.StartBuildNew(BuildingType.茶水间);
-        Building nb = GC.BM.Temp_Building;
-        DepControl nd = GC.CreateDep(nb);
-        nb.Department = nd;
-        nd.CommandingOffice = this;
-        SubDeps.Add(nd);
-        Text_SubDepCreate.text = "建造茶水间 (" + SubDeps.Count + "/2)";
-        if (SubDeps.Count == 1)
-        {
-            SubDeps[0].SubDepValue = 100;
-            SubDeps[0].UpdateUI();
-        }
-    }
-
-    //附加建筑拆除时移除各种引用
-    public void RemoveSubDep(DepControl dep)
-    {
-        SubDeps.Remove(dep);
-        Text_SubDepCreate.text = "建造茶水间 (" + SubDeps.Count + "/2)";
-        SubDepValue += dep.SubDepValue;
-        GC.WeeklyEvent.RemoveListener(SubDepEffect);
-    }
-
-    //修改体力供给点数
-    public void SubValueChange(bool Add)
-    {
-        if (Add == true)
-        {
-            if(CommandingOffice != null && CommandingOffice.SubDepValue > 0)
-            {
-                CommandingOffice.SubDepValue -= 10;
-                SubDepValue += 10;
-            }
-        }
-        else
-        {
-            if (CommandingOffice != null && SubDepValue > 0)
-            {
-                SubDepValue -= 10;
-                CommandingOffice.SubDepValue += 10;
-            }
-        }
-        UpdateUI();
-    }
-
-    //距离检测
-    public void SubDepDistanceCheck()
-    {
-        if(CommandingOffice != null)
-        {
-            int distance = Mathf.Abs(building.X10 - CommandingOffice.building.X10) + Mathf.Abs(building.Z10 - CommandingOffice.building.Z10);
-            if (distance > 80)
-            {
-                RangeWarning.SetActive(true);
-                canWork = false;
-            }
-            else
-            {
-                RangeWarning.SetActive(false);
-                canWork = true;
-            }
-        }
-    }
-
-    //茶水间体力补充效果
-    public void SubDepEffect()
-    {
-        if (SubDepValue == 0 || canWork == false)
-            return;
-        List<Employee> AffectedEmps = new List<Employee>();
-        foreach (Building b in building.effect.AffectedBuildings)
-        {
-            if (b.Department != null)
-            {
-                foreach (Employee e in b.Department.CurrentEmps)
-                {
-                    //只取体力不满的员工
-                    if (e.Stamina != e.StaminaLimit + e.StaminaLimitExtra)
-                        AffectedEmps.Add(e);
-                }
-            }
-        }
-        if (AffectedEmps.Count == 0)
-            return;
-        for(int i = 0; i < SubDepValue; i++)
-        {
-            //根据体力提供点数循环，每次随机给一个体力不满的员工+1体力，直到没有体力不满的人或者提供体力达到上限
-            int num = Random.Range(0, AffectedEmps.Count);
-            AffectedEmps[num].Stamina += 1;
-            if (AffectedEmps[num].Stamina == AffectedEmps[num].StaminaLimit + AffectedEmps[num].StaminaLimitExtra)
-                AffectedEmps.RemoveAt(num);
-            if (AffectedEmps.Count == 0)
-                break;
-        }
-
-    }
-
     //——————————————————————————————————————————————————————————
     //以下是办公室改版后从原OfficeControl复制过来的方法
     //管理监测
@@ -1446,14 +836,11 @@ public class DepControl : MonoBehaviour
             if (TotalUsage <= value)
             {
                 ControledDeps[i].canWork = true;
-                ControledDeps[i].OfficeWarning.SetActive(false);
             }
             else
             {
                 ControledDeps[i].canWork = false;
-                ControledDeps[i].OfficeWarning.SetActive(true);
             }
-            ControledDeps[i].UpdateUI();
         }
     }
 
@@ -1483,7 +870,6 @@ public class DepControl : MonoBehaviour
                     }
                 }
                 CheckManage();
-                UpdateUI();
             }
         }
         else
@@ -1494,4 +880,18 @@ public class DepControl : MonoBehaviour
         }
 
     }
+
+    //——————————————————————————————————————————————————————————
+    //事业部相关
+    public void SetDivision(DivisionControl DC)
+    {
+        if (CurrentDivision != null)
+            CurrentDivision.CurrentDeps.Remove(this);
+        DivPanel.transform.parent = DC.DepContent;
+        DivPanel.gameObject.SetActive(true);
+        DC.CurrentDeps.Add(this);
+        CurrentDivision = DC;
+    }
+
+
 }

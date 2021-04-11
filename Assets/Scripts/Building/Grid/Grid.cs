@@ -42,6 +42,13 @@ public class Grid : MonoBehaviour
     public void Unlock()
     {
         Lock = false;
+
+        //部分空白格子没有从属Area所以要略过
+        if (BelongedArea != null && BelongedArea.DC != null)
+        {
+            BelongedArea.DC.gameObject.SetActive(true);
+            BelongedArea.DC.Locked = false;
+        }
         RefreshGrid();
     }
 

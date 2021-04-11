@@ -155,7 +155,7 @@ public class Building : MonoBehaviour
         Z10 = ((zMax - zMin) * 10 / 2) + (zMin * 10);
 
         effect = new BuildingEffect(this);
-
+        
         //Destroy(m_Decoration);
     }
 
@@ -163,24 +163,6 @@ public class Building : MonoBehaviour
     {
         effect.RemoveAffect();
         Moving = true;
-        if(Department != null)
-        {
-            Department.RemoveAllProvidePerk();
-            List<Perk> RemovePerks = new List<Perk>();
-            foreach(PerkInfo perkinfo in Department.CurrentPerks)
-            {
-                if(perkinfo.CurrentPerk.ProvideDep != null)
-                {
-                    perkinfo.CurrentPerk.ProvideDep.PreAffectedDeps.Remove(Department);
-                    RemovePerks.Add(perkinfo.CurrentPerk);
-                }
-            }
-            foreach(Perk perk in RemovePerks)
-            {
-                perk.RemoveEffect();
-            }
-            RemovePerks.Clear();
-        }
         foreach (Grid grid in ContainsGrids)
         {
             grid.Dismantle();

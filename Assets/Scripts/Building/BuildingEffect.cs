@@ -64,11 +64,11 @@ public class BuildingEffect
     public void RemoveAffect()
     {
         //不再影响这些
-            foreach (Building affect in AffectedBuildings)
-            {
-                OnRemoveAffect(affect);
-            }
-        
+        foreach (Building affect in AffectedBuildings)
+        {
+            OnRemoveAffect(affect);
+        }
+
 
         //遍历场景中所有建筑
         foreach (Building temp in BuildingManage.Instance.ConstructedBuildings)
@@ -119,7 +119,6 @@ public class BuildingEffect
                     {
                         dep.CommandingOffice = null;
                         dep.canWork = false;
-                        dep.OfficeWarning.SetActive(true);
                     }
                     CurrentBuilding.Department.ControledDeps.Clear();
                 }

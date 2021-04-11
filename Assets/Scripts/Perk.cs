@@ -21,7 +21,6 @@ public class Perk
 
     public Employee TargetEmp;
     public DepControl TargetDep;
-    public DepControl ProvideDep;//生成该状态的部门
     public PerkInfo Info;
 
     public int TempValue1, TempValue2, TempValue3;//用于检测和保存的一些数值
@@ -2099,17 +2098,11 @@ public class Perk133 : Perk
         TargetEmp.Manage -= 2;
         if (TargetEmp.Manage < 0)
             TargetEmp.Manage = 0;
-        TargetEmp.BaseAttributes[TargetEmp.Professions[0] - 1] += 1;
-        if (TargetEmp.BaseAttributes[TargetEmp.Professions[0] - 1] > Employee.AttributeLimit)
-            TargetEmp.BaseAttributes[TargetEmp.Professions[0] - 1] = Employee.AttributeLimit;
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
         TargetEmp.Manage += 2;
-        TargetEmp.BaseAttributes[TargetEmp.Professions[0] - 1] -= 1;
-        if (TargetEmp.BaseAttributes[TargetEmp.Professions[0] - 1] < 0)
-            TargetEmp.BaseAttributes[TargetEmp.Professions[0] - 1] = 0;
     }
 }
 
@@ -2267,12 +2260,12 @@ public class Perk140 : Perk
 
     public override void ImmEffect()
     {
-        TargetEmp.ExtraAttributes[6] -= 1;
+        TargetEmp.Manage -= 1;
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetEmp.ExtraAttributes[6] += 1;
+        TargetEmp.Manage += 1;
     }
 }
 
@@ -2498,12 +2491,12 @@ public class Perk148 : Perk
     public override void ImmEffect()
     {
         TempValue1 = Random.Range(0, 3);
-        TargetEmp.StarLimit[TargetEmp.Professions[TempValue1] - 1] += 1 * TempValue1;
+        //TargetEmp.StarLimit[TargetEmp.Professions[TempValue1] - 1] += 1 * TempValue1;
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetEmp.StarLimit[TargetEmp.Professions[TempValue1] - 1] -= 1 * TempValue1;
+        //TargetEmp.StarLimit[TargetEmp.Professions[TempValue1] - 1] -= 1 * TempValue1;
     }
 }
 
@@ -2529,12 +2522,12 @@ public class Perk149 : Perk
                 limit++;
         }
         TempValue1 = Random.Range(0, limit);
-        TargetEmp.ExtraAttributes[TargetEmp.Professions[TempValue1] - 1] += 3 * TempValue1;
+        //TargetEmp.ExtraAttributes[TargetEmp.Professions[TempValue1] - 1] += 3 * TempValue1;
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetEmp.ExtraAttributes[TargetEmp.Professions[TempValue1] - 1] -= 3 * TempValue1;
+        //TargetEmp.ExtraAttributes[TargetEmp.Professions[TempValue1] - 1] -= 3 * TempValue1;
     }
 }
 

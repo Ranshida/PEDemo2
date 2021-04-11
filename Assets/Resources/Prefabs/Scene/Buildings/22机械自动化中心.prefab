@@ -119,7 +119,7 @@ Transform:
   m_GameObject: {fileID: 2757109849142786447}
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 15, y: 0.05, z: 10}
-  m_LocalScale: {x: 4, y: 1, z: 4}
+  m_LocalScale: {x: 2, y: 1, z: 3}
   m_Children:
   - {fileID: 929789831565172772}
   m_Father: {fileID: 876988828179824846}
@@ -279,6 +279,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fbf92dd024df3634eb7e2476cd848a6b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Type: 48
   ID: 22
   Name: "\u673A\u68B0\u81EA\u52A8\u5316\u4E2D\u5FC3"
   Size: 4x4
@@ -287,32 +288,42 @@ MonoBehaviour:
   Description_A: 
   Time_A: 
   Result_A: 
-  Function_B: 
   Require_B: 
-  Description_B: 
-  Time_B: 
-  Result_B: 
-  Function_C: /
-  Require_C: /
-  Description_C: /
+  BuildingPay: 
+  Manage: 
+  FaithBonus: 
+  WorkStatus_str: 
+  MajorSuccess_str: 
+  Failure_str: 
   EffectRange_str: 
   Jobs: 2
+  Str_Type: 
+  X10: 0
+  Z10: 0
   Length: 3
   Width: 2
   EffectRange: 0
   EffectRangeType: 2
-  effectValue: 1
   StaminaRequest: 0
-  Type: 48
-  Str_Type: 
+  effectValue: 1
+  effectValue2: 0
   Pay: 0
   CanLottery: 0
   CanDismantle: 1
-  ContainsGrids: []
+  CurrentArea:
+    NeighborIndex: 
+    NeighborAreas: []
+    gridList: []
+    CA: {fileID: 0}
+    AS: {fileID: 0}
+    DC: {fileID: 0}
+    centerPosition: {x: 0, y: 0, z: 0}
+    topPosition: {x: 0, y: 0, z: 0}
   Department: {fileID: 0}
   effect:
     CurrentBuilding: {fileID: -2279394563660855739}
     AffectedBuildings: []
+  ContainsGrids: []
   WorkPos: []
   EffectBuildings: []
 --- !u!1 &4512804770838475587

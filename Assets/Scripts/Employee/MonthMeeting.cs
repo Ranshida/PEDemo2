@@ -215,8 +215,6 @@ public class MonthMeeting : MonoBehaviour
     public void EndMeeting()
     {
         CrystalPanel.SetWndState();
-        if (dynamicWindow.m_ShowAllBuildingInfo == false)
-            dynamicWindow.ShowAllBuildingInfo(BuildingManage.Instance.ConstructedBuildings);
         foreach (CompanyItem item in GameControl.Instance.Items)
         {
             if (item.Type == CompanyItemType.MonthMeeting)
@@ -244,8 +242,6 @@ public class MonthMeeting : MonoBehaviour
     public void SettleArea(List<CrystalType> crystals, Area area)
     {
         MeetingStart = false;
-        if (CrystalPanel.toggle_ShowPanel.isOn == false)
-            dynamicWindow.HideAllBuildingInfo();
         CrystalPanel.SetWndState(false);
         List<Building> buildings = new List<Building>();
         foreach (Grid grid in area.gridList)

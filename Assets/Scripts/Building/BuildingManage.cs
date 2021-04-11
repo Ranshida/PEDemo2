@@ -46,7 +46,6 @@ public class BuildingManage : MonoBehaviour
     private GameObject m_EffectHalo;   //选中的建筑的影响范围
 
     public List<Building> ConstructedBuildings { get; private set; } = new List<Building>(); //所有已建建筑列表
-    public DepControl CEOOffice;    //默认建筑（CEO办公室）
 
     //屏幕射线位置
     public Vector3 AimingPosition = Vector3.zero;
@@ -79,7 +78,8 @@ public class BuildingManage : MonoBehaviour
         {
             Building building = prefab.GetComponent<Building>();
 
-            if (building.Type != BuildingType.CEO办公室 && building.Type != BuildingType.茶水间 && building.Type != BuildingType.高管办公室)
+            if (building.Type == BuildingType.机械自动化中心 || building.Type == BuildingType.前端小组 ||
+                building.Type == BuildingType.心理咨询室 || building.Type == BuildingType.智库小组)
             {
                 SelectList.Add(building.Type);
             }
@@ -96,8 +96,7 @@ public class BuildingManage : MonoBehaviour
     private void Start()
     {
         m_EffectHalo.SetActive(false);
-        InitBuilding(BuildingType.CEO办公室, new Int2(6, 11));
-        InitBuilding(BuildingType.用户访谈室, new Int2(2, 11));
+        InitBuilding(BuildingType.心理咨询室, new Int2(1, 11));
         InitBuilding(BuildingType.前端小组, new Int2(10, 11));
         //InitBuilding(BuildingType.人力资源部, new Int2(0, 8));
     }
@@ -285,22 +284,6 @@ public class BuildingManage : MonoBehaviour
             m_EffectHalo.transform.position = SelectBuilding.transform.position + new Vector3(SelectBuilding.Length * 5, 0.2f, SelectBuilding.Width * 5);
             m_EffectHalo.transform.localScale = new Vector3(SelectBuilding.Length + SelectBuilding.EffectRange * 2, 1, SelectBuilding.Width + SelectBuilding.EffectRange * 2);
         }
-
-        if (GridContainer.Instance.GridDict.TryGetValue(m_GridX, out Dictionary<int, Grid> dicttt))
-        {
-            if (dicttt.TryGetValue(m_GridZ, out Grid grid))
-            {
-                if (grid.Type == Grid.GridType.已放置)
-                {
-                    Building mouseBuilding = GridContainer.Instance.GridDict[m_GridX][m_GridZ].BelongBuilding;
-                    if (mouseBuilding.Department)
-                    {
-                        DynamicWindow.Instance.ShowName(mouseBuilding.Department.Text_DepName.text, mouseBuilding.transform, Vector3.up * 15 + new Vector3(mouseBuilding.Length * 5, 0, mouseBuilding.Width * 5));
-                        DynamicWindow.Instance.ShowBuildingInfo(mouseBuilding);
-                    }
-                }
-            }
-        }
     }
 
     void SelectABuilding(Building building)
@@ -322,9 +305,10 @@ public class BuildingManage : MonoBehaviour
     {
         if (SelectBuilding && SelectBuilding.Department != null)
         {
-            SelectBuilding.Department.ShowEmpInfoPanel();
+            SelectBuilding.Department.ShowDivisionPanel();
         }
-        else{
+        else
+        {
             Debug.LogError("错误的调用位置");
         }
         UnselectBuilding();
@@ -451,20 +435,7 @@ public class BuildingManage : MonoBehaviour
 
             BuildingType T = building.Type;
             //部门创建
-            if (T != BuildingType.茶水间)
-            {
-                if (T != BuildingType.CEO办公室)
-                {
-                    building.Department = GameControl.Instance.CreateDep(building);//根据Type创建对应的生产部门面板
-                }
-                else
-                {
-                    building.Department = CEOOffice;    //互相引用
-                    CEOOffice.Text_WorkStatus.gameObject.SetActive(false);
-                    CEOOffice.building = building;  //互相引用
-                    building.effectValue = 10;
-                }
-            }
+            building.Department = GameControl.Instance.CreateDep(building);//根据Type创建对应的生产部门面板
         }
 
         //确定建筑已摆放完毕
@@ -474,28 +445,9 @@ public class BuildingManage : MonoBehaviour
             temp.effect.FindAffect();
         }
 
-        //茶水间相关的距离检测
-        if (building.Type == BuildingType.茶水间)
-            building.Department.SubDepDistanceCheck();
-        if (building.Department != null && building.Department.SubDeps.Count > 0)
-        {
-            foreach(DepControl dep in building.Department.SubDeps)
-            {
-                dep.SubDepDistanceCheck();
-            }
-        }
+        //设置事业部
+        building.Department.SetDivision(building.CurrentArea.DC);
 
-        //获取建筑相互影响情况
-        //building.effect.GetEffectBuilding();
-
-        ////对自身周围建筑造成影响
-        //building.effect.Affect();
-
-        ////周围建筑对自身造成影响 
-        //for (int i = 0; i < building.effect.AffectedBuildings.Count; i++)
-        //{
-        //    building.effect.AffectedBuildings[i].effect.Affect();
-        //}
     }
 
     public void MoveBuilding()

@@ -66,21 +66,21 @@ public class EmpBSInfo : MonoBehaviour
         foreach(PerkInfo p in target.InfoDetail.PerksInfo)
         {
             if (p.CurrentPerk.Num == 134)
-                BSC.GC.CC.CEO.ExtraAttributes[5] += 2;
+                BSC.GC.CC.CEO.Strength += 2;
             else if (p.CurrentPerk.Num == 135)
-                BSC.GC.CC.CEO.ExtraAttributes[9] += 2;
+                BSC.GC.CC.CEO.Decision += 2;
             else if (p.CurrentPerk.Num == 136)
-                BSC.GC.CC.CEO.ExtraAttributes[4] += 2;
+                BSC.GC.CC.CEO.Tenacity += 2;
             else if (p.CurrentPerk.Num == 137)
-                BSC.GC.CC.CEO.ExtraAttributes[6] += 2;
+                BSC.GC.CC.CEO.Manage += 2;
             else if (p.CurrentPerk.Num == 138)
-                BSC.GC.CC.CEO.ExtraAttributes[5] -= 2;
+                BSC.GC.CC.CEO.Strength -= 2;
             else if (p.CurrentPerk.Num == 139)
-                BSC.GC.CC.CEO.ExtraAttributes[4] -= 2;
+                BSC.GC.CC.CEO.Tenacity -= 2;
             else if (p.CurrentPerk.Num == 140)
-                BSC.GC.CC.CEO.ExtraAttributes[6] -= 2;
+                BSC.GC.CC.CEO.Manage -= 2;
             else if (p.CurrentPerk.Num == 141)
-                BSC.GC.CC.CEO.ExtraAttributes[9] -= 2;
+                BSC.GC.CC.CEO.Decision -= 2;
         }
     }
 
@@ -106,21 +106,21 @@ public class EmpBSInfo : MonoBehaviour
         foreach (PerkInfo p in emp.InfoDetail.PerksInfo)
         {
             if (p.CurrentPerk.Num == 134)
-                BSC.GC.CC.CEO.ExtraAttributes[5] -= 2;
+                BSC.GC.CC.CEO.Strength -= 2;
             else if (p.CurrentPerk.Num == 135)
-                BSC.GC.CC.CEO.ExtraAttributes[9] -= 2;
+                BSC.GC.CC.CEO.Decision -= 2;
             else if (p.CurrentPerk.Num == 136)
-                BSC.GC.CC.CEO.ExtraAttributes[4] -= 2;
+                BSC.GC.CC.CEO.Tenacity -= 2;
             else if (p.CurrentPerk.Num == 137)
-                BSC.GC.CC.CEO.ExtraAttributes[6] -= 2;
+                BSC.GC.CC.CEO.Manage -= 2;
             else if (p.CurrentPerk.Num == 138)
-                BSC.GC.CC.CEO.ExtraAttributes[5] += 2;
+                BSC.GC.CC.CEO.Strength += 2;
             else if (p.CurrentPerk.Num == 139)
-                BSC.GC.CC.CEO.ExtraAttributes[4] += 2;
+                BSC.GC.CC.CEO.Tenacity += 2;
             else if (p.CurrentPerk.Num == 140)
-                BSC.GC.CC.CEO.ExtraAttributes[6] += 2;
+                BSC.GC.CC.CEO.Manage += 2;
             else if (p.CurrentPerk.Num == 141)
-                BSC.GC.CC.CEO.ExtraAttributes[9] += 2;
+                BSC.GC.CC.CEO.Decision += 2;
         }
         emp = null;
         EmpStatus.SetActive(false);
@@ -137,7 +137,7 @@ public class EmpBSInfo : MonoBehaviour
             if (num == 0)
                 continue;
             //技能为0则不继续算
-            if (emp.BaseAttributes[num - 1] == 0)
+            if (num == 0)
                 continue;
 
             int type = 0;
@@ -154,22 +154,7 @@ public class EmpBSInfo : MonoBehaviour
             else if (num == 12 || num == 15)
                 type = 5;
 
-            if(emp.BaseAttributes[num - 1] > 3)
-            {
-                for(int i = 0; i < emp.BaseAttributes[num - 1] / 3; i++)
-                {
-                    BSC.InitDice(new int[6] { type, type, type, -1, -1, -1 });
-                }
-            }
-            if (emp.BaseAttributes[num - 1] % 3 > 0)
-            {
-                int[] DiceSide = new int[6] { -1, -1, -1, -1, -1, -1};
-                for (int i = 0; i < emp.BaseAttributes[num - 1] % 3; i++)
-                {
-                    DiceSide[i] = type;
-                }
-                BSC.InitDice(DiceSide);
-            }
+            BSC.InitDice(new int[6] { type, type, type, -1, -1, -1 });
         }
     }
 
@@ -183,12 +168,6 @@ public class EmpBSInfo : MonoBehaviour
         SkillMarkers.Clear();
         foreach (int num in emp.Professions)
         {
-            //没有对应技能不继续算
-            if (num == 0)
-                continue;
-            //技能为0则不继续算
-            if (emp.BaseAttributes[num - 1] == 0)
-                continue;
 
             int type = 0;
             if (num == 8)
@@ -204,21 +183,9 @@ public class EmpBSInfo : MonoBehaviour
             else if (num == 12 || num == 15)
                 type = 5;
 
-            if (emp.BaseAttributes[num - 1] > 3)
-            {
-                for (int i = 0; i < emp.BaseAttributes[num - 1] / 3; i++)
-                {
-                    BSSkillMarker m = Instantiate(BSC.MarkerPrefab, MarkerContent).GetComponent<BSSkillMarker>();
-                    m.SetInfo(type, 3);
-                    SkillMarkers.Add(m);
-                }
-            }
-            if (emp.BaseAttributes[num - 1] % 3 > 0)
-            {
-                BSSkillMarker m = Instantiate(BSC.MarkerPrefab, MarkerContent).GetComponent<BSSkillMarker>();
-                m.SetInfo(type, emp.BaseAttributes[num - 1] % 3);
-                SkillMarkers.Add(m);
-            }
+            BSSkillMarker m = Instantiate(BSC.MarkerPrefab, MarkerContent).GetComponent<BSSkillMarker>();
+            m.SetInfo(type, 3);
+            SkillMarkers.Add(m);
         }
     }
 }

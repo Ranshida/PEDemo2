@@ -28,72 +28,7 @@ public class HireControl : MonoBehaviour
         for (int i = 0; i < 5; i++)
         {
             if (i < 2)
-            {
-                //先重置所有专业
-                for(int j = 0; j < HireInfos[i].emp.Professions.Length; j++)
-                {
-                    HireInfos[i].emp.Professions[j] = 0;
-                }
-                //设定初始获得的两个员工的属性
-                if (i == 0)
-                {
-                    HireInfos[i].emp.Character[0] = 0;
-                    HireInfos[i].emp.Character[1] = 0;
-                    HireInfos[i].emp.ChangeCharacter(0, 0);
-                    HireInfos[i].emp.Professions[0] = AdjustData.EmpAProfessionType;
-                    HireInfos[i].emp.SetAttributes(HireInfos[i].emp.Professions[0], AdjustData.EmpAProfessionValue);
-                }
-                else if (i == 1)
-                {
-                    HireInfos[i].emp.Character[0] = GC.CurrentEmployees[0].Character[0];
-                    HireInfos[i].emp.Character[1] = GC.CurrentEmployees[0].Character[1];
-                    HireInfos[i].emp.ChangeCharacter(0, 0);
-                    HireInfos[i].emp.Professions[0] = AdjustData.EmpBProfessionType;
-                    HireInfos[i].emp.SetAttributes(HireInfos[i].emp.Professions[0], AdjustData.EmpBProfessionValue);
-                }
-
-                //再次随机剩下的两个专业技能类型并设为0级
-                int[] Nst = { 1, 2, 3, 8, 9, 11, 12, 13, 15, 16 };//Nst:几个专业技能对应的编号
-                //int r1 = HireInfos[i].emp.Professions[0], r2 = Random.Range(0, 10);
-                //r2 = Nst[r2];
-                //while (r1 == r2)
-                //{
-                //    r2 = Random.Range(0, 10);
-                //    r2 = Nst[r2];
-                //}
-                //HireInfos[i].emp.Professions[1] = r2;
-                //HireInfos[i].emp.Professions[2] = 0;
-                //HireInfos[i].emp.SetAttributes(r2, 0);
-
-                //重新随机天赋
-                for (int j = 0; j < 1; j++)
-                {
-                    int type = 0;
-                    if (j == 0)
-                        type = HireInfos[i].emp.Professions[0];
-                    //else if (j == 1)
-                    //    type = r2;
-                    float Posb = Random.Range(0.0f, 1.0f);
-                    if (Posb < 0.4f)
-                        HireInfos[j].emp.StarLimit[type - 1] = 0;
-                    else if (Posb < 0.7f)
-                        HireInfos[j].emp.StarLimit[type - 1] = 1;
-                    else if (Posb < 0.9f)
-                        HireInfos[j].emp.StarLimit[type - 1] = 2;
-                    else
-                        HireInfos[j].emp.StarLimit[type - 1] = 3;
-                }
-
-                //随机分配技能点
-                HireInfos[i].emp.SkillPoint = 7;
-                HireInfos[i].emp.RandomSkillAssign();
-
-                //设定一些固定属性
-                HireInfos[i].emp.Age = 24;
-                HireInfos[i].emp.SchoolType = 2;
-                HireInfos[i].emp.MajorType = Random.Range(0, 10);
-                HireInfos[i].emp.MajorType = Nst[HireInfos[i].emp.MajorType];
-
+            {           
                 GC.CurrentEmpInfo = HireInfos[i];
                 SetInfoPanel();
                 GC.CurrentEmpInfo.emp.InfoA.transform.parent = GC.StandbyContent;
@@ -187,7 +122,7 @@ public class HireControl : MonoBehaviour
         ED.emp.InfoDetail = ED;
         ED.emp.InitRelation();
         GC.HourEvent.AddListener(ED.emp.TimePass);
-        ED.SetSkillName();
+        ED.Text_Name.text = ED.emp.Name;
 
         //创建员工实体
         ED.Entity = EmpManager.Instance.CreateEmp(BuildingManage.Instance.ExitPos.position);
@@ -207,8 +142,6 @@ public class HireControl : MonoBehaviour
         }
         GC.CurrentEmpInfo.PerksInfo.Clear();
 
-        //检查是否存在瓶颈
-        ED.emp.BottleNeckCheck();
         //复制战略
         for (int i = 0; i < GC.CurrentEmpInfo.StrategiesInfo.Count; i++)
         {
@@ -231,12 +164,13 @@ public class HireControl : MonoBehaviour
         EmpInfo ED = UIManager.Instance.NewWindow(EmpDetailPrefab.gameObject).GetComponent<EmpInfo>();
         ED.GC = GC;
         ED.emp = emp;
-        ED.SetSkillName();
+        ED.Text_Name.text = ED.emp.Name;
         GC.CC.CEO = emp;
 
         EmpInfo EI1 = Instantiate(EmpInfoPrefab, TotalEmpContent);
         ED.CopyStatus(EI1);
         EI1.FireButton.gameObject.SetActive(false);
+        EI1.transform.parent = GC.StandbyContent;
 
         EmpInfo EI2 = Instantiate(EmpInfoPrefab, TotalEmpContent);
         ED.CopyStatus(EI2);
@@ -247,7 +181,6 @@ public class HireControl : MonoBehaviour
         emp.InfoB = EI2;
         EI1.DetailInfo = ED;
         EI2.DetailInfo = ED;
-        EI1.transform.parent = GC.StandbyContent;
         emp.InitRelation();
         //创建特质和技能
         ED.InitStrategy();
@@ -257,13 +190,6 @@ public class HireControl : MonoBehaviour
         ED.Entity.SetInfo(ED);
 
         GC.CurrentEmployees.Add(emp);
-
-        emp.CurrentDep = GC.CurrentDeps[0];
-        GC.CurrentDeps[0].CurrentEmps.Add(emp);
-        GC.CurrentDeps[0].Manager = emp;
-        GC.CurrentDeps[0].SetOfficeStatus();
-        GC.HourEvent.AddListener(emp.TimePass);
-
         //将CEO添加到核心团队
         GC.BSC.CEOInfo.EmpJoin(emp);
     }

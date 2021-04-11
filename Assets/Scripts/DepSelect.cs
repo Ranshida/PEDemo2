@@ -7,11 +7,15 @@ public class DepSelect : MonoBehaviour
 {
     public DepControl DC;
     public GameControl GC;
+    public DivisionControl DivC;
     public Text Text_DepName;
 
     public void Select()
     {
-        GC.SelectDep(DC);
+        if (DC != null)
+            GC.SelectDep(DC);
+        else
+            GC.SelectDivManager(DivC);
     }
 
     public void Select2()

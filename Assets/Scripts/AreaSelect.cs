@@ -17,9 +17,7 @@ public class AreaSelect : MonoBehaviour
     public void SelectArea()
     {
 
-        if (GameControl.Instance.AreaSelectMode == 1)
-            GameControl.Instance.CurrentDep.SelectTarget(area);
-        else if (GameControl.Instance.AreaSelectMode == 2)
+        if (GameControl.Instance.AreaSelectMode == 2)
         {
             GameControl.Instance.CurrentItem.TargetArea = area;
             GameControl.Instance.CurrentItem.UseItem();

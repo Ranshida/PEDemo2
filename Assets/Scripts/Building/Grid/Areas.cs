@@ -7,8 +7,10 @@ using UnityEngine;
 /// </summary>
 public class Areas : MonoBehaviour
 {
+    public GameControl GC;
     public AreaSelect ASPrefab;
-    public Transform ASContent;
+    public DivisionControl DCPrefab;
+    public Transform ASContent, DivContent;
     public GameObject CancelButton;
 
     public List<Area> AreaLists;
@@ -16,17 +18,45 @@ public class Areas : MonoBehaviour
 
     public void Init()
     {
+        int num = 1;
         foreach (Area area in AreaLists)
         {
             area.Init();
+            //初始化AS
             AreaSelect AS = Instantiate(ASPrefab, ASContent);
             AS.area = area;
             area.AS = AS;
             AS.gameObject.SetActive(false);
             ASList.Add(AS);
+
+            //初始化DC
+            DivisionControl DC = Instantiate(DCPrefab, DivContent);
+            UIManager.Instance.OnAddNewWindow(DC.DetailPanel.gameObject.GetComponent<WindowBaseControl>());
+            GC.TurnEvent.AddListener(DC.Produce);
+            DC.CurrentArea = area;
+            area.DC = DC;
+            DC.DivName = "事业部" + num;
+            DC.Text_DivPanelName.text = DC.DivName;
+            num += 1;
+
+            DepSelect ds = Instantiate(GC.DepSelectButtonPrefab, GC.DepSelectContent);
+            ds.DivC = DC;
+            ds.Text_DepName.text = DC.DivName;
+            DC.DS = ds;
+            ds.GC = GC;
+
             foreach (int index in area.NeighborIndex)
             {
                 area.NeighborAreas.Add(AreaLists[index]);
+            }
+
+            //添加事业部至GameContral中的链表
+            GC.CurrentDivisions.Add(DC);
+
+            if (area.gridList[0].Lock == true)
+            {
+                DC.gameObject.SetActive(false);
+                DC.Locked = true;
             }
         }
         MonthMeeting.Instance.CrystalPanel.InitCrystalPanel();
@@ -61,6 +91,7 @@ public class Area
 
     public CrystalArea CA;
     public AreaSelect AS;
+    public DivisionControl DC;
     public Vector3 centerPosition;
     public Vector3 topPosition;
 

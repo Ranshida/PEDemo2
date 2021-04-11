@@ -41,216 +41,52 @@ public class Employee
 
     //1.技术 2.市场 3.产品 4.Ob观察 5.Te坚韧 6.Str强壮 7.Ma管理 8.HR人力 9.Fi财务 10.De决策 
     //11.Fo行业 12.St谋略 13.Co说服 14.Ch魅力 15.Go八卦 16.Ad行政
-    #region 所有属性
 
-    public int Tech
-    {
-        get
-        {
-            int Num = BaseAttributes[0] + ExtraAttributes[0];
-            if (Num > AttributeLimit)
-                Num = AttributeLimit;
-            if (Num < 0)
-                Num = 0;
-            return Num;
-        }
-        set { BaseAttributes[0] = value; }
-    }
-    public int Market
-    {
-        get
-        {
-            int Num = BaseAttributes[1] + ExtraAttributes[1];
-            if (Num > AttributeLimit)
-                Num = AttributeLimit;
-            if (Num < 0)
-                Num = 0;
-            return Num;
-        }
-        set { BaseAttributes[1] = value; }
-    }
-    public int Product
-    {
-        get
-        {
-            int Num = BaseAttributes[2] + ExtraAttributes[2];
-            if (Num > AttributeLimit)
-                Num = AttributeLimit;
-            if (Num < 0)
-                Num = 0;
-            return Num;
-        }
-        set { BaseAttributes[2] = value; }
-    }
-    public int Observation
-    {
-        get
-        {
-            int Num = BaseAttributes[3] + ExtraAttributes[3];
-            if (Num > AttributeLimit)
-                Num = AttributeLimit;
-            if (Num < 0)
-                Num = 0;
-            return Num;
-        }
-        set { BaseAttributes[3] = value; }
-    }
     public int Tenacity
     {
-        get
+        get { return tenacity; }
+        set
         {
-            int Num = BaseAttributes[4] + ExtraAttributes[4];
-            if (Num > AttributeLimit)
-                Num = AttributeLimit;
-            if (Num < 0)
-                Num = 0;
-            return Num;
+            if (value < 0)
+                tenacity = 0;
+            else
+                tenacity = value;
         }
-        set { BaseAttributes[4] = value; }
     }
     public int Strength
     {
-        get
+        get { return strength; }
+        set
         {
-            int Num = BaseAttributes[5] + ExtraAttributes[5];
-            if (Num > AttributeLimit)
-                Num = AttributeLimit;
-            if (Num < 0)
-                Num = 0;
-            return Num;
+            if (value < 0)
+                strength = 0;
+            else
+                strength = value;
         }
-        set { BaseAttributes[5] = value; }
     }
     public int Manage
     {
-        get
+        get { return manage; }
+        set
         {
-            int Num = BaseAttributes[6] + ExtraAttributes[6];
-            if (Num > AttributeLimit)
-                Num = AttributeLimit;
-            if (Num < 0)
-                Num = 0;
-            return Num;
+            if (value < 0)
+                manage = 0;
+            else
+                manage = value;
         }
-        set { BaseAttributes[6] = value; }
     }
-    public int HR
+    public int Decision
     {
-        get
+        get { return decision; }
+        set
         {
-            int Num = BaseAttributes[7] + ExtraAttributes[7];
-            if (Num > AttributeLimit)
-                Num = AttributeLimit;
-            if (Num < 0)
-                Num = 0;
-            return Num;
+            if (value < 0)
+                decision = 0;
+            else
+                decision = value;
         }
-        set { BaseAttributes[7] = value; }
     }
-    public int Finance
-    {
-        get
-        {
-            int Num = BaseAttributes[8] + ExtraAttributes[8];
-            if (Num > AttributeLimit)
-                Num = AttributeLimit;
-            if (Num < 0)
-                Num = 0;
-            return Num;
-        }
-        set { BaseAttributes[8] = value; }
-    }
-    public int Decision //!!决策的技能上限与其他技能不同
-    {
-        get
-        {
-            int Num = BaseAttributes[9] + ExtraAttributes[9];
-            if (Num > 5)
-                Num = 5;
-            if (Num < 0)
-                Num = 0;
-            return Num;
-        }
-        set { BaseAttributes[9] = value; }
-    }
-    public int Forecast
-    {
-        get
-        {
-            int Num = BaseAttributes[10] + ExtraAttributes[10];
-            if (Num > AttributeLimit)
-                Num = AttributeLimit;
-            if (Num < 0)
-                Num = 0;
-            return Num;
-        }
-        set { BaseAttributes[10] = value; }
-    }
-    public int Strategy
-    {
-        get
-        {
-            int Num = BaseAttributes[11] + ExtraAttributes[11];
-            if (Num > AttributeLimit)
-                Num = AttributeLimit;
-            if (Num < 0)
-                Num = 0;
-            return Num;
-        }
-        set { BaseAttributes[11] = value; }
-    }
-    public int Convince
-    {
-        get
-        {
-            int Num = BaseAttributes[12] + ExtraAttributes[12];
-            if (Num > AttributeLimit)
-                Num = AttributeLimit;
-            if (Num < 0)
-                Num = 0;
-            return Num;
-        }
-        set { BaseAttributes[12] = value; }
-    }
-    public int Charm
-    {
-        get
-        {
-            int Num = BaseAttributes[13] + ExtraAttributes[13];
-            if (Num > AttributeLimit)
-                Num = AttributeLimit;
-            if (Num < 0)
-                Num = 0;
-            return Num;
-        }
-        set { BaseAttributes[13] = value; }
-    }
-    public int Gossip
-    {
-        get
-        {
-            int Num = BaseAttributes[14] + ExtraAttributes[14];
-            if (Num > AttributeLimit)
-                Num = AttributeLimit;
-            if (Num < 0)
-                Num = 0;
-            return Num;
-        }
-        set { BaseAttributes[14] = value; }
-    }
-    public int Admin
-    {
-        get
-        {
-            int Num = BaseAttributes[15] + ExtraAttributes[15];
-            if (Num > AttributeLimit)
-                Num = AttributeLimit;
-            if (Num < 0)
-                Num = 0;
-            return Num;
-        }
-        set { BaseAttributes[15] = value; }
-    }
+    private int tenacity, strength, manage, decision;
     //体力  心力
     public int Stamina
     {
@@ -309,10 +145,8 @@ public class Employee
     public int MentalityLimit { get { return 100 + (Tenacity * 5) + MentalityLimitExtra; } set { MentalityLimit = value; } } // 心力上限
     public int StaminaLimitExtra = 0; //体力上限额外值
     public int MentalityLimitExtra = 0; //心力上限额外值
-    public int SkillPoint = 0; //当前可分配的技能点
     public int SchoolType, MajorType;//初始学校和专业类型
     public int ExtraExp = 0;//升级所需的额外经验
-    #endregion
 
     public int SalaryExtra = 0, Age, EventTime, ObeyTime, NoPromotionTime = 0, NoMarriageTime = 0,
         VacationTime = 0, SpyTime = 0, CoreMemberTime;//放假时间、间谍时间、核心成员说服CD时间
@@ -320,16 +154,9 @@ public class Employee
     public int Confidence;//信心，头脑风暴中的护盾
     public int SkillLimitTime;//头脑风暴中技能禁用的回合数
     public int NewRelationTargetTime = 1;
-    public int ManageExp = 0, DecisionExp = 0;//管理和决策的经验值
     public float ExtraSuccessRate = 0, SalaryMultiple = 1.0f;
 
-
-    public int[] BaseAttributes = new int[16]; 
-    public int[] ExtraAttributes = new int[16];//基础和额外属性的数组存储,便于一些情况下的查找和使用
-    public int[] Professions = new int[3];//用于保存员工的三个行业技能的类型
-    public int[] StarLimit = new int[16];
-    public int[] SkillExp = new int[16];
-    public int[] Levels = new int[5]; //0职业(业务) 1基础 2经营 3战略 4社交 (已过时)
+    public List<int> Professions = new List<int>();//用于保存员工的三个行业技能的类型
     public int[] CharacterTendency = new int[4];//(0文化 -独裁 +开源) (1信仰-机械 +人文) (2道德-功利主义 +绝对律令) (3行事-随心所欲 +严格守序)
     public int[] CurrentSkillType = new int[3];
     public float[] Character = new float[5]; //0文化 1信仰 2道德 3行事 4信念
@@ -339,6 +166,7 @@ public class Employee
 
     public EmpInfo InfoA, InfoB, InfoDetail;
     public DepControl CurrentDep;
+    public DivisionControl CommandingDivision;
     public Employee Master, Lover, RTarget;
     public Clique CurrentClique;
 
@@ -367,9 +195,9 @@ public class Employee
         r1 = Nst[r1];
         r2 = Nst[r2];
         r3 = Nst[r3];
-        Professions[0] = r1;
-        Professions[1] = r2;
-        Professions[2] = r3;
+        Professions.Add(r1);
+        Professions.Add(r2);
+        Professions.Add(r3);
 
         float YearPosb = Random.Range(0.0f, 1.0f);
         int WorkYear = 0;
@@ -381,116 +209,13 @@ public class Employee
             WorkYear = Random.Range(8, 15);
 
         Age = 20 + WorkYear;
-
-        //根据工龄随机技能
-        if(WorkYear <= 2)
-        {
-            SetAttributes(r1, WorkYear);
-            SkillPoint = WorkYear * 2;
-            Professions[1] = 0;
-            Professions[2] = 0;
-        }
-        else if (WorkYear < 7)
-        {
-            if(Random.Range(1, 11) <= 2)
-            {
-                SetAttributes(r1, WorkYear);
-                Professions[1] = 0;
-                Professions[2] = 0;
-            }
-            else
-            {
-                int SkillAValue = Random.Range(1, WorkYear + 1);
-                SetAttributes(r1, SkillAValue);
-                SetAttributes(r2, WorkYear - SkillAValue);
-                Professions[2] = 0;
-            }
-            SkillPoint = WorkYear + 3;
-            Professions[2] = 0;
-        }
-        else
-        {
-            if (Random.Range(1, 11) <= 2)
-            {
-                SetAttributes(r1, WorkYear);
-                Professions[1] = 0;
-                Professions[2] = 0;
-            }
-            else if (Random.Range(1, 11) <= 2)
-            {
-                int SkillAValue = Random.Range(1, WorkYear + 1);
-                SetAttributes(r1, SkillAValue);
-                SetAttributes(r2, WorkYear - SkillAValue);
-                Professions[2] = 0;
-            }
-            else
-            {
-                int SkillAValue = Random.Range(1, WorkYear + 1);
-                int SkillBValue = Random.Range(1, WorkYear - SkillAValue);
-                SetAttributes(r1, SkillAValue);
-                SetAttributes(r2, SkillBValue);
-                SetAttributes(r3, WorkYear - SkillAValue - SkillBValue);
-            }
-        }
-
-        //随机天赋
-        for(int i = 0; i < 3; i++)
-        {
-            int type = 0;
-            if (i == 0)
-                type = Professions[0];
-            else if (i == 1)
-                type = Professions[1];
-            else
-                type = Professions[2];
-            if (type == 0)
-                continue;
-            float Posb = Random.Range(0.0f, 1.0f);
-            if (Posb < 0.4f)
-                StarLimit[type - 1] = 0;
-            else if (Posb < 0.7f)
-                StarLimit[type - 1] = 1;
-            else if (Posb < 0.9f)
-                StarLimit[type - 1] = 2;
-            else 
-                StarLimit[type - 1] = 3;
-        }
-
-
         //随机出身
 
         //1.随机学校
         SchoolType = Random.Range(1, 4);
-        if (SchoolType == 1)
-        {
-            if (BaseAttributes[r1 - 1] < 10)
-                SetAttributes(r1, BaseAttributes[r1 - 1] + 1);
-        }
-        else if (SchoolType == 3)
-        {
-            if (BaseAttributes[r1 - 1] > 0)
-                SetAttributes(r1, BaseAttributes[r1 - 1] - 1);
-            Tenacity -= 2;
-        }
 
         //2.随机专业
         MajorType = Random.Range(0, 10);
-        MajorType = Nst[MajorType];
-        if (r1 == MajorType)
-        {
-            if (BaseAttributes[r1 - 1] < 9)
-                SetAttributes(r1, BaseAttributes[r1 - 1] + 2);
-        }
-        else if (r2 == MajorType)
-        {
-            if (BaseAttributes[r2 - 1] < 9)
-                SetAttributes(r2, BaseAttributes[r2 - 1] + 2);
-        }
-        else if (r3 == MajorType)
-        {
-            if (BaseAttributes[r3 - 1] < 9)
-                SetAttributes(r3, BaseAttributes[r3 - 1] + 2);
-        }
 
         //设定姓名并检查是否重名
         bool nameCheck = false;
@@ -531,7 +256,6 @@ public class Employee
         Name = "X";
         Tenacity = 3;
         Strength = 3;
-        SkillPoint = 7;
 
         //确定倾向
         for (int i = 0; i < 5; i++)
@@ -548,50 +272,21 @@ public class Employee
         CheckCharacter();
         EventTime = 8;
 
-        //再次随机剩下的两个专业技能类型并设为0级
         int[] Nst = { 1, 2, 3, 8, 9, 11, 12, 13, 15, 16 };//Nst:几个专业技能对应的编号
-        Professions[0] = AdjustData.CEOProfessionType;
-        SetAttributes(Professions[0], AdjustData.CEOProfessionValue);
-        int r1 = Professions[0], r2 = Random.Range(0, 10);
-        //int r3 = Random.Range(0, 10);
-        //r2 = Nst[r2];
-        //r3 = Nst[r3];
-        //while (r1 == r2)
-        //{
-        //    r2 = Random.Range(0, 10);
-        //    r2 = Nst[r2];
-        //}
-        //while (r3 == r2 || r3 == r1)
-        //{
-        //    r3 = Random.Range(0, 10);
-        //    r3 = Nst[r3];
-        //}
-        //Professions[1] = r2;
-        //Professions[2] = r3;
-        //SetAttributes(r2, 0);
-        //SetAttributes(r3, 0);
-
-        //随机天赋
-        for (int j = 0; j < 1; j++)
+        int r1 = Random.Range(0, 10), r2 = Random.Range(0, 10), r3 = Random.Range(0, 10);
+        while (r1 == r2)
         {
-            int type = 0;
-            if (j == 0)
-                type = r1;
-            //else if (j == 1)
-            //    type = r2;
-            //else
-            //    type = r3;
-            float Posb = Random.Range(0.0f, 1.0f);
-            if (Posb < 0.4f)
-                StarLimit[type - 1] = 0;
-            else if (Posb < 0.7f)
-                StarLimit[type - 1] = 1;
-            else if (Posb < 0.9f)
-                StarLimit[type - 1] = 2;
-            else
-                StarLimit[type - 1] = 3;
+            r2 = Random.Range(0, 10);
         }
+        while (r3 == r2 || r3 == r1)
+            r3 = Random.Range(0, 10);
 
+        r1 = Nst[r1];
+        r2 = Nst[r2];
+        r3 = Nst[r3];
+        Professions.Add(r1);
+        Professions.Add(r2);
+        Professions.Add(r3);
 
         //随机学校
         SchoolType = 2;
@@ -604,254 +299,21 @@ public class Employee
         Mentality = MentalityLimit;
     }
 
-    //随机分配已有技能点
-    public void RandomSkillAssign()
-    {
-        Tenacity = 3;
-        Strength = 3;
-        Manage = 0;
-        Decision = 0;
-        for (int i = 0; i < SkillPoint; i++)
-        {
-            int type = Random.Range(0, 4);
-            if (type == 0)
-                Tenacity += 1;
-            else if (type == 1)
-                Strength += 1;
-            else if (type == 2)
-                Manage += 1;
-            else
-                Decision += 1;
-        }
-        SkillPoint = 0;
-        Stamina = StaminaLimit;
-        Mentality = MentalityLimit;
-    }
-
     public void GainExp(int value, int type)
     {
-        //1-3职业技能 4观察 5坚韧 6强壮 7管理 8人力 9财务 10决策 11行业 12谋略 13说服 14魅力 15八卦
-        int SkillLevel = 0;
-        #region 设定等级
-        if (type == 1)
-            SkillLevel = Tech;
-        else if (type == 2)
-            SkillLevel = Market;
-        else if (type == 3)
-            SkillLevel = Product;
-        else if (type == 4)
-            SkillLevel = Observation;
-        else if (type == 5)
-            SkillLevel = Tenacity;
-        else if (type == 6)
-            SkillLevel = Strength;
-        else if (type == 7)
-            SkillLevel = Manage;
-        else if (type == 8)
-            SkillLevel = HR;
-        else if (type == 9)
-            SkillLevel = Finance;
-        else if (type == 10)
-            SkillLevel = Decision;
-        else if (type == 11)
-            SkillLevel = Forecast;
-        else if (type == 12)
-            SkillLevel = Strategy;
-        else if (type == 13)
-            SkillLevel = Convince;
-        else if (type == 14)
-            SkillLevel = Charm;
-        else if (type == 15)
-            SkillLevel = Gossip;
-        #endregion
-
-        int pValue = value;//计算天赋
-        if (StarLimit[type - 1] == 1)
-            pValue = (int)(pValue * 1.5f);
-        else if (StarLimit[type - 1] == 2)
-            pValue = (int)(pValue * 2.5f);
-        else if (StarLimit[type - 1] == 3)
-            pValue = pValue * 4;
-
-        SkillExp[type - 1] += pValue;
-
-        //达到上限后不继续判断
-        if (SkillLevel >= AttributeLimit)
-            return;
-        if (SkillExp[type - 1] >= AdjustData.ExpLimit[SkillLevel] + ExtraExp)
+        //上司经验获取
+        if (CurrentDep != null && CurrentDep.CommandingOffice != null)
         {
-            InfoDetail.AddPerk(new Perk58(this), true);
-            SkillExp[type - 1] = 0;
-            string SkillName;
-            if (type == 1)
+            if (CurrentDep.CommandingOffice.Manager != null)
             {
-                Tech += 1;
-                SkillName = "技术技能";
-            }
-            else if (type == 2)
-            { 
-                Market += 1;
-                SkillName = "市场技能";
-            }
-            else if (type == 3)
-            { 
-                Product += 1;
-                SkillName = "产品技能3";
-            }
-            else if (type == 4)
-            { 
-                Observation += 1;
-                SkillName = "观察";
-            }
-            else if (type == 5)
-            { 
-                Tenacity += 1;
-                Mentality += 5;
-                SkillName = "坚韧";
-            }
-            else if (type == 6)
-            { 
-                Strength += 1;
-                Stamina += 5;
-                SkillName = "强壮";
-            }
-            else if (type == 7)
-            { 
-                Manage += 1;
-                SkillName = "管理";
-                if (CurrentDep != null && CurrentDep.Manager == this)
-                    CurrentDep.SetOfficeStatus();
-            }
-            else if (type == 8)
-            { 
-                HR += 1;
-                SkillName = "人力";
-            }
-            else if (type == 9)
-            { 
-                Finance += 1;
-                SkillName = "财务";
-            }
-            else if (type == 10)
-            { 
-                Decision += 1;
-                SkillName = "决策";
-            }
-            else if (type == 11)
-            { 
-                Forecast += 1;
-                SkillName = "行业";
-            }
-            else if (type == 12)
-            { 
-                Strategy += 1;
-                SkillName = "谋略";
-            }
-            else if (type == 13)
-            { 
-                Convince += 1;
-                SkillName = "说服";
-            }
-            else if (type == 14)
-            { 
-                Charm += 1;
-                SkillName = "魅力";
-            }
-            else if (type == 15)
-            { 
-                Gossip += 1;
-                SkillName = "八卦";
-            }
-            else
-            {
-                Admin += 1;
-                SkillName = "行政";
-            }
-            InfoDetail.GC.CreateMessage(Name + "的 " + SkillName + " 技能提升了");
-            BottleNeckCheck();
-            SkillPoint += 1;
-            if (InfoDetail != null)
-                InfoDetail.CheckMarker();
-
-            //上司经验获取
-            if (CurrentDep != null && CurrentDep.CommandingOffice != null)
-            {
-                if (CurrentDep.CommandingOffice.Manager != null)
+                CurrentDep.CommandingOffice.Manager.ManagerExp += 1;
+                if (CurrentDep.CommandingOffice.Manager.ManagerExp >= 10)
                 {
-                    CurrentDep.CommandingOffice.Manager.ManagerExp += 1;
-                    if (CurrentDep.CommandingOffice.Manager.ManagerExp >= 10)
-                    {
-                        CurrentDep.CommandingOffice.Manager.SkillPoint += 1;
-                        CurrentDep.CommandingOffice.Manager.ManagerExp = 0;
-                        CurrentDep.CommandingOffice.Manager.InfoDetail.SkillPointCheck();
-                    }
+                    CurrentDep.CommandingOffice.Manager.ManagerExp = 0;
                 }
             }
         }
-    }
 
-    public void BottleNeckCheck()
-    {
-        int pValue = 0;
-        foreach (int a in Professions)
-        {
-            if (a != 0)
-                pValue += BaseAttributes[a - 1];
-        }
-        if (InfoDetail == null)
-        {
-            Debug.Log("无InfoDetail时获取经验");
-            return;
-        }
-        if (pValue >= 5 && ExtraExp < AdjustData.BottleneckValue)
-            InfoDetail.AddPerk(new Perk142(this));
-        if (pValue >= 10 && ExtraExp < AdjustData.BottleneckValue * 2)
-            InfoDetail.AddPerk(new Perk142(this));
-        if (pValue >= 15 && ExtraExp < AdjustData.BottleneckValue * 3)
-            InfoDetail.AddPerk(new Perk142(this));
-        if (pValue >= 20 && ExtraExp < AdjustData.BottleneckValue * 4)
-            InfoDetail.AddPerk(new Perk142(this));
-        if (pValue >= 25 && ExtraExp < AdjustData.BottleneckValue * 5)
-            InfoDetail.AddPerk(new Perk142(this));
-        InfoDetail.SkillPointCheck();
-    }
-
-    //根据编号设置属性
-    public void SetAttributes(int type, int value)
-    {    //1.技术 2.市场 3.产品 4.Ob观察 5.Te坚韧 6.Str强壮 7.Ma管理 8.HR人力 9.Fi财务 10.De决策 
-         //11.Fo行业 12.St谋略 13.Co说服 14.Ch魅力 15.Go八卦 16.Ad行政
-        if (type == 1)
-            Tech = value;
-        else if (type == 2)
-            Market = value;
-        else if (type == 3)
-            Product = value;
-        else if (type == 4)
-            Observation = value;
-        else if (type == 5)
-            Tenacity = value;
-        else if (type == 6)
-            Strength = value;
-        else if (type == 7)
-            Manage = value;
-        else if (type == 8)
-            HR = value;
-        else if (type == 9)
-            Finance = value;
-        else if (type == 10)
-            Decision = value;
-        else if (type == 11)
-            Forecast = value;
-        else if (type == 12)
-            Strategy = value;
-        else if (type == 13)
-            Convince = value;
-        else if (type == 14)
-            Charm = value;
-        else if (type == 15)
-            Gossip = value;
-        else if (type == 16)
-            Admin = value;
     }
 
     public void InitRelation()

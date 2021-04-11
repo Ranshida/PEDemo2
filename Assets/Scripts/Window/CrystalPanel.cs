@@ -45,7 +45,6 @@ public class CrystalPanel : WindowRoot
         {
             btn_Finish.gameObject.SetActive(false);
             BG.gameObject.SetActive(false);
-            Manager.dynamicWindow.ShowAllBuildingInfo(BuildingManage.Instance.ConstructedBuildings);
         }
         Areas.gameObject.SetActive(true);
     }
@@ -219,10 +218,9 @@ public class CrystalPanel : WindowRoot
         if (show == false)
         {
             SetWndState(false);
-            Manager.dynamicWindow.HideAllBuildingInfo();
             Areas.gameObject.SetActive(false);
         }
-        else if (Manager.dynamicWindow.m_ShowAllBuildingInfo == false)
+        else 
             SetWndState();
     }
 }
