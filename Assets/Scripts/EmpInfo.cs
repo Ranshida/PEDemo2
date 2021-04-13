@@ -416,7 +416,7 @@ public class EmpInfo : MonoBehaviour
         float Posb = Random.Range(0.0f, 1.0f);
 
         //额外的金色特质
-        if (Random.Range(0.0f, 1.0f) < 1)
+        if (Random.Range(0.0f, 1.0f) < 0.02f)
         {
             int num = Random.Range(0, PerkData.GoldenPerkList.Count);
             Perk perk3 = PerkData.GoldenPerkList[num].Clone();
