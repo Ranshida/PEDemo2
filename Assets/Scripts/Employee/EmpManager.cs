@@ -89,7 +89,8 @@ public class EmpManager : MonoBehaviour
     {
         EmpEntity emp = GameObject.Instantiate(empPrefabs, position, Quaternion.identity).GetComponentInChildren<EmpEntity>();
         emp.Init();
-        emp.Renderer.material = empMaterials[Random.Range(0, empMaterials.Length)];
+        emp.FaceType = Random.Range(0, empMaterials.Length);
+        emp.Renderer.material = empMaterials[emp.FaceType];
         return emp;
     }
 

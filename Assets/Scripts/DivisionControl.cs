@@ -19,8 +19,9 @@ public class DivisionControl : MonoBehaviour
     public GameObject DetailPanel;
     public Transform PerkContent, DepContent;
     public Area CurrentArea;
-    public Text Text_DivName, Text_DivPanelName, Text_Faith, Text_Efficiency, Text_WorkStatus, Text_Manager;
+    public Text Text_DivName, Text_DivPanelName, Text_Faith, Text_Efficiency, Text_WorkStatus, Text_Manager, Text_Cost;
     public Employee Manager;
+    public Image EfficiencyBarFill, WorkStatusBarFill;
 
     public List<DepControl> CurrentDeps = new List<DepControl>();
 
@@ -50,11 +51,11 @@ public class DivisionControl : MonoBehaviour
                 Text_Efficiency.text += "\n\n效率等级:3\n产率:3";
 
             Text_WorkStatus.text = "工作状态:" + WorkStatus;
-            if (Efficiency + ExtraEfficiency < 0)
+            if (WorkStatus < 0)
                 Text_WorkStatus.text += "\n\n工作状态:0\n工作停止";
-            else if (Efficiency + ExtraEfficiency < 4)
+            else if (WorkStatus < 4)
                 Text_WorkStatus.text += "\n\n工作状态:1\n";
-            else if (Efficiency + ExtraEfficiency < 9)
+            else if (WorkStatus < 9)
                 Text_WorkStatus.text += "\n\n工作状态:2\n";
             else
                 Text_WorkStatus.text += "\n\n工作状态:3\n";
@@ -63,6 +64,24 @@ public class DivisionControl : MonoBehaviour
                 Text_Manager.text = "当前高管:" + Manager.Name;
             else
                 Text_Manager.text = "当前高管:无";
+
+            int empCost = CalcCost(1), depCost = CalcCost(2);
+            Text_Cost.text = "成本:" + (empCost + depCost) + "/回合\n\n员工工资:" + empCost + "/回合\n建筑维护费:" + depCost + "/回合";
+
+            //效率和工作状态调填充
+            if (ExtraEfficiency + Efficiency < 0)
+                EfficiencyBarFill.fillAmount = 0.06f;
+            else if (ExtraEfficiency + Efficiency < 9)
+                EfficiencyBarFill.fillAmount = (float)(ExtraEfficiency + Efficiency) / 10 + 0.1f;
+            else
+                EfficiencyBarFill.fillAmount = 1;
+
+            if (WorkStatus < 0)
+                WorkStatusBarFill.fillAmount = 0.06f;
+            else if (WorkStatus < 9)
+                WorkStatusBarFill.fillAmount = (float)(WorkStatus) / 10 + 0.1f;
+            else
+                WorkStatusBarFill.fillAmount = 1;
         }
     }
 
@@ -89,18 +108,19 @@ public class DivisionControl : MonoBehaviour
         //撤掉高管
         if(RemoveManager == true)
         {
-            Manager.CommandingDivision = null;
+            Manager.CurrentDivision = null;
             Manager = null;
         }
         //任命高管
         else
         {
             Manager = emp;
-            emp.CommandingDivision = this;
+            emp.CurrentDivision = this;
         }
     }
 
-    public void DepExtraEffectCheck()
+    //部门移动、销毁或者属性变化时检测额外效率
+    public void DepExtraCheck()
     {
         ExtraEfficiency = 0;
         foreach(DepControl dep in CurrentDeps)
@@ -109,5 +129,15 @@ public class DivisionControl : MonoBehaviour
         }
         if (ExtraEfficiency + Efficiency < 0)
             canWork = false;
+    }
+
+    public int CalcCost(int type)
+    {
+        int cost = 0;
+        foreach(DepControl dep in CurrentDeps)
+        {
+            cost += dep.CalcCost(type);
+        }
+        return cost;
     }
 }

@@ -25,7 +25,7 @@ public class BrainStormControl : MonoBehaviour
     public EmpBSInfo CurrentBSInfo, CEOInfo;
     public BSRouteNode CurrentNode;//当前所处的节点
     public GameControl GC;
-    public GameObject MemberSelectPanel, RouteSelectPanel, FightPanel, SkillButton, StartButton, CloseButton, 
+    public GameObject MemberSelectPanel, RouteSelectPanel, FightPanel, SkillButton, CloseButton, 
         RouteNoticePanel, NodeSkipButton;
     public BSDiceControl DicePrefab;
     public BSBossControl CurrentBoss, BossPrefab;
@@ -53,7 +53,6 @@ public class BrainStormControl : MonoBehaviour
     public void PrepareBS()
     {
         CloseButton.SetActive(false);
-        StartButton.SetActive(true);
         GC.AskPause(this);
     }
 
@@ -62,7 +61,6 @@ public class BrainStormControl : MonoBehaviour
     {
         BSStarted = false;
         CloseButton.SetActive(true);
-        StartButton.SetActive(false);
         FightPanel.SetActive(false);
         RouteSelectPanel.SetActive(false);
         MemberSelectPanel.SetActive(true);
@@ -503,7 +501,7 @@ public class BrainStormControl : MonoBehaviour
             
     }
 
-    //设置技能图标
+    //设置技能图标和特质信息
     public void CheckAllMarkers()
     {
         for(int i = 0; i < 6; i++)
@@ -511,7 +509,10 @@ public class BrainStormControl : MonoBehaviour
             if (EmpInfos[i].emp != null)
                 EmpInfos[i].CheckMarker();
             if (EmpSelectInfos[i].emp != null)
+            {
                 EmpSelectInfos[i].CheckMarker();
+                EmpSelectInfos[i].CheckPerk();
+            }
         }
     }
 

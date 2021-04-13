@@ -671,7 +671,7 @@ public class DepControl : MonoBehaviour
         }
         #endregion
 
-        CurrentDivision.DepExtraEffectCheck();
+        CurrentDivision.DepExtraCheck();
         UpdateUI();
     }
 
@@ -718,6 +718,7 @@ public class DepControl : MonoBehaviour
             InitDoubleMarker("生产商战牌-迭代");
             InitDoubleMarker("");
             Text_WeakEffect.text = "事业部效率-2";
+            ExtraEfficiency = -4;
             WeakAction = () => { ExtraEfficiency -= 2; };
             UnWeakAction = () => { ExtraEfficiency += 2; };
             ActiveMode = 5;
@@ -815,7 +816,7 @@ public class DepControl : MonoBehaviour
             else
                 multiply = GC.TotalBuildingPayMultiply * BuildingPayMultiply;
 
-            value = (int)(building.Pay * multiply);
+            value = (int)(building.MaintainCost * multiply);
         }
         return value;
     }
@@ -886,11 +887,15 @@ public class DepControl : MonoBehaviour
     public void SetDivision(DivisionControl DC)
     {
         if (CurrentDivision != null)
+        {
             CurrentDivision.CurrentDeps.Remove(this);
+            CurrentDivision.DepExtraCheck();
+        }
         DivPanel.transform.parent = DC.DepContent;
         DivPanel.gameObject.SetActive(true);
         DC.CurrentDeps.Add(this);
         CurrentDivision = DC;
+        CurrentDivision.DepExtraCheck();
     }
 
 

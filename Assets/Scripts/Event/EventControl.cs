@@ -52,344 +52,345 @@ public class EventControl : MonoBehaviour
         if (Fire == true)
             Text_MeetingName.text = "开除员工" + emp.Name + "会议投票结果";
 
-        for (int i = 0; i < GC.CurrentDeps.Count; i++)
+        foreach (EmpBSInfo info in GC.BSC.EmpSelectInfos)
         {
-            if ((GC.CurrentDeps[i].building.Type == BuildingType.CEO办公室 || GC.CurrentDeps[i].building.Type == BuildingType.高管办公室) && GC.CurrentDeps[i].Manager != null)
-            {
-                Employee E = GC.CurrentDeps[i].Manager, CEO = GC.CurrentEmployees[0];
-                //CEO和自己不投票
-                if (E.isCEO == true || E == emp)
-                    continue;
-                VoteCell V = Instantiate(VoteCellPrefab, ManageVoteContent);
-                int VoteValue = 0;
-                string Description = "和目标关系", Description2 = "和CEO关系";
-                V.Text_Name.text = E.Name;
-                VCells.Add(V);
-                //和目标的关系
-                Relation r = E.FindRelation(emp);
-                //友情关系检测
-                if (r.FriendValue == -2)
-                {
-                    if (Dismissal == false)
-                    {
-                        VoteValue -= 4;
-                        Description += "\n仇敌-4";
-                    }
-                    else
-                    {
-                        VoteValue += 4;
-                        Description += "\n仇敌+4";
-                    }
-                }
-                else if (r.FriendValue == -1)
-                {
-                    if (Dismissal == false)
-                    {
-                        VoteValue -= 2;
-                        Description += "\n陌路-2";
-                    }
-                    else
-                    {
-                        VoteValue += 2;
-                        Description += "\n陌路+2";
-                    }
-                }
-                else if (r.FriendValue == 1)
-                {
-                    if (Dismissal == false)
-                    {
-                        VoteValue += 1;
-                        Description += "\n朋友+1";
-                    }
-                    else
-                    {
-                        VoteValue -= 1;
-                        Description += "\n朋友-1";
-                    }
-                }
-                else if (r.FriendValue == 2)
-                {
-                    if (Dismissal == false)
-                    {
-                        VoteValue += 3;
-                        Description += "\n挚友+3";
-                    }
-                    else
-                    {
-                        VoteValue -= 3;
-                        Description += "\n挚友-3";
-                    }
-                }
-                //恋爱关系检测
-                if (r.LoveValue == 1)
-                {
-                    if (Dismissal == false)
-                    {
-                        VoteValue += 1;
-                        Description += "\n倾慕+1";
-                    }
-                    else
-                    {
-                        VoteValue -= 1;
-                        Description += "\n倾慕-1";
-                    }
-                }
-                else if (r.LoveValue == 2)
-                {
-                    if (Dismissal == false)
-                    {
-                        VoteValue -= 1;
-                        Description += "\n追求者-1";
-                    }
-                    else
-                    {
-                        VoteValue += 1;
-                        Description += "\n追求者+1";
-                    }
-                }
-                else if (r.LoveValue == 3)
-                {
-                    if (Dismissal == false)
-                    {
-                        VoteValue += 2;
-                        Description += "\n情侣+2";
-                    }
-                    else
-                    {
-                        VoteValue -= 2;
-                        Description += "\n情侣-2";
-                    }
-                }
-                else if (r.LoveValue == 4)
-                {
-                    if (Dismissal == false)
-                    {
-                        VoteValue += 3;
-                        Description += "\n情侣+3";
-                    }
-                    else
-                    {
-                        VoteValue -= 3;
-                        Description += "\n情侣-3";
-                    }
-                }
-                //师徒关系检测 (可能方向有问题)
-                if(r.MasterValue == 1)
-                {
-                    if (Dismissal == false)
-                    {
-                        VoteValue += 1;
-                        Description += "\n门徒+1";
-                    }
-                    else
-                    {
-                        VoteValue -= 1;
-                        Description += "\n门徒-1";
-                    }
-                }
-                else if (r.MasterValue == 2)
-                {
-                    if (Dismissal == false)
-                    {
-                        VoteValue += 2;
-                        Description += "\n师承+2";
-                    }
-                    else
-                    {
-                        VoteValue -= 2;
-                        Description += "\n师承-2";
-                    }
-                }
-                //派系检测
-                if (E.CurrentClique != null && E.CurrentClique.Members.Contains(emp) == true)
-                {
-                    if (Dismissal == false)
-                    {
-                        VoteValue += 3;
-                        Description += "\n同派系+3";
-                    }
-                    else
-                    {
-                        VoteValue -= 3;
-                        Description += "\n同派系-3";
-                    }
-                }
-                //文化检测
-                if(E.CharacterTendency[0] * emp.CharacterTendency[0] == 1)
-                {
-                    if (Dismissal == false)
-                    {
-                        VoteValue += 1;
-                        Description += "\n文化一致+1";
-                    }
-                    else
-                    {
-                        VoteValue -= 1;
-                        Description += "\n文化一致-1";
-                    }
-                }
-                else if (E.CharacterTendency[0] * emp.CharacterTendency[0] == -1)
-                {
-                    if (Dismissal == false)
-                    {
-                        VoteValue -= 2;
-                        Description += "\n文化相反-2";
-                    }
-                    else
-                    {
-                        VoteValue += 2;
-                        Description += "\n文化相反+2";
-                    }
-                }
-                //信仰检测
-                if (E.CharacterTendency[1] * emp.CharacterTendency[1] == 1)
-                {
-                    if (Dismissal == false)
-                    {
-                        VoteValue += 1;
-                        Description += "\n信仰一致+1";
-                    }
-                    else
-                    {
-                        VoteValue -= 1;
-                        Description += "\n信仰一致-1";
-                    }
-                }
-                else if (E.CharacterTendency[1] * emp.CharacterTendency[1] == -1)
-                {
-                    if (Dismissal == false)
-                    {
-                        VoteValue -= 2;
-                        Description += "\n信仰相反-2";
-                    }
-                    else
-                    {
-                        VoteValue += 2;
-                        Description += "\n信仰相反+2";
-                    }
-                }
+            if (info.emp == null)
+                continue;
 
-                //和CEO的关系
-                r = E.FindRelation(CEO);
-                //友情关系检测
-                if (r.FriendValue == -2)
+            Employee E = info.emp, CEO = GC.CurrentEmployees[0];
+            //CEO和自己不投票
+            if (E.isCEO == true || E == emp)
+                continue;
+            VoteCell V = Instantiate(VoteCellPrefab, ManageVoteContent);
+            int VoteValue = 0;
+            string Description = "和目标关系", Description2 = "和CEO关系";
+            V.Text_Name.text = E.Name;
+            VCells.Add(V);
+            //和目标的关系
+            Relation r = E.FindRelation(emp);
+            //友情关系检测
+            if (r.FriendValue == -2)
+            {
+                if (Dismissal == false)
                 {
                     VoteValue -= 4;
-                    Description2 += "\n仇敌-4";
+                    Description += "\n仇敌-4";
                 }
-                else if (r.FriendValue == -1)
+                else
+                {
+                    VoteValue += 4;
+                    Description += "\n仇敌+4";
+                }
+            }
+            else if (r.FriendValue == -1)
+            {
+                if (Dismissal == false)
                 {
                     VoteValue -= 2;
-                    Description2 += "\n陌路-2";
+                    Description += "\n陌路-2";
                 }
-                else if (r.FriendValue == 1)
+                else
+                {
+                    VoteValue += 2;
+                    Description += "\n陌路+2";
+                }
+            }
+            else if (r.FriendValue == 1)
+            {
+                if (Dismissal == false)
                 {
                     VoteValue += 1;
-                    Description2 += "\n朋友+1";
+                    Description += "\n朋友+1";
                 }
-                else if (r.FriendValue == 2)
-                {
-                    VoteValue += 3;
-                    Description2 += "\n挚友+3";
-                }
-                //恋爱关系检测
-                if (r.LoveValue == 1)
-                {
-                    VoteValue += 1;
-                    Description2 += "\n倾慕+1";
-                }
-                else if (r.LoveValue == 2)
+                else
                 {
                     VoteValue -= 1;
-                    Description2 += "\n追求者-1";
+                    Description += "\n朋友-1";
                 }
-                else if (r.LoveValue == 3)
-                {
-                    VoteValue += 2;
-                    Description2 += "\n情侣+2";
-                }
-                else if (r.LoveValue == 4)
-                {
-                    VoteValue += 3;
-                    Description2 += "\n情侣+3";
-                }
-                //师徒关系检测 (可能方向有问题)
-                if (r.MasterValue == 1)
-                {
-                    VoteValue += 1;
-                    Description2 += "\n门徒+1";
-                }
-                else if (r.MasterValue == 2)
-                {
-                    VoteValue += 2;
-                    Description2 += "\n师承+2";
-                }
-                //派系检测
-                if (E.CurrentClique != null && E.CurrentClique.Members.Contains(CEO) == true)
-                {
-                    VoteValue += 3;
-                    Description2 += "\n同派系+3";
-                }
-                //文化检测
-                if (E.CharacterTendency[0] * emp.CharacterTendency[0] == 1)
-                {
-                    VoteValue += 1;
-                    Description2 += "\n文化一致+1";
-                }
-                else if (E.CharacterTendency[0] * emp.CharacterTendency[0] == -1)
-                {
-                    VoteValue -= 2;
-                    Description2 += "\n文化相反-2";
-                }
-                //信仰检测
-                if (E.CharacterTendency[1] * emp.CharacterTendency[1] == 1)
-                {
-                    VoteValue += 1;
-                    Description2 += "\n信仰一致+1";
-                }
-                else if (E.CharacterTendency[0] * emp.CharacterTendency[0] == -1)
-                {
-                    VoteValue -= 2;
-                    Description2 += "\n信仰相反-2";
-                }
-
-                //支持判定
-                if(E.ObeyTime > 0)
-                {
-                    E.ObeyTime = 0;
-                    VoteValue += 50;
-                    Description2 += "\n支持+50";
-                }
-
-                //计算技能影响（分就职和离职两种）
-                int ExtraValue = ExtraValue = (int)(emp.Manage * 0.1f); ;
-                if (Dismissal == true)
-                {                   
-                    VoteValue += ExtraValue;
-                    Description += "\n管理技能+" + ExtraValue;
-                }
-                else
-                {
-                    VoteValue -= ExtraValue;
-                    Description += "\n管理技能-" + ExtraValue;
-                }
-
-                //确定结果
-                VoteNum += 1;
-                if (VoteValue >= 0)
-                {
-                    V.image.color = Color.green;
-                    V.Text_Value.text = "+" + VoteValue;
-                    AgreeNum += 1;
-                }
-                else
-                {
-                    V.image.color = Color.red;
-                    V.Text_Value.text = "-" + Mathf.Abs(VoteValue);
-                }
-                V.Text_Vote.text = Description;
-                V.Text_Vote2.text = Description2;
             }
+            else if (r.FriendValue == 2)
+            {
+                if (Dismissal == false)
+                {
+                    VoteValue += 3;
+                    Description += "\n挚友+3";
+                }
+                else
+                {
+                    VoteValue -= 3;
+                    Description += "\n挚友-3";
+                }
+            }
+            //恋爱关系检测
+            if (r.LoveValue == 1)
+            {
+                if (Dismissal == false)
+                {
+                    VoteValue += 1;
+                    Description += "\n倾慕+1";
+                }
+                else
+                {
+                    VoteValue -= 1;
+                    Description += "\n倾慕-1";
+                }
+            }
+            else if (r.LoveValue == 2)
+            {
+                if (Dismissal == false)
+                {
+                    VoteValue -= 1;
+                    Description += "\n追求者-1";
+                }
+                else
+                {
+                    VoteValue += 1;
+                    Description += "\n追求者+1";
+                }
+            }
+            else if (r.LoveValue == 3)
+            {
+                if (Dismissal == false)
+                {
+                    VoteValue += 2;
+                    Description += "\n情侣+2";
+                }
+                else
+                {
+                    VoteValue -= 2;
+                    Description += "\n情侣-2";
+                }
+            }
+            else if (r.LoveValue == 4)
+            {
+                if (Dismissal == false)
+                {
+                    VoteValue += 3;
+                    Description += "\n情侣+3";
+                }
+                else
+                {
+                    VoteValue -= 3;
+                    Description += "\n情侣-3";
+                }
+            }
+            //师徒关系检测 (可能方向有问题)
+            if (r.MasterValue == 1)
+            {
+                if (Dismissal == false)
+                {
+                    VoteValue += 1;
+                    Description += "\n门徒+1";
+                }
+                else
+                {
+                    VoteValue -= 1;
+                    Description += "\n门徒-1";
+                }
+            }
+            else if (r.MasterValue == 2)
+            {
+                if (Dismissal == false)
+                {
+                    VoteValue += 2;
+                    Description += "\n师承+2";
+                }
+                else
+                {
+                    VoteValue -= 2;
+                    Description += "\n师承-2";
+                }
+            }
+            //派系检测
+            if (E.CurrentClique != null && E.CurrentClique.Members.Contains(emp) == true)
+            {
+                if (Dismissal == false)
+                {
+                    VoteValue += 3;
+                    Description += "\n同派系+3";
+                }
+                else
+                {
+                    VoteValue -= 3;
+                    Description += "\n同派系-3";
+                }
+            }
+            //文化检测
+            if (E.CharacterTendency[0] * emp.CharacterTendency[0] == 1)
+            {
+                if (Dismissal == false)
+                {
+                    VoteValue += 1;
+                    Description += "\n文化一致+1";
+                }
+                else
+                {
+                    VoteValue -= 1;
+                    Description += "\n文化一致-1";
+                }
+            }
+            else if (E.CharacterTendency[0] * emp.CharacterTendency[0] == -1)
+            {
+                if (Dismissal == false)
+                {
+                    VoteValue -= 2;
+                    Description += "\n文化相反-2";
+                }
+                else
+                {
+                    VoteValue += 2;
+                    Description += "\n文化相反+2";
+                }
+            }
+            //信仰检测
+            if (E.CharacterTendency[1] * emp.CharacterTendency[1] == 1)
+            {
+                if (Dismissal == false)
+                {
+                    VoteValue += 1;
+                    Description += "\n信仰一致+1";
+                }
+                else
+                {
+                    VoteValue -= 1;
+                    Description += "\n信仰一致-1";
+                }
+            }
+            else if (E.CharacterTendency[1] * emp.CharacterTendency[1] == -1)
+            {
+                if (Dismissal == false)
+                {
+                    VoteValue -= 2;
+                    Description += "\n信仰相反-2";
+                }
+                else
+                {
+                    VoteValue += 2;
+                    Description += "\n信仰相反+2";
+                }
+            }
+
+            //和CEO的关系
+            r = E.FindRelation(CEO);
+            //友情关系检测
+            if (r.FriendValue == -2)
+            {
+                VoteValue -= 4;
+                Description2 += "\n仇敌-4";
+            }
+            else if (r.FriendValue == -1)
+            {
+                VoteValue -= 2;
+                Description2 += "\n陌路-2";
+            }
+            else if (r.FriendValue == 1)
+            {
+                VoteValue += 1;
+                Description2 += "\n朋友+1";
+            }
+            else if (r.FriendValue == 2)
+            {
+                VoteValue += 3;
+                Description2 += "\n挚友+3";
+            }
+            //恋爱关系检测
+            if (r.LoveValue == 1)
+            {
+                VoteValue += 1;
+                Description2 += "\n倾慕+1";
+            }
+            else if (r.LoveValue == 2)
+            {
+                VoteValue -= 1;
+                Description2 += "\n追求者-1";
+            }
+            else if (r.LoveValue == 3)
+            {
+                VoteValue += 2;
+                Description2 += "\n情侣+2";
+            }
+            else if (r.LoveValue == 4)
+            {
+                VoteValue += 3;
+                Description2 += "\n情侣+3";
+            }
+            //师徒关系检测 (可能方向有问题)
+            if (r.MasterValue == 1)
+            {
+                VoteValue += 1;
+                Description2 += "\n门徒+1";
+            }
+            else if (r.MasterValue == 2)
+            {
+                VoteValue += 2;
+                Description2 += "\n师承+2";
+            }
+            //派系检测
+            if (E.CurrentClique != null && E.CurrentClique.Members.Contains(CEO) == true)
+            {
+                VoteValue += 3;
+                Description2 += "\n同派系+3";
+            }
+            //文化检测
+            if (E.CharacterTendency[0] * emp.CharacterTendency[0] == 1)
+            {
+                VoteValue += 1;
+                Description2 += "\n文化一致+1";
+            }
+            else if (E.CharacterTendency[0] * emp.CharacterTendency[0] == -1)
+            {
+                VoteValue -= 2;
+                Description2 += "\n文化相反-2";
+            }
+            //信仰检测
+            if (E.CharacterTendency[1] * emp.CharacterTendency[1] == 1)
+            {
+                VoteValue += 1;
+                Description2 += "\n信仰一致+1";
+            }
+            else if (E.CharacterTendency[0] * emp.CharacterTendency[0] == -1)
+            {
+                VoteValue -= 2;
+                Description2 += "\n信仰相反-2";
+            }
+
+            //支持判定
+            if (E.ObeyTime > 0)
+            {
+                E.ObeyTime = 0;
+                VoteValue += 50;
+                Description2 += "\n支持+50";
+            }
+
+            //计算技能影响（分就职和离职两种）
+            int ExtraValue = ExtraValue = (int)(emp.Manage * 0.1f); ;
+            if (Dismissal == true)
+            {
+                VoteValue += ExtraValue;
+                Description += "\n管理技能+" + ExtraValue;
+            }
+            else
+            {
+                VoteValue -= ExtraValue;
+                Description += "\n管理技能-" + ExtraValue;
+            }
+
+            //确定结果
+            VoteNum += 1;
+            if (VoteValue >= 0)
+            {
+                V.image.color = Color.green;
+                V.Text_Value.text = "+" + VoteValue;
+                AgreeNum += 1;
+            }
+            else
+            {
+                V.image.color = Color.red;
+                V.Text_Value.text = "-" + Mathf.Abs(VoteValue);
+            }
+            V.Text_Vote.text = Description;
+            V.Text_Vote2.text = Description2;
+
         }
 
         if ((AgreeNum * 2) >= VoteNum)

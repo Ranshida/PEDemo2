@@ -166,7 +166,7 @@ public class Employee
 
     public EmpInfo InfoA, InfoB, InfoDetail;
     public DepControl CurrentDep;
-    public DivisionControl CommandingDivision;
+    public DivisionControl CurrentDivision;
     public Employee Master, Lover, RTarget;
     public Clique CurrentClique;
 

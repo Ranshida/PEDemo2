@@ -15,7 +15,7 @@ public class GameControl : MonoBehaviour
     //5发动建筑技能时员工选择 6CEO技能员工/部门选择 7选择两个员工发动动员技能 8普通办公室的上级(高管办公室)选择  9头脑风暴的员工选择
     //10选择两个员工的CEO技能 11部门/员工的物品使用
     public int AreaSelectMode = 1;//1部门目标区域的选择（暂时删除）  2物品目标区域的选择
-    public int Money = 1000, DoubleMobilizeCost = 0, MeetingBlockTime = 0, MobTime = 192;
+    public int Money = 1000, DoubleMobilizeCost = 0, MeetingBlockTime = 0, MonthMeetingTime = 3;
     public bool ForceTimePause = false;
     public int Stamina
     {
@@ -94,7 +94,7 @@ public class GameControl : MonoBehaviour
     public InfoPanel infoPanel;
     public GameObject DepSelectPanel, StandbyButton, MessagePrefab, GameOverPanel;
     public Text Text_Time, Text_TechResource, Text_MarketResource, Text_MarketResource2, Text_ProductResource, Text_Money, 
-        Text_Stamina, Text_Mentality, Text_Morale, Text_WarTime, Text_MobTime;
+        Text_Stamina, Text_Mentality, Text_Morale, Text_WarTime, Text_MonthMeetingTime, Text_NextTurn;
     public Toggle WorkOvertimeToggle;
     public BrainStormControl BSC;
     [HideInInspector] public UnityEvent DailyEvent, WeeklyEvent, MonthlyEvent, HourEvent, YearEvent, TurnEvent;
@@ -167,9 +167,32 @@ public class GameControl : MonoBehaviour
 
     void TurnPass()
     {
+        //月会时间检测
+        if (MonthMeetingTime == 0)
+        {
+            MonthMeeting.Instance.StartMeeting();
+            return;
+        }
+
         Turn += 1;
+        MonthMeetingTime -= 1;
+
         Text_Time.text = "第" + Turn + "回合";
+        Text_MonthMeetingTime.text = "距离下次月会还剩" + MonthMeetingTime + "回合";
+
+        CheckButtonName();
         TurnEvent.Invoke();
+    }
+
+    public void CheckButtonName()
+    {
+        if(MonthMeetingTime == 0)
+        {
+            Text_NextTurn.text = "开始月会";
+            return;
+        }
+        else
+            Text_NextTurn.text = "下一回合";
     }
 
     void HourPass()
@@ -200,17 +223,6 @@ public class GameControl : MonoBehaviour
             //开会封锁时间
             if (MeetingBlockTime > 0)
                 MeetingBlockTime -= 1;
-            if (MobTime > 0)
-            {
-                MobTime -= 1;
-                if (MobTime == 0)
-                {
-                    BSC.GetComponent<WindowBaseControl>().SetWndState(true);
-                    BSC.PrepareBS();
-                    MobTime = 192;
-                }
-                Text_MobTime.text = "距离下次头脑风暴还剩" + (MobTime / 8) + "周";
-            }
 
             //临时招聘
             TempHireHour -= 1;
@@ -401,7 +413,7 @@ public class GameControl : MonoBehaviour
     }
 
     //员工招聘和移动时部门选择
-    public void ShowDepSelectPanel(Employee emp)
+    public void ShowDepSelectPanel(Employee emp, bool ShowDivision = false)
     {
         DepSelectPanel.GetComponent<WindowBaseControl>().SetWndState(true);
         StandbyButton.SetActive(true);
@@ -420,7 +432,9 @@ public class GameControl : MonoBehaviour
         }
         foreach(DivisionControl div in CurrentDivisions)
         {
-            if (div.Manager != null || div.Locked == true)
+            if(ShowDivision == false)
+                div.DS.gameObject.SetActive(false);
+            else if (div.Manager != null || div.Locked == true)
                 div.DS.gameObject.SetActive(false);
             else
                 div.DS.gameObject.SetActive(true);
@@ -470,12 +484,12 @@ public class GameControl : MonoBehaviour
         }
         else if (SelectMode == 2)
         {
-            if(CurrentEmpInfo.emp.CommandingDivision != null)
+            if(CurrentEmpInfo.emp.CurrentDivision != null)
             {
                 //离任高管投票检测
                 if (EC.ManagerVoteCheck(CurrentEmpInfo.emp, true) == false)
                     return;
-                CurrentEmpInfo.emp.CommandingDivision.SetManager(true);
+                CurrentEmpInfo.emp.CurrentDivision.SetManager(true);
             }
             if (CurrentEmpInfo == CurrentEmpInfo.emp.InfoB)
                 CurrentEmpInfo = CurrentEmpInfo.emp.InfoA;
@@ -506,7 +520,7 @@ public class GameControl : MonoBehaviour
         else if (SelectMode == 2)
         {
             //离任高管投票检测
-            if (CurrentEmpInfo.emp.CommandingDivision != null)
+            if (CurrentEmpInfo.emp.CurrentDivision != null)
             {
                 if (EC.ManagerVoteCheck(CurrentEmpInfo.emp, true) == false)
                     return;
@@ -615,8 +629,8 @@ public class GameControl : MonoBehaviour
             }
             emp.CurrentDep = null;
         }
-        else if (CurrentEmpInfo.emp.CommandingDivision != null)
-            CurrentEmpInfo.emp.CommandingDivision.SetManager(true);
+        else if (CurrentEmpInfo.emp.CurrentDivision != null)
+            CurrentEmpInfo.emp.CurrentDivision.SetManager(true);
     }
 
     //更新资源面板

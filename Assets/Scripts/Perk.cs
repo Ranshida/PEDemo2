@@ -15,6 +15,7 @@ public class Perk
 {
     public int TimeLeft, Num = 0, Level = 1, BaseTime;  //Time单位小时,BaseTime用于可叠加Perk清除层数时重置时间
     public bool canStack = false;//是否可叠加
+    public bool ManagePerk = false;//是否为管理特质
     public string Name, Description;
     public EffectType effectType;
     public PerkColor perkColor = PerkColor.None;
@@ -2141,6 +2142,7 @@ public class Perk135 : Perk
         TimeLeft = -1;
         Num = 135;
         canStack = false;
+        ManagePerk = true;
     }
 
     public override void ImmEffect()
@@ -2164,6 +2166,7 @@ public class Perk136 : Perk
         TimeLeft = -1;
         Num = 136;
         canStack = false;
+        ManagePerk = true;
     }
 
     public override void ImmEffect()
@@ -2187,6 +2190,7 @@ public class Perk137 : Perk
         TimeLeft = -1;
         Num = 137;
         canStack = false;
+        ManagePerk = true;
     }
 
     public override void ImmEffect()
@@ -2210,6 +2214,7 @@ public class Perk138 : Perk
         TimeLeft = -1;
         Num = 138;
         canStack = false;
+        ManagePerk = true;
     }
 
     public override void ImmEffect()
@@ -2233,6 +2238,7 @@ public class Perk139 : Perk
         TimeLeft = -1;
         Num = 139;
         canStack = false;
+        ManagePerk = true;
     }
 
     public override void ImmEffect()
@@ -2256,6 +2262,7 @@ public class Perk140 : Perk
         TimeLeft = -1;
         Num = 140;
         canStack = false;
+        ManagePerk = true;
     }
 
     public override void ImmEffect()
@@ -2279,6 +2286,7 @@ public class Perk141 : Perk
         TimeLeft = -1;
         Num = 141;
         canStack = false;
+        ManagePerk = true;
     }
 
     public override void ImmEffect()

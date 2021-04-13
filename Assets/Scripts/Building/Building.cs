@@ -16,7 +16,8 @@ public class Building : MonoBehaviour
     public string Time_A;                      //建筑功能1的基础生产周期
     public string Result_A;                    //建筑功能1具体效果描述
     public string Require_B;
-    public string BuildingPay;                 //维护费
+    public int MaintainCost;                   //维护费用
+    public int PurchaseCost;                   //购买费用
     public string Manage;                      //占用管理
     public string FaithBonus;                  //信念减益  
     public string WorkStatus_str;              //工作状态
@@ -35,8 +36,6 @@ public class Building : MonoBehaviour
     public int effectValue = 0, effectValue2 = 0;//1技术 2市场 3产品 4观察 5坚韧 6强壮 7管理 8人力 9财务 10决策 11行业 12谋略 13说服 14魅力 15八卦 16行政
     public bool BuildingSet { get; private set; } = false;   //设置完毕不再动
     public bool Moving { get; private set; } = false;        //移动中
-
-    public int Pay;               //维护费用
     public bool CanLottery;    //基础建筑物，可以直接建造
     public bool CanDismantle = true;
 
@@ -63,7 +62,8 @@ public class Building : MonoBehaviour
         Manage = value[ID, 6];
         Size = value[ID, 7];
         EffectRange_str = value[ID, 8];
-        BuildingPay = value[ID, 9];
+        MaintainCost = int.Parse(value[ID, 9]);
+        PurchaseCost = int.Parse(value[ID, 10]);
         Time_A = value[ID, 11];
         FaithBonus = value[ID, 12];
         WorkStatus_str = value[ID, 13];
@@ -82,10 +82,6 @@ public class Building : MonoBehaviour
         //信念减益字符的转化
         if (FaithBonus == "/")
             FaithBonus = "0";
-
-        //维护费转化
-        if (BuildingPay == "/")
-            BuildingPay = "0";
 
         //影响范围转化
         EffectRangeType = int.Parse(EffectRange_str);
@@ -114,7 +110,6 @@ public class Building : MonoBehaviour
         string[] size = Size.Split('×');
         Length = int.Parse(size[0]);
         Width = int.Parse(size[1]);
-        Pay = int.Parse(BuildingPay);
         CanLottery = Str_Type != "基础办公室" && Type != BuildingType.CEO办公室 && Type != BuildingType.人力资源部;
         if (!int.TryParse(EffectRange_str, out EffectRange))
         {

@@ -6,6 +6,8 @@ using UnityEngine.UI;
 
 public class EmpEntity : MonoBehaviour
 {
+    public string EmpName;
+    public int FaceType = 0;
     public Employee ThisEmp
     {
         get
@@ -17,7 +19,6 @@ public class EmpEntity : MonoBehaviour
             return InfoDetail.emp;
         } 
     }
-    public string EmpName;
     private BehaviorTree selfTree;
     public MeshRenderer Renderer { get; private set; }
     public EmpInfo InfoDetail { get; private set; }

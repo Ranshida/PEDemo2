@@ -45,8 +45,8 @@ public class EmpInfo : MonoBehaviour
                 Text_Manage.text = "管理能力:" + emp.Manage;
                 if (emp.CurrentDep != null)
                     Text_DepName.text = emp.CurrentDep.Text_DepName.text;
-                else if (emp.CommandingDivision != null)
-                    Text_DepName.text = emp.CommandingDivision.DivName;
+                else if (emp.CurrentDivision != null)
+                    Text_DepName.text = emp.CurrentDivision.DivName;
                 else
                     Text_DepName.text = "无";
             }
@@ -414,6 +414,15 @@ public class EmpInfo : MonoBehaviour
     void AddRandomPerk()
     {
         float Posb = Random.Range(0.0f, 1.0f);
+
+        //额外的金色特质
+        if (Random.Range(0.0f, 1.0f) < 1)
+        {
+            int num = Random.Range(0, PerkData.GoldenPerkList.Count);
+            Perk perk3 = PerkData.GoldenPerkList[num].Clone();
+            perk3.TargetEmp = emp;
+            AddPerk(perk3, true);
+        }
         //20%几率没特质
         if (Posb < 0.2f)
             return;
@@ -435,20 +444,11 @@ public class EmpInfo : MonoBehaviour
         Perk perk2 = PerkData.PerkList[numB].Clone();
         perk2.TargetEmp = emp;
         AddPerk(perk2, true);
-
-        //额外的金色特质
-        if(Random.Range(0.0f, 1.0f) < 0.02)
-        {
-            numA = Random.Range(0, PerkData.GoldenPerkList.Count);
-            Perk perk3 = PerkData.GoldenPerkList[numA].Clone();
-            perk3.TargetEmp = emp;
-            AddPerk(perk3, true);
-        }
     }
 
     public int CalcSalary()
-    {//暂时定为25
-        return 25;
+    {//暂时定为10
+        return 10;
         //int type = emp.InfoDetail.ST.SkillType;
         //int salary = emp.SalaryExtra + emp.Manage + emp.Skill1 + emp.Skill2 + emp.Skill3 + emp.Observation + emp.Tenacity + emp.Strength
         //     + emp.HR + emp.Finance + emp.Decision + emp.Forecast + emp.Strategy + emp.Convince + emp.Charm + emp.Gossip;

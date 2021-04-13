@@ -44,6 +44,9 @@ public class MonthMeeting : MonoBehaviour
     public void StartMeeting()
     {
         //开始月会
+        //已经开始了就不执行
+        if (MeetingStart == true)
+            return;
         MeetingWindow.SetWndState();
         MeetingStart = true;
         foreach(CompanyItem item in GameControl.Instance.Items)
@@ -57,11 +60,11 @@ public class MonthMeeting : MonoBehaviour
     {
         //统计所有管理成员
         List<Employee> managers = new List<Employee>();
-        foreach (DepControl dep in GameControl.Instance.CurrentDeps)
+        foreach (EmpBSInfo info in GameControl.Instance.BSC.EmpSelectInfos)
         {
-            if (dep.Manager != null)
+            if (info.emp != null)
             {
-                managers.Add(dep.Manager);
+                managers.Add(info.emp);
             }
         }
 
@@ -241,7 +244,6 @@ public class MonthMeeting : MonoBehaviour
     //结算水晶
     public void SettleArea(List<CrystalType> crystals, Area area)
     {
-        MeetingStart = false;
         CrystalPanel.SetWndState(false);
         List<Building> buildings = new List<Building>();
         foreach (Grid grid in area.gridList)
@@ -346,7 +348,9 @@ public class MonthMeeting : MonoBehaviour
     public void EndPutting()
     {
         CrystalPanel.SetWndState(false);
-
+        MeetingStart = false;
+        GameControl.Instance.MonthMeetingTime = 3;
+        GameControl.Instance.CheckButtonName();
         CrystalDict = new Dictionary<CrystalType, int>();
         CrystalDict.Add(CrystalType.White, 0);
         CrystalDict.Add(CrystalType.Orange, 0);
