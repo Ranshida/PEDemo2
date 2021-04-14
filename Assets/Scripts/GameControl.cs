@@ -432,9 +432,9 @@ public class GameControl : MonoBehaviour
         }
         foreach(DivisionControl div in CurrentDivisions)
         {
-            if(ShowDivision == false)
+            if (ShowDivision == false)
                 div.DS.gameObject.SetActive(false);
-            else if (div.Manager != null || div.Locked == true)
+            else if (div.Manager != null || div.Locked == true || div.CurrentDeps.Count == 0)
                 div.DS.gameObject.SetActive(false);
             else
                 div.DS.gameObject.SetActive(true);
@@ -491,9 +491,7 @@ public class GameControl : MonoBehaviour
                     return;
                 CurrentEmpInfo.emp.CurrentDivision.SetManager(true);
             }
-            if (CurrentEmpInfo == CurrentEmpInfo.emp.InfoB)
-                CurrentEmpInfo = CurrentEmpInfo.emp.InfoA;
-            CurrentEmpInfo.transform.parent = StandbyContent;
+            CurrentEmpInfo.emp.InfoA.transform.parent = StandbyContent;
             ResetOldAssignment();
             //CurrentEmpInfo.DetailInfo.Entity.FindWorkPos();
         }
@@ -525,9 +523,7 @@ public class GameControl : MonoBehaviour
                 if (EC.ManagerVoteCheck(CurrentEmpInfo.emp, true) == false)
                     return;
             }
-            if (CurrentEmpInfo == CurrentEmpInfo.emp.InfoB)
-                CurrentEmpInfo = CurrentEmpInfo.emp.InfoA;
-            CurrentEmpInfo.transform.parent = depControl.EmpContent;
+            CurrentEmpInfo.emp.InfoA.transform.parent = depControl.EmpContent;
             ResetOldAssignment();
         }
         //确定部门领导者

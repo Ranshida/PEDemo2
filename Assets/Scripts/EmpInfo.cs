@@ -66,7 +66,6 @@ public class EmpInfo : MonoBehaviour
             if(InfoType == 2)
             {
                 Text_Mentality.text = "心力:" + emp.Mentality;
-                Text_Stamina.text = "体力:" + emp.Stamina;
 
                 if (emp.CurrentDep != null)
                     Text_DepName.text = "所属部门:" + emp.CurrentDep.Text_DepName.text;

@@ -306,7 +306,7 @@ public class DepControl : MonoBehaviour
             CommandingOffice.CheckManage();
         }
         if (CurrentDivision != null)
-            CurrentDivision.CurrentDeps.Remove(this);
+            RemoveDivision();
         Destroy(DS.gameObject);
         Destroy(EmpPanel.gameObject);
         Destroy(DivPanel);
@@ -690,7 +690,7 @@ public class DepControl : MonoBehaviour
             InitMarker("事业部效率+1");
             InitMarker("事业部效率+1");
             InitDoubleMarker("事业部效率+2");
-            Text_WeakEffect.text = "事业部效率-1";
+            Text_WeakEffect.text = "(弱化)事业部效率-1";
             WeakAction = () => { ExtraEfficiency -= 1; };
             UnWeakAction = () => { ExtraEfficiency += 1; };
             ActiveMode = 0;
@@ -699,7 +699,7 @@ public class DepControl : MonoBehaviour
         {
             InitMarker("充能周期:4");
             InitMarker("充能周期:2");
-            Text_WeakEffect.text = "充能周期+1回合";
+            Text_WeakEffect.text = "(弱化)充能周期+1回合";
             WeakAction = () => { ExtraProduceLimit += 1; };
             UnWeakAction = () => { ExtraProduceLimit -= 1; };
             ActiveMode = 2;
@@ -708,7 +708,7 @@ public class DepControl : MonoBehaviour
         {
             InitMarker("充能周期:6");
             InitMarker("充能周期:3");
-            Text_WeakEffect.text = "生产周期+1回合";
+            Text_WeakEffect.text = "(弱化)生产周期+1回合";
             WeakAction = () => { ExtraProduceLimit += 1; };
             UnWeakAction = () => { ExtraProduceLimit -= 1; };
             ActiveMode = 1;
@@ -717,7 +717,7 @@ public class DepControl : MonoBehaviour
         {
             InitDoubleMarker("生产商战牌-迭代");
             InitDoubleMarker("");
-            Text_WeakEffect.text = "事业部效率-2";
+            Text_WeakEffect.text = "(弱化)事业部效率-2";
             ExtraEfficiency = -4;
             WeakAction = () => { ExtraEfficiency -= 2; };
             UnWeakAction = () => { ExtraEfficiency += 2; };
@@ -887,15 +887,27 @@ public class DepControl : MonoBehaviour
     public void SetDivision(DivisionControl DC)
     {
         if (CurrentDivision != null)
-        {
-            CurrentDivision.CurrentDeps.Remove(this);
-            CurrentDivision.DepExtraCheck();
-        }
+            RemoveDivision();
         DivPanel.transform.parent = DC.DepContent;
         DivPanel.gameObject.SetActive(true);
         DC.CurrentDeps.Add(this);
         CurrentDivision = DC;
         CurrentDivision.DepExtraCheck();
+        CurrentDivision.Text_DivName.gameObject.SetActive(true);
+    }
+
+    //从现有的事业部中移除
+    void RemoveDivision()
+    {
+        if (CurrentDivision == null)
+            return;
+        CurrentDivision.CurrentDeps.Remove(this);
+        CurrentDivision.DepExtraCheck();
+        if (CurrentDivision.CurrentDeps.Count == 0)
+        {
+            CurrentDivision.Text_DivName.gameObject.SetActive(false);
+            CurrentDivision.SetManager(true);
+        }
     }
 
 

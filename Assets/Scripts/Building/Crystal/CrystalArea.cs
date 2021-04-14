@@ -15,7 +15,6 @@ public class CrystalArea : MonoBehaviour
     public Area Area;
 
     List<Transform> buttons;
-    Text txt_;        //体力消耗
     public Dictionary<Transform, CrystalType> CrystalDict;
 
     public void Init(CrystalPanel parent, Area area)
@@ -31,7 +30,6 @@ public class CrystalArea : MonoBehaviour
             if (i > 3)
                 buttons[i - 1].gameObject.SetActive(false);
         }
-        txt_ = transform.Find("Text").GetComponent<Text>();
 
         CrystalDict = new Dictionary<Transform, CrystalType>();
         foreach (Transform item in buttons)
@@ -43,7 +41,7 @@ public class CrystalArea : MonoBehaviour
 
     private void Update()
     {
-        transform.position = Function.World2ScreenPoint(Area.topPosition + new Vector3(0, 0, 5));
+        transform.position = Function.World2ScreenPoint(Area.topPosition + new Vector3(3, 0, 7));
         int count = 0;
         BlueCount = 0;
         GrayCount = 0;
@@ -67,7 +65,6 @@ public class CrystalArea : MonoBehaviour
             else if (type == CrystalType.Black)
                 BlackCount++;
         }
-        txt_.text = "区域体力：+" + count + "0/月";
     }
 
     public void SelectCrystal(Transform self)

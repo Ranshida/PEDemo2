@@ -219,8 +219,20 @@ public class CrystalPanel : WindowRoot
         {
             SetWndState(false);
             Areas.gameObject.SetActive(false);
+            foreach (DivisionControl div in GameControl.Instance.CurrentDivisions)
+            {
+                div.Text_Status.gameObject.SetActive(false);
+                div.StatusShowed = false;
+            }
         }
-        else 
+        else
+        {
             SetWndState();
+            foreach (DivisionControl div in GameControl.Instance.CurrentDivisions)
+            {
+                div.Text_Status.gameObject.SetActive(true);
+                div.StatusShowed = true;
+            }
+        }
     }
 }
