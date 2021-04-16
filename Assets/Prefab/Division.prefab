@@ -2127,11 +2127,16 @@ MonoBehaviour:
   Faith: 0
   Efficiency: 0
   ExtraEfficiency: 0
+  ExtraManage: 0
   WorkStatus: 0
+  ExtraCost: 0
+  ExtraProduceTime: 0
+  ExtraExp: 0
   DivName: 
   canWork: 1
   Locked: 0
   StatusShowed: 0
+  GC: {fileID: 0}
   DS: {fileID: 0}
   DetailPanel: {fileID: 2240367578400681490}
   PerkContent: {fileID: 1129530101776680145}

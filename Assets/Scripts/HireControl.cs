@@ -121,7 +121,7 @@ public class HireControl : MonoBehaviour
         ED.emp.InfoB = EI2;
         ED.emp.InfoDetail = ED;
         ED.emp.InitRelation();
-        GC.HourEvent.AddListener(ED.emp.TimePass);
+        GC.TurnEvent.AddListener(ED.emp.TimePass);
         ED.Text_Name.text = ED.emp.Name;
 
         //创建员工实体
@@ -183,7 +183,7 @@ public class HireControl : MonoBehaviour
         EI2.DetailInfo = ED;
         emp.InitRelation();
         //创建特质和技能
-        ED.InitStrategy();
+        ED.InitStrategyAndPerk();
 
         //创建员工实体
         ED.Entity = EmpManager.Instance.CreateEmp(BuildingManage.Instance.ExitPos.position);

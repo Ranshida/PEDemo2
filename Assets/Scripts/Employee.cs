@@ -6,9 +6,20 @@ public enum ProfessionType
 {//{1, 2, 3, 8, 9, 11, 12, 13, 15, 16};//Nst:几个专业技能对应的编号
     技术, 市场, 产品, 观察, 坚韧, 强壮, 管理, 人力, 财务, 决策, 行业, 谋略, 说服, 魅力, 八卦, 行政
 }
+
+public enum OccupationType
+{
+    超级黑客, 神秘打工仔, 大企业中层, 海盗, 大学毕业生, 论坛版主, 独立开发者, 键盘艺术家, 酒保
+}
+
 public enum EColor
 {//L开头为对应1级浅色情绪
     White, Gray, LYellow, LRed, LBlue, LOrange, LPurple, LGreen, Yellow, Red, Blue, Orange, Purple, Green, None
+}
+
+public enum Ambition
+{
+    专家, 高管, 打工人, 无
 }
 
 public class Emotion
@@ -145,8 +156,8 @@ public class Employee
     public int MentalityLimit { get { return 100 + (Tenacity * 5) + MentalityLimitExtra; } set { MentalityLimit = value; } } // 心力上限
     public int StaminaLimitExtra = 0; //体力上限额外值
     public int MentalityLimitExtra = 0; //心力上限额外值
-    public int SchoolType, MajorType;//初始学校和专业类型
-    public int ExtraExp = 0;//升级所需的额外经验
+    public int Exp = 0;//升级所需的经验
+    public int ExtraExp = 0;//每回合获得的经验
 
     public int SalaryExtra = 0, Age, EventTime, ObeyTime, NoPromotionTime = 0, NoMarriageTime = 0,
         VacationTime = 0, SpyTime = 0, CoreMemberTime;//放假时间、间谍时间、核心成员说服CD时间
@@ -155,8 +166,11 @@ public class Employee
     public int SkillLimitTime;//头脑风暴中技能禁用的回合数
     public int NewRelationTargetTime = 1;
     public float ExtraSuccessRate = 0, SalaryMultiple = 1.0f;
+    public OccupationType Occupation;
+    public Ambition ambition;
 
-    public List<int> Professions = new List<int>();//用于保存员工的三个行业技能的类型
+    public List<int> Professions = new List<int>();//员工的岗位优势
+    public List<int[]> CurrentDices = new List<int[]>();//员工的骰子
     public int[] CharacterTendency = new int[4];//(0文化 -独裁 +开源) (1信仰-机械 +人文) (2道德-功利主义 +绝对律令) (3行事-随心所欲 +严格守序)
     public int[] CurrentSkillType = new int[3];
     public float[] Character = new float[5]; //0文化 1信仰 2道德 3行事 4信念
@@ -183,22 +197,6 @@ public class Employee
     //初始化员工属性
     public void InitStatus()
     {
-        int[] Nst = {1, 2, 3, 8, 9, 11, 12, 13, 15, 16};//Nst:几个专业技能对应的编号
-        int r1 = Random.Range(0, 10), r2 = Random.Range(0, 10), r3 = Random.Range(0, 10);
-        while (r1 == r2)
-        {
-            r2 = Random.Range(0, 10);
-        }
-        while (r3 == r2 || r3 == r1)
-            r3 = Random.Range(0, 10);
-
-        r1 = Nst[r1];
-        r2 = Nst[r2];
-        r3 = Nst[r3];
-        Professions.Add(r1);
-        Professions.Add(r2);
-        Professions.Add(r3);
-
         float YearPosb = Random.Range(0.0f, 1.0f);
         int WorkYear = 0;
         if (YearPosb < 0.6f)
@@ -209,14 +207,8 @@ public class Employee
             WorkYear = Random.Range(8, 15);
 
         Age = 20 + WorkYear;
-        //随机出身
 
-        //1.随机学校
-        SchoolType = Random.Range(1, 4);
-
-        //2.随机专业
-        MajorType = Random.Range(0, 10);
-
+        RandomOccupation();
         //设定姓名并检查是否重名
         bool nameCheck = false;
         while (nameCheck == false)
@@ -254,8 +246,6 @@ public class Employee
         isCEO = true;
         Age = 24;
         Name = "X";
-        Tenacity = 3;
-        Strength = 3;
 
         //确定倾向
         for (int i = 0; i < 5; i++)
@@ -272,35 +262,93 @@ public class Employee
         CheckCharacter();
         EventTime = 8;
 
-        int[] Nst = { 1, 2, 3, 8, 9, 11, 12, 13, 15, 16 };//Nst:几个专业技能对应的编号
-        int r1 = Random.Range(0, 10), r2 = Random.Range(0, 10), r3 = Random.Range(0, 10);
-        while (r1 == r2)
-        {
-            r2 = Random.Range(0, 10);
-        }
-        while (r3 == r2 || r3 == r1)
-            r3 = Random.Range(0, 10);
-
-        r1 = Nst[r1];
-        r2 = Nst[r2];
-        r3 = Nst[r3];
-        Professions.Add(r1);
-        Professions.Add(r2);
-        Professions.Add(r3);
-
-        //随机学校
-        SchoolType = 2;
-
-        //随机专业
-        MajorType = Random.Range(0, 10);
-        MajorType = Nst[MajorType];
+        RandomOccupation();
 
         Stamina = StaminaLimit;
         Mentality = MentalityLimit;
     }
 
+    //随机一个职业和志向
+    void RandomOccupation(int type = -1)
+    {
+        int num;
+        if (type != -1)
+            num = type;
+        else
+            num = Random.Range(0, 2);
+
+        if (num == 0)
+        {
+            Occupation = OccupationType.超级黑客;
+            Professions.Add(1);
+            Professions.Add(12);
+            CurrentDices.Add(new int[6] { 3, 3, 3, 3, -1, -1 });
+            CurrentDices.Add(new int[6] { 3, 3, 3, 3, -1, -1 });
+        }
+        else if (num == 1)
+        {
+            Occupation = OccupationType.神秘打工仔;
+            CurrentDices.Add(new int[6] { 1, 1, 1, 1, -1, -1 });
+            CurrentDices.Add(new int[6] { 0, 0, 0, 0, -1, -1 });
+            CurrentDices.Add(new int[6] { 5, 5, 5, 5, -1, -1 });
+        }
+        else if (num == 2)
+        {
+            Occupation = OccupationType.大企业中层;
+            Professions.Add(16);
+            CurrentDices.Add(new int[6] { 2, 2, 2, 2, -1, -1 });
+            CurrentDices.Add(new int[6] { 4, 4, 4, 4, -1, -1 });
+        }
+        else if (num == 3)
+        {
+            Occupation = OccupationType.海盗;
+            Professions.Add(9);
+            CurrentDices.Add(new int[6] { 1, 1, 1, 1, -1, -1 });
+            CurrentDices.Add(new int[6] { 0, 0, 0, 0, -1, -1 });
+        }
+        else if (num == 4)
+        {
+            Occupation = OccupationType.大学毕业生;
+            Professions.Add(2);
+            CurrentDices.Add(new int[6] { 4, 4, 4, 4, -1, -1 });
+            CurrentDices.Add(new int[6] { 3, 3, 3, 3, -1, -1 });
+        }
+        else if (num == 5)
+        {
+            Occupation = OccupationType.论坛版主;
+            Professions.Add(11);
+            Professions.Add(15);
+            CurrentDices.Add(new int[6] { 0, 0, 0, 0, -1, -1 });
+            CurrentDices.Add(new int[6] { 5, 5, 5, 5, -1, -1 });
+        }
+        else if (num == 6)
+        {
+            Occupation = OccupationType.独立开发者;
+            Professions.Add(3);
+            CurrentDices.Add(new int[6] { 2, 2, 2, 2, -1, -1 });
+            CurrentDices.Add(new int[6] { 3, 3, 3, 3, -1, -1 });
+        }
+        else if (num == 7)
+        {
+            Occupation = OccupationType.键盘艺术家;
+            Professions.Add(13);
+            CurrentDices.Add(new int[6] { 4, 4, 4, 4, -1, -1 });
+            CurrentDices.Add(new int[6] { 4, 4, 4, 4, -1, -1 });
+        }
+        else if (num == 8)
+        {
+            Occupation = OccupationType.酒保;
+            Professions.Add(8);
+            CurrentDices.Add(new int[6] { 2, 2, 2, 2, -1, -1 });
+        }
+
+        num = Random.Range(0, 4);
+        ambition = (Ambition)num;
+    }
+
     public void GainExp(int value, int type)
     {
+        Exp += value;
         //上司经验获取
         if (CurrentDep != null && CurrentDep.CommandingOffice != null)
         {
@@ -534,76 +582,94 @@ public class Employee
     //时间流逝后部分基础属性判定
     public void TimePass()
     {
-        EventTimePass();
-        //假期计时
-        if (VacationTime > 0)
+        if (InfoDetail.MainEmotion != null)
         {
-            VacationTime -= 1;
-            Stamina += 2;
-            if (VacationTime == 0)
-                EndVacation();
-        }
-        //核心成员说服CD倒计时
-        if (CoreMemberTime > 0)
-            CoreMemberTime -= 1;
-        //间谍时间倒计时
-        if (SpyTime > 0)
-        {
-            SpyTime -= 1;
-            if (SpyTime == 0)
-                InfoDetail.Entity.SetFree();
+            InfoDetail.MainEmotion.TimeLeft -= 1;
+            if (InfoDetail.MainEmotion.TimeLeft == 0)
+            {
+                CurrentEmotions.Remove(InfoDetail.MainEmotion.E);
+                InfoDetail.EmotionInfos.Remove(InfoDetail.MainEmotion);
+                InfoDetail.MainEmotion.Active = false;
+                InfoDetail.MainEmotion.gameObject.SetActive(false);
+            }
         }
 
-        if (CurrentDep == null)
-            NoPromotionTime += 1;
-        else if (CurrentDep.building.Type != BuildingType.CEO办公室 || CurrentDep.building.Type != BuildingType.高管办公室)
-            NoPromotionTime += 1;
+        //额外获取经验的结算
+        if (ExtraExp > 0)
+            GainExp(ExtraExp, 0);
 
-        if (Lover == null)
-            NoMarriageTime += 1;
-        else if (FindRelation(Lover).LoveValue < 3)
-            NoMarriageTime += 1;
+        #region 旧时间判定
+        //EventTimePass();
+        ////假期计时
+        //if (VacationTime > 0)
+        //{
+        //    VacationTime -= 1;
+        //    Stamina += 2;
+        //    if (VacationTime == 0)
+        //        EndVacation();
+        //}
+        ////核心成员说服CD倒计时
+        //if (CoreMemberTime > 0)
+        //    CoreMemberTime -= 1;
+        ////间谍时间倒计时
+        //if (SpyTime > 0)
+        //{
+        //    SpyTime -= 1;
+        //    if (SpyTime == 0)
+        //        InfoDetail.Entity.SetFree();
+        //}
 
-        //清除Items
-        if (CurrentItems.Count > 0)
-        {
-            List<EmpItem> DesItems = new List<EmpItem>();
-            for (int i = 0; i < CurrentItems.Count; i++)
-            {
-                if (CurrentItems[i].TimeLeft > 0)
-                    CurrentItems[i].TimeLeft -= 1;
-                if (CurrentItems[i].TimeLeft == 0)
-                    DesItems.Add(CurrentItems[i]);
-            }
-            for(int i = 0; i < DesItems.Count; i++)
-            {
-                CurrentItems.Remove(DesItems[i]);
-            }
-            DesItems.Clear();
-        }
-        //计算经验加成
-        if(CurrentBuffs.Count > 0)
-        {
-            List<EmpBuff> RemoveBonus = new List<EmpBuff>();
-            foreach(EmpBuff buff in CurrentBuffs)
-            {
-                if (buff.Type < 16)
-                    GainExp(buff.Value, buff.Type);
-                buff.Time -= 1;
-                if (buff.Time <= 0)
-                    RemoveBonus.Add(buff);
-            }
-            foreach(EmpBuff buff in RemoveBonus)
-            {
-                if (buff.Type == 16)
-                {
-                    StaminaLimitExtra -= buff.Value;
-                    Stamina += 0;
-                }
-                CurrentBuffs.Remove(buff);
-            }
-            RemoveBonus.Clear();
-        }
+        //if (CurrentDep == null)
+        //    NoPromotionTime += 1;
+        //else if (CurrentDep.building.Type != BuildingType.CEO办公室 || CurrentDep.building.Type != BuildingType.高管办公室)
+        //    NoPromotionTime += 1;
+
+        //if (Lover == null)
+        //    NoMarriageTime += 1;
+        //else if (FindRelation(Lover).LoveValue < 3)
+        //    NoMarriageTime += 1;
+
+        ////清除Items
+        //if (CurrentItems.Count > 0)
+        //{
+        //    List<EmpItem> DesItems = new List<EmpItem>();
+        //    for (int i = 0; i < CurrentItems.Count; i++)
+        //    {
+        //        if (CurrentItems[i].TimeLeft > 0)
+        //            CurrentItems[i].TimeLeft -= 1;
+        //        if (CurrentItems[i].TimeLeft == 0)
+        //            DesItems.Add(CurrentItems[i]);
+        //    }
+        //    for(int i = 0; i < DesItems.Count; i++)
+        //    {
+        //        CurrentItems.Remove(DesItems[i]);
+        //    }
+        //    DesItems.Clear();
+        //}
+        ////计算经验加成
+        //if(CurrentBuffs.Count > 0)
+        //{
+        //    List<EmpBuff> RemoveBonus = new List<EmpBuff>();
+        //    foreach(EmpBuff buff in CurrentBuffs)
+        //    {
+        //        if (buff.Type < 16)
+        //            GainExp(buff.Value, buff.Type);
+        //        buff.Time -= 1;
+        //        if (buff.Time <= 0)
+        //            RemoveBonus.Add(buff);
+        //    }
+        //    foreach(EmpBuff buff in RemoveBonus)
+        //    {
+        //        if (buff.Type == 16)
+        //        {
+        //            StaminaLimitExtra -= buff.Value;
+        //            Stamina += 0;
+        //        }
+        //        CurrentBuffs.Remove(buff);
+        //    }
+        //    RemoveBonus.Clear();
+        //}
+        #endregion
     }
 
     //事件相关时间判定
@@ -830,7 +896,8 @@ public class Employee
         }
         else if (C == EColor.Yellow || C == EColor.Red || C == EColor.Blue || C == EColor.Orange || C == EColor.Purple || C == EColor.Green)
         {
-
+            InfoDetail.SetMainEmotion(C);
+            return;
         }
         InfoDetail.AddEmotionInfo(new Emotion(C));
 

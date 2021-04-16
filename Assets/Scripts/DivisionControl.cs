@@ -9,13 +9,18 @@ public class DivisionControl : MonoBehaviour
     public int Faith = 0;//事业部信念
     public int Efficiency = 0;//事业部效率
     public int ExtraEfficiency = 0;//部门提供的额外效率
+    public int ExtraManage = 0;//部门提供的额外高管管理能力加成
     public int WorkStatus = 0;//事业部工作状态
+    public int ExtraCost = 0;//额外成本加成
+    public int ExtraProduceTime = 0;//额外生产周期加成
+    public int ExtraExp = 0;//每回合为管理下的部门的员工额外提供的经验值
     public string DivName;
     public bool canWork = true;
     public bool Locked = false;//事业部是否处于未解锁状态
     public bool StatusShowed = false;//是否显示信息面板
     private bool DetailPanelShowed = false;//是否显示详细信息面板
 
+    public GameControl GC;
     public DepSelect DS;
     public GameObject DetailPanel;
     public Transform PerkContent, DepContent;
@@ -67,7 +72,7 @@ public class DivisionControl : MonoBehaviour
                 Text_Manager.text = "当前高管:无";
 
             int empCost = CalcCost(1), depCost = CalcCost(2);
-            Text_Cost.text = "成本:" + (empCost + depCost) + "/回合\n\n员工工资:" + empCost + "/回合\n建筑维护费:" + depCost + "/回合";
+            Text_Cost.text = "成本:" + (empCost + depCost + ExtraCost) + "/回合\n\n员工工资:" + empCost + "/回合\n建筑维护费:" + depCost + "/回合";
 
             //效率和工作状态调填充
             if (ExtraEfficiency + Efficiency < 0)
@@ -190,8 +195,15 @@ public class DivisionControl : MonoBehaviour
         foreach (DepControl dep in CurrentDeps)
         {
             dep.Produce();
+            if(ExtraExp > 0)
+            {
+                foreach(Employee emp in dep.CurrentEmps)
+                {
+                    emp.GainExp(ExtraExp, 0);
+                }
+            }
         }
-
+        GC.Money -= (CalcCost(1) + CalcCost(2) + ExtraCost);
     }
 
     public void SetDetailPanel(bool showed)
@@ -206,7 +218,14 @@ public class DivisionControl : MonoBehaviour
         if(RemoveManager == true)
         {
             if (Manager != null)
+            {
+                foreach (PerkInfo perk in Manager.InfoDetail.PerksInfo)
+                {
+                    if (perk.CurrentPerk.DivisionPerk == true)
+                        perk.CurrentPerk.DeActiveSpecialEffect();
+                }
                 Manager.CurrentDivision = null;
+            }
             Manager = null;
             Text_DivName.color = Color.red;
         }
@@ -216,6 +235,11 @@ public class DivisionControl : MonoBehaviour
             Manager = emp;
             emp.CurrentDivision = this;
             Text_DivName.color = Color.black;
+            foreach(PerkInfo perk in Manager.InfoDetail.PerksInfo)
+            {
+                if (perk.CurrentPerk.DivisionPerk == true)
+                    perk.CurrentPerk.ActiveSpecialEffect();
+            }
         }
     }
 

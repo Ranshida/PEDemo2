@@ -46,7 +46,7 @@ public class DepControl : MonoBehaviour
     public DepSelect DS;
     public DepControl CommandingOffice;
     public DivisionControl CurrentDivision;
-    public Text Text_DepName, Text_DepName2, Text_DepName3, Text_WeakEffect, Text_InfoProgress, Text_DivProgress;
+    public Text Text_DepName, Text_DepName2, Text_DepName3, Text_WeakEffect, Text_InfoProgress, Text_DivProgress, Text_DepFunction;
 
     public List<Employee> CurrentEmps = new List<Employee>();
     public List<DepControl> InRangeOffices = new List<DepControl>();
@@ -99,10 +99,10 @@ public class DepControl : MonoBehaviour
             //基础经验获取
             EmpsGetExp();
             //进度增加
-            if (SpProgress < (ProducePointLimit + ExtraProduceLimit))
+            if (SpProgress < (ProducePointLimit + ExtraProduceLimit + CurrentDivision.ExtraProduceTime))
                 SpProgress += 1;
 
-            if (SpProgress >= (ProducePointLimit + ExtraProduceLimit))
+            if (SpProgress >= (ProducePointLimit + ExtraProduceLimit + CurrentDivision.ExtraProduceTime))
             {
                 #region 旧生产判定
                 ////完成生产
@@ -174,13 +174,13 @@ public class DepControl : MonoBehaviour
     {
         if(ActiveMode == 1)
         {
-            Text_InfoProgress.text = "生产进度:" + SpProgress + "/" + (ProducePointLimit + ExtraProduceLimit);
-            Text_DivProgress.text = "生产进度:" + SpProgress + "/" + (ProducePointLimit + ExtraProduceLimit);
+            Text_InfoProgress.text = "生产进度:" + SpProgress + "/" + (ProducePointLimit + ExtraProduceLimit + CurrentDivision.ExtraProduceTime);
+            Text_DivProgress.text = "生产进度:" + SpProgress + "/" + (ProducePointLimit + ExtraProduceLimit + CurrentDivision.ExtraProduceTime);
         }
         else if (ActiveMode == 2 || ActiveMode == 3 || ActiveMode == 4)
         {
-            Text_InfoProgress.text = "充能进度:" + SpProgress + "/" + (ProducePointLimit + ExtraProduceLimit);
-            Text_DivProgress.text = "充能进度:" + SpProgress + "/" + (ProducePointLimit + ExtraProduceLimit);
+            Text_InfoProgress.text = "充能进度:" + SpProgress + "/" + (ProducePointLimit + ExtraProduceLimit + CurrentDivision.ExtraProduceTime);
+            Text_DivProgress.text = "充能进度:" + SpProgress + "/" + (ProducePointLimit + ExtraProduceLimit + CurrentDivision.ExtraProduceTime);
         }
     }
 
@@ -691,6 +691,7 @@ public class DepControl : MonoBehaviour
             InitMarker("事业部效率+1");
             InitDoubleMarker("事业部效率+2");
             Text_WeakEffect.text = "(弱化)事业部效率-1";
+            Text_DepFunction.text = "提高事业部效率";
             WeakAction = () => { ExtraEfficiency -= 1; };
             UnWeakAction = () => { ExtraEfficiency += 1; };
             ActiveMode = 0;
@@ -700,6 +701,7 @@ public class DepControl : MonoBehaviour
             InitMarker("充能周期:4");
             InitMarker("充能周期:2");
             Text_WeakEffect.text = "(弱化)充能周期+1回合";
+            Text_DepFunction.text = "充能后指定1名员工恢复20心力";
             WeakAction = () => { ExtraProduceLimit += 1; };
             UnWeakAction = () => { ExtraProduceLimit -= 1; };
             ActiveMode = 2;
@@ -709,6 +711,7 @@ public class DepControl : MonoBehaviour
             InitMarker("充能周期:6");
             InitMarker("充能周期:3");
             Text_WeakEffect.text = "(弱化)生产周期+1回合";
+            Text_DepFunction.text = "生产“管理咨询报告”物品";
             WeakAction = () => { ExtraProduceLimit += 1; };
             UnWeakAction = () => { ExtraProduceLimit -= 1; };
             ActiveMode = 1;
@@ -718,6 +721,7 @@ public class DepControl : MonoBehaviour
             InitDoubleMarker("生产商战牌-迭代");
             InitDoubleMarker("");
             Text_WeakEffect.text = "(弱化)事业部效率-2";
+            Text_DepFunction.text = "生产商战牌-迭代";
             ExtraEfficiency = -4;
             WeakAction = () => { ExtraEfficiency -= 2; };
             UnWeakAction = () => { ExtraEfficiency += 2; };

@@ -335,7 +335,7 @@ public class CEOControl : MonoBehaviour
             }
             else if (CEOSkillNum == 17)
             {
-                Target.InfoDetail.AddPerk(new Perk41(Target), true);
+                //Target.InfoDetail.AddPerk(new Perk41(Target), true);
             }
             else if (CEOSkillNum == 18)
             {

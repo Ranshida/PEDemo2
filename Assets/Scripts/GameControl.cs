@@ -59,6 +59,7 @@ public class GameControl : MonoBehaviour
         }
     }
     public int Turn = 1;//当前回合数
+    public int ItemLimit = 6;//物品数量限制
 
     #region 杂项变量
     [HideInInspector] public bool ProduceBuffBonus = false;//“精进”和“团结”状态的持续时间提高至4m战略效果
@@ -106,7 +107,7 @@ public class GameControl : MonoBehaviour
     public int[] FinishedTask = new int[10];//0程序迭代 1技术研发 2可行性调研 3传播 4营销文案 5资源拓展 6原型图 7产品研究 8用户访谈 9已删除
 
     int Year = 1, Month = 1, Week = 1, Day = 1, Hour = 1, morale = 50;
-    int TempHireHour = 64;//临时的每2月刷新一次招聘
+    int TempHireHour = 3;//临时的每2月刷新一次招聘
     float Timer, MoneyCalcTimer;
     bool TimePause = false; //现在仅用来判断是否处于下班状态，用于其他功能时需检查WorkEndCheck()和WeekStart
 
@@ -177,6 +178,14 @@ public class GameControl : MonoBehaviour
         Turn += 1;
         MonthMeetingTime -= 1;
 
+        //临时招聘
+        TempHireHour -= 1;
+        if (TempHireHour == 0)
+        {
+            TempHireHour = 3;
+            HC.AddHireTypes(new HireType());
+        }
+
         Text_Time.text = "第" + Turn + "回合";
         Text_MonthMeetingTime.text = "距离下次月会还剩" + MonthMeetingTime + "回合";
 
@@ -223,14 +232,6 @@ public class GameControl : MonoBehaviour
             //开会封锁时间
             if (MeetingBlockTime > 0)
                 MeetingBlockTime -= 1;
-
-            //临时招聘
-            TempHireHour -= 1;
-            if(TempHireHour == 0)
-            {
-                TempHireHour = 64;
-                HC.AddHireTypes(new HireType());
-            }
         }
         //加班时间只进行工作和事件计算
         else if (WorkOverTime == true && Hour > 8)
@@ -574,6 +575,11 @@ public class GameControl : MonoBehaviour
             CurrentEmpInfo.emp.CurrentDep = depControl;
             depControl.CurrentEmps.Add(CurrentEmpInfo.emp);
             CurrentEmpInfo.emp.CurrentDep.EmpMove(false);
+            foreach(PerkInfo perk in CurrentEmpInfo.emp.InfoDetail.PerksInfo)
+            {
+                if (perk.CurrentPerk.DepPerk == true)
+                    perk.CurrentPerk.ActiveSpecialEffect();
+            }
             //调动信息历史添加
             CurrentEmpInfo.emp.InfoDetail.AddHistory("调动至" + depControl.Text_DepName.text);
             if (CurrentEmpInfo.emp.isCEO == false)
@@ -607,6 +613,11 @@ public class GameControl : MonoBehaviour
             emp = CurrentEmpInfo.emp;
         if (emp.CurrentDep != null)
         {
+            foreach (PerkInfo perk in emp.InfoDetail.PerksInfo)
+            {
+                if (perk.CurrentPerk.DepPerk == true)
+                    perk.CurrentPerk.DeActiveSpecialEffect();
+            }
             emp.CurrentDep.CurrentEmps.Remove(emp);
             //修改生产力显示
             emp.CurrentDep.UpdateUI();
@@ -766,7 +777,7 @@ public class GameControl : MonoBehaviour
     public void CreateItem(int num)
     {
         //不能持有超过6个物品
-        if (Items.Count >= 6)
+        if (Items.Count >= ItemLimit)
             return;
         else
         {

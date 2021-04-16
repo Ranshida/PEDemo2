@@ -888,7 +888,7 @@ public class Event3_1 : Event
         Target.Mentality -= 10;
         for (int i = 0; i < 4; i++)
         {
-            Self.InfoDetail.AddPerk(new Perk49(Self), true);
+            //Self.InfoDetail.AddPerk(new Perk49(Self), true);
         }
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "与同事" + Target.Name + "对于某个工作细节产生分歧，";
         ResultText += "双方互相不停指责,获得事件状态 悔恨*4，双方心力下降10点";
@@ -970,14 +970,14 @@ public class Event3_2 : Event
         {
             for (int i = 0; i < 4; i++)
             {
-                Self.InfoDetail.AddPerk(new Perk49(Self), true);
+                //Self.InfoDetail.AddPerk(new Perk49(Self), true);
                 //Target.InfoDetail.AddPerk(new Perk49(Target), true);
             }
         }else if(EmpManager.Instance.FindBoss(Target) == Self)
         {
             for (int i = 0; i < 4; i++)
             {
-                Target.InfoDetail.AddPerk(new Perk49(Target), true);
+                //Target.InfoDetail.AddPerk(new Perk49(Target), true);
             }
         }
         if (EmpManager.Instance.FindBoss(Self) == Target)
@@ -1147,8 +1147,8 @@ public class Event3_4 : Event
         base.Failure(Posb);
         for (int i = 0; i < 3; i++)
         {
-            Self.InfoDetail.AddPerk(new Perk49(Self), true);
-            Target.InfoDetail.AddPerk(new Perk49(Target), true);
+            //Self.InfoDetail.AddPerk(new Perk49(Self), true);
+            //Target.InfoDetail.AddPerk(new Perk49(Target), true);
         }
         Self.Mentality -= 3;
         Target.Mentality -= 3;
@@ -1221,7 +1221,7 @@ public class Event3_5 : Event
     public override void Success(float Posb)
     {
         base.Success(Posb);
-        Self.InfoDetail.AddPerk(new Perk47(Self), true);
+        //Self.InfoDetail.AddPerk(new Perk47(Self), true);
         bool huiyishi = false;
         for (int i = 0; i < GC.CurrentDeps.Count; i++)
         {
@@ -1251,8 +1251,8 @@ public class Event3_5 : Event
     public override void Failure(float Posb)
     {
         base.Failure(Posb);
-        Self.InfoDetail.AddPerk(new Perk51(Self), true);
-        Target.InfoDetail.AddPerk(new Perk51(Target), true);
+        //Self.InfoDetail.AddPerk(new Perk51(Self), true);
+        //Target.InfoDetail.AddPerk(new Perk51(Target), true);
         Self.Mentality -= 7;
         Target.Mentality -= 7;
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "与同事" + Target.Name + "一起讨论了工作，";
@@ -1331,7 +1331,7 @@ public class Event3_6 : Event
         {
             for (int i = 0; i < 2; i++)
             {
-                Self.InfoDetail.AddPerk(new Perk47(Self), true);
+                //Self.InfoDetail.AddPerk(new Perk47(Self), true);
                 //Target.InfoDetail.AddPerk(new Perk47(Target), true);
             }
         }
@@ -1339,12 +1339,12 @@ public class Event3_6 : Event
         {
             for (int i = 0; i < 2; i++)
             {
-                Target.InfoDetail.AddPerk(new Perk47(Target), true);
+                //Target.InfoDetail.AddPerk(new Perk47(Target), true);
             }
         }
         for (int i = 0; i < 2; i++)
         {
-            Self.InfoDetail.AddPerk(new Perk47(Self), true);
+            //Self.InfoDetail.AddPerk(new Perk47(Self), true);
             //Target.InfoDetail.AddPerk(new Perk47(Target), true);
         }
         bool huiyishi = false;
@@ -1511,7 +1511,7 @@ public class Event3_7 : Event
         {
             for (int i = 0; i < 4; i++)
             {
-                Self.InfoDetail.AddPerk(new Perk47(Self), true);
+                //Self.InfoDetail.AddPerk(new Perk47(Self), true);
                 //Target.InfoDetail.AddPerk(new Perk47(Target), true);
             }
         }
@@ -1519,7 +1519,7 @@ public class Event3_7 : Event
         {
             for (int i = 0; i < 4; i++)
             {
-                Target.InfoDetail.AddPerk(new Perk47(Target), true);
+                //Target.InfoDetail.AddPerk(new Perk47(Target), true);
             }
         }
         bool huiyishi = false;
@@ -1567,8 +1567,8 @@ public class Event3_7 : Event
     public override void Failure(float Posb)
     {
         base.Failure(Posb);
-        Self.InfoDetail.AddPerk(new Perk51(Self), true);
-        Target.InfoDetail.AddPerk(new Perk51(Target), true);
+        //Self.InfoDetail.AddPerk(new Perk51(Self), true);
+        //Target.InfoDetail.AddPerk(new Perk51(Target), true);
         Self.Mentality -= 3;
         Target.Mentality -= 3;
         if (EmpManager.Instance.FindBoss(Self) == Target)
@@ -1650,7 +1650,7 @@ public class Event3_8 : Event
         base.Success(Posb);
         for (int i = 0; i < 2; i++)
         {
-            Self.InfoDetail.AddPerk(new Perk47(Self), true);
+            //Self.InfoDetail.AddPerk(new Perk47(Self), true);
             //Target.InfoDetail.AddPerk(new Perk47(Target), true);
         }
         bool huiyishi = false;
@@ -1682,8 +1682,8 @@ public class Event3_8 : Event
     public override void Failure(float Posb)
     {
         base.Failure(Posb);
-        Self.InfoDetail.AddPerk(new Perk51(Self), true);
-        Target.InfoDetail.AddPerk(new Perk51(Target), true);
+        //Self.InfoDetail.AddPerk(new Perk51(Self), true);
+        //Target.InfoDetail.AddPerk(new Perk51(Target), true);
         Self.Mentality -= 3;
         Target.Mentality -= 3;
         ResultText = Self.Name + "约同事" + Target.Name + "商量工作计划";
@@ -1718,14 +1718,14 @@ public class Event3_9 : Event
     public override void Success(float Posb)
     {
         base.Success(Posb);
-        Self.InfoDetail.AddPerk(new Perk51(Self), true);
+        //Self.InfoDetail.AddPerk(new Perk51(Self), true);
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "独自工作遇到瓶颈";
         ResultText += "只好绕过问题，获得事件状态 困惑*1";
     }
     public override void Failure(float Posb)
     {
         base.Failure(Posb);
-        Self.InfoDetail.AddPerk(new Perk49(Self), true);
+        //Self.InfoDetail.AddPerk(new Perk49(Self), true);
         Self.Mentality -= 5;
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "独自工作遇到瓶颈";
         ResultText += "导致无法有效推进，获得事件状态 悔恨*1，心力下降5点";
@@ -1780,7 +1780,7 @@ public class Event3_10 : Event
     public override void Success(float Posb)
     {
         base.Success(Posb);
-        Self.InfoDetail.AddPerk(new Perk51(Self), true);
+        //Self.InfoDetail.AddPerk(new Perk51(Self), true);
         
         ResultText = "由于" + perkUsedName + "的情绪在" + Self.Name + "心中的持续酝酿，" + Self.Name + "渐渐感到对公司不满，获得事件状态 不满*1，消除事件状态" + perkUsedName + "×1";
     }
@@ -1838,7 +1838,7 @@ public class Event3_11 : Event
     public override void Success(float Posb)
     {
         base.Success(Posb);
-        Self.InfoDetail.AddPerk(new Perk3(Self), true);
+        //Self.InfoDetail.AddPerk(new Perk3(Self), true);
         ResultText = "在" + SelfEntity.StandGridName() + "，" + Self.Name + "独自工作进展顺利，";
         ResultText += "并受到了一些启发，获得事件状态 受到启发*1";
     }
@@ -2093,7 +2093,7 @@ public class Event3_14 : Event
     {
         base.Success(Posb);
         Self.InfoDetail.AddPerk(new Perk70(Self), true);
-        Self.InfoDetail.AddPerk(new Perk3(Self), true);
+        //Self.InfoDetail.AddPerk(new Perk3(Self), true);
         PerkInfo yuanwang = null, chengzhang = null;
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)
         {
@@ -2501,7 +2501,7 @@ public class Event3_17 : Event
     public override void Success(float Posb)
     {
         base.Success(Posb);
-        Self.InfoDetail.AddPerk(new Perk3(Self), true);
+        //Self.InfoDetail.AddPerk(new Perk3(Self), true);
         Self.InfoDetail.AddPerk(new Perk55(Self), true);
         PerkInfo yuanwang = null, chengzhang = null, yihan = null;
         for (int i = 0; i < Self.InfoDetail.PerksInfo.Count; i++)

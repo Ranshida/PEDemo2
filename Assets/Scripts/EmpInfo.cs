@@ -5,15 +5,14 @@ using UnityEngine.UI;
 
 public class EmpInfo : MonoBehaviour
 {
-    [HideInInspector] public EmpEntity Entity;
-
+    public EmpEntity Entity;
     public Employee emp;
     public GameControl GC;
     public Button HireButton, MoveButton, FireButton;
-    public Text Text_Name, Text_Mentality, Text_Stamina, Text_Skill1, Text_Ability, Text_Age, Text_School, Text_Major, Text_Professions;
-    public Text Text_DepName, Text_Tenacity, Text_Strength, Text_Manage, Text_Decision, Text_Emotion, Text_RTarget;
+    public Text Text_Name, Text_Mentality, Text_Stamina, Text_Skill1, Text_Ability, Text_Age, Text_Professions, Text_Occupation, Text_Ambition;
+    public Text Text_DepName, Text_Tenacity, Text_Manage, Text_Decision, Text_RTarget;
     public EmpInfo DetailInfo;
-    public EmotionInfo EmotionInfoPrefab;
+    public EmotionInfo EmotionInfoPrefab, MainEmotion;
     public Transform PerkContent, SkillContent, StrategyContent, RelationContent, HistoryContent, EmotionContent, MarkerContent;
     public Transform PerkContent2;//特质专用面板，上面的是状态面板
     public StrategyInfo CurrentStrategy;
@@ -56,9 +55,10 @@ public class EmpInfo : MonoBehaviour
             {
                 Text_Age.text = emp.Age + "岁";                
                 Text_Tenacity.text = emp.Tenacity.ToString();
-                Text_Strength.text = emp.Strength.ToString();
                 Text_Manage.text = emp.Manage.ToString();
                 Text_Decision.text = emp.Decision.ToString();
+                Text_Ambition.text = "志向:" + emp.ambition;
+                Text_Occupation.text = "职业:" + emp.Occupation;
 
                 UpdateCharacterUI();
             }
@@ -83,65 +83,13 @@ public class EmpInfo : MonoBehaviour
         emp.InitStatus();
         HireButton.interactable = true;
         Text_Name.text = emp.Name;
-        InitStrategy();
+        InitStrategyAndPerk();
         CheckProfessions();
-
-        //根据学校和专业设定特效
-        if(emp.SchoolType == 1)
-        {
-            Text_School.text = "名牌大学";
-            Text_School.GetComponent<InfoPanelTrigger>().ContentB = "第一份工作技能等级+1";
-        }
-        else if(emp.SchoolType == 2)
-        {
-            Text_School.text = "普通院校";
-            Text_School.GetComponent<InfoPanelTrigger>().ContentB = "无特效";
-        }
-        else if (emp.SchoolType == 3)
-        {
-            Text_School.text = "普通院校";
-            Text_School.GetComponent<InfoPanelTrigger>().ContentB = "第一份工作技能等级-1，坚韧+2";
-        }
-
-        int[] Nst = { 1, 2, 3, 8, 9, 11, 12, 13, 15, 16 };//Nst:几个专业技能对应的编号
-        int major = Random.Range(0, 10);
-        major = Nst[major];
-
-        for(int i = 0; i < 3; i++)
-        {
-            if(major == emp.Professions[i])
-            {
-                Text_Major.GetComponent<InfoPanelTrigger>().ContentB = "大学所选专业与工作内容相匹配，对应技能等级+2";
-                break;
-            }
-            if(i == 2)
-                Text_Major.GetComponent<InfoPanelTrigger>().ContentB = "无额外效果";
-        }
-        if (major == 1)
-            Text_Major.text = "技术专业";
-        else if (major == 2)
-            Text_Major.text = "市场专业";
-        else if (major == 3)
-            Text_Major.text = "产品专业";
-        else if (major == 8)
-            Text_Major.text = "人力专业";
-        else if (major == 9)
-            Text_Major.text = "财务专业";
-        else if (major == 11)
-            Text_Major.text = "行业专业";
-        else if (major == 12)
-            Text_Major.text = "谋略专业";
-        else if (major == 13)
-            Text_Major.text = "说服专业";
-        else if (major == 15)
-            Text_Major.text = "八卦专业";
-        else if (major == 16)
-            Text_Major.text = "行政专业";
-
+        CheckMarker();
     }
 
     //初始化头脑风暴技能和战略
-    public void InitStrategy()
+    public void InitStrategyAndPerk()
     {
         AddThreeRandomStrategy();
         AddRandomPerk();
@@ -198,7 +146,7 @@ public class EmpInfo : MonoBehaviour
 
         GC.ResetOldAssignment(emp);
         emp.ClearRelations();//清空所有关系
-        GC.HourEvent.RemoveListener(emp.TimePass);
+        GC.TurnEvent.RemoveListener(emp.TimePass);
         GC.CurrentEmployees.Remove(emp);
         
         //删除员工实体
@@ -358,7 +306,7 @@ public class EmpInfo : MonoBehaviour
             }
         }
         PerkInfo newPerk;
-        if (perk.Num >= 128 && perk.Num <= 141 && PerkContent2 != null)
+        if (perk.Num >= 1 && perk.Num <= 51 && PerkContent2 != null)
             newPerk = Instantiate(GC.PerkInfoPrefab, PerkContent2);
         else
             newPerk = Instantiate(GC.PerkInfoPrefab, PerkContent);
@@ -412,69 +360,36 @@ public class EmpInfo : MonoBehaviour
     }
     void AddRandomPerk()
     {
-        float Posb = Random.Range(0.0f, 1.0f);
+        //初始化经历
+        int num = Random.Range(0, PerkData.DefaultPerkList.Count);
+        Perk perk3 = PerkData.DefaultPerkList[num].Clone();
+        perk3.TargetEmp = emp;
+        AddPerk(perk3, true);
 
-        //额外的金色特质
-        if (Random.Range(0.0f, 1.0f) < 0.02f)
-        {
-            int num = Random.Range(0, PerkData.GoldenPerkList.Count);
-            Perk perk3 = PerkData.GoldenPerkList[num].Clone();
-            perk3.TargetEmp = emp;
-            AddPerk(perk3, true);
-        }
-        //20%几率没特质
-        if (Posb < 0.2f)
-            return;
-
-        int numA = Random.Range(0, PerkData.PerkList.Count);      
-        Perk perk1 = PerkData.PerkList[numA].Clone();
-        perk1.TargetEmp = emp;
-        AddPerk(perk1, true);
-
-        //60%几率只有一个特质
-        if (Posb < 0.8f)
-            return;
-
-        int numB = Random.Range(0, PerkData.PerkList.Count); ;
-        while (numB == numA)
-        {
-            numB = Random.Range(0, PerkData.PerkList.Count);
-        }
-        Perk perk2 = PerkData.PerkList[numB].Clone();
-        perk2.TargetEmp = emp;
-        AddPerk(perk2, true);
+        //职业特质
+        if (emp.Occupation == OccupationType.超级黑客)
+            AddPerk(new Perk35(emp));
+        else if (emp.Occupation == OccupationType.神秘打工仔)
+            AddPerk(new Perk36(emp));
+        else if (emp.Occupation == OccupationType.大企业中层)
+            AddPerk(new Perk37(emp));
+        else if (emp.Occupation == OccupationType.海盗)
+            AddPerk(new Perk38(emp));
+        else if (emp.Occupation == OccupationType.大学毕业生)
+            AddPerk(new Perk39(emp));
+        else if (emp.Occupation == OccupationType.论坛版主)
+            AddPerk(new Perk40(emp));
+        else if (emp.Occupation == OccupationType.独立开发者)
+            AddPerk(new Perk41(emp));
+        else if (emp.Occupation == OccupationType.键盘艺术家)
+            AddPerk(new Perk42(emp));
+        else if (emp.Occupation == OccupationType.酒保)
+            AddPerk(new Perk43(emp));
     }
 
     public int CalcSalary()
     {//暂时定为10
         return 10;
-        //int type = emp.InfoDetail.ST.SkillType;
-        //int salary = emp.SalaryExtra + emp.Manage + emp.Skill1 + emp.Skill2 + emp.Skill3 + emp.Observation + emp.Tenacity + emp.Strength
-        //     + emp.HR + emp.Finance + emp.Decision + emp.Forecast + emp.Strategy + emp.Convince + emp.Charm + emp.Gossip;
-        //if (type == 1)
-        //    salary = emp.Observation;
-        //else if (type == 2)
-        //    salary += emp.Skill1;
-        //else if (type == 3)
-        //    salary += emp.Skill3;
-        //else if (type == 4)
-        //    salary += emp.Skill2;
-        //else if (type == 5)
-        //    salary += emp.Finance;
-        //else if (type == 6)
-        //    salary += emp.HR;
-        //else if (type == 7)
-        //    salary += emp.Strength;
-        //else if (type == 8)
-        //    salary += emp.Tenacity;
-        //else if (type == 9)
-        //    salary += emp.Forecast;
-        //else if (type == 10)
-        //    salary += emp.Strategy;
-        //else
-        //    salary += emp.Manage;
-        //salary = (int)(salary * emp.SalaryMultiple);
-        //return salary;
     }
 
     void UpdateCharacterUI()
@@ -485,47 +400,6 @@ public class EmpInfo : MonoBehaviour
                 Scrollbar_Character[i].value = (emp.Character[i] + 100) / 200;
             else
                 Scrollbar_Character[4].value = emp.Character[4] / 100;
-        }
-    }
-
-    public void UpdateEmotionPanel()
-    {
-        Text_Emotion.text = "当前情绪:";
-        for(int i = 0; i < emp.CurrentEmotions.Count; i++)
-        {
-            if (emp.CurrentEmotions[i].color == EColor.White)
-                Text_Emotion.text += "  白" + emp.CurrentEmotions[i].Level;
-            else if (emp.CurrentEmotions[i].color == EColor.Gray)
-                Text_Emotion.text += "  灰" + emp.CurrentEmotions[i].Level;
-            else if (emp.CurrentEmotions[i].color == EColor.LYellow)
-                Text_Emotion.text += "  淡黄" + emp.CurrentEmotions[i].Level;
-            else if (emp.CurrentEmotions[i].color == EColor.LRed)
-                Text_Emotion.text += "  淡红" + emp.CurrentEmotions[i].Level;
-            else if (emp.CurrentEmotions[i].color == EColor.LBlue)
-                Text_Emotion.text += "  淡蓝" + emp.CurrentEmotions[i].Level;
-            else if (emp.CurrentEmotions[i].color == EColor.LOrange)
-                Text_Emotion.text += "  淡橙" + emp.CurrentEmotions[i].Level;
-            else if (emp.CurrentEmotions[i].color == EColor.LPurple)
-                Text_Emotion.text += "  淡紫" + emp.CurrentEmotions[i].Level;
-            else if (emp.CurrentEmotions[i].color == EColor.LGreen)
-                Text_Emotion.text += "  淡绿" + emp.CurrentEmotions[i].Level;
-            else if (emp.CurrentEmotions[i].color == EColor.Yellow)
-                Text_Emotion.text += "  黄" + emp.CurrentEmotions[i].Level;
-            else if (emp.CurrentEmotions[i].color == EColor.Red)
-                Text_Emotion.text += "  红" + emp.CurrentEmotions[i].Level;
-            else if (emp.CurrentEmotions[i].color == EColor.Blue)
-                Text_Emotion.text += "  蓝" + emp.CurrentEmotions[i].Level;
-            else if (emp.CurrentEmotions[i].color == EColor.Orange)
-                Text_Emotion.text += "  橙" + emp.CurrentEmotions[i].Level;
-            else if (emp.CurrentEmotions[i].color == EColor.Purple)
-                Text_Emotion.text += "  紫" + emp.CurrentEmotions[i].Level;
-            else if (emp.CurrentEmotions[i].color == EColor.Green)
-                Text_Emotion.text += "  绿" + emp.CurrentEmotions[i].Level;
-        }
-        Text_RTarget.text = "发展目标:";
-        for(int i = 0; i < emp.RelationTargets.Count; i++)
-        {
-            Text_RTarget.text += "  " + emp.RelationTargets[i].Name;
         }
     }
 
@@ -584,6 +458,32 @@ public class EmpInfo : MonoBehaviour
             }
         }
     }
+    //设置主导情绪
+    public void SetMainEmotion(EColor color)
+    {
+        if (MainEmotion.Active == true)
+        {
+            if (MainEmotion.E.color == color)
+                MainEmotion.TimeLeft = 2;
+            else
+            {
+                Emotion newEmotion = new Emotion(color);
+                emp.CurrentEmotions.Remove(MainEmotion.E);
+                emp.CurrentEmotions.Add(newEmotion);
+                MainEmotion.E = newEmotion;
+                MainEmotion.TimeLeft = 2;
+                MainEmotion.SetColor(newEmotion);
+            }
+        }
+        else
+        {
+            Emotion newEmotion = new Emotion(color);
+            emp.CurrentEmotions.Add(newEmotion);
+            MainEmotion.SetColor(newEmotion);
+            MainEmotion.TimeLeft = 2;
+            MainEmotion.gameObject.SetActive(true);
+        }
+    }
 
     public void CreateStrategy()
     {
@@ -630,24 +530,19 @@ public class EmpInfo : MonoBehaviour
             Destroy(SkillMarkers[i].gameObject);
         }
         SkillMarkers.Clear();
-        foreach (int num in emp.Professions)
+        foreach(int[] count in emp.CurrentDices)
         {
-            int type = 0;
-            if (num == 8)
-                type = 0;
-            else if (num == 9)
-                type = 1;
-            else if (num == 16)
-                type = 2;
-            else if (num == 1 || num == 3 || num == 11)
-                type = 3;
-            else if (num == 2 || num == 13)
-                type = 4;
-            else if (num == 12 || num == 15)
-                type = 5;
+            int num = 0;
+            foreach(int n in count)
+            {
+                if (n != -1)
+                    num += 1;
+                else
+                    break;
+            }
 
             BSSkillMarker m = Instantiate(GC.BSC.MarkerPrefab, MarkerContent).GetComponent<BSSkillMarker>();
-            m.SetInfo(type, 3);
+            m.SetInfo(count[0], num);
             SkillMarkers.Add(m);
         }
     }

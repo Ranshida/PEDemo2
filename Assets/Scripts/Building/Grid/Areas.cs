@@ -32,6 +32,7 @@ public class Areas : MonoBehaviour
             //初始化DC
             DivisionControl DC = Instantiate(DCPrefab, DivContent);
             UIManager.Instance.OnAddNewWindow(DC.DetailPanel.gameObject.GetComponent<WindowBaseControl>());
+            DC.GC = GC;
             GC.TurnEvent.AddListener(DC.Produce);
             DC.CurrentArea = area;
             area.DC = DC;

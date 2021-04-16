@@ -81,26 +81,15 @@ public class EmpBSInfo : MonoBehaviour
         }
         CheckMarker();
         CheckPerk();
-        Photo.sprite = Faces[emp.InfoDetail.Entity.FaceType];
-        //金色特质检测
+
+        //设置核心成员面板头像
+        if (Type == 1)
+            Photo.sprite = Faces[emp.InfoDetail.Entity.FaceType];
+        //管理特质检测
         foreach(PerkInfo p in target.InfoDetail.PerksInfo)
         {
-            if (p.CurrentPerk.Num == 134)
-                BSC.GC.CC.CEO.Strength += 2;
-            else if (p.CurrentPerk.Num == 135)
-                BSC.GC.CC.CEO.Decision += 2;
-            else if (p.CurrentPerk.Num == 136)
-                BSC.GC.CC.CEO.Tenacity += 2;
-            else if (p.CurrentPerk.Num == 137)
-                BSC.GC.CC.CEO.Manage += 2;
-            else if (p.CurrentPerk.Num == 138)
-                BSC.GC.CC.CEO.Strength -= 2;
-            else if (p.CurrentPerk.Num == 139)
-                BSC.GC.CC.CEO.Tenacity -= 2;
-            else if (p.CurrentPerk.Num == 140)
-                BSC.GC.CC.CEO.Manage -= 2;
-            else if (p.CurrentPerk.Num == 141)
-                BSC.GC.CC.CEO.Decision -= 2;
+            if (p.CurrentPerk.ManagePerk == true)
+                p.CurrentPerk.ActiveSpecialEffect();
         }
     }
 
@@ -125,22 +114,8 @@ public class EmpBSInfo : MonoBehaviour
         }
         foreach (PerkInfo p in emp.InfoDetail.PerksInfo)
         {
-            if (p.CurrentPerk.Num == 134)
-                BSC.GC.CC.CEO.Strength -= 2;
-            else if (p.CurrentPerk.Num == 135)
-                BSC.GC.CC.CEO.Decision -= 2;
-            else if (p.CurrentPerk.Num == 136)
-                BSC.GC.CC.CEO.Tenacity -= 2;
-            else if (p.CurrentPerk.Num == 137)
-                BSC.GC.CC.CEO.Manage -= 2;
-            else if (p.CurrentPerk.Num == 138)
-                BSC.GC.CC.CEO.Strength += 2;
-            else if (p.CurrentPerk.Num == 139)
-                BSC.GC.CC.CEO.Tenacity += 2;
-            else if (p.CurrentPerk.Num == 140)
-                BSC.GC.CC.CEO.Manage += 2;
-            else if (p.CurrentPerk.Num == 141)
-                BSC.GC.CC.CEO.Decision += 2;
+            if (p.CurrentPerk.ManagePerk == true)
+                p.CurrentPerk.DeActiveSpecialEffect();
         }
         emp = null;
         EmpStatus.SetActive(false);
@@ -151,30 +126,9 @@ public class EmpBSInfo : MonoBehaviour
     //根据员工能力生成骰子
     public void CreateDices()
     {
-        foreach(int num in emp.Professions)
+        foreach(int[] count in emp.CurrentDices)
         {
-            //没有对应技能不继续算
-            if (num == 0)
-                continue;
-            //技能为0则不继续算
-            if (num == 0)
-                continue;
-
-            int type = 0;
-            if (num == 8)
-                type = 0;
-            else if (num == 9)
-                type = 1;
-            else if (num == 16)
-                type = 2;
-            else if (num == 1 || num == 3 || num == 11)
-                type = 3;
-            else if (num == 2 || num == 13)
-                type = 4;
-            else if (num == 12 || num == 15)
-                type = 5;
-
-            BSC.InitDice(new int[6] { type, type, type, -1, -1, -1 });
+            BSC.InitDice(count);
         }
     }
 
@@ -186,25 +140,19 @@ public class EmpBSInfo : MonoBehaviour
             Destroy(SkillMarkers[i].gameObject);
         }
         SkillMarkers.Clear();
-        foreach (int num in emp.Professions)
+        foreach (int[] count in emp.CurrentDices)
         {
-
-            int type = 0;
-            if (num == 8)
-                type = 0;
-            else if (num == 9)
-                type = 1;
-            else if (num == 16)
-                type = 2;
-            else if (num == 1 || num == 3 || num == 11)
-                type = 3;
-            else if (num == 2 || num == 13)
-                type = 4;
-            else if (num == 12 || num == 15)
-                type = 5;
+            int num = 0;
+            foreach (int n in count)
+            {
+                if (n != -1)
+                    num += 1;
+                else
+                    break;
+            }
 
             BSSkillMarker m = Instantiate(BSC.MarkerPrefab, MarkerContent).GetComponent<BSSkillMarker>();
-            m.SetInfo(type, 3);
+            m.SetInfo(count[0], num);
             SkillMarkers.Add(m);
         }
     }

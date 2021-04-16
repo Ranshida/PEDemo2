@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class EmotionInfo : MonoBehaviour
 {
+    public int TimeLeft = 0;
+    public bool Active = false; //是否为激活状态的主导情绪
     bool ShowPanel = false;
     float Timer = 0.0f;
 
@@ -36,6 +38,8 @@ public class EmotionInfo : MonoBehaviour
                     info.Text_Name.text = Text_Name.text;
                     if (E.Level > 1)
                         info.Text_Name.text += "(" + E.Level + "层)";
+                    if (TimeLeft > 0)
+                        info.Text_Name.text += "(" + TimeLeft + "回合)";
                     if (E.color == EColor.Red)
                     {
                         info.Text_Description.text = "事件判定修正-2";

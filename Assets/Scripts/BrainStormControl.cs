@@ -525,7 +525,6 @@ public class BrainStormControl : MonoBehaviour
             CauseDamage(3);
         else if (SkillType == 2)
             Shield += 2;
-        //暂时没写 需要选择
         else if (SkillType == 3)
         {
             StartSelectEmp();
