@@ -30,6 +30,7 @@ public class DivisionControl : MonoBehaviour
     public Image EfficiencyBarFill, WorkStatusBarFill, FaithFill;
 
     public List<DepControl> CurrentDeps = new List<DepControl>();
+    public List<RectTransform> FillMarkers = new List<RectTransform>();
 
     private void Update()
     {
@@ -82,6 +83,7 @@ public class DivisionControl : MonoBehaviour
             }
             else if (ExtraEfficiency + Efficiency < 4)
             {
+                EfficiencyBarFill.fillAmount = (float)(ExtraEfficiency + Efficiency) / 10 + 0.1f;
                 EfficiencyBarFill.color = new Color(1, 1, 1);
             }
             else if (ExtraEfficiency + Efficiency < 9)
@@ -94,6 +96,8 @@ public class DivisionControl : MonoBehaviour
                 EfficiencyBarFill.fillAmount = 1;
                 EfficiencyBarFill.color = new Color(0, 1, 0);
             }
+            FillMarkers[0].anchoredPosition = new Vector2(FillMarkers[0].parent.GetComponent<RectTransform>().sizeDelta.x * EfficiencyBarFill.fillAmount, 0);
+
 
             if (WorkStatus < 0)
             {
@@ -115,6 +119,8 @@ public class DivisionControl : MonoBehaviour
                 WorkStatusBarFill.fillAmount = 1;
                 WorkStatusBarFill.color = new Color(0, 1, 0);
             }
+            FillMarkers[1].anchoredPosition = new Vector2(FillMarkers[1].parent.GetComponent<RectTransform>().sizeDelta.x * WorkStatusBarFill.fillAmount, 0);
+
 
             if (Faith <= -90)
             {
@@ -146,6 +152,8 @@ public class DivisionControl : MonoBehaviour
                 FaithFill.fillAmount = 1;
                 FaithFill.color = new Color(0, 1, 0);
             }
+            FillMarkers[2].anchoredPosition = new Vector2(FillMarkers[2].parent.GetComponent<RectTransform>().sizeDelta.x * FaithFill.fillAmount, 0);
+
         }
 
         if (StatusShowed == true)

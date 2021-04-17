@@ -275,7 +275,7 @@ public class Employee
         if (type != -1)
             num = type;
         else
-            num = Random.Range(0, 2);
+            num = 1;
 
         if (num == 0)
         {
@@ -709,17 +709,6 @@ public class Employee
     //增减情绪
     public void AddEmotion(EColor C)
     {
-        //遇到麻木等状态抵消一次情绪添加
-        for(int i = 0; i < InfoDetail.PerksInfo.Count; i++)
-        {
-            if ((C == EColor.LRed || C == EColor.Red) && InfoDetail.PerksInfo[i].CurrentPerk.Num == 96)
-                return;
-            else if(InfoDetail.PerksInfo[i].CurrentPerk.Num == 36)
-            {
-                InfoDetail.PerksInfo[i].CurrentPerk.RemoveEffect();
-                return;
-            }
-        }
         if (C == EColor.LYellow)
         {
             for (int i = 0; i < CurrentEmotions.Count; i++)

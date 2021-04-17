@@ -107,7 +107,7 @@ public class GameControl : MonoBehaviour
     public int[] FinishedTask = new int[10];//0程序迭代 1技术研发 2可行性调研 3传播 4营销文案 5资源拓展 6原型图 7产品研究 8用户访谈 9已删除
 
     int Year = 1, Month = 1, Week = 1, Day = 1, Hour = 1, morale = 50;
-    int TempHireHour = 3;//临时的每2月刷新一次招聘
+    int TempHireHour = 3;//临时的每3回合刷新一次招聘
     float Timer, MoneyCalcTimer;
     bool TimePause = false; //现在仅用来判断是否处于下班状态，用于其他功能时需检查WorkEndCheck()和WeekStart
 
@@ -122,7 +122,6 @@ public class GameControl : MonoBehaviour
     private void Start()
     {
         UpdateResourceInfo();
-        HC.AddHireTypes(new HireType());
     }
 
     private void Update()
@@ -184,6 +183,14 @@ public class GameControl : MonoBehaviour
         {
             TempHireHour = 3;
             HC.AddHireTypes(new HireType());
+            HC.Refresh();
+            HC.Text_HireButtonText.transform.parent.GetComponent<Button>().interactable = true;
+        }
+        else
+        {
+            HC.Text_HireButtonText.transform.parent.GetComponent<Button>().interactable = false;
+            HC.Text_HireButtonText.color = Color.black;
+            HC.StorePanel.SetWndState(false);//玩家直接进下一回合的话强制关闭
         }
 
         Text_Time.text = "第" + Turn + "回合";

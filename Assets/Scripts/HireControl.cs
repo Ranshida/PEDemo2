@@ -11,10 +11,12 @@ public class HireControl : MonoBehaviour
     public Transform TotalEmpContent;
     public GameControl GC;
     public Button HireRefreshButton;
-    public Text Text_HireButtonText;
+    public Text Text_HireButtonText, Text_Hire, Text_Dep;
     public EmpInfo EmpInfoPrefab, EmpDetailPrefab;
+    public WindowBaseControl StorePanel;
 
     public EmpInfo[] HireInfos = new EmpInfo[5];
+    public List<DepInfo> DepInfos = new List<DepInfo>();
     List<HireType> HireTypes = new List<HireType>();
 
     int CurrentHireNum;//用于计算单次招聘已选择的人数
@@ -23,7 +25,7 @@ public class HireControl : MonoBehaviour
     {
         InitCEO();
         AddHireTypes(new HireType());
-        RefreshHire();
+        Refresh();
         //初始的员工
         for (int i = 0; i < 5; i++)
         {
@@ -41,18 +43,20 @@ public class HireControl : MonoBehaviour
             HireInfos[i].gameObject.SetActive(false);
         }
         GC.CurrentEmpInfo = null;
+        AddHireTypes(new HireType());
+        Refresh();
     }
 
     //添加从人力资源部获得的招聘
     public void AddHireTypes(HireType ht)
     {
         HireTypes.Add(ht);
-        HireRefreshButton.interactable = true;
+        //HireRefreshButton.interactable = true;
         Text_HireButtonText.color = Color.red;
     }
 
     //刷新招聘
-    public void RefreshHire()
+    public void Refresh()
     {
         if (HireTypes.Count > 0)
         {
@@ -96,8 +100,13 @@ public class HireControl : MonoBehaviour
             if (HireTypes.Count < 1)
                 HireRefreshButton.interactable = false;
         }
-        if(HireTypes.Count == 0)
-            Text_HireButtonText.color = Color.black;
+        foreach (DepInfo info in DepInfos)
+        {
+            info.SetInfo();
+            info.gameObject.SetActive(true);
+        }
+        Text_Hire.color = Color.red;
+        Text_Dep.color = Color.red;
     }
 
     //(Hire)招聘后信息转移和创建信息面板
@@ -134,7 +143,7 @@ public class HireControl : MonoBehaviour
         for (int i = 0; i < GC.CurrentEmpInfo.PerksInfo.Count; i++)
         {
             int Num = GC.CurrentEmpInfo.PerksInfo[i].CurrentPerk.Num;
-            if (Num >= 128 && Num <= 141)
+            if (Num >= 1 && Num <= 51)
                 GC.CurrentEmpInfo.PerksInfo[i].transform.parent = ED.PerkContent2;
             else
                 GC.CurrentEmpInfo.PerksInfo[i].transform.parent = ED.PerkContent;
@@ -153,6 +162,10 @@ public class HireControl : MonoBehaviour
         if (GC.CC.CEO != null)
             GC.CC.CEO.InfoDetail.AddHistory("招聘了" + ED.emp.Name);
         HideOptions();
+
+        //扣手续费
+        GC.Money -= 100;
+        Text_Hire.color = Color.black;
     }
 
     //初始化CEO
@@ -205,5 +218,16 @@ public class HireControl : MonoBehaviour
                 HireInfos[i].gameObject.SetActive(false);
             }
         }
+    }
+
+    public void BuildingPurchase(BuildingType type)
+    {
+        foreach(DepInfo info in DepInfos)
+        {
+            info.gameObject.SetActive(false);
+        }
+        BuildingManage.Instance.EnterBuildMode();
+        BuildingManage.Instance.StartBuildNew(type);
+        Text_Dep.color = Color.black;
     }
 }
