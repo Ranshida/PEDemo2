@@ -7,24 +7,15 @@ public class EventControl : MonoBehaviour
 {
     public GameObject ManageVotePanel;
     public GameControl GC;
-    public Transform ManageVoteContent, EventInfoContent, EventOptionContent;
-    public EventInfo EventInfoPrefab;
+    public Transform ManageVoteContent;
     public VoteCell VoteCellPrefab;
-    public Text Text_MeetingName, Text_ManageVoteResult, Text_EventWarning;
-    public List<EventInfo> EventInfos = new List<EventInfo>();
+    public Text Text_MeetingName, Text_ManageVoteResult;
 
     List<VoteCell> VCells = new List<VoteCell>();
     private void Start()
     {
         if (GC == null)
             GC = GameControl.Instance;       
-    }
-    private void Update()
-    {
-        if (EventInfos.Count > 0)
-            Text_EventWarning.color = Color.red;
-        else
-            Text_EventWarning.color = Color.black;
     }
 
     //换高管投票检测
@@ -403,18 +394,5 @@ public class EventControl : MonoBehaviour
             Text_ManageVoteResult.text = "未通过";
             return false;
         }
-    }
-
-    public void CreateEventInfo(Event e)
-    {
-        EventInfo newEvent = Instantiate(EventInfoPrefab, this.transform);
-        newEvent.SelectPanel.transform.parent = EventOptionContent;
-        newEvent.transform.parent = EventInfoContent;
-        newEvent.CurrentEvent = e.Clone();
-        newEvent.EC = this;
-        newEvent.Text_EventName.text = e.Self.Name + " 的 " + e.EventName + "事件";
-        newEvent.Text_TimeLeft.text = "剩余时间:" + e.TimeLeft + "/时";
-        GC.HourEvent.AddListener(newEvent.TimePass);
-        EventInfos.Add(newEvent);
     }
 }

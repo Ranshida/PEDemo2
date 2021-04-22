@@ -20,36 +20,6 @@ public class BTE_WaitEvent : BTE_Action
         if (ThisEntity.CurrentEvent == null)
             return TaskStatus.Success;
 
-        //事件开始执行
-        if (ThisEntity.CurrentEvent.isSolving)
-            return TaskStatus.Success;
-
-        //独立事件 => 直接执行
-        if (!ThisEntity.CurrentEvent.HaveTarget)
-        {
-            ThisEntity.SolveEvent();
-            return TaskStatus.Running;
-        }
-
-        //主动发起方去寻找被动方 => 找到后执行
-        if (ThisEntity.CurrentEvent.Self == ThisEntity.ThisEmp)
-        {
-            if (!ThisEntity.CurrentEvent.TargetEntity)
-            {
-                Debug.LogError("有目标的事件，但是没有目标对象");
-            }
-            Movable.Value = true;
-            StopDistance.Value = 1;
-            Destination.Value = ThisEntity.CurrentEvent.TargetEntity.transform.position;
-
-            //满足开始执行事件的条件（TODO）
-            if (Function.XZDistance(ThisEntity.transform.position, Destination.Value) < 8)
-            {
-                ThisEntity.SolveEvent();
-                return TaskStatus.Running;
-            }
-        }
-
         return TaskStatus.Running;
     }
 }

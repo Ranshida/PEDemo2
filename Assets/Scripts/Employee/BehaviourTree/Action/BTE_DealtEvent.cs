@@ -23,9 +23,6 @@ public class BTE_DealtEvent : BTE_Action
         if (ThisEntity.CurrentEvent == null)  
             return TaskStatus.Success;
 
-        if (!ThisEntity.CurrentEvent.isSolving)
-            return TaskStatus.Success;
-
         MoveFlag.Value = false;
 
         //没有当前事件，返回工作

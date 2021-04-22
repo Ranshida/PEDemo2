@@ -15,9 +15,6 @@ public class EmpManager : MonoBehaviour
     private EmpEntity pointEmp;
     private GameObject eventBubble;
 
-    public JudgeEventWindow JudgeEventWindow;
-    public EventDetailWindow EventDetailWindow;
-
     private void Awake()
     {
         Instance = this;
@@ -37,52 +34,6 @@ public class EmpManager : MonoBehaviour
         }
         if (pointEmp && !pointEmp.Fired && Input.GetMouseButtonDown(0))
             pointEmp.ShowDetailPanel();
-
-        if (CameraController.ItemHit && !UISvc.IsPointingUI)
-        {
-            if (Input.GetMouseButtonDown(0))
-            {
-                GameObject itemGo = CameraController.ItemRaycast.collider.gameObject;
-                EventBulle bubble = itemGo.GetComponentInParent<EventBulle>();
-                bubble.TempEvent.SelfEntity.bulle = null;
-                if (bubble)
-                {
-                    bubble.OnLeftClick();
-                }
-            }
-            if (Input.GetMouseButtonDown(1))
-            {
-                GameObject itemGo = CameraController.ItemRaycast.collider.gameObject;
-                EventBulle bubble = itemGo.GetComponentInParent<EventBulle>();
-                bubble.TempEvent.SelfEntity.bulle = null;
-                if (bubble)
-                {
-                    bubble.OnRightClick();
-                }
-            }
-        }
-    }
-
-    //矛盾事件弹窗
-    public void JudgeEvent(Event currentEvent, bool canAccept)
-    {
-        //这个方法应当会导致游戏暂停
-        //应该需要Instantiate一个新panel写，现在如果同时发生两次就顶掉一个
-        GameControl.Instance.AskPause(this);
-        JudgeEventWindow.SetWndState();
-        JudgeEventWindow.AddEvent(currentEvent, canAccept);
-    }
-
-    public void AcceptJudgeEvent(Event judgeEvent)
-    {
-        (judgeEvent as JudgeEvent).OnAccept();
-        JudgeEventWindow.SetWndState(false);
-    }
-
-    public void RefuseJudgeEvent(Event judgeEvent)
-    {
-        (judgeEvent as JudgeEvent).OnRefuse();
-        JudgeEventWindow.SetWndState(false);
     }
 
     public EmpEntity CreateEmp(Vector3 position)
@@ -94,16 +45,15 @@ public class EmpManager : MonoBehaviour
         return emp;
     }
 
-
     //查找上级Boss
     public Employee FindBoss(Employee self)
     {
         if (!self.CurrentDep)
             return null;
 
-        if (self.CurrentDep.CommandingOffice != null && self.CurrentDep.CommandingOffice.Manager != null) 
+        if (self.CurrentDep.CurrentDivision.Manager != null) 
         {
-            Employee boss = self.CurrentDep.CommandingOffice.Manager;
+            Employee boss = self.CurrentDep.CurrentDivision.Manager;
             if (boss != self) 
             {
                 return boss;
@@ -114,10 +64,16 @@ public class EmpManager : MonoBehaviour
     //寻找员工的同事
     public List<Employee> FindColleague(Employee self)
     {
-        if (!self.CurrentDep)
-            return new List<Employee>();
-
         List<Employee> colleagues = new List<Employee>();
+        if (!self.CurrentDep)
+        {
+            foreach(Employee e in GameControl.Instance.CurrentEmployees)
+            {
+                if (e != self && e.CurrentDep == null && e.CurrentDivision == null)
+                    colleagues.Add(e);
+            }
+            return colleagues;
+        }
         for (int i = 0; i < self.CurrentDep.CurrentEmps.Count; i++)
         {
             if (self.CurrentDep.CurrentEmps[i] != self) 
@@ -130,13 +86,11 @@ public class EmpManager : MonoBehaviour
     //寻找员工的下属
     public List<Employee> FindMembers(Employee self)
     {
-        if (self.CurrentDep == null)
-            return new List<Employee>();
-        else if (self.CurrentDep.building.Type != BuildingType.CEO办公室 && self.CurrentDep.building.Type != BuildingType.高管办公室)
+        if (self.CurrentDivision == null)
             return new List<Employee>();
 
         List<Employee> members = new List<Employee>();
-        foreach (DepControl dep in self.CurrentDep.ControledDeps)
+        foreach (DepControl dep in self.CurrentDivision.CurrentDeps)
         {
             foreach (Employee employee in dep.CurrentEmps)
             {
@@ -145,277 +99,39 @@ public class EmpManager : MonoBehaviour
         }
         return members;
     }
-
-    public EmpEntity RandomEventTarget(Employee self, out int index)
+    //寻找上级下属和同事
+    public List<Employee> FindAll(Employee emp)
     {
-        //检查认识关系
-        CheckRelation(self);
-
-        List<Event> eventList = RandomEventList(self, out index);
-        List<Employee> posbTargets = new List<Employee>();     //可能的对象（随机其一）
-
-        //从上下级同事之间选择
-        if (index == 0 || index == 1)
+        List<Employee> TargetEmps = new List<Employee>();
+        if (emp.CurrentDep != null)
         {
-            //如果Boss存在，则有50%概率发生到Boss上（可用是前提）
-            Employee boss = FindBoss(self);
-            if (boss != null) 
+            foreach (Employee e in emp.CurrentDep.CurrentEmps)
             {
-                if (Random.Range(0,2) == 0)
-                {
-                    if (boss.InfoDetail.Entity.Available)
-                    {
-                        return boss.InfoDetail.Entity;
-                    }
-                }
+                if (e != emp)
+                    TargetEmps.Add(e);
             }
-            //否则找其他同事下属
-            List<Employee> members = FindMembers(self);
-            List<Employee> colleagues = FindColleague(self);
-            posbTargets = Function.MergerList<Employee>(colleagues, members);
+            if (emp.CurrentDep.CurrentDivision.Manager != null)
+                TargetEmps.Add(emp.CurrentDep.CurrentDivision.Manager);
         }
-        if (index == 2)
+        else if (emp.CurrentDivision != null)
         {
-            posbTargets = Function.CopyList(self.RelationTargets);
-        }
-
-        //乱序排列可用目标，随机找到一个可用的
-        if (posbTargets.Count > 0)
-        {
-            posbTargets = Function.RandomSortList<Employee>(posbTargets);
-            foreach (Employee item in posbTargets)
+            foreach (DepControl dep in emp.CurrentDivision.CurrentDeps)
             {
-                if (item.InfoDetail.Entity.Available)
+                foreach (Employee e in dep.CurrentEmps)
                 {
-                    return item.InfoDetail.Entity;
+                    TargetEmps.Add(e);
                 }
             }
         }
-
-        //无可用对象
-        return null;
-    }
-
-    private List<Event> RandomEventList(Employee self, out int listIndex)
-    {
-        float initalValue = 0.3f;
-        float companyValue = 0.3f;
-        float relationValue = 0.4f;
-        for (int i = 0; i < self.InfoDetail.PerksInfo.Count; i++)
-        {
-            if (self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 42)
-            {
-                initalValue += 0.1f;
-                companyValue += 0.1f;
-            }
-            if (self.InfoDetail.PerksInfo[i].CurrentPerk.Num == 43)
-            {
-                companyValue -= 0.1f;
-                relationValue += 0.1f;
-            }
-        }
-
-        float value = Random.Range(0f, initalValue + companyValue + relationValue) ;
-        if (value < initalValue)
-        {
-            listIndex = 0;
-            return EventData.InitialList;
-        }
-        else if (value < initalValue + companyValue)
-        {
-            listIndex = 1;
-            return EventData.CompanyList;
-        }
-        else 
-        {
-            listIndex = 2;
-            return EventData.RelationList;
-        }
-    }
-    public Event RandomEvent(Employee self, Employee target,int index)
-    {
-        Event newEvent = null;
-        List<Event> AddEvents = new List<Event>();
-        List<Event> PosbEvents = new List<Event>();
-
-        List<Event> weight_7 = new List<Event>();
-        List<Event> weight_6 = new List<Event>();
-        List<Event> weight_5 = new List<Event>();
-        List<Event> weight_4 = new List<Event>();
-        List<Event> weight_3 = new List<Event>();
-        List<Event> weight_2 = new List<Event>();
-        List<Event> weight_1 = new List<Event>();
-
-        if (index == 0)
-            PosbEvents = Function.CopyList(EventData.InitialList);
-        else if (index == 1)
-            PosbEvents = Function.CopyList(EventData.CompanyList);
-        else if (index == 2)
-            PosbEvents = Function.CopyList(EventData.RelationList);
-
-        //没有目标
-        if (target == null)
-        {
-            foreach (Event item in PosbEvents)
-            {
-                if (item.HaveTarget)
-                {
-                    continue;
-                }
-                int weight = item.Weight;
-                item.Self = self;
-                item.Target = null;
-                if (item.ConditionCheck(-1) == true)
-                {
-                    item.SetWeight();
-                    if (item.Weight >= 7)
-                        weight_7.Add(item.Clone());
-                    if (item.Weight == 6)
-                        weight_6.Add(item.Clone());   
-                    if (item.Weight == 5)
-                        weight_5.Add(item.Clone());  
-                    if (item.Weight == 4)
-                        weight_4.Add(item.Clone());
-                    if (item.Weight == 3)
-                        weight_3.Add(item.Clone());
-                    if (item.Weight == 2)
-                        weight_2.Add(item.Clone());
-                    if (item.Weight == 1)
-                        weight_1.Add(item.Clone());
-                }
-                item.Weight = weight;
-                item.Self = null;
-                item.Target = null;
-            }
-        }
-        //有目标
         else
         {
-            foreach (Event item in PosbEvents)
+            foreach (Employee e in GameControl.Instance.CurrentEmployees)
             {
-                //有对象，也可以选择无目标的事件
-                int weight = item.Weight;
-                item.Self = self;
-                if (item.HaveTarget)
-                    item.Target = target;
-                else
-                    item.Target = null;
-
-                if (item.ConditionCheck(-1) == true)
-                {
-                    item.SetWeight(); 
-                    if (item.Weight >= 7)
-                        weight_7.Add(item.Clone());
-                    if (item.Weight == 6)
-                        weight_6.Add(item.Clone());
-                    if (item.Weight == 5)
-                        weight_5.Add(item.Clone());
-                    if (item.Weight == 4)
-                        weight_4.Add(item.Clone());
-                    if (item.Weight == 3)
-                        weight_3.Add(item.Clone());
-                    if (item.Weight == 2)
-                        weight_2.Add(item.Clone());
-                    if (item.Weight == 1)
-                        weight_1.Add(item.Clone());
-                }
-                item.Weight = weight;
-                item.Self = null;
-                item.Target = null;
+                if (e.CurrentDep != null && e.CurrentDivision != null && e != emp)
+                    TargetEmps.Add(e);
             }
         }
-
-        //找到5个AddEvents，按42211的权重排序
-        for (int i = 0; i < 5; i++)
-        {
-            if (weight_7.Count > 0)
-            {
-                Event temp = weight_7[Random.Range(0, weight_7.Count)];
-                AddEvents.Add(temp);
-                weight_7.Remove(temp);
-                continue;
-            }
-            if (weight_6.Count > 0)
-            {
-                Event temp = weight_6[Random.Range(0, weight_6.Count)];
-                AddEvents.Add(temp);
-                weight_6.Remove(temp);
-                continue;
-            }
-            if (weight_5.Count > 0) 
-            {
-                Event temp = weight_5[Random.Range(0, weight_5.Count)];
-                AddEvents.Add(temp);
-                weight_5.Remove(temp);
-                continue;
-            }
-            if (weight_4.Count > 0) 
-            {
-                Event temp = weight_4[Random.Range(0, weight_4.Count)];
-                AddEvents.Add(temp);
-                weight_4.Remove(temp);
-                continue;
-            }
-            if (weight_3.Count > 0) 
-            {
-                Event temp = weight_3[Random.Range(0, weight_3.Count)];
-                AddEvents.Add(temp);
-                weight_3.Remove(temp);
-                continue;
-            }
-            if (weight_2.Count > 0) 
-            {
-                Event temp = weight_2[Random.Range(0, weight_2.Count)];
-                AddEvents.Add(temp);
-                weight_2.Remove(temp);
-                continue;
-            }
-            if (weight_1.Count > 0) 
-            {
-                Event temp = weight_1[Random.Range(0, weight_1.Count)];
-                AddEvents.Add(temp);
-                weight_1.Remove(temp);
-                continue;
-            }
-        }
-
-        if (AddEvents.Count > 0)
-        {
-            float MaxPosb = 0, Posb = 0;
-            if (AddEvents.Count == 1)
-            {
-                newEvent = AddEvents[0];
-                return newEvent;
-            }
-            else if (AddEvents.Count == 2)
-                MaxPosb = 0.6f;
-            else if (AddEvents.Count == 3)
-                MaxPosb = 0.8f;
-            else if (AddEvents.Count == 4)
-                MaxPosb = 0.9f;
-            else if (AddEvents.Count == 5)
-                MaxPosb = 1.0f;
-            Posb = Random.Range(0.0f, MaxPosb);
-            if (Posb < 0.4f)
-                newEvent = AddEvents[0];
-            else if (Posb < 0.6f)
-                newEvent = AddEvents[1];
-            else if (Posb < 0.8f)
-                newEvent = AddEvents[2];
-            else if (Posb < 0.9f)
-                newEvent = AddEvents[3];
-            else if (Posb < 1.0f)
-                newEvent = AddEvents[4];
-        }
-
-        //子事件检测
-        if (newEvent != null)
-        {
-            Event TempEvent = newEvent.SubEventCheck();
-            if (TempEvent != null)
-                newEvent = TempEvent.Clone();
-        }
-        return newEvent;
+        return TargetEmps;
     }
 
     private void CheckRelation(Employee self)
@@ -435,30 +151,147 @@ public class EmpManager : MonoBehaviour
         }
     }
 
-    public void ShowEventBubble(Event thisEvent)
+    //根据条件和权重选择一个事件序列
+    public void AddEvent(Employee emp)
     {
-        if (thisEvent.SelfEntity.bulle != null)
+        int TotalWeight = 10;
+        bool HaveBlack = false, HaveOrange = false, HaveColleague = false;
+        //判断有没有对应颜色的事件状态
+        foreach (EventCondition c in emp.EventConditions)
         {
-            thisEvent.SelfEntity.bulle.OnRightClick();
+            if ((int)c <= 4)
+                HaveBlack = true;
+            else
+                HaveOrange = true;
         }
 
-        GameObject bubble =  Instantiate(eventBubble, thisEvent.SelfEntity.Renderer.transform);
-        EventBulle eventBulle = bubble.GetComponent<EventBulle>();
-        bubble.transform.localPosition = new Vector3(-8, 0, -6);
-        eventBulle.Init(thisEvent);
-        thisEvent.SelfEntity.bulle = eventBulle;
-        //thisEvent.selfEntity头上显示一个气泡
+        //是否有上司、下属或同事(待命时所有待命员工互相为同事)
+        if (emp.CurrentDep != null)
+        {
+            if (emp.CurrentDep.CurrentEmps.Count > 1 || emp.CurrentDep.CurrentDivision.Manager != null)
+                HaveColleague = true;
+        }
+        else if (emp.CurrentDivision != null)
+        {
+            foreach(DepControl dep in emp.CurrentDivision.CurrentDeps)
+            {
+                if (dep.CurrentEmps.Count > 0)
+                {
+                    HaveColleague = true;
+                    break;
+                }
+            }
+        }
+        else
+        {
+            int count = 0;
+            foreach(Employee e in GameControl.Instance.CurrentEmployees)
+            {
+                if (e.CurrentDep == null && e.CurrentDivision == null)
+                {
+                    count += 1;
+                    if (count > 1)
+                    {
+                        HaveColleague = true;
+                        break;
+                    }
+                }
+            }
+        }
 
-        //左键点气泡弹出事件面板
-
-        //右键点气泡关掉
-
-        //不点气泡，10秒消失
+        int ColleagueWeight = 0, BlackWeight1 = 0, BlackWeight2 = 0, OrangeWeight = 0;
+        if (HaveColleague == true)
+        {
+            ColleagueWeight = 10;
+            TotalWeight += 10;
+        }
+        if (HaveBlack == true)
+        {
+            BlackWeight1 = ColleagueWeight + 10;
+            BlackWeight2 = ColleagueWeight + 40;
+            TotalWeight += 40;
+        }
+        if (HaveOrange == true)
+        {
+            OrangeWeight += (ColleagueWeight + BlackWeight1 + BlackWeight2);
+            TotalWeight += 50;
+        }
+        int Posb = Random.Range(1, TotalWeight + 1);
+        if (Posb <= ColleagueWeight)
+            StartEvent(emp, 1);
+        else if (Posb <= BlackWeight1)
+            StartEvent(emp, 2);
+        else if (Posb <= BlackWeight2)
+            StartEvent(emp, 3);
+        else if (Posb <= OrangeWeight)
+            StartEvent(emp, 4);
     }
 
-    public void ShowEventDetail(Event thisEvent)
+    //根据序列选择一个事件
+    private void StartEvent(Employee emp, int Type)
     {
-        EventDetailWindow.SetWndState();
-        EventDetailWindow.AddEvent(thisEvent);
+        //1公司日常行为树 2公司一般事件行为树 3个人港口行为树 4个人行为树
+        if (Type == 1)
+        {
+            //先判断是进同事事件还是状态事件
+
+            //同事事件时，先确认所有可行目标
+            List<Employee> TargetEmps = FindAll(emp);
+            if (TargetEmps.Count == 0)
+            {
+                Debug.LogError("公司日常事件没有找到目标");
+                return;
+            }
+            Employee target = TargetEmps[Random.Range(0, TargetEmps.Count)];
+
+            //确认所有可用事件
+            List<Event> PosbEvents = new List<Event>();
+            foreach(Event e in EventData.CompanyRoutineEventA)
+            {
+                if (e.ConditionCheck(emp, target) == true)
+                    PosbEvents.Add(e);
+            }
+
+            //直接随机一个事件结算效果
+            PosbEvents[Random.Range(0, PosbEvents.Count)].StartEvent(emp, 0, target);
+        }
+        else if (Type == 2)
+        {
+            List<Event> PosbEvents = new List<Event>();
+            foreach(Event e in EventData.CompanyNormalEvent)
+            {
+                if (e.ConditionCheck(emp) == true)
+                    PosbEvents.Add(e);
+            }
+            PosbEvents[Random.Range(0, PosbEvents.Count)].StartEvent(emp);
+        }
+        else if (Type == 3)
+        {
+            List<Event> PosbEvents = new List<Event>();
+            foreach (Event e in EventData.EmpPortEvent)
+            {
+                if (e.ConditionCheck(emp) == true)
+                    PosbEvents.Add(e);
+            }
+            PosbEvents[Random.Range(0, PosbEvents.Count)].StartEvent(emp);
+        }
+        else if (Type == 4)
+        {
+            List<Employee> TargetEmps = FindAll(emp);
+            if (TargetEmps.Count == 0)
+            {
+                CheckRelation(emp);
+                return;
+            }
+            Employee target = TargetEmps[Random.Range(0, TargetEmps.Count)];
+
+            List<Event> PosbEvents = new List<Event>();
+            foreach (Event e in EventData.EmpPersonalEvent)
+            {
+                if (e.ConditionCheck(emp, target) == true)
+                    PosbEvents.Add(e);
+            }
+            PosbEvents[Random.Range(0, PosbEvents.Count)].StartEvent(emp, 0, target);
+        }
     }
 }

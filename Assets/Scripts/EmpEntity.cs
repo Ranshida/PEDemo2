@@ -74,13 +74,10 @@ public class EmpEntity : MonoBehaviour
     //事件
     public bool NewEventFlag;       //接受到新事件，但还没有开始执行
     public bool Available { get { return CurrentEvent == null && !OutCompany; } }      //员工为可用状态
-    public bool SolvingEvent { get { return CurrentEvent != null && CurrentEvent.isSolving; } }     //事件正在执行中
     public Event CurrentEvent { get; private set; } = null;  //当前正在执行的事件
     public EmpEntity EventTarget { get; private set; }       //事件发生的对象
     public int EventStage { get; private set; } = 0;         //事件发生的阶段   0：无事件  1：确定目标  2：发生中
 
-    public 事件类型 类型;
-    public string eventName;
     public int LastHour;
 
     //上下班
@@ -91,8 +88,6 @@ public class EmpEntity : MonoBehaviour
     public WayPoint NextWP { get; private set; }        //目标寻路点
     private bool m_ArriveWP;    //到达目标路点
     private float m_WPTimer;    //到达后计时
-
-    public EventBulle bulle;
 
     public string StandGridName()
     {
@@ -124,29 +119,6 @@ public class EmpEntity : MonoBehaviour
         //模型只同步位置，不同步旋转
         mesh.position = this.transform.position + offset;
 
-        if (CurrentEvent == null)
-        {
-            类型 = 事件类型.NoEvent;
-               LastHour = 99999;
-        }
-        else
-        {
-            eventName = CurrentEvent.EventName;
-            LastHour = CurrentEvent.TimeLeft;
-            if (!CurrentEvent.HaveTarget)
-            {
-                类型 = 事件类型.Self;
-            }
-            if (CurrentEvent.Self == ThisEmp)
-            {
-                类型 = 事件类型.主动;
-            }
-            else
-            {
-                类型 = 事件类型.被动;
-            }
-        }
-
         if (WalkAround)
         {
             //如果到达路点，则计时
@@ -172,84 +144,9 @@ public class EmpEntity : MonoBehaviour
     
     public void TimePass()
     {
-        //事件处理中
-        if (SolvingEvent)
-        {
-            //独立事件
-            if (!CurrentEvent.HaveTarget)
-            {
-                CurrentEvent.TimeLeft--;
-                if (CurrentEvent.TimeLeft <= 0)
-                {
-                    EventFinish();
-                }
-            }
-            else
-            {
-                //主动方控制
-                if (CurrentEvent.SelfEntity == this)
-                {
-                    CurrentEvent.TimeLeft--;
-                    if (CurrentEvent.TimeLeft <= 0)
-                    {
-                        EventFinish();
-                    }
-                }
-            }
-        }
+        //原先事件时间在这里减少
     }
 
-    void EventFinish()
-    {
-        CurrentEvent.EventFinish();
-
-        //独立事件  自身清空
-        if (!CurrentEvent.HaveTarget)
-        {
-            EventStage = 0;
-            EventTarget = null;
-            CurrentEvent = null;
-        }
-        else
-        {
-            //主动方
-            if (CurrentEvent.SelfEntity == this)
-            {
-                EventStage = 0;
-                EventTarget = null;
-                CurrentEvent.TargetEntity.EventStage = 0;
-                CurrentEvent.TargetEntity.EventTarget = null;
-                CurrentEvent.TargetEntity.CurrentEvent = null;
-            }
-            //被动方
-            else
-            {
-                EventStage = 0;
-                EventTarget = null;
-                CurrentEvent.SelfEntity.EventStage = 0;
-                CurrentEvent.SelfEntity.EventTarget = null;
-                CurrentEvent.SelfEntity.CurrentEvent = null;
-            }
-            CurrentEvent = null;
-        }
-    }
-
-    //员工主动发起的执行事件的指令
-    public void SolveEvent()
-    {
-        CurrentEvent.StartSolve();
-        EventStage = 2;
-
-        //对方也开始处理
-        if (CurrentEvent.HaveTarget)
-        {
-            if (!EventTarget)
-            {
-                Debug.LogError(ThisEmp.Name + " " + CurrentEvent.EventName);
-            }
-            EventTarget.EventStage = 2;
-        }
-    }
 
     //下班
     public void WorkEnd()
@@ -263,10 +160,10 @@ public class EmpEntity : MonoBehaviour
         OffWork = true;
 
         //事件直接判定为完成
-        if (CurrentEvent != null)
-        {
-            EventFinish();
-        }
+        //if (CurrentEvent != null)
+        //{
+        //    EventFinish();
+        //}
     }
 
     //上班
@@ -277,71 +174,16 @@ public class EmpEntity : MonoBehaviour
         //FindWorkPos();
     }
 
-    ///寻找目标（事件版本2）
-    public void AddEvent(EmpEntity Ee, int index)  //场景序列
-    {
-        //自己的事件还没有完成
-        if (CurrentEvent != null) 
-            return;
-
-
-        if (Ee == null) 
-            CurrentEvent = EmpManager.Instance.RandomEvent(ThisEmp, null, index);
-        else
-            CurrentEvent = EmpManager.Instance.RandomEvent(ThisEmp, Ee.ThisEmp, index);
-
-        //没找到合适事件
-        if (CurrentEvent == null)
-        {
-            MonoBehaviour.print("无合适事件");
-            return;
-        }
-
-        if (CurrentEvent.HaveTarget)
-        {
-            if (!CurrentEvent.TargetEntity.Available)
-            {
-                MonoBehaviour.print("无合适事件");
-                EventStage = 0;
-                CurrentEvent = null;
-                return;
-            }
-
-            EventStage = 1;
-            EventTarget = CurrentEvent.TargetEntity;
-
-            EventTarget.CurrentEvent = CurrentEvent;
-            EventTarget.EventStage = 1;
-            EventTarget.EventTarget = CurrentEvent.SelfEntity;
-        }
-        else
-        {
-            EventStage = 1;
-            EventTarget = null;
-        }
-        //找到了合适的事件
-        CurrentEvent.PerkRemoveCheck();
-
-        if (CurrentEvent.HaveTarget && CurrentEvent.Target == null)
-        {
-            Debug.LogError("有目标的事件，但是没有目标对象" + CurrentEvent.EventName);
-        }
-    }
-    
-    public void AddEvent(Event e)  //废弃
-    {
-        return;
-    }
 
     //进入忙碌状态
     public void SetBusy()
     {
         OutCompany = true;
         //当前事件直接成功
-        if (CurrentEvent != null)
-        {
-            EventFinish();
-        }
+        //if (CurrentEvent != null)
+        //{
+        //    EventFinish();
+        //}
 
     }
 
@@ -357,10 +199,6 @@ public class EmpEntity : MonoBehaviour
         InfoDetail = null;
         Fired = true;
         OffWork = true;
-        if (CurrentEvent != null)
-        {
-            EventFinish();
-        }
     }
     public void Remove()
     {
@@ -415,12 +253,4 @@ public class EmpEntity : MonoBehaviour
     }
 
 
-}
-
-public enum 事件类型
-{
-    NoEvent,
-    Self,
-    主动,
-    被动
 }

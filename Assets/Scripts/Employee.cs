@@ -166,8 +166,8 @@ public class Employee
     public int SkillLimitTime;//头脑风暴中技能禁用的回合数
     public int NewRelationTargetTime = 1;
     public float ExtraSuccessRate = 0, SalaryMultiple = 1.0f;
-    public OccupationType Occupation;
-    public Ambition ambition;
+    public OccupationType Occupation;  //职业
+    public Ambition ambition; //志向
 
     public List<int> Professions = new List<int>();//员工的岗位优势
     public List<int[]> CurrentDices = new List<int[]>();//员工的骰子
@@ -190,6 +190,7 @@ public class Employee
     public List<EmpItem> CurrentItems = new List<EmpItem>();
     public List<Emotion> CurrentEmotions = new List<Emotion>();
     public List<EmpBuff> CurrentBuffs = new List<EmpBuff>();
+    public List<EventCondition> EventConditions = new List<EventCondition>();
     public List<int> ExhaustedCount = new List<int>();
 
     private int mentality, stamina;
@@ -397,34 +398,6 @@ public class Employee
             tempRelation.Remove(relation);
             RelationTargets.Add(relation.Target);
         }
-        //旧版发展对象
-        //List<Employee> EL = new List<Employee>();
-        //for (int i = 0; i < InfoDetail.GC.CurrentEmployees.Count; i++)
-        //{
-        //    if (InfoDetail.GC.CurrentEmployees[i] != this)
-        //        EL.Add(InfoDetail.GC.CurrentEmployees[i]);
-        //}
-        //if (CurrentDep != null)
-        //{
-        //    for (int i = 0; i < CurrentDep.CurrentEmps.Count; i++)
-        //    {
-        //        if (CurrentDep.CurrentEmps[i] != this)
-        //            EL.Remove(CurrentDep.CurrentEmps[i]);
-        //    }
-        //    if (CurrentDep.CommandingOffice != null && CurrentDep.CommandingOffice.CurrentManager != null)
-        //        EL.Remove(CurrentDep.CommandingOffice.CurrentManager);
-        //}
-        //else if (CurrentOffice != null && CurrentOffice.CommandingOffice != null && CurrentOffice.CommandingOffice.CurrentManager != null)
-        //    EL.Remove(CurrentOffice.CommandingOffice.CurrentManager);
-        //for(int i = 0; i < 3; i++)
-        //{
-        //    if(EL.Count > 1)
-        //    {
-        //        Employee NE = EL[Random.Range(0, EL.Count)];
-        //        RelationTargets.Add(NE);
-        //        EL.Remove(NE);
-        //    }
-        //}
     }
 
     //返回一个加权后的随机发展对象
@@ -679,7 +652,7 @@ public class Employee
         if (EventTime == 0)
         {
             EventTime = Random.Range(7, 10);
-            InfoDetail.Entity.AddEvent(EmpManager.Instance.RandomEventTarget(this, out int index), index);
+            //InfoDetail.Entity.AddEvent(EmpManager.Instance.RandomEventTarget(this, out int index), index);
         }
         //寻找新关系发展目标
         NewRelationTargetTime -= 1;
