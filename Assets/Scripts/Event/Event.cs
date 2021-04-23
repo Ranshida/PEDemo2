@@ -15,6 +15,7 @@ public abstract class Event
     protected int LoveRequire = -1;   //-1无需求 0无恋爱关系 1倾慕 2追求 3情侣 4伴侣
     protected int LevelRequire = -1;  //-1无需求 0无等级关系 1同事 2上级 3下属
     protected int FailLimitValue = 10;//事件失败判定的阈值
+    protected bool SingleResult = false;
     protected string EventName;//事件名称
 
     protected string[] SelfDescriptions;//个人历史描述
@@ -143,8 +144,12 @@ public abstract class Event
     //计算结果
     protected virtual int FindResult(Employee emp, int ExtraCorrection = 0, Employee target = null)
     {
+        //0失败 1成功
         int result = 0;
 
+        //单结果事件直接成功
+        if (SingleResult == true)
+            return 1;
         return result;
     }
 
@@ -171,7 +176,8 @@ public abstract class Event
     /// <param name="emp">员工自身</param>
     /// <param name="ExtraCorrection">额外点数修正</param>
     /// <param name="target">目标员工</param>
-    public virtual void StartEvent(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    /// <param name="Stage">事件组执行阶段</param>
+    public virtual void StartEvent(Employee emp, int ExtraCorrection = 0, Employee target = null, int Stage = 0)
     {
         if (FindResult(emp, ExtraCorrection, target) == 1)
             SuccessResult(emp, target);
@@ -208,6 +214,12 @@ public static class EventData
 
     //个人事件序列
     public static List<Event> EmpPersonalEvent = new List<Event>()
+    {
+
+    };
+
+    //特殊事件组
+    public static List<EventGroup> SpecialEventGroups = new List<EventGroup>()
     {
 
     };
