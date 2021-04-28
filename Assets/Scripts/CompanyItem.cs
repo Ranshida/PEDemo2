@@ -103,6 +103,9 @@ public class CompanyItem : MonoBehaviour
 
     public void SelectItem()
     {
+        //有未处理事件时不能继续
+        if (GC.EC.UnfinishedEvents.Count > 0)
+            return;
         GC.CurrentItem = this;
         if (ActiveType == 2)
         {

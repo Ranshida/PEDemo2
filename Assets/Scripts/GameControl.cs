@@ -88,6 +88,7 @@ public class GameControl : MonoBehaviour
     public StrategyControl StrC;
     public FOEControl foeControl;
     public EventControl EC;
+    public OptionCardLibrary OCL;
     public CEOControl CC;
     public Areas AC;
     public WindowBaseControl TotalEmpPanel;
@@ -162,11 +163,16 @@ public class GameControl : MonoBehaviour
 
     public void NextTurn()
     {
+        if (ForceTimePause == true)
+            return;
         TurnPass();
     }
 
-    void TurnPass()
+    public void TurnPass()
     {
+        if (EC.UnfinishedEvents.Count > 0)
+            return;
+
         //月会时间检测
         if (MonthMeetingTime == 0)
         {
@@ -196,13 +202,22 @@ public class GameControl : MonoBehaviour
         Text_Time.text = "第" + Turn + "回合";
         Text_MonthMeetingTime.text = "距离下次月会还剩" + MonthMeetingTime + "回合";
 
+        //大概在这里确定所有的事件
+
         CheckButtonName();
         TurnEvent.Invoke();
+        EC.StartSpecialEvent();
     }
 
     public void CheckButtonName()
     {
-        if(MonthMeetingTime == 0)
+        if(EC.UnfinishedEvents.Count > 0 || ForceTimePause == true)
+        {
+            Text_NextTurn.text = "处理事件";
+            return;
+        }
+
+        if (MonthMeetingTime == 0)
         {
             Text_NextTurn.text = "开始月会";
             return;
@@ -423,6 +438,13 @@ public class GameControl : MonoBehaviour
     //员工招聘和移动时部门选择
     public void ShowDepSelectPanel(Employee emp, bool ShowDivision = false)
     {
+        //有事件没处理时不能选择
+        if(EC.UnfinishedEvents.Count > 0)
+        {
+            ResetSelectMode();
+            return;
+        }
+
         DepSelectPanel.GetComponent<WindowBaseControl>().SetWndState(true);
         StandbyButton.SetActive(true);
         for (int i = 0; i < CurrentDeps.Count; i++)
@@ -804,6 +826,7 @@ public class GameControl : MonoBehaviour
             pauseMono.Add(mono);
             ForceTimePause = true;
         }
+        CheckButtonName();
     }
     public void RemovePause(MonoBehaviour mono)
     {
@@ -817,6 +840,7 @@ public class GameControl : MonoBehaviour
         {
             ForceTimePause = true;
         }
+        CheckButtonName();
     }
 
 }

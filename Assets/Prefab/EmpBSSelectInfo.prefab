@@ -1782,17 +1782,6 @@ MonoBehaviour:
   AddExpButton: {fileID: 8308742248168055551}
   SkillMarkers: []
   CurrentPerks: []
-  Faces:
-  - {fileID: 21300000, guid: 2fcc170e1db148c46b91eb76c86eb4b9, type: 3}
-  - {fileID: 21300000, guid: 7e7705a267367ea4bbcb704416f07090, type: 3}
-  - {fileID: 21300000, guid: d0e01ec3f1b6b074d81f4ddf2609b6e5, type: 3}
-  - {fileID: 21300000, guid: a98ce9267fc4c0848951df022fdd3807, type: 3}
-  - {fileID: 21300000, guid: 732b93ca069674b48aeef8641f09983e, type: 3}
-  - {fileID: 21300000, guid: b6652e1c7fd6c2d4b91893669dbb86de, type: 3}
-  - {fileID: 21300000, guid: c323da50e85b6b541afe2b0f54cc541d, type: 3}
-  - {fileID: 21300000, guid: 164437b25612eab4e9574d569e22bd34, type: 3}
-  - {fileID: 21300000, guid: a99f5ee986495634f8c705088563b91d, type: 3}
-  - {fileID: 21300000, guid: 297092e20cf302448a547521d74e05e5, type: 3}
 --- !u!114 &2779070723595128723
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -484,6 +484,9 @@ public class BuildingManage : MonoBehaviour
 
     public void AskUnlockArea()
     {
+        //有未处理事件时不能继续
+        if (GameControl.Instance.EC.UnfinishedEvents.Count > 0)
+            return;
         UnlockAreaWindow.SetWndState();
     }
 
@@ -522,6 +525,7 @@ public class BuildingManage : MonoBehaviour
     //int pauseCount = 0;
     private void AskPause()
     {
+        return;
         GameControl.Instance.AskPause(this);
         //pauseCount++;
     }

@@ -177,6 +177,7 @@ public class Employee
 
     public string Name;
     public bool isCEO = false, SupportCEO;
+    public bool inSpecialSquad = false;//是否在特殊小组里
 
     public EmpInfo InfoA, InfoB, InfoDetail;
     public DepControl CurrentDep;
@@ -555,6 +556,7 @@ public class Employee
     //时间流逝后部分基础属性判定
     public void TimePass()
     {
+        //涉及主导情绪的部分，应该单独写一个方法并且不能放在TimePass里
         if (InfoDetail.MainEmotion != null)
         {
             InfoDetail.MainEmotion.TimeLeft -= 1;
@@ -891,13 +893,18 @@ public class Employee
             System.Action AgreeAction = () =>
             {
                 MoneyRequest();
+                GameControl.Instance.EC.ExhaustedCount -= 1;
+                GameControl.Instance.EC.StartSpecialEvent();
             };
             System.Action RefuseAction = () =>
             {
                 InfoDetail.Fire(false);
+                GameControl.Instance.EC.ExhaustedCount -= 1;
+                GameControl.Instance.EC.StartSpecialEvent();
             };
             QuestControl.Instance.Init(Name + "心力爆炸产生了崩溃，向您索赔金钱500，如果不接受，该员工将会离职", AgreeAction, RefuseAction);
         }
+        GameControl.Instance.EC.ExhaustedCount += 1;
         Mentality += 50;
         if (ExhaustedCount.Count >= 4)
         {

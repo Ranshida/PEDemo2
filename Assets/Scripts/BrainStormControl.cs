@@ -53,6 +53,7 @@ public class BrainStormControl : MonoBehaviour
     public void PrepareBS()
     {
         CloseButton.SetActive(false);
+        return;
         GC.AskPause(this);
     }
 
@@ -76,6 +77,9 @@ public class BrainStormControl : MonoBehaviour
     //从人员选择面板开始头脑风暴
     public void StartBS()
     {
+        //有未处理事件时不能继续
+        if (GC.EC.UnfinishedEvents.Count > 0)
+            return;
         BSStarted = true;
         StageCount = 0;
         //重置物品数量

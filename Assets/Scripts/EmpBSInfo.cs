@@ -18,7 +18,6 @@ public class EmpBSInfo : MonoBehaviour
 
     public List<BSSkillMarker> SkillMarkers = new List<BSSkillMarker>();
     public List<PerkInfo> CurrentPerks = new List<PerkInfo>();
-    public Sprite[] Faces = new Sprite[10];
 
 
     private void Update()
@@ -64,6 +63,9 @@ public class EmpBSInfo : MonoBehaviour
     //开始说服员工加入
     public void SetEmp()
     {
+        //有未处理事件是不能
+        if (BSC.GC.EC.UnfinishedEvents.Count > 0)
+            return;
         BSC.CurrentBSInfo = this;
         BSC.GC.CC.SetCEOSkill(20);
     }
@@ -84,7 +86,7 @@ public class EmpBSInfo : MonoBehaviour
 
         //设置核心成员面板头像
         if (Type == 1)
-            Photo.sprite = Faces[emp.InfoDetail.Entity.FaceType];
+            Photo.sprite = EmpManager.Instance.EmpFaces[emp.InfoDetail.Entity.FaceType];
         //管理特质检测
         foreach(PerkInfo p in target.InfoDetail.PerksInfo)
         {

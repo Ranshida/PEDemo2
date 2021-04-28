@@ -22,6 +22,7 @@ public class EmpInfo : MonoBehaviour
     public List<StrategyInfo> StrategiesInfo = new List<StrategyInfo>();
     public List<EmotionInfo> EmotionInfos = new List<EmotionInfo>();
     public List<BSSkillMarker> SkillMarkers = new List<BSSkillMarker>();
+    public List<OptionCardInfo> OptionCards = new List<OptionCardInfo>();
 
     public int InfoType;
 
@@ -176,27 +177,6 @@ public class EmpInfo : MonoBehaviour
         //发动CEO技能
         else if(GC.SelectMode == 6)
         {
-            ////调查员工
-            //if(GC.CEOSkillNum == 18)
-            //{
-            //    GC.CC.EmpSelectWarning.SetActive(false);
-            //    GC.CEOSkillNum = 15;
-            //    int Posb = Random.Range(1, 7);
-            //    Posb += (int)(GC.CurrentEmpInfo.emp.Gossip * 0.2f);
-            //    if (Posb >= 3)
-            //    {
-            //        if (emp.isSpy == true)
-            //        {
-            //            emp.InfoDetail.AddPerk(new Perk29(emp), true);
-            //            GC.CreateMessage("成功发现了内鬼" + emp.Name);
-            //        }
-            //        else
-            //            GC.CreateMessage("发现" + emp.Name + "不是内鬼");
-            //    }
-            //    else
-            //        GC.CreateMessage("调查失败，无法了解" + emp.Name + "的成分");
-            //    return;
-            //}
             if (GC.CC.CEOSkillNum == 4)
             {
                 emp.Mentality += (int)(10 * GC.HRBuildingMentalityExtra);

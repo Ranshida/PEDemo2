@@ -4,8 +4,13 @@ using UnityEngine;
 
 public class EventGroup : Event
 {
-    //事件组生成后待机(不产生效果)的回合数
-    public int ExtraStage = 0;
+    public int ExtraStage = 0;//事件组生成后待机(不产生效果)的回合数
+    public int StageCount = 1;//事件组总阶段数
+
+    public EventGroup() : base()
+    {
+        isEventGroup = true;
+    }
 
     public override void StartEvent(Employee emp, int ExtraCorrection = 0, Employee target = null, int Stage = 0)
     {
@@ -48,6 +53,14 @@ public class EventGroup : Event
 
     }
     protected virtual void EffectF(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    {
+
+    }
+}
+
+public class EventGroup1 : EventGroup
+{
+    public EventGroup1() : base()
     {
 
     }

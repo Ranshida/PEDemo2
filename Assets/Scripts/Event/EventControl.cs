@@ -5,13 +5,20 @@ using UnityEngine.UI;
 
 public class EventControl : MonoBehaviour
 {
+    public int ExhaustedCount = 0;
+    private int EventGroupIndex = 0;
+
     public GameObject ManageVotePanel;
     public GameControl GC;
     public Transform ManageVoteContent;
     public VoteCell VoteCellPrefab;
     public Text Text_MeetingName, Text_ManageVoteResult;
+    public ChoiceEvent ChoiceEventPrefab;
 
-    List<VoteCell> VCells = new List<VoteCell>();
+    private List<VoteCell> VCells = new List<VoteCell>();
+    public List<ChoiceEvent> UnfinishedEvents = new List<ChoiceEvent>();
+    public List<EventGroupInfo> CurrentEventGroup = new List<EventGroupInfo>();
+
     private void Start()
     {
         if (GC == null)
@@ -394,5 +401,78 @@ public class EventControl : MonoBehaviour
             Text_ManageVoteResult.text = "未通过";
             return false;
         }
+    }
+
+    public void StartChoiceEvent(Event e, Employee self, EventGroupInfo egi = null)
+    {
+        ChoiceEvent c = Instantiate(ChoiceEventPrefab, GC.transform);
+        c.EC = this;
+        c.CurrentEvent = e;
+        c.SetEventInfo(e, self, egi);
+        UnfinishedEvents.Add(c);
+    }
+
+    //判断是否能够进入特殊事件
+    public void StartSpecialEvent()
+    {
+        //有未处理的心态爆炸则必须先处理
+        if (ExhaustedCount != 0)
+            return;
+
+        //此处可能要先重置一下各种数据？
+        //此处开始，先弹出第一个事件组的特殊事件
+        if (EventGroupIndex + 1 > CurrentEventGroup.Count)
+        {
+
+        }
+        //处理所有已经完成的事件组
+        else
+        {
+            List<EventGroupInfo> FinishList = new List<EventGroupInfo>();
+            foreach(EventGroupInfo egi in CurrentEventGroup)
+            {
+                if (egi.Stage > egi.TargetEventGroup.StageCount)
+                    FinishList.Add(egi);
+            }
+            foreach(EventGroupInfo egi in FinishList)
+            {
+                CurrentEventGroup.Remove(egi);
+                Destroy(egi.gameObject);
+            }
+            FinishList.Clear();
+        }
+    }
+
+    //生成一个抉择事件
+    void CreateChoiceEvent(Event e)
+    {
+
+    }
+
+    //判断是否完成了抉择事件并进入一般事件流程
+    public void ChoiceEventCheck(bool groupEvent)
+    {
+        //判断是否为事件组事件
+        //不是的话看一下所有一般抉择事件是否都完成，完成后进入下一阶段(情绪回合-1)
+        if (groupEvent == false)
+        {
+            if (UnfinishedEvents.Count == 0)
+            {
+
+            }
+        }
+
+        //是的话看一下是否遍历了所有事件组事件，是的话删除所有已经完成的事件组并进入下一阶段
+        else
+        {
+            EventGroupIndex += 1;
+            StartSpecialEvent();
+        }
+    }
+
+    //判断一下抉择事件是否都选择完毕了（能进入下一阶段）
+    public void EventFinishCheck()
+    {
+
     }
 }

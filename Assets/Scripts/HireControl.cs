@@ -47,6 +47,14 @@ public class HireControl : MonoBehaviour
         Refresh();
     }
 
+    public void OpenStorePanel()
+    {
+        //有未处理事件时不能继续
+        if (GC.EC.UnfinishedEvents.Count > 0)
+            return;
+        StorePanel.SetWndState(true);
+    }
+
     //添加从人力资源部获得的招聘
     public void AddHireTypes(HireType ht)
     {

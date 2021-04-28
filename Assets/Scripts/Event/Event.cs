@@ -14,14 +14,17 @@ public abstract class Event
     protected int MasterRequire = -1; //-1无需求 0无师徒关系 1徒弟 2师傅
     protected int LoveRequire = -1;   //-1无需求 0无恋爱关系 1倾慕 2追求 3情侣 4伴侣
     protected int LevelRequire = -1;  //-1无需求 0无等级关系 1同事 2上级 3下属
-    protected int FailLimitValue = 10;//事件失败判定的阈值
+    public int FailLimitValue = 10;//事件失败判定的阈值
+    public int DescriptionCount = 1;//总共有几种描述文案
     protected bool SingleResult = false;
-    protected string EventName;//事件名称
+    public string EventName;//事件(组)名称
+    public string SuccessDescription, FailDescription;
+    protected string SelfName;//员工自身名字
+    protected string TargetName;//目标员工名字(员工名字用于事件各种描述中调用)
 
-    protected string[] SelfDescriptions;//个人历史描述
-    protected string[] TargetDescriptions;//目标历史描述
-    protected string[] EventDescriptions;//事件描述
-    protected string[] OptionDescriptions;//选项描述
+    public bool isEventGroup = false;//是否为事件组事件
+
+    public string[] SubEventNames = new string[6]; //(事件组)各个子事件的名称
 
     protected EventCondition RequiredCondition; //事件状态需求
 
@@ -183,6 +186,50 @@ public abstract class Event
             SuccessResult(emp, target);
         else
             FailResult(emp, target);
+    }
+
+    public virtual string ResultDescription(Employee Emp, Employee targetEmp, int index)
+    {
+        string content = "";
+        if (Emp != null)
+            SelfName = Emp.Name;
+        if (targetEmp != null)
+            TargetName = targetEmp.Name;
+        
+        return content;
+    }
+
+    public virtual string SelfDescription(Employee Emp, Employee targetEmp, int index)
+    {
+        string content = "";
+        if (Emp != null)
+            SelfName = Emp.Name;
+        if (targetEmp != null)
+            TargetName = targetEmp.Name;
+
+        return content;
+    }
+
+    public virtual string TargetDescription(Employee Emp, Employee targetEmp, int index)
+    {
+        string content = "";
+        if (Emp != null)
+            SelfName = Emp.Name;
+        if (targetEmp != null)
+            TargetName = targetEmp.Name;
+
+        return content;
+    }
+
+    public virtual string EventDescription(Employee Emp, Employee targetEmp, int index)
+    {
+        string content = "";
+        if (Emp != null)
+            SelfName = Emp.Name;
+        if (targetEmp != null)
+            TargetName = targetEmp.Name;
+
+        return content;
     }
 }
 

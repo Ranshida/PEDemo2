@@ -18,6 +18,7 @@ public class Perk
     public bool ManagePerk = false;//是否为在成为核心团队成员后奏效
     public bool DivisionPerk = false;//是否在成为高管后奏效
     public bool DepPerk = false;//是否为编入部门后生效
+    public bool OptionCardPerk = false;//是否为生成抉择卡的特质
     public string Name, Description;
     public EffectType effectType;
     public PerkColor perkColor = PerkColor.None;
@@ -1289,6 +1290,58 @@ public class Perk51 : Perk
     }
 }
 
+//回避冲突
+public class Perk52 : Perk
+{
+    public Perk52(Employee Emp) : base(Emp)
+    {
+        Name = "回避冲突";
+        Description = "获得抉择卡“回避冲突”";
+        TimeLeft = -1;
+        Num = 52;
+    }
+
+    public override void ImmEffect()
+    {
+        GameControl.Instance.OCL.AddOptionCard(new OptionCard1(), TargetEmp);
+    }
+}
+
+//闪烁其词
+public class Perk53 : Perk
+{
+    public Perk53(Employee Emp) : base(Emp)
+    {
+        Name = "闪烁其词";
+        Description = "获得抉择卡“闪烁其词”";
+        TimeLeft = -1;
+        Num = 53;
+    }
+
+    public override void ImmEffect()
+    {
+        GameControl.Instance.OCL.AddOptionCard(new OptionCard2(), TargetEmp);
+    }
+}
+
+//拒绝沟通
+public class Perk54 : Perk
+{
+    public Perk54(Employee Emp) : base(Emp)
+    {
+        Name = "拒绝沟通";
+        Description = "获得抉择卡“拒绝沟通”";
+        TimeLeft = -1;
+        Num = 54;
+    }
+
+    public override void ImmEffect()
+    {
+        GameControl.Instance.OCL.AddOptionCard(new OptionCard3(), TargetEmp);
+    }
+}
+
+
 #region 旧perk
 
 //热情
@@ -1589,45 +1642,6 @@ public class Perk45 : Perk
     {
         base.RemoveEffect();
         TargetDep.FaithRelationCheck();
-    }
-}
-
-//烦恼
-public class Perk52 : Perk
-{
-    public Perk52(Employee Emp) : base(Emp)
-    {
-        Name = "烦恼";
-        Description = "解锁事件，公司日常";
-        TimeLeft = 64;
-        Num = 52;
-        canStack = true;
-    }
-}
-
-//炫耀
-public class Perk53 : Perk
-{
-    public Perk53(Employee Emp) : base(Emp)
-    {
-        Name = "炫耀";
-        Description = "解锁事件，公司日常";
-        TimeLeft = 64;
-        Num = 53;
-        canStack = true;
-    }
-}
-
-//尴尬
-public class Perk54 : Perk
-{
-    public Perk54(Employee Emp) : base(Emp)
-    {
-        Name = "尴尬";
-        Description = "解锁事件，公司日常";
-        TimeLeft = 64;
-        Num = 54;
-        canStack = true;
     }
 }
 
@@ -3505,5 +3519,10 @@ public static class PerkData
         new Perk7(null), new Perk8(null), new Perk9(null), new Perk10(null), new Perk11(null)
         , new Perk24(null), new Perk25(null), new Perk26(null), new Perk27(null), new Perk28(null),
         new Perk29(null), new Perk30(null), new Perk31(null), new Perk32(null)
+    };
+
+    public static List<Perk> DebuffPerkList = new List<Perk>()
+    {
+        new Perk52(null), new Perk53(null), new Perk54(null)
     };
 }

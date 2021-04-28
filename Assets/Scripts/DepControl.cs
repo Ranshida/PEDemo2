@@ -325,6 +325,9 @@ public class DepControl : MonoBehaviour
     //手动激活部门技能
     public void StartBuildingActive()
     {
+        //有未处理事件时不能继续
+        if (GC.EC.UnfinishedEvents.Count > 0)
+            return;
         GC.CurrentDep = this;
         if (ActiveMode == 2)
         {

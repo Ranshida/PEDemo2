@@ -11,9 +11,11 @@ public class EmpManager : MonoBehaviour
 {
     public static EmpManager Instance { get; private set; }
     private GameObject empPrefabs;
-    private Material[] empMaterials;
     private EmpEntity pointEmp;
     private GameObject eventBubble;
+
+    private Material[] empMaterials;
+    public Sprite[] EmpFaces = new Sprite[10];
 
     private void Awake()
     {

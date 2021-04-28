@@ -58,6 +58,7 @@ public abstract class WindowRoot : MonoBehaviour
 
     public void AskPause()
     {
+        return;
         GameControl.Instance.AskPause(this);
     }
     public void RemovePause()
