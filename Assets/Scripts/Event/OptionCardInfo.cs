@@ -56,7 +56,7 @@ public class OptionCardInfo : MonoBehaviour
     public void SelectOptionCard()
     {
         //抉择卡库界面信息展示
-        if(SelectType == 1)
+        if(SelectType == 1 && Emp != null)
         {
             OCL.ShowEmpOptions(Emp);
         }

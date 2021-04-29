@@ -123,6 +123,9 @@ public class GameControl : MonoBehaviour
     private void Start()
     {
         UpdateResourceInfo();
+        OCL.AddStaticOptions(new OptionCard1());
+        OCL.AddStaticOptions(new OptionCard2());
+        OCL.AddStaticOptions(new OptionCard3());
     }
 
     private void Update()
@@ -206,6 +209,7 @@ public class GameControl : MonoBehaviour
 
         CheckButtonName();
         TurnEvent.Invoke();
+        EC.EventGroupIndex = 0;
         EC.StartSpecialEvent();
     }
 

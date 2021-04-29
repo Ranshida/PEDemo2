@@ -277,7 +277,7 @@ public class Employee
         if (type != -1)
             num = type;
         else
-            num = 1;
+            num = Random.Range(0, 9);
 
         if (num == 0)
         {

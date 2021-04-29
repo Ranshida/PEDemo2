@@ -15,6 +15,15 @@ public class OptionCardLibrary : MonoBehaviour
     public List<OptionCardInfo> CurrentOptions = new List<OptionCardInfo>();
     public List<OptionCardInfo> DisplayOptions = new List<OptionCardInfo>();
 
+    public void AddStaticOptions(OptionCard oc)
+    {
+        OptionCardInfo newCard = Instantiate(OptionCardPrefab, TotalOptionContent);
+        newCard.SetBaseInfo(oc);
+        newCard.OCL = this;
+        CurrentOptions.Add(newCard);
+        UpdateUI();
+    }
+
     public void AddOptionCard(OptionCard oc, Employee emp)
     {
         OptionCardInfo newCard = Instantiate(OptionCardPrefab, TotalOptionContent);

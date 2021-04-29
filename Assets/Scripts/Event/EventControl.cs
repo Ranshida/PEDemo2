@@ -6,14 +6,15 @@ using UnityEngine.UI;
 public class EventControl : MonoBehaviour
 {
     public int ExhaustedCount = 0;
-    private int EventGroupIndex = 0;
+    public int EventGroupIndex = 0; //当前处理到的事件组编号
 
     public GameObject ManageVotePanel;
     public GameControl GC;
-    public Transform ManageVoteContent;
+    public Transform ManageVoteContent, EventGroupContent;
     public VoteCell VoteCellPrefab;
     public Text Text_MeetingName, Text_ManageVoteResult;
     public ChoiceEvent ChoiceEventPrefab;
+    public EventGroupInfo EventGroupPrefab;
 
     private List<VoteCell> VCells = new List<VoteCell>();
     public List<ChoiceEvent> UnfinishedEvents = new List<ChoiceEvent>();
@@ -22,7 +23,8 @@ public class EventControl : MonoBehaviour
     private void Start()
     {
         if (GC == null)
-            GC = GameControl.Instance;       
+            GC = GameControl.Instance;
+        CreateEventGroup(EventData.SpecialEventGroups[0]);
     }
 
     //换高管投票检测
@@ -406,10 +408,21 @@ public class EventControl : MonoBehaviour
     public void StartChoiceEvent(Event e, Employee self, EventGroupInfo egi = null)
     {
         ChoiceEvent c = Instantiate(ChoiceEventPrefab, GC.transform);
+        UIManager.Instance.OnAddNewWindow(c.GetComponent<WindowBaseControl>());
         c.EC = this;
         c.CurrentEvent = e;
         c.SetEventInfo(e, self, egi);
         UnfinishedEvents.Add(c);
+    }
+
+    public void CreateEventGroup(EventGroup e)
+    {
+        EventGroupInfo newEventGroup = Instantiate(EventGroupPrefab, GC.transform);
+        newEventGroup.EC = this;
+        newEventGroup.SetEvent(e);
+        CurrentEventGroup.Add(newEventGroup);
+        UIManager.Instance.OnAddNewWindow(newEventGroup.DetailPanel.GetComponent<WindowBaseControl>());
+        newEventGroup.transform.parent = EventGroupContent;
     }
 
     //判断是否能够进入特殊事件
@@ -421,9 +434,9 @@ public class EventControl : MonoBehaviour
 
         //此处可能要先重置一下各种数据？
         //此处开始，先弹出第一个事件组的特殊事件
-        if (EventGroupIndex + 1 > CurrentEventGroup.Count)
+        if (EventGroupIndex < CurrentEventGroup.Count)
         {
-
+            CurrentEventGroup[EventGroupIndex].StartGroupEvent();
         }
         //处理所有已经完成的事件组
         else
@@ -437,6 +450,7 @@ public class EventControl : MonoBehaviour
             foreach(EventGroupInfo egi in FinishList)
             {
                 CurrentEventGroup.Remove(egi);
+                Destroy(egi.DetailPanel.gameObject);
                 Destroy(egi.gameObject);
             }
             FinishList.Clear();

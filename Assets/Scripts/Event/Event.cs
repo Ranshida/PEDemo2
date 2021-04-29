@@ -153,6 +153,16 @@ public abstract class Event
         //单结果事件直接成功
         if (SingleResult == true)
             return 1;
+
+        int posb = Random.Range(1, 21);
+
+        //这里posb应该加上额外判定的点数
+
+        if (posb > FailLimitValue)
+            result = 1;
+        else
+            result = 2;
+
         return result;
     }
 
@@ -180,7 +190,7 @@ public abstract class Event
     /// <param name="ExtraCorrection">额外点数修正</param>
     /// <param name="target">目标员工</param>
     /// <param name="Stage">事件组执行阶段</param>
-    public virtual void StartEvent(Employee emp, int ExtraCorrection = 0, Employee target = null, int Stage = 0)
+    public virtual void StartEvent(Employee emp, int ExtraCorrection = 0, Employee target = null, EventGroupInfo egi = null)
     {
         if (FindResult(emp, ExtraCorrection, target) == 1)
             SuccessResult(emp, target);
@@ -268,6 +278,6 @@ public static class EventData
     //特殊事件组
     public static List<EventGroup> SpecialEventGroups = new List<EventGroup>()
     {
-
+        new EventGroup1()
     };
 }

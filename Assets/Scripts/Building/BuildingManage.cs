@@ -454,6 +454,14 @@ public class BuildingManage : MonoBehaviour
     {
         if (Temp_Building)
             BuildCancel();
+        if (SelectBuilding.Department)
+        {
+            if (SelectBuilding.Department.CurrentEmps.Count > 0)
+            {
+                QuestControl.Instance.Init("部门内还有员工");
+                return;
+            }
+        }
         SelectBuilding.Move();
         Temp_Building = SelectBuilding;
        

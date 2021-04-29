@@ -50,9 +50,10 @@ public class ChoiceEvent : MonoBehaviour
         }
         else
         {
-            CurrentEvent.StartEvent(Self, TotalCorrection, null, EGI.Stage);
-            EC.ChoiceEventCheck(true);
+            CurrentEvent.StartEvent(Self, TotalCorrection, null, EGI);
+            EGI.FinishStage += 1;
             EGI.NextStage();
+            EC.ChoiceEventCheck(true);
         }
         Destroy(this.gameObject);
     }
@@ -85,6 +86,8 @@ public class ChoiceEvent : MonoBehaviour
         {
             OptionCardInfo option = Instantiate(OptionPrefab, OptionContent);
             Options.Add(option);
+            int num = Random.Range(0, EC.GC.OCL.CurrentOptions.Count);
+            option.SetInfo(EC.GC.OCL.CurrentOptions[num].OC, Self, this);
             if (option.OC.DebuffCard == true)
             {
                 //option.Text_Emp.gameObject.SetActive(true);

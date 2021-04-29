@@ -22,6 +22,7 @@ public class BrainStormControl : MonoBehaviour
 
     public int[] AcquiredItem = new int[4];
 
+    private EventGroupInfo CurrentEGI;
     public EmpBSInfo CurrentBSInfo, CEOInfo;
     public BSRouteNode CurrentNode;//当前所处的节点
     public GameControl GC;
@@ -49,14 +50,6 @@ public class BrainStormControl : MonoBehaviour
             Text_EmptyDice.text += "\n护盾:" + Shield;
     }
 
-    //头脑风暴开始前的一堆面板准备设定
-    public void PrepareBS()
-    {
-        CloseButton.SetActive(false);
-        return;
-        GC.AskPause(this);
-    }
-
     //头脑风暴结束后的一系列设定
     public void EndBS()
     {
@@ -80,6 +73,7 @@ public class BrainStormControl : MonoBehaviour
         //有未处理事件时不能继续
         if (GC.EC.UnfinishedEvents.Count > 0)
             return;
+        GC.AskPause(this);
         BSStarted = true;
         StageCount = 0;
         //重置物品数量
@@ -122,6 +116,34 @@ public class BrainStormControl : MonoBehaviour
         MemberSelectPanel.SetActive(false);
         RouteSelectPanel.SetActive(true);
         ResetStatus();
+    }
+
+    //事件组的头脑风暴战斗
+    public void StartEventBossFight(EventGroupInfo e)
+    {
+        //有未处理事件时不能继续
+        if (GC.EC.UnfinishedEvents.Count > 0 || BSStarted == true)
+            return;
+        GC.AskPause(this);
+        CurrentEGI = e;
+        BSStarted = true;
+        //核心成员信息传递
+        for (int i = 0; i < 6; i++)
+        {
+            if (i < CoreMembers.Count)
+            {
+                EmpInfos[i].gameObject.SetActive(true);
+                EmpInfos[i].EmpJoin(CoreMembers[i]);
+            }
+            else
+                EmpInfos[i].gameObject.SetActive(false);
+        }
+        SetBossLevel(e.TargetEventGroup.BSBossLevel);
+        Text_Item.text = "";
+        this.GetComponent<WindowBaseControl>().SetWndState(true);
+        MemberSelectPanel.SetActive(false);
+        RouteSelectPanel.SetActive(false);
+        FightPanel.SetActive(true);
     }
 
     //下一回合
@@ -734,29 +756,44 @@ public class BrainStormControl : MonoBehaviour
     //战斗结果判定
     void FightFinish(bool Win)
     {
-        if(Win == true)
+        //不是事件组头脑风暴战斗的时候
+        if (CurrentEGI == null)
         {
-            //根据节点类型产生具体结果(暂时只加数)
-            AcquiredItem[CurrentNode.NodeType - 1] += 1;
-            if (CurrentNode.NodeType == 1)
-                GC.CreateItem(7);
-            else if (CurrentNode.NodeType == 2)
-                GC.CreateItem(8);
-            else if (CurrentNode.NodeType == 3)
-                GC.CreateItem(9);
-            else if (CurrentNode.NodeType == 4)
-                GC.CreateItem(10);
-
-            System.Action AgreeAction = () =>
+            if (Win == true)
             {
+                //根据节点类型产生具体结果(暂时只加数)
+                AcquiredItem[CurrentNode.NodeType - 1] += 1;
+                if (CurrentNode.NodeType == 1)
+                    GC.CreateItem(7);
+                else if (CurrentNode.NodeType == 2)
+                    GC.CreateItem(8);
+                else if (CurrentNode.NodeType == 3)
+                    GC.CreateItem(9);
+                else if (CurrentNode.NodeType == 4)
+                    GC.CreateItem(10);
+
+                System.Action AgreeAction = () =>
+                {
+                    RouteSelectPanel.SetActive(true);
+                };
+                GC.QC.Init("本阶段议题讨论完毕", AgreeAction);
+            }
+            else
+            {
+                GC.Morale -= 5;
                 RouteSelectPanel.SetActive(true);
-            };
-            GC.QC.Init("本阶段议题讨论完毕", AgreeAction);
+            }
         }
+        //是事件组头脑风暴战斗的时候
         else
         {
-            GC.Morale -= 5;
-            RouteSelectPanel.SetActive(true);
+            if (Win == true)
+            {
+                GC.QC.Init("事件组议题成功");
+                CurrentEGI.ResolveStage(2);
+            }
+            CurrentEGI = null;
+            EndBS();
         }
         CurrentBoss = null;
         for(int i = 0; i < Bosses.Count; i++)
