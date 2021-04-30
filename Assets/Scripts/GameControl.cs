@@ -11,7 +11,7 @@ public class GameControl : MonoBehaviour
     [HideInInspector] public float EfficiencyExtraScience = 0, ExtrafailRate = 0, TotalSalaryMultiply = 1.0f,
         HRBuildingMentalityExtra = 1.0f, BuildingSkillSuccessExtra = 0, TotalBuildingPayMultiply = 1.0f, HireSuccessExtra = 0, 
         BaseDepExtraSuccessRate = 0;
-    public int SelectMode = 1; //1员工招聘时部门选择 2员工移动时部门选择 3部门的高管办公室选择 4发动动员技能时员工选择 
+    public int SelectMode = 1; //1员工招聘时部门选择 2员工移动时部门选择 3事件组特别小组成员选择 4发动动员技能时员工选择 
     //5发动建筑技能时员工选择 6CEO技能员工/部门选择 7选择两个员工发动动员技能 8普通办公室的上级(高管办公室)选择  9头脑风暴的员工选择
     //10选择两个员工的CEO技能 11部门/员工的物品使用
     public int AreaSelectMode = 1;//1部门目标区域的选择（暂时删除）  2物品目标区域的选择
@@ -411,8 +411,6 @@ public class GameControl : MonoBehaviour
         //设置员工上限
         newDep.SetDepStatus(int.Parse(b.Jobs));
 
-        newDep.Mode1EffectValue = b.effectValue;
-
         int num = 1;
         for(int i = 0; i < CurrentDeps.Count; i++)
         {
@@ -559,23 +557,6 @@ public class GameControl : MonoBehaviour
             }
             CurrentEmpInfo.emp.InfoA.transform.parent = depControl.EmpContent;
             ResetOldAssignment();
-        }
-        //确定部门领导者
-        else if (SelectMode == 3)
-        {
-            if (CurrentDep.CommandingOffice != null)
-            {
-                CurrentDep.CommandingOffice.ControledDeps.Remove(CurrentDep);
-                CurrentDep.CommandingOffice.CheckManage();
-                CurrentDep.AddPerk(new Perk110(null));
-            }
-            CurrentDep.CommandingOffice = depControl;
-            depControl.ControledDeps.Add(CurrentDep);
-            depControl.CheckManage();
-            //加额外状态
-            if (depControl.Manager != null)
-                CurrentDep.AddPerk(new Perk108(null));
-            CurrentDep.FaithRelationCheck();
         }
         //选择部门发动建筑特效
         else if (SelectMode == 5)

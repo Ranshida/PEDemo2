@@ -51,6 +51,7 @@ public class ChoiceEvent : MonoBehaviour
         else
         {
             CurrentEvent.StartEvent(Self, TotalCorrection, null, EGI);
+            EGI.STExtraTime();
             EGI.FinishStage += 1;
             EGI.NextStage();
             EC.ChoiceEventCheck(true);

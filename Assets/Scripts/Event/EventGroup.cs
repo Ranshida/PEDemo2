@@ -8,6 +8,19 @@ public class EventGroup : Event
     public int StageCount = 6;//事件组总阶段数
     public int BSBossLevel = 2;//头脑风暴boss等级
 
+    //特别小组修正相关
+    public float ST_BaseRate = 0.3f;//基础成功率
+    public float ST_EmpRate = 0.1f;//每增加一名员工提供的额外成功率
+
+    public float ST_SkillRate = 0.1f;//技能需求额外成功率
+    public int ST_SkillCount = 3;//技能需求阈值
+    public int ST_SkillType = 1;//1决策 2管理 3坚韧
+
+    public float ST_ProfessionRate = 0.2f;//岗位优势额外成功率
+    public int ST_ProfessionCount = 3;//岗位优势需求人数
+    public ProfessionType ST_ProfessionType = ProfessionType.工程学;//岗位优势需求类型
+
+
     public EventGroup() : base()
     {
         isEventGroup = true;
@@ -68,7 +81,7 @@ public class EventGroup1 : EventGroup
     public EventGroup1() : base()
     {
         EventName = "冷酷管理";
-        StageCount = 6;
+        StageCount = 2;
         ExtraStage = 0;
         SubEventNames[0] = "晕船风波";
         SubEventNames[1] = "异常电波";
@@ -77,6 +90,17 @@ public class EventGroup1 : EventGroup
         SubEventNames[4] = "仙人掌中毒";
         SubEventNames[5] = "蹭网风波";
         SingleResult = false;
+
+        ST_BaseRate = 0.3f;//基础成功率
+        ST_EmpRate = 0.05f;//每增加一名员工提供的额外成功率
+
+        ST_SkillRate = 0.1f;//技能需求额外成功率
+        ST_SkillCount = 5;//技能需求阈值
+        ST_SkillType = 1;//1决策 2管理 3坚韧
+
+        ST_ProfessionRate = 0.2f;//岗位优势额外成功率
+        ST_ProfessionCount = 3;//岗位优势需求人数
+        ST_ProfessionType = ProfessionType.工程学;//岗位优势需求类型
     }
     public override string EventDescription(Employee Emp, Employee targetEmp, int index)
     {

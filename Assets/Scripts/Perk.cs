@@ -3377,12 +3377,12 @@ public class Perk149 : Perk
     public override void ImmEffect()
     {
         int limit = 0;
-        foreach(int a in TargetEmp.Professions)
-        {
-            if (a != 0)
-                limit++;
-        }
-        TempValue1 = Random.Range(0, limit);
+        //foreach(int a in TargetEmp.Professions)
+        //{
+        //    if (a != 0)
+        //        limit++;
+        //}
+        //TempValue1 = Random.Range(0, limit);
         //TargetEmp.ExtraAttributes[TargetEmp.Professions[TempValue1] - 1] += 3 * TempValue1;
     }
     public override void RemoveEffect()

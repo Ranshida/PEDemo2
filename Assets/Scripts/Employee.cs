@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public enum ProfessionType
-{//{1, 2, 3, 8, 9, 11, 12, 13, 15, 16};//Nst:几个专业技能对应的编号
-    技术, 市场, 产品, 观察, 坚韧, 强壮, 管理, 人力, 财务, 决策, 行业, 谋略, 说服, 魅力, 八卦, 行政
+{
+    工程学, 产品设计, 市场营销, 人力资源, 财务, 战略分析
 }
 
 public enum OccupationType
@@ -50,7 +50,7 @@ public class Employee
 {
     static public int AttributeLimit = 10;
 
-    //1.技术 2.市场 3.产品 4.Ob观察 5.Te坚韧 6.Str强壮 7.Ma管理 8.HR人力 9.Fi财务 10.De决策 
+    //(旧编号)1.技术 2.市场 3.产品 4.Ob观察 5.Te坚韧 6.Str强壮 7.Ma管理 8.HR人力 9.Fi财务 10.De决策 
     //11.Fo行业 12.St谋略 13.Co说服 14.Ch魅力 15.Go八卦 16.Ad行政
 
     public int Tenacity
@@ -164,6 +164,7 @@ public class Employee
     public int ManagerExp;//作为高管的经验值，属下员工技能升级时经验+1，攒够10点获得一个技能点数
     public int Confidence;//信心，头脑风暴中的护盾
     public int SkillLimitTime;//头脑风暴中技能禁用的回合数
+    public int SpecialTeamTime = 0;//特别小组在事件组结束后额外禁用的回合数
     public int NewRelationTargetTime = 1;
     public float ExtraSuccessRate = 0, SalaryMultiple = 1.0f;
     public OccupationType Occupation;  //职业
@@ -177,7 +178,7 @@ public class Employee
 
     public string Name;
     public bool isCEO = false, SupportCEO;
-    public bool inSpecialSquad = false;//是否在特殊小组里
+    public bool inSpecialTeam = false;//是否在特殊小组里
 
     public EmpInfo InfoA, InfoB, InfoDetail;
     public DepControl CurrentDep;
@@ -282,8 +283,8 @@ public class Employee
         if (num == 0)
         {
             Occupation = OccupationType.超级黑客;
-            Professions.Add(1);
-            Professions.Add(12);
+            Professions.Add(0);
+            Professions.Add(5);
             CurrentDices.Add(new int[6] { 3, 3, 3, 3, -1, -1 });
             CurrentDices.Add(new int[6] { 3, 3, 3, 3, -1, -1 });
         }
@@ -297,50 +298,49 @@ public class Employee
         else if (num == 2)
         {
             Occupation = OccupationType.大企业中层;
-            Professions.Add(16);
+            Professions.Add(3);
             CurrentDices.Add(new int[6] { 2, 2, 2, 2, -1, -1 });
             CurrentDices.Add(new int[6] { 4, 4, 4, 4, -1, -1 });
         }
         else if (num == 3)
         {
             Occupation = OccupationType.海盗;
-            Professions.Add(9);
+            Professions.Add(4);
             CurrentDices.Add(new int[6] { 1, 1, 1, 1, -1, -1 });
             CurrentDices.Add(new int[6] { 0, 0, 0, 0, -1, -1 });
         }
         else if (num == 4)
         {
             Occupation = OccupationType.大学毕业生;
-            Professions.Add(2);
+            Professions.Add(1);
             CurrentDices.Add(new int[6] { 4, 4, 4, 4, -1, -1 });
             CurrentDices.Add(new int[6] { 3, 3, 3, 3, -1, -1 });
         }
         else if (num == 5)
         {
             Occupation = OccupationType.论坛版主;
-            Professions.Add(11);
-            Professions.Add(15);
+            Professions.Add(3);
             CurrentDices.Add(new int[6] { 0, 0, 0, 0, -1, -1 });
             CurrentDices.Add(new int[6] { 5, 5, 5, 5, -1, -1 });
         }
         else if (num == 6)
         {
             Occupation = OccupationType.独立开发者;
-            Professions.Add(3);
+            Professions.Add(1);
             CurrentDices.Add(new int[6] { 2, 2, 2, 2, -1, -1 });
             CurrentDices.Add(new int[6] { 3, 3, 3, 3, -1, -1 });
         }
         else if (num == 7)
         {
             Occupation = OccupationType.键盘艺术家;
-            Professions.Add(13);
+            Professions.Add(0);
             CurrentDices.Add(new int[6] { 4, 4, 4, 4, -1, -1 });
             CurrentDices.Add(new int[6] { 4, 4, 4, 4, -1, -1 });
         }
         else if (num == 8)
         {
             Occupation = OccupationType.酒保;
-            Professions.Add(8);
+            Professions.Add(2);
             CurrentDices.Add(new int[6] { 2, 2, 2, 2, -1, -1 });
         }
 
@@ -572,6 +572,13 @@ public class Employee
         //额外获取经验的结算
         if (ExtraExp > 0)
             GainExp(ExtraExp, 0);
+
+        if(SpecialTeamTime > 0)
+        {
+            SpecialTeamTime -= 1;
+            if (SpecialTeamTime == 0)
+                inSpecialTeam = false;
+        }
 
         #region 旧时间判定
         //EventTimePass();

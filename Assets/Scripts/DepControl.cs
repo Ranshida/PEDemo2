@@ -16,7 +16,7 @@ public class DepControl : MonoBehaviour
     public float DepBaseMajorFailureRate = 0;
     [HideInInspector] public int FailProgress = 0, EfficiencyLevel = 0, SpType;
     //BuildingMode用于区分建筑模式  ActiveMode用于区分激活方式 0无法激活 1直接激活 2选择员工 3选择部门 4选择区域 5卡牌生产
-    [HideInInspector] public int ProducePointLimit = 20, ActiveMode = 1, Mode1EffectValue = -1, Mode2EffectValue = -2;
+    [HideInInspector] public int ProducePointLimit = 20, ActiveMode = 1, Mode2EffectValue = -2;
     [HideInInspector] public bool SurveyStart = false;
     public int DepFaith = 50;
     public int StaminaExtra = 0;//特质导致的每周体力buff
@@ -184,14 +184,6 @@ public class DepControl : MonoBehaviour
         }
     }
 
-    //显示所有能当上级的办公室
-    public void ShowAvailableOffices()
-    {
-        GC.SelectMode = 3;
-        GC.ShowDepSelectPanel(this);
-        GC.CurrentDep = this;
-    }
-
     public int calcTime(float pp, float total)
     {
         float time = 0;
@@ -254,8 +246,6 @@ public class DepControl : MonoBehaviour
             int type1 = 0, type2 = 0;
             foreach(int a in CurrentEmps[i].Professions)
             {
-                if (a == 0)
-                    continue;
                 if (a == building.effectValue)
                     type1 = a;
                 if (a == building.effectValue2)
@@ -307,9 +297,10 @@ public class DepControl : MonoBehaviour
         }
         if (CurrentDivision != null)
             RemoveDivision();
+
+        Destroy(DivPanel.gameObject);
         Destroy(DS.gameObject);
         Destroy(EmpPanel.gameObject);
-        Destroy(DivPanel);
         Destroy(this.gameObject);
     }
 
@@ -621,13 +612,11 @@ public class DepControl : MonoBehaviour
             {
                 WeakAction();
                 Text_WeakEffect.gameObject.SetActive(true);
-                print("Weak");
             }
             else
             {
                 UnWeakAction();
                 Text_WeakEffect.gameObject.SetActive(false);
-                print("UnWeak");
             }
         }
         #region 具体建筑效果

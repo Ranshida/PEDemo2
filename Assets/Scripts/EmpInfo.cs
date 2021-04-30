@@ -113,6 +113,11 @@ public class EmpInfo : MonoBehaviour
     {
         if (GC.SelectMode != 9)
         {
+            if (emp.inSpecialTeam == true)
+            {
+                QuestControl.Instance.Init("员工目前隶属特别小组，无法移动");
+                return;
+            }
             GC.CurrentEmpInfo = this;
             GC.SelectMode = 2;
             GC.ShowDepSelectPanel(emp);
@@ -124,6 +129,13 @@ public class EmpInfo : MonoBehaviour
         //不能删CEO
         if (emp.isCEO == true)
             return;
+        //不能解雇特别小组成员
+        if(emp.inSpecialTeam == true)
+        {
+            QuestControl.Instance.Init("该员工隶属于特别小组，无法被解雇");
+            return;
+        }
+
         //会议未通过不能开除
         if (NeedVote == true && GC.EC.ManagerVoteCheck(emp, true, true) == false)
             return;
@@ -159,8 +171,14 @@ public class EmpInfo : MonoBehaviour
     //选择Info后的各种行为
     public void ShowDetailPanel()
     {
+        if (GC.SelectMode == 3)
+        {
+            GC.EC.CurrentEventGroup.SetSTMember(emp);
+            GC.EC.CurrentEventGroup = null;
+            GC.ResetSelectMode();
+        }
         //发动动员技能
-        if (GC.SelectMode == 4)
+        else if (GC.SelectMode == 4)
         {
             GC.CurrentEmpInfo = DetailInfo;
             //GC.SC.ConfirmPanel.SetActive(true);
@@ -533,28 +551,11 @@ public class EmpInfo : MonoBehaviour
          //11.Fo行业 12.St谋略 13.Co说服 14.Ch魅力 15.Go八卦 16.Ad行政
          //int[] Nst = { 1, 2, 3, 8, 9, 11, 12, 13, 15, 16 };//Nst:几个专业技能对应的编号
         Text_Professions.text = "";
-        foreach(int num in emp.Professions)
+        for(int i = 0; i < emp.Professions.Count; i++)
         {
-            if (num == 1)
-                Text_Professions.text += "技术/";
-            else if (num == 2)
-                Text_Professions.text += "市场/";
-            else if (num == 3)
-                Text_Professions.text += "产品/";
-            else if (num == 8)
-                Text_Professions.text += "人力/";
-            else if (num == 9)
-                Text_Professions.text += "财务/";
-            else if (num == 11)
-                Text_Professions.text += "行业/";
-            else if (num == 12)
-                Text_Professions.text += "谋略/";
-            else if (num == 13)
-                Text_Professions.text += "说服/";
-            else if (num == 15)
-                Text_Professions.text += "八卦/";
-            else if (num == 16)
-                Text_Professions.text += "行政/";
+            if (i > 0)
+                Text_Professions.text += "/";
+            Text_Professions.text += (ProfessionType)emp.Professions[i];
         }
     }
 

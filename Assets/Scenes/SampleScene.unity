@@ -41865,6 +41865,7 @@ MonoBehaviour:
   buildingPrefabs: []
   SelectList: 
   InBuildMode: 0
+  ConstructedBuildings: []
   AimingPosition: {x: 0, y: 0, z: 0}
   btn_AskUnlock: {fileID: 3437621388065999043}
 --- !u!4 &1581022672
@@ -121404,8 +121405,9 @@ MonoBehaviour:
     type: 3}
   EventGroupPrefab: {fileID: 1832493545063188258, guid: 6b9ba47f6ac0a1b4fbe2da81efd886bd,
     type: 3}
+  CurrentEventGroup: {fileID: 0}
   UnfinishedEvents: []
-  CurrentEventGroup: []
+  CurrentEventGroups: []
 --- !u!114 &8540986348157489489
 MonoBehaviour:
   m_ObjectHideFlags: 0

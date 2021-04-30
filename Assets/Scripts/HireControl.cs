@@ -213,6 +213,7 @@ public class HireControl : MonoBehaviour
         GC.CurrentEmployees.Add(emp);
         //将CEO添加到核心团队
         GC.BSC.CEOInfo.EmpJoin(emp);
+        GC.AC.AreaLists[0].DC.SetManager(false, emp);
     }
 
     //招聘后隐藏其它选项

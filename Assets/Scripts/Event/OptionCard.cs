@@ -11,7 +11,7 @@ public class OptionCard
 
     public OptionCard()
     {
-        MonoBehaviour.print("Shit");
+        
     }
 
     public virtual void StartEffect(Employee emp)

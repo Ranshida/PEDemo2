@@ -45,7 +45,7 @@ public class BuildingManage : MonoBehaviour
     public Building SelectBuilding { get; private set; }    //选中的建筑
     private GameObject m_EffectHalo;   //选中的建筑的影响范围
 
-    public List<Building> ConstructedBuildings { get; private set; } = new List<Building>(); //所有已建建筑列表
+    public List<Building> ConstructedBuildings = new List<Building>(); //所有已建建筑列表
 
     //屏幕射线位置
     public Vector3 AimingPosition = Vector3.zero;
@@ -403,14 +403,6 @@ public class BuildingManage : MonoBehaviour
         //Init
         GameObject buildingGo = Instantiate(m_AllBuildingPrefab[type]);
         Temp_Building = buildingGo.GetComponent<Building>();
-
-        //确定名称
-        int DepNum = 1;
-        for (int i = 0; i < ConstructedBuildings.Count; i++)
-        {
-            if (ConstructedBuildings[i].Type == type)
-                DepNum += 1;
-        }
     }
 
     //开始建造（已生成过的建筑）

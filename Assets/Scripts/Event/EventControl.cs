@@ -14,11 +14,11 @@ public class EventControl : MonoBehaviour
     public VoteCell VoteCellPrefab;
     public Text Text_MeetingName, Text_ManageVoteResult;
     public ChoiceEvent ChoiceEventPrefab;
-    public EventGroupInfo EventGroupPrefab;
+    public EventGroupInfo EventGroupPrefab, CurrentEventGroup;
 
     private List<VoteCell> VCells = new List<VoteCell>();
     public List<ChoiceEvent> UnfinishedEvents = new List<ChoiceEvent>();
-    public List<EventGroupInfo> CurrentEventGroup = new List<EventGroupInfo>();
+    public List<EventGroupInfo> CurrentEventGroups = new List<EventGroupInfo>();
 
     private void Start()
     {
@@ -420,7 +420,7 @@ public class EventControl : MonoBehaviour
         EventGroupInfo newEventGroup = Instantiate(EventGroupPrefab, GC.transform);
         newEventGroup.EC = this;
         newEventGroup.SetEvent(e);
-        CurrentEventGroup.Add(newEventGroup);
+        CurrentEventGroups.Add(newEventGroup);
         UIManager.Instance.OnAddNewWindow(newEventGroup.DetailPanel.GetComponent<WindowBaseControl>());
         newEventGroup.transform.parent = EventGroupContent;
     }
@@ -434,22 +434,22 @@ public class EventControl : MonoBehaviour
 
         //此处可能要先重置一下各种数据？
         //此处开始，先弹出第一个事件组的特殊事件
-        if (EventGroupIndex < CurrentEventGroup.Count)
+        if (EventGroupIndex < CurrentEventGroups.Count)
         {
-            CurrentEventGroup[EventGroupIndex].StartGroupEvent();
+            CurrentEventGroups[EventGroupIndex].StartGroupEvent();
         }
         //处理所有已经完成的事件组
         else
         {
             List<EventGroupInfo> FinishList = new List<EventGroupInfo>();
-            foreach(EventGroupInfo egi in CurrentEventGroup)
+            foreach(EventGroupInfo egi in CurrentEventGroups)
             {
                 if (egi.Stage > egi.TargetEventGroup.StageCount)
                     FinishList.Add(egi);
             }
             foreach(EventGroupInfo egi in FinishList)
             {
-                CurrentEventGroup.Remove(egi);
+                CurrentEventGroups.Remove(egi);
                 Destroy(egi.DetailPanel.gameObject);
                 Destroy(egi.gameObject);
             }

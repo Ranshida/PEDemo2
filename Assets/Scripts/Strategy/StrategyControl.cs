@@ -189,12 +189,10 @@ public class StrategyControl : MonoBehaviour
             if (VoteSeqNum == 3)
                 VoteSeqNum += 1;
         }
-        print(VoteSeqNum);
         if (VoteSeqNum < 5)
             StartVote();
         else
         {
-            print("Ended");
             for(int i = 0; i < TempStrs.Count; i++)
             {
                 StrategyInfo NewStr = Instantiate(ActivePrefab, ActiveStrsContent);

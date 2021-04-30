@@ -102,9 +102,9 @@ public class Building : MonoBehaviour
 
         //技能需求转化
         if (Require_A != "/")
-            effectValue = (int)(System.Enum.Parse(typeof(ProfessionType), Require_A)) + 1;
+            effectValue = (int)(System.Enum.Parse(typeof(ProfessionType), Require_A));
         if (Require_B != "/")
-            effectValue2 = (int)(System.Enum.Parse(typeof(ProfessionType), Require_B)) + 1;
+            effectValue2 = (int)(System.Enum.Parse(typeof(ProfessionType), Require_B));
 
         //Type = (BuildingType)System.Enum.Parse(typeof(BuildingType), Name);
         string[] size = Size.Split('×');
@@ -188,7 +188,9 @@ public class Building : MonoBehaviour
         {
             Department.ClearDep();
         }
-
+        BuildingManage.Instance.ConstructedBuildings.Remove(this);
+        if (BuildingManage.Instance.ConstructedBuildings.Count == 0)
+            GameControl.Instance.GameOverPanel.GetComponent<WindowBaseControl>().SetWndState(true);
         Destroy(gameObject);
 
         return true;
