@@ -272,7 +272,7 @@ public class EmpInfo : MonoBehaviour
     public void AddHistory(string Content)
     {
         Text t = Instantiate(GC.HistoryTextPrefab, HistoryContent);
-        t.text = "[" + GC.Text_Time.text + "] " + Content;
+        t.text = "[第" + GC.Turn + "回合] " + Content;
     }
 
     public void AdjustSize()
@@ -480,6 +480,7 @@ public class EmpInfo : MonoBehaviour
             MainEmotion.SetColor(newEmotion);
             MainEmotion.TimeLeft = 2;
             MainEmotion.gameObject.SetActive(true);
+            MainEmotion.Active = true;
         }
     }
 

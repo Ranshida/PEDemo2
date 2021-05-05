@@ -280,9 +280,22 @@ public class EmpManager : MonoBehaviour
         else if (Type == 4)
         {
             List<Employee> TargetEmps = FindAll(emp);
+            foreach(Employee e in emp.RelationTargets)
+            {
+                if (TargetEmps.Contains(e) == false)
+                    TargetEmps.Add(e);
+            }
             if (TargetEmps.Count == 0)
             {
-                CheckRelation(emp);
+                if (GameControl.Instance.CurrentEmployees.Count > 1)
+                {
+                    Employee rTarget = GameControl.Instance.CurrentEmployees[Random.Range(0, GameControl.Instance.CurrentEmployees.Count)];
+                    while(rTarget == emp)
+                    {
+                        rTarget = GameControl.Instance.CurrentEmployees[Random.Range(0, GameControl.Instance.CurrentEmployees.Count)];
+                    }
+                    new Event14().StartEvent(emp, 0, rTarget);
+                }
                 return;
             }
             Employee target = TargetEmps[Random.Range(0, TargetEmps.Count)];

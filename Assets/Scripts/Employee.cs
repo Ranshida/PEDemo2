@@ -195,6 +195,11 @@ public class Employee
     public List<EventCondition> EventConditions = new List<EventCondition>();
     public List<int> ExhaustedCount = new List<int>();
 
+    private List<EColor> TempEmotion = new List<EColor>();
+    private List<EventCondition> TempEventCondition = new List<EventCondition>();
+    private List<Employee> TempRelationTargets = new List<Employee>();
+    private List<int> TempRelationValue = new List<int>();
+
     private int mentality, stamina;
 
     //初始化员工属性
@@ -972,6 +977,41 @@ public class Employee
             MonoBehaviour.Destroy(InfoB.gameObject);
         if (InfoDetail != null)
             MonoBehaviour.Destroy(InfoDetail.gameObject);
+    }
+
+    //事件相关的延后判定
+    public void AddTempEventCondition(EventCondition e)
+    {
+        TempEventCondition.Add(e);
+    }
+    public void AddTempRelation(Employee target, int value)
+    {
+        TempRelationTargets.Add(target);
+        TempRelationValue.Add(value);
+    }
+    public void AddTempEmotion(EColor e)
+    {
+        TempEmotion.Add(e);
+    }
+    public void CalcTempValues()
+    {
+        foreach(EventCondition e in TempEventCondition)
+        {
+            EventConditions.Add(e);
+        }
+        foreach(EColor e in TempEmotion)
+        {
+            AddEmotion(e);
+        }
+        for(int i = 0; i < TempRelationTargets.Count; i++)
+        {
+            if (TempRelationTargets[i] != null)
+                ChangeRelation(TempRelationTargets[i], TempRelationValue[i]);
+        }
+        TempEventCondition.Clear();
+        TempEmotion.Clear();
+        TempRelationTargets.Clear();
+        TempRelationValue.Clear();
     }
 }
 

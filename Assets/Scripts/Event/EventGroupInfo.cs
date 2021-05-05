@@ -21,6 +21,7 @@ public class EventGroupInfo : MonoBehaviour
     public Transform DetailPanel, StagePointer;
     public EventGroup TargetEventGroup;
     public Employee Target;
+    public DivisionControl TargetDivision;
 
     public Employee[] STMembers = new Employee[3];
     public Button[] STRemoveButtons = new Button[3];
@@ -63,6 +64,7 @@ public class EventGroupInfo : MonoBehaviour
             if (Target == null)
                 UpdateUI();
             EC.StartChoiceEvent(TargetEventGroup, Target, this);
+            Target = null;
         }
     }
 
@@ -120,6 +122,7 @@ public class EventGroupInfo : MonoBehaviour
     {
         if (Target == null)
         {
+            //找目标员工
             List<Employee> PosbEmps = new List<Employee>();
             foreach(Employee e in EC.GC.CurrentEmployees)
             {
@@ -127,6 +130,23 @@ public class EventGroupInfo : MonoBehaviour
                     PosbEmps.Add(e);
             }
             Target = PosbEmps[Random.Range(0, PosbEmps.Count)];
+
+            //找目标事业部，目标员工没有所属事业部时，找第一个有部门的事业部
+            if (Target.CurrentDep != null)
+                TargetDivision = Target.CurrentDep.CurrentDivision;
+            else if (Target.CurrentDivision != null)
+                TargetDivision = Target.CurrentDivision;
+            else
+            {
+                foreach(DivisionControl dc in GameControl.Instance.CurrentDivisions)
+                {
+                    if (dc.CurrentDeps.Count > 0)
+                    {
+                        TargetDivision = dc;
+                        return;
+                    }
+                }
+            }
         }
         Text_Description.text = TargetEventGroup.EventDescription(Target, null, Stage);
         Text_FailResult.text = "事件失败效果:" + TargetEventGroup.ResultDescription(Target, null, Stage);

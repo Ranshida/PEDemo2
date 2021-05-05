@@ -802,6 +802,12 @@ public class GameControl : MonoBehaviour
         }
     }
 
+    //增加不满或认同,bool = true 为不满，反之是认同
+    public void AddEventProgress(int value, bool dissatisfied)
+    {
+
+    }
+
     //暂停检测相关
     List<MonoBehaviour> pauseMono = new List<MonoBehaviour>();
     public void AskPause(MonoBehaviour mono)
