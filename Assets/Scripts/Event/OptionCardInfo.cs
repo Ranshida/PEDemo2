@@ -14,6 +14,7 @@ public class OptionCardInfo : MonoBehaviour
     public Employee Emp;
     public EventGroup EG;
     public ChoiceEvent CurrentEvent;
+    public Perk ProvidePerk;//抉择卡效果中可能提供的随机特质的存储
     public Text Text_Name, Text_Description, Text_Correction, Text_Emp;
 
     public void SetBaseInfo(OptionCard oc)
@@ -77,5 +78,23 @@ public class OptionCardInfo : MonoBehaviour
             }
             CurrentEvent.CheckCorrectionUI();
         }
+    }
+
+    //随机一个负面特质
+    public void RandomPerk()
+    {
+        int num = Random.Range(0, PerkData.DebuffPerkList.Count);
+        ProvidePerk = PerkData.DebuffPerkList[num].Clone();
+        Text_Emp.text = "获得特质:" + ProvidePerk.Name + "\n特质效果:" + ProvidePerk.Description;
+        Text_Emp.gameObject.SetActive(true);
+    }
+
+    //为目标提供负面特质
+    public void TargetAddPerk(Employee emp)
+    {
+        if (ProvidePerk == null || emp == null)
+            return;
+
+        emp.InfoDetail.AddPerk(ProvidePerk);
     }
 }

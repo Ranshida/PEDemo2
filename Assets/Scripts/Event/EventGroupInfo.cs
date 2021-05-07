@@ -165,7 +165,7 @@ public class EventGroupInfo : MonoBehaviour
         DetailPanel.GetComponent<WindowBaseControl>().SetWndState(true);
     }
 
-
+    //开始头脑风暴修正
     public void StartBS()
     {
         //有未处理事件时不能继续
@@ -174,6 +174,12 @@ public class EventGroupInfo : MonoBehaviour
         BSButton.interactable = false;
         EC.GC.BSC.StartEventBossFight(this);
         DetailPanel.GetComponent<WindowBaseControl>().SetWndState(false);
+    }
+
+    //使用消耗资源修正
+    public void UseResource()
+    {
+        TargetEventGroup.UseResource(this);
     }
 
     //事件组结束后额外的特别小组禁用时间

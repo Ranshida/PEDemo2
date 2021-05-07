@@ -285,6 +285,8 @@ public class EmpManager : MonoBehaviour
                 if (TargetEmps.Contains(e) == false)
                     TargetEmps.Add(e);
             }
+
+            //没有任何目标时直接执行认识新人事件
             if (TargetEmps.Count == 0)
             {
                 if (GameControl.Instance.CurrentEmployees.Count > 1)
@@ -298,8 +300,8 @@ public class EmpManager : MonoBehaviour
                 }
                 return;
             }
-            Employee target = TargetEmps[Random.Range(0, TargetEmps.Count)];
 
+            Employee target = TargetEmps[Random.Range(0, TargetEmps.Count)];
             List<Event> PosbEvents = new List<Event>();
             foreach (Event e in EventData.EmpPersonalEvent)
             {

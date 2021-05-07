@@ -121,7 +121,7 @@ public class Employee
             {
                 if (mentality >= 20 && value < 20)
                 {
-                    InfoDetail.AddPerk(new Perk119(this));
+                    InfoDetail.AddPerk(new Perk119());
 
                     if(CurrentDep == null)
                         QuestControl.Instance.Init(Name + "出现心力低下现象\n可以调节所在部门的信念或使用CEO技能“安抚”");
@@ -561,19 +561,6 @@ public class Employee
     //时间流逝后部分基础属性判定
     public void TimePass()
     {
-        //涉及主导情绪的部分，应该单独写一个方法并且不能放在TimePass里
-        if (InfoDetail.MainEmotion != null)
-        {
-            InfoDetail.MainEmotion.TimeLeft -= 1;
-            if (InfoDetail.MainEmotion.TimeLeft == 0)
-            {
-                CurrentEmotions.Remove(InfoDetail.MainEmotion.E);
-                InfoDetail.EmotionInfos.Remove(InfoDetail.MainEmotion);
-                InfoDetail.MainEmotion.Active = false;
-                InfoDetail.MainEmotion.gameObject.SetActive(false);
-            }
-        }
-
         //额外获取经验的结算
         if (ExtraExp > 0)
             GainExp(ExtraExp, 0);
@@ -657,6 +644,22 @@ public class Employee
         //    RemoveBonus.Clear();
         //}
         #endregion
+    }
+
+    //主导情绪持续时间减少
+    public void EmotionTimePass()
+    {
+        if (InfoDetail.MainEmotion != null && InfoDetail.MainEmotion.Active == true)
+        {
+            InfoDetail.MainEmotion.TimeLeft -= 1;
+            if (InfoDetail.MainEmotion.TimeLeft == 0)
+            {
+                CurrentEmotions.Remove(InfoDetail.MainEmotion.E);
+                InfoDetail.EmotionInfos.Remove(InfoDetail.MainEmotion);
+                InfoDetail.MainEmotion.Active = false;
+                InfoDetail.MainEmotion.gameObject.SetActive(false);
+            }
+        }
     }
 
     //事件相关时间判定
@@ -935,13 +938,13 @@ public class Employee
         }
         num = PosbNum[Random.Range(0, PosbNum.Count)];
         if (num == 93)
-            InfoDetail.AddPerk(new Perk93(this), true);
+            InfoDetail.AddPerk(new Perk93());
         else if (num == 94)
-            InfoDetail.AddPerk(new Perk94(this), true);
+            InfoDetail.AddPerk(new Perk94());
         else if (num == 95)
-            InfoDetail.AddPerk(new Perk95(this), true);
+            InfoDetail.AddPerk(new Perk95());
         else if (num == 96)
-            InfoDetail.AddPerk(new Perk96(this), true);
+            InfoDetail.AddPerk(new Perk96());
         ExhaustedCount.Add(num);
         InfoDetail.GC.CreateMessage(Name + "心力爆炸,获得了" + InfoDetail.PerksInfo[InfoDetail.PerksInfo.Count - 1].CurrentPerk.Name);
         InfoDetail.AddHistory(Name + "心力爆炸,获得了" + InfoDetail.PerksInfo[InfoDetail.PerksInfo.Count - 1].CurrentPerk.Name);

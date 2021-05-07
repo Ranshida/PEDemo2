@@ -2508,6 +2508,7 @@ MonoBehaviour:
   EfficiencyBarFill: {fileID: 2734506734792374743}
   WorkStatusBarFill: {fileID: 2591742349457449944}
   FaithFill: {fileID: 4343476176131414044}
+  CurrentPerks: []
   CurrentDeps: []
   FillMarkers:
   - {fileID: 2284298822331552896}

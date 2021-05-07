@@ -206,7 +206,7 @@ public class CrystalPanel : WindowRoot
             Areas.gameObject.SetActive(false);
         foreach (CompanyItem item in GameControl.Instance.Items)
         {
-            if (item.Type == CompanyItemType.MonthMeeting)
+            if (item.item.Type == CompanyItemType.MonthMeeting)
                 item.button.interactable = false;
         }
         Manager.EndPutting();

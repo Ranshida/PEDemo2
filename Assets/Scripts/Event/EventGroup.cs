@@ -7,6 +7,9 @@ public class EventGroup : Event
     public int ExtraStage = 0;//事件组生成后待机(不产生效果)的回合数
     public int StageCount = 6;//事件组总阶段数
     public int BSBossLevel = 2;//头脑风暴boss等级
+    public int MoneyRequest = 0;//资源消耗选项-金钱消耗
+    public List<int> ItemTypeRequest = new List<int>();//物品类型需求
+    public List<int> ItemValueRequest = new List<int>();//物品数量需求
 
     //特别小组修正相关
     public float ST_BaseRate = 0.3f;//基础成功率
@@ -26,12 +29,43 @@ public class EventGroup : Event
         isEventGroup = true;
     }
 
+    public void UseResource(EventGroupInfo egi)
+    {
+        //先检测金钱
+        if (MoneyRequest > 0)
+        {
+            if (egi.EC.GC.Money >= MoneyRequest)
+                egi.EC.GC.Money -= MoneyRequest;
+            else
+                return;
+        }
+        //再检测是否有足够物品
+        if (ItemTypeRequest.Count > 0)
+        {
+            for(int i = 0; i < ItemTypeRequest.Count; i++)
+            {
+                int count = 0;
+                foreach(CompanyItem CItem in egi.EC.GC.Items)
+                {
+                    if (CItem.item.Num == ItemTypeRequest[i])
+                        count += 1;
+                }
+                if (count < ItemValueRequest[i])
+                    return;
+            }
+        }
+        //都满足则生效
+        egi.ResolveStage(1);
+        egi.UseResourceButton.interactable = false;
+    }
+
     public override void StartEvent(Employee emp, int ExtraCorrection = 0, Employee target = null, EventGroupInfo egi = null)
     {
         //如果判定成功就不继续
         if (FindResult(emp, ExtraCorrection, target) == 1)
         {
             egi.StageMarker[egi.Stage - 1].color = Color.red;
+            QuestControl.Instance.Init("判定失败," + ResultDescription(emp, target, egi.Stage));
             return;
         }
 
@@ -48,6 +82,8 @@ public class EventGroup : Event
             EffectE(emp, ExtraCorrection, target);
         else if (egi.Stage == 6)
             EffectF(emp, ExtraCorrection, target);
+
+        QuestControl.Instance.Init("判定成功");
     }
 
     protected virtual void EffectA(Employee emp, int ExtraCorrection = 0, Employee target = null)
@@ -81,8 +117,8 @@ public class EventGroup1 : EventGroup
     public EventGroup1() : base()
     {
         EventName = "冷酷管理";
-        StageCount = 2;
-        ExtraStage = 0;
+        StageCount = 6;
+        ExtraStage = 2;
         SubEventNames[0] = "晕船风波";
         SubEventNames[1] = "异常电波";
         SubEventNames[2] = "虐待传闻";
@@ -101,6 +137,8 @@ public class EventGroup1 : EventGroup
         ST_ProfessionRate = 0.2f;//岗位优势额外成功率
         ST_ProfessionCount = 3;//岗位优势需求人数
         ST_ProfessionType = ProfessionType.工程学;//岗位优势需求类型
+
+        MoneyRequest = 50;
     }
     public override string EventDescription(Employee Emp, Employee targetEmp, int index)
     {

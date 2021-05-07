@@ -244,7 +244,7 @@ public class EmpInfo : MonoBehaviour
         //使用物品
         else if (GC.SelectMode == 11)
         {
-            GC.CurrentItem.TargetEmp = emp.InfoDetail;
+            GC.CurrentItem.item.TargetEmp = emp.InfoDetail;
             GC.CurrentItem.UseItem();
             GC.ResetSelectMode();
             GC.TotalEmpPanel.SetWndState(false);
@@ -309,6 +309,7 @@ public class EmpInfo : MonoBehaviour
         else
             newPerk = Instantiate(GC.PerkInfoPrefab, PerkContent);
         newPerk.CurrentPerk = perk;
+        newPerk.CurrentPerk.TargetEmp = emp;
         newPerk.CurrentPerk.BaseTime = perk.TimeLeft; 
         newPerk.CurrentPerk.Info = newPerk;
         newPerk.Text_Name.text = perk.Name;
@@ -366,23 +367,23 @@ public class EmpInfo : MonoBehaviour
 
         //职业特质
         if (emp.Occupation == OccupationType.超级黑客)
-            AddPerk(new Perk35(emp));
+            AddPerk(new Perk35());
         else if (emp.Occupation == OccupationType.神秘打工仔)
-            AddPerk(new Perk36(emp));
+            AddPerk(new Perk36());
         else if (emp.Occupation == OccupationType.大企业中层)
-            AddPerk(new Perk37(emp));
+            AddPerk(new Perk37());
         else if (emp.Occupation == OccupationType.海盗)
-            AddPerk(new Perk38(emp));
+            AddPerk(new Perk38());
         else if (emp.Occupation == OccupationType.大学毕业生)
-            AddPerk(new Perk39(emp));
+            AddPerk(new Perk39());
         else if (emp.Occupation == OccupationType.论坛版主)
-            AddPerk(new Perk40(emp));
+            AddPerk(new Perk40());
         else if (emp.Occupation == OccupationType.独立开发者)
-            AddPerk(new Perk41(emp));
+            AddPerk(new Perk41());
         else if (emp.Occupation == OccupationType.键盘艺术家)
-            AddPerk(new Perk42(emp));
+            AddPerk(new Perk42());
         else if (emp.Occupation == OccupationType.酒保)
-            AddPerk(new Perk43(emp));
+            AddPerk(new Perk43());
     }
 
     public int CalcSalary()

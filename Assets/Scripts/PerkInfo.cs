@@ -26,9 +26,9 @@ public class PerkInfo : MonoBehaviour
                         info.Text_Name.text += "(" + CurrentPerk.Level + "层)";
                     info.Text_Description.text = CurrentPerk.Description;
                     if (CurrentPerk.TimeLeft != -1)
-                        info.Text_ExtraInfo.text = "剩余" + CurrentPerk.TimeLeft + "时";
+                        info.Text_ExtraInfo.text = "剩余" + CurrentPerk.TimeLeft + "回合";
                     else
-                        info.Text_ExtraInfo.text = "剩余∞时";
+                        info.Text_ExtraInfo.text = "剩余∞回合";
                 }
                 if (info.Visible == false)
                     info.ShowPanel();

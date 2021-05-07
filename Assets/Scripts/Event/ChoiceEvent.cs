@@ -19,6 +19,16 @@ public class ChoiceEvent : MonoBehaviour
     public void CheckCorrectionUI()
     {
         Text_Correction.text = "当前修正:" + TotalCorrection + "\n";
+        if(Self.CurrentDep != null || Self.CurrentDivision != null)
+        {
+            int FaithCorrection = CurrentEvent.CalcDivisionFaith(Self);
+            int ManageCorrection = CurrentEvent.CalcDivisionManage(Self);
+
+            if (FaithCorrection != 0)
+                Text_Correction.text += "事业部信念: +" + FaithCorrection + "修正\n";
+            if (ManageCorrection != 0)
+                Text_Correction.text += "事业部管理: +" + ManageCorrection + "修正\n";
+        }
         foreach(OptionCardInfo option in Options)
         {
             if (option.Selected == true && option.OC.Correction != 0)
@@ -41,7 +51,10 @@ public class ChoiceEvent : MonoBehaviour
         foreach (OptionCardInfo option in Options)
         {
             if (option.Selected == true)
+            {
                 option.OC.StartEffect(Self);
+                option.TargetAddPerk(Self);
+            }
         }
         if (EGI == null)
         {
@@ -89,18 +102,22 @@ public class ChoiceEvent : MonoBehaviour
             Options.Add(option);
             int num = Random.Range(0, EC.GC.OCL.CurrentOptions.Count);
             option.SetInfo(EC.GC.OCL.CurrentOptions[num].OC, Self, this);
+
+            //有随机负面特质效果的抉择卡随机一个特质
             if (option.OC.DebuffCard == true)
             {
-                //option.Text_Emp.gameObject.SetActive(true);
-                //option.Text_Emp.text = 
+                option.RandomPerk();
             }
         }
     }
     //检查部门和高管提供的修正
     void CheckSpecialCorrection()
     {
-
-
+        if (Self.CurrentDep != null || Self.CurrentDivision != null)
+        {
+            TotalCorrection += CurrentEvent.CalcDivisionFaith(Self);
+            TotalCorrection += CurrentEvent.CalcDivisionManage(Self);
+        }
         CheckCorrectionUI();
     }
 }

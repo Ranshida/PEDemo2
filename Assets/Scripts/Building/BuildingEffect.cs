@@ -161,7 +161,7 @@ public class BuildingEffect
 
         for (int i = 0; i < level; i++)
         {
-            B1.Department.AddPerk(new Perk114(null));
+            B1.Department.AddPerk(new Perk114());
         }
 
     }

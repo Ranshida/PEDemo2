@@ -29,6 +29,7 @@ public class DivisionControl : MonoBehaviour
     public Employee Manager;
     public Image EfficiencyBarFill, WorkStatusBarFill, FaithFill;
 
+    public List<PerkInfo> CurrentPerks = new List<PerkInfo>();
     public List<DepControl> CurrentDeps = new List<DepControl>();
     public List<RectTransform> FillMarkers = new List<RectTransform>();
 
@@ -271,5 +272,84 @@ public class DivisionControl : MonoBehaviour
             cost += dep.CalcCost(type);
         }
         return cost;
+    }
+
+    //添加Perk
+    public void AddPerk(Perk perk)
+    {
+        //同类Perk检测
+        foreach (PerkInfo p in CurrentPerks)
+        {
+            if (p.CurrentPerk.Num == perk.Num)
+            {
+                //可叠加的进行累加
+                if (perk.canStack == true)
+                {
+                    p.CurrentPerk.Level += 1;
+                    p.CurrentPerk.AddEffect();
+                    return;
+                }
+                //不可叠加的清除
+                else
+                {
+                    p.CurrentPerk.RemoveEffect();
+                    break;
+                }
+            }
+        }
+        PerkInfo newPerk = Instantiate(GC.PerkInfoPrefab, PerkContent);
+        newPerk.CurrentPerk = perk;
+        newPerk.CurrentPerk.BaseTime = perk.TimeLeft;
+        newPerk.CurrentPerk.Info = newPerk;
+        newPerk.Text_Name.text = perk.Name;
+        newPerk.CurrentPerk.TargetDiv = this;
+        newPerk.info = GC.infoPanel;
+        CurrentPerks.Add(newPerk);
+        newPerk.CurrentPerk.AddEffect();
+        newPerk.SetColor();
+
+        PerkSort();
+    }
+
+    //移除Perk
+    public void RemovePerk(int num)
+    {
+        foreach (PerkInfo info in CurrentPerks)
+        {
+            if (info.CurrentPerk.Num == num)
+            {
+                info.CurrentPerk.RemoveEffect();
+                break;
+            }
+        }
+    }
+
+    //状态排序
+    void PerkSort()
+    {
+        if (CurrentPerks.Count == 0)
+            return;
+        List<PerkInfo> newPerkList = new List<PerkInfo>();
+        for (int i = 0; i < 5; i++)
+        {
+            PerkColor c = PerkColor.None;
+            if (i == 0)
+                c = PerkColor.White;
+            else if (i == 1)
+                c = PerkColor.Orange;
+            else if (i == 2)
+                c = PerkColor.Grey;
+            else if (i == 3)
+                c = PerkColor.Blue;
+            foreach (PerkInfo p in CurrentPerks)
+            {
+                if (p.CurrentPerk.perkColor == c)
+                    newPerkList.Add(p);
+            }
+        }
+        for (int i = 0; i < newPerkList.Count; i++)
+        {
+            newPerkList[i].transform.SetSiblingIndex(i);
+        }
     }
 }

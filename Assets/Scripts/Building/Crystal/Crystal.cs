@@ -10,7 +10,7 @@ public class Crystal : MonoBehaviour
     {
         if (GameControl.Instance.CurrentItem != null)
         {
-            GameControl.Instance.CurrentItem.TargetCrystal = this;
+            GameControl.Instance.CurrentItem.item.TargetCrystal = this;
             GameControl.Instance.CurrentItem.UseItem();
         }
     }

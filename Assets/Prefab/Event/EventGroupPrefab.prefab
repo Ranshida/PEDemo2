@@ -1473,7 +1473,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1832493544885918092}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1832493545063188258}
+        m_MethodName: UseResource
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
 --- !u!1 &1832493544936437803
@@ -1936,6 +1947,7 @@ MonoBehaviour:
   SpecialTeamPanel: {fileID: 104205081081863231}
   DetailPanel: {fileID: 1832493544871510371}
   StagePointer: {fileID: 1832493544690431158}
+  TargetDivision: {fileID: 0}
   STRemoveButtons:
   - {fileID: 2099203671622386392}
   - {fileID: 4206351848618754807}

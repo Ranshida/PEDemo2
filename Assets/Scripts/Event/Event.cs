@@ -202,8 +202,8 @@ public abstract class Event
         return result;
     }
 
-    //检测事业部加成
-    protected virtual int CalcDivision(Employee emp, Employee target, EventGroupInfo egi = null)
+    //检测事业部信念加成
+    public virtual int CalcDivisionFaith(Employee emp, Employee target = null, EventGroupInfo egi = null)
     {
         int result = 0;
         DivisionControl TargetDivision = null;
@@ -239,22 +239,46 @@ public abstract class Event
                 result -= 2;
             else
                 result -= 4;
-
-            if (TargetDivision.Manager != null)
-            {
-                if (TargetDivision.Manager.Manage == 1)
-                    result += 1;
-                else if (TargetDivision.Manager.Manage == 2)
-                    result += 2;
-                else if (TargetDivision.Manager.Manage == 3)
-                    result += 3;
-                else if (TargetDivision.Manager.Manage == 4)
-                    result += 5;
-                else if (TargetDivision.Manager.Manage == 5)
-                    result += 7;
-            }
         }
 
+        return result;
+    }
+
+    //事业部管理加成
+    public virtual int CalcDivisionManage(Employee emp, Employee target = null, EventGroupInfo egi = null)
+    {
+        int result = 0;
+        DivisionControl TargetDivision = null;
+        //找目标事业部
+        if (egi != null && egi.TargetDivision)
+            TargetDivision = egi.TargetDivision;
+        else if (emp.CurrentDep != null)
+            TargetDivision = emp.CurrentDep.CurrentDivision;
+        else if (emp.CurrentDivision != null)
+            TargetDivision = emp.CurrentDivision;
+        else if (target != null)
+        {
+            if (target.CurrentDep != null)
+                TargetDivision = target.CurrentDep.CurrentDivision;
+            else if (target.CurrentDivision != null)
+                TargetDivision = target.CurrentDivision;
+        }
+        if (TargetDivision == null)
+            return 0;
+
+        if (TargetDivision.Manager != null)
+        {
+            if (TargetDivision.Manager.Manage == 1)
+                result += 1;
+            else if (TargetDivision.Manager.Manage == 2)
+                result += 2;
+            else if (TargetDivision.Manager.Manage == 3)
+                result += 3;
+            else if (TargetDivision.Manager.Manage == 4)
+                result += 5;
+            else if (TargetDivision.Manager.Manage == 5)
+                result += 7;
+        }
         return result;
     }
 
@@ -760,7 +784,7 @@ public class EventC1 : Event
 
     protected override int CalcBonus(Employee emp, Employee target = null, EventGroupInfo egi = null)
     {
-        int result = CalcEmotion(emp) + CalcDivision(emp, target, egi) + CalcPerk(emp);
+        int result = CalcEmotion(emp) + CalcDivisionFaith(emp, target, egi) + CalcPerk(emp) + CalcDivisionManage(emp, target, egi);
         return result;
     }
 

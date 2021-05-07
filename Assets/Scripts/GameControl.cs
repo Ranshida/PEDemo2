@@ -108,7 +108,7 @@ public class GameControl : MonoBehaviour
     public int[] FinishedTask = new int[10];//0程序迭代 1技术研发 2可行性调研 3传播 4营销文案 5资源拓展 6原型图 7产品研究 8用户访谈 9已删除
 
     int Year = 1, Month = 1, Week = 1, Day = 1, Hour = 1, morale = 50;
-    int TempHireHour = 3;//临时的每3回合刷新一次招聘
+    int HireTime = 3;//临时的每3回合刷新一次招聘
     float Timer, MoneyCalcTimer;
     bool TimePause = false; //现在仅用来判断是否处于下班状态，用于其他功能时需检查WorkEndCheck()和WeekStart
 
@@ -126,6 +126,10 @@ public class GameControl : MonoBehaviour
         OCL.AddStaticOptions(new OptionCard1());
         OCL.AddStaticOptions(new OptionCard2());
         OCL.AddStaticOptions(new OptionCard3());
+        CreateItem(3);
+        CreateItem(4);
+        CreateItem(5);
+        CreateItem(6);
     }
 
     private void Update()
@@ -187,10 +191,10 @@ public class GameControl : MonoBehaviour
         MonthMeetingTime -= 1;
 
         //临时招聘
-        TempHireHour -= 1;
-        if (TempHireHour == 0)
+        HireTime -= 1;
+        if (HireTime == 0)
         {
-            TempHireHour = 3;
+            HireTime = 3;
             HC.AddHireTypes(new HireType());
             HC.Refresh();
             HC.Text_HireButtonText.transform.parent.GetComponent<Button>().interactable = true;
@@ -210,6 +214,7 @@ public class GameControl : MonoBehaviour
         CheckButtonName();
         TurnEvent.Invoke();
         EC.EventGroupIndex = 0;
+        EC.StartEventQueue = true;
         EC.StartSpecialEvent();
     }
 
@@ -433,7 +438,7 @@ public class GameControl : MonoBehaviour
         //检测老板摸鱼的附加状态
         CurrentDeps.Add(newDep);
         if (CEOVacation == true)
-            newDep.AddPerk(new Perk115(null));
+            newDep.AddPerk(new Perk115());
         return newDep;
     }
 
@@ -498,8 +503,29 @@ public class GameControl : MonoBehaviour
             else
                 CurrentDeps[i].DS.gameObject.SetActive(false);
         }
+        foreach(DivisionControl div in CurrentDivisions)
+        {
+            div.DS.gameObject.SetActive(false);
+        }
     }
 
+    //显示所有已激活事业部
+    public void ShowDivSelectPanel()
+    {
+        DepSelectPanel.GetComponent<WindowBaseControl>().SetWndState(true);
+        StandbyButton.SetActive(false);
+        foreach (DepControl dep in CurrentDeps)
+        {
+            dep.DS.gameObject.SetActive(false);
+        }
+        foreach (DivisionControl div in CurrentDivisions)
+        {
+             if (div.Manager == null || div.Locked == true || div.CurrentDeps.Count == 0)
+                div.DS.gameObject.SetActive(false);
+            else
+                div.DS.gameObject.SetActive(true);
+        }
+    }
 
     //员工管理 SelectMode 1雇佣 2移动 3指定高管（办公室）5指定部门发动建筑特效
     //InfoB常驻Total面板
@@ -569,7 +595,7 @@ public class GameControl : MonoBehaviour
         {
             if (CC.CEOSkillNum == 1)
             {
-                depControl.AddPerk(new Perk117(null));
+                depControl.AddPerk(new Perk117());
                 QC.Finish(5);
                 new EmpBuff(CC.CEO, 16, -45);
                 ResetSelectMode();
@@ -579,7 +605,7 @@ public class GameControl : MonoBehaviour
         //物品使用
         else if (SelectMode == 11)
         {
-            CurrentItem.TargetDep = depControl;
+            CurrentItem.item.TargetDep = depControl;
             CurrentItem.UseItem();
             ResetSelectMode();
         }
@@ -598,26 +624,38 @@ public class GameControl : MonoBehaviour
             CurrentEmpInfo.emp.InfoDetail.AddHistory("调动至" + depControl.Text_DepName.text);
             if (CurrentEmpInfo.emp.isCEO == false)
                 CC.CEO.InfoDetail.AddHistory("将" + CurrentEmpInfo.emp.Name + "调动至" + depControl.Text_DepName.text);
+            ResetSelectMode();
         }
     }
 
-    //为事业部指定高管
+    //为事业部指定高管 + 为事业部使用物品
     public void SelectDivManager(DivisionControl div)
     {
         DepSelectPanel.GetComponent<WindowBaseControl>().SetWndState(false);
-        //确认是否通过投票
-        if (EC.ManagerVoteCheck(CurrentEmpInfo.emp) == false)
-            return;
-        CurrentEmpInfo.emp.InfoA.transform.parent = StandbyContent;
-        //如果是移动的话重置之前的部门
-        ResetOldAssignment();
+        //高管指定
+        if (SelectMode == 2)
+        {
+            //确认是否通过投票
+            if (EC.ManagerVoteCheck(CurrentEmpInfo.emp) == false)
+                return;
+            CurrentEmpInfo.emp.InfoA.transform.parent = StandbyContent;
+            //如果是移动的话重置之前的部门
+            ResetOldAssignment();
 
-        div.SetManager(false, CurrentEmpInfo.emp);
-        //调动信息历史添加
-        CurrentEmpInfo.emp.InfoDetail.AddHistory("调动至" + div.DivName);
-        if (CurrentEmpInfo.emp.isCEO == false)
-            CC.CEO.InfoDetail.AddHistory("将" + CurrentEmpInfo.emp.Name + "调动至" + div.DivName);
-
+            div.SetManager(false, CurrentEmpInfo.emp);
+            //调动信息历史添加
+            CurrentEmpInfo.emp.InfoDetail.AddHistory("调动至" + div.DivName);
+            if (CurrentEmpInfo.emp.isCEO == false)
+                CC.CEO.InfoDetail.AddHistory("将" + CurrentEmpInfo.emp.Name + "调动至" + div.DivName);
+            ResetSelectMode();
+        }
+        //物品使用
+        else if (SelectMode == 11)
+        {
+            CurrentItem.item.TargetDiv = div;
+            CurrentItem.UseItem();
+            ResetSelectMode();
+        }
     }
     //重置各项信息
     public void ResetOldAssignment(Employee target = null)
@@ -640,7 +678,7 @@ public class GameControl : MonoBehaviour
             {
                 foreach (DepControl dep in emp.CurrentDep.ControledDeps)
                 {
-                    dep.AddPerk(new Perk110(null));
+                    dep.AddPerk(new Perk110());
                     dep.FaithRelationCheck();
                 }
                 emp.InfoDetail.TempDestroyStrategy();//旧版战略
@@ -804,6 +842,11 @@ public class GameControl : MonoBehaviour
 
     //增加不满或认同,bool = true 为不满，反之是认同
     public void AddEventProgress(int value, bool dissatisfied)
+    {
+
+    }
+
+    public void CheckEventProgress()
     {
 
     }

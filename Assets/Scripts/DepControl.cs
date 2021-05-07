@@ -86,7 +86,7 @@ public class DepControl : MonoBehaviour
             {
                 NoEmp = true;
                 NoEmpTime = 0;
-                AddPerk(new Perk111(null));
+                AddPerk(new Perk111());
             }
         }
 
@@ -480,33 +480,33 @@ public class DepControl : MonoBehaviour
                     RPos += 1;
             }
             if (GoodRelation == true)
-                AddPerk(new Perk99(null));
+                AddPerk(new Perk99());
             else
                 RemovePerk(99);
             if (BadRelation == true)
-                AddPerk(new Perk100(null));
+                AddPerk(new Perk100());
             else
                 RemovePerk(100);
 
             if (RPos == TempEmps.Count || RNeg == TempEmps.Count)
             {
                 RemovePerk(101);
-                AddPerk(new Perk102(null));
+                AddPerk(new Perk102());
             }
             else
             {
                 RemovePerk(102);
-                AddPerk(new Perk101(null));
+                AddPerk(new Perk101());
             }
             if (CPos == TempEmps.Count || CNeg == TempEmps.Count)
             {
                 RemovePerk(103);
-                AddPerk(new Perk104(null));
+                AddPerk(new Perk104());
             }
             else
             {
                 RemovePerk(104);
-                AddPerk(new Perk103(null));
+                AddPerk(new Perk103());
             }
         }
         //无人时清空所有
@@ -548,12 +548,12 @@ public class DepControl : MonoBehaviour
     {
         if (MoveOut == true)
         {
-            AddPerk(new Perk110(null));
+            AddPerk(new Perk110());
             Efficiency -= 0.25f;
         }
         else
         {
-            AddPerk(new Perk108(null));
+            AddPerk(new Perk108());
             Efficiency += 0.25f;
             //设定空置部门状态
             if (NoEmp == true)

@@ -7,6 +7,7 @@ public class EventControl : MonoBehaviour
 {
     public int ExhaustedCount = 0;
     public int EventGroupIndex = 0; //当前处理到的事件组编号
+    public bool StartEventQueue = false;//是否已经开始处理事件（心力爆炸判定后是否开始事件流程）
 
     public GameObject ManageVotePanel;
     public GameControl GC;
@@ -405,6 +406,7 @@ public class EventControl : MonoBehaviour
         }
     }
 
+    //生成一个抉择事件
     public void StartChoiceEvent(Event e, Employee self, EventGroupInfo egi = null)
     {
         ChoiceEvent c = Instantiate(ChoiceEventPrefab, GC.transform);
@@ -415,6 +417,7 @@ public class EventControl : MonoBehaviour
         UnfinishedEvents.Add(c);
     }
 
+    //生成一个事件组
     public void CreateEventGroup(EventGroup e)
     {
         EventGroupInfo newEventGroup = Instantiate(EventGroupPrefab, GC.transform);
@@ -428,8 +431,8 @@ public class EventControl : MonoBehaviour
     //判断是否能够进入特殊事件
     public void StartSpecialEvent()
     {
-        //有未处理的心态爆炸则必须先处理
-        if (ExhaustedCount != 0)
+        //有未处理的心态爆炸则必须先处理，没有进入事件流程时不继续
+        if (ExhaustedCount != 0 || StartEventQueue == false)
             return;
 
         //此处可能要先重置一下各种数据？
@@ -457,22 +460,25 @@ public class EventControl : MonoBehaviour
         }
     }
 
-    //生成一个抉择事件
-    void CreateChoiceEvent(Event e)
-    {
-
-    }
-
     //判断是否完成了抉择事件并进入一般事件流程
     public void ChoiceEventCheck(bool groupEvent)
     {
         //判断是否为事件组事件
-        //不是的话看一下所有一般抉择事件是否都完成，完成后进入下一阶段(情绪回合-1)
+        //不是的话看一下所有一般抉择事件是否都完成，完成后进入下一阶段(情绪回合-1、结算不满/认同、结算一般事件)
         if (groupEvent == false)
         {
             if (UnfinishedEvents.Count == 0)
             {
-
+                foreach(Employee e in GC.CurrentEmployees)
+                {
+                    e.EmotionTimePass();
+                }
+                GC.CheckEventProgress();
+                foreach (Employee e in GC.CurrentEmployees)
+                {
+                    EmpManager.Instance.AddEvent(e);
+                }
+                StartEventQueue = false;
             }
         }
 
@@ -482,11 +488,5 @@ public class EventControl : MonoBehaviour
             EventGroupIndex += 1;
             StartSpecialEvent();
         }
-    }
-
-    //判断一下抉择事件是否都选择完毕了（能进入下一阶段）
-    public void EventFinishCheck()
-    {
-
     }
 }

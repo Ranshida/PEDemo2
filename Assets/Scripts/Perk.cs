@@ -25,17 +25,13 @@ public class Perk
 
     public Employee TargetEmp;
     public DepControl TargetDep;
+    public DivisionControl TargetDiv;
     public PerkInfo Info;
 
     public int TempValue1, TempValue2, TempValue3;//用于检测和保存的一些数值
     public float TempValue4;
 
     private bool StackAdded = false;
-
-    public Perk(Employee Emp)
-    {
-        TargetEmp = Emp;
-    }
 
     public void AddEffect()
     {
@@ -54,7 +50,7 @@ public class Perk
             {
                 GameControl.Instance.MonthlyEvent.AddListener(ContinuousEffect);
             }
-            GameControl.Instance.HourEvent.AddListener(TimePass);
+            GameControl.Instance.TurnEvent.AddListener(TimePass);
             StackAdded = true;
         }
         ImmEffect();
@@ -133,7 +129,7 @@ public class Perk
 //档案维护
 public class Perk1 : Perk
 {
-    public Perk1(Employee Emp) : base(Emp)
+    public Perk1() : base()
     {
         Name = "档案维护";
         Description = "成为核心团队成员后生效，增加公司1个物品槽";
@@ -156,7 +152,7 @@ public class Perk1 : Perk
 //缓和措施
 public class Perk2 : Perk
 {
-    public Perk2(Employee Emp) : base(Emp)
+    public Perk2() : base()
     {
         Name = "缓和措施";
         Description = "成为核心团队成员后生效，增加公司不满栏位上限1点";
@@ -179,7 +175,7 @@ public class Perk2 : Perk
 //矛盾处理
 public class Perk3 : Perk
 {
-    public Perk3(Employee Emp) : base(Emp)
+    public Perk3() : base()
     {
         Name = "矛盾处理";
         Description = "成为核心团队成员后生效，成功处理不满事件后额外消除1个不满";
@@ -202,7 +198,7 @@ public class Perk3 : Perk
 //值得信任
 public class Perk4 : Perk
 {
-    public Perk4(Employee Emp) : base(Emp)
+    public Perk4() : base()
     {
         Name = "值得信任";
         Description = "成为核心团队成员后生效，增加CEO坚韧2点";
@@ -225,7 +221,7 @@ public class Perk4 : Perk
 //沟通与协调
 public class Perk5 : Perk
 {
-    public Perk5(Employee Emp) : base(Emp)
+    public Perk5() : base()
     {
         Name = "沟通与协调";
         Description = "成为高管后生效，管理的事业部信念+10";
@@ -248,7 +244,7 @@ public class Perk5 : Perk
 //组织行为学
 public class Perk6 : Perk
 {
-    public Perk6(Employee Emp) : base(Emp)
+    public Perk6() : base()
     {
         Name = "组织行为学";
         Description = "成为高管后生效，管理的事业部效率+1";
@@ -271,7 +267,7 @@ public class Perk6 : Perk
 //项目管理
 public class Perk7 : Perk
 {
-    public Perk7(Employee Emp) : base(Emp)
+    public Perk7() : base()
     {
         Name = "项目管理";
         Description = "成为高管后生效，管理的事业部工作状态+1";
@@ -282,19 +278,19 @@ public class Perk7 : Perk
 
     public override void ActiveSpecialEffect()
     {
-        TargetEmp.CurrentDivision.WorkStatus += 10;
+        TargetEmp.CurrentDivision.WorkStatus += 1;
     }
 
     public override void DeActiveSpecialEffect()
     {
-        TargetEmp.CurrentDivision.WorkStatus -= 10;
+        TargetEmp.CurrentDivision.WorkStatus -= 1;
     }
 }
 
 //报表分析
 public class Perk8 : Perk
 {
-    public Perk8(Employee Emp) : base(Emp)
+    public Perk8() : base()
     {
         Name = "报表分析";
         Description = "成为高管后生效，管理的事业部成本-20";
@@ -317,7 +313,7 @@ public class Perk8 : Perk
 //战略管理
 public class Perk9 : Perk
 {
-    public Perk9(Employee Emp) : base(Emp)
+    public Perk9() : base()
     {
         Name = "战略管理";
         Description = "成为高管后生效，管理的事业部中所有充能建筑的生产周期-1回合";
@@ -340,7 +336,7 @@ public class Perk9 : Perk
 //调度
 public class Perk10 : Perk
 {
-    public Perk10(Employee Emp) : base(Emp)
+    public Perk10() : base()
     {
         Name = "调度";
         Description = "成为高管后生效，管理的事业部的状态效果额外增加50%";
@@ -363,7 +359,7 @@ public class Perk10 : Perk
 //概率论入门
 public class Perk11 : Perk
 {
-    public Perk11(Employee Emp) : base(Emp)
+    public Perk11() : base()
     {
         Name = "概率论入门";
         Description = "成为高管后生效，管理的事业部中员工的经验值每回合额外获得1点经验";
@@ -386,7 +382,7 @@ public class Perk11 : Perk
 //高效
 public class Perk12 : Perk
 {
-    public Perk12(Employee Emp) : base(Emp)
+    public Perk12() : base()
     {
         Name = "高效";
         Description = "所在事业部效率+1";
@@ -416,7 +412,7 @@ public class Perk12 : Perk
 //投入
 public class Perk13 : Perk
 {
-    public Perk13(Employee Emp) : base(Emp)
+    public Perk13() : base()
     {
         Name = "投入";
         Description = "所在事业部工作状态+1";
@@ -446,7 +442,7 @@ public class Perk13 : Perk
 //鼓舞
 public class Perk14 : Perk
 {
-    public Perk14(Employee Emp) : base(Emp)
+    public Perk14() : base()
     {
         Name = "鼓舞";
         Description = "所在事业部信念+10";
@@ -476,7 +472,7 @@ public class Perk14 : Perk
 //节约
 public class Perk15 : Perk
 {
-    public Perk15(Employee Emp) : base(Emp)
+    public Perk15() : base()
     {
         Name = "节约";
         Description = "所在事业部成本-5";
@@ -506,7 +502,7 @@ public class Perk15 : Perk
 //乐观
 public class Perk16 : Perk
 {
-    public Perk16(Employee Emp) : base(Emp)
+    public Perk16() : base()
     {
         Name = "乐观";
         Description = "自身参与的事件修正+1";
@@ -518,7 +514,7 @@ public class Perk16 : Perk
 //开朗
 public class Perk17 : Perk
 {
-    public Perk17(Employee Emp) : base(Emp)
+    public Perk17() : base()
     {
         Name = "开朗";
         Description = "自身参与的事件修正+1";
@@ -530,7 +526,7 @@ public class Perk17 : Perk
 //敏感
 public class Perk18 : Perk
 {
-    public Perk18(Employee Emp) : base(Emp)
+    public Perk18() : base()
     {
         Name = "敏感";
         Description = "更容易产生情绪（获取情绪时有50%概率多获得1个）";
@@ -542,7 +538,7 @@ public class Perk18 : Perk
 //热情
 public class Perk19 : Perk
 {
-    public Perk19(Employee Emp) : base(Emp)
+    public Perk19() : base()
     {
         Name = "热情";
         Description = "每回合额外获取1点经验";
@@ -565,7 +561,7 @@ public class Perk19 : Perk
 //电波系
 public class Perk20 : Perk
 {
-    public Perk20(Employee Emp) : base(Emp)
+    public Perk20() : base()
     {
         Name = "电波系";
         Description = "办公室中存在两名持有此特质的员工时效率+2";
@@ -618,7 +614,7 @@ public class Perk20 : Perk
 //有耐心
 public class Perk21 : Perk
 {
-    public Perk21(Employee Emp) : base(Emp)
+    public Perk21() : base()
     {
         Name = "有耐心";
         Description = "坚韧+1";
@@ -641,7 +637,7 @@ public class Perk21 : Perk
 //持之以恒
 public class Perk22 : Perk
 {
-    public Perk22(Employee Emp) : base(Emp)
+    public Perk22() : base()
     {
         Name = "持之以恒";
         Description = "坚韧+2";
@@ -664,7 +660,7 @@ public class Perk22 : Perk
 //经历过打击
 public class Perk23 : Perk
 {
-    public Perk23(Employee Emp) : base(Emp)
+    public Perk23() : base()
     {
         Name = "经历过打击";
         Description = "坚韧+3";
@@ -687,7 +683,7 @@ public class Perk23 : Perk
 //数据模型
 public class Perk24 : Perk
 {
-    public Perk24(Employee Emp) : base(Emp)
+    public Perk24() : base()
     {
         Name = "数据模型";
         Description = "决策+1";
@@ -710,7 +706,7 @@ public class Perk24 : Perk
 //应用统计学
 public class Perk25 : Perk
 {
-    public Perk25(Employee Emp) : base(Emp)
+    public Perk25() : base()
     {
         Name = "应用统计学";
         Description = "决策+1";
@@ -733,7 +729,7 @@ public class Perk25 : Perk
 //运筹学
 public class Perk26 : Perk
 {
-    public Perk26(Employee Emp) : base(Emp)
+    public Perk26() : base()
     {
         Name = "运筹学";
         Description = "决策+2";
@@ -756,7 +752,7 @@ public class Perk26 : Perk
 //部门领导
 public class Perk27 : Perk
 {
-    public Perk27(Employee Emp) : base(Emp)
+    public Perk27() : base()
     {
         Name = "部门领导";
         Description = "管理+1";
@@ -779,7 +775,7 @@ public class Perk27 : Perk
 //自主创业
 public class Perk28 : Perk
 {
-    public Perk28(Employee Emp) : base(Emp)
+    public Perk28() : base()
     {
         Name = "自主创业";
         Description = "管理+1";
@@ -802,7 +798,7 @@ public class Perk28 : Perk
 //管培生
 public class Perk29 : Perk
 {
-    public Perk29(Employee Emp) : base(Emp)
+    public Perk29() : base()
     {
         Name = "管培生";
         Description = "管理+1";
@@ -825,7 +821,7 @@ public class Perk29 : Perk
 //小组长
 public class Perk30 : Perk
 {
-    public Perk30(Employee Emp) : base(Emp)
+    public Perk30() : base()
     {
         Name = "小组长";
         Description = "管理+1";
@@ -848,7 +844,7 @@ public class Perk30 : Perk
 //学生会干部
 public class Perk31 : Perk
 {
-    public Perk31(Employee Emp) : base(Emp)
+    public Perk31() : base()
     {
         Name = "学生会干部";
         Description = "管理+1";
@@ -871,7 +867,7 @@ public class Perk31 : Perk
 //社团领袖
 public class Perk32 : Perk
 {
-    public Perk32(Employee Emp) : base(Emp)
+    public Perk32() : base()
     {
         Name = "社团领袖";
         Description = "管理+1";
@@ -894,7 +890,7 @@ public class Perk32 : Perk
 //自由者
 public class Perk35 : Perk
 {
-    public Perk35(Employee Emp) : base(Emp)
+    public Perk35() : base()
     {
         Name = "自由者";
         Description = "厌恶管理，所在事业部高管管理-1";
@@ -917,7 +913,7 @@ public class Perk35 : Perk
 //服从
 public class Perk36 : Perk
 {
-    public Perk36(Employee Emp) : base(Emp)
+    public Perk36() : base()
     {
         Name = "服从";
         Description = "所在事业部工作状态-1，效率+1";
@@ -959,7 +955,7 @@ public class Perk36 : Perk
 //待遇要求高
 public class Perk37 : Perk
 {
-    public Perk37(Employee Emp) : base(Emp)
+    public Perk37() : base()
     {
         Name = "待遇要求高";
         Description = "管理+1，所在事业部成本+5";
@@ -994,7 +990,7 @@ public class Perk37 : Perk
 //盗窃癖
 public class Perk38 : Perk
 {
-    public Perk38(Employee Emp) : base(Emp)
+    public Perk38() : base()
     {
         Name = "盗窃癖";
         Description = "所在事业部成本+5";
@@ -1024,7 +1020,7 @@ public class Perk38 : Perk
 //用爱发电
 public class Perk39 : Perk
 {
-    public Perk39(Employee Emp) : base(Emp)
+    public Perk39() : base()
     {
         Name = "用爱发电";
         Description = "所在事业部成本-5";
@@ -1054,7 +1050,7 @@ public class Perk39 : Perk
 //意见领袖
 public class Perk40 : Perk
 {
-    public Perk40(Employee Emp) : base(Emp)
+    public Perk40() : base()
     {
         Name = "意见领袖";
         Description = "所在事业部信念+10，所在事业部高管管理-1";
@@ -1090,7 +1086,7 @@ public class Perk40 : Perk
 //经常重做
 public class Perk41 : Perk
 {
-    public Perk41(Employee Emp) : base(Emp)
+    public Perk41() : base()
     {
         Name = "经常重做";
         Description = "所在事业部工作状态+1，信念-10";
@@ -1132,7 +1128,7 @@ public class Perk41 : Perk
 //滔滔不绝
 public class Perk42 : Perk
 {
-    public Perk42(Employee Emp) : base(Emp)
+    public Perk42() : base()
     {
         Name = "滔滔不绝";
         Description = "所在事业部效率-1，自身坚韧+1";
@@ -1167,7 +1163,7 @@ public class Perk42 : Perk
 //见多识广
 public class Perk43 : Perk
 {
-    public Perk43(Employee Emp) : base(Emp)
+    public Perk43() : base()
     {
         Name = "见多识广";
         Description = "参与个人事件修正+1";
@@ -1179,7 +1175,7 @@ public class Perk43 : Perk
 //御宅族
 public class Perk46 : Perk
 {
-    public Perk46(Employee Emp) : base(Emp)
+    public Perk46() : base()
     {
         Name = "御宅族";
         Description = "初始坚韧2点，初始决策1点，初始管理0点";
@@ -1198,7 +1194,7 @@ public class Perk46 : Perk
 //钓鱼爱好者
 public class Perk47 : Perk
 {
-    public Perk47(Employee Emp) : base(Emp)
+    public Perk47() : base()
     {
         Name = "钓鱼爱好者";
         Description = "初始坚韧3点，初始决策0点，初始管理0点";
@@ -1217,7 +1213,7 @@ public class Perk47 : Perk
 //孩子王
 public class Perk48 : Perk
 {
-    public Perk48(Employee Emp) : base(Emp)
+    public Perk48() : base()
     {
         Name = "孩子王";
         Description = "初始坚韧0点，初始决策0点，初始管理2点";
@@ -1236,7 +1232,7 @@ public class Perk48 : Perk
 //乐队成员
 public class Perk49 : Perk
 {
-    public Perk49(Employee Emp) : base(Emp)
+    public Perk49() : base()
     {
         Name = "乐队成员";
         Description = "初始坚韧0点，初始决策2点，初始管理0点";
@@ -1255,7 +1251,7 @@ public class Perk49 : Perk
 //社会人
 public class Perk50 : Perk
 {
-    public Perk50(Employee Emp) : base(Emp)
+    public Perk50() : base()
     {
         Name = "社会人";
         Description = "初始坚韧2点，初始决策0点，初始管理1点";
@@ -1274,7 +1270,7 @@ public class Perk50 : Perk
 //平衡强迫症
 public class Perk51 : Perk
 {
-    public Perk51(Employee Emp) : base(Emp)
+    public Perk51() : base()
     {
         Name = "平衡强迫症";
         Description = "初始坚韧1点，初始决策1点，初始管理1点";
@@ -1293,7 +1289,7 @@ public class Perk51 : Perk
 //回避冲突
 public class Perk52 : Perk
 {
-    public Perk52(Employee Emp) : base(Emp)
+    public Perk52() : base()
     {
         Name = "回避冲突";
         Description = "获得抉择卡“回避冲突”";
@@ -1310,7 +1306,7 @@ public class Perk52 : Perk
 //闪烁其词
 public class Perk53 : Perk
 {
-    public Perk53(Employee Emp) : base(Emp)
+    public Perk53() : base()
     {
         Name = "闪烁其词";
         Description = "获得抉择卡“闪烁其词”";
@@ -1327,7 +1323,7 @@ public class Perk53 : Perk
 //拒绝沟通
 public class Perk54 : Perk
 {
-    public Perk54(Employee Emp) : base(Emp)
+    public Perk54() : base()
     {
         Name = "拒绝沟通";
         Description = "获得抉择卡“拒绝沟通”";
@@ -1349,7 +1345,7 @@ public class Perk109 : Perk
 {
     int Value = -1;
     List<int> StarNum = new List<int>();
-    public Perk109(Employee Emp) : base(Emp)
+    public Perk109() : base()
     {
         Name = "热情";
         Description = "对应领域热情+1";
@@ -1396,7 +1392,7 @@ public class Perk109 : Perk
 //精进
 public class Perk33 : Perk
 {
-    public Perk33(Employee Emp) : base(Emp)
+    public Perk33() : base()
     {
         Name = "精进";
         Description = "生产和办公室技能充能成功率+5%";
@@ -1419,7 +1415,7 @@ public class Perk33 : Perk
 //削减支出
 public class Perk34 : Perk
 {
-    public Perk34(Employee Emp) : base(Emp)
+    public Perk34() : base()
     {
         Name = "削减支出";
         Description = "公司建筑维护费用-5%";
@@ -1450,7 +1446,7 @@ public class Perk34 : Perk
 //孤僻
 public class Perk82 : Perk
 {
-    public Perk82(Employee Emp) : base(Emp)
+    public Perk82() : base()
     {
         Name = "孤僻";
         Description = "降低认识新人事件组发生权重1";
@@ -1463,7 +1459,7 @@ public class Perk82 : Perk
 //野心家
 public class Perk83 : Perk
 {
-    public Perk83(Employee Emp) : base(Emp)
+    public Perk83() : base()
     {
         Name = "野心家";
         Description = "提高野心事件组发生权重1";
@@ -1476,7 +1472,7 @@ public class Perk83 : Perk
 //梦想家
 public class Perk84 : Perk
 {
-    public Perk84(Employee Emp) : base(Emp)
+    public Perk84() : base()
     {
         Name = "梦想家";
         Description = "提高愿望事件组发生权重1";
@@ -1489,7 +1485,7 @@ public class Perk84 : Perk
 //革命者
 public class Perk85 : Perk
 {
-    public Perk85(Employee Emp) : base(Emp)
+    public Perk85() : base()
     {
         Name = "革命者";
         Description = "提高诉求不满事件组发生权重1";
@@ -1502,7 +1498,7 @@ public class Perk85 : Perk
 //虚荣者
 public class Perk86 : Perk
 {
-    public Perk86(Employee Emp) : base(Emp)
+    public Perk86() : base()
     {
         Name = "虚荣者";
         Description = "提高认可交谈事件组发生权重1";
@@ -1515,7 +1511,7 @@ public class Perk86 : Perk
 //社交达人
 public class Perk87 : Perk
 {
-    public Perk87(Employee Emp) : base(Emp)
+    public Perk87() : base()
     {
         Name = "社交达人";
         Description = "提高分享日常、分享快乐事件组发生权重1";
@@ -1528,7 +1524,7 @@ public class Perk87 : Perk
 //倾诉者
 public class Perk88 : Perk
 {
-    public Perk88(Employee Emp) : base(Emp)
+    public Perk88() : base()
     {
         Name = "倾诉者";
         Description = "提高寻求安慰事件组发生权重1";
@@ -1541,7 +1537,7 @@ public class Perk88 : Perk
 //躁狂
 public class Perk89 : Perk
 {
-    public Perk89(Employee Emp) : base(Emp)
+    public Perk89() : base()
     {
         Name = "躁狂";
         Description = "提高无聊事件组发生权重1";
@@ -1554,7 +1550,7 @@ public class Perk89 : Perk
 //思想家
 public class Perk90 : Perk
 {
-    public Perk90(Employee Emp) : base(Emp)
+    public Perk90() : base()
     {
         Name = "思想家";
         Description = "提高深刻交谈事件组发生权重1";
@@ -1567,7 +1563,7 @@ public class Perk90 : Perk
 //谦逊
 public class Perk91 : Perk
 {
-    public Perk91(Employee Emp) : base(Emp)
+    public Perk91() : base()
     {
         Name = "谦逊";
         Description = "不会出现骄傲事件组";
@@ -1580,7 +1576,7 @@ public class Perk91 : Perk
 //冷静
 public class Perk92 : Perk
 {
-    public Perk92(Employee Emp) : base(Emp)
+    public Perk92() : base()
     {
         Name = "冷静";
         Description = "不会出现狂想事件组";
@@ -1594,7 +1590,7 @@ public class Perk92 : Perk
 //结构优化
 public class Perk44 : Perk
 {
-    public Perk44(Employee Emp) : base(Emp)
+    public Perk44() : base()
     {
         Name = "结构优化";
         Description = "降低人员工资和建筑维护费用25%";
@@ -1621,7 +1617,7 @@ public class Perk44 : Perk
 //团结
 public class Perk45 : Perk
 {
-    public Perk45(Employee Emp) : base(Emp)
+    public Perk45() : base()
     {
         Name = "团结";
         Description = "存在时“并肩作战”效果×3";
@@ -1648,7 +1644,7 @@ public class Perk45 : Perk
 //愿望
 public class Perk55 : Perk
 {
-    public Perk55(Employee Emp) : base(Emp)
+    public Perk55() : base()
     {
         Name = "愿望";
         Description = "解锁事件，公司港口行为树";
@@ -1661,7 +1657,7 @@ public class Perk55 : Perk
 //野心
 public class Perk56 : Perk
 {
-    public Perk56(Employee Emp) : base(Emp)
+    public Perk56() : base()
     {
         Name = "野心";
         Description = "解锁事件，公司港口行为树";
@@ -1674,7 +1670,7 @@ public class Perk56 : Perk
 //不满
 public class Perk57 : Perk
 {
-    public Perk57(Employee Emp) : base(Emp)
+    public Perk57() : base()
     {
         Name = "不满";
         Description = "解锁事件，公司港口行为树";
@@ -1687,7 +1683,7 @@ public class Perk57 : Perk
 //成长
 public class Perk58 : Perk
 {
-    public Perk58(Employee Emp) : base(Emp)
+    public Perk58() : base()
     {
         Name = "成长";
         Description = "解锁事件，1年内每升一级获取1个，下年清空";
@@ -1700,7 +1696,7 @@ public class Perk58 : Perk
 //深刻交谈
 public class Perk59 : Perk
 {
-    public Perk59(Employee Emp) : base(Emp)
+    public Perk59() : base()
     {
         Name = "深刻交谈";
         Description = "解锁事件，个人港口行为树";
@@ -1713,7 +1709,7 @@ public class Perk59 : Perk
 //分享乐事
 public class Perk60 : Perk
 {
-    public Perk60(Employee Emp) : base(Emp)
+    public Perk60() : base()
     {
         Name = "分享乐事";
         Description = "解锁事件，个人港口行为树";
@@ -1726,7 +1722,7 @@ public class Perk60 : Perk
 //认可交谈
 public class Perk61 : Perk
 {
-    public Perk61(Employee Emp) : base(Emp)
+    public Perk61() : base()
     {
         Name = "认可交谈";
         Description = "解锁事件，个人港口行为树";
@@ -1739,7 +1735,7 @@ public class Perk61 : Perk
 //分享日常
 public class Perk62 : Perk
 {
-    public Perk62(Employee Emp) : base(Emp)
+    public Perk62() : base()
     {
         Name = "分享日常";
         Description = "解锁事件，个人港口行为树";
@@ -1752,7 +1748,7 @@ public class Perk62 : Perk
 //寻求安慰
 public class Perk63 : Perk
 {
-    public Perk63(Employee Emp) : base(Emp)
+    public Perk63() : base()
     {
         Name = "寻求安慰";
         Description = "解锁事件，个人港口行为树";
@@ -1765,7 +1761,7 @@ public class Perk63 : Perk
 //无聊
 public class Perk64 : Perk
 {
-    public Perk64(Employee Emp) : base(Emp)
+    public Perk64() : base()
     {
         Name = "无聊";
         Description = "解锁事件，个人港口行为树";
@@ -1778,7 +1774,7 @@ public class Perk64 : Perk
 //受到信任
 public class Perk65 : Perk
 {
-    public Perk65(Employee Emp) : base(Emp)
+    public Perk65() : base()
     {
         Name = "受到信任";
         Description = "解锁事件，公司普通行为树";
@@ -1791,7 +1787,7 @@ public class Perk65 : Perk
 //受到质疑
 public class Perk66 : Perk
 {
-    public Perk66(Employee Emp) : base(Emp)
+    public Perk66() : base()
     {
         Name = "受到质疑";
         Description = "解锁事件，公司普通行为树";
@@ -1804,7 +1800,7 @@ public class Perk66 : Perk
 //受到赞扬
 public class Perk67 : Perk
 {
-    public Perk67(Employee Emp) : base(Emp)
+    public Perk67() : base()
     {
         Name = "受到赞扬";
         Description = "解锁事件，公司普通行为树";
@@ -1817,7 +1813,7 @@ public class Perk67 : Perk
 //受到批评
 public class Perk68 : Perk
 {
-    public Perk68(Employee Emp) : base(Emp)
+    public Perk68() : base()
     {
         Name = "受到批评";
         Description = "解锁事件，公司普通行为树";
@@ -1830,7 +1826,7 @@ public class Perk68 : Perk
 //遭到敌意
 public class Perk69 : Perk
 {
-    public Perk69(Employee Emp) : base(Emp)
+    public Perk69() : base()
     {
         Name = "遭到敌意";
         Description = "解锁事件，公司普通行为树";
@@ -1843,7 +1839,7 @@ public class Perk69 : Perk
 //理想
 public class Perk70 : Perk
 {
-    public Perk70(Employee Emp) : base(Emp)
+    public Perk70() : base()
     {
         Name = "理想";
         Description = "解锁事件，公司普通行为树";
@@ -1856,7 +1852,7 @@ public class Perk70 : Perk
 //充分讨论
 public class Perk71 : Perk
 {
-    public Perk71(Employee Emp) : base(Emp)
+    public Perk71() : base()
     {
         Name = "充分讨论";
         Description = "部门成功率上升5%";
@@ -1885,7 +1881,7 @@ public class Perk71 : Perk
 //期待转岗
 public class Perk72 : Perk
 {
-    public Perk72(Employee Emp) : base(Emp)
+    public Perk72() : base()
     {
         Name = "期待转岗";
         Description = "持续时间结束时没有消除则员工信念-10";
@@ -1898,7 +1894,7 @@ public class Perk72 : Perk
 //期待升职
 public class Perk73 : Perk
 {
-    public Perk73(Employee Emp) : base(Emp)
+    public Perk73() : base()
     {
         Name = "期待升职";
         Description = "持续时间结束时没有消除则员工信念-8";
@@ -1911,7 +1907,7 @@ public class Perk73 : Perk
 //精神恍惚
 public class Perk74 : Perk
 {
-    public Perk74(Employee Emp) : base(Emp)
+    public Perk74() : base()
     {
         Name = "精神恍惚";
         Description = "心力爆炸获得，失误率+50%";
@@ -1924,7 +1920,7 @@ public class Perk74 : Perk
 //善辩
 public class Perk75 : Perk
 {
-    public Perk75(Employee Emp) : base(Emp)
+    public Perk75() : base()
     {
         Name = "善辩";
         Description = "加事件判定正面修正+1";
@@ -1937,7 +1933,7 @@ public class Perk75 : Perk
 //说客
 public class Perk76 : Perk
 {
-    public Perk76(Employee Emp) : base(Emp)
+    public Perk76() : base()
     {
         Name = "说客";
         Description = "加事件判定正面修正+2";
@@ -1950,7 +1946,7 @@ public class Perk76 : Perk
 //雄辩家
 public class Perk77 : Perk
 {
-    public Perk77(Employee Emp) : base(Emp)
+    public Perk77() : base()
     {
         Name = "雄辩家";
         Description = "加事件判定正面修正+3";
@@ -1963,7 +1959,7 @@ public class Perk77 : Perk
 //出众
 public class Perk78 : Perk
 {
-    public Perk78(Employee Emp) : base(Emp)
+    public Perk78() : base()
     {
         Name = "出众";
         Description = "加事件判定正面修正+1";
@@ -1976,7 +1972,7 @@ public class Perk78 : Perk
 //领袖气质
 public class Perk79 : Perk
 {
-    public Perk79(Employee Emp) : base(Emp)
+    public Perk79() : base()
     {
         Name = "领袖气质";
         Description = "加事件判定正面修正+2";
@@ -1989,7 +1985,7 @@ public class Perk79 : Perk
 //传奇
 public class Perk80 : Perk
 {
-    public Perk80(Employee Emp) : base(Emp)
+    public Perk80() : base()
     {
         Name = "传奇";
         Description = "加事件判定正面修正+3";
@@ -2002,7 +1998,7 @@ public class Perk80 : Perk
 //认识新人
 public class Perk81 : Perk
 {
-    public Perk81(Employee Emp) : base(Emp)
+    public Perk81() : base()
     {
         Name = "认识新人";
         Description = "认识新人的次数，作为标记使用";
@@ -2016,7 +2012,7 @@ public class Perk81 : Perk
 //被害妄想症
 public class Perk93 : Perk
 {
-    public Perk93(Employee Emp) : base(Emp)
+    public Perk93() : base()
     {
         Name = "被害妄想症";
         Description = "所有公司日常类的事件正面修正-2";
@@ -2034,7 +2030,7 @@ public class Perk93 : Perk
 //刚愎自用
 public class Perk94: Perk
 {
-    public Perk94(Employee Emp) : base(Emp)
+    public Perk94() : base()
     {
         Name = "刚愎自用";
         Description = "所在部门成功率-10%";
@@ -2058,7 +2054,7 @@ public class Perk94: Perk
 //重度抑郁
 public class Perk95 : Perk
 {
-    public Perk95(Employee Emp) : base(Emp)
+    public Perk95() : base()
     {
         Name = "重度抑郁";
         Description = "心力每周下降10点";
@@ -2081,7 +2077,7 @@ public class Perk95 : Perk
 //开悟
 public class Perk96 : Perk
 {
-    public Perk96(Employee Emp) : base(Emp)
+    public Perk96() : base()
     {
         Name = "开悟";
         Description = "不产生红色系情绪，愤怒、反感、侮辱等";
@@ -2099,7 +2095,7 @@ public class Perk96 : Perk
 //转岗无望
 public class Perk97 : Perk
 {
-    public Perk97(Employee Emp) : base(Emp)
+    public Perk97() : base()
     {
         Name = "转岗无望";
         Description = "部门信念-15";
@@ -2122,7 +2118,7 @@ public class Perk97 : Perk
 //升职无望
 public class Perk98 : Perk
 {
-    public Perk98(Employee Emp) : base(Emp)
+    public Perk98() : base()
     {
         Name = "升职无望";
         Description = "部门信念-15";
@@ -2145,7 +2141,7 @@ public class Perk98 : Perk
 //并肩作战
 public class Perk99 : Perk
 {
-    public Perk99(Employee Emp) : base(Emp)
+    public Perk99() : base()
     {
         Name = "并肩作战";
         Description = "部门内每存在一组好友/挚友关系，信念+5";
@@ -2196,7 +2192,7 @@ public class Perk99 : Perk
 //同室操戈
 public class Perk100 : Perk
 {
-    public Perk100(Employee Emp) : base(Emp)
+    public Perk100() : base()
     {
         Name = "同室操戈";
         Description = "部门内每存在一组陌路/仇人关系，信念-10";
@@ -2238,7 +2234,7 @@ public class Perk100 : Perk
 //信仰不一
 public class Perk101 : Perk
 {
-    public Perk101(Employee Emp) : base(Emp)
+    public Perk101() : base()
     {
         Name = "信仰不一";
         Description = "同事和直属上级中存在信仰与其他人不同的，部门信念-15";
@@ -2261,7 +2257,7 @@ public class Perk101 : Perk
 //信仰一致
 public class Perk102 : Perk
 {
-    public Perk102(Employee Emp) : base(Emp)
+    public Perk102() : base()
     {
         Name = "信仰一致";
         Description = "同事和直属上级中信仰全部一致，部门信念+15";
@@ -2284,7 +2280,7 @@ public class Perk102 : Perk
 //文化不一
 public class Perk103 : Perk
 {
-    public Perk103(Employee Emp) : base(Emp)
+    public Perk103() : base()
     {
         Name = "文化不一";
         Description = "同事和直属上级中存在文化与其他人不同的，部门信念-15";
@@ -2307,7 +2303,7 @@ public class Perk103 : Perk
 //文化一致
 public class Perk104 : Perk
 {
-    public Perk104(Employee Emp) : base(Emp)
+    public Perk104() : base()
     {
         Name = "文化一致";
         Description = "同事和直属上级中文化全部一致，部门信念+15";
@@ -2330,7 +2326,7 @@ public class Perk104 : Perk
 //重大失误
 public class Perk105 : Perk
 {
-    public Perk105(Employee Emp) : base(Emp)
+    public Perk105() : base()
     {
         Name = "重大失误";
         Description = "部门信念-20";
@@ -2353,7 +2349,7 @@ public class Perk105 : Perk
 //心理咨询
 public class Perk106 : Perk
 {
-    public Perk106(Employee Emp) : base(Emp)
+    public Perk106() : base()
     {
         Name = "心理咨询";
         Description = "部门信念+25";
@@ -2376,7 +2372,7 @@ public class Perk106 : Perk
 //遗憾
 public class Perk107 : Perk
 {
-    public Perk107(Employee Emp) : base(Emp)
+    public Perk107() : base()
     {
         Name = "遗憾";
         Description = "愿望没有被满足而产生的遗憾";
@@ -2389,7 +2385,7 @@ public class Perk107 : Perk
 //生疏磨合
 public class Perk108 : Perk
 {
-    public Perk108(Employee Emp) : base(Emp)
+    public Perk108() : base()
     {
         Name = "生疏磨合";
         Description = "部门内有新转岗进来一人，信念-15";
@@ -2412,7 +2408,7 @@ public class Perk108 : Perk
 //紧急调离
 public class Perk110 : Perk
 {
-    public Perk110(Employee Emp) : base(Emp)
+    public Perk110() : base()
     {
         Name = "紧急调离";
         Description = "部门内有新转岗转出一人，信念-15";
@@ -2435,7 +2431,7 @@ public class Perk110 : Perk
 //空置部门
 public class Perk111 : Perk
 {
-    public Perk111(Employee Emp) : base(Emp)
+    public Perk111() : base()
     {
         Name = "空置部门";
         Description = "降低部门30点信念,移入员工1周后移除";
@@ -2458,7 +2454,7 @@ public class Perk111 : Perk
 //相互帮助
 public class Perk112 : Perk
 {
-    public Perk112(Employee Emp) : base(Emp)
+    public Perk112() : base()
     {
         Name = "相互帮助";
         Description = "提高部门2点信念";
@@ -2481,7 +2477,7 @@ public class Perk112 : Perk
 //产生矛盾
 public class Perk113 : Perk
 {
-    public Perk113(Employee Emp) : base(Emp)
+    public Perk113() : base()
     {
         Name = "产生矛盾";
         Description = "降低部门2点信念";
@@ -2504,7 +2500,7 @@ public class Perk113 : Perk
 //环境舒适
 public class Perk114 : Perk
 {
-    public Perk114(Employee Emp) : base(Emp)
+    public Perk114() : base()
     {
         Name = "环境舒适";
         Description = "提高部门2点信念";
@@ -2527,7 +2523,7 @@ public class Perk114 : Perk
 //老板摸鱼
 public class Perk115 : Perk
 {
-    public Perk115(Employee Emp) : base(Emp)
+    public Perk115() : base()
     {
         Name = "老板摸鱼";
         Description = "降低部门35点信念,持续到CEO放假结束";
@@ -2550,7 +2546,7 @@ public class Perk115 : Perk
 //业务干扰
 public class Perk116 : Perk
 {
-    public Perk116(Employee Emp) : base(Emp)
+    public Perk116() : base()
     {
         Name = "业务干扰";
         Description = "降低部门30点信念";
@@ -2573,7 +2569,7 @@ public class Perk116 : Perk
 //亲自指导
 public class Perk117 : Perk
 {
-    public Perk117(Employee Emp) : base(Emp)
+    public Perk117() : base()
     {
         Name = "亲自指导";
         Description = "部门成功率上升45%";
@@ -2596,7 +2592,7 @@ public class Perk117 : Perk
 //心力低下
 public class Perk119 : Perk
 {
-    public Perk119(Employee Emp) : base(Emp)
+    public Perk119() : base()
     {
         Name = "心力低下";
         Description = "员工心力<20";
@@ -2609,7 +2605,7 @@ public class Perk119 : Perk
 //放轻松
 public class Perk120 : Perk
 {
-    public Perk120(Employee Emp) : base(Emp)
+    public Perk120() : base()
     {
         Name = "放轻松";
         Description = "成功率上升10%";
@@ -2635,7 +2631,7 @@ public class Perk120 : Perk
 //勇气赞歌
 public class Perk121 : Perk
 {
-    public Perk121(Employee Emp) : base(Emp)
+    public Perk121() : base()
     {
         Name = "勇气赞歌";
         Description = "信念+15";
@@ -2661,7 +2657,7 @@ public class Perk121 : Perk
 //加班加班
 public class Perk122 : Perk
 {
-    public Perk122(Employee Emp) : base(Emp)
+    public Perk122() : base()
     {
         Name = "加班加班";
         Description = "效率上升25%";
@@ -2687,7 +2683,7 @@ public class Perk122 : Perk
 //流程优化
 public class Perk123 : Perk
 {
-    public Perk123(Employee Emp) : base(Emp)
+    public Perk123() : base()
     {
         Name = "流程优化";
         Description = "部门成本-25%";
@@ -2715,7 +2711,7 @@ public class Perk123 : Perk
 //无意义争执
 public class Perk124 : Perk
 {
-    public Perk124(Employee Emp) : base(Emp)
+    public Perk124() : base()
     {
         Name = "无意义争执";
         Description = "信念-30";
@@ -2741,7 +2737,7 @@ public class Perk124 : Perk
 //单领导指令
 public class Perk125 : Perk
 {
-    public Perk125(Employee Emp) : base(Emp)
+    public Perk125() : base()
     {
         Name = "单领导指令";
         Description = "部门内全部员工每周结束时体力-10";
@@ -2764,7 +2760,7 @@ public class Perk125 : Perk
 //双领导指令
 public class Perk126 : Perk
 {
-    public Perk126(Employee Emp) : base(Emp)
+    public Perk126() : base()
     {
         Name = "双领导指令";
         Description = "部门内全部员工每周结束时体力-20";
@@ -2787,7 +2783,7 @@ public class Perk126 : Perk
 //三领导指令
 public class Perk127 : Perk
 {
-    public Perk127(Employee Emp) : base(Emp)
+    public Perk127() : base()
     {
         Name = "三领导指令";
         Description = "部门内全部员工每周结束时体力-30";
@@ -2810,7 +2806,7 @@ public class Perk127 : Perk
 //身体羸弱
 public class Perk128 : Perk
 {
-    public Perk128(Employee Emp) : base(Emp)
+    public Perk128() : base()
     {
         Name = "身体羸弱";
         Description = "强壮-2";
@@ -2836,7 +2832,7 @@ public class Perk128 : Perk
 //狮子之心
 public class Perk129 : Perk
 {
-    public Perk129(Employee Emp) : base(Emp)
+    public Perk129() : base()
     {
         Name = "狮子之心";
         Description = "坚韧+2";
@@ -2862,7 +2858,7 @@ public class Perk129 : Perk
 //热爱运动
 public class Perk130 : Perk
 {
-    public Perk130(Employee Emp) : base(Emp)
+    public Perk130() : base()
     {
         Name = "热爱运动";
         Description = "强壮+2";
@@ -2887,7 +2883,7 @@ public class Perk130 : Perk
 //养尊处优
 public class Perk131 : Perk
 {
-    public Perk131(Employee Emp) : base(Emp)
+    public Perk131() : base()
     {
         Name = "养尊处优";
         Description = "坚韧-2";
@@ -2913,7 +2909,7 @@ public class Perk131 : Perk
 //结构化思维
 public class Perk132 : Perk
 {
-    public Perk132(Employee Emp) : base(Emp)
+    public Perk132() : base()
     {
         Name = "结构化思维";
         Description = "决策+1";
@@ -2938,7 +2934,7 @@ public class Perk132 : Perk
 //孤僻
 public class Perk133 : Perk
 {
-    public Perk133(Employee Emp) : base(Emp)
+    public Perk133() : base()
     {
         Name = "孤僻";
         Description = "管理-1，第一份工作技能等级+1";
@@ -2964,7 +2960,7 @@ public class Perk133 : Perk
 //魔鬼筋肉人(金色特质)
 public class Perk134 : Perk
 {
-    public Perk134(Employee Emp) : base(Emp)
+    public Perk134() : base()
     {
         Name = "魔鬼筋肉人(金)";
         Description = "成为核心团队成员后生效，增加CEO强壮2点";
@@ -2988,7 +2984,7 @@ public class Perk134 : Perk
 //智囊(金色特质)
 public class Perk135 : Perk
 {
-    public Perk135(Employee Emp) : base(Emp)
+    public Perk135() : base()
     {
         Name = "智囊(金)";
         Description = "成为核心团队成员后生效，增加CEO决策2点";
@@ -3012,7 +3008,7 @@ public class Perk135 : Perk
 //脱口秀演员(金色特质)
 public class Perk136 : Perk
 {
-    public Perk136(Employee Emp) : base(Emp)
+    public Perk136() : base()
     {
         Name = "脱口秀演员(金)";
         Description = "成为核心团队成员后生效，增加CEO坚韧2点";
@@ -3036,7 +3032,7 @@ public class Perk136 : Perk
 //管理咨询师(金色特质)
 public class Perk137 : Perk
 {
-    public Perk137(Employee Emp) : base(Emp)
+    public Perk137() : base()
     {
         Name = "管理咨询师(金)";
         Description = "成为核心团队成员后生效，增加CEO管理2点";
@@ -3060,7 +3056,7 @@ public class Perk137 : Perk
 //怠惰(金色特质)
 public class Perk138 : Perk
 {
-    public Perk138(Employee Emp) : base(Emp)
+    public Perk138() : base()
     {
         Name = "怠惰(金)";
         Description = "成为核心团队成员后生效，减少CEO强壮2点";
@@ -3084,7 +3080,7 @@ public class Perk138 : Perk
 //神经质(金色特质)
 public class Perk139 : Perk
 {
-    public Perk139(Employee Emp) : base(Emp)
+    public Perk139() : base()
     {
         Name = "神经质(金)";
         Description = "成为核心团队成员后生效，减少CEO坚韧2点";
@@ -3108,7 +3104,7 @@ public class Perk139 : Perk
 //独断专行(金色特质)
 public class Perk140 : Perk
 {
-    public Perk140(Employee Emp) : base(Emp)
+    public Perk140() : base()
     {
         Name = "独断专行(金)";
         Description = "自身管理-1，成为核心团队成员后生效，减少CEO管理2点";
@@ -3132,7 +3128,7 @@ public class Perk140 : Perk
 //选择困难症(金色特质)
 public class Perk141 : Perk
 {
-    public Perk141(Employee Emp) : base(Emp)
+    public Perk141() : base()
     {
         Name = "选择困难症(金)";
         Description = "成为核心团队成员后生效，减少CEO决策2点";
@@ -3155,7 +3151,7 @@ public class Perk141 : Perk
 //瓶颈
 public class Perk142 : Perk
 {
-    public Perk142(Employee Emp) : base(Emp)
+    public Perk142() : base()
     {
         Name = "瓶颈";
         Description = "每拥有1层“瓶颈”特质，升级时所需经验增加800点";
@@ -3178,7 +3174,7 @@ public class Perk142 : Perk
 //混乱与创造
 public class Perk143 : Perk
 {
-    public Perk143(Employee Emp) : base(Emp)
+    public Perk143() : base()
     {
         Name = "混乱与创造";
         Description = "部门工作状态-3，大成功率增加30%";
@@ -3206,7 +3202,7 @@ public class Perk143 : Perk
 //必胜信念
 public class Perk144 : Perk
 {
-    public Perk144(Employee Emp) : base(Emp)
+    public Perk144() : base()
     {
         Name = "必胜信念";
         Description = "部门信念下降30，工作状态+2";
@@ -3233,7 +3229,7 @@ public class Perk144 : Perk
 //机器人员工
 public class Perk145 : Perk
 {
-    public Perk145(Employee Emp) : base(Emp)
+    public Perk145() : base()
     {
         Name = "机器人员工";
         Description = "部门效率上升25%";
@@ -3276,7 +3272,7 @@ public class Perk145 : Perk
 //机械检修
 public class Perk146 : Perk
 {
-    public Perk146(Employee Emp) : base(Emp)
+    public Perk146() : base()
     {
         Name = "机械检修";
         Description = "拥有机器人员工时效率额外+15%";
@@ -3315,7 +3311,7 @@ public class Perk146 : Perk
 //肌体强化
 public class Perk147 : Perk
 {
-    public Perk147(Employee Emp) : base(Emp)
+    public Perk147() : base()
     {
         Name = "肌体强化";
         Description = "部门内员工每周体力消耗减少30%";
@@ -3339,7 +3335,7 @@ public class Perk147 : Perk
 //自由之翼
 public class Perk148 : Perk
 {
-    public Perk148(Employee Emp) : base(Emp)
+    public Perk148() : base()
     {
         Name = "自由之翼";
         Description = "随机增加1点天赋";
@@ -3364,7 +3360,7 @@ public class Perk148 : Perk
 //脑机芯片
 public class Perk149 : Perk
 {
-    public Perk149(Employee Emp) : base(Emp)
+    public Perk149() : base()
     {
         Name = "脑机芯片";
         Description = "随机一项职业技能增加3点";
@@ -3395,11 +3391,11 @@ public class Perk149 : Perk
 //胜利开发
 public class Perk150 : Perk
 {
-    public Perk150(Employee Emp) : base(Emp)
+    public Perk150() : base()
     {
         Name = "胜利开发";
-        Description = "提升其工作状态1点，持续到下一次头脑风暴";
-        TimeLeft = -1;
+        Description = "提升工作状态1点";
+        TimeLeft = 3;
         Num = 150;
         canStack = true;
         perkColor = PerkColor.White;
@@ -3407,23 +3403,23 @@ public class Perk150 : Perk
 
     public override void ImmEffect()
     {
-        TargetDep.BaseWorkStatus += 1;
+        TargetDiv.WorkStatus += 1;
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDep.BaseWorkStatus -= 1;
+        TargetDiv.WorkStatus -= 1;
     }
 }
 
 //节省支出
 public class Perk151 : Perk
 {
-    public Perk151(Employee Emp) : base(Emp)
+    public Perk151() : base()
     {
         Name = "节省支出";
-        Description = "降低人员工资10%，持续到下一次头脑风暴";
-        TimeLeft = -1;
+        Description = "降低成本3点";
+        TimeLeft = 3;
         Num = 151;
         canStack = true;
         perkColor = PerkColor.Blue;
@@ -3431,23 +3427,23 @@ public class Perk151 : Perk
 
     public override void ImmEffect()
     {
-        TargetDep.SalaryMultiply -= 0.1f;
+        TargetDiv.ExtraCost -= 3;
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDep.SalaryMultiply += 0.1f;
+        TargetDiv.ExtraCost += 3;
     }
 }
 
 //信仰充值
 public class Perk152 : Perk
 {
-    public Perk152(Employee Emp) : base(Emp)
+    public Perk152() : base()
     {
         Name = "信仰充值";
-        Description = "提升信念5点，持续到下一次头脑风暴";
-        TimeLeft = -1;
+        Description = "提升信念10点";
+        TimeLeft = 3;
         Num = 152;
         canStack = true;
         perkColor = PerkColor.Orange;
@@ -3455,23 +3451,23 @@ public class Perk152 : Perk
 
     public override void ImmEffect()
     {
-        TargetDep.DepFaith += 5;
+        TargetDiv.Faith += 10;
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDep.DepFaith -= 5;
+        TargetDiv.Faith -= 10;
     }
 }
 
 //效率至上
 public class Perk153 : Perk
 {
-    public Perk153(Employee Emp) : base(Emp)
+    public Perk153() : base()
     {
         Name = "效率至上";
-        Description = "提升效率5%，持续到下一次头脑风暴";
-        TimeLeft = -1;
+        Description = "提升效率1点";
+        TimeLeft = 3;
         Num = 153;
         canStack = true;
         perkColor = PerkColor.Grey;
@@ -3479,14 +3475,39 @@ public class Perk153 : Perk
 
     public override void ImmEffect()
     {
-        TargetDep.Efficiency += 0.05f;
+        TargetDiv.Efficiency += 1;
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDep.Efficiency -= 0.05f;
+        TargetDiv.Efficiency -= 1;
     }
 }
+
+//996
+public class Perk154 : Perk
+{
+    public Perk154() : base()
+    {
+        Name = "996";
+        Description = "提升效率1点";
+        TimeLeft = 1;
+        Num = 154;
+        canStack = true;
+        perkColor = PerkColor.Grey;
+    }
+
+    public override void ImmEffect()
+    {
+        TargetDiv.Efficiency += 1;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDiv.Efficiency -= 1;
+    }
+}
+
 #endregion
 public static class PerkData
 {
@@ -3494,35 +3515,35 @@ public static class PerkData
     //一般特质
     public static List<Perk> PerkList = new List<Perk>()
     {
-        new Perk12(null), new Perk13(null), new Perk14(null), new Perk15(null), new Perk16(null), new Perk17(null),
-        new Perk18(null), new Perk19(null), new Perk20(null), new Perk21(null), new Perk22(null),
-        new Perk23(null)
+        new Perk12(), new Perk13(), new Perk14(), new Perk15(), new Perk16(), new Perk17(),
+        new Perk18(), new Perk19(), new Perk20(), new Perk21(), new Perk22(),
+        new Perk23()
     };
 
     //经历特质
     public static List<Perk> DefaultPerkList = new List<Perk>()
     {
-        new Perk46(null), new Perk47(null), new Perk48(null), new Perk49(null), new Perk50(null), new Perk51(null)
+        new Perk46(), new Perk47(), new Perk48(), new Perk49(), new Perk50(), new Perk51()
     };
 
     //职业特质
     public static List<Perk> OccupationPerkList = new List<Perk>()
     {
-        new Perk35(null), new Perk36(null), new Perk37(null), new Perk38(null), new Perk39(null), new Perk40(null),
-        new Perk41(null), new Perk42(null), new Perk43(null)
+        new Perk35(), new Perk36(), new Perk37(), new Perk38(), new Perk39(), new Perk40(),
+        new Perk41(), new Perk42(), new Perk43()
     };
 
     //管理特质
     public static List<Perk> ManagePerkList = new List<Perk>()
     {
-         new Perk1(null), new Perk2(null), new Perk3(null), new Perk4(null), new Perk5(null), new Perk6(null),
-        new Perk7(null), new Perk8(null), new Perk9(null), new Perk10(null), new Perk11(null)
-        , new Perk24(null), new Perk25(null), new Perk26(null), new Perk27(null), new Perk28(null),
-        new Perk29(null), new Perk30(null), new Perk31(null), new Perk32(null)
+         new Perk1(), new Perk2(), new Perk3(), new Perk4(), new Perk5(), new Perk6(),
+        new Perk7(), new Perk8(), new Perk9(), new Perk10(), new Perk11()
+        , new Perk24(), new Perk25(), new Perk26(), new Perk27(), new Perk28(),
+        new Perk29(), new Perk30(), new Perk31(), new Perk32()
     };
 
     public static List<Perk> DebuffPerkList = new List<Perk>()
     {
-        new Perk52(null), new Perk53(null), new Perk54(null)
+        new Perk52(), new Perk53(), new Perk54()
     };
 }

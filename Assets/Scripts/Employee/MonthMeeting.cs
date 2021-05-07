@@ -51,7 +51,7 @@ public class MonthMeeting : MonoBehaviour
         MeetingStart = true;
         foreach(CompanyItem item in GameControl.Instance.Items)
         {
-            if (item.Type == CompanyItemType.MonthMeeting && item.ActiveType != 2)
+            if (item.item.Type == CompanyItemType.MonthMeeting && item.item.ActiveType != 2)
                 item.button.interactable = true;
         }
     }
@@ -220,9 +220,9 @@ public class MonthMeeting : MonoBehaviour
         CrystalPanel.SetWndState();
         foreach (CompanyItem item in GameControl.Instance.Items)
         {
-            if (item.Type == CompanyItemType.MonthMeeting)
+            if (item.item.Type == CompanyItemType.MonthMeeting)
             {
-                if (item.ActiveType == 2)
+                if (item.item.ActiveType == 2)
                     item.button.interactable = true;
                 else
                     item.button.interactable = false;
@@ -292,35 +292,35 @@ public class MonthMeeting : MonoBehaviour
             if (NumA > 0)
             {
                 Debug.Log(dep.name + "获得白色水晶");
-                Perk newPerk = new Perk120(null);
+                Perk newPerk = new Perk120();
                 newPerk.TempValue1 = NumA;
                 dep.AddPerk(newPerk);
             }
             if (NumB > 0)
             {
                 Debug.Log(dep.name + "获得橙色水晶");
-                Perk newPerk = new Perk121(null);
+                Perk newPerk = new Perk121();
                 newPerk.TempValue1 = 15 * NumB;
                 dep.AddPerk(newPerk);
             }
             if (NumC > 0)
             {
                 Debug.Log(dep.name + "获得灰色水晶");
-                Perk newPerk = new Perk122(null);
+                Perk newPerk = new Perk122();
                 newPerk.TempValue4 = 0.25f * NumC;
                 dep.AddPerk(newPerk);
             }
             if (NumD > 0)
             {
                 Debug.Log(dep.name + "获得蓝色水晶");
-                Perk newPerk = new Perk123(null);
+                Perk newPerk = new Perk123();
                 newPerk.TempValue4 = 0.25f * NumD;
                 dep.AddPerk(newPerk);
             }
             if (NumE > 0)
             {
                 Debug.Log(dep.name + "获得黑色水晶");
-                Perk newPerk = new Perk124(null);
+                Perk newPerk = new Perk124();
                 newPerk.TempValue1 = 30 * NumE;
                 dep.AddPerk(newPerk);
             }
@@ -329,17 +329,17 @@ public class MonthMeeting : MonoBehaviour
             if (crystals.Count == 1)
             {
                 Debug.Log(dep.name + "单指令");
-                dep.AddPerk(new Perk125(null));
+                dep.AddPerk(new Perk125());
             }
             else if (crystals.Count == 2)
             {
                 Debug.Log(dep.name + "二指令");
-                dep.AddPerk(new Perk126(null));
+                dep.AddPerk(new Perk126());
             }
             else if (crystals.Count == 3)
             {
                 Debug.Log(dep.name + "三指令");
-                dep.AddPerk(new Perk127(null));
+                dep.AddPerk(new Perk127());
             }
         }
     }

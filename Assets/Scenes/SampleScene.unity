@@ -47739,7 +47739,7 @@ MonoBehaviour:
   DepSelectContent: {fileID: 1108151499}
   StandbyContent: {fileID: 7006581084688389462}
   MessageContent: {fileID: 1911513303}
-  ItemContent: {fileID: 304679969}
+  ItemContent: {fileID: 1040020050}
   infoPanel: {fileID: 8580098925468764068}
   DepSelectPanel: {fileID: 1541332337}
   StandbyButton: {fileID: 1007390634}
@@ -121393,6 +121393,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ExhaustedCount: 0
   EventGroupIndex: 0
+  StartEventQueue: 0
   ManageVotePanel: {fileID: 500598437704866980}
   GC: {fileID: 1815467296}
   ManageVoteContent: {fileID: 500598436900840719}

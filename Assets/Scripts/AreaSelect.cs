@@ -19,7 +19,7 @@ public class AreaSelect : MonoBehaviour
 
         if (GameControl.Instance.AreaSelectMode == 2)
         {
-            GameControl.Instance.CurrentItem.TargetArea = area;
+            GameControl.Instance.CurrentItem.item.TargetArea = area;
             GameControl.Instance.CurrentItem.UseItem();
         }
         //选择后关闭所有按钮
