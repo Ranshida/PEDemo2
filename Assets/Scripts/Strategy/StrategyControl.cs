@@ -119,8 +119,7 @@ public class StrategyControl : MonoBehaviour
         Managers.Clear();
         foreach(Employee emp in GC.CurrentEmployees)
         {
-            if (emp.CurrentDep != null && (emp.CurrentDep.building.Type == BuildingType.CEO办公室 ||
-                emp.CurrentDep.building.Type == BuildingType.高管办公室) && emp.isCEO == false)
+            if (emp.CurrentDivision != null)
                 Managers.Add(emp);
         }
         canChangeCulture = true;

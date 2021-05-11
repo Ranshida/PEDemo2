@@ -44,12 +44,10 @@ public class BuildingDescription : WindowRoot
     {
         str_BuildingName.text = building.Name;
         str_BuildingSize.text = building.Size;
-        str_BuildingRange.text = building.EffectRange_str;
         str_Jobs.text = building.Jobs;
-        str_Func1.text = building.Function_A;
+        str_Func1.text = building.Functions[0];
         str_Require1.text = building.Require_A;
-        str_Description1.text = building.Description_A;
-        str_Require2.text = building.Require_B;
+        str_Description1.text = building.Description;
     }
 
     public void ShowInfo_Decorate(bool right)

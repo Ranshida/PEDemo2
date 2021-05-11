@@ -8,13 +8,7 @@ using UnityEngine.UI;
 
 public enum BuildingType
 {
-    技术部门, 市场部门, 产品部门, 公关营销部, 高管办公室, CEO办公室, 研发部门, 会议室, 智库小组, 人力资源部,
-    心理咨询室, 会计办公室, 体能研究室, 茶水间, 中央厨房, 宣传中心, 机械检修中心, 绩效考评中心, 员工休息室, 脑机实验室,
-    兴趣社团, 电子科技展, 冥想室, 特别秘书处, 成人再教育所, 秘书处, 中央监控室, 谍战中心, 室内温室, 整修楼顶,
-    游戏厅, 营养师定制厨房, 咖啡bar, 花盆, 长椅, 自动贩卖机, 空
-
-        ,前端小组, 后端小组, 算法小组, 用户访谈室, 原型图画室, 行为分析室, 文案小组, 传单小队, 派对小组, 公关小组,
-    食物3D打印机, 机械自动化中心, 私人安保, 混沌创意营, 自由之翼学院
+    空, 自动化研究中心, 企业历史展览, 福报宣传中心, 混沌创意营, 会计办公室, 心理咨询室, 智库小组, 仓库, 原型图画室, 算法小组
 }
 
 public class BuildingManage : MonoBehaviour
@@ -77,12 +71,7 @@ public class BuildingManage : MonoBehaviour
         foreach (GameObject prefab in buildingPrefabs)
         {
             Building building = prefab.GetComponent<Building>();
-
-            if (building.Type == BuildingType.机械自动化中心 || building.Type == BuildingType.前端小组 ||
-                building.Type == BuildingType.心理咨询室 || building.Type == BuildingType.智库小组)
-            {
-                SelectList.Add(building.Type);
-            }
+            SelectList.Add(building.Type);
         }
         //装饰建筑临时这样做
         //SelectList.Add(BuildingType.空); SelectList.Add(BuildingType.空); SelectList.Add(BuildingType.空); SelectList.Add(BuildingType.空); SelectList.Add(BuildingType.空);
@@ -97,8 +86,7 @@ public class BuildingManage : MonoBehaviour
     {
         m_EffectHalo.SetActive(false);
         InitBuilding(BuildingType.心理咨询室, new Int2(1, 11));
-        InitBuilding(BuildingType.前端小组, new Int2(10, 11));
-        //InitBuilding(BuildingType.人力资源部, new Int2(0, 8));
+        InitBuilding(BuildingType.原型图画室, new Int2(10, 11));
     }
 
     //初始化默认建筑
@@ -282,7 +270,6 @@ public class BuildingManage : MonoBehaviour
         if (SelectBuilding)
         {
             m_EffectHalo.transform.position = SelectBuilding.transform.position + new Vector3(SelectBuilding.Length * 5, 0.2f, SelectBuilding.Width * 5);
-            m_EffectHalo.transform.localScale = new Vector3(SelectBuilding.Length + SelectBuilding.EffectRange * 2, 1, SelectBuilding.Width + SelectBuilding.EffectRange * 2);
         }
     }
 

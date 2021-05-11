@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
+//商店页面的建筑信息
 public class DepInfo : MonoBehaviour
 {
     public Text Text_Name, Text_Require, Text_Function, Text_Size, Text_PurchaseCost, Text_MaintainCost;
@@ -41,29 +41,13 @@ public class DepInfo : MonoBehaviour
         Text_MaintainCost.text = "维护费:" + building.MaintainCost + "/回合";
         cost = building.PurchaseCost;
 
-        if (CurrentType == BuildingType.机械自动化中心)
+        for(int i = 0; i < 3; i++)
         {
-            InitMarker("事业部效率+1");
-            InitMarker("事业部效率+1");
-            InitDoubleMarker("事业部效率+2");
-            Text_Function.text = "增加事业部效率";
-        }
-        else if (CurrentType == BuildingType.心理咨询室)
-        {
-            InitMarker("充能周期:4");
-            InitMarker("充能周期:2");
-            Text_Function.text = "充能后指定1名员工心力+20";
-        }
-        else if (CurrentType == BuildingType.智库小组)
-        {
-            InitMarker("生产周期:4");
-            InitMarker("生产周期:2");
-            Text_Function.text = "生产“管理咨询报告”物品";
-        }
-        else if (CurrentType == BuildingType.前端小组)
-        {
-            InitDoubleMarker("生产商战牌-迭代");
-            Text_Function.text = "生产商战卡牌";
+            if (building.EmpCount[i] == 1)
+                InitMarker(building.Functions[i], building.Debuffs[i]);
+            else if (building.EmpCount[i] == 2)
+                InitDoubleMarker(building.Functions[i], building.Debuffs[i]);
+            Text_Function.text = building.Description;
         }
     }
 
@@ -81,17 +65,21 @@ public class DepInfo : MonoBehaviour
     }
 
     //生成单图标记
-    void InitMarker(string describe)
+    void InitMarker(string describe, string debuff)
     {
         EmpEffect effect = Instantiate(SingleEffectPrefab, EmpInfoContent).GetComponent<EmpEffect>();
-        effect.text.text = describe;
+        effect.InitEffect(describe);
+        effect.InitDebuff(debuff);
         Effects.Add(effect.gameObject);
+        effect.HideOptions();
     }
     //生成双图标记
-    void InitDoubleMarker(string describe)
+    void InitDoubleMarker(string describe, string debuff)
     {
         EmpEffect effect = Instantiate(DoubleEffectPrefab, EmpInfoContent).GetComponent<EmpEffect>();
-        effect.text.text = describe;
+        effect.InitEffect(describe);
+        effect.InitDebuff(debuff);
         Effects.Add(effect.gameObject);
+        effect.HideOptions();
     }
 }

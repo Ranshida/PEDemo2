@@ -32,7 +32,8 @@ public class SelectBuildingWindow : WindowRoot
         }
         else
         {
-            OnQuitBuildMode();
+            _Manage.OpenDetailPanel();
+            //OnQuitBuildMode();
         }
     }
 

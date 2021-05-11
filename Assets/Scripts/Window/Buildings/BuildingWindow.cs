@@ -36,12 +36,12 @@ public class BuildingWindow : WindowRoot
     {
         _Manage = BuildingManage.Instance;
 
-        BuildingManage.Instance.AddInfoListener(transform.Find("Btn_技术部门"), BuildingType.技术部门);
-        BuildingManage.Instance.AddInfoListener(transform.Find("Btn_市场部门"), BuildingType.市场部门);
-        BuildingManage.Instance.AddInfoListener(transform.Find("Btn_产品部门"), BuildingType.产品部门);
-        BuildingManage.Instance.AddInfoListener(transform.Find("Btn_公关营销部"), BuildingType.公关营销部);
-        BuildingManage.Instance.AddInfoListener(transform.Find("Btn_高管办公室"), BuildingType.高管办公室);
-        BuildingManage.Instance.AddInfoListener(transform.Find("Btn_人力资源部"), BuildingType.人力资源部);
+        //BuildingManage.Instance.AddInfoListener(transform.Find("Btn_技术部门"), BuildingType.技术部门);
+        //BuildingManage.Instance.AddInfoListener(transform.Find("Btn_市场部门"), BuildingType.市场部门);
+        //BuildingManage.Instance.AddInfoListener(transform.Find("Btn_产品部门"), BuildingType.产品部门);
+        //BuildingManage.Instance.AddInfoListener(transform.Find("Btn_公关营销部"), BuildingType.公关营销部);
+        //BuildingManage.Instance.AddInfoListener(transform.Find("Btn_高管办公室"), BuildingType.高管办公室);
+        BuildingManage.Instance.AddInfoListener(transform.Find("Btn_人力资源部"), BuildingType.福报宣传中心);
         
         m_PanelTrigger = btn_FinishBuild.GetComponent<InfoPanelTrigger>();
     }
@@ -87,22 +87,22 @@ public class BuildingWindow : WindowRoot
                 _Manage.DismantleBuilding(_Manage.Temp_Building);
                 break;
             case "Btn_技术部门":
-                _Manage.StartBuildNew(BuildingType.技术部门);
+                //_Manage.StartBuildNew(BuildingType.技术部门);
                 break;   
             case "Btn_市场部门":
-                _Manage.StartBuildNew(BuildingType.市场部门);
+                //_Manage.StartBuildNew(BuildingType.市场部门);
                 break;   
             case "Btn_产品部门":
-                _Manage.StartBuildNew(BuildingType.产品部门);
+                //_Manage.StartBuildNew(BuildingType.产品部门);
                 break;    
             case "Btn_公关营销部":
-                _Manage.StartBuildNew(BuildingType.公关营销部);
+                //_Manage.StartBuildNew(BuildingType.公关营销部);
                 break;   
             case "Btn_高管办公室":
-                _Manage.StartBuildNew(BuildingType.高管办公室);
+                //_Manage.StartBuildNew(BuildingType.高管办公室);
                 break; 
             case "Btn_人力资源部":
-                _Manage.StartBuildNew(BuildingType.人力资源部);
+                _Manage.StartBuildNew(BuildingType.福报宣传中心);
                 break;
             default:
                 break;

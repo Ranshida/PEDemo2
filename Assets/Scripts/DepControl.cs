@@ -290,11 +290,6 @@ public class DepControl : MonoBehaviour
         }
 
         GC.CurrentDeps.Remove(this);
-        if (CommandingOffice != null)
-        {
-            CommandingOffice.ControledDeps.Remove(this);
-            CommandingOffice.CheckManage();
-        }
         if (CurrentDivision != null)
             RemoveDivision();
 
@@ -355,12 +350,6 @@ public class DepControl : MonoBehaviour
     //添加Perk
     public void AddPerk(Perk perk)
     {
-        //效率和工作状态相关的状态无法被添加至办公室
-        if (building != null && (building.Type == BuildingType.CEO办公室 || building.Type == BuildingType.高管办公室))
-        {
-            if (perk.perkColor == PerkColor.White || perk.perkColor == PerkColor.Grey)
-                return;
-        }
 
         //同类Perk检测
         foreach (PerkInfo p in CurrentPerks)
@@ -596,12 +585,14 @@ public class DepControl : MonoBehaviour
                     EmpMarkers[i].color = Color.red;
                     weak = true;
                 }
+                EmpEffectMarkers[i].gameObject.GetComponentInChildren<Text>().text = CurrentEmps[i].Name;
             }
             //超出人数的标白
             else
             {
                 EmpEffectMarkers[i].color = Color.white;
                 EmpMarkers[i].color = Color.white;
+                EmpEffectMarkers[i].gameObject.GetComponentInChildren<Text>().text = "";
             }
         }
         //检测削弱效果
@@ -631,7 +622,7 @@ public class DepControl : MonoBehaviour
         }
         else
             canWork = true;
-        if (building.Type == BuildingType.机械自动化中心)
+        if (building.Type == BuildingType.自动化研究中心)//临时
         {
             if (num == 1)
                 ExtraEfficiency = 1;
@@ -654,7 +645,7 @@ public class DepControl : MonoBehaviour
             else if (num == 2)
                 ProducePointLimit = 3;
         }
-        else if (building.Type == BuildingType.前端小组)
+        else if (building.Type == BuildingType.原型图画室)//临时
         {
             if (num >= 2)
                 canWork = true;
@@ -677,43 +668,43 @@ public class DepControl : MonoBehaviour
             EmpMarkers.Add(image);
         }
 
-        if (building.Type == BuildingType.机械自动化中心)
+        int EmpIndex = 0;
+        for (int i = 0; i < 3; i++)
         {
-            InitMarker("事业部效率+1");
-            InitMarker("事业部效率+1");
-            InitDoubleMarker("事业部效率+2");
-            Text_WeakEffect.text = "(弱化)事业部效率-1";
-            Text_DepFunction.text = "提高事业部效率";
+            if (building.EmpCount[i] == 1)
+            {
+                InitMarker(building.Functions[i], building.Debuffs[i], EmpIndex);
+                EmpIndex += 1;
+            }
+            else if (building.EmpCount[i] == 2)
+            {
+                InitDoubleMarker(building.Functions[i], building.Debuffs[i], EmpIndex);
+                EmpIndex += 2;
+            }
+        }
+        Text_DepFunction.text = building.Description;
+        Text_WeakEffect.gameObject.GetComponent<InfoPanelTrigger>().ContentB = building.WeakEffect;
+
+        if (building.Type == BuildingType.自动化研究中心)
+        {
             WeakAction = () => { ExtraEfficiency -= 1; };
             UnWeakAction = () => { ExtraEfficiency += 1; };
             ActiveMode = 0;
         }
         else if (building.Type == BuildingType.心理咨询室)
         {
-            InitMarker("充能周期:4");
-            InitMarker("充能周期:2");
-            Text_WeakEffect.text = "(弱化)充能周期+1回合";
-            Text_DepFunction.text = "充能后指定1名员工恢复20心力";
             WeakAction = () => { ExtraProduceLimit += 1; };
             UnWeakAction = () => { ExtraProduceLimit -= 1; };
             ActiveMode = 2;
         }
         else if (building.Type == BuildingType.智库小组)
         {
-            InitMarker("充能周期:6");
-            InitMarker("充能周期:3");
-            Text_WeakEffect.text = "(弱化)生产周期+1回合";
-            Text_DepFunction.text = "生产“管理咨询报告”物品";
             WeakAction = () => { ExtraProduceLimit += 1; };
             UnWeakAction = () => { ExtraProduceLimit -= 1; };
             ActiveMode = 1;
         }
-        else if (building.Type == BuildingType.前端小组)
+        else if (building.Type == BuildingType.原型图画室)
         {
-            InitDoubleMarker("生产商战牌-迭代");
-            InitDoubleMarker("");
-            Text_WeakEffect.text = "(弱化)事业部效率-2";
-            Text_DepFunction.text = "生产商战牌-迭代";
             ExtraEfficiency = -4;
             WeakAction = () => { ExtraEfficiency -= 2; };
             UnWeakAction = () => { ExtraEfficiency += 2; };
@@ -725,19 +716,25 @@ public class DepControl : MonoBehaviour
             ActiveButton.gameObject.SetActive(true);
     }
     //生成单图标记
-    void InitMarker(string describe)
+    void InitMarker(string describe, string debuff, int index)
     {
         EmpEffect effect = Instantiate(EmpEffectPrefab, EmpEffectContent).GetComponent<EmpEffect>();
-        effect.text.text = describe;
+        effect.dep = this;
+        effect.InitEffect(describe);
+        effect.InitDebuff(debuff);
         EmpEffectMarkers.Add(effect.Marker1);
+        effect.EmpIndex = index;
     }
     //生成双图标记
-    void InitDoubleMarker(string describe)
+    void InitDoubleMarker(string describe, string debuff, int index)
     {
         EmpEffect effect = Instantiate(EmpEffect2Prefab, EmpEffectContent).GetComponent<EmpEffect>();
-        effect.text.text = describe;
+        effect.dep = this;
+        effect.InitEffect(describe);
+        effect.InitDebuff(debuff);
         EmpEffectMarkers.Add(effect.Marker1);
         EmpEffectMarkers.Add(effect.Marker2);
+        effect.EmpIndex = index;
     }
 
     //作弊模式
@@ -817,75 +814,12 @@ public class DepControl : MonoBehaviour
         return value;
     }
 
-    //——————————————————————————————————————————————————————————
-    //以下是办公室改版后从原OfficeControl复制过来的方法
-    //管理监测
-    public void CheckManage()
-    {
-        int value = ManageValue;
-        if (canWork == false)
-            value = 0;
-
-        int TotalUsage = 0;
-        for (int i = 0; i < ControledDeps.Count; i++)
-        {
-            TotalUsage += ControledDeps[i].ManageUse;
-            if (TotalUsage <= value)
-            {
-                ControledDeps[i].canWork = true;
-            }
-            else
-            {
-                ControledDeps[i].canWork = false;
-            }
-        }
-    }
-
-    //放入和移除高管时调用
-    public void SetOfficeStatus()
-    {
-        if (Manager != null)
-        {
-            //Text_EmpName.text = "当前高管:" + CurrentManager.Name;
-            if (building.Type == BuildingType.高管办公室 || building.Type == BuildingType.CEO办公室)
-            {
-                //if (BuildingMode == 1)
-                //    Text_MAbility.text = "决策:" + CurrentManager.Decision;
-                //else if (OfficeMode == 2 || OfficeMode == 4)
-                //    Text_MAbility.text = "人力:" + CurrentManager.HR;
-                //else if (OfficeMode == 3 || OfficeMode == 5)
-                //    Text_MAbility.text = "管理:" + CurrentManager.Manage;
-                ManageValue = Manager.Manage;
-                Manager.InfoDetail.CreateStrategy();
-                Manager.NoPromotionTime = 0;
-                for (int i = 0; i < Manager.InfoDetail.PerksInfo.Count; i++)
-                {
-                    if (Manager.InfoDetail.PerksInfo[i].CurrentPerk.Num == 32)
-                    {
-                        Manager.InfoDetail.PerksInfo[i].CurrentPerk.RemoveEffect();
-                        break;
-                    }
-                }
-                CheckManage();
-            }
-        }
-        else
-        {
-            //Text_EmpName.text = "当前高管:无";
-            //Text_MAbility.text = "能力:--";
-            ManageValue = 0;
-        }
-
-    }
-
-    //——————————————————————————————————————————————————————————
     //事业部相关
     public void SetDivision(DivisionControl DC)
     {
         if (CurrentDivision != null)
             RemoveDivision();
         DivPanel.transform.parent = DC.DepContent;
-        DivPanel.gameObject.SetActive(true);
         DC.CurrentDeps.Add(this);
         CurrentDivision = DC;
         CurrentDivision.DepExtraCheck();

@@ -48,7 +48,7 @@ public class EmpInfo : MonoBehaviour
                 else if (emp.CurrentDivision != null)
                     Text_DepName.text = emp.CurrentDivision.DivName;
                 else
-                    Text_DepName.text = "无";
+                    Text_DepName.text = "人才储备库";
             }
 
             //雇佣和详细面板通用部分

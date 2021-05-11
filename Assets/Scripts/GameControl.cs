@@ -60,6 +60,7 @@ public class GameControl : MonoBehaviour
     }
     public int Turn = 1;//当前回合数
     public int ItemLimit = 6;//物品数量限制
+    public int StandbyEmpLimit = 5;//人才库数量限制
 
     #region 杂项变量
     [HideInInspector] public bool ProduceBuffBonus = false;//“精进”和“团结”状态的持续时间提高至4m战略效果
@@ -126,10 +127,10 @@ public class GameControl : MonoBehaviour
         OCL.AddStaticOptions(new OptionCard1());
         OCL.AddStaticOptions(new OptionCard2());
         OCL.AddStaticOptions(new OptionCard3());
-        CreateItem(3);
-        CreateItem(4);
-        CreateItem(5);
-        CreateItem(6);
+        //CreateItem(3);
+        //CreateItem(4);
+        //CreateItem(5);
+        //CreateItem(6);
     }
 
     private void Update()
@@ -317,16 +318,6 @@ public class GameControl : MonoBehaviour
             Week = 1;
             Money = Money + Income - Salary - (int)(BuildingPay * TotalBuildingPayMultiply);
             MonthlyEvent.Invoke();
-            for (int i = 0; i < CurrentDeps.Count; i++)
-            {
-                if(ResearchExtraMentality == true && CurrentDeps[i].building.Type == BuildingType.研发部门)
-                {
-                    foreach(Employee emp in CurrentDeps[i].CurrentEmps)
-                    {
-                        emp.Mentality += 20;
-                    }
-                }
-            }
         }
         if (Month > 12)
         {
@@ -402,9 +393,6 @@ public class GameControl : MonoBehaviour
         newDep = Instantiate(DepPrefab, this.transform);
         newDep.transform.parent = DepContent;
         newDep.building = b;
-        if (b.Type != BuildingType.CEO办公室 && b.Type != BuildingType.高管办公室)
-            newDep.Efficiency = 0.75f;
-
         UIManager.Instance.OnAddNewWindow(newDep.EmpPanel.GetComponent<WindowBaseControl>());
 
         //部门命名
@@ -442,7 +430,7 @@ public class GameControl : MonoBehaviour
         return newDep;
     }
 
-    //员工招聘和移动时部门选择
+    //员工招聘和移动时部门选择(ShowDivision表示是否显示事业部选项，只有在头脑风暴面板和事业部面板才能选择事业部)
     public void ShowDepSelectPanel(Employee emp, bool ShowDivision = false)
     {
         //有事件没处理时不能选择
@@ -453,7 +441,19 @@ public class GameControl : MonoBehaviour
         }
 
         DepSelectPanel.GetComponent<WindowBaseControl>().SetWndState(true);
-        StandbyButton.SetActive(true);
+
+        //人才库员工数量检查（最好单独记一下待命员工数量？）
+        int StandbyCount = 0;
+        foreach(Employee e in CurrentEmployees)
+        {
+            if (e.CurrentDep == null && e.CurrentDivision == null)
+                StandbyCount += 1;
+        }
+        if (StandbyCount >= StandbyEmpLimit || emp.isCEO == true)
+            StandbyButton.SetActive(false);
+        else
+            StandbyButton.SetActive(true);
+
         for (int i = 0; i < CurrentDeps.Count; i++)
         {
             if (CurrentDeps[i] == emp.CurrentDep || CurrentDeps[i].CheckEmpNum() == false)
@@ -475,19 +475,6 @@ public class GameControl : MonoBehaviour
                 div.DS.gameObject.SetActive(false);
             else
                 div.DS.gameObject.SetActive(true);
-        }
-    }
-    //部门领导选择
-    public void ShowDepSelectPanel(DepControl dep)
-    {
-        DepSelectPanel.GetComponent<WindowBaseControl>().SetWndState(true);
-        StandbyButton.SetActive(false);
-        for (int i = 0; i < CurrentDeps.Count; i++)
-        {
-            if (dep.InRangeOffices.Contains(CurrentDeps[i]))
-                CurrentDeps[i].DS.gameObject.SetActive(true);
-            else
-                CurrentDeps[i].DS.gameObject.SetActive(false);
         }
     }
 
@@ -674,18 +661,6 @@ public class GameControl : MonoBehaviour
             //修改生产力显示
             emp.CurrentDep.UpdateUI();
             CurrentEmpInfo.emp.CurrentDep.EmpMove(true);
-            if (emp.CurrentDep.building.Type == BuildingType.CEO办公室 || emp.CurrentDep.building.Type == BuildingType.高管办公室)
-            {
-                foreach (DepControl dep in emp.CurrentDep.ControledDeps)
-                {
-                    dep.AddPerk(new Perk110());
-                    dep.FaithRelationCheck();
-                }
-                emp.InfoDetail.TempDestroyStrategy();//旧版战略
-                emp.CurrentDep.Manager = null;
-                emp.CurrentDep.SetOfficeStatus();
-                emp.CurrentDep.CheckManage();
-            }
             emp.CurrentDep = null;
         }
         else if (CurrentEmpInfo.emp.CurrentDivision != null)

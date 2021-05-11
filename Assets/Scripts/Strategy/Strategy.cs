@@ -231,9 +231,9 @@ public class Strategy2_3 : Strategy
         List<DepControl> deps = new List<DepControl>();
         foreach(DepControl dep in GC.CurrentDeps)
         {
-            if (dep.building.Type != BuildingType.技术部门 && dep.building.Type != BuildingType.市场部门
-                && dep.building.Type != BuildingType.产品部门 && dep.building.Type != BuildingType.公关营销部)
-                deps.Add(dep);
+            //if (dep.building.Type != BuildingType.技术部门 && dep.building.Type != BuildingType.市场部门
+            //    && dep.building.Type != BuildingType.产品部门 && dep.building.Type != BuildingType.公关营销部)
+            //    deps.Add(dep);
         }
         if (deps.Count > 0)
         {
