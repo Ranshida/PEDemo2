@@ -32,7 +32,9 @@ public class Building : MonoBehaviour
 
     public Area CurrentArea;
     public DepControl Department; //BM赋值
+    public Building MasterBuilding;//作为附加建筑时自身的父建筑
     public BuildingEffect effect;
+    public Transform WarePanel;
     private Transform m_Decoration;   //修饰物，建造后删除
 
     public List<Grid> ContainsGrids;   //所包含的格子
@@ -121,6 +123,7 @@ public class Building : MonoBehaviour
         if (!CanDismantle)
         {
             Debug.Log("不能拆除这个建筑");
+            GameControl.Instance.CreateMessage("该建筑无法手动拆除");
             return false;
         }
 

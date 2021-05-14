@@ -15,6 +15,7 @@ public enum OccupationType
 public enum EColor
 {//L开头为对应1级浅色情绪
     White, Gray, LYellow, LRed, LBlue, LOrange, LPurple, LGreen, Yellow, Red, Blue, Orange, Purple, Green, None
+    //浅黄愉悦 浅红厌恶 浅蓝苦涩 浅橙=橘黄骄傲 浅紫委屈 草色=浅绿敬畏 黄=金振奋 红愤怒 蓝悲伤 橙色偏执 紫沮丧 绿平静
 }
 
 public enum Ambition

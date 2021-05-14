@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 public enum BuildingType
 {
-    空, 自动化研究中心, 企业历史展览, 福报宣传中心, 混沌创意营, 会计办公室, 心理咨询室, 智库小组, 仓库, 原型图画室, 算法小组
+    空, 自动化研究中心, 企业历史展览, 福报宣传中心, 混沌创意营, 会计办公室, 心理咨询室, 智库小组, 仓库, 原型图画室, 算法小组, 自动化工坊
 }
 
 public class BuildingManage : MonoBehaviour
@@ -23,6 +23,7 @@ public class BuildingManage : MonoBehaviour
     public BuildingDescription Description;
     //public 
 
+    public Building SubDepPrefab;//自动化工坊临时预制体引用
     //初始化
     public GameObject[] buildingPrefabs;  //建筑预制体
     public Dictionary<BuildingType, GameObject> m_AllBuildingPrefab;   //  <建筑类型，预制体> 的字典
@@ -86,7 +87,7 @@ public class BuildingManage : MonoBehaviour
     {
         m_EffectHalo.SetActive(false);
         InitBuilding(BuildingType.心理咨询室, new Int2(1, 11));
-        InitBuilding(BuildingType.原型图画室, new Int2(10, 11));
+        InitBuilding(BuildingType.自动化研究中心, new Int2(10, 11));
     }
 
     //初始化默认建筑
@@ -162,10 +163,12 @@ public class BuildingManage : MonoBehaviour
                 //确定建造当前建筑
                 if (Temp_Building && m_CanBuild)
                 {
-                    if (GameControl.Instance.Money < 100)
+                    //(目前)附加建筑必须和父建筑在一个事业部内
+                    if (Temp_Building.MasterBuilding != null && temp_Grids[0].BelongedArea != Temp_Building.MasterBuilding.CurrentArea)
+                    {
+                        GameControl.Instance.CreateMessage("与父建筑不在同一事业部");
                         return;
-                    GameControl.Instance.Money -= 100;
-
+                    }
                     BuildConfirm(Temp_Building, temp_Grids);
                     Temp_Building = null;
                 }
@@ -410,12 +413,12 @@ public class BuildingManage : MonoBehaviour
         {
             //在链表上保存新建筑
             ConstructedBuildings.Add(building);
-            //GameControl.Instance.BuildingPay += building.Pay;
-
-            BuildingType T = building.Type;
             //部门创建
-            building.Department = GameControl.Instance.CreateDep(building);//根据Type创建对应的生产部门面板
+            //附加部门不管这个
+            if (building.Type != BuildingType.自动化工坊)
+                building.Department = GameControl.Instance.CreateDep(building);
         }
+
 
         //确定建筑已摆放完毕
         building.Build(grids);
@@ -425,7 +428,8 @@ public class BuildingManage : MonoBehaviour
         }
 
         //设置事业部
-        building.Department.SetDivision(building.CurrentArea.DC);
+        if (building.Department)
+            building.Department.SetDivision(building.CurrentArea.DC);
 
     }
 

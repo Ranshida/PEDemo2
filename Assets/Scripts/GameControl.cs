@@ -63,6 +63,9 @@ public class GameControl : MonoBehaviour
     public int StandbyEmpLimit = 5;//人才库数量限制
 
     #region 杂项变量
+    [HideInInspector] public int ApproveLimit = 5;//认同上限
+    [HideInInspector] public int DissatisfiedLimit = 5;//不满上限
+    [HideInInspector] public int ExtraExpense = 0;//额外维护费效果
     [HideInInspector] public bool ProduceBuffBonus = false;//“精进”和“团结”状态的持续时间提高至4m战略效果
     [HideInInspector] public bool GymBuffBonus = false;//“健身房”大成功时获得“强化”或“铁人”状态的概率上升为80%战略效果
     [HideInInspector] public bool WorkToggle = false;//下周开始是否加班
@@ -78,7 +81,7 @@ public class GameControl : MonoBehaviour
     public DepControl CurrentDep, SelectedDep;
     public QuestControl QC;
     public EmpEntity EmpEntityPrefab;
-    public PerkInfo PerkInfoPrefab;
+    public PerkInfo PerkInfoPrefab, PerkInfoPrefab_Company;
     public DepControl DepPrefab, HRDepPrefab;
     public DepSelect DepSelectButtonPrefab;
     public RelationInfo RelationInfoPrefab;
@@ -93,7 +96,7 @@ public class GameControl : MonoBehaviour
     public CEOControl CC;
     public Areas AC;
     public WindowBaseControl TotalEmpPanel;
-    public Transform DepContent, DepSelectContent, StandbyContent, MessageContent, ItemContent;
+    public Transform DepContent, DepSelectContent, StandbyContent, MessageContent, ItemContent, PerkContent;
     public InfoPanel infoPanel;
     public GameObject DepSelectPanel, StandbyButton, MessagePrefab, GameOverPanel;
     public Text Text_Time, Text_TechResource, Text_MarketResource, Text_MarketResource2, Text_ProductResource, Text_Money, 
@@ -106,6 +109,7 @@ public class GameControl : MonoBehaviour
     public List<Employee> CurrentEmployees = new List<Employee>();
     public List<CompanyItem> Items = new List<CompanyItem>();
     public List<DivisionControl> CurrentDivisions = new List<DivisionControl>();
+    public List<PerkInfo> CurrentPerks = new List<PerkInfo>();
     public int[] FinishedTask = new int[10];//0程序迭代 1技术研发 2可行性调研 3传播 4营销文案 5资源拓展 6原型图 7产品研究 8用户访谈 9已删除
 
     int Year = 1, Month = 1, Week = 1, Day = 1, Hour = 1, morale = 50;
@@ -127,7 +131,7 @@ public class GameControl : MonoBehaviour
         OCL.AddStaticOptions(new OptionCard1());
         OCL.AddStaticOptions(new OptionCard2());
         OCL.AddStaticOptions(new OptionCard3());
-        //CreateItem(3);
+        CreateItem(3);
         //CreateItem(4);
         //CreateItem(5);
         //CreateItem(6);
@@ -157,8 +161,6 @@ public class GameControl : MonoBehaviour
         if(MoneyCalcTimer > 1)
         {
             MoneyCalcTimer = 0;
-            CalcTotalSalary();
-            CalcBuildingPay();
         }
         Text_Money.text = "金钱:" + Money +"\n" 
                         + "    " + (Income - Salary - BuildingPay) + "/月";
@@ -188,6 +190,7 @@ public class GameControl : MonoBehaviour
             return;
         }
 
+        CalcExpense();
         Turn += 1;
         MonthMeetingTime -= 1;
 
@@ -241,8 +244,6 @@ public class GameControl : MonoBehaviour
         Hour += 1;
         //以下为加班判定
         //体力额外扣除
-        CalcBuildingPay();
-        CalcTotalSalary();
         if(WorkOverTime == true)
         {
             foreach(Employee emp in CurrentEmployees)
@@ -343,26 +344,16 @@ public class GameControl : MonoBehaviour
     }
 
     //计算支出
-    void CalcTotalSalary()
-    {
-        Salary = 0;
-        foreach(Employee e in CurrentEmployees)
-        {
-            int value = e.InfoDetail.CalcSalary();
-            if (e.CurrentDep != null)
-                value = (int)(value * e.CurrentDep.SalaryMultiply);
-            value = (int)(value * TotalSalaryMultiply);
-            Salary += value;
-        }
-    }
-    void CalcBuildingPay()
+    void CalcExpense()
     {
         int value = 0;
-        foreach(DepControl dep in CurrentDeps)
+        foreach(DivisionControl div in CurrentDivisions)
         {
-            value += dep.CalcCost(2);
+            value += (div.CalcCost(1) + div.CalcCost(2) + div.ExtraCost);
         }
-        BuildingPay = value;
+        value += ExtraExpense;
+        if (value > 0)
+            Money -= value;
     }
 
     //旧下班判定，现在没有太大用处
@@ -824,6 +815,53 @@ public class GameControl : MonoBehaviour
     public void CheckEventProgress()
     {
 
+    }
+
+    //添加Perk
+    public void AddPerk(Perk perk)
+    {
+        //同类Perk检测
+        foreach (PerkInfo p in CurrentPerks)
+        {
+            if (p.CurrentPerk.Num == perk.Num)
+            {
+                //可叠加的进行累加
+                if (perk.canStack == true)
+                {
+                    p.CurrentPerk.Level += 1;
+                    p.CurrentPerk.AddEffect();
+                    return;
+                }
+                //不可叠加的清除
+                else
+                {
+                    p.CurrentPerk.RemoveEffect();
+                    break;
+                }
+            }
+        }
+        PerkInfo newPerk = Instantiate(PerkInfoPrefab_Company, PerkContent);
+        newPerk.CurrentPerk = perk;
+        newPerk.CurrentPerk.BaseTime = perk.TimeLeft;
+        newPerk.CurrentPerk.Info = newPerk;
+        newPerk.Text_Name.text = perk.Name;
+        newPerk.info = infoPanel;
+        CurrentPerks.Add(newPerk);
+        newPerk.CurrentPerk.AddEffect();
+        newPerk.SetColor();
+    }
+
+    //移除Perk
+    public void RemovePerk(int num)
+    {
+        foreach (PerkInfo info in CurrentPerks)
+        {
+            if (info.CurrentPerk.Num == num)
+            {
+                info.CurrentPerk.RemoveEffect();
+                break;
+            }
+        }
     }
 
     //暂停检测相关

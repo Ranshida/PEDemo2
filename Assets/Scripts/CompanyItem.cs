@@ -108,6 +108,7 @@ public class Item1 : Item
         Name = "福报自修手册";
         Description = "施加“996”状态，持续1回合，事业部效率+1";
         ActiveType = 5;
+        Num = 1;
     }
 
     public override void StartEffect()
@@ -125,6 +126,7 @@ public class Item2 : Item
         Description = "月会时可以使用，选择一个领导力水晶，并获得额外一个与之相同的水晶";
         ActiveType = 1;
         Type = CompanyItemType.MonthMeeting;
+        Num = 2;
     }
 
     public override void StartEffect()
@@ -147,6 +149,7 @@ public class Item3 : Item
         Name = "《加班技术大全》";
         Description = "选择特定事业部，施加“效率至上”的状态，持续3回合，提升效率1点，可叠加";
         ActiveType = 5;
+        Num = 3;
     }
 
     public override void StartEffect()
@@ -163,6 +166,7 @@ public class Item4 : Item
         Name = "《致全体同事的一封信》";
         Description = "选择特定事业部，施加“信仰充值”的状态，持续3回合，并提升信念10点，可叠加";
         ActiveType = 5;
+        Num = 4;
     }
 
     public override void StartEffect()
@@ -179,6 +183,7 @@ public class Item5 : Item
         Name = "《预算新编》";
         Description = "选择特定事业部，施加“节省支出”的状态，持续3回合，降低3成本，可叠加";
         ActiveType = 5;
+        Num = 5;
     }
 
     public override void StartEffect()
@@ -195,6 +200,7 @@ public class Item6 : Item
         Name = "《胜利开发者的全新计划》";
         Description = "选择特定事业部，施加“胜利开发”的状态，持续3回合，并提升其工作状态1点，可叠加";
         ActiveType = 5;
+        Num = 6;
     }
 
     public override void StartEffect()
@@ -214,6 +220,7 @@ public class Item117 : Item
         Description = "在月会时可以使用，使用时选择一个建筑空间，增加其领导力槽位1个";
         ActiveType = 2;
         Type = CompanyItemType.MonthMeeting;
+        Num = 117;
     }
 
     public override void StartEffect()
@@ -231,6 +238,7 @@ public class Item118 : Item
         Description = "选择并删除一个水晶，再随机添加一个水晶";
         ActiveType = 5;
         Type = CompanyItemType.MonthMeeting;
+        Num = 118;
     }
 
     public override void StartEffect()

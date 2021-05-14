@@ -29,6 +29,7 @@ public abstract class Event
     public string[] SubEventNames = new string[6]; //(事件组)各个子事件的名称
 
     protected EventCondition RequiredCondition; //事件状态需求
+    protected EColor EmotionRequire = EColor.None;
 
 
     public virtual bool ConditionCheck(Employee CheckEmp, Employee TargetEmp = null)
@@ -43,6 +44,14 @@ public abstract class Event
 
         //事业部存在检测
         if (DivisionConditionCheck(CheckEmp, TargetEmp) == false)
+            return false;
+
+        //主导情绪检测
+        if (EmotionConditionCheck(CheckEmp) == false)
+            return false;
+
+        //特殊检测
+        if (SpecialConditionCheck(CheckEmp, TargetEmp) == false)
             return false;
 
         return true;
@@ -78,6 +87,24 @@ public abstract class Event
                 return true;
         }
         return false;
+    }
+
+    //情绪检测
+    protected virtual bool EmotionConditionCheck(Employee emp)
+    {
+        if (emp == null)
+            return false;
+        if (EmotionRequire == EColor.None)
+            return true;
+        if (emp.InfoDetail.MainEmotion.Active == true && emp.InfoDetail.MainEmotion.E.color == EmotionRequire)
+            return true;
+        return false;
+    }
+
+    //特殊检测
+    protected virtual bool SpecialConditionCheck(Employee emp, Employee target)
+    {
+        return true;
     }
 
     //关系检测
@@ -199,6 +226,15 @@ public abstract class Event
         int result = 0;
         if (emp == null || target == null)
             return 0;
+        if (emp.CharacterTendency[0] == target.CharacterTendency[0])
+            result += 1;
+        else
+            result -= 1;
+
+        if (emp.CharacterTendency[1] == target.CharacterTendency[1])
+            result += 1;
+        else
+            result -= 1;
         return result;
     }
 
@@ -348,7 +384,7 @@ public abstract class Event
             FailResult(emp, target);
     }
 
-    public virtual string ResultDescription(Employee Emp, Employee targetEmp, int index)
+    public virtual string ResultDescription(Employee Emp, Employee targetEmp, int index, EventGroupInfo egi = null)
     {
         string content = "";
         SetNames(Emp, targetEmp);
@@ -370,19 +406,27 @@ public abstract class Event
         return content;
     }
 
-    public virtual string EventDescription(Employee Emp, Employee targetEmp, int index)
+    public virtual string EventDescription(Employee Emp, Employee targetEmp, int index, EventGroupInfo egi = null)
     {
         string content = "";
         SetNames(Emp, targetEmp);
         return content;
     }
 
-    protected virtual void SetNames(Employee Emp, Employee targetEmp)
+    protected virtual void SetNames(Employee Emp, Employee targetEmp, EventGroupInfo egi = null)
     {
         if (Emp != null)
             SelfName = Emp.Name;
         if (targetEmp != null)
             TargetName = targetEmp.Name;
+
+        //事件组有自己的目标时直接设置事件组为目的地
+        if (egi != null && egi.TargetDivision != null)
+        {
+            PlaceName = egi.TargetDivision.DivName;
+            return;
+        }
+
         if (Emp.CurrentDep != null)
             PlaceName = Emp.CurrentDep.Text_DepName.text;
         else if (targetEmp != null && targetEmp.CurrentDep != null)
@@ -390,8 +434,7 @@ public abstract class Event
     }
 }
 
-
-//以下是公司一般事件
+#region 公司一般事件
 public class EventC1 : Event
 {
     public EventC1() : base()
@@ -404,7 +447,7 @@ public class EventC1 : Event
 
     protected override int CalcBonus(Employee emp, Employee target = null, EventGroupInfo egi = null)
     {
-        int result = CalcEmotion(emp) + CalcDivisionFaith(emp, target, egi) + CalcPerk(emp) + CalcDivisionManage(emp, target, egi);
+        int result = CalcEmotion(emp)  + CalcPerk(emp) ;
         return result;
     }
 
@@ -442,8 +485,6 @@ public class EventC1 : Event
         return content;
     }
 }
-
-
 public class EventC2 : Event
 {
     public EventC2() : base()
@@ -456,7 +497,7 @@ public class EventC2 : Event
 
     protected override int CalcBonus(Employee emp, Employee target = null, EventGroupInfo egi = null)
     {
-        int result = CalcEmotion(emp) + CalcDivisionFaith(emp, target, egi) + CalcPerk(emp) + CalcDivisionManage(emp, target, egi);
+        int result = CalcEmotion(emp)  + CalcPerk(emp) ;
         return result;
     }
 
@@ -506,7 +547,7 @@ public class EventC3 : Event
 
     protected override int CalcBonus(Employee emp, Employee target = null, EventGroupInfo egi = null)
     {
-        int result = CalcEmotion(emp) + CalcDivisionFaith(emp, target, egi) + CalcPerk(emp) + CalcDivisionManage(emp, target, egi);
+        int result = CalcEmotion(emp)  + CalcPerk(emp) ;
         return result;
     }
 
@@ -544,8 +585,6 @@ public class EventC3 : Event
         return content;
     }
 }
-
-
 public class EventC4 : Event
 {
     public EventC4() : base()
@@ -558,7 +597,7 @@ public class EventC4 : Event
 
     protected override int CalcBonus(Employee emp, Employee target = null, EventGroupInfo egi = null)
     {
-        int result = CalcEmotion(emp) + CalcDivisionFaith(emp, target, egi) + CalcPerk(emp) + CalcDivisionManage(emp, target, egi);
+        int result = CalcEmotion(emp)  + CalcPerk(emp) ;
         return result;
     }
 
@@ -596,7 +635,6 @@ public class EventC4 : Event
         return content;
     }
 }
-
 public class EventC5 : Event
 {
     public EventC5() : base()
@@ -609,7 +647,7 @@ public class EventC5 : Event
 
     protected override int CalcBonus(Employee emp, Employee target = null, EventGroupInfo egi = null)
     {
-        int result = CalcEmotion(emp) + CalcDivisionFaith(emp, target, egi) + CalcPerk(emp) + CalcDivisionManage(emp, target, egi);
+        int result = CalcEmotion(emp)  + CalcPerk(emp) ;
         return result;
     }
 
@@ -646,47 +684,10 @@ public class EventC5 : Event
         }
         return content;
     }
-}//以下是公司一般事件
-
-public static class EventData
-{
-    //公司日常事件序列(无状态条件事件)
-    public static List<Event> CompanyRoutineEventA = new List<Event>()
-    {
-        Event1(),Event2(),Event3(),Event4(),Event5()
-    };
-
-    //公司日常事件序列(状态条件事件)
-    public static List<Event> CompanyRoutineEventB = new List<Event>()
-    {
-        Event6(),Event7(),Event8()
-    };
-
-    //公司一般事件序列
-    public static List<Event> CompanyNormalEvent = new List<Event>()
-    {
-        new EventC1(),new EventC2(),new EventC3(),new EventC4(),new EventC5(),
-    };
-
-    //个人港口事件序列
-    public static List<Event> EmpPortEvent = new List<Event>()
-    {
-        Event9(),Event10(),Event11(),Event12(),Event13()
-    };
-
-    //个人事件序列(只记第一个事件)，且Event14比较特殊故不计入
-    public static List<Event> EmpPersonalEvent = new List<Event>()
-    {
-        Event19(),Event24(),Event29(),Event34(),Event39(),Event44(),Event49(),Event54(),Event59(),Event64(),Event69(),Event74(),Event79(),Event84(),Event89(),Event94(),Event99(),Event104(),Event109(),Event114(),Event119(),Event124(),Event129(),Event134(),Event139()
-    };
-
-    //特殊事件组
-    public static List<EventGroup> SpecialEventGroups = new List<EventGroup>()
-    {
-        new EventGroup1()
-    };
 }
+#endregion
 
+#region 个人事件
 public class Event1 : Event
 {
     public Event1() : base()
@@ -757,13 +758,12 @@ public class Event1 : Event
         return content;
     }
 }
-
 public class Event2 : Event
 {
     public Event2() : base()
     {
         EventName = "/";
-        LevelRequire = new List<int>(2,3);
+        LevelRequire = new List<int>() { 2, 3 };
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
@@ -802,7 +802,7 @@ public class Event2 : Event
         if (success == true)
         {
             if (index == 1)
-                content = "在 " + placeName + "的会议中，上级mm对下属nn当前做法表达赞赏";
+                content = "在 " + PlaceName + "的会议中，上级mm对下属nn当前做法表达赞赏";
             else if (index == 2)
             {
 
@@ -811,7 +811,7 @@ public class Event2 : Event
         else
         {
             if (index == 1)
-                content = "在 " + placeName + "的会议中，上级mm认可了下属nn当前的做法";
+                content = "在 " + PlaceName + "的会议中，上级mm认可了下属nn当前的做法";
         }
         return content;
     }
@@ -821,9 +821,9 @@ public class Event2 : Event
         string content = "";
         SetNames(Emp, targetEmp);
         if (success == true)
-            content = content = "在 " + placeName + "的会议中，下属nn接受上级mm的嘉奖";
+            content = content = "在 " + PlaceName + "的会议中，下属nn接受上级mm的嘉奖";
         else
-            content = content = "在 " + placeName + "的会议中，下属nn当前的做法获得上级mm许可";
+            content = content = "在 " + PlaceName + "的会议中，下属nn当前的做法获得上级mm许可";
         return content;
     }
 }
@@ -871,7 +871,7 @@ public class Event3 : Event
         if (success == true)
         {
             if (index == 1)
-                content = "在" + placeName + "，" + SelfName + "提出同事" + TargetName + "过于纠结细节，有些浪费时间";
+                content = "在" + PlaceName + "，" + SelfName + "提出同事" + TargetName + "过于纠结细节，有些浪费时间";
             else if (index == 2)
             {
 
@@ -880,7 +880,7 @@ public class Event3 : Event
         else
         {
             if (index == 1)
-                content = "在" + placeName + "，" + SelfName + "提出自己只想把事做好，同事" + TargetName + "却总设置阻碍";
+                content = "在" + PlaceName + "，" + SelfName + "提出自己只想把事做好，同事" + TargetName + "却总设置阻碍";
         }
         return content;
     }
@@ -890,9 +890,9 @@ public class Event3 : Event
         string content = "";
         SetNames(Emp, targetEmp);
         if (success == true)
-            content = content = "在" + placeName + "，" + TargetName + "提出同事" + SelfName + "过于强调愿景，有些不切实际";
+            content = content = "在" + PlaceName + "，" + TargetName + "提出同事" + SelfName + "过于强调愿景，有些不切实际";
         else
-            content = content = "在" + placeName + "，" + TargetName + "提出" + SelfName + "过于自我，对团队配合一无所知";
+            content = content = "在" + PlaceName + "，" + TargetName + "提出" + SelfName + "过于自我，对团队配合一无所知";
         return content;
     }
 }
@@ -901,7 +901,7 @@ public class Event4 : Event
     public Event4() : base()
     {
         EventName = "甩锅三连";
-        LevelRequire = new List<int>(1, 2, 3); //"关系:上下级同事"
+        LevelRequire = new List<int>() { 1, 2, 3 }; //"关系:上下级同事"
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
@@ -940,7 +940,7 @@ public class Event4 : Event
         if (success == true)
         {
             if (index == 1)
-                content = "在" + placeName + "，" + SelfName + "表示" + TargetName + "的想法过于模糊，缺乏逻辑";
+                content = "在" + PlaceName + "，" + SelfName + "表示" + TargetName + "的想法过于模糊，缺乏逻辑";
             else if (index == 2)
             {
 
@@ -949,7 +949,7 @@ public class Event4 : Event
         else
         {
             if (index == 1)
-                content = "在" + placeName + "，" + SelfName + "表示无法理解" + TargetName + "不考虑自己建议的原因";
+                content = "在" + PlaceName + "，" + SelfName + "表示无法理解" + TargetName + "不考虑自己建议的原因";
         }
         return content;
     }
@@ -959,9 +959,9 @@ public class Event4 : Event
         string content = "";
         SetNames(Emp, targetEmp);
         if (success == true)
-            content = content = "在" + placeName + "，" + TargetName + "提出" + SelfName + "沉浸在自己的逻辑里，根本没有在听自己在说什么";
+            content = content = "在" + PlaceName + "，" + TargetName + "提出" + SelfName + "沉浸在自己的逻辑里，根本没有在听自己在说什么";
         else
-            content = content = "在" + placeName + "，" + TargetName + "提出如果没有" + SelfName + "瞎指挥，自己会更明确如何工作";
+            content = content = "在" + PlaceName + "，" + TargetName + "提出如果没有" + SelfName + "瞎指挥，自己会更明确如何工作";
         return content;
     }
 }
@@ -970,7 +970,7 @@ public class Event5 : Event
     public Event5() : base()
     {
         EventName = "验收工作";
-        LevelRequire = new List<int>(2, 3); //"关系:上下级"
+        LevelRequire = new List<int>() { 2, 3 }; //"关系:上下级"
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
@@ -1009,7 +1009,7 @@ public class Event5 : Event
         if (success == true)
         {
             if (index == 1)
-                content = "在" + placeName + "，上级mm在验收工作时表示未达要求，下属nn误解自己的意思";
+                content = "在" + PlaceName + "，上级mm在验收工作时表示未达要求，下属nn误解自己的意思";
             else if (index == 2)
             {
 
@@ -1018,7 +1018,7 @@ public class Event5 : Event
         else
         {
             if (index == 1)
-                content = "在" + placeName + "，上级mm在验收工作时表示未达标，下属nn捏造理由推卸责任";
+                content = "在" + PlaceName + "，上级mm在验收工作时表示未达标，下属nn捏造理由推卸责任";
         }
         return content;
     }
@@ -1028,9 +1028,9 @@ public class Event5 : Event
         string content = "";
         SetNames(Emp, targetEmp);
         if (success == true)
-            content = content = "在" + placeName + "汇报工作时被骂，下属nn用沉默反抗上级mm，最后表示会做修改";
+            content = content = "在" + PlaceName + "汇报工作时被骂，下属nn用沉默反抗上级mm，最后表示会做修改";
         else
-            content = content = "在" + placeName + "汇报工作时被骂，下属nn表示自己完全按照上级mm的要求来做的";
+            content = content = "在" + PlaceName + "汇报工作时被骂，下属nn表示自己完全按照上级mm的要求来做的";
         return content;
     }
 }
@@ -1043,6 +1043,7 @@ public class Event6 : Event
         SingleResult = false;
         //主导情绪为振奋
         RequiredCondition = EventCondition.无;
+        EmotionRequire = EColor.Yellow;
         SuccessDescription = " 双方获得事件状态“成就感” ×2";
         FailDescription = " 双方获得事件状态“成就感” ×1";
     }
@@ -1104,6 +1105,7 @@ public class Event7 : Event
         SingleResult = false;
         //主导情绪：偏执
         RequiredCondition = EventCondition.无;
+        EmotionRequire = EColor.Orange;
         SuccessDescription = " 双方获得事件状态“烦恼” ×1";
         FailDescription = " 双方获得事件状态“烦恼” ×2";
     }
@@ -1165,6 +1167,13 @@ public class Event8 : Event
         RequiredCondition = EventCondition.无;
         SuccessDescription = " 双方获得事件状态“悔恨” ×1";
         FailDescription = " 双方获得事件状态“悔恨” ×2";
+    }
+
+    protected override bool SpecialConditionCheck(Employee emp, Employee target)
+    {
+        if (emp.Stamina < 50)
+            return true;
+        return false;
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -1487,6 +1496,9 @@ public class Event13 : Event
         return 0;
     }
 }
+#endregion
+
+#region 个人连续事件
 public class Event14 : Event
 {
     public Event14() : base()
@@ -1552,7 +1564,6 @@ public class Event14 : Event
         return content;
     }
 }
-
 public class Event15 : Event
 {
     public Event15() : base()
@@ -1613,7 +1624,6 @@ public class Event15 : Event
         return content;
     }
 }
-
 public class Event16 : Event
 {
     public Event16() : base()
@@ -1674,7 +1684,6 @@ public class Event16 : Event
         return content;
     }
 }
-
 public class Event17 : Event
 {
     public Event17() : base()
@@ -1735,7 +1744,6 @@ public class Event17 : Event
         return content;
     }
 }
-
 public class Event18 : Event
 {
     public Event18() : base()
@@ -1836,7 +1844,7 @@ public class Event19 : Event
         if (success == true)
         {
             if (index == 1)
-                content = "在" + placeName + "见到" + TargetName + "，开了几句别的同事的玩笑";
+                content = "在" + PlaceName + "见到" + TargetName + "，开了几句别的同事的玩笑";
             else if (index == 2)
             {
 
@@ -1845,7 +1853,7 @@ public class Event19 : Event
         else
         {
             if (index == 1)
-                content = "在" + placeName + "见到" + TargetName + "，开了几句别的同事的玩笑";
+                content = "在" + PlaceName + "见到" + TargetName + "，开了几句别的同事的玩笑";
         }
         return content;
     }
@@ -1855,9 +1863,9 @@ public class Event19 : Event
         string content = "";
         SetNames(Emp, targetEmp);
         if (success == true)
-            content = content = "在" + placeName + "见到" + SelfName + "，对方开了几句别的同事的玩笑";
+            content = content = "在" + PlaceName + "见到" + SelfName + "，对方开了几句别的同事的玩笑";
         else
-            content = content = "在" + placeName + "见到" + SelfName + "，对方在嘲笑别的同事";
+            content = content = "在" + PlaceName + "见到" + SelfName + "，对方在嘲笑别的同事";
         return content;
     }
 }
@@ -2162,7 +2170,7 @@ public class Event24 : Event
         if (success == true)
         {
             if (index == 1)
-                content = "在" + placeName + "见到" + TargetName + "，抱怨工作真是麻烦";
+                content = "在" + PlaceName + "见到" + TargetName + "，抱怨工作真是麻烦";
             else if (index == 2)
             {
 
@@ -2171,7 +2179,7 @@ public class Event24 : Event
         else
         {
             if (index == 1)
-                content = "在" + placeName + "见到" + TargetName + "，抱怨工作真是麻烦";
+                content = "在" + PlaceName + "见到" + TargetName + "，抱怨工作真是麻烦";
         }
         return content;
     }
@@ -2181,9 +2189,9 @@ public class Event24 : Event
         string content = "";
         SetNames(Emp, targetEmp);
         if (success == true)
-            content = content = "在" + placeName + "见到" + SelfName + "，对方似乎遇到了一些困难";
+            content = content = "在" + PlaceName + "见到" + SelfName + "，对方似乎遇到了一些困难";
         else
-            content = content = "在" + placeName + "见到" + SelfName + "，对方在抱怨无法胜任工作";
+            content = content = "在" + PlaceName + "见到" + SelfName + "，对方在抱怨无法胜任工作";
         return content;
     }
 }
@@ -2487,7 +2495,7 @@ public class Event29 : Event
         if (success == true)
         {
             if (index == 1)
-                content = "在" + placeName + "见到" + TargetName + "，询问" + TargetName + "对自己的印象如何";
+                content = "在" + PlaceName + "见到" + TargetName + "，询问" + TargetName + "对自己的印象如何";
             else if (index == 2)
             {
 
@@ -2496,7 +2504,7 @@ public class Event29 : Event
         else
         {
             if (index == 1)
-                content = "在" + placeName + "见到" + TargetName + "，询问" + TargetName + "对自己的印象如何";
+                content = "在" + PlaceName + "见到" + TargetName + "，询问" + TargetName + "对自己的印象如何";
         }
         return content;
     }
@@ -2506,9 +2514,9 @@ public class Event29 : Event
         string content = "";
         SetNames(Emp, targetEmp);
         if (success == true)
-            content = content = "在" + placeName + "见到" + SelfName + "，对方诚恳地询问自己对其看法";
+            content = content = "在" + PlaceName + "见到" + SelfName + "，对方诚恳地询问自己对其看法";
         else
-            content = content = "在" + placeName + "见到" + SelfName + "，对方看起来没有自信";
+            content = content = "在" + PlaceName + "见到" + SelfName + "，对方看起来没有自信";
         return content;
     }
 }
@@ -2814,7 +2822,7 @@ public class Event34 : Event
         if (success == true)
         {
             if (index == 1)
-                content = "在" + placeName + "见到" + TargetName + "，表示希望和对方探讨工作方法";
+                content = "在" + PlaceName + "见到" + TargetName + "，表示希望和对方探讨工作方法";
             else if (index == 2)
             {
 
@@ -2823,7 +2831,7 @@ public class Event34 : Event
         else
         {
             if (index == 1)
-                content = "在" + placeName + "见到" + TargetName + "，表示希望和对方探讨工作方法";
+                content = "在" + PlaceName + "见到" + TargetName + "，表示希望和对方探讨工作方法";
         }
         return content;
     }
@@ -2833,9 +2841,9 @@ public class Event34 : Event
         string content = "";
         SetNames(Emp, targetEmp);
         if (success == true)
-            content = content = "在" + placeName + "见到" + SelfName + "，对方确实看起来有很多好点子";
+            content = content = "在" + PlaceName + "见到" + SelfName + "，对方确实看起来有很多好点子";
         else
-            content = content = "在" + placeName + "见到" + SelfName + "，对方看起来想推销一些建议";
+            content = content = "在" + PlaceName + "见到" + SelfName + "，对方看起来想推销一些建议";
         return content;
     }
 }
@@ -3141,7 +3149,7 @@ public class Event39 : Event
         if (success == true)
         {
             if (index == 1)
-                content = "在" + placeName + "见到" + TargetName + "，于是我分享了最近开心的事";
+                content = "在" + PlaceName + "见到" + TargetName + "，于是我分享了最近开心的事";
             else if (index == 2)
             {
 
@@ -3150,7 +3158,7 @@ public class Event39 : Event
         else
         {
             if (index == 1)
-                content = "在" + placeName + "见到" + TargetName + "，于是我分享了最近开心的事";
+                content = "在" + PlaceName + "见到" + TargetName + "，于是我分享了最近开心的事";
         }
         return content;
     }
@@ -3160,9 +3168,9 @@ public class Event39 : Event
         string content = "";
         SetNames(Emp, targetEmp);
         if (success == true)
-            content = content = "在" + placeName + "见到" + SelfName + "，对方看起来很开心";
+            content = content = "在" + PlaceName + "见到" + SelfName + "，对方看起来很开心";
         else
-            content = content = "在" + placeName + "见到" + SelfName + "，对方自顾自地说着开心的事情";
+            content = content = "在" + PlaceName + "见到" + SelfName + "，对方自顾自地说着开心的事情";
         return content;
     }
 }
@@ -3470,7 +3478,7 @@ public class Event44 : Event
         if (success == true)
         {
             if (index == 1)
-                content = "在" + placeName + "见到朋友" + TargetName + "，和对方聊起私人船只价格还在上涨";
+                content = "在" + PlaceName + "见到朋友" + TargetName + "，和对方聊起私人船只价格还在上涨";
             else if (index == 2)
             {
 
@@ -3479,7 +3487,7 @@ public class Event44 : Event
         else
         {
             if (index == 1)
-                content = "在" + placeName + "见到朋友" + TargetName + "，和对方聊起私人船只价格还在上涨";
+                content = "在" + PlaceName + "见到朋友" + TargetName + "，和对方聊起私人船只价格还在上涨";
         }
         return content;
     }
@@ -3489,9 +3497,9 @@ public class Event44 : Event
         string content = "";
         SetNames(Emp, targetEmp);
         if (success == true)
-            content = content = "在" + placeName + "见到朋友" + SelfName + "，彼此聊了会儿生活方面的话题";
+            content = content = "在" + PlaceName + "见到朋友" + SelfName + "，彼此聊了会儿生活方面的话题";
         else
-            content = content = "在" + placeName + "见到朋友" + SelfName + "，对方想聊生活日常，没注意到我在忙";
+            content = content = "在" + PlaceName + "见到朋友" + SelfName + "，对方想聊生活日常，没注意到我在忙";
         return content;
     }
 }
@@ -3801,7 +3809,7 @@ public class Event49 : Event
         if (success == true)
         {
             if (index == 1)
-                content = "在" + placeName + "见到朋友" + TargetName + "，向" + TargetName + "倾诉我低落的心情";
+                content = "在" + PlaceName + "见到朋友" + TargetName + "，向" + TargetName + "倾诉我低落的心情";
             else if (index == 2)
             {
 
@@ -3810,7 +3818,7 @@ public class Event49 : Event
         else
         {
             if (index == 1)
-                content = "在" + placeName + "见到朋友" + TargetName + "，向" + TargetName + "倾诉我低落的心情";
+                content = "在" + PlaceName + "见到朋友" + TargetName + "，向" + TargetName + "倾诉我低落的心情";
         }
         return content;
     }
@@ -3820,9 +3828,9 @@ public class Event49 : Event
         string content = "";
         SetNames(Emp, targetEmp);
         if (success == true)
-            content = content = "在" + placeName + "见到朋友" + SelfName + "，对方向我分享了最近遇到的麻烦";
+            content = content = "在" + PlaceName + "见到朋友" + SelfName + "，对方向我分享了最近遇到的麻烦";
         else
-            content = content = "在" + placeName + "见到朋友" + SelfName + "，对方似乎把什么事情搞砸了";
+            content = content = "在" + PlaceName + "见到朋友" + SelfName + "，对方似乎把什么事情搞砸了";
         return content;
     }
 }
@@ -4128,7 +4136,7 @@ public class Event54 : Event
         if (success == true)
         {
             if (index == 1)
-                content = "在" + placeName + "见到朋友" + TargetName + "，分享近来工作内容，并询问对方评价";
+                content = "在" + PlaceName + "见到朋友" + TargetName + "，分享近来工作内容，并询问对方评价";
             else if (index == 2)
             {
 
@@ -4137,7 +4145,7 @@ public class Event54 : Event
         else
         {
             if (index == 1)
-                content = "在" + placeName + "见到朋友" + TargetName + "，分享近来工作内容，并询问对方评价";
+                content = "在" + PlaceName + "见到朋友" + TargetName + "，分享近来工作内容，并询问对方评价";
         }
         return content;
     }
@@ -4147,9 +4155,9 @@ public class Event54 : Event
         string content = "";
         SetNames(Emp, targetEmp);
         if (success == true)
-            content = content = "在" + placeName + "见到朋友" + SelfName + "，对方请我评价其近期工作";
+            content = content = "在" + PlaceName + "见到朋友" + SelfName + "，对方请我评价其近期工作";
         else
-            content = content = "在" + placeName + "见到朋友" + SelfName + "，对方请我评价其工作能力";
+            content = content = "在" + PlaceName + "见到朋友" + SelfName + "，对方请我评价其工作能力";
         return content;
     }
 }
@@ -4457,7 +4465,7 @@ public class Event59 : Event
         if (success == true)
         {
             if (index == 1)
-                content = "在" + placeName + "见到朋友" + TargetName + "，我积极地分享自己最近工作上的收获";
+                content = "在" + PlaceName + "见到朋友" + TargetName + "，我积极地分享自己最近工作上的收获";
             else if (index == 2)
             {
 
@@ -4466,7 +4474,7 @@ public class Event59 : Event
         else
         {
             if (index == 1)
-                content = "在" + placeName + "见到朋友" + TargetName + "，我积极地分享自己最近工作上的收获";
+                content = "在" + PlaceName + "见到朋友" + TargetName + "，我积极地分享自己最近工作上的收获";
         }
         return content;
     }
@@ -4476,9 +4484,9 @@ public class Event59 : Event
         string content = "";
         SetNames(Emp, targetEmp);
         if (success == true)
-            content = content = "在" + placeName + "见到朋友" + SelfName + "，对方看起来状态非常好";
+            content = content = "在" + PlaceName + "见到朋友" + SelfName + "，对方看起来状态非常好";
         else
-            content = content = "在" + placeName + "见到朋友" + SelfName + "，对方看起来很成功";
+            content = content = "在" + PlaceName + "见到朋友" + SelfName + "，对方看起来很成功";
         return content;
     }
 }
@@ -4784,7 +4792,7 @@ public class Event64 : Event
         if (success == true)
         {
             if (index == 1)
-                content = "在" + placeName + "见到朋友" + TargetName + "，开心地向对方分享最近高兴的事";
+                content = "在" + PlaceName + "见到朋友" + TargetName + "，开心地向对方分享最近高兴的事";
             else if (index == 2)
             {
 
@@ -4793,7 +4801,7 @@ public class Event64 : Event
         else
         {
             if (index == 1)
-                content = "在" + placeName + "见到朋友" + TargetName + "，开心地向对方分享最近高兴的事";
+                content = "在" + PlaceName + "见到朋友" + TargetName + "，开心地向对方分享最近高兴的事";
         }
         return content;
     }
@@ -4803,9 +4811,9 @@ public class Event64 : Event
         string content = "";
         SetNames(Emp, targetEmp);
         if (success == true)
-            content = content = "在" + placeName + "见到朋友" + SelfName + "，对方看起来非常开心";
+            content = content = "在" + PlaceName + "见到朋友" + SelfName + "，对方看起来非常开心";
         else
-            content = content = "在" + placeName + "见到朋友" + SelfName + "，对方高兴的样子有些夸张";
+            content = content = "在" + PlaceName + "见到朋友" + SelfName + "，对方高兴的样子有些夸张";
         return content;
     }
 }
@@ -5109,7 +5117,7 @@ public class Event69 : Event
         if (success == true)
         {
             if (index == 1)
-                content = "在" + placeName + "见到挚友" + TargetName + "，" + TargetName + "主动问我最近怎么样";
+                content = "在" + PlaceName + "见到挚友" + TargetName + "，" + TargetName + "主动问我最近怎么样";
             else if (index == 2)
             {
 
@@ -5118,7 +5126,7 @@ public class Event69 : Event
         else
         {
             if (index == 1)
-                content = "在" + placeName + "见到挚友" + TargetName + "，" + TargetName + "和我简单打了个招呼";
+                content = "在" + PlaceName + "见到挚友" + TargetName + "，" + TargetName + "和我简单打了个招呼";
         }
         return content;
     }
@@ -5128,9 +5136,9 @@ public class Event69 : Event
         string content = "";
         SetNames(Emp, targetEmp);
         if (success == true)
-            content = content = "在" + placeName + "见到挚友" + SelfName + "，对方有事想聊，于是我主动询问";
+            content = content = "在" + PlaceName + "见到挚友" + SelfName + "，对方有事想聊，于是我主动询问";
         else
-            content = content = "在" + placeName + "见到挚友" + SelfName + "，对方有心事，但是我没太理会";
+            content = content = "在" + PlaceName + "见到挚友" + SelfName + "，对方有心事，但是我没太理会";
         return content;
     }
 }
@@ -5433,7 +5441,7 @@ public class Event74 : Event
         if (success == true)
         {
             if (index == 1)
-                content = "在" + placeName + "见到挚友" + TargetName + "，由于工作中的痛苦向对方请求帮助";
+                content = "在" + PlaceName + "见到挚友" + TargetName + "，由于工作中的痛苦向对方请求帮助";
             else if (index == 2)
             {
 
@@ -5442,7 +5450,7 @@ public class Event74 : Event
         else
         {
             if (index == 1)
-                content = "在" + placeName + "见到挚友" + TargetName + "，由于工作中的痛苦向对方请求帮助";
+                content = "在" + PlaceName + "见到挚友" + TargetName + "，由于工作中的痛苦向对方请求帮助";
         }
         return content;
     }
@@ -5452,9 +5460,9 @@ public class Event74 : Event
         string content = "";
         SetNames(Emp, targetEmp);
         if (success == true)
-            content = content = "在" + placeName + "见到挚友" + SelfName + "，对方似乎看起来很痛苦";
+            content = content = "在" + PlaceName + "见到挚友" + SelfName + "，对方似乎看起来很痛苦";
         else
-            content = content = "在" + placeName + "见到挚友" + SelfName + "，对方似乎遇到了一些困难";
+            content = content = "在" + PlaceName + "见到挚友" + SelfName + "，对方似乎遇到了一些困难";
         return content;
     }
 }
@@ -5756,7 +5764,7 @@ public class Event79 : Event
         if (success == true)
         {
             if (index == 1)
-                content = "在" + placeName + "见到挚友" + TargetName + "，询问" + TargetName + "自己是否适合当前工作";
+                content = "在" + PlaceName + "见到挚友" + TargetName + "，询问" + TargetName + "自己是否适合当前工作";
             else if (index == 2)
             {
 
@@ -5765,7 +5773,7 @@ public class Event79 : Event
         else
         {
             if (index == 1)
-                content = "在" + placeName + "见到挚友" + TargetName + "，询问" + TargetName + "自己是否适合当前工作";
+                content = "在" + PlaceName + "见到挚友" + TargetName + "，询问" + TargetName + "自己是否适合当前工作";
         }
         return content;
     }
@@ -5775,9 +5783,9 @@ public class Event79 : Event
         string content = "";
         SetNames(Emp, targetEmp);
         if (success == true)
-            content = content = "在" + placeName + "见到挚友" + SelfName + "，对方怀疑其能力是否胜任工作";
+            content = content = "在" + PlaceName + "见到挚友" + SelfName + "，对方怀疑其能力是否胜任工作";
         else
-            content = content = "在" + placeName + "见到挚友" + SelfName + "，对方看起来缺少方向";
+            content = content = "在" + PlaceName + "见到挚友" + SelfName + "，对方看起来缺少方向";
         return content;
     }
 }
@@ -6080,7 +6088,7 @@ public class Event84 : Event
         if (success == true)
         {
             if (index == 1)
-                content = "在" + placeName + "见到挚友" + TargetName + "，对方主动询问我最近有什么收获";
+                content = "在" + PlaceName + "见到挚友" + TargetName + "，对方主动询问我最近有什么收获";
             else if (index == 2)
             {
 
@@ -6089,7 +6097,7 @@ public class Event84 : Event
         else
         {
             if (index == 1)
-                content = "在" + placeName + "见到挚友" + TargetName + "，对方主动询问我最近有什么收获";
+                content = "在" + PlaceName + "见到挚友" + TargetName + "，对方主动询问我最近有什么收获";
         }
         return content;
     }
@@ -6099,9 +6107,9 @@ public class Event84 : Event
         string content = "";
         SetNames(Emp, targetEmp);
         if (success == true)
-            content = content = "在" + placeName + "见到挚友" + SelfName + "，对方看起来很有干劲";
+            content = content = "在" + PlaceName + "见到挚友" + SelfName + "，对方看起来很有干劲";
         else
-            content = content = "在" + placeName + "见到挚友" + SelfName + "，对方看起来十分得意";
+            content = content = "在" + PlaceName + "见到挚友" + SelfName + "，对方看起来十分得意";
         return content;
     }
 }
@@ -6405,7 +6413,7 @@ public class Event89 : Event
         if (success == true)
         {
             if (index == 1)
-                content = "在" + placeName + "见到挚友" + TargetName + "，对方主动问我最近有什么开心事";
+                content = "在" + PlaceName + "见到挚友" + TargetName + "，对方主动问我最近有什么开心事";
             else if (index == 2)
             {
 
@@ -6414,7 +6422,7 @@ public class Event89 : Event
         else
         {
             if (index == 1)
-                content = "在" + placeName + "见到挚友" + TargetName + "，对方主动问我最近有什么开心事";
+                content = "在" + PlaceName + "见到挚友" + TargetName + "，对方主动问我最近有什么开心事";
         }
         return content;
     }
@@ -6424,9 +6432,9 @@ public class Event89 : Event
         string content = "";
         SetNames(Emp, targetEmp);
         if (success == true)
-            content = content = "在" + placeName + "见到挚友" + SelfName + "，主动问对方有什么开心事";
+            content = content = "在" + PlaceName + "见到挚友" + SelfName + "，主动问对方有什么开心事";
         else
-            content = content = "在" + placeName + "见到挚友" + SelfName + "，对方很开心，我于是问问原因";
+            content = content = "在" + PlaceName + "见到挚友" + SelfName + "，对方很开心，我于是问问原因";
         return content;
     }
 }
@@ -6731,7 +6739,7 @@ public class Event94 : Event
         if (success == true)
         {
             if (index == 1)
-                content = "在" + placeName + "见到陌路" + TargetName + "，开了几句对方的玩笑";
+                content = "在" + PlaceName + "见到陌路" + TargetName + "，开了几句对方的玩笑";
             else if (index == 2)
             {
 
@@ -6740,7 +6748,7 @@ public class Event94 : Event
         else
         {
             if (index == 1)
-                content = "在" + placeName + "见到陌路" + TargetName + "，开了几句对方的玩笑";
+                content = "在" + PlaceName + "见到陌路" + TargetName + "，开了几句对方的玩笑";
         }
         return content;
     }
@@ -6750,9 +6758,9 @@ public class Event94 : Event
         string content = "";
         SetNames(Emp, targetEmp);
         if (success == true)
-            content = content = "在" + placeName + "见到陌路" + SelfName + "，对方开了个玩笑，竟意外幽默";
+            content = content = "在" + PlaceName + "见到陌路" + SelfName + "，对方开了个玩笑，竟意外幽默";
         else
-            content = content = "在" + placeName + "见到陌路" + SelfName + "，对方在嘲笑我";
+            content = content = "在" + PlaceName + "见到陌路" + SelfName + "，对方在嘲笑我";
         return content;
     }
 }
@@ -7061,7 +7069,7 @@ public class Event99 : Event
         if (success == true)
         {
             if (index == 1)
-                content = "在" + placeName + "见到陌路" + TargetName + "，对方说我看起来很倒霉";
+                content = "在" + PlaceName + "见到陌路" + TargetName + "，对方说我看起来很倒霉";
             else if (index == 2)
             {
 
@@ -7070,7 +7078,7 @@ public class Event99 : Event
         else
         {
             if (index == 1)
-                content = "在" + placeName + "见到陌路" + TargetName + "，对方询问我又犯错了吗？";
+                content = "在" + PlaceName + "见到陌路" + TargetName + "，对方询问我又犯错了吗？";
         }
         return content;
     }
@@ -7080,9 +7088,9 @@ public class Event99 : Event
         string content = "";
         SetNames(Emp, targetEmp);
         if (success == true)
-            content = content = "在" + placeName + "见到陌路" + SelfName + "，对方看起来很倒霉";
+            content = content = "在" + PlaceName + "见到陌路" + SelfName + "，对方看起来很倒霉";
         else
-            content = content = "在" + placeName + "见到陌路" + SelfName + "，很高兴对方似乎又犯错了";
+            content = content = "在" + PlaceName + "见到陌路" + SelfName + "，很高兴对方似乎又犯错了";
         return content;
     }
 }
@@ -7391,7 +7399,7 @@ public class Event104 : Event
         if (success == true)
         {
             if (index == 1)
-                content = "在" + placeName + "见到陌路" + TargetName + "，对方表示我的工作能力太差了";
+                content = "在" + PlaceName + "见到陌路" + TargetName + "，对方表示我的工作能力太差了";
             else if (index == 2)
             {
 
@@ -7400,7 +7408,7 @@ public class Event104 : Event
         else
         {
             if (index == 1)
-                content = "在" + placeName + "见到陌路" + TargetName + "，对方表示老板雇我是在浪费时间";
+                content = "在" + PlaceName + "见到陌路" + TargetName + "，对方表示老板雇我是在浪费时间";
         }
         return content;
     }
@@ -7410,9 +7418,9 @@ public class Event104 : Event
         string content = "";
         SetNames(Emp, targetEmp);
         if (success == true)
-            content = content = "在" + placeName + "见到陌路" + SelfName + "，对方的工作效率太低了";
+            content = content = "在" + PlaceName + "见到陌路" + SelfName + "，对方的工作效率太低了";
         else
-            content = content = "在" + placeName + "见到陌路" + SelfName + "，对方的工作效率太低了";
+            content = content = "在" + PlaceName + "见到陌路" + SelfName + "，对方的工作效率太低了";
         return content;
     }
 }
@@ -7720,7 +7728,7 @@ public class Event109 : Event
         if (success == true)
         {
             if (index == 1)
-                content = "在" + placeName + "见到陌路" + TargetName + "，遭到对方嘲讽我近来取得的成果";
+                content = "在" + PlaceName + "见到陌路" + TargetName + "，遭到对方嘲讽我近来取得的成果";
             else if (index == 2)
             {
 
@@ -7729,7 +7737,7 @@ public class Event109 : Event
         else
         {
             if (index == 1)
-                content = "在" + placeName + "见到陌路" + TargetName + "，对方嘲讽我的做事方法本质上是谬误";
+                content = "在" + PlaceName + "见到陌路" + TargetName + "，对方嘲讽我的做事方法本质上是谬误";
         }
         return content;
     }
@@ -7739,9 +7747,9 @@ public class Event109 : Event
         string content = "";
         SetNames(Emp, targetEmp);
         if (success == true)
-            content = content = "在" + placeName + "见到陌路" + SelfName + "，对方貌似颇为得意";
+            content = content = "在" + PlaceName + "见到陌路" + SelfName + "，对方貌似颇为得意";
         else
-            content = content = "在" + placeName + "见到陌路" + SelfName + "，对方十分张狂，于是我出言相讥";
+            content = content = "在" + PlaceName + "见到陌路" + SelfName + "，对方十分张狂，于是我出言相讥";
         return content;
     }
 }
@@ -8051,7 +8059,7 @@ public class Event114 : Event
         if (success == true)
         {
             if (index == 1)
-                content = "在" + placeName + "见到陌路" + TargetName + "，对方问我在傻乐什么";
+                content = "在" + PlaceName + "见到陌路" + TargetName + "，对方问我在傻乐什么";
             else if (index == 2)
             {
 
@@ -8060,7 +8068,7 @@ public class Event114 : Event
         else
         {
             if (index == 1)
-                content = "在" + placeName + "见到陌路" + TargetName + "，对方说我笑的脸抽筋了";
+                content = "在" + PlaceName + "见到陌路" + TargetName + "，对方说我笑的脸抽筋了";
         }
         return content;
     }
@@ -8070,9 +8078,9 @@ public class Event114 : Event
         string content = "";
         SetNames(Emp, targetEmp);
         if (success == true)
-            content = content = "在" + placeName + "见到陌路" + SelfName + "，对方的笑声很刺耳";
+            content = content = "在" + PlaceName + "见到陌路" + SelfName + "，对方的笑声很刺耳";
         else
-            content = content = "在" + placeName + "见到陌路" + SelfName + "，我看到对方开心就很不开心";
+            content = content = "在" + PlaceName + "见到陌路" + SelfName + "，我看到对方开心就很不开心";
         return content;
     }
 }
@@ -8382,7 +8390,7 @@ public class Event119 : Event
         if (success == true)
         {
             if (index == 1)
-                content = "在" + placeName + "见到仇人" + TargetName + "，感觉对方打扰了自己的兴致";
+                content = "在" + PlaceName + "见到仇人" + TargetName + "，感觉对方打扰了自己的兴致";
             else if (index == 2)
             {
 
@@ -8391,7 +8399,7 @@ public class Event119 : Event
         else
         {
             if (index == 1)
-                content = "在" + placeName + "见到仇人" + TargetName + "，察觉对方正在打量自己";
+                content = "在" + PlaceName + "见到仇人" + TargetName + "，察觉对方正在打量自己";
         }
         return content;
     }
@@ -8401,9 +8409,9 @@ public class Event119 : Event
         string content = "";
         SetNames(Emp, targetEmp);
         if (success == true)
-            content = content = "在" + placeName + "见到仇人" + TargetName + "，感到遇见对方真是倒霉";
+            content = content = "在" + PlaceName + "见到仇人" + TargetName + "，感到遇见对方真是倒霉";
         else
-            content = content = "在" + placeName + "见到仇人" + SelfName + "，察觉对方正在打量自己";
+            content = content = "在" + PlaceName + "见到仇人" + SelfName + "，察觉对方正在打量自己";
         return content;
     }
 }
@@ -8706,7 +8714,7 @@ public class Event124 : Event
         if (success == true)
         {
             if (index == 1)
-                content = "在" + placeName + "见到仇人" + TargetName + "，不小心被对方看到状态不好的时候";
+                content = "在" + PlaceName + "见到仇人" + TargetName + "，不小心被对方看到状态不好的时候";
             else if (index == 2)
             {
 
@@ -8715,7 +8723,7 @@ public class Event124 : Event
         else
         {
             if (index == 1)
-                content = "在" + placeName + "见到仇人" + TargetName + "，不小心被对方看到状态不好的时候";
+                content = "在" + PlaceName + "见到仇人" + TargetName + "，不小心被对方看到状态不好的时候";
         }
         return content;
     }
@@ -8725,9 +8733,9 @@ public class Event124 : Event
         string content = "";
         SetNames(Emp, targetEmp);
         if (success == true)
-            content = content = "在" + placeName + "见到仇人" + SelfName + "，对方看起来失魂落魄";
+            content = content = "在" + PlaceName + "见到仇人" + SelfName + "，对方看起来失魂落魄";
         else
-            content = content = "在" + placeName + "见到仇人" + SelfName + "，对方看起来刚经历惨败";
+            content = content = "在" + PlaceName + "见到仇人" + SelfName + "，对方看起来刚经历惨败";
         return content;
     }
 }
@@ -9033,7 +9041,7 @@ public class Event129 : Event
         if (success == true)
         {
             if (index == 1)
-                content = "在" + placeName + "见到仇人" + TargetName + "，对方正在一脸戏谑地看着我";
+                content = "在" + PlaceName + "见到仇人" + TargetName + "，对方正在一脸戏谑地看着我";
             else if (index == 2)
             {
 
@@ -9042,7 +9050,7 @@ public class Event129 : Event
         else
         {
             if (index == 1)
-                content = "在" + placeName + "见到仇人" + TargetName + "，对方正在一脸戏谑地看着我";
+                content = "在" + PlaceName + "见到仇人" + TargetName + "，对方正在一脸戏谑地看着我";
         }
         return content;
     }
@@ -9052,9 +9060,9 @@ public class Event129 : Event
         string content = "";
         SetNames(Emp, targetEmp);
         if (success == true)
-            content = content = "在" + placeName + "见到仇人" + SelfName + "，对方看起来异常纠结";
+            content = content = "在" + PlaceName + "见到仇人" + SelfName + "，对方看起来异常纠结";
         else
-            content = content = "在" + placeName + "见到仇人" + SelfName + "，对方迷茫的样子好像第一天上班";
+            content = content = "在" + PlaceName + "见到仇人" + SelfName + "，对方迷茫的样子好像第一天上班";
         return content;
     }
 }
@@ -9358,7 +9366,7 @@ public class Event134 : Event
         if (success == true)
         {
             if (index == 1)
-                content = "在" + placeName + "见到仇人" + TargetName + "，正好当时我在和别的同事分享经验";
+                content = "在" + PlaceName + "见到仇人" + TargetName + "，正好当时我在和别的同事分享经验";
             else if (index == 2)
             {
 
@@ -9367,7 +9375,7 @@ public class Event134 : Event
         else
         {
             if (index == 1)
-                content = "在" + placeName + "见到仇人" + TargetName + "，正好当时我在和别的同事分享经验";
+                content = "在" + PlaceName + "见到仇人" + TargetName + "，正好当时我在和别的同事分享经验";
         }
         return content;
     }
@@ -9377,9 +9385,9 @@ public class Event134 : Event
         string content = "";
         SetNames(Emp, targetEmp);
         if (success == true)
-            content = content = "在" + placeName + "见到仇人" + SelfName + "，对方正跟别人介绍“成功经验”";
+            content = content = "在" + PlaceName + "见到仇人" + SelfName + "，对方正跟别人介绍“成功经验”";
         else
-            content = content = "在" + placeName + "见到仇人" + SelfName + "，对方正唾沫横飞地跟别人吹牛";
+            content = content = "在" + PlaceName + "见到仇人" + SelfName + "，对方正唾沫横飞地跟别人吹牛";
         return content;
     }
 }
@@ -9681,7 +9689,7 @@ public class Event139 : Event
         if (success == true)
         {
             if (index == 1)
-                content = "在" + placeName + "见到仇人" + TargetName + "，我故意提高笑声让对方听见";
+                content = "在" + PlaceName + "见到仇人" + TargetName + "，我故意提高笑声让对方听见";
             else if (index == 2)
             {
 
@@ -9690,7 +9698,7 @@ public class Event139 : Event
         else
         {
             if (index == 1)
-                content = "在" + placeName + "见到仇人" + TargetName + "，我故意提高笑声让对方听见";
+                content = "在" + PlaceName + "见到仇人" + TargetName + "，我故意提高笑声让对方听见";
         }
         return content;
     }
@@ -9700,9 +9708,9 @@ public class Event139 : Event
         string content = "";
         SetNames(Emp, targetEmp);
         if (success == true)
-            content = content = "在" + placeName + "见到仇人" + SelfName + "，对方高兴的样子很蠢";
+            content = content = "在" + PlaceName + "见到仇人" + SelfName + "，对方高兴的样子很蠢";
         else
-            content = content = "在" + placeName + "见到仇人" + SelfName + "，对方高兴的样子很讨厌";
+            content = content = "在" + PlaceName + "见到仇人" + SelfName + "，对方高兴的样子很讨厌";
         return content;
     }
 }
@@ -9965,4 +9973,55 @@ public class Event143 : Event
             content = content = "我抬手准备教训" + SelfName + "这个混蛋，却被同事们拉开了";
         return content;
     }
+}
+
+
+#endregion
+
+public static class EventData
+{
+    //公司日常事件序列(无状态条件事件)
+    public static List<Event> CompanyRoutineEventA = new List<Event>()
+    {
+        new Event1(), new Event2(), new Event3(), new Event4(),new Event5()
+    };
+
+    //公司日常事件序列(状态条件事件)
+    public static List<Event> CompanyRoutineEventB = new List<Event>()
+    {
+        new Event6(), new Event7(), new Event8()
+    };
+
+    //公司一般事件序列
+    public static List<Event> CompanyNormalEvent = new List<Event>()
+    {
+        new EventC1(),new EventC2(),new EventC3(),new EventC4(),new EventC5(),
+    };
+
+    //个人港口事件序列
+    public static List<Event> EmpPortEvent = new List<Event>()
+    {
+        new Event9(), new Event10(), new Event11(), new Event12(), new Event13()
+    };
+
+    //个人事件序列(只记第一个事件)，且Event14比较特殊故不计入
+    public static List<Event> EmpPersonalEvent = new List<Event>()
+    {
+        new Event19(), new Event24(), new Event29(), new Event34(), new Event39(), new Event44(), new Event49(),
+        new Event54(), new Event59(), new Event64(), new Event69(), new Event74(), new Event79(), new Event84(),
+        new Event89(), new Event94(), new Event99(), new Event104(), new Event109(), new Event114(), new Event119(),
+        new Event124(), new Event129(), new Event134(), new Event139()
+    };
+
+    //特殊事件组(正面)
+    public static List<EventGroup> SpecialEventGroups = new List<EventGroup>()
+    {
+        
+    };
+
+    //特殊事件组(负面)
+    public static List<EventGroup> SpecialEventGroups2 = new List<EventGroup>()
+    {
+        new EventGroup1()
+    };
 }

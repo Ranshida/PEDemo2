@@ -18,6 +18,7 @@ public class DepControl : MonoBehaviour
     //BuildingMode用于区分建筑模式  ActiveMode用于区分激活方式 0无法激活 1直接激活 2选择员工 3选择部门 4选择区域 5卡牌生产
     [HideInInspector] public int ProducePointLimit = 20, ActiveMode = 1, Mode2EffectValue = -2;
     [HideInInspector] public bool SurveyStart = false;
+    public int DepLevel = 0;//部门等级,用于计算效果
     public int DepFaith = 50;
     public int StaminaExtra = 0;//特质导致的每周体力buff
     public int ManageValue;//管理值
@@ -25,6 +26,8 @@ public class DepControl : MonoBehaviour
     public int EmpLimit;
     public int BaseWorkStatus;//基本工作状态
     public int ExtraEfficiency = 0;//提供给事业部的额外效率加成
+    public int ExtraFaith = 0;//提供给事业部的额外信念加成
+    public int ExtraWorkStatus = 0;//提供给事业部的额外工作状态加成
     public int ExtraProduceLimit = 0;//额外生产/充能周期
     public float Efficiency = 0, SalaryMultiply = 1.0f, BuildingPayMultiply = 1.0f, SpProgress = 0;
     public float StaminaCostRate = 1.0f;//体力消耗率（默认100%）
@@ -34,8 +37,7 @@ public class DepControl : MonoBehaviour
     private bool NoEmp;
     private bool CheatMode = false, TipShowed = false, isWeakend = false;
 
-    Action WeakAction;
-    Action UnWeakAction;
+    Action WeakAction, UnWeakAction, AddLevelEffect = () => { }, RemoveLevelEffect = () => { }, DepEffect = () => { };//弱化效果，弱化清除效果，等级增加效果，等级减少效果，部门激活效果
     public Area TargetArea;
     public Employee Manager;
     public Transform EmpContent, PerkContent, EmpPanel, DivPanel, EmpMarkerContent, EmpEffectContent;
@@ -48,9 +50,9 @@ public class DepControl : MonoBehaviour
     public DivisionControl CurrentDivision;
     public Text Text_DepName, Text_DepName2, Text_DepName3, Text_WeakEffect, Text_InfoProgress, Text_DivProgress, Text_DepFunction;
 
+
     public List<Employee> CurrentEmps = new List<Employee>();
-    public List<DepControl> InRangeOffices = new List<DepControl>();
-    public List<DepControl> ControledDeps = new List<DepControl>();
+    public List<Building> SubBuildings = new List<Building>();//保存的所有附加建筑
     public List<PerkInfo> CurrentPerks = new List<PerkInfo>();
     public List<Image> EmpMarkers = new List<Image>();
     public List<Image> EmpEffectMarkers = new List<Image>();
@@ -332,10 +334,7 @@ public class DepControl : MonoBehaviour
         SpProgress = 0;
         ActiveButton.interactable = false;
 
-        if (building.Type == BuildingType.心理咨询室)
-            GC.CurrentEmpInfo.emp.Mentality += 20;
-        else if (building.Type == BuildingType.智库小组)
-            GC.CreateItem(3);
+        DepEffect();
 
         GC.UpdateResourceInfo();
         GC.SelectedDep = null;
@@ -562,6 +561,21 @@ public class DepControl : MonoBehaviour
 
         EmpEffectCheck();
     }
+    //部门等级变化
+    private void SetDepLevel(int level)
+    {
+        //变换前等级比现在高时清空高级效果,低的时候添加额外效果
+        if (DepLevel > level)
+        {
+            RemoveLevelEffect();
+            DepLevel = level;
+        }
+        else if (DepLevel < level)
+        {
+            DepLevel = level;
+            AddLevelEffect();
+        }
+    }
 
     //检测员工技能和数量效果
     public void EmpEffectCheck()
@@ -610,49 +624,14 @@ public class DepControl : MonoBehaviour
                 Text_WeakEffect.gameObject.SetActive(false);
             }
         }
-        #region 具体建筑效果
-        int num = CurrentEmps.Count;
-        //没人的时候都没法工作
-        if (num == 0)
-        {
-            canWork = false;
-            ProducePointLimit = 0;
-            UpdateUI();
-            return;
-        }
+        if (building.EmpCount[2] != 0 && CurrentEmps.Count >= (building.EmpCount[0] + building.EmpCount[1] + building.EmpCount[2]))
+            SetDepLevel(3);
+        else if (building.EmpCount[1] != 0 && CurrentEmps.Count >= (building.EmpCount[0] + building.EmpCount[1]))
+            SetDepLevel(2);
+        else if (building.EmpCount[0] != 0 && CurrentEmps.Count >= building.EmpCount[0])
+            SetDepLevel(1);
         else
-            canWork = true;
-        if (building.Type == BuildingType.自动化研究中心)//临时
-        {
-            if (num == 1)
-                ExtraEfficiency = 1;
-            else if (num == 2)
-                ExtraEfficiency = 2;
-            else if (num == 4)
-                ExtraEfficiency = 4;
-        }
-        else if (building.Type == BuildingType.心理咨询室)
-        {
-            if (num == 1)
-                ProducePointLimit = 4;
-            else if (num == 2)
-                ProducePointLimit = 2;
-        }
-        else if (building.Type == BuildingType.智库小组)
-        {
-            if (num == 1)
-                ProducePointLimit = 6;
-            else if (num == 2)
-                ProducePointLimit = 3;
-        }
-        else if (building.Type == BuildingType.原型图画室)//临时
-        {
-            if (num >= 2)
-                canWork = true;
-            else
-                canWork = false;
-        }
-        #endregion
+            SetDepLevel(0);
 
         CurrentDivision.DepExtraCheck();
         UpdateUI();
@@ -689,28 +668,360 @@ public class DepControl : MonoBehaviour
         {
             WeakAction = () => { ExtraEfficiency -= 1; };
             UnWeakAction = () => { ExtraEfficiency += 1; };
+            AddLevelEffect = () =>
+            {
+                if (DepLevel == 1)
+                    ExtraEfficiency += 1;
+                else if (DepLevel == 2)
+                {
+                    ExtraEfficiency += 1;
+                    AddSubBulding();
+                }
+                else if (DepLevel == 3)
+                {
+                    ExtraEfficiency += 2;
+                    AddSubBulding();
+                }
+            };
+            RemoveLevelEffect = () =>
+            {
+                if (DepLevel == 1)
+                    ExtraEfficiency -= 1;
+                else if (DepLevel == 2)
+                {
+                    ExtraEfficiency -= 1;
+                    RemoveSubBuilding();
+                }
+                else if (DepLevel == 3)
+                {
+                    ExtraEfficiency -= 2;
+                    RemoveSubBuilding();
+                }
+            };
             ActiveMode = 0;
         }
+        else if (building.Type == BuildingType.企业历史展览)
+        {
+            WeakAction = () => { ExtraFaith -= 10; };
+            UnWeakAction = () => { ExtraFaith += 10; };
+            AddLevelEffect = () =>
+            {
+                if (DepLevel == 1)
+                    ExtraFaith += 10;
+                else if (DepLevel == 2)
+                {
+                    ExtraFaith += 5;
+                    CurrentDivision.AddPerk(new Perk107());
+                }
+                else if (DepLevel == 3)
+                {
+                    ExtraFaith += 10;
+                    CurrentDivision.AddPerk(new Perk107());
+                }
+            };
+            RemoveLevelEffect = () =>
+            {
+                if (DepLevel == 1)
+                    ExtraFaith -= 10;
+                else if (DepLevel == 2)
+                {
+                    ExtraFaith -= 5;
+                    CurrentDivision.RemovePerk(107);
+                }
+                else if (DepLevel == 3)
+                {
+                    ExtraFaith -= 10;
+                    CurrentDivision.RemovePerk(107);
+                }
+            };
+            ActiveMode = 0;
+        }
+        else if (building.Type == BuildingType.福报宣传中心)
+        {
+            WeakAction = () => { ExtraProduceLimit += 2; };
+            UnWeakAction = () => { ExtraProduceLimit -= 2; };
+            DepEffect = () => { GC.CreateItem(1); };
+            AddLevelEffect = () =>
+            {
+                if (DepLevel == 1)
+                {
+                    canWork = true;
+                    ProducePointLimit = 6;
+                }
+                else if (DepLevel == 2)
+                {
+                    ProducePointLimit = 3;
+                    CurrentDivision.AddPerk(new Perk90());
+                }
+                else if (DepLevel == 3)
+                {
+                    ProducePointLimit = 1;
+                    CurrentDivision.AddPerk(new Perk90());
+                }
+            };
+            RemoveLevelEffect = () =>
+            {
+                if (DepLevel == 1)
+                {
+                    canWork = false;
+                    ProducePointLimit = 0;
+                }
+                else if (DepLevel == 2)
+                {
+                    ProducePointLimit = 6;
+                    CurrentDivision.RemovePerk(90);
+                }
+                else if (DepLevel == 3)
+                {
+                    ProducePointLimit = 3;
+                    CurrentDivision.RemovePerk(90);
+                }
+            };
+            ActiveMode = 1;
+        }
+        else if (building.Type == BuildingType.混沌创意营)
+        {
+            WeakAction = () => { ExtraWorkStatus += 2; };
+            UnWeakAction = () => { ExtraWorkStatus -= 2; };
+            AddLevelEffect = () =>
+            {
+                if (DepLevel == 1)
+                    ExtraWorkStatus += 2;
+                else if (DepLevel == 2)
+                {
+                    ExtraWorkStatus += 1;
+                    CurrentDivision.AddPerk(new Perk91());
+                }
+                else if (DepLevel == 3)
+                {
+                    ExtraWorkStatus += 2;
+                    CurrentDivision.AddPerk(new Perk91());
+                }
+            };
+            RemoveLevelEffect = () =>
+            {
+                if (DepLevel == 1)
+                    ExtraWorkStatus -= 2;
+                else if (DepLevel == 2)
+                {
+                    ExtraWorkStatus -= 1;
+                    CurrentDivision.RemovePerk(91);
+                }
+                else if (DepLevel == 3)
+                {
+                    ExtraWorkStatus -= 2;
+                    CurrentDivision.RemovePerk(91);
+                }
+            };
+            ActiveMode = 0;
+        }
+        else if (building.Type == BuildingType.会计办公室)
+        {
+            WeakAction = () => { };
+            UnWeakAction = () => { };
+            AddLevelEffect = () =>
+            {
+                if (DepLevel == 1)
+                    GC.ExtraExpense -= 20;
+                else if (DepLevel == 2)
+                {
+                    GC.ExtraExpense -= 15;
+                    GC.AddPerk(new Perk92());
+                }
+                else if (DepLevel == 3)
+                {
+                    GC.ExtraExpense -= 25;
+                    GC.AddPerk(new Perk92());
+                    GC.AddPerk(new Perk92());
+                }
+            };
+            RemoveLevelEffect = () =>
+            {
+                if (DepLevel == 1)
+                    GC.ExtraExpense += 20;
+                else if (DepLevel == 2)
+                {
+                    GC.ExtraExpense += 15;
+                    GC.RemovePerk(92);
+                }
+                else if (DepLevel == 3)
+                {
+                    GC.ExtraExpense += 25;
+                    GC.RemovePerk(92);
+                    GC.RemovePerk(92);
+                }
+            };
+            ActiveMode = 0;
+        }//没弄完
         else if (building.Type == BuildingType.心理咨询室)
         {
             WeakAction = () => { ExtraProduceLimit += 1; };
             UnWeakAction = () => { ExtraProduceLimit -= 1; };
+            AddLevelEffect = () =>
+            {
+                if (DepLevel == 1)
+                {
+                    ProducePointLimit  = 3;
+                    canWork = true;
+                }
+                else if (DepLevel == 2)
+                {
+                    ProducePointLimit = 1;
+                    GC.AddPerk(new Perk97());
+                }
+            };
+            RemoveLevelEffect = () =>
+            {
+                if (DepLevel == 1)
+                {
+                    ProducePointLimit = 0;
+                    canWork = false;
+                }
+                else if (DepLevel == 2)
+                {
+                    ProducePointLimit = 3;
+                    GC.RemovePerk(97);
+                }
+            };
+            DepEffect = () =>
+            {
+                GC.CurrentEmpInfo.emp.Mentality += 15;
+            };
             ActiveMode = 2;
         }
         else if (building.Type == BuildingType.智库小组)
         {
             WeakAction = () => { ExtraProduceLimit += 1; };
             UnWeakAction = () => { ExtraProduceLimit -= 1; };
-            ActiveMode = 1;
-        }
+            AddLevelEffect = () =>
+            {
+                if (DepLevel == 1)
+                {
+                    ProducePointLimit = 3;
+                    canWork = true;
+                }
+                else if (DepLevel == 2)
+                {
+                    ProducePointLimit = 1;
+                    GC.AddPerk(new Perk98());
+                    GC.AddPerk(new Perk98());
+                }
+            };
+            RemoveLevelEffect = () =>
+            {
+                if (DepLevel == 1)
+                {
+                    ProducePointLimit = 0;
+                    canWork = false;
+                }
+                else if (DepLevel == 2)
+                {
+                    ProducePointLimit = 3;
+                    CurrentDivision.RemovePerk(98);
+                    CurrentDivision.RemovePerk(98);
+                }
+            };
+            DepEffect = () =>
+            {
+                GC.CreateItem(2);
+            };
+            ActiveMode = 2;
+        }//状态没弄完
+        else if (building.Type == BuildingType.仓库)
+        {
+            WeakAction = () => 
+            {
+                if (DepLevel > 0)
+                    GC.RemovePerk(106);
+            };
+            UnWeakAction = () => 
+            {
+                if (DepLevel > 0)
+                    GC.AddPerk(new Perk106());
+            };
+            AddLevelEffect = () =>
+            {
+                if (DepLevel == 1)
+                {
+                    if (isWeakend == false)
+                        GC.AddPerk(new Perk106());
+                }
+                else if (DepLevel == 2)
+                {
+                    CurrentDivision.AddPerk(new Perk105());
+                    GC.AddPerk(new Perk106());
+                    GC.AddPerk(new Perk106());
+                }
+            };
+            RemoveLevelEffect = () =>
+            {
+                if (DepLevel == 1)
+                {
+                    CurrentDivision.RemovePerk(106);
+                }
+                else if (DepLevel == 2)
+                {
+                    GC.RemovePerk(106);
+                    GC.RemovePerk(106);
+                    CurrentDivision.RemovePerk(105);
+                }
+            };
+            ActiveMode = 0;
+        }//状态没弄完
         else if (building.Type == BuildingType.原型图画室)
         {
             ExtraEfficiency = -4;
             WeakAction = () => { ExtraEfficiency -= 2; };
             UnWeakAction = () => { ExtraEfficiency += 2; };
+            AddLevelEffect = () =>
+            {
+                if (DepLevel == 1)
+                {
+                    ExtraEfficiency -= 4;
+                    canWork = true;
+                }
+                else if (DepLevel == 2)
+                    ExtraEfficiency += 1;
+            };
+            RemoveLevelEffect = () =>
+            {
+                if (DepLevel == 1)
+                {
+                    ExtraEfficiency += 4;
+                    canWork = false;
+                }
+                else if (DepLevel == 2)
+                    ExtraEfficiency -= 1;
+            };
             ActiveMode = 5;
         }
-
+        else if (building.Type == BuildingType.算法小组)
+        {
+            ExtraEfficiency = -4;
+            WeakAction = () => { ExtraWorkStatus -= 2; };
+            UnWeakAction = () => { ExtraWorkStatus += 2; };
+            AddLevelEffect = () =>
+            {
+                if (DepLevel == 1)
+                {
+                    ExtraWorkStatus -= 5;
+                    canWork = true;
+                }
+                else if (DepLevel == 2)
+                    ExtraWorkStatus += 1;
+            };
+            RemoveLevelEffect = () =>
+            {
+                if (DepLevel == 1)
+                {
+                    ExtraWorkStatus += 5;
+                    canWork = false;
+                }
+                else if (DepLevel == 2)
+                    ExtraWorkStatus -= 1;
+            };
+            ActiveMode = 5;
+        }
         //需要手动激活的才显示激活按钮
         if (ActiveMode == 2 || ActiveMode == 3 || ActiveMode == 4)
             ActiveButton.gameObject.SetActive(true);
@@ -735,6 +1046,34 @@ public class DepControl : MonoBehaviour
         EmpEffectMarkers.Add(effect.Marker1);
         EmpEffectMarkers.Add(effect.Marker2);
         effect.EmpIndex = index;
+    }
+
+    void AddSubBulding()
+    {
+        GC.BM.EnterBuildMode();
+        CurrentDivision.SetDetailPanel(false);
+        GC.TotalEmpPanel.SetWndState(false);
+        GC.ResetSelectMode();
+        GC.HC.StorePanel.SetWndState(false);
+        Building b = Instantiate(GC.BM.SubDepPrefab);
+        b.CanDismantle = false;
+        SubBuildings.Add(b);
+        b.MasterBuilding = building;
+        GC.BM.StartBuild(b);
+    }
+    void RemoveSubBuilding()
+    {
+        if (SubBuildings.Count == 0)
+            return;
+        int a = SubBuildings.Count - 1;
+        if (SubBuildings[a].WarePanel != null)
+        {
+            GC.BM.BuildingWindow.warePanels.Remove(SubBuildings[a].WarePanel);
+            Destroy(SubBuildings[a].WarePanel.gameObject);
+        }
+        SubBuildings[a].CanDismantle = true;
+        GC.BM.DismantleBuilding(SubBuildings[a]);
+        SubBuildings.RemoveAt(a);
     }
 
     //作弊模式

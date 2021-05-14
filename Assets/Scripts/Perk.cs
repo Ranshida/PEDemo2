@@ -1547,42 +1547,75 @@ public class Perk89 : Perk
     }
 }
 
-//思想家
+//打吊瓶加班
 public class Perk90 : Perk
 {
     public Perk90() : base()
     {
-        Name = "思想家";
-        Description = "提高深刻交谈事件组发生权重1";
-        TimeLeft = -1;//特质
+        Name = "打吊瓶加班";
+        Description = "事业部中每名员工每回合心力下降10点";
+        TimeLeft = -1;
         Num = 90;
-        canStack = false;
+        canStack = true;
+    }
+
+    public override void ImmEffect()
+    {
+        TargetDiv.MentalityBonus -= 10;
+    }
+
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDiv.MentalityBonus += 10;
     }
 }
 
-//谦逊
+//混沌
 public class Perk91 : Perk
 {
     public Perk91() : base()
     {
-        Name = "谦逊";
-        Description = "不会出现骄傲事件组";
+        Name = "混沌";
+        Description = "事业部信念-20";
         TimeLeft = -1;//特质
         Num = 91;
-        canStack = false;
+        canStack = true;
+        perkColor = PerkColor.Orange;
+    }
+
+    public override void ImmEffect()
+    {
+        TargetDiv.Faith -= 20;
+    }
+
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDiv.Faith += 20;
     }
 }
 
-//冷静
+//经费不足
 public class Perk92 : Perk
 {
     public Perk92() : base()
     {
-        Name = "冷静";
-        Description = "不会出现狂想事件组";
+        Name = "经费不足";
+        Description = "领导力水晶的决策成功率-10%";
         TimeLeft = -1;//特质
         Num = 92;
-        canStack = false;
+        canStack = true;
+    }
+    public override void ImmEffect()
+    {
+        MonthMeeting.Instance.CrystalExtraSuccessRate -= 0.1f;
+    }
+
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        MonthMeeting.Instance.CrystalExtraSuccessRate += 0.1f;
     }
 }
 #endregion
@@ -2092,49 +2125,49 @@ public class Perk96 : Perk
     }
 }
 
-//转岗无望
+//拒绝洗脑
 public class Perk97 : Perk
 {
     public Perk97() : base()
     {
-        Name = "转岗无望";
-        Description = "部门信念-15";
-        TimeLeft = 96;
+        Name = "拒绝洗脑";
+        Description = "不满栏位上限-1，认同栏位上限+1";
+        TimeLeft = -1;
         Num = 97;
         canStack = true;
-        perkColor = PerkColor.Orange;
     }
     public override void ImmEffect()
     {
-        TargetDep.DepFaith -= 15;
+        GameControl.Instance.ApproveLimit += 1;
+        GameControl.Instance.DissatisfiedLimit -= 1;
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDep.DepFaith += 15;
+        GameControl.Instance.ApproveLimit -= 1;
+        GameControl.Instance.DissatisfiedLimit += 1;
     }
 }
 
-//升职无望
+//组织调整
 public class Perk98 : Perk
 {
     public Perk98() : base()
     {
-        Name = "升职无望";
-        Description = "部门信念-15";
-        TimeLeft = 96;
+        Name = "组织调整";
+        Description = "";
+        TimeLeft = -1;
         Num = 98;
         canStack = true;
-        perkColor = PerkColor.Orange;
     }
     public override void ImmEffect()
     {
-        TargetDep.DepFaith -= 15;
+        
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDep.DepFaith += 15;
+        
     }
 }
 
@@ -2323,62 +2356,76 @@ public class Perk104 : Perk
     }
 }
 
-//重大失误
+//我放哪儿了？
 public class Perk105 : Perk
 {
     public Perk105() : base()
     {
-        Name = "重大失误";
-        Description = "部门信念-20";
-        TimeLeft = 96;
+        Name = "我放哪儿了？";
+        Description = "事业部中每名员工每回合获取经验减少3点";
+        TimeLeft = -1;
         Num = 105;
         canStack = true;
         perkColor = PerkColor.Orange;
     }
     public override void ImmEffect()
     {
-        TargetDep.DepFaith -= 20;
+        
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDep.DepFaith += 20;
+        
     }
 }
 
-//心理咨询
+//仓鼠之家
 public class Perk106 : Perk
 {
     public Perk106() : base()
     {
-        Name = "心理咨询";
-        Description = "部门信念+25";
-        TimeLeft = 64;
+        Name = "仓鼠之家";
+        Description = "公司物品栏+1";
+        TimeLeft = -1;
         Num = 106;
         canStack = true;
-        perkColor = PerkColor.Orange;
     }
     public override void ImmEffect()
     {
-        TargetDep.DepFaith += 25;
+        GameControl.Instance.ItemLimit += 1;
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDep.DepFaith -= 25;
+        GameControl.Instance.ItemLimit -= 1;
     }
 }
 
-//遗憾
+//看展览
 public class Perk107 : Perk
 {
     public Perk107() : base()
     {
-        Name = "遗憾";
-        Description = "愿望没有被满足而产生的遗憾";
+        Name = "看展览";
+        Description = "公司所有部门生产或充能周期+1回合";
         TimeLeft = -1;
         Num = 107;
         canStack = true;
+    }
+    public override void ImmEffect()
+    {
+        foreach(DivisionControl div in GameControl.Instance.CurrentDivisions)
+        {
+            div.ExtraProduceTime += 1;
+        }
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        foreach (DivisionControl div in GameControl.Instance.CurrentDivisions)
+        {
+            div.ExtraProduceTime -= 1;
+        }
     }
 }
 

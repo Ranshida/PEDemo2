@@ -8,6 +8,7 @@ using UnityEngine;
 public class MonthMeeting : MonoBehaviour
 {
     public bool MeetingStart = false;
+    public float CrystalExtraSuccessRate = 0;
 
     public static MonthMeeting Instance;
 
@@ -75,7 +76,7 @@ public class MonthMeeting : MonoBehaviour
             bool success;
             int result = 0;     // 1成功  2大成功  3失败  4大失败
             CrystalType crystal = CrystalType.None;
-            float successPercent = 0.5f;
+            float successPercent = 0.5f + CrystalExtraSuccessRate;
             successPercent += employee.Decision * 0.1f;
             successPercent = Mathf.Clamp(successPercent, 0, 1);
             float rand = Random.Range(0f, 1f);

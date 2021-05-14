@@ -17,7 +17,7 @@ public class BuildingWindow : WindowRoot
     private Button btn_FinishBuild;
 
     //仓库面板
-    private List<Transform> warePanels;     //仓库中存储的待建建筑
+    public List<Transform> warePanels;     //仓库中存储的待建建筑
     private Transform wareBuildingParent;   //仓库面板
 
     InfoPanelTrigger m_PanelTrigger;
@@ -113,6 +113,7 @@ public class BuildingWindow : WindowRoot
     {
         //放到仓库里
         Transform panel = GameObject.Instantiate(wareBuilding, wareBuildingParent).transform;
+        building.WarePanel = panel;
         warePanels.Add(panel);
         panel.name = building.Type.ToString();
         panel.GetComponentInChildren<Text>().text = building.Type.ToString();

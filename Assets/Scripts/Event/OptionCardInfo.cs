@@ -64,6 +64,12 @@ public class OptionCardInfo : MonoBehaviour
         //抉择事件选择面板进行选择
         else if (SelectType == 2)
         {
+            //正面事件组只能用正面卡，负面事件组只能用负面卡
+            if (CurrentEvent.EGI != null && CurrentEvent.EGI.TargetEventGroup.DebuffEvent != OC.DebuffCard)
+            {
+                GameControl.Instance.CreateMessage("抉择卡类型和事件组类型不符");
+                return;
+            }
             if (Selected == true)
             {
                 Selected = false;

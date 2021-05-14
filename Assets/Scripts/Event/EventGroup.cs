@@ -8,6 +8,8 @@ public class EventGroup : Event
     public int StageCount = 6;//事件组总阶段数
     public int BSBossLevel = 2;//头脑风暴boss等级
     public int MoneyRequest = 0;//资源消耗选项-金钱消耗
+    public bool DebuffEvent = true;//是否为负面事件组
+
     public List<int> ItemTypeRequest = new List<int>();//物品类型需求
     public List<int> ItemValueRequest = new List<int>();//物品数量需求
 
@@ -64,12 +66,19 @@ public class EventGroup : Event
         //如果判定成功就不继续
         if (FindResult(emp, ExtraCorrection, target) == 1)
         {
+            egi.StageMarker[egi.Stage - 1].color = Color.green;
+            QuestControl.Instance.Init("判定成功," + ResultDescription(emp, target, egi.Stage));
+            if (DebuffEvent == true)
+                return;
+        }
+        else
+        {
             egi.StageMarker[egi.Stage - 1].color = Color.red;
             QuestControl.Instance.Init("判定失败," + ResultDescription(emp, target, egi.Stage));
-            return;
+            if (DebuffEvent == false)
+                return;
         }
 
-        egi.StageMarker[egi.Stage - 1].color = Color.green;
         if (egi.Stage == 1)
             EffectA(emp, ExtraCorrection, target);
         else if (egi.Stage == 2)
@@ -125,7 +134,7 @@ public class EventGroup1 : EventGroup
         SubEventNames[3] = "要求解释";
         SubEventNames[4] = "仙人掌中毒";
         SubEventNames[5] = "蹭网风波";
-        SingleResult = false;
+        DebuffEvent = false;
 
         ST_BaseRate = 0.3f;//基础成功率
         ST_EmpRate = 0.05f;//每增加一名员工提供的额外成功率
@@ -139,10 +148,39 @@ public class EventGroup1 : EventGroup
         ST_ProfessionType = ProfessionType.工程学;//岗位优势需求类型
 
         MoneyRequest = 50;
+        ItemTypeRequest = new List<int>() { };
+        ItemValueRequest = new List<int>() { };
     }
-    public override string EventDescription(Employee Emp, Employee targetEmp, int index)
+
+    protected override void EffectA(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    {
+
+    }
+    protected override void EffectB(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    {
+
+    }
+    protected override void EffectC(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    {
+
+    }
+    protected override void EffectD(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    {
+
+    }
+    protected override void EffectE(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    {
+
+    }
+    protected override void EffectF(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    {
+
+    }
+
+    public override string EventDescription(Employee Emp, Employee targetEmp, int index, EventGroupInfo egi = null)
     {
         string content = "";
+        SetNames(Emp, targetEmp, egi);
         if (Emp != null)
             SelfName = Emp.Name;
         if (targetEmp != null)
@@ -164,9 +202,10 @@ public class EventGroup1 : EventGroup
         return content;
     }
 
-    public override string ResultDescription(Employee Emp, Employee targetEmp, int index)
+    public override string ResultDescription(Employee Emp, Employee targetEmp, int index, EventGroupInfo egi = null)
     {
         string content = "";
+        SetNames(Emp, targetEmp, egi);
         if (Emp != null)
             SelfName = Emp.Name;
         if (targetEmp != null)

@@ -9,11 +9,17 @@ public class DivisionControl : MonoBehaviour
     public int Faith = 0;//事业部信念
     public int Efficiency = 0;//事业部效率
     public int ExtraEfficiency = 0;//部门提供的额外效率
+    public int ExtraFaith = 0;//部门提供的额外信仰加成
+    public int ExtraWorkStatus = 0;//部门提供的额外工作状态加成
     public int ExtraManage = 0;//部门提供的额外高管管理能力加成
     public int WorkStatus = 0;//事业部工作状态
     public int ExtraCost = 0;//额外成本加成
     public int ExtraProduceTime = 0;//额外生产周期加成
     public int ExtraExp = 0;//每回合为管理下的部门的员工额外提供的经验值
+
+    //特效相关
+    public int MentalityBonus = 0;//每回合部门内员工心力变化量
+
     public string DivName;
     public bool canWork = true;
     public bool Locked = false;//事业部是否处于未解锁状态
@@ -44,26 +50,30 @@ public class DivisionControl : MonoBehaviour
         else
             Text_DivName.text = DivName;
 
+        int CurrentEfficiency = Efficiency + ExtraEfficiency;
+        int CurrentFaith = Faith + ExtraFaith;
+        int CurrentWorkStatus = WorkStatus + ExtraWorkStatus;
+
         if (DetailPanelShowed == true)
         {
-            Text_Faith.text = "部门信念:" + Faith + "\n\n事件修正:+0";
+            Text_Faith.text = "部门信念:" + CurrentFaith + "\n\n事件修正:+0";
 
-            Text_Efficiency.text = "效率:" + (Efficiency + ExtraEfficiency);
-            if (Efficiency + ExtraEfficiency < 0)
+            Text_Efficiency.text = "效率:" + (CurrentEfficiency);
+            if (CurrentEfficiency < 0)
                 Text_Efficiency.text += "\n\n效率等级:0\n工作停止";
-            else if (Efficiency + ExtraEfficiency < 4)
+            else if (CurrentEfficiency < 4)
                 Text_Efficiency.text += "\n\n效率等级:1\n产率:1";
-            else if (Efficiency + ExtraEfficiency < 9)
+            else if (CurrentEfficiency < 9)
                 Text_Efficiency.text += "\n\n效率等级:2\n产率:2";
             else
                 Text_Efficiency.text += "\n\n效率等级:3\n产率:3";
 
-            Text_WorkStatus.text = "工作状态:" + WorkStatus;
-            if (WorkStatus < 0)
+            Text_WorkStatus.text = "工作状态:" + CurrentWorkStatus;
+            if (CurrentWorkStatus < 0)
                 Text_WorkStatus.text += "\n\n工作等级:0\n工作停止";
-            else if (WorkStatus < 4)
+            else if (CurrentWorkStatus < 4)
                 Text_WorkStatus.text += "\n\n工作等级:1\n";
-            else if (WorkStatus < 9)
+            else if (CurrentWorkStatus < 9)
                 Text_WorkStatus.text += "\n\n工作等级:2\n";
             else
                 Text_WorkStatus.text += "\n\n工作等级:3\n";
@@ -100,19 +110,19 @@ public class DivisionControl : MonoBehaviour
             FillMarkers[0].anchoredPosition = new Vector2(FillMarkers[0].parent.GetComponent<RectTransform>().sizeDelta.x * EfficiencyBarFill.fillAmount, 0);
 
 
-            if (WorkStatus < 0)
+            if (CurrentWorkStatus < 0)
             {
                 WorkStatusBarFill.fillAmount = 0.06f;
                 WorkStatusBarFill.color = new Color(1, 0, 0);
             }
-            else if (WorkStatus < 4)
+            else if (CurrentWorkStatus < 4)
             {
-                WorkStatusBarFill.fillAmount = (float)(WorkStatus) / 10 + 0.1f;
+                WorkStatusBarFill.fillAmount = (float)(CurrentWorkStatus) / 10 + 0.1f;
                 WorkStatusBarFill.color = new Color(1, 1, 1);
             }
-            else if (WorkStatus < 9)
+            else if (CurrentWorkStatus < 9)
             {
-                WorkStatusBarFill.fillAmount = (float)(WorkStatus) / 10 + 0.1f;
+                WorkStatusBarFill.fillAmount = (float)(CurrentWorkStatus) / 10 + 0.1f;
                 WorkStatusBarFill.color = new Color(1, 1, 0);
             }
             else
@@ -123,29 +133,29 @@ public class DivisionControl : MonoBehaviour
             FillMarkers[1].anchoredPosition = new Vector2(FillMarkers[1].parent.GetComponent<RectTransform>().sizeDelta.x * WorkStatusBarFill.fillAmount, 0);
 
 
-            if (Faith <= -90)
+            if (CurrentFaith <= -90)
             {
                 FaithFill.fillAmount = 0.06f;
                 FaithFill.color = new Color(1, 0, 0);
             }
-            else if (Faith <= -30)
+            else if (CurrentFaith <= -30)
             {
-                FaithFill.fillAmount = (float)(100 + Faith) / 200;
+                FaithFill.fillAmount = (float)(100 + CurrentFaith) / 200;
                 FaithFill.color = new Color(1, 0.4f, 0.4f);
             }
-            else if (Faith < 0)
+            else if (CurrentFaith < 0)
             {
-                FaithFill.fillAmount = (float)(100 + Faith) / 200;
+                FaithFill.fillAmount = (float)(100 + CurrentFaith) / 200;
                 FaithFill.color = new Color(1, 0.8f, 0.8f);
             }
-            else if (Faith <= 30)
+            else if (CurrentFaith <= 30)
             {
-                FaithFill.fillAmount = (float)Faith / 200 + 0.5f;
+                FaithFill.fillAmount = (float)CurrentFaith / 200 + 0.5f;
                 FaithFill.color = new Color(0.8f, 1, 0.8f);
             }
-            else if (Faith <= 90)
+            else if (CurrentFaith <= 90)
             {
-                FaithFill.fillAmount = (float)Faith / 200 + 0.5f;
+                FaithFill.fillAmount = (float)CurrentFaith / 200 + 0.5f;
                 FaithFill.color = new Color(0.4f, 1, 0.4f);
             }
             else
@@ -159,38 +169,38 @@ public class DivisionControl : MonoBehaviour
 
         if (StatusShowed == true)
         {
-            if (WorkStatus < 0)
+            if (CurrentWorkStatus < 0)
                 Text_Status.text = "<color=#FF0000>工作状态:等级0 工作停工</color>";
-            else if (WorkStatus < 4)
+            else if (CurrentWorkStatus < 4)
                 Text_Status.text = "<color=#FFFFFF>工作状态:等级1</color>";
-            else if (WorkStatus < 9)
+            else if (CurrentWorkStatus < 9)
                 Text_Status.text = "<color=#FFFF00>工作状态:等级2</color>";
             else
                 Text_Status.text = "<color=#00FF00>工作状态:等级3</color>";
 
-            if (Efficiency + ExtraEfficiency < 0)
+            if (CurrentEfficiency < 0)
                 Text_Status.text += "\n<color=#FF0000>效率:等级0 工作停止</color>";
-            else if (Efficiency + ExtraEfficiency < 4)
+            else if (CurrentEfficiency < 4)
                 Text_Status.text += "\n<color=#FFFFFF>效率:等级1</color>";
-            else if (Efficiency + ExtraEfficiency < 9)
+            else if (CurrentEfficiency < 9)
                 Text_Status.text += "\n<color=#FFFF00>效率:等级2</color>";
             else
                 Text_Status.text += "\n<color=#00FF00>效率:等级3</color>";
 
-            if (Faith <= -90)
-                Text_Status.text += "\n<color=#FF0000>信念:" + Faith + "</color>";
-            else if (Faith <= -30)
-                Text_Status.text += "\n<color=#FF6666>信念:" + Faith + "</color>";
-            else if (Faith < 0)
-                Text_Status.text += "\n<color=#FFCCCC>信念:" + Faith + "</color>";
-            else if (Faith == 0)
-                Text_Status.text += "\n<color=#FFFFFF>信念:" + Faith + "</color>";
-            else if (Faith <= 30)
-                Text_Status.text += "\n<color=#CCFFCC>信念:" + Faith + "</color>";
-            else if (Faith <= 90)
-                Text_Status.text += "\n<color=#66FF66>信念:" + Faith + "</color>";
+            if (CurrentFaith <= -90)
+                Text_Status.text += "\n<color=#FF0000>信念:" + CurrentFaith + "</color>";
+            else if (CurrentFaith <= -30)
+                Text_Status.text += "\n<color=#FF6666>信念:" + CurrentFaith + "</color>";
+            else if (CurrentFaith < 0)
+                Text_Status.text += "\n<color=#FFCCCC>信念:" + CurrentFaith + "</color>";
+            else if (CurrentFaith == 0)
+                Text_Status.text += "\n<color=#FFFFFF>信念:" + CurrentFaith + "</color>";
+            else if (CurrentFaith <= 30)
+                Text_Status.text += "\n<color=#CCFFCC>信念:" + CurrentFaith + "</color>";
+            else if (CurrentFaith <= 90)
+                Text_Status.text += "\n<color=#66FF66>信念:" + CurrentFaith + "</color>";
             else
-                Text_Status.text += "\n<color=#00FF00>信念:" + Faith + "</color>";
+                Text_Status.text += "\n<color=#00FF00>信念:" + CurrentFaith + "</color>";
 
             Text_Status.text += "\n成本:" + (CalcCost(1) + CalcCost(2)) + "/回合";
         }
@@ -209,10 +219,11 @@ public class DivisionControl : MonoBehaviour
                 foreach(Employee emp in dep.CurrentEmps)
                 {
                     emp.GainExp(ExtraExp, 0);
+                    if (MentalityBonus != 0)
+                        emp.Mentality += MentalityBonus;
                 }
             }
         }
-        GC.Money -= (CalcCost(1) + CalcCost(2) + ExtraCost);
     }
 
     public void SetDetailPanel(bool showed)
@@ -256,9 +267,13 @@ public class DivisionControl : MonoBehaviour
     public void DepExtraCheck()
     {
         ExtraEfficiency = 0;
+        ExtraFaith = 0;
+        ExtraWorkStatus = 0;
         foreach(DepControl dep in CurrentDeps)
         {
             ExtraEfficiency += dep.ExtraEfficiency;
+            ExtraFaith += dep.ExtraFaith;
+            ExtraWorkStatus += dep.ExtraWorkStatus;
         }
         if (ExtraEfficiency + Efficiency < 0)
             canWork = false;
