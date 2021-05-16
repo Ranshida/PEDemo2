@@ -129,8 +129,10 @@ public class GameControl : MonoBehaviour
     {
         UpdateResourceInfo();
         OCL.AddStaticOptions(new OptionCard1());
+        OCL.AddStaticOptions(new OptionCard1());
         OCL.AddStaticOptions(new OptionCard2());
         OCL.AddStaticOptions(new OptionCard3());
+        OCL.AddStaticOptions(new OptionCard4());
         CreateItem(3);
         //CreateItem(4);
         //CreateItem(5);
@@ -175,6 +177,22 @@ public class GameControl : MonoBehaviour
     {
         if (ForceTimePause == true)
             return;
+        if (Items.Count > ItemLimit)
+        {
+            CreateMessage("物品超出上限");
+            return;
+        }
+        int StandbyCount = 0;
+        foreach (Employee e in CurrentEmployees)
+        {
+            if (e.CurrentDep == null && e.CurrentDivision == null)
+                StandbyCount += 1;
+        }
+        if (StandbyCount > StandbyEmpLimit)
+        {
+            CreateMessage("人才储备库员工超出上限");
+            return;
+        }
         TurnPass();
     }
 
@@ -406,7 +424,6 @@ public class GameControl : MonoBehaviour
         newDep.Text_DepName3.text = newDepName + num + "<" + b.Require_A + ">";
         newDep.GC = this;
         HourEvent.AddListener(newDep.Produce);
-        WeeklyEvent.AddListener(newDep.FaithEffect);
 
         //创建对应按钮
         newDep.DS = Instantiate(DepSelectButtonPrefab, DepSelectContent);
@@ -416,8 +433,6 @@ public class GameControl : MonoBehaviour
 
         //检测老板摸鱼的附加状态
         CurrentDeps.Add(newDep);
-        if (CEOVacation == true)
-            newDep.AddPerk(new Perk115());
         return newDep;
     }
 
@@ -592,7 +607,7 @@ public class GameControl : MonoBehaviour
         {
             CurrentEmpInfo.emp.CurrentDep = depControl;
             depControl.CurrentEmps.Add(CurrentEmpInfo.emp);
-            CurrentEmpInfo.emp.CurrentDep.EmpMove(false);
+            CurrentEmpInfo.emp.CurrentDep.EmpEffectCheck();
             foreach(PerkInfo perk in CurrentEmpInfo.emp.InfoDetail.PerksInfo)
             {
                 if (perk.CurrentPerk.DepPerk == true)
@@ -651,7 +666,7 @@ public class GameControl : MonoBehaviour
             emp.CurrentDep.CurrentEmps.Remove(emp);
             //修改生产力显示
             emp.CurrentDep.UpdateUI();
-            CurrentEmpInfo.emp.CurrentDep.EmpMove(true);
+            CurrentEmpInfo.emp.CurrentDep.EmpEffectCheck();
             emp.CurrentDep = null;
         }
         else if (CurrentEmpInfo.emp.CurrentDivision != null)
@@ -794,15 +809,24 @@ public class GameControl : MonoBehaviour
     //生成物品
     public void CreateItem(int num)
     {
-        //不能持有超过6个物品
-        if (Items.Count >= ItemLimit)
-            return;
-        else
+        CompanyItem newItem = Instantiate(ItemPrefab, ItemContent);
+        newItem.GC = this;
+        newItem.SetType(num);
+        Items.Add(newItem);
+        ItemCountCheck();
+    }
+    //物品数量监测
+    public void ItemCountCheck()
+    {
+        if (Items.Count > ItemLimit)
         {
-            CompanyItem newItem = Instantiate(ItemPrefab, ItemContent);
-            newItem.GC = this;
-            newItem.SetType(num);
-            Items.Add(newItem);
+            for(int i = 0; i < Items.Count; i++)
+            {
+                if (i < ItemLimit)
+                    Items[i].gameObject.GetComponent<Image>().color = Color.white;
+                else
+                    Items[i].gameObject.GetComponent<Image>().color = Color.red;
+            }
         }
     }
 

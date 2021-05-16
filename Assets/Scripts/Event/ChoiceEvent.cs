@@ -5,7 +5,9 @@ using UnityEngine.UI;
 public class ChoiceEvent : MonoBehaviour
 {
     public int TotalCorrection = 0; //当前提供的总修正
+    public string ExtraCorrectionContent;//基本演绎法+1效果的描述
 
+    public GameObject TipPanel;
     public Text Text_EventName, Text_Correction, Text_EventResult, Text_EventDescrition, Text_Condition;
     public Transform OptionContent;
     public OptionCardInfo OptionPrefab;
@@ -14,7 +16,13 @@ public class ChoiceEvent : MonoBehaviour
     public Event CurrentEvent;
     public Employee Self;//自身和目标员工
 
-    public List<OptionCardInfo> Options = new List<OptionCardInfo>();
+    //抉择卡特效相关
+    public int NoDebuffPerkCount = 0;//随机消除添加负面状态的数量
+    public OptionCardInfo SelectedOption;//当前被选中的抉择卡用于选择并去掉1张抉择卡，重新抽取2张的功能
+    public List<int> BonusCards = new List<int>();//修正双倍的卡牌编号
+
+    public List<OptionCardInfo> SelectedOptions = new List<OptionCardInfo>();//当前已选中的卡
+    public List<OptionCardInfo> Options = new List<OptionCardInfo>();//所有的卡
 
     public void CheckCorrectionUI()
     {
@@ -24,21 +32,36 @@ public class ChoiceEvent : MonoBehaviour
             int FaithCorrection = CurrentEvent.CalcDivisionFaith(Self);
             int ManageCorrection = CurrentEvent.CalcDivisionManage(Self);
 
-            if (FaithCorrection != 0)
+            if (FaithCorrection > 0)
                 Text_Correction.text += "事业部信念: +" + FaithCorrection + "修正\n";
-            if (ManageCorrection != 0)
+            else if (FaithCorrection < 0)
+                Text_Correction.text += "事业部信念: " + FaithCorrection + "修正\n";
+            if (ManageCorrection > 0)
                 Text_Correction.text += "事业部管理: +" + ManageCorrection + "修正\n";
+            else if (ManageCorrection < 0)
+                Text_Correction.text += "事业部管理: " + ManageCorrection + "修正\n";
         }
-        foreach(OptionCardInfo option in Options)
+        for(int i = 0; i < SelectedOptions.Count; i++)
         {
-            if (option.Selected == true && option.OC.Correction != 0)
+            OptionCardInfo option = SelectedOptions[i];
+            if (option.OC.Correction != 0)
             {
+                int times = 1;
+                foreach(int num in BonusCards)
+                {
+                    if (num == i)
+                    {
+                        times = 2;
+                        break;
+                    }
+                }
                 if (option.OC.Correction > 0)
-                    Text_Correction.text += option.OC.Name + ":  +" + option.OC.Correction + "修正\n";
+                    Text_Correction.text += option.OC.Name + ":  +" + (option.OC.Correction * times) + "修正\n";
                 else
-                    Text_Correction.text += option.OC.Name + ":  " + option.OC.Correction + "修正\n";
+                    Text_Correction.text += option.OC.Name + ":  " + (option.OC.Correction * times) + "修正\n";
             }
         }
+        Text_Correction.text += ExtraCorrectionContent;
 
         Text_Condition.text = "初始成功条件:\n1D20 > " + CurrentEvent.FailLimitValue + "\n当前成功条件:\n1D20 > " 
             + (CurrentEvent.FailLimitValue - TotalCorrection);
@@ -48,9 +71,40 @@ public class ChoiceEvent : MonoBehaviour
     public void ConfirmChoice()
     {
         EC.UnfinishedEvents.Remove(this);
-        foreach (OptionCardInfo option in Options)
+
+        //消除提供负面状态效果的功能
+        if (NoDebuffPerkCount > 0)
         {
-            if (option.Selected == true)
+            List<OptionCardInfo> DebuffPerkInfos = new List<OptionCardInfo>();
+            foreach (OptionCardInfo option in SelectedOptions)
+            {
+                if (option.OC.AddDebuffPerk == true)
+                    DebuffPerkInfos.Add(option);
+            }
+            if (DebuffPerkInfos.Count > 0)
+            {
+                if (NoDebuffPerkCount >= DebuffPerkInfos.Count)
+                {
+                    foreach (OptionCardInfo option in DebuffPerkInfos)
+                    {
+                        option.NoEffect = true;
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < NoDebuffPerkCount; i++)
+                    {
+                        OptionCardInfo info = DebuffPerkInfos[Random.Range(0, DebuffPerkInfos.Count)];
+                        info.NoEffect = true;
+                        DebuffPerkInfos.Remove(info);
+                    }
+                }
+            }
+        }
+
+        foreach (OptionCardInfo option in SelectedOptions)
+        {
+            if (option.NoEffect == false)
             {
                 option.OC.StartEffect(Self);
                 option.TargetAddPerk(Self);
@@ -70,6 +124,14 @@ public class ChoiceEvent : MonoBehaviour
             EC.ChoiceEventCheck(true);
         }
         Destroy(this.gameObject);
+    }
+
+    //取消选择一张后刷新两张的效果
+    public void CancelSelect()
+    {
+        if (SelectedOption != null && SelectedOption.OC.Num == 13)
+            SelectedOption.SelectOptionCard();
+            
     }
 
     public void SetEventInfo(Event e, Employee emp, EventGroupInfo info = null)
@@ -99,15 +161,8 @@ public class ChoiceEvent : MonoBehaviour
         for (int i = 0; i < 3; i++)
         {
             OptionCardInfo option = Instantiate(OptionPrefab, OptionContent);
+            option.RandomOption(this);
             Options.Add(option);
-            int num = Random.Range(0, EC.GC.OCL.CurrentOptions.Count);
-            option.SetInfo(EC.GC.OCL.CurrentOptions[num].OC, Self, this);
-
-            //有随机负面特质效果的抉择卡随机一个特质
-            if (option.OC.DebuffCard == true)
-            {
-                option.RandomPerk();
-            }
         }
     }
     //检查部门和高管提供的修正

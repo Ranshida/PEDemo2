@@ -122,8 +122,6 @@ public class Employee
             {
                 if (mentality >= 20 && value < 20)
                 {
-                    InfoDetail.AddPerk(new Perk119());
-
                     if(CurrentDep == null)
                         QuestControl.Instance.Init(Name + "出现心力低下现象\n可以调节所在部门的信念或使用CEO技能“安抚”");
                     else if (CurrentDep != null)
@@ -132,10 +130,6 @@ public class Employee
                         QuestControl.Instance.Init(Name + "出现心力低下现象\n可以调节所在部门的信念或使用CEO技能“安抚”\n点击“确认”" +
                             "跳转至员工所在部门详细面板", AgreeAction);
                     }
-                }
-                else if (mentality < 20 && value >= 20)
-                {
-                    InfoDetail.RemovePerk(119);
                 }
             }
 
@@ -555,8 +549,6 @@ public class Employee
             CharacterTendency[3] = -1;
         else
             CharacterTendency[3] = 0;
-        if (CurrentDep != null)
-            CurrentDep.FaithRelationCheck();
     }
 
     //时间流逝后部分基础属性判定
@@ -690,10 +682,6 @@ public class Employee
         {
             InfoDetail.GC.CC.SkillButton.interactable = true;
             InfoDetail.GC.CEOVacation = false;
-            foreach(DepControl dep in InfoDetail.GC.CurrentDeps)
-            {
-                dep.RemovePerk(115);
-            }
         }
     }
 

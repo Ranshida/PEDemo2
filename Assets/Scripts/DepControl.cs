@@ -33,8 +33,6 @@ public class DepControl : MonoBehaviour
     public float StaminaCostRate = 1.0f;//体力消耗率（默认100%）
     public bool MajorSuccess = false, canWork = false, DefautDep = false;
 
-    private int NoEmpTime = 0;
-    private bool NoEmp;
     private bool CheatMode = false, TipShowed = false, isWeakend = false;
 
     Action WeakAction, UnWeakAction, AddLevelEffect = () => { }, RemoveLevelEffect = () => { }, DepEffect = () => { };//弱化效果，弱化清除效果，等级增加效果，等级减少效果，部门激活效果
@@ -80,18 +78,6 @@ public class DepControl : MonoBehaviour
     //目前不只是制作，还有很多别的跟事件相关的功能都写在这儿
     public void Produce()
     {
-        //空置判定
-        if (CurrentEmps.Count == 0 && NoEmp == false)
-        {
-            NoEmpTime += 1;
-            if (NoEmpTime > 16)
-            {
-                NoEmp = true;
-                NoEmpTime = 0;
-                AddPerk(new Perk111());
-            }
-        }
-
         //工作结算
         if (canWork == true)
         {
@@ -285,7 +271,6 @@ public class DepControl : MonoBehaviour
         }
 
         GC.HourEvent.RemoveListener(Produce);
-        GC.WeeklyEvent.RemoveListener(FaithEffect);
         foreach(PerkInfo perk in CurrentPerks)
         {
             perk.CurrentPerk.RemoveAllListeners();
@@ -425,142 +410,6 @@ public class DepControl : MonoBehaviour
         }
     }
 
-    //检测信念
-    public void FaithRelationCheck()
-    {
-        List<Employee> TempEmps = new List<Employee>();
-        foreach(Employee emp in CurrentEmps)
-        {
-            TempEmps.Add(emp);
-        }
-        //如果有高管加上高管
-        if (CommandingOffice != null && CommandingOffice.Manager != null)
-            TempEmps.Add(CommandingOffice.Manager);
-
-        if (TempEmps.Count > 1)
-        {
-            bool GoodRelation = false, BadRelation = false;
-            int CPos = 0, CNeg = 0, RPos = 0, RNeg = 0;
-            for (int i = 0; i < TempEmps.Count; i++)
-            {
-                for (int j = i + 1; j < TempEmps.Count; j++)
-                {
-                    if (TempEmps[i].FindRelation(TempEmps[j]).FriendValue > 0)
-                    {
-                        GoodRelation = true;
-                        break;
-                    }
-                    else if (TempEmps[i].FindRelation(TempEmps[j]).FriendValue < 0)
-                    {
-                        BadRelation = true;
-                        break;
-                    }
-                }
-                //文化倾向计数
-                if (TempEmps[i].CharacterTendency[0] == -1)
-                    CNeg += 1;
-                else if (TempEmps[i].CharacterTendency[0] == 1)
-                    CPos += 1;
-                //信仰倾向计数
-                if (TempEmps[i].CharacterTendency[1] == -1)
-                    RNeg += 1;
-                else if (TempEmps[i].CharacterTendency[1] == 1)
-                    RPos += 1;
-            }
-            if (GoodRelation == true)
-                AddPerk(new Perk99());
-            else
-                RemovePerk(99);
-            if (BadRelation == true)
-                AddPerk(new Perk100());
-            else
-                RemovePerk(100);
-
-            if (RPos == TempEmps.Count || RNeg == TempEmps.Count)
-            {
-                RemovePerk(101);
-                AddPerk(new Perk102());
-            }
-            else
-            {
-                RemovePerk(102);
-                AddPerk(new Perk101());
-            }
-            if (CPos == TempEmps.Count || CNeg == TempEmps.Count)
-            {
-                RemovePerk(103);
-                AddPerk(new Perk104());
-            }
-            else
-            {
-                RemovePerk(104);
-                AddPerk(new Perk103());
-            }
-        }
-        //无人时清空所有
-        else
-        {
-            RemovePerk(99);
-            RemovePerk(100);
-            RemovePerk(101);
-            RemovePerk(102);
-            RemovePerk(103);
-            RemovePerk(104);
-        }
-
-    }
-    //信念效果
-    public void FaithEffect()
-    {
-        //员工关系检查放在这里，每周进行一次
-        FaithRelationCheck();
-
-        int value = 0;
-        if (DepFaith >= 80)
-            value = 10;
-        else if (DepFaith >= 60)
-            value = 5;
-        else if (DepFaith >= 40)
-            value = 0;
-        else if (DepFaith >= 20)
-            value = -5;
-        else
-            value = -10;
-        foreach (Employee emp in CurrentEmps)
-        {
-            emp.Mentality += value;
-        }
-    }
-    //人员调动
-    public void EmpMove(bool MoveOut)
-    {
-        if (MoveOut == true)
-        {
-            AddPerk(new Perk110());
-            Efficiency -= 0.25f;
-        }
-        else
-        {
-            AddPerk(new Perk108());
-            Efficiency += 0.25f;
-            //设定空置部门状态
-            if (NoEmp == true)
-            {
-                foreach (PerkInfo info in CurrentPerks)
-                {
-                    if (info.CurrentPerk.Num == 111)
-                    {
-                        info.CurrentPerk.TimeLeft = 8;
-                        break;
-                    }
-                }
-            }
-            NoEmp = false;
-            NoEmpTime = 0;
-        }
-
-        EmpEffectCheck();
-    }
     //部门等级变化
     private void SetDepLevel(int level)
     {

@@ -426,6 +426,7 @@ public class EventControl : MonoBehaviour
         CurrentEventGroups.Add(newEventGroup);
         UIManager.Instance.OnAddNewWindow(newEventGroup.DetailPanel.GetComponent<WindowBaseControl>());
         newEventGroup.transform.parent = EventGroupContent;
+        newEventGroup.UpdateUI();
     }
 
     //判断是否能够进入特殊事件

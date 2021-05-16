@@ -792,10 +792,6 @@ public class CEOControl : MonoBehaviour
             GC.ResetSelectMode();
             SkillButton.interactable = false;
             GC.CEOVacation = true;
-            foreach (DepControl dep in GC.CurrentDeps)
-            {
-                dep.AddPerk(new Perk115());
-            }
         }
     }
 }

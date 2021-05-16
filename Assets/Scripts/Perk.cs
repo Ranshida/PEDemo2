@@ -1291,15 +1291,15 @@ public class Perk52 : Perk
 {
     public Perk52() : base()
     {
-        Name = "回避冲突";
-        Description = "获得抉择卡“回避冲突”";
+        Name = "甩锅高手";
+        Description = "获得负面抉择卡-推卸责任”";
         TimeLeft = -1;
         Num = 52;
     }
 
     public override void ImmEffect()
     {
-        GameControl.Instance.OCL.AddOptionCard(new OptionCard1(), TargetEmp);
+        GameControl.Instance.OCL.AddOptionCard(new OptionCard5(), TargetEmp);
     }
 }
 
@@ -1308,15 +1308,15 @@ public class Perk53 : Perk
 {
     public Perk53() : base()
     {
-        Name = "闪烁其词";
-        Description = "获得抉择卡“闪烁其词”";
+        Name = "官僚主义";
+        Description = "获得负面抉择卡-转移话题";
         TimeLeft = -1;
         Num = 53;
     }
 
     public override void ImmEffect()
     {
-        GameControl.Instance.OCL.AddOptionCard(new OptionCard2(), TargetEmp);
+        GameControl.Instance.OCL.AddOptionCard(new OptionCard6(), TargetEmp);
     }
 }
 
@@ -1339,55 +1339,6 @@ public class Perk54 : Perk
 
 
 #region 旧perk
-
-//热情
-public class Perk109 : Perk
-{
-    int Value = -1;
-    List<int> StarNum = new List<int>();
-    public Perk109() : base()
-    {
-        Name = "热情";
-        Description = "对应领域热情+1";
-        TimeLeft = 192;
-        Num = 109;
-        canStack = true;
-    }
-
-    public override void ImmEffect()
-    {
-        //旧的热情判定
-        ////叠加时重置
-        //Value = -1;
-        //if (TargetEmp.CurrentDep != null)
-        //    Value = TargetEmp.CurrentDep.building.effectValue - 1;
-        //else if (TargetEmp.CurrentOffice != null)
-        //    Value = TargetEmp.CurrentOffice.building.effectValue - 1;
-        //if (Value != -1)
-        //{ 
-        //    Value /= 3;
-        //    if (TargetEmp.Stars[Value] < TargetEmp.StarLimit[Value])
-        //    {
-        //        TargetEmp.Stars[Value] += 1;
-        //        StarNum.Add(Value);
-        //    }
-        //}
-    }
-
-    public override void RemoveEffect()
-    {
-        //旧的热情判定
-        //if (StarNum.Count > 0)
-        //{
-        //    TargetEmp.Stars[StarNum[0]] -= 1;
-        //    if (TargetEmp.Stars[StarNum[0]] < 0)
-        //        TargetEmp.Stars[StarNum[0]] = 0;
-        //    StarNum.RemoveAt(0);
-        //}
-        base.RemoveEffect();
-    }
-}
-
 
 //精进
 public class Perk33 : Perk
@@ -1664,13 +1615,11 @@ public class Perk45 : Perk
         if (TargetDep != null)
         {
             Description = "存在时“并肩作战”效果×3";
-            TargetDep.FaithRelationCheck();
         }
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDep.FaithRelationCheck();
     }
 }
 
@@ -2429,187 +2378,158 @@ public class Perk107 : Perk
     }
 }
 
-//生疏磨合
+//特立独行
 public class Perk108 : Perk
 {
     public Perk108() : base()
     {
-        Name = "生疏磨合";
-        Description = "部门内有新转岗进来一人，信念-15";
-        TimeLeft = 16;
+        Name = "特立独行";
+        Description = "获得正面抉择卡-另辟蹊径";
+        TimeLeft = -1;
         Num = 108;
-        canStack = true;
-        perkColor = PerkColor.Orange;
+        canStack = false;
     }
+
     public override void ImmEffect()
     {
-        TargetDep.DepFaith -= 15;
-    }
-    public override void RemoveEffect()
-    {
-        base.RemoveEffect();
-        TargetDep.DepFaith += 15;
+        GameControl.Instance.OCL.AddOptionCard(new OptionCard8(), TargetEmp);
     }
 }
 
-//紧急调离
+//谈判专家
+public class Perk109 : Perk
+{
+    public Perk109() : base()
+    {
+        Name = "谈判专家";
+        Description = "获得正面抉择卡-寻求共识";
+        TimeLeft = -1;
+        Num = 109;
+        canStack = false;
+    }
+
+    public override void ImmEffect()
+    {
+        GameControl.Instance.OCL.AddOptionCard(new OptionCard9(), TargetEmp);
+    }
+}
+
+//同理心
 public class Perk110 : Perk
 {
     public Perk110() : base()
     {
-        Name = "紧急调离";
-        Description = "部门内有新转岗转出一人，信念-15";
-        TimeLeft = 16;
+        Name = "同理心";
+        Description = "获得正面抉择卡-缓和情绪";
+        TimeLeft = -1;
         Num = 110;
-        canStack = true;
-        perkColor = PerkColor.Orange;
+        canStack = false;
     }
     public override void ImmEffect()
     {
-        TargetDep.DepFaith -= 15;
-    }
-    public override void RemoveEffect()
-    {
-        base.RemoveEffect();
-        TargetDep.DepFaith += 15;
+        GameControl.Instance.OCL.AddOptionCard(new OptionCard10(), TargetEmp);
     }
 }
 
-//空置部门
+//侦探
 public class Perk111 : Perk
 {
     public Perk111() : base()
     {
-        Name = "空置部门";
-        Description = "降低部门30点信念,移入员工1周后移除";
+        Name = "侦探";
+        Description = "获得正面抉择卡-基本演绎法";
         TimeLeft = -1;
         Num = 111;
         canStack = false;
-        perkColor = PerkColor.Orange;
     }
     public override void ImmEffect()
     {
-        TargetDep.DepFaith -= 30;
-    }
-    public override void RemoveEffect()
-    {
-        base.RemoveEffect();
-        TargetDep.DepFaith += 30;
+        GameControl.Instance.OCL.AddOptionCard(new OptionCard11(), TargetEmp);
     }
 }
 
-//相互帮助
+//沉思者
 public class Perk112 : Perk
 {
     public Perk112() : base()
     {
-        Name = "相互帮助";
-        Description = "提高部门2点信念";
-        TimeLeft = 16;
+        Name = "沉思者";
+        Description = "获得正面抉择卡-一语中的";
+        TimeLeft = -1;
         Num = 112;
-        canStack = true;
-        perkColor = PerkColor.Orange;
+        canStack = false;
     }
     public override void ImmEffect()
     {
-        TargetDep.DepFaith += 2;
-    }
-    public override void RemoveEffect()
-    {
-        base.RemoveEffect();
-        TargetDep.DepFaith -= 2;
+        GameControl.Instance.OCL.AddOptionCard(new OptionCard12(), TargetEmp);
     }
 }
 
-//产生矛盾
+//老练
 public class Perk113 : Perk
 {
     public Perk113() : base()
     {
-        Name = "产生矛盾";
-        Description = "降低部门2点信念";
-        TimeLeft = 16;
+        Name = "老练";
+        Description = "获得正面抉择卡-聚焦";
+        TimeLeft = -1;
         Num = 113;
-        canStack = true;
-        perkColor = PerkColor.Orange;
+        canStack = false;
     }
     public override void ImmEffect()
     {
-        TargetDep.DepFaith -= 2;
-    }
-    public override void RemoveEffect()
-    {
-        base.RemoveEffect();
-        TargetDep.DepFaith += 2;
+        GameControl.Instance.OCL.AddOptionCard(new OptionCard13(), TargetEmp);
     }
 }
 
-//环境舒适
+//暴躁
 public class Perk114 : Perk
 {
     public Perk114() : base()
     {
-        Name = "环境舒适";
-        Description = "提高部门2点信念";
+        Name = "暴躁";
+        Description = "获得负面抉择卡-呵斥";
         TimeLeft = -1;
         Num = 114;
-        canStack = true;
-        perkColor = PerkColor.Orange;
+        canStack = false;
     }
     public override void ImmEffect()
     {
-        TargetDep.DepFaith += 2;
-    }
-    public override void RemoveEffect()
-    {
-        base.RemoveEffect();
-        TargetDep.DepFaith -= 2;
+        GameControl.Instance.OCL.AddOptionCard(new OptionCard14(), TargetEmp);
     }
 }
 
-//老板摸鱼
+//专断
 public class Perk115 : Perk
 {
     public Perk115() : base()
     {
-        Name = "老板摸鱼";
-        Description = "降低部门35点信念,持续到CEO放假结束";
+        Name = "专断";
+        Description = "获得负面抉择卡-一言堂";
         TimeLeft = -1;
         Num = 115;
         canStack = false;
-        perkColor = PerkColor.Orange;
     }
     public override void ImmEffect()
     {
-        TargetDep.DepFaith -= 35;
-    }
-    public override void RemoveEffect()
-    {
-        base.RemoveEffect();
-        TargetDep.DepFaith += 35;
+        GameControl.Instance.OCL.AddOptionCard(new OptionCard15(), TargetEmp);
     }
 }
 
-//业务干扰
+//拜金主义
 public class Perk116 : Perk
 {
     public Perk116() : base()
     {
-        Name = "业务干扰";
-        Description = "降低部门30点信念";
-        TimeLeft = 96;
+        Name = "拜金主义";
+        Description = "获得负面抉择卡-撒币";
+        TimeLeft = -1;
         Num = 116;
         canStack = false;
-        perkColor = PerkColor.Orange;
     }
     public override void ImmEffect()
     {
-        TargetDep.DepFaith -= 30;
-    }
-    public override void RemoveEffect()
-    {
-        base.RemoveEffect();
-        TargetDep.DepFaith += 30;
+        GameControl.Instance.OCL.AddOptionCard(new OptionCard16(), TargetEmp);
     }
 }
 
@@ -2619,85 +2539,114 @@ public class Perk117 : Perk
     public Perk117() : base()
     {
         Name = "亲自指导";
-        Description = "部门成功率上升45%";
-        TimeLeft = 128;
+        Description = "事业部信念-10";
+        TimeLeft = 6;
         Num = 117;
-        canStack = false;
-        perkColor = PerkColor.White;
+        canStack = true;
+        perkColor = PerkColor.Orange;
     }
     public override void ImmEffect()
     {
-        TargetDep.Efficiency += 0.45f;
+        TargetDiv.Faith -= 10;
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDep.Efficiency -= 0.45f;
+        TargetDiv.Faith += 10;
     }
 }
 
-//心力低下
+//怀疑情绪
+public class Perk118 : Perk
+{
+    public Perk118() : base()
+    {
+        Name = "怀疑情绪";
+        Description = "事业部信念-15";
+        TimeLeft = 9;
+        Num = 118;
+        canStack = true;
+        perkColor = PerkColor.Orange;
+    }
+    public override void ImmEffect()
+    {
+        TargetDiv.Faith -= 15;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDiv.Faith += 15;
+    }
+}
+
+//状态低迷
 public class Perk119 : Perk
 {
     public Perk119() : base()
     {
-        Name = "心力低下";
-        Description = "员工心力<20";
-        TimeLeft = -1;
+        Name = "状态低迷";
+        Description = "事业部工作状态-2";
+        TimeLeft = 6;
         Num = 119;
-        canStack = false;
+        canStack = true;
+        perkColor = PerkColor.White;
+    }
+    public override void ImmEffect()
+    {
+        TargetDiv.WorkStatus -= 2;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDiv.WorkStatus += 2;
     }
 }
 
-//放轻松
+//寒蝉效应
 public class Perk120 : Perk
 {
     public Perk120() : base()
     {
-        Name = "放轻松";
-        Description = "成功率上升10%";
-        TimeLeft = 31;
+        Name = "寒蝉效应";
+        Description = "事业部效率-2";
+        TimeLeft = 6;
         Num = 120;
-        canStack = false;
-        TempValue1 = 1;
-        perkColor = PerkColor.White;
+        canStack = true;
+        perkColor = PerkColor.Grey;
     }
 
     public override void ImmEffect()
     {
-        TargetDep.BaseWorkStatus += TempValue1;
-        Description = "成功率上升" + TempValue1 + "点";
+        TargetDiv.Efficiency -= 2;
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDep.BaseWorkStatus -= TempValue1;
+        TargetDiv.Efficiency += 2;
     }
 }
 
-//勇气赞歌
+//成本飙升
 public class Perk121 : Perk
 {
     public Perk121() : base()
     {
-        Name = "勇气赞歌";
-        Description = "信念+15";
-        TimeLeft = 31;
+        Name = "成本飙升";
+        Description = "事业部成本上升25";
+        TimeLeft = 6;
         Num = 121;
-        canStack = false;
-        TempValue1 = 15;
-        perkColor = PerkColor.Orange;
+        canStack = true;
+        perkColor = PerkColor.Blue;
     }
 
     public override void ImmEffect()
     {
-        TargetDep.DepFaith += TempValue1;
-        Description = "信念+" + TempValue1;
+        TargetDiv.ExtraCost += 25;
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDep.DepFaith -= TempValue1;
+        TargetDiv.ExtraCost -= 25;
     }
 }
 
@@ -2902,28 +2851,16 @@ public class Perk129 : Perk
     }
 }
 
-//热爱运动
+//救火队员
 public class Perk130 : Perk
 {
     public Perk130() : base()
     {
-        Name = "热爱运动";
-        Description = "强壮+2";
+        Name = "救火队员";
+        Description = "加入特别小组后额外增加10%成功率";
         TimeLeft = -1;
         Num = 130;
         canStack = false;
-    }
-
-    public override void ImmEffect()
-    {
-        TargetEmp.Strength += 2;
-    }
-    public override void RemoveEffect()
-    {
-        base.RemoveEffect();
-        TargetEmp.Strength -= 2;
-        if (TargetEmp.Strength < 0)
-            TargetEmp.Strength = 0;
     }
 }
 
@@ -3564,7 +3501,7 @@ public static class PerkData
     {
         new Perk12(), new Perk13(), new Perk14(), new Perk15(), new Perk16(), new Perk17(),
         new Perk18(), new Perk19(), new Perk20(), new Perk21(), new Perk22(),
-        new Perk23()
+        new Perk23(), new Perk108(), new Perk109(), new Perk110(), new Perk111(), new Perk112(), new Perk113(), new Perk130()
     };
 
     //经历特质
@@ -3591,6 +3528,6 @@ public static class PerkData
 
     public static List<Perk> DebuffPerkList = new List<Perk>()
     {
-        new Perk52(), new Perk53(), new Perk54()
+        new Perk52(), new Perk53(), new Perk54(), new Perk114(), new Perk115(), new Perk116()
     };
 }

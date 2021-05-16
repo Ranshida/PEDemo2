@@ -790,7 +790,7 @@ public class BrainStormControl : MonoBehaviour
             if (Win == true)
             {
                 GC.QC.Init("事件组议题成功");
-                CurrentEGI.ResolveStage(2);
+                CurrentEGI.ResolveStage(CurrentEGI.TargetEventGroup.BSTurnCorrection);
             }
             CurrentEGI = null;
             EndBS();

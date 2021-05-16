@@ -332,6 +332,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Selected: 0
+  NoEffect: 0
   outline: {fileID: 6460860135096670523}
   OCL: {fileID: 0}
   CurrentEvent: {fileID: 0}
@@ -384,7 +385,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 6896780739696359035}
         m_MethodName: SelectOptionCard
-        m_Mode: 1
+        m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine

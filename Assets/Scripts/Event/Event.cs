@@ -10016,12 +10016,13 @@ public static class EventData
     //特殊事件组(正面)
     public static List<EventGroup> SpecialEventGroups = new List<EventGroup>()
     {
-        
+        new EventGroup4(), new EventGroup5(), new EventGroup6()
     };
 
     //特殊事件组(负面)
     public static List<EventGroup> SpecialEventGroups2 = new List<EventGroup>()
     {
-        new EventGroup1()
+        new EventGroup1(), new EventGroup2(), new EventGroup3(), new EventGroup7(), new EventGroup8(), new EventGroup9(), new EventGroup10()
+        , new EventGroup11(), new EventGroup12(), new EventGroup13()
     };
 }

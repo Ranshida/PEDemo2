@@ -72,6 +72,7 @@ public class CompanyItem : MonoBehaviour
     public void DeleteItem()
     {
         GC.Items.Remove(this);
+        GC.ItemCountCheck();
         Destroy(this.gameObject);
     }
 }

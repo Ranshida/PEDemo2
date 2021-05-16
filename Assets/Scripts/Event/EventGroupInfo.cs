@@ -54,6 +54,8 @@ public class EventGroupInfo : MonoBehaviour
         //先判断是否处于准备阶段或下一阶段已经完成,是的话直接继续
         if (PrepareTurnLeft > 0 || Stage <= FinishStage)
         {
+            if (Stage <= FinishStage && TargetEventGroup.DebuffEvent == false)
+                TargetEventGroup.StartEvent(Target, 1000, null, this);
             NextStage();
             STExtraTime();
             EC.ChoiceEventCheck(true);
@@ -216,7 +218,7 @@ public class EventGroupInfo : MonoBehaviour
                 BSButton.interactable = true;
                 UseResourceButton.interactable = true;
             }
-            ResolveStage(1);
+            ResolveStage(TargetEventGroup.ST_TurnCorrection);
             QuestControl.Instance.Init("特别小组处理成功");
         }
         else
@@ -271,7 +273,7 @@ public class EventGroupInfo : MonoBehaviour
     //检测特别小组状态
     public void CheckSTStatus()
     {
-        int MemberCount = 0, ProfessionCount = 0, SkillCount = 0;
+        int MemberCount = 0, ProfessionCount = 0, SkillCount = 0, PerkCount = 0;
         foreach(Employee emp in STMembers)
         {
             if (emp != null)
@@ -291,6 +293,11 @@ public class EventGroupInfo : MonoBehaviour
                     SkillCount += emp.Manage;
                 else if (TargetEventGroup.ST_SkillType == 3)
                     SkillCount += emp.Tenacity;
+                foreach(PerkInfo info in emp.InfoDetail.PerksInfo)
+                {
+                    if (info.CurrentPerk.Num == 130)
+                        PerkCount += 1;
+                }
             }
         }
         Text_STRateDetail.text = "<color=black>初始几率 +" + (TargetEventGroup.ST_BaseRate * 100) + "%\n</color>";
@@ -331,6 +338,17 @@ public class EventGroupInfo : MonoBehaviour
         {
             Text_STRateDetail.text += "<color=gray>" + SkillContent + TargetEventGroup.ST_SkillCount + " +"
                 + (TargetEventGroup.ST_SkillRate * 100) + "%(" + SkillCount + ")\n</color>";
+        }
+
+        if (PerkCount > 0)
+        {
+            Text_STRateDetail.text += "<color=black>特质“救火队员” +" + (10 * PerkCount) + "%(" + PerkCount + "人)\n</color>";
+            STSuccessRate += 0.1f * PerkCount;
+        }
+        else
+        {
+            Text_STRateDetail.text += "<color=gray>特质“救火队员” +10%/人\n</color>";
+
         }
 
         Text_STStatus.text = "被派遣调研的员工直到第" + (EC.GC.Turn + 3) + "回合不能调整岗位\n";
