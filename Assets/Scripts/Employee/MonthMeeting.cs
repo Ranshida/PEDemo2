@@ -246,102 +246,74 @@ public class MonthMeeting : MonoBehaviour
     public void SettleArea(List<CrystalType> crystals, Area area)
     {
         CrystalPanel.SetWndState(false);
-        List<Building> buildings = new List<Building>();
-        foreach (Grid grid in area.gridList)
+        //各色水晶数量
+        int NumA = 0, NumB = 0, NumC = 0, NumD = 0, NumE = 0;
+        foreach (CrystalType crystal in crystals)
         {
-            if (grid.BelongBuilding != null && !buildings.Contains(grid.BelongBuilding))
+            switch (crystal)
             {
-                buildings.Add(grid.BelongBuilding);
+                case CrystalType.None:
+                    break;
+                case CrystalType.White:
+                    NumA += 1;
+                    break;
+                case CrystalType.Orange:
+                    NumB += 1;
+                    break;
+                case CrystalType.Gray:
+                    NumC += 1;
+                    break;
+                case CrystalType.Blue:
+                    NumD += 1;
+                    break;
+                case CrystalType.Black:
+                    NumE += 1;
+                    break;
+                default:
+                    break;
             }
         }
-
-        foreach (Building building in buildings)
+        if (NumA > 0)
         {
-            DepControl dep = building.Department;
-            if (!dep)
-            {
-                break;
-            }
-
-            //各色水晶数量
-            int NumA = 0, NumB = 0, NumC = 0, NumD = 0, NumE = 0;
-            foreach (CrystalType crystal in crystals)
-            {
-                switch (crystal)
-                {
-                    case CrystalType.None:
-                        break;
-                    case CrystalType.White:
-                        NumA += 1;
-                        break;
-                    case CrystalType.Orange:
-                        NumB += 1;
-                        break;
-                    case CrystalType.Gray:
-                        NumC += 1;
-                        break;
-                    case CrystalType.Blue:
-                        NumD += 1;
-                        break;
-                    case CrystalType.Black:
-                        NumE += 1;
-                        break;
-                    default:
-                        break;
-                }
-            }
-            if (NumA > 0)
-            {
-                Debug.Log(dep.name + "获得白色水晶");
-                Perk newPerk = new Perk120();
-                newPerk.TempValue1 = NumA;
-                dep.AddPerk(newPerk);
-            }
-            if (NumB > 0)
-            {
-                Debug.Log(dep.name + "获得橙色水晶");
-                Perk newPerk = new Perk121();
-                newPerk.TempValue1 = 15 * NumB;
-                dep.AddPerk(newPerk);
-            }
-            if (NumC > 0)
-            {
-                Debug.Log(dep.name + "获得灰色水晶");
-                Perk newPerk = new Perk122();
-                newPerk.TempValue4 = 0.25f * NumC;
-                dep.AddPerk(newPerk);
-            }
-            if (NumD > 0)
-            {
-                Debug.Log(dep.name + "获得蓝色水晶");
-                Perk newPerk = new Perk123();
-                newPerk.TempValue4 = 0.25f * NumD;
-                dep.AddPerk(newPerk);
-            }
-            if (NumE > 0)
-            {
-                Debug.Log(dep.name + "获得黑色水晶");
-                Perk newPerk = new Perk124();
-                newPerk.TempValue1 = 30 * NumE;
-                dep.AddPerk(newPerk);
-            }
+            Debug.Log(area.DC.DivName + "获得白色水晶");
+            Perk newPerk = new Perk120();
+            newPerk.TempValue1 = NumA;
+            area.DC.AddPerk(newPerk);
+        }
+        if (NumB > 0)
+        {
+            Debug.Log(area.DC.DivName + "获得橙色水晶");
+            Perk newPerk = new Perk121();
+            newPerk.TempValue1 = NumB;
+            area.DC.AddPerk(newPerk);
+        }
+        if (NumC > 0)
+        {
+            Debug.Log(area.DC.DivName + "获得灰色水晶");
+            Perk newPerk = new Perk122();
+            newPerk.TempValue1 = NumC;
+            area.DC.AddPerk(newPerk);
+        }
+        if (NumD > 0)
+        {
+            Debug.Log(area.DC.DivName + "获得蓝色水晶");
+            Perk newPerk = new Perk123();
+            newPerk.TempValue1 = NumD;
+            area.DC.AddPerk(newPerk);
+        }
+        if (NumE > 0)
+        {
+            Debug.Log(area.DC.DivName + "获得黑色水晶");
+            Perk newPerk = new Perk124();
+            newPerk.TempValue1 = NumE;
+            area.DC.AddPerk(newPerk);
+        }
 
 
-            if (crystals.Count == 1)
-            {
-                Debug.Log(dep.name + "单指令");
-                dep.AddPerk(new Perk125());
-            }
-            else if (crystals.Count == 2)
-            {
-                Debug.Log(dep.name + "二指令");
-                dep.AddPerk(new Perk126());
-            }
-            else if (crystals.Count == 3)
-            {
-                Debug.Log(dep.name + "三指令");
-                dep.AddPerk(new Perk127());
-            }
+        if (crystals.Count == 1)
+        {
+            Debug.Log(area.DC.DivName + "单指令");
+            area.DC.AddPerk(new Perk125());
         }
     }
 

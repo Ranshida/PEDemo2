@@ -2602,15 +2602,157 @@ public class Perk119 : Perk
     }
 }
 
-//寒蝉效应
+//放轻松
 public class Perk120 : Perk
 {
     public Perk120() : base()
     {
+        Name = "放轻松";
+        Description = "提高工作状态1点";
+        TimeLeft = 3;
+        Num = 120;
+        canStack = false;
+        TempValue1 = 1;
+        perkColor = PerkColor.White;
+    }
+
+    public override void ImmEffect()
+    {
+        TargetDiv.WorkStatus += TempValue1;
+        Description = "提高工作状态" + TempValue1 + "点";
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDiv.WorkStatus -= TempValue1;
+    }
+}
+
+//勇气赞歌
+public class Perk121 : Perk
+{
+    public Perk121() : base()
+    {
+        Name = "勇气赞歌";
+        Description = "信念+15";
+        TimeLeft = 3;
+        Num = 121;
+        canStack = false;
+        perkColor = PerkColor.Orange;
+    }
+
+    public override void ImmEffect()
+    {
+        Description = "信念+" + (TempValue1 * 15);
+        TargetDiv.Faith += 15 * TempValue1;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDiv.Faith -= 15 * TempValue1;
+    }
+}
+
+//加班加班
+public class Perk122 : Perk
+{
+    public Perk122() : base()
+    {
+        Name = "加班加班";
+        Description = "事业部效率+1";
+        TimeLeft = 3;
+        Num = 122;
+        canStack = false;
+        TempValue1 = 1;
+        perkColor = PerkColor.Grey;
+    }
+
+    public override void ImmEffect()
+    {
+        TargetDiv.Efficiency += TempValue1;
+        Description = "事业部效率+" + TempValue1;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDiv.Efficiency -= TempValue1;
+    }
+}
+
+//流程优化
+public class Perk123 : Perk
+{
+    public Perk123() : base()
+    {
+        Name = "流程优化";
+        Description = "事业部成本-5";
+        TimeLeft = 3;
+        Num = 123;
+        canStack = false;
+        TempValue1 = 1;
+        perkColor = PerkColor.Blue;
+    }
+
+    public override void ImmEffect()
+    {
+        TargetDiv.ExtraCost -= TempValue1 * 5;
+        Description = "部门成本-" + (TempValue1 * 5);
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDiv.ExtraCost += TempValue1 * 5;
+    }
+}
+
+//无意义争执
+public class Perk124 : Perk
+{
+    public Perk124() : base()
+    {
+        Name = "无意义争执";
+        Description = "信念-30";
+        TimeLeft = 3;
+        Num = 124;
+        canStack = false;
+        TempValue1 = 1;
+        perkColor = PerkColor.Orange;
+    }
+
+    public override void ImmEffect()
+    {
+        TargetDep.DepFaith -= TempValue1 * 30;
+        Description = "信念-" + (TempValue1 * 30);
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDep.DepFaith += (TempValue1 * 30);
+    }
+}
+
+//领导指令
+public class Perk125 : Perk
+{
+    public Perk125() : base()
+    {
+        Name = "领导指令";
+        Description = "部门内全部员工每周结束时体力-10";
+        TimeLeft = 3;
+        Num = 125;
+        canStack = false;
+    }
+}
+
+//寒蝉效应
+public class Perk128 : Perk
+{
+    public Perk128() : base()
+    {
         Name = "寒蝉效应";
         Description = "事业部效率-2";
         TimeLeft = 6;
-        Num = 120;
+        Num = 128;
         canStack = true;
         perkColor = PerkColor.Grey;
     }
@@ -2627,14 +2769,14 @@ public class Perk120 : Perk
 }
 
 //成本飙升
-public class Perk121 : Perk
+public class Perk129 : Perk
 {
-    public Perk121() : base()
+    public Perk129() : base()
     {
         Name = "成本飙升";
         Description = "事业部成本上升25";
         TimeLeft = 6;
-        Num = 121;
+        Num = 129;
         canStack = true;
         perkColor = PerkColor.Blue;
     }
@@ -2647,207 +2789,6 @@ public class Perk121 : Perk
     {
         base.RemoveEffect();
         TargetDiv.ExtraCost -= 25;
-    }
-}
-
-//加班加班
-public class Perk122 : Perk
-{
-    public Perk122() : base()
-    {
-        Name = "加班加班";
-        Description = "效率上升25%";
-        TimeLeft = 31;
-        Num = 122;
-        canStack = false;
-        TempValue4 = 0.25f;
-        perkColor = PerkColor.Grey;
-    }
-
-    public override void ImmEffect()
-    {
-        TargetDep.Efficiency += TempValue4;
-        Description = "效率上升" + (TempValue4 * 100) + "%";
-    }
-    public override void RemoveEffect()
-    {
-        base.RemoveEffect();
-        TargetDep.Efficiency -= TempValue4;
-    }
-}
-
-//流程优化
-public class Perk123 : Perk
-{
-    public Perk123() : base()
-    {
-        Name = "流程优化";
-        Description = "部门成本-25%";
-        TimeLeft = 31;
-        Num = 123;
-        canStack = false;
-        TempValue4 = 0.25f;
-        perkColor = PerkColor.Blue;
-    }
-
-    public override void ImmEffect()
-    {
-        TargetDep.SalaryMultiply -= TempValue4;
-        TargetDep.BuildingPayMultiply -= TempValue4;
-        Description = "部门成本-" + (TempValue4 * 100) + "%";
-    }
-    public override void RemoveEffect()
-    {
-        base.RemoveEffect();
-        TargetDep.SalaryMultiply += TempValue4;
-        TargetDep.BuildingPayMultiply += TempValue4;
-    }
-}
-
-//无意义争执
-public class Perk124 : Perk
-{
-    public Perk124() : base()
-    {
-        Name = "无意义争执";
-        Description = "信念-30";
-        TimeLeft = 31;
-        Num = 124;
-        canStack = false;
-        TempValue1 = 30;
-        perkColor = PerkColor.Orange;
-    }
-
-    public override void ImmEffect()
-    {
-        TargetDep.DepFaith -= TempValue1;
-        Description = "信念-" + TempValue1;
-    }
-    public override void RemoveEffect()
-    {
-        base.RemoveEffect();
-        TargetDep.DepFaith += TempValue1;
-    }
-}
-
-//单领导指令
-public class Perk125 : Perk
-{
-    public Perk125() : base()
-    {
-        Name = "单领导指令";
-        Description = "部门内全部员工每周结束时体力-10";
-        TimeLeft = 31;
-        Num = 125;
-        canStack = false;
-    }
-
-    public override void ImmEffect()
-    {
-        TargetDep.StaminaExtra -= 10;
-    }
-    public override void RemoveEffect()
-    {
-        base.RemoveEffect();
-        TargetDep.StaminaExtra += 10;
-    }
-}
-
-//双领导指令
-public class Perk126 : Perk
-{
-    public Perk126() : base()
-    {
-        Name = "双领导指令";
-        Description = "部门内全部员工每周结束时体力-20";
-        TimeLeft = 31;
-        Num = 126;
-        canStack = false;
-    }
-
-    public override void ImmEffect()
-    {
-        TargetDep.StaminaExtra -= 20;
-    }
-    public override void RemoveEffect()
-    {
-        base.RemoveEffect();
-        TargetDep.StaminaExtra += 20;
-    }
-}
-
-//三领导指令
-public class Perk127 : Perk
-{
-    public Perk127() : base()
-    {
-        Name = "三领导指令";
-        Description = "部门内全部员工每周结束时体力-30";
-        TimeLeft = 31;
-        Num = 127;
-        canStack = false;
-    }
-
-    public override void ImmEffect()
-    {
-        TargetDep.StaminaExtra -= 30;
-    }
-    public override void RemoveEffect()
-    {
-        base.RemoveEffect();
-        TargetDep.StaminaExtra += 30;
-    }
-}
-
-//身体羸弱
-public class Perk128 : Perk
-{
-    public Perk128() : base()
-    {
-        Name = "身体羸弱";
-        Description = "强壮-2";
-        TimeLeft = -1;
-        Num = 128;
-        canStack = false;
-    }
-
-    public override void ImmEffect()
-    {
-        TargetEmp.Strength -= 2;
-        if (TargetEmp.Strength < 0)
-            TargetEmp.Strength = 0;
-    }
-    public override void RemoveEffect()
-    {
-        base.RemoveEffect();
-        TargetEmp.Strength += 2;
-
-    }
-}
-
-//狮子之心
-public class Perk129 : Perk
-{
-    public Perk129() : base()
-    {
-        Name = "狮子之心";
-        Description = "坚韧+2";
-        TimeLeft = -1;
-        Num = 129;
-        canStack = false;
-    }
-
-    public override void ImmEffect()
-    {
-        TargetEmp.Tenacity += 2;
-        if (TargetEmp.Tenacity < 0)
-            TargetEmp.Tenacity = 0;
-    }
-    public override void RemoveEffect()
-    {
-        base.RemoveEffect();
-        TargetEmp.Tenacity -= 2;
-
     }
 }
 

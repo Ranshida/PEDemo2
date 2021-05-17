@@ -701,6 +701,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   TotalCorrection: 0
+  ExtraCorrectionContent: 
   TipPanel: {fileID: 4414987492688239243}
   Text_EventName: {fileID: 6857258945391925303}
   Text_Correction: {fileID: 6857258944035447626}

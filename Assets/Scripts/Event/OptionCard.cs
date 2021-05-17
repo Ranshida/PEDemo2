@@ -288,7 +288,7 @@ public class OptionCard15 : OptionCard
     {
         if (emp != null && emp.CurrentDivision != null)
         {
-            emp.CurrentDivision.AddPerk(new Perk120());
+            emp.CurrentDivision.AddPerk(new Perk128());
         }
     }
 }
@@ -309,7 +309,7 @@ public class OptionCard16 : OptionCard
     {
         if (emp != null && emp.CurrentDivision != null)
         {
-            emp.CurrentDivision.AddPerk(new Perk121());
+            emp.CurrentDivision.AddPerk(new Perk129());
         }
     }
 }

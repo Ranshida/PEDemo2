@@ -16,7 +16,7 @@ public class OptionCardInfo : MonoBehaviour
     public EventGroup EG;
     public ChoiceEvent CurrentEvent;
     public Perk ProvidePerk;//抉择卡效果中可能提供的随机特质的存储
-    public Text Text_Name, Text_Description, Text_Correction, Text_Emp;
+    public Text Text_Name, Text_Description, Text_Correction, Text_Emp, Text_Index;
 
     //设置各种基础信息
     public void SetBaseInfo(OptionCard oc)
@@ -97,8 +97,16 @@ public class OptionCardInfo : MonoBehaviour
                 }
                 else
                     CurrentEvent.TotalCorrection -= OC.Correction;
+
+                //重新设置自身和其他抉择卡编号
+                Text_Index.text = "";
+                for (int i = 0; i < CurrentEvent.SelectedOptions.Count; i++)
+                {
+                    CurrentEvent.SelectedOptions[i].Text_Index.text = (i + 1).ToString();
+                }
+
                 if (SkipSelectEffect == false)
-                    SelectEffectCheck(false);
+                    SelectEffectCheck(false);              
             }
             else
             {
@@ -120,6 +128,7 @@ public class OptionCardInfo : MonoBehaviour
                 CurrentEvent.SelectedOptions.Add(this);
                 if (SkipSelectEffect == false)
                     SelectEffectCheck(true);
+                Text_Index.text = CurrentEvent.SelectedOptions.Count.ToString();
             }
             CurrentEvent.CheckCorrectionUI();
         }
