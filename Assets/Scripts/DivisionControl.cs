@@ -275,8 +275,10 @@ public class DivisionControl : MonoBehaviour
             ExtraFaith += dep.ExtraFaith;
             ExtraWorkStatus += dep.ExtraWorkStatus;
         }
-        if (ExtraEfficiency + Efficiency < 0)
+        if (ExtraEfficiency + Efficiency < 0 || WorkStatus + ExtraWorkStatus < 0)
             canWork = false;
+        else
+            canWork = true;
     }
 
     public int CalcCost(int type)

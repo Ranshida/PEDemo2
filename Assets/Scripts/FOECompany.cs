@@ -5,98 +5,81 @@ using UnityEngine.UI;
 
 public class FOECompany : MonoBehaviour
 {
-    FOEControl FC;
+    public int UserCount = 0, Ranking, Type = 1;//Type:1~3 = A~C公司用户获取策略
+    public bool isPlayer = false;
 
-    public int ActionPoint = 4;//执行力
-    public int Node;//节点数
-    public int Line, Triangle, Square;//线段、三角形和正方形
-    public int Shield;//护盾
-    public int Market;//控制市场数
+    public Text Text_Ranking, Text_User;
+    private GameControl GC;
 
-    //攻击对手的节点和图形
-    public void Attack(int type, FOECompany target)
+    //用户获取
+    public void GainUser()
     {
-        if (target.Shield > 0)
+        if (isPlayer == true)
         {
-            target.Shield -= 1;
-            return;
+            if (GC == null)
+                GC = GameControl.Instance;
+            GC.foeControl.PlayerCardCount = new int[3] { 0, 0, 0 };
+            foreach(DepControl dep in GC.CurrentDeps)
+            {
+                if (dep.ActiveMode == 5 && dep.canWork == true && dep.CurrentDivision.canWork == true)
+                {
+                    int level = 1, count = 1;
+
+                    if (dep.CurrentDivision.WorkStatus + dep.CurrentDivision.ExtraWorkStatus <= 3)
+                        level = 1;
+                    else if (dep.CurrentDivision.WorkStatus + dep.CurrentDivision.ExtraWorkStatus <= 8)
+                        level = 2;
+                    else
+                        level = 3;
+
+                    if (dep.CurrentDivision.Efficiency + dep.CurrentDivision.ExtraEfficiency <= 3)
+                        count = 1;
+                    else if (dep.CurrentDivision.Efficiency + dep.CurrentDivision.ExtraEfficiency <= 8)
+                        count = 2;
+                    else
+                        count = 3;
+
+                    GC.foeControl.PlayerCardCount[level - 1] += count;
+                }
+            }
         }
         else
         {
-            //节点
-            if (type == 1)
+            int[] UOb;
+            float[] Posb;
+            if (Type == 1)
             {
-                if (target.Node > 0)
-                    target.Node -= 1;
+                UOb = AdjustData.UserObtain_A;
+                Posb = AdjustData.UserPosb_A;
             }
-            //线段
-            else if (type == 2)
+            else if (Type == 2)
             {
-                if (target.Line > 0)
-                {
-                    target.Line -= 1;
-                    target.Node += 1;
-                }
+                UOb = AdjustData.UserObtain_B;
+                Posb = AdjustData.UserPosb_B;
             }
-            //三角形
-            else if (type == 3)
+            else
             {
-                if (target.Triangle > 0)
-                {
-                    target.Triangle -= 1;
-                    target.Node += 2;
-                }
-            }
-            //正方形
-            else if (type == 4)
-            {
-                if (target.Square > 0)
-                {
-                    target.Square -= 1;
-                    target.Node += 3;
-                }
+                UOb = AdjustData.UserObtain_C;
+                Posb = AdjustData.UserPosb_C;
             }
 
+            float r = Random.Range(0.0f, 1.0f);
+            if (r < Posb[0])
+                UserCount += UOb[0];
+            else if (r < Posb[2])
+                UserCount += UOb[1];
+            else if (r < Posb[3])
+                UserCount += UOb[2];
+            else
+                UserCount += UOb[3];
+            if (UserCount < 0)
+                UserCount = 0;
         }
     }
 
-    //获取市场
-    public void ConquerMarket(int type, FOECompany target)
+    public void UpdateUI()
     {
-        int Limit, Value = 0;
-        if (target != null)
-            Limit = target.Market;
-        else
-            Limit = FC.NeutralMarket;
-        //线段
-        if (type == 1)
-        {
-            Line -= 1;
-            ActionPoint -= 1;
-            Value = 2;
-        }
-        //三角形
-        else if (type == 2)
-        {
-            Triangle -= 1;
-            ActionPoint -= 2;
-            Value = 5;
-        }
-        else if (type == 3)
-        {
-            Square -= 1;
-            ActionPoint -= 3;
-            Value = 8;
-        }
-
-        if (Value > Limit)
-            Value = Limit;
-
-        if (target != null)
-            target.Market -= Value;
-        else
-            FC.NeutralMarket -= Value;
-
-        Market += Value;
+        Text_Ranking.text = Ranking.ToString();
+        Text_User.text = UserCount.ToString();
     }
 }

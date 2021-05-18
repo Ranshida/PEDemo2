@@ -19,6 +19,7 @@ public class BrainStormControl : MonoBehaviour
     public bool BSStarted = false;//是否已经开始头脑风暴，用于心力爆炸检测
 
     private int HpLimit;//Boss血量上限，用于UI显示
+    private int FightType = 1;//1正常头脑风暴 2事件组 3融资
 
     public int[] AcquiredItem = new int[4];
 
@@ -76,6 +77,7 @@ public class BrainStormControl : MonoBehaviour
         GC.AskPause(this);
         BSStarted = true;
         StageCount = 0;
+        FightType = 1;
         //重置物品数量
         for(int i = 0; i < AcquiredItem.Length; i++)
         {
@@ -127,6 +129,7 @@ public class BrainStormControl : MonoBehaviour
         GC.AskPause(this);
         CurrentEGI = e;
         BSStarted = true;
+        FightType = 2;
         //核心成员信息传递
         for (int i = 0; i < 6; i++)
         {
@@ -146,6 +149,32 @@ public class BrainStormControl : MonoBehaviour
         FightPanel.SetActive(true);
     }
 
+    public void StartEventBossFight(int level)
+    {
+        //有未处理事件时不能继续
+        if (GC.EC.UnfinishedEvents.Count > 0 || BSStarted == true)
+            return;
+        GC.AskPause(this);
+        BSStarted = true;
+        FightType = 3;
+        //核心成员信息传递
+        for (int i = 0; i < 6; i++)
+        {
+            if (i < CoreMembers.Count)
+            {
+                EmpInfos[i].gameObject.SetActive(true);
+                EmpInfos[i].EmpJoin(CoreMembers[i]);
+            }
+            else
+                EmpInfos[i].gameObject.SetActive(false);
+        }
+        SetBossLevel(level);
+        Text_Item.text = "";
+        this.GetComponent<WindowBaseControl>().SetWndState(true);
+        MemberSelectPanel.SetActive(false);
+        RouteSelectPanel.SetActive(false);
+        FightPanel.SetActive(true);
+    }
     //下一回合
     public void NextTurn()
     {
@@ -757,7 +786,7 @@ public class BrainStormControl : MonoBehaviour
     void FightFinish(bool Win)
     {
         //不是事件组头脑风暴战斗的时候
-        if (CurrentEGI == null)
+        if (FightType == 1)
         {
             if (Win == true)
             {
@@ -785,7 +814,7 @@ public class BrainStormControl : MonoBehaviour
             }
         }
         //是事件组头脑风暴战斗的时候
-        else
+        else if (FightType == 2)
         {
             if (Win == true)
             {
@@ -795,6 +824,17 @@ public class BrainStormControl : MonoBehaviour
             CurrentEGI = null;
             EndBS();
         }
+        //融资头脑风暴战斗
+        else if (FightType == 3)
+        {
+            if (Win == true)
+            {
+                GC.QC.Init("融资议题成功");
+                GC.foeControl.InvestComplete();
+            }
+            EndBS();
+        }
+        
         CurrentBoss = null;
         for(int i = 0; i < Bosses.Count; i++)
         {

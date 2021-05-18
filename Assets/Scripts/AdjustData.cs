@@ -4,20 +4,58 @@ using UnityEngine;
 
 static public class AdjustData
 {
-    static public int BottleneckValue = 800; //每层瓶颈提供的额外经验需求
-
-    static public int[] ExpLimit = { 400,600,800,1000,1200,1400,1600,1800,2000,2200, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1}; //各等级(1-10)升级所需经验
-
-    //1.技术 2.市场 3.产品 8.HR人力 9.Fi财务 11.Fo行业 12.St谋略 13.Co说服 15.Go八卦 16.Ad行政
-    static public int CEOProfessionType = 13; //CEO专场能力类型（编号见上面）
-    static public int CEOProfessionValue = 4; //CEO专场能力数值（编号见上面）
-
-    static public int EmpAProfessionType = 1; //默认员工A专场能力类型（编号见上面）
-    static public int EmpAProfessionValue = 4; //默认员工A专场能力数值（编号见上面）
-
-    static public int EmpBProfessionType = 8; //默认员工B专场能力类型（编号见上面）
-    static public int EmpBProfessionValue = 4; //默认员工B专场能力数值（编号见上面）
-
     static public int EmpExpObtain = 5;//有一个技能符合时工作1工时获得的经验
     static public int EmpExpDoubleSkillObtain = 3;//有两个技能符合时工作1工时获得的经验
+
+    #region 融资相关
+    //融资数值相关
+    //天使、A、B、C、上市投资轮的各等级用户意愿判定阈值
+    static public int[] UserLevel1 = new int[] { 3, 4, 5, 6 }, UserLevel2 = new int[] { 10, 12, 14, 16 }
+    , UserLevel3 = new int[] { 22, 25, 28, 31 }, UserLevel4 = new int[] { 40, 44, 48, 52 }, UserLevel5 = new int[] { 65, 70, 75, 80 };
+    //士气等级阈值
+    static public int[] MoraleLevel = new int[] { 100, 80, 60, 40 };
+    //人均成本等级阈值
+    static public int[] CostLevel = new int[] { 20, 30, 40};
+
+    //根据用户数量等级确定的意愿加成
+    static public int[] UserRult = new int[] { 0, 1, 2, 3, 4 };
+    //商战排名1-4时的意愿加成
+    static public int[] RankResult = new int[] { 3, 2, 1, 0 };
+    //士气从最高到最低的意愿加成
+    static public int[] MoraleResult = new int[] { 0, -1, -2, -3, -5 };
+    //人均成本的意愿加成
+    static public int[] CostResult = new int[] { 3, 2, 1, 0 };
+
+    //各轮投资的收入
+    static public int[] InvestIncome = new int[] { 50, 100, 200, 400, 800 };
+    //投资意愿等级阈值
+    static public int[] InvestWillLevel = new int[] { 3, 5, 7, 9 };
+    #endregion
+
+    #region 商战相关
+    //敌对公司A用户获取
+    static public int[] UserObtain_A = new int[] { -1, 0, 1, 2 };
+    //敌对公司A用户获取概率
+    static public float[] UserPosb_A = new float[] { 0.25f, 0.25f, 0.25f, 0.25f };
+
+    //敌对公司B用户获取
+    static public int[] UserObtain_B = new int[] { -3, 1, 2, 5 };
+    //敌对公司B用户获取概率
+    static public float[] UserPosb_B = new float[] { 0.15f, 0.25f, 0.45f, 0.15f };
+
+    //敌对公司C用户获取
+    static public int[] UserObtain_C = new int[] { -2, 3, 3, 5 };
+    //敌对公司C用户获取概率
+    static public float[] UserPosb_C = new float[] { 0.25f, 0.25f, 0.25f, 0.25f };
+
+    //各轮融资玩家用户获取概率                   (初始、1级牌加成、2级牌加成、3级牌加成)
+    static public float[] PUserPosb1 = new float[] { 0.5f, 0.2f, 0.3f, 0.5f };//天使轮
+    static public float[] PUserPosb2 = new float[] { 0.4f, 0.15f, 0.25f, 0.4f };//A轮
+    static public float[] PUserPosb3 = new float[] { 0.2f, 0.12f, 0.2f, 0.3f };//B轮
+    static public float[] PUserPosb4 = new float[] { 0f, 0.1f, 0.15f, 0.25f };//C轮
+    static public float[] PUserPosb5 = new float[] { -0.3f, 0.08f, 0.12f, 0.2f };//上市
+
+    //各轮融资阶段玩家用户上限
+    static public int[] PlayerUSerLimit = new int[] { 10, 22, 40, 65 };
+    #endregion
 }

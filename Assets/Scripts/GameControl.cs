@@ -7,7 +7,7 @@ using UnityEngine.Events;
 public class GameControl : MonoBehaviour
 {
     public static GameControl Instance;
-    [HideInInspector] public int Salary, Income, BuildingPay, MobilizeExtraMent = 0, ExtraDice = 0, TimeMultiply = 1, WorkEndEmpCount = 0;
+    [HideInInspector] public int Salary, Income = 0, BuildingPay, MobilizeExtraMent = 0, ExtraDice = 0, TimeMultiply = 1, WorkEndEmpCount = 0;
     [HideInInspector] public float EfficiencyExtraScience = 0, ExtrafailRate = 0, TotalSalaryMultiply = 1.0f,
         HRBuildingMentalityExtra = 1.0f, BuildingSkillSuccessExtra = 0, TotalBuildingPayMultiply = 1.0f, HireSuccessExtra = 0, 
         BaseDepExtraSuccessRate = 0;
@@ -15,7 +15,7 @@ public class GameControl : MonoBehaviour
     //5发动建筑技能时员工选择 6CEO技能员工/部门选择 7选择两个员工发动动员技能 8普通办公室的上级(高管办公室)选择  9头脑风暴的员工选择
     //10选择两个员工的CEO技能 11部门/员工的物品使用
     public int AreaSelectMode = 1;//1部门目标区域的选择（暂时删除）  2物品目标区域的选择
-    public int Money = 1000, DoubleMobilizeCost = 0, MeetingBlockTime = 0, MonthMeetingTime = 3;
+    public int Money = 1000, DoubleMobilizeCost = 0, MeetingBlockTime = 0, MonthMeetingTime = 3, WarTime = 3;
     public bool ForceTimePause = false;
     public int Stamina
     {
@@ -164,8 +164,7 @@ public class GameControl : MonoBehaviour
         {
             MoneyCalcTimer = 0;
         }
-        Text_Money.text = "金钱:" + Money +"\n" 
-                        + "    " + (Income - Salary - BuildingPay) + "/月";
+        Text_Money.text = "金钱:" + Money +"\n" + "    " + (CalcCost() + Income) + "/月";
         if (CurrentEmployees.Count > 0)
         {
             Text_Stamina.text = "CEO体力:" + CurrentEmployees[0].Stamina + "/" + CurrentEmployees[0].StaminaLimit;
@@ -207,10 +206,20 @@ public class GameControl : MonoBehaviour
             MonthMeeting.Instance.StartMeeting();
             return;
         }
+        if (WarTime == 0)
+        {
+            foeControl.PrepareCWar();
+            return;
+        }
 
-        CalcExpense();
+        //扣维护费
+        int value = CalcCost();
+        if (value > 0)
+            Money -= value;
+
         Turn += 1;
         MonthMeetingTime -= 1;
+        WarTime -= 1;
 
         //临时招聘
         HireTime -= 1;
@@ -251,6 +260,11 @@ public class GameControl : MonoBehaviour
         if (MonthMeetingTime == 0)
         {
             Text_NextTurn.text = "开始月会";
+            return;
+        }
+        else if (WarTime == 0)
+        {
+            Text_NextTurn.text = "开始商战";
             return;
         }
         else
@@ -362,16 +376,20 @@ public class GameControl : MonoBehaviour
     }
 
     //计算支出
-    void CalcExpense()
+    public int CalcCost()
     {
         int value = 0;
-        foreach(DivisionControl div in CurrentDivisions)
+        foreach (DivisionControl div in CurrentDivisions)
         {
             value += (div.CalcCost(1) + div.CalcCost(2) + div.ExtraCost);
         }
+        foreach(Employee emp in CurrentEmployees)
+        {
+            if (emp.CurrentDep == null && emp.CurrentDivision == null)
+                value += emp.InfoDetail.CalcSalary();
+        }
         value += ExtraExpense;
-        if (value > 0)
-            Money -= value;
+        return value;
     }
 
     //旧下班判定，现在没有太大用处
