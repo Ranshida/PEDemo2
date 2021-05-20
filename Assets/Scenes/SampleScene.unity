@@ -4296,7 +4296,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &199189134
 RectTransform:
   m_ObjectHideFlags: 0
@@ -8851,7 +8851,7 @@ MonoBehaviour:
   info: {fileID: 0}
   ShowTime: 0.1
   ContentA: "\u84DD\u8272\u6C34\u6676"
-  ContentB: "\u524A\u51CF\u90E8\u95E8\u6210\u672C25%"
+  ContentB: "\u4E8B\u4E1A\u90E8\u6210\u672C-5"
   ContentC: 
 --- !u!1 &385913685
 GameObject:
@@ -19245,7 +19245,7 @@ MonoBehaviour:
   info: {fileID: 0}
   ShowTime: 0.1
   ContentA: "\u9ED1\u8272\u6C34\u6676"
-  ContentB: "\u4FE1\u5FF5\u964D\u4F4E30\uFF08\u5FC5\u987B\u4F18\u5148\u653E\u7F6E\uFF09"
+  ContentB: "\u4FE1\u5FF5-30"
   ContentC: 
 --- !u!1001 &809957249
 PrefabInstance:
@@ -24203,6 +24203,7 @@ RectTransform:
   - {fileID: 1825845146}
   - {fileID: 426027442}
   - {fileID: 176923726}
+  - {fileID: 1734237731}
   m_Father: {fileID: 1815467295}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -28565,7 +28566,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1247299583
 RectTransform:
   m_ObjectHideFlags: 0
@@ -38652,7 +38653,7 @@ MonoBehaviour:
   info: {fileID: 0}
   ShowTime: 0.1
   ContentA: "\u7070\u8272\u6C34\u6676"
-  ContentB: "\u63D0\u9AD8\u6548\u738725%"
+  ContentB: "\u4E8B\u4E1A\u90E8\u6548\u7387+1"
   ContentC: 
 --- !u!1 &1554920929
 GameObject:
@@ -40663,6 +40664,28 @@ MonoBehaviour:
         m_CallState: 2
       - m_Target: {fileID: 1644882124}
         m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1597523469082120015}
+        m_MethodName: CountInvestLevel
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1778791483}
+        m_MethodName: SetWndState
         m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -43399,6 +43422,85 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1733057665}
   m_CullTransparentMesh: 0
+--- !u!1 &1734237730
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1734237731}
+  - component: {fileID: 1734237733}
+  - component: {fileID: 1734237732}
+  m_Layer: 5
+  m_Name: Text_EventProgress
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &1734237731
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1734237730}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 1055849692}
+  m_RootOrder: 18
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -640.2, y: 475}
+  m_SizeDelta: {x: 226, y: 108}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1734237732
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1734237730}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_RaycastTarget: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
+      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  m_FontData:
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_FontSize: 30
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 2
+    m_MaxSize: 40
+    m_Alignment: 0
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: "\u4E0D\u6EE1:0/6\n\n\u8BA4\u540C:0/6"
+--- !u!222 &1734237733
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1734237730}
+  m_CullTransparentMesh: 0
 --- !u!1 &1735079007
 GameObject:
   m_ObjectHideFlags: 0
@@ -45395,6 +45497,7 @@ MonoBehaviour:
   Text_WarTime: {fileID: 1825845147}
   Text_MonthMeetingTime: {fileID: 426027443}
   Text_NextTurn: {fileID: 251430520}
+  Text_EventProgress: {fileID: 1734237732}
   WorkOvertimeToggle: {fileID: 1382955067}
   BSC: {fileID: 249768021}
   DailyEvent:

@@ -12,12 +12,12 @@ public class HireType
 
 public class DepControl : MonoBehaviour
 {
-    public float DepBaseMajorSuccessRate = 0;
-    public float DepBaseMajorFailureRate = 0;
+
     [HideInInspector] public int FailProgress = 0, EfficiencyLevel = 0, SpType;
     //BuildingMode用于区分建筑模式  ActiveMode用于区分激活方式 0无法激活 1直接激活 2选择员工 3选择部门 4选择区域 5卡牌生产
     [HideInInspector] public int ProducePointLimit = 20, ActiveMode = 1, Mode2EffectValue = -2;
     [HideInInspector] public bool SurveyStart = false;
+
     public int DepLevel = 0;//部门等级,用于计算效果
     public int DepFaith = 50;
     public int StaminaExtra = 0;//特质导致的每周体力buff
@@ -30,9 +30,25 @@ public class DepControl : MonoBehaviour
     public int ExtraWorkStatus = 0;//提供给事业部的额外工作状态加成
     public int ExtraProduceLimit = 0;//额外生产/充能周期
     public float Efficiency = 0, SalaryMultiply = 1.0f, BuildingPayMultiply = 1.0f, SpProgress = 0;
-    public float StaminaCostRate = 1.0f;//体力消耗率（默认100%）
+    public int StopWorkTime//停工时间
+    {
+        get
+        {
+            if (stopWorkTime == 0)
+                Text_StopWork.gameObject.SetActive(false);
+            else
+            {
+                Text_StopWork.gameObject.SetActive(true);
+                Text_StopWork.text = "部门停工" + stopWorkTime + "回合";
+            }
+            return stopWorkTime;
+        }
+        set { stopWorkTime = value; }
+    }
+
     public bool MajorSuccess = false, canWork = false, DefautDep = false;
 
+    private int stopWorkTime = 0;//停工时间
     private bool CheatMode = false, TipShowed = false, isWeakend = false;
 
     Action WeakAction, UnWeakAction, AddLevelEffect = () => { }, RemoveLevelEffect = () => { }, DepEffect = () => { };//弱化效果，弱化清除效果，等级增加效果，等级减少效果，部门激活效果
@@ -46,7 +62,8 @@ public class DepControl : MonoBehaviour
     public DepSelect DS;
     public DepControl CommandingOffice;
     public DivisionControl CurrentDivision;
-    public Text Text_DepName, Text_DepName2, Text_DepName3, Text_WeakEffect, Text_InfoProgress, Text_DivProgress, Text_DepFunction;
+    public Text Text_DepName, Text_DepName2, Text_DepName3, Text_WeakEffect, Text_InfoProgress, Text_DivProgress, Text_DepFunction,
+        Text_StopWork;
 
 
     public List<Employee> CurrentEmps = new List<Employee>();
@@ -78,6 +95,12 @@ public class DepControl : MonoBehaviour
     //目前不只是制作，还有很多别的跟事件相关的功能都写在这儿
     public void Produce()
     {
+        if (stopWorkTime > 0)
+        {
+            stopWorkTime -= 1;
+            return;
+        }
+
         //工作结算
         if (canWork == true)
         {
@@ -92,62 +115,6 @@ public class DepControl : MonoBehaviour
 
             if (SpProgress >= (ProducePointLimit + ExtraProduceLimit + CurrentDivision.ExtraProduceTime))
             {
-                #region 旧生产判定
-                ////完成生产
-                //float BaseSuccessRate = CountSuccessRate();
-                //float Posb = Random.Range(0.0f, 1.0f);
-                ////作弊模式必定成功
-                //if (CheatMode == true)
-                //    Posb = BaseSuccessRate - 1;
-                ////成功和大成功
-                //if (Posb <= BaseSuccessRate)
-                //{
-                //    if (Random.Range(0.0f, 1.0f) < DepBaseMajorSuccessRate)
-                //    {
-                //        //大成功
-                //        MajorSuccess = true;
-                //        //额外经验获取
-                //        if (CurrentEmps.Count > 0)
-                //        {
-                //            for (int i = 0; i < (int)(ProducePointLimit / Efficiency); i++)
-                //            {
-                //                EmpsGetExp();
-                //            }
-                //        }
-                //        BuildingActive();
-                //    }
-                //    else
-                //    {
-                //        MajorSuccess = false;
-                //        BuildingActive();
-                //    }
-
-                //}
-                ////失败和大失败
-                //else
-                //{
-                //    SpProgress = 0;
-                //    float Posb2 = Random.Range(0.0f, 1.0f);
-                //    if (Posb2 < DepBaseMajorFailureRate)
-                //    {
-                //        //大失败
-                //        GC.CreateMessage(Text_DepName.text + " 工作中发生重大失误");
-                //        AddPerk(new Perk105(null));
-                //        GC.QC.Init(Text_DepName.text + "发生重大失误!\n(成功率:" + Mathf.Round((CountSuccessRate()) * 100) +
-                //            "% 重大失误率:" + ((DepBaseMajorFailureRate) * 100) + "%)\n部门信念严重降低");
-                //    }
-                //    else
-                //    {
-                //        //失败
-                //        GC.CreateMessage(Text_DepName.text + " 工作失败");
-                //        if (TipShowed == false)
-                //        {
-                //            TipShowed = true;
-                //            GC.QC.Init(Text_DepName.text + "业务生产失败!\n(成功率:" + Mathf.Round((CountSuccessRate()) * 100) + "%)");
-                //        }
-                //    }
-                //}
-                #endregion
                 if (ActiveMode == 1)
                     BuildingActive();
                 else if (ActiveMode != 5)

@@ -129,7 +129,7 @@ public class EmpManager : MonoBehaviour
         {
             foreach (Employee e in GameControl.Instance.CurrentEmployees)
             {
-                if (e.CurrentDep != null && e.CurrentDivision != null && e != emp)
+                if (e.CurrentDep == null && e.CurrentDivision == null && e != emp)
                     TargetEmps.Add(e);
             }
         }
@@ -156,7 +156,7 @@ public class EmpManager : MonoBehaviour
     //根据条件和权重选择一个事件序列
     public void AddEvent(Employee emp)
     {
-        int TotalWeight = 10;
+        int TotalWeight = 0;
         bool HaveBlack = false, HaveOrange = false, HaveColleague = false;
         //判断有没有对应颜色的事件状态
         foreach (EventCondition c in emp.EventConditions)
@@ -209,24 +209,28 @@ public class EmpManager : MonoBehaviour
         }
         if (HaveBlack == true)
         {
-            BlackWeight1 = ColleagueWeight + 10;
+            BlackWeight1 = ColleagueWeight + 8;
             BlackWeight2 = ColleagueWeight + 40;
             TotalWeight += 40;
         }
         if (HaveOrange == true)
         {
-            OrangeWeight += (ColleagueWeight + BlackWeight1 + BlackWeight2);
+            OrangeWeight += (ColleagueWeight + BlackWeight1 + BlackWeight2) + 50;
             TotalWeight += 50;
         }
-        int Posb = Random.Range(1, TotalWeight + 1);
-        if (Posb <= ColleagueWeight)
-            StartEvent(emp, 1);
-        else if (Posb <= BlackWeight1)
-            StartEvent(emp, 2);
-        else if (Posb <= BlackWeight2)
-            StartEvent(emp, 3);
-        else if (Posb <= OrangeWeight)
-            StartEvent(emp, 4);
+        if (TotalWeight > 0)
+        {
+            int Posb = Random.Range(1, TotalWeight + 1);
+            //print(emp.Name + " 随机:" + Posb + "，同事:" + ColleagueWeight + "，黑1:" + BlackWeight1 + "，黑2:" + BlackWeight2 + "，橙:" + OrangeWeight + "，总:" + TotalWeight);
+            if (Posb <= ColleagueWeight)
+                StartEvent(emp, 1);
+            else if (Posb <= BlackWeight1)
+                StartEvent(emp, 2);
+            else if (Posb <= BlackWeight2)
+                StartEvent(emp, 3);
+            else if (Posb <= OrangeWeight)
+                StartEvent(emp, 4);
+        }
     }
 
     //根据序列选择一个事件
@@ -275,7 +279,7 @@ public class EmpManager : MonoBehaviour
                 if (e.ConditionCheck(emp) == true)
                     PosbEvents.Add(e);
             }
-            PosbEvents[Random.Range(0, PosbEvents.Count)].StartEvent(emp);
+            PosbEvents[Random.Range(0, PosbEvents.Count)].StartEvent(emp, emp.SelfEventCorrection);
         }
         else if (Type == 4)
         {
@@ -296,7 +300,7 @@ public class EmpManager : MonoBehaviour
                     {
                         rTarget = GameControl.Instance.CurrentEmployees[Random.Range(0, GameControl.Instance.CurrentEmployees.Count)];
                     }
-                    new Event14().StartEvent(emp, 0, rTarget);
+                    new Event14().StartEvent(emp, emp.SelfEventCorrection + rTarget.SelfEventCorrection, rTarget);
                 }
                 return;
             }
@@ -308,7 +312,7 @@ public class EmpManager : MonoBehaviour
                 if (e.ConditionCheck(emp, target) == true)
                     PosbEvents.Add(e);
             }
-            PosbEvents[Random.Range(0, PosbEvents.Count)].StartEvent(emp, 0, target);
+            PosbEvents[Random.Range(0, PosbEvents.Count)].StartEvent(emp, emp.SelfEventCorrection + target.SelfEventCorrection, target);
         }
     }
 }

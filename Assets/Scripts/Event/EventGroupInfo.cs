@@ -5,10 +5,11 @@ using UnityEngine.UI;
 
 public class EventGroupInfo : MonoBehaviour
 {
+    public int RandomEventNum = 0;//当前随机到的事件编号
     public int Stage = 1;
     public int STEmpIndex = 0;
     public int STTime = 0;
-    public int FinishStage = 0; //已完成的阶段，完成抉择事件会增加，完成特殊指令会增加
+    public int FinishStage = 1; //已完成的阶段，完成抉择事件会增加，完成特殊指令会增加
     public float STSuccessRate = 0;//特别小组成功率
     public bool SpecialTeamUsed = false;//是否已经添加了特别小组修正
     private int PrepareTurnLeft = 0;
@@ -22,6 +23,7 @@ public class EventGroupInfo : MonoBehaviour
     public EventGroup TargetEventGroup;
     public Employee Target;
     public DivisionControl TargetDivision;
+    public DepControl TargetDep;
 
     public Employee[] STMembers = new Employee[3];
     public Button[] STRemoveButtons = new Button[3];
@@ -32,6 +34,7 @@ public class EventGroupInfo : MonoBehaviour
 
     public void SetEvent(EventGroup e)
     {
+        RandomEventNum = Random.Range(1, e.StageCount + 1);
         TargetEventGroup = e;
         PrepareTurnLeft = e.ExtraStage;
         Text_GroupName1.text = TargetEventGroup.EventName;
@@ -63,10 +66,13 @@ public class EventGroupInfo : MonoBehaviour
         //否则创建相应抉择事件
         else
         {
-            if (Target == null)
+            //没有目标时重新设定目标
+            if (Target == null || TargetDep == null || TargetDivision == null)
+            {
                 UpdateUI();
+                print("抉择事件开始前丢失目标");
+            }
             EC.StartChoiceEvent(TargetEventGroup, Target, this);
-            Target = null;
         }
     }
 
@@ -92,6 +98,11 @@ public class EventGroupInfo : MonoBehaviour
         {
             Lines[Stage - 1].sprite = null;
             Stage += 1;
+            //重置目标并随机下个事件类型
+            RandomEventNum = Random.Range(1, TargetEventGroup.StageCount + 1);
+            Target = null;
+            TargetDep = null;
+            TargetDivision = null;
         }
         //更新UI，是否执行完毕在EventControl统一判断
         if (Stage <= TargetEventGroup.StageCount)
@@ -99,6 +110,9 @@ public class EventGroupInfo : MonoBehaviour
             StagePointer.position = StageMarker[Stage - 1].transform.position;
             UpdateUI();
         }
+
+        //特别小组和其他修正相关
+        //重置按钮
         if (SpecialTeamUsed == true)
         {
             BSButton.interactable = true;
@@ -132,7 +146,10 @@ public class EventGroupInfo : MonoBehaviour
                     PosbEmps.Add(e);
             }
             Target = PosbEmps[Random.Range(0, PosbEmps.Count)];
+        }
 
+        if (TargetDivision == null)
+        {
             //找目标事业部，目标员工没有所属事业部时，找第一个有部门的事业部
             if (Target.CurrentDep != null)
                 TargetDivision = Target.CurrentDep.CurrentDivision;
@@ -140,20 +157,40 @@ public class EventGroupInfo : MonoBehaviour
                 TargetDivision = Target.CurrentDivision;
             else
             {
-                foreach(DivisionControl dc in GameControl.Instance.CurrentDivisions)
+                List<DivisionControl> dcList = new List<DivisionControl>();
+                foreach (DivisionControl dc in GameControl.Instance.CurrentDivisions)
                 {
                     if (dc.CurrentDeps.Count > 0)
                     {
-                        TargetDivision = dc;
-                        return;
+                        dcList.Add(dc);
                     }
                 }
+                TargetDivision = dcList[Random.Range(0, dcList.Count)];
             }
         }
-        Text_Description.text = TargetEventGroup.EventDescription(Target, null, Stage);
-        Text_FailResult.text = "事件失败效果:" + TargetEventGroup.ResultDescription(Target, null, Stage);
+
+        if (TargetDep == null)
+        {
+            if (Target.CurrentDep != null)
+                TargetDep = Target.CurrentDep;
+            else if (Target.CurrentDivision != null)
+            {
+                if (Target.CurrentDivision.CurrentDeps.Count > 0)
+                    TargetDep = Target.CurrentDivision.CurrentDeps[Random.Range(0, Target.CurrentDivision.CurrentDeps.Count)];
+                else
+                    TargetDep = EC.GC.CurrentDeps[Random.Range(0, EC.GC.CurrentDeps.Count)];
+            }
+            else
+                TargetDep = EC.GC.CurrentDeps[Random.Range(0, EC.GC.CurrentDeps.Count)];
+        }
+        Text_Description.text = TargetEventGroup.EventDescription(Target, null, RandomEventNum);
+        if (TargetEventGroup.DebuffEvent == true)
+            Text_FailResult.text = "事件失败效果:" + TargetEventGroup.ResultDescription(Target, null, RandomEventNum, this);
+        else
+            Text_FailResult.text = "事件成功效果:" + TargetEventGroup.ResultDescription(Target, null, RandomEventNum, this);
+
         int TurnCount = 1 + PrepareTurnLeft;
-        Text_GroupInfo1.text = "距离下一事件:" + TurnCount + "回合\n下一事件:" + TargetEventGroup.SubEventNames[Stage - 1];
+        Text_GroupInfo1.text = "距离下一事件:" + TurnCount + "回合\n下一事件:" + TargetEventGroup.SubEventNames[RandomEventNum - 1];
         Text_GroupInfo2.text = Text_GroupInfo1.text;
     }
 

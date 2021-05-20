@@ -77,56 +77,62 @@ public class EventGroup : Event
         //如果判定成功就不继续
         if (FindResult(emp, ExtraCorrection, target) == 1)
         {
-            egi.StageMarker[egi.Stage - 1].color = Color.green;
-            QuestControl.Instance.Init("判定成功," + ResultDescription(emp, target, egi.Stage));
+            egi.StageMarker[egi.Stage - 1].color = Color.green;            
             if (DebuffEvent == true)
+            {
+                QuestControl.Instance.Init("判定成功，未产生负面效果");
                 return;
+            }
+            else
+                QuestControl.Instance.Init("判定成功," + ResultDescription(emp, target, egi.RandomEventNum));
         }
         else
         {
             egi.StageMarker[egi.Stage - 1].color = Color.red;
-            QuestControl.Instance.Init("判定失败," + ResultDescription(emp, target, egi.Stage));
             if (DebuffEvent == false)
+            {
+                QuestControl.Instance.Init("判定失败，未产生效果");
                 return;
+            }
+            else
+                QuestControl.Instance.Init("判定失败," + ResultDescription(emp, target, egi.RandomEventNum));
         }
 
-        if (egi.Stage == 1)
-            EffectA(emp, ExtraCorrection, target);
-        else if (egi.Stage == 2)
-            EffectB(emp, ExtraCorrection, target);
-        else if (egi.Stage == 3)
-            EffectC(emp, ExtraCorrection, target);
-        else if (egi.Stage == 4)
-            EffectD(emp, ExtraCorrection, target);
-        else if (egi.Stage == 5)
-            EffectE(emp, ExtraCorrection, target);
-        else if (egi.Stage == 6)
-            EffectF(emp, ExtraCorrection, target);
-
-        QuestControl.Instance.Init("判定成功");
+        if (egi.RandomEventNum == 1)
+            EffectA(emp, egi, target);
+        else if (egi.RandomEventNum == 2)
+            EffectB(emp, egi, target);
+        else if (egi.RandomEventNum == 3)
+            EffectC(emp, egi, target);
+        else if (egi.RandomEventNum == 4)
+            EffectD(emp, egi, target);
+        else if (egi.RandomEventNum == 5)
+            EffectE(emp, egi, target);
+        else if (egi.RandomEventNum == 6)
+            EffectF(emp, egi, target);
     }
 
-    protected virtual void EffectA(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected virtual void EffectA(Employee emp, EventGroupInfo egi = null, Employee target = null )
     {
 
     }
-    protected virtual void EffectB(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected virtual void EffectB(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
 
     }
-    protected virtual void EffectC(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected virtual void EffectC(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
 
     }
-    protected virtual void EffectD(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected virtual void EffectD(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
 
     }
-    protected virtual void EffectE(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected virtual void EffectE(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
 
     }
-    protected virtual void EffectF(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected virtual void EffectF(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
 
     }
@@ -163,29 +169,55 @@ public class EventGroup1 : EventGroup
         ItemValueRequest = new List<int>() { };
     }
 
-    protected override void EffectA(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectA(Employee emp, EventGroupInfo egi = null, Employee target = null )
     {
+        DivisionControl div = egi.TargetDivision;
 
+        if (div != null)
+        {
+            foreach(DepControl dep in div.CurrentDeps)
+            {
+                foreach (Employee e in dep.CurrentEmps)
+                {
+                    e.AddEmotion(EColor.Red);
+                }
+            }
+            if (div.Manager != null)
+                div.Manager.AddEmotion(EColor.Red);
+        }
     }
-    protected override void EffectB(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectB(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
+        DivisionControl div = egi.TargetDivision;
 
+        if (div != null)
+        {
+            foreach (DepControl dep in div.CurrentDeps)
+            {
+                foreach (Employee e in dep.CurrentEmps)
+                {
+                    e.AddEmotion(EColor.Red);
+                }
+            }
+            if (div.Manager != null)
+                div.Manager.AddEmotion(EColor.Red);
+        }
     }
-    protected override void EffectC(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectC(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
-
+        emp.InfoDetail.AddPerk(new Perk55());
     }
-    protected override void EffectD(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectD(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
-
+        egi.TargetDivision.AddPerk(new Perk56());
     }
-    protected override void EffectE(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectE(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
-
+        egi.TargetDivision.AddPerk(new Perk57());
     }
-    protected override void EffectF(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectF(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
-
+        egi.TargetDivision.AddPerk(new Perk58());
     }
 
     public override string EventDescription(Employee Emp, Employee targetEmp, int index, EventGroupInfo egi = null)
@@ -223,17 +255,17 @@ public class EventGroup1 : EventGroup
             TargetName = targetEmp.Name;
 
         if (index == 1)
-            content = PlaceName + "所有员工主导情绪变为“愤怒”";
+            content = DivName + "所有员工主导情绪变为“愤怒”";
         else if (index == 2)
-            content = PlaceName + "所有员工主导情绪变为“愤怒”";
+            content = DivName + "所有员工主导情绪变为“愤怒”";
         else if (index == 3)
-            content = SelfName + "获得“虐待传闻”状态，所有关系事件修正-5，持续6个回合";
+            content = SelfName + "获得“虐待传闻”状态，所有个人事件修正-5，持续6个回合";
         else if (index == 4)
-            content = PlaceName + "获得状态“机械傀儡”×1，每个“机械傀儡”导致信念下降30点，持续6回合";
+            content = DivName + "获得状态“机械傀儡”×1，每个“机械傀儡”导致信念下降30点，持续6回合";
         else if (index == 5)
-            content = PlaceName + "获得状态“发奋涂墙”×1，每个“发奋涂墙”导致信念下降30点，持续6回合";
+            content = DivName + "获得状态“发奋涂墙”×1，每个“发奋涂墙”导致信念下降30点，持续6回合";
         else if (index == 6)
-            content = PlaceName + "获得状态“警惕人工智能”×1，每个“警惕人工智能”导致信念下降30点，持续6回合";
+            content = DivName + "获得状态“警惕人工智能”×1，每个“警惕人工智能”导致信念下降30点，持续6回合";
 
         return content;
     }
@@ -268,21 +300,21 @@ public class EventGroup2 : EventGroup
         ItemValueRequest = new List<int>() { };
     }
 
-    protected override void EffectA(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectA(Employee emp, EventGroupInfo egi = null, Employee target = null )
     {
-        //" + PlaceName + "获得“拖延工期”状态×1，每个“拖延工期”使效率下降3点，持续6个月
+        egi.TargetDivision.AddPerk(new Perk59());
     }
-    protected override void EffectB(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectB(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
-        //" + PlaceName + "获得“占领公厕”状态×1，每个“占领公厕”使工作状态下降3点，持续6回合
+        egi.TargetDivision.AddPerk(new Perk60());
     }
-    protected override void EffectC(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectC(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
-        //" + PlaceName + "获得“上班捕鱼”状态×1，每个“摸鱼”使工作状态下降3点，持续6回合
+        egi.TargetDivision.AddPerk(new Perk61());
     }
-    protected override void EffectD(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectD(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
-        //" + PlaceName + "获得“信号不良”状态×1，每个“信号不良”使效率下降3点，持续6个月
+        egi.TargetDivision.AddPerk(new Perk62());
     }
 
     public override string EventDescription(Employee Emp, Employee targetEmp, int index, EventGroupInfo egi = null)
@@ -316,13 +348,13 @@ public class EventGroup2 : EventGroup
             TargetName = targetEmp.Name;
 
         if (index == 1)
-            content = PlaceName + "获得“拖延工期”状态×1，每个“拖延工期”使效率下降3点，持续6个月";
+            content = DivName + "获得“拖延工期”状态×1，每个“拖延工期”使效率下降3点，持续6个月";
         else if (index == 2)
-            content = PlaceName + "获得“占领公厕”状态×1，每个“占领公厕”使工作状态下降3点，持续6回合";
+            content = DivName + "获得“占领公厕”状态×1，每个“占领公厕”使工作状态下降3点，持续6回合";
         else if (index == 3)
-            content = PlaceName + "获得“上班捕鱼”状态×1，每个“摸鱼”使工作状态下降3点，持续6回合";
+            content = DivName + "获得“上班捕鱼”状态×1，每个“摸鱼”使工作状态下降3点，持续6回合";
         else if (index == 4)
-            content = PlaceName + "获得“信号不良”状态×1，每个“信号不良”使效率下降3点，持续6个月";
+            content = DivName + "获得“信号不良”状态×1，每个“信号不良”使效率下降3点，持续6个月";
 
         return content;
     }
@@ -358,29 +390,29 @@ public class EventGroup3 : EventGroup
         ItemValueRequest = new List<int>() { };
     }
 
-    protected override void EffectA(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectA(Employee emp, EventGroupInfo egi = null, Employee target = null )
     {
-        //" + PlaceName + "获得状态“食堂降价”×1，每个“食堂降价”使事业部运行成本增加50
+        egi.TargetDivision.AddPerk(new Perk63());
     }
-    protected override void EffectB(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectB(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
-        //" + PlaceName + "获得状态“要求涨工资”×1，每个“要求涨工资”使事业部运行成本增加50
+        egi.TargetDivision.AddPerk(new Perk64());
     }
-    protected override void EffectC(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectC(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
-        //" + SelfName + "所在部门停工6回合
+        egi.TargetDep.StopWorkTime += 6;
     }
-    protected override void EffectD(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectD(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
-        //" + SelfName + "所在部门停工6回合
+        egi.TargetDep.StopWorkTime += 6;
     }
-    protected override void EffectE(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectE(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
-        //" + SelfName + "离职
+        emp.InfoDetail.Fire(false);
     }
-    protected override void EffectF(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectF(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
-        //" + SelfName + "离职
+        emp.InfoDetail.Fire(false);
     }
 
     public override string EventDescription(Employee Emp, Employee targetEmp, int index, EventGroupInfo egi = null)
@@ -418,13 +450,13 @@ public class EventGroup3 : EventGroup
             TargetName = targetEmp.Name;
 
         if (index == 1)
-            content = PlaceName + "获得状态“食堂降价”×1，每个“食堂降价”使事业部运行成本增加50";
+            content = DivName + "获得状态“食堂降价”×1，每个“食堂降价”使事业部运行成本增加50";
         else if (index == 2)
-            content = PlaceName + "获得状态“要求涨工资”×1，每个“要求涨工资”使事业部运行成本增加50";
+            content = DivName + "获得状态“要求涨工资”×1，每个“要求涨工资”使事业部运行成本增加50";
         else if (index == 3)
-            content = SelfName + "所在部门停工6回合";
+            content = DepName + "停工6回合";
         else if (index == 4)
-            content = SelfName + "所在部门停工6回合";
+            content = DepName + "停工6回合";
         else if (index == 5)
             content = SelfName + "离职";
         else if (index == 6)
@@ -465,29 +497,61 @@ public class EventGroup4 : EventGroup
         ItemValueRequest = new List<int>() { };
     }
 
-    protected override void EffectA(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectA(Employee emp, EventGroupInfo egi = null, Employee target = null )
     {
-        //失败无效果，成功则" + PlaceName + "所有人情绪变为“振奋”
+        foreach (DepControl dep in egi.TargetDivision.CurrentDeps)
+        {
+            foreach(Employee e in dep.CurrentEmps)
+            {
+                e.AddEmotion(EColor.Yellow);
+            }
+        }
+        if (egi.TargetDivision.Manager != null)
+            egi.TargetDivision.Manager.AddEmotion(EColor.Yellow);
     }
-    protected override void EffectB(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectB(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
-        //失败无效果，成功则" + PlaceName + "中所有人获得“仙人掌大战”状态，所有一般事件修正+5，持续6个回合
+        DivisionControl div = egi.TargetDivision;
+        if (div != null)
+        {
+            foreach (DepControl dep in div.CurrentDeps)
+            {
+                foreach (Employee e in dep.CurrentEmps)
+                {
+                    e.InfoDetail.AddPerk(new Perk65());
+                }
+            }
+            if (div.Manager != null)
+                div.Manager.InfoDetail.AddPerk(new Perk65());
+        }
     }
-    protected override void EffectC(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectC(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
-        //失败无效果，成功则全公司所有人获得“明星见面会”状态，每回合额外获得3点经验，持续6回合
+        DivisionControl div = egi.TargetDivision;
+        if (div != null)
+        {
+            foreach (DepControl dep in div.CurrentDeps)
+            {
+                foreach (Employee e in dep.CurrentEmps)
+                {
+                    e.InfoDetail.AddPerk(new Perk66());
+                }
+            }
+            if (div.Manager != null)
+                div.Manager.InfoDetail.AddPerk(new Perk66());
+        }
     }
-    protected override void EffectD(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectD(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
-        //失败无效果，成功则" + PlaceName + "获得状态“电音派对”×1，每个“电音派对”使事业部工作状态+3，持续6回合
+        egi.TargetDivision.AddPerk(new Perk67());
     }
-    protected override void EffectE(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectE(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
-        //失败无效果，成功则" + PlaceName + "获得状态“读书会”×1，每个“读书会”使事业部效率+3，持续6回合
+        egi.TargetDivision.AddPerk(new Perk68());
     }
-    protected override void EffectF(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectF(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
-        //失败无效果，成功则" + PlaceName + "获得“甲板烧烤”状态×1，每个“甲板烧烤”使事业部信念+30，持续6回合
+        egi.TargetDivision.AddPerk(new Perk69());
     }
 
     public override string EventDescription(Employee Emp, Employee targetEmp, int index, EventGroupInfo egi = null)
@@ -525,17 +589,17 @@ public class EventGroup4 : EventGroup
             TargetName = targetEmp.Name;
 
         if (index == 1)
-            content = "失败无效果，成功则" + PlaceName + "所有人情绪变为“振奋”";
+            content = "失败无效果，成功则" + DivName + "所有人情绪变为“振奋”";
         else if (index == 2)
-            content = "失败无效果，成功则" + PlaceName + "中所有人获得“仙人掌大战”状态，所有一般事件修正+5，持续6个回合";
+            content = "失败无效果，成功则" + DivName + "中所有人获得“仙人掌大战”状态，所有一般事件修正+5，持续6个回合";
         else if (index == 3)
             content = "失败无效果，成功则全公司所有人获得“明星见面会”状态，每回合额外获得3点经验，持续6回合";
         else if (index == 4)
-            content = "失败无效果，成功则" + PlaceName + "获得状态“电音派对”×1，每个“电音派对”使事业部工作状态+3，持续6回合";
+            content = "失败无效果，成功则" + DivName + "获得状态“电音派对”×1，每个“电音派对”使事业部工作状态+3，持续6回合";
         else if (index == 5)
-            content = "失败无效果，成功则" + PlaceName + "获得状态“读书会”×1，每个“读书会”使事业部效率+3，持续6回合";
+            content = "失败无效果，成功则" + DivName + "获得状态“读书会”×1，每个“读书会”使事业部效率+3，持续6回合";
         else if (index == 6)
-            content = "失败无效果，成功则" + PlaceName + "获得“甲板烧烤”状态×1，每个“甲板烧烤”使事业部信念+30，持续6回合";
+            content = "失败无效果，成功则" + DivName + "获得“甲板烧烤”状态×1，每个“甲板烧烤”使事业部信念+30，持续6回合";
 
         return content;
     }
@@ -569,21 +633,39 @@ public class EventGroup5 : EventGroup
         ItemValueRequest = new List<int>() { };
     }
 
-    protected override void EffectA(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectA(Employee emp, EventGroupInfo egi = null, Employee target = null )
     {
-        //失败无效果，成功则" + PlaceName + "获得“冥想”状态×1，每个“冥想”使事业部信念+30，持续6回合
+        egi.TargetDivision.AddPerk(new Perk70());
     }
-    protected override void EffectB(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectB(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
-        //失败无效果，成功则" + PlaceName + "所有人情绪变为“振奋”
+        foreach (DepControl dep in egi.TargetDivision.CurrentDeps)
+        {
+            foreach (Employee e in dep.CurrentEmps)
+            {
+                e.AddEmotion(EColor.Yellow);
+            }
+        }
+        if (egi.TargetDivision.Manager != null)
+            egi.TargetDivision.Manager.AddEmotion(EColor.Yellow);
     }
-    protected override void EffectC(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectC(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
-        //失败无效果，成功则" + PlaceName + "中所有人获得“夜跑”状态，所有一般事件修正+5，持续6个回合
+        foreach (DepControl dep in egi.TargetDivision.CurrentDeps)
+        {
+            foreach (Employee e in dep.CurrentEmps)
+            {
+                e.InfoDetail.AddPerk(new Perk71());
+            }
+        }
+        if (egi.TargetDivision.Manager != null)
+            egi.TargetDivision.Manager.InfoDetail.AddPerk(new Perk71());
     }
-    protected override void EffectD(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectD(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
-        //失败无效果，成功则员工获得随机正面特质
+        int num = Random.Range(0, PerkData.OptionCardPerkList.Count);
+        Perk perk = PerkData.OptionCardPerkList[num].Clone();
+        emp.InfoDetail.AddPerk(perk);
     }
 
     public override string EventDescription(Employee Emp, Employee targetEmp, int index, EventGroupInfo egi = null)
@@ -617,11 +699,11 @@ public class EventGroup5 : EventGroup
             TargetName = targetEmp.Name;
 
         if (index == 1)
-            content = "失败无效果，成功则" + PlaceName + "获得“冥想”状态×1，每个“冥想”使事业部信念+30，持续6回合";
+            content = "失败无效果，成功则" + DivName + "获得“冥想”状态×1，每个“冥想”使事业部信念+30，持续6回合";
         else if (index == 2)
-            content = "失败无效果，成功则" + PlaceName + "所有人情绪变为“振奋”";
+            content = "失败无效果，成功则" + DivName + "所有人情绪变为“振奋”";
         else if (index == 3)
-            content = "失败无效果，成功则" + PlaceName + "中所有人获得“夜跑”状态，所有一般事件修正+5，持续6个回合";
+            content = "失败无效果，成功则" + DivName + "中所有人获得“夜跑”状态，所有一般事件修正+5，持续6个回合";
         else if (index == 4)
             content = "失败无效果，成功则员工获得随机正面特质";
 
@@ -657,21 +739,26 @@ public class EventGroup6 : EventGroup
         ItemValueRequest = new List<int>() { };
     }
 
-    protected override void EffectA(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectA(Employee emp, EventGroupInfo egi = null, Employee target = null )
     {
-        //失败无效果，成功则员工获得随机正面特质
+        int num = Random.Range(0, PerkData.OptionCardPerkList.Count);
+        Perk perk = PerkData.OptionCardPerkList[num].Clone();
+        emp.InfoDetail.AddPerk(perk);
     }
-    protected override void EffectB(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectB(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
-        //失败无效果，成功则全公司所有人获得“管线设计”状态，每回合额外获得3点经验，持续6回合
+        foreach(Employee e in GameControl.Instance.CurrentEmployees)
+        {
+            e.InfoDetail.AddPerk(new Perk72());
+        }
     }
-    protected override void EffectC(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectC(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
-        //失败无效果，成功则" + PlaceName + "获得状态“资源共享”×1，每个“资源共享”使事业部效率+3，持续6回合
+        egi.TargetDivision.AddPerk(new Perk73());
     }
-    protected override void EffectD(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectD(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
-        //失败无效果，成功则" + PlaceName + "获得“产品创意”状态×1，每个“产品创意”使事业部信念+30，持续6回合
+        egi.TargetDivision.AddPerk(new Perk74());
     }
 
     public override string EventDescription(Employee Emp, Employee targetEmp, int index, EventGroupInfo egi = null)
@@ -709,9 +796,9 @@ public class EventGroup6 : EventGroup
         else if (index == 2)
             content = "失败无效果，成功则全公司所有人获得“管线设计”状态，每回合额外获得3点经验，持续6回合";
         else if (index == 3)
-            content = "失败无效果，成功则" + PlaceName + "获得状态“资源共享”×1，每个“资源共享”使事业部效率+3，持续6回合";
+            content = "失败无效果，成功则" + DivName + "获得状态“资源共享”×1，每个“资源共享”使事业部效率+3，持续6回合";
         else if (index == 4)
-            content = "失败无效果，成功则" + PlaceName + "获得“产品创意”状态×1，每个“产品创意”使事业部信念+30，持续6回合";
+            content = "失败无效果，成功则" + DivName + "获得“产品创意”状态×1，每个“产品创意”使事业部信念+30，持续6回合";
 
         return content;
     }
@@ -747,29 +834,29 @@ public class EventGroup7 : EventGroup
         ItemValueRequest = new List<int>() { };
     }
 
-    protected override void EffectA(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectA(Employee emp, EventGroupInfo egi = null, Employee target = null )
     {
-        //" + SelfName + "离职
+        emp.InfoDetail.Fire(false);
     }
-    protected override void EffectB(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectB(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
-        //公司获得状态“设施老旧”×1，每个“设施老旧”状态降低士气10点，持续6回合
+        GameControl.Instance.AddPerk(new Perk75());
     }
-    protected override void EffectC(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectC(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
-        //" + SelfName + "所在部门停工6回合
+        egi.TargetDep.StopWorkTime += 6;
     }
-    protected override void EffectD(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectD(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
-        //公司中所有人力资源部门停工6回合
+        egi.TargetDep.StopWorkTime += 6;
     }
-    protected override void EffectE(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectE(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
-        //" + PlaceName + "获得状态“谁是内鬼”×1，每个“谁是内鬼”导致信念下降30点，持续6回合
+        egi.TargetDivision.AddPerk(new Perk76());
     }
-    protected override void EffectF(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectF(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
-        //" + SelfName + "所在部门停工6回合
+        egi.TargetDep.StopWorkTime += 6;
     }
 
     public override string EventDescription(Employee Emp, Employee targetEmp, int index, EventGroupInfo egi = null)
@@ -792,7 +879,7 @@ public class EventGroup7 : EventGroup
         else if (index == 5)
             content = SelfName + "怀疑本次商战的失败是由于事业部中有内鬼导致的";
         else if (index == 6)
-            content = SelfName + "收到匿名邮件称商战的对手公司已经掌控了我公司的后台接口，即将切断" + PlaceName + "与网络的连接";
+            content = SelfName + "收到匿名邮件称商战的对手公司已经掌控了我公司的后台接口，即将切断" + DivName + "与网络的连接";
 
         return content;
     }
@@ -811,13 +898,13 @@ public class EventGroup7 : EventGroup
         else if (index == 2)
             content = "公司获得状态“设施老旧”×1，每个“设施老旧”状态降低士气10点，持续6回合";
         else if (index == 3)
-            content = SelfName + "所在部门停工6回合";
+            content = DepName + "停工6回合";
         else if (index == 4)
-            content = "公司中所有人力资源部门停工6回合";
+            content = DepName + "停工6回合";
         else if (index == 5)
-            content = PlaceName + "获得状态“谁是内鬼”×1，每个“谁是内鬼”导致信念下降30点，持续6回合";
+            content = DivName + "获得状态“谁是内鬼”×1，每个“谁是内鬼”导致信念下降30点，持续6回合";
         else if (index == 6)
-            content = SelfName + "所在部门停工6回合";
+            content = DepName + "停工6回合";
 
         return content;
     }
@@ -852,21 +939,34 @@ public class EventGroup8 : EventGroup
         ItemValueRequest = new List<int>() { };
     }
 
-    protected override void EffectA(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectA(Employee emp, EventGroupInfo egi = null, Employee target = null )
     {
-        //公司获得状态“谣言”×1，每个“谣言”状态降低士气10点，持续6回合
+        GameControl.Instance.AddPerk(new Perk77());
     }
-    protected override void EffectB(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectB(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
-        //公司获得状态“舆论谴责”×1，每个“舆论谴责”状态降低士气10点，持续6回合
+        GameControl.Instance.AddPerk(new Perk78());
     }
-    protected override void EffectC(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectC(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
-        //" + PlaceName + "获得状态“用户流失”×1，每个“用户流失”导致信念下降30点，持续6回合
+        egi.TargetDivision.AddPerk(new Perk79());
     }
-    protected override void EffectD(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectD(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
-        //" + PlaceName + "所有员工主导情绪变为“愤怒”
+        DivisionControl div = egi.TargetDivision;
+
+        if (div != null)
+        {
+            foreach (DepControl dep in div.CurrentDeps)
+            {
+                foreach (Employee e in dep.CurrentEmps)
+                {
+                    e.AddEmotion(EColor.Red);
+                }
+            }
+            if (div.Manager != null)
+                div.Manager.AddEmotion(EColor.Red);
+        }
     }
 
     public override string EventDescription(Employee Emp, Employee targetEmp, int index, EventGroupInfo egi = null)
@@ -904,9 +1004,9 @@ public class EventGroup8 : EventGroup
         else if (index == 2)
             content = "公司获得状态“舆论谴责”×1，每个“舆论谴责”状态降低士气10点，持续6回合";
         else if (index == 3)
-            content = PlaceName + "获得状态“用户流失”×1，每个“用户流失”导致信念下降30点，持续6回合";
+            content = DivName + "获得状态“用户流失”×1，每个“用户流失”导致信念下降30点，持续6回合";
         else if (index == 4)
-            content = PlaceName + "所有员工主导情绪变为“愤怒”";
+            content = DivName + "所有员工主导情绪变为“愤怒”";
 
         return content;
     }
@@ -940,21 +1040,21 @@ public class EventGroup9 : EventGroup
         ItemValueRequest = new List<int>() { };
     }
 
-    protected override void EffectA(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectA(Employee emp, EventGroupInfo egi = null, Employee target = null )
     {
-        //损失一半金钱（自动计算出具体数字）
+        GameControl.Instance.Money -= (GameControl.Instance.Money / 2);
     }
-    protected override void EffectB(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectB(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
-        //公司获得状态“夸大事实”×1，每个“夸大事实”状态降低士气10点，持续6回合
+        GameControl.Instance.AddPerk(new Perk80());
     }
-    protected override void EffectC(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectC(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
-        //" + PlaceName + "获得状态“设备维修”×1，每个“设备维修”使事业部运行成本增加50
+        egi.TargetDivision.AddPerk(new Perk81());
     }
-    protected override void EffectD(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectD(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
-        //公司获得状态“盗版软件”×1，每个“盗版软件”状态降低士气10点，持续6回合
+        GameControl.Instance.AddPerk(new Perk82());
     }
 
     public override string EventDescription(Employee Emp, Employee targetEmp, int index, EventGroupInfo egi = null)
@@ -992,7 +1092,7 @@ public class EventGroup9 : EventGroup
         else if (index == 2)
             content = "公司获得状态“夸大事实”×1，每个“夸大事实”状态降低士气10点，持续6回合";
         else if (index == 3)
-            content = PlaceName + "获得状态“设备维修”×1，每个“设备维修”使事业部运行成本增加50";
+            content = DivName + "获得状态“设备维修”×1，每个“设备维修”使事业部运行成本增加50";
         else if (index == 4)
             content = "公司获得状态“盗版软件”×1，每个“盗版软件”状态降低士气10点，持续6回合";
 
@@ -1027,17 +1127,26 @@ public class EventGroup10 : EventGroup
         ItemValueRequest = new List<int>() { };
     }
 
-    protected override void EffectA(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectA(Employee emp, EventGroupInfo egi = null, Employee target = null )
     {
-        //" + PlaceName + "获得状态“人人自危”×1，每个“人人自危”导致信念下降30点，持续6回合
+        egi.TargetDivision.AddPerk(new Perk83());
     }
-    protected override void EffectB(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectB(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
-        //公司获得状态“琢磨跳槽”×1，每个“琢磨跳槽”状态降低士气10点，持续6回合
+        GameControl.Instance.AddPerk(new Perk84());
     }
-    protected override void EffectC(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectC(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
-        //" + PlaceName + "所有员工获得6个“辛酸”情绪
+        foreach(DepControl dep in egi.TargetDivision.CurrentDeps)
+        {
+            foreach(Employee e in dep.CurrentEmps)
+            {
+                for (int i = 0; i < 6; i++)
+                {
+                    e.AddEmotion(EColor.LBlue);
+                }
+            }
+        }
     }
 
     public override string EventDescription(Employee Emp, Employee targetEmp, int index, EventGroupInfo egi = null)
@@ -1069,11 +1178,11 @@ public class EventGroup10 : EventGroup
             TargetName = targetEmp.Name;
 
         if (index == 1)
-            content = PlaceName + "获得状态“人人自危”×1，每个“人人自危”导致信念下降30点，持续6回合";
+            content = DivName + "获得状态“人人自危”×1，每个“人人自危”导致信念下降30点，持续6回合";
         else if (index == 2)
             content = "公司获得状态“琢磨跳槽”×1，每个“琢磨跳槽”状态降低士气10点，持续6回合";
         else if (index == 3)
-            content = PlaceName + "所有员工获得6个“辛酸”情绪";
+            content = DivName + "所有员工获得6个“苦涩”情绪";
 
         return content;
     }
@@ -1106,13 +1215,13 @@ public class EventGroup11 : EventGroup
         ItemValueRequest = new List<int>() { };
     }
 
-    protected override void EffectA(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectA(Employee emp, EventGroupInfo egi = null, Employee target = null )
     {
-        //公司获得状态“要求公开财务”×1，每个“要求公开财务”状态降低士气10点，持续6回合
+        GameControl.Instance.AddPerk(new Perk85());
     }
-    protected override void EffectB(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectB(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
-        //" + PlaceName + "获得状态“”×1，每个“怀疑”导致信念下降30点，持续6回合
+        egi.TargetDivision.AddPerk(new Perk86());
     }
 
     public override string EventDescription(Employee Emp, Employee targetEmp, int index, EventGroupInfo egi = null)
@@ -1144,7 +1253,7 @@ public class EventGroup11 : EventGroup
         if (index == 1)
             content = "公司获得状态“要求公开财务”×1，每个“要求公开财务”状态降低士气10点，持续6回合";
         else if (index == 2)
-            content = PlaceName + "获得状态“”×1，每个“怀疑”导致信念下降30点，持续6回合";
+            content = DivName + "获得状态“出现幻觉”×1，每个“出现幻觉”导致信念下降30点，持续6回合";
 
         return content;
     }
@@ -1178,17 +1287,30 @@ public class EventGroup12 : EventGroup
         ItemValueRequest = new List<int>() { };
     }
 
-    protected override void EffectA(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectA(Employee emp, EventGroupInfo egi = null, Employee target = null )
     {
-        //" + PlaceName + "获得状态“迷路”×1，每个“迷路”导致信念下降30点，持续6回合
+        egi.TargetDivision.AddPerk(new Perk87());
     }
-    protected override void EffectB(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectB(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
-        //公司获得状态“资料丢失”×1，每个“资料丢失”状态降低士气10点，持续6回合
+        GameControl.Instance.AddPerk(new Perk88());
     }
-    protected override void EffectC(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectC(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
-        //" + PlaceName + "所有员工主导情绪变为“沮丧”
+        DivisionControl div = egi.TargetDivision;
+
+        if (div != null)
+        {
+            foreach (DepControl dep in div.CurrentDeps)
+            {
+                foreach (Employee e in dep.CurrentEmps)
+                {
+                    e.AddEmotion(EColor.Purple);
+                }
+            }
+            if (div.Manager != null)
+                div.Manager.AddEmotion(EColor.Purple);
+        }
     }
 
     public override string EventDescription(Employee Emp, Employee targetEmp, int index, EventGroupInfo egi = null)
@@ -1220,11 +1342,11 @@ public class EventGroup12 : EventGroup
             TargetName = targetEmp.Name;
 
         if (index == 1)
-            content = PlaceName + "获得状态“迷路”×1，每个“迷路”导致信念下降30点，持续6回合";
+            content = DivName + "获得状态“迷路”×1，每个“迷路”导致信念下降30点，持续6回合";
         else if (index == 2)
             content = "公司获得状态“资料丢失”×1，每个“资料丢失”状态降低士气10点，持续6回合";
         else if (index == 3)
-            content = PlaceName + "所有员工主导情绪变为“沮丧”";
+            content = DivName + "所有员工主导情绪变为“沮丧”";
 
         return content;
     }
@@ -1257,13 +1379,26 @@ public class EventGroup13 : EventGroup
         ItemValueRequest = new List<int>() { };
     }
 
-    protected override void EffectA(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectA(Employee emp, EventGroupInfo egi = null, Employee target = null )
     {
-        //" + PlaceName + "全体员工主导情绪变为“沮丧”
+        DivisionControl div = egi.TargetDivision;
+
+        if (div != null)
+        {
+            foreach (DepControl dep in div.CurrentDeps)
+            {
+                foreach (Employee e in dep.CurrentEmps)
+                {
+                    e.AddEmotion(EColor.Purple);
+                }
+            }
+            if (div.Manager != null)
+                div.Manager.AddEmotion(EColor.Purple);
+        }
     }
-    protected override void EffectB(Employee emp, int ExtraCorrection = 0, Employee target = null)
+    protected override void EffectB(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
-        //公司获得状态“额外工作”×1，每个“额外工作”状态降低士气10点，持续6回合
+        GameControl.Instance.AddPerk(new Perk89());
     }
 
     public override string EventDescription(Employee Emp, Employee targetEmp, int index, EventGroupInfo egi = null)
@@ -1293,7 +1428,7 @@ public class EventGroup13 : EventGroup
             TargetName = targetEmp.Name;
 
         if (index == 1)
-            content = PlaceName + "全体员工主导情绪变为“沮丧”";
+            content = DivName + "全体员工主导情绪变为“沮丧”";
         else if (index == 2)
             content = "公司获得状态“额外工作”×1，每个“额外工作”状态降低士气10点，持续6回合";
 

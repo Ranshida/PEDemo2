@@ -86,7 +86,7 @@ public class Perk
         {
             GameControl.Instance.MonthlyEvent.RemoveListener(ContinuousEffect);
         }
-        GameControl.Instance.HourEvent.RemoveListener(TimePass);
+        GameControl.Instance.TurnEvent.RemoveListener(TimePass);
     }
 
     public virtual void TimePass()
@@ -126,12 +126,12 @@ public class Perk
 
 }
 
-//档案维护
+//整理癖
 public class Perk1 : Perk
 {
     public Perk1() : base()
     {
-        Name = "档案维护";
+        Name = "整理癖";
         Description = "成为核心团队成员后生效，增加公司1个物品槽";
         TimeLeft = -1;
         Num = 1;
@@ -149,12 +149,12 @@ public class Perk1 : Perk
     }
 }
 
-//缓和措施
+//包容
 public class Perk2 : Perk
 {
     public Perk2() : base()
     {
-        Name = "缓和措施";
+        Name = "包容";
         Description = "成为核心团队成员后生效，增加公司不满栏位上限1点";
         TimeLeft = -1;
         Num = 2;
@@ -163,21 +163,21 @@ public class Perk2 : Perk
 
     public override void ActiveSpecialEffect()
     {
-
+        GameControl.Instance.DissatisfiedLimit += 1;
     }
 
     public override void DeActiveSpecialEffect()
     {
-
+        GameControl.Instance.DissatisfiedLimit -= 1;
     }
 }
 
-//矛盾处理
+//调停高手
 public class Perk3 : Perk
 {
     public Perk3() : base()
     {
-        Name = "矛盾处理";
+        Name = "调停高手";
         Description = "成为核心团队成员后生效，成功处理不满事件后额外消除1个不满";
         TimeLeft = -1;
         Num = 3;
@@ -195,12 +195,12 @@ public class Perk3 : Perk
     }
 }
 
-//值得信任
+//正义伙伴
 public class Perk4 : Perk
 {
     public Perk4() : base()
     {
-        Name = "值得信任";
+        Name = "正义伙伴";
         Description = "成为核心团队成员后生效，增加CEO坚韧2点";
         TimeLeft = -1;
         Num = 4;
@@ -218,12 +218,12 @@ public class Perk4 : Perk
     }
 }
 
-//沟通与协调
+//稳健
 public class Perk5 : Perk
 {
     public Perk5() : base()
     {
-        Name = "沟通与协调";
+        Name = "稳健";
         Description = "成为高管后生效，管理的事业部信念+10";
         TimeLeft = -1;
         Num = 5;
@@ -241,13 +241,13 @@ public class Perk5 : Perk
     }
 }
 
-//组织行为学
+//决断者
 public class Perk6 : Perk
 {
     public Perk6() : base()
     {
-        Name = "组织行为学";
-        Description = "成为高管后生效，管理的事业部效率+1";
+        Name = "决断者";
+        Description = "成为高管后生效，管理的事业部效率+2";
         TimeLeft = -1;
         Num = 6;
         DivisionPerk = true;
@@ -255,22 +255,22 @@ public class Perk6 : Perk
 
     public override void ActiveSpecialEffect()
     {
-        TargetEmp.CurrentDivision.Efficiency += 10;
+        TargetEmp.CurrentDivision.Efficiency += 2;
     }
 
     public override void DeActiveSpecialEffect()
     {
-        TargetEmp.CurrentDivision.Efficiency -= 10;
+        TargetEmp.CurrentDivision.Efficiency -= 2;
     }
 }
 
-//项目管理
+//睿智
 public class Perk7 : Perk
 {
     public Perk7() : base()
     {
-        Name = "项目管理";
-        Description = "成为高管后生效，管理的事业部工作状态+1";
+        Name = "睿智";
+        Description = "成为高管后生效，管理的事业部工作状态+2";
         TimeLeft = -1;
         Num = 7;
         DivisionPerk = true;
@@ -278,21 +278,21 @@ public class Perk7 : Perk
 
     public override void ActiveSpecialEffect()
     {
-        TargetEmp.CurrentDivision.WorkStatus += 1;
+        TargetEmp.CurrentDivision.WorkStatus += 2;
     }
 
     public override void DeActiveSpecialEffect()
     {
-        TargetEmp.CurrentDivision.WorkStatus -= 1;
+        TargetEmp.CurrentDivision.WorkStatus -= 2;
     }
 }
 
-//报表分析
+//黄金账本
 public class Perk8 : Perk
 {
     public Perk8() : base()
     {
-        Name = "报表分析";
+        Name = "黄金账本";
         Description = "成为高管后生效，管理的事业部成本-20";
         TimeLeft = -1;
         Num = 8;
@@ -310,12 +310,12 @@ public class Perk8 : Perk
     }
 }
 
-//战略管理
+//流程优化专家
 public class Perk9 : Perk
 {
     public Perk9() : base()
     {
-        Name = "战略管理";
+        Name = "流程优化专家";
         Description = "成为高管后生效，管理的事业部中所有充能建筑的生产周期-1回合";
         TimeLeft = -1;
         Num = 9;
@@ -333,12 +333,12 @@ public class Perk9 : Perk
     }
 }
 
-//调度
+//手段老练(未实装)
 public class Perk10 : Perk
 {
     public Perk10() : base()
     {
-        Name = "调度";
+        Name = "手段老练";
         Description = "成为高管后生效，管理的事业部的状态效果额外增加50%";
         TimeLeft = -1;
         Num = 10;
@@ -356,13 +356,13 @@ public class Perk10 : Perk
     }
 }
 
-//概率论入门
+//绩效教练
 public class Perk11 : Perk
 {
     public Perk11() : base()
     {
-        Name = "概率论入门";
-        Description = "成为高管后生效，管理的事业部中员工的经验值每回合额外获得1点经验";
+        Name = "绩效教练";
+        Description = "成为高管后生效，管理的事业部中员工的经验值每回合额外获得2点经验";
         TimeLeft = -1;
         Num = 11;
         DivisionPerk = true;
@@ -370,12 +370,12 @@ public class Perk11 : Perk
 
     public override void ActiveSpecialEffect()
     {
-        TargetEmp.CurrentDivision.ExtraExp += 1;
+        TargetEmp.CurrentDivision.ExtraExp += 2;
     }
 
     public override void DeActiveSpecialEffect()
     {
-        TargetEmp.CurrentDivision.ExtraExp -= 1;
+        TargetEmp.CurrentDivision.ExtraExp -= 2;
     }
 }
 
@@ -409,12 +409,12 @@ public class Perk12 : Perk
     }
 }
 
-//投入
+//奇思妙想
 public class Perk13 : Perk
 {
     public Perk13() : base()
     {
-        Name = "投入";
+        Name = "奇思妙想";
         Description = "所在事业部工作状态+1";
         TimeLeft = -1;
         Num = 13;
@@ -439,12 +439,12 @@ public class Perk13 : Perk
     }
 }
 
-//鼓舞
+//乐观
 public class Perk14 : Perk
 {
     public Perk14() : base()
     {
-        Name = "鼓舞";
+        Name = "乐观";
         Description = "所在事业部信念+10";
         TimeLeft = -1;
         Num = 14;
@@ -469,12 +469,12 @@ public class Perk14 : Perk
     }
 }
 
-//节约
+//人形扑满
 public class Perk15 : Perk
 {
     public Perk15() : base()
     {
-        Name = "节约";
+        Name = "人形扑满";
         Description = "所在事业部成本-5";
         TimeLeft = -1;
         Num = 15;
@@ -499,12 +499,12 @@ public class Perk15 : Perk
     }
 }
 
-//乐观
+//冷静
 public class Perk16 : Perk
 {
     public Perk16() : base()
     {
-        Name = "乐观";
+        Name = "冷静";
         Description = "自身参与的事件修正+1";
         TimeLeft = -1;
         Num = 16;
@@ -521,6 +521,17 @@ public class Perk17 : Perk
         TimeLeft = -1;
         Num = 17;
     }
+
+    public override void ImmEffect()
+    {
+        TargetEmp.SelfEventCorrection += 1;
+    }
+
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetEmp.SelfEventCorrection -= 1;
+    }
 }
 
 //敏感
@@ -533,9 +544,20 @@ public class Perk18 : Perk
         TimeLeft = -1;
         Num = 18;
     }
+
+    public override void ImmEffect()
+    {
+        TargetEmp.MultiEmotion = true;
+    }
+
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetEmp.MultiEmotion = false;
+    }
 }
 
-//热情
+//热情(未实装)
 public class Perk19 : Perk
 {
     public Perk19() : base()
@@ -611,12 +633,12 @@ public class Perk20 : Perk
     }
 }
 
-//有耐心
+//耐心
 public class Perk21 : Perk
 {
     public Perk21() : base()
     {
-        Name = "有耐心";
+        Name = "耐心";
         Description = "坚韧+1";
         TimeLeft = -1;
         Num = 21;
@@ -657,12 +679,12 @@ public class Perk22 : Perk
     }
 }
 
-//经历过打击
+//心如止水
 public class Perk23 : Perk
 {
     public Perk23() : base()
     {
-        Name = "经历过打击";
+        Name = "心如止水";
         Description = "坚韧+3";
         TimeLeft = -1;
         Num = 23;
@@ -680,12 +702,12 @@ public class Perk23 : Perk
     }
 }
 
-//数据模型
+//预言家
 public class Perk24 : Perk
 {
     public Perk24() : base()
     {
-        Name = "数据模型";
+        Name = "预言家";
         Description = "决策+1";
         TimeLeft = -1;
         Num = 24;
@@ -703,12 +725,12 @@ public class Perk24 : Perk
     }
 }
 
-//应用统计学
+//谋士
 public class Perk25 : Perk
 {
     public Perk25() : base()
     {
-        Name = "应用统计学";
+        Name = "谋士";
         Description = "决策+1";
         TimeLeft = -1;
         Num = 25;
@@ -726,12 +748,12 @@ public class Perk25 : Perk
     }
 }
 
-//运筹学
+//扭曲现实力场
 public class Perk26 : Perk
 {
     public Perk26() : base()
     {
-        Name = "运筹学";
+        Name = "扭曲现实力场";
         Description = "决策+2";
         TimeLeft = -1;
         Num = 26;
@@ -749,12 +771,12 @@ public class Perk26 : Perk
     }
 }
 
-//部门领导
+//谈判专家
 public class Perk27 : Perk
 {
     public Perk27() : base()
     {
-        Name = "部门领导";
+        Name = "谈判专家";
         Description = "管理+1";
         TimeLeft = -1;
         Num = 27;
@@ -772,12 +794,12 @@ public class Perk27 : Perk
     }
 }
 
-//自主创业
+//同理心
 public class Perk28 : Perk
 {
     public Perk28() : base()
     {
-        Name = "自主创业";
+        Name = "同理心";
         Description = "管理+1";
         TimeLeft = -1;
         Num = 28;
@@ -795,12 +817,12 @@ public class Perk28 : Perk
     }
 }
 
-//管培生
+//坦诚
 public class Perk29 : Perk
 {
     public Perk29() : base()
     {
-        Name = "管培生";
+        Name = "坦诚";
         Description = "管理+1";
         TimeLeft = -1;
         Num = 29;
@@ -818,12 +840,12 @@ public class Perk29 : Perk
     }
 }
 
-//小组长
+//全局之眼
 public class Perk30 : Perk
 {
     public Perk30() : base()
     {
-        Name = "小组长";
+        Name = "全局之眼";
         Description = "管理+1";
         TimeLeft = -1;
         Num = 30;
@@ -841,12 +863,12 @@ public class Perk30 : Perk
     }
 }
 
-//学生会干部
+//端水大师
 public class Perk31 : Perk
 {
     public Perk31() : base()
     {
-        Name = "学生会干部";
+        Name = "端水大师";
         Description = "管理+1";
         TimeLeft = -1;
         Num = 31;
@@ -864,12 +886,12 @@ public class Perk31 : Perk
     }
 }
 
-//社团领袖
+//制衡之手
 public class Perk32 : Perk
 {
     public Perk32() : base()
     {
-        Name = "社团领袖";
+        Name = "制衡之手";
         Description = "管理+1";
         TimeLeft = -1;
         Num = 32;
@@ -1083,12 +1105,12 @@ public class Perk40 : Perk
     }
 }
 
-//经常重做
+//返工受害者
 public class Perk41 : Perk
 {
     public Perk41() : base()
     {
-        Name = "经常重做";
+        Name = "返工受害者";
         Description = "所在事业部工作状态+1，信念-10";
         TimeLeft = -1;
         Num = 41;
@@ -1169,6 +1191,17 @@ public class Perk43 : Perk
         Description = "参与个人事件修正+1";
         TimeLeft = -1;
         Num = 43;
+    }
+
+    public override void ImmEffect()
+    {
+        TargetEmp.SelfEventCorrection += 1;
+    }
+
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetEmp.SelfEventCorrection -= 1;
     }
 }
 
@@ -1392,109 +1425,879 @@ public class Perk34 : Perk
     }
 }
 
-#region 部分初始随机特质
+//虐待传闻
+public class Perk44 : Perk
+{
+    public Perk44() : base()
+    {
+        Name = "虐待传闻";
+        Description = "降低人员工资和建筑维护费用25%";
+        TimeLeft = 64;
+        Num = 44;
+        canStack = false;
+        perkColor = PerkColor.Blue;
+        TempValue1 = 1;
+    }
+    public override void ImmEffect()
+    {
+        TargetDep.SalaryMultiply -= 0.25f * TempValue1;
+        TargetDep.BuildingPayMultiply -= 0.25f * TempValue1;
+        Description = "降低人员工资和建筑维护费用" + 25 * TempValue1 + "%";
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDep.SalaryMultiply += 0.25f * TempValue1;
+        TargetDep.BuildingPayMultiply += 0.25f * TempValue1;
+    }
+}
 
-//孤僻
+//团结
+public class Perk45 : Perk
+{
+    public Perk45() : base()
+    {
+        Name = "团结";
+        Description = "存在时“并肩作战”效果×3";
+        TimeLeft = 64;
+        Num = 45;
+        canStack = false;
+        perkColor = PerkColor.Orange;
+    }
+    public override void ImmEffect()
+    {
+        if (TargetDep != null)
+        {
+            Description = "存在时“并肩作战”效果×3";
+        }
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+    }
+}
+
+//虐待传闻
+public class Perk55 : Perk
+{
+    public Perk55() : base()
+    {
+        Name = "虐待传闻";
+        Description = "由“虐待传闻”事件产生，所有个人事件修正-5";
+        TimeLeft = 6;
+        Num = 55;
+        canStack = true;
+    }
+    public override void ImmEffect()
+    {
+        TargetEmp.SelfEventCorrection -= 5;
+    }
+
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetEmp.SelfEventCorrection += 5;
+    }
+
+}
+
+//机械傀儡
+public class Perk56 : Perk
+{
+    public Perk56() : base()
+    {
+        Name = "机械傀儡";
+        Description = "由“机械傀儡”事件产生，事业部信念-30点";
+        TimeLeft = 6;
+        Num = 56;
+        canStack = true;
+        perkColor = PerkColor.Orange;
+    }
+    public override void ImmEffect()
+    {
+        TargetDiv.Faith -= 30;
+    }
+
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDiv.Faith += 30;
+    }
+}
+
+//发奋涂墙
+public class Perk57 : Perk
+{
+    public Perk57() : base()
+    {
+        Name = "发奋涂墙";
+        Description = "由“发奋涂墙”事件产生，事业部信念-30点";
+        TimeLeft = 6;
+        Num = 57;
+        canStack = true;
+        perkColor = PerkColor.Orange;
+    }
+    public override void ImmEffect()
+    {
+        TargetDiv.Faith -= 30;
+    }
+
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDiv.Faith += 30;
+    }
+}
+
+//警惕人工智能
+public class Perk58 : Perk
+{
+    public Perk58() : base()
+    {
+        Name = "警惕人工智能";
+        Description = "由“警惕人工智能”事件产生，事业部信念-30点";
+        TimeLeft = 6; 
+        Num = 58;
+        canStack = true;
+        perkColor = PerkColor.Orange;
+    }
+    public override void ImmEffect()
+    {
+        TargetDiv.Faith -= 30;
+    }
+
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDiv.Faith += 30;
+    }
+}
+
+//拖延工期
+public class Perk59 : Perk
+{
+    public Perk59() : base()
+    {
+        Name = "拖延工期";
+        Description = "由“拖延工期”事件产生，事业部效率-3点";
+        TimeLeft = 6;
+        Num = 59;
+        canStack = true;
+        perkColor = PerkColor.Grey;
+    }
+    public override void ImmEffect()
+    {
+        TargetDiv.Efficiency -= 3;
+    }
+
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDiv.Efficiency += 3;
+    }
+}
+
+//占领公厕
+public class Perk60 : Perk
+{
+    public Perk60() : base()
+    {
+        Name = "占领公厕";
+        Description = "由“占领公厕”事件产生，事业部工作状态-3点";
+        TimeLeft = 6;
+        Num = 60;
+        canStack = true;
+        perkColor = PerkColor.White;
+    }
+    public override void ImmEffect()
+    {
+        TargetDiv.WorkStatus -= 3;
+    }
+
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDiv.WorkStatus += 3;
+    }
+}
+
+//上班捕鱼
+public class Perk61 : Perk
+{
+    public Perk61() : base()
+    {
+        Name = "上班捕鱼";
+        Description = "由“上班捕鱼”事件产生，事业部工作状态-3点";
+        TimeLeft = 6;
+        Num = 61;
+        canStack = true;
+        perkColor = PerkColor.White;
+    }
+    public override void ImmEffect()
+    {
+        TargetDiv.WorkStatus -= 3;
+    }
+
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDiv.WorkStatus += 3;
+    }
+}
+
+//信号不良
+public class Perk62 : Perk
+{
+    public Perk62() : base()
+    {
+        Name = "信号不良";
+        Description = "由“信号不良”事件产生，事业部效率-3点";
+        TimeLeft = 6;
+        Num = 62;
+        canStack = true;
+        perkColor = PerkColor.Grey;
+    }
+    public override void ImmEffect()
+    {
+        TargetDiv.Efficiency -= 3;
+    }
+
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDiv.Efficiency += 3;
+    }
+}
+
+//食堂降价
+public class Perk63 : Perk
+{
+    public Perk63() : base()
+    {
+        Name = "食堂降价";
+        Description = "由“食堂降价”事件产生，事业部运行成本+50";
+        TimeLeft = 6;
+        Num = 63;
+        canStack = true;
+        perkColor = PerkColor.Blue;
+    }
+    public override void ImmEffect()
+    {
+        TargetDiv.ExtraCost += 50;
+    }
+
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDiv.ExtraCost -= 50;
+    }
+}
+
+//要求涨工资
+public class Perk64 : Perk
+{
+    public Perk64() : base()
+    {
+        Name = "要求涨工资";
+        Description = "由“要求涨工资”事件产生，事业部运行成本+50";
+        TimeLeft = 6;
+        Num = 64;
+        canStack = true;
+        perkColor = PerkColor.Blue;
+    }
+    public override void ImmEffect()
+    {
+        TargetDiv.ExtraCost += 50;
+    }
+
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDiv.ExtraCost -= 50;
+    }
+}
+
+//仙人掌大战
+public class Perk65 : Perk
+{
+    public Perk65() : base()
+    {
+        Name = "仙人掌大战";
+        Description = "由“仙人掌大战”事件产生，所有个人事件修正+5";
+        TimeLeft = 6;
+        Num = 65;
+        canStack = true;
+    }
+
+    public override void ImmEffect()
+    {
+        TargetEmp.SelfEventCorrection += 5;
+    }
+
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetEmp.SelfEventCorrection -= 5;
+    }
+}
+
+//明星见面会
+public class Perk66 : Perk
+{
+    public Perk66() : base()
+    {
+        Name = "明星见面会";
+        Description = "由“明星员工见面会”事件产生，每回合额外获得3点经验";
+        TimeLeft = 6;
+        Num = 66;
+        canStack = true;
+    }
+
+    public override void ImmEffect()
+    {
+        TargetEmp.ExtraExp += 3;
+    }
+
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetEmp.ExtraExp += 3;
+    }
+}
+
+//电音派对
+public class Perk67 : Perk
+{
+    public Perk67() : base()
+    {
+        Name = "电音派对";
+        Description = "由“电音派对”事件产生，事业部工作状态+3点";
+        TimeLeft = 6;
+        Num = 67;
+        canStack = true;
+        perkColor = PerkColor.White;
+    }
+    public override void ImmEffect()
+    {
+        TargetDiv.WorkStatus += 3;
+    }
+
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDiv.WorkStatus -= 3;
+    }
+}
+
+//读书会
+public class Perk68 : Perk
+{
+    public Perk68() : base()
+    {
+        Name = "读书会";
+        Description = "由“读书会”事件产生，事业部效率+3点";
+        TimeLeft = 6;
+        Num = 68;
+        canStack = true;
+        perkColor = PerkColor.Grey;
+    }
+    public override void ImmEffect()
+    {
+        TargetDiv.Efficiency += 3;
+    }
+
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDiv.Efficiency -= 3;
+    }
+}
+
+//甲板烧烤
+public class Perk69 : Perk
+{
+    public Perk69() : base()
+    {
+        Name = "甲板烧烤";
+        Description = "由“甲板烧烤”事件产生，事业部信念+30点";
+        TimeLeft = 6;
+        Num = 69;
+        canStack = true;
+        perkColor = PerkColor.Orange;
+    }
+    public override void ImmEffect()
+    {
+        TargetDiv.Faith += 30;
+    }
+
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDiv.Faith -= 30;
+    }
+}
+
+//冥想
+public class Perk70 : Perk
+{
+    public Perk70() : base()
+    {
+        Name = "冥想";
+        Description = "由“冥想”事件产生，事业部信念+30点";
+        TimeLeft = 6;
+        Num = 70;
+        canStack = true;
+        perkColor = PerkColor.Orange;
+    }
+    public override void ImmEffect()
+    {
+        TargetDiv.Faith += 30;
+    }
+
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDiv.Faith -= 30;
+    }
+}
+
+//夜跑
+public class Perk71 : Perk
+{
+    public Perk71() : base()
+    {
+        Name = "夜跑";
+        Description = "由“夜跑”事件产生，所有个人事件修正+5";
+        TimeLeft = 6;
+        Num = 71;
+        canStack = true;
+    }
+
+    public override void ImmEffect()
+    {
+        TargetEmp.SelfEventCorrection += 5;
+    }
+
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetEmp.SelfEventCorrection -= 5;
+    }
+}
+
+//管线设计
+public class Perk72 : Perk
+{
+    public Perk72() : base()
+    {
+        Name = "管线设计";
+        Description = "由“管线设计”事件产生，每回合额外获得3点经验";
+        TimeLeft = 6;
+        Num = 72;
+        canStack = true;
+    }
+
+    public override void ImmEffect()
+    {
+        TargetEmp.ExtraExp += 3;
+    }
+
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetEmp.ExtraExp += 3;
+    }
+}
+
+//资源共享
+public class Perk73 : Perk
+{
+    public Perk73() : base()
+    {
+        Name = "资源共享";
+        Description = "由“资源共享”事件产生，事业部效率+3点";
+        TimeLeft = 6;
+        Num = 73;
+        canStack = true;
+        perkColor = PerkColor.Grey;
+    }
+    public override void ImmEffect()
+    {
+        TargetDiv.Efficiency += 3;
+    }
+
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDiv.Efficiency -= 3;
+    }
+}
+
+//产品创意
+public class Perk74 : Perk
+{
+    public Perk74() : base()
+    {
+        Name = "产品创意";
+        Description = "由“产品创意”事件产生，事业部信念+30点";
+        TimeLeft = 6;
+        Num = 74;
+        canStack = true;
+        perkColor = PerkColor.Orange;
+    }
+    public override void ImmEffect()
+    {
+        TargetDiv.Faith += 30;
+    }
+
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDiv.Faith -= 30;
+    }
+}
+
+//设施老旧
+public class Perk75 : Perk
+{
+    public Perk75() : base()
+    {
+        Name = "设施老旧";
+        Description = "由“设施老旧”事件产生，士气-10点";
+        TimeLeft = 6;
+        Num = 75;
+        canStack = true;
+    }
+
+    public override void ImmEffect()
+    {
+        GameControl.Instance.Morale -= 10;
+    }
+
+    public override void RemoveEffect()
+    {
+        GameControl.Instance.Morale += 10;
+    }
+}
+
+//谁是内鬼
+public class Perk76 : Perk
+{
+    public Perk76() : base()
+    {
+        Name = "谁是内鬼";
+        Description = "由“谁是内鬼”事件产生，事业部信念-30点";
+        TimeLeft = 6;//特质
+        Num = 76;
+        canStack = true;
+        perkColor = PerkColor.Orange;
+    }
+    public override void ImmEffect()
+    {
+        TargetDiv.Faith -= 30;
+    }
+
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDiv.Faith += 30;
+    }
+}
+
+//谣言
+public class Perk77 : Perk
+{
+    public Perk77() : base()
+    {
+        Name = "谣言";
+        Description = "由“谣言”事件产生，公司士气-10点";
+        TimeLeft = 6;//特质
+        Num = 77;
+        canStack = true;
+    }
+
+    public override void ImmEffect()
+    {
+        GameControl.Instance.Morale -= 10;
+    }
+
+    public override void RemoveEffect()
+    {
+        GameControl.Instance.Morale += 10;
+    }
+}
+
+//舆论谴责
+public class Perk78 : Perk
+{
+    public Perk78() : base()
+    {
+        Name = "舆论谴责";
+        Description = "由“舆论谴责”事件产生，公司士气-10点";
+        TimeLeft = 6;
+        Num = 78;
+        canStack = true;
+    }
+    public override void ImmEffect()
+    {
+        GameControl.Instance.Morale -= 10;
+    }
+
+    public override void RemoveEffect()
+    {
+        GameControl.Instance.Morale += 10;
+    }
+}
+
+//用户流失
+public class Perk79 : Perk
+{
+    public Perk79() : base()
+    {
+        Name = "用户流失";
+        Description = "由“用户流失”事件产生，事业部信念-30点";
+        TimeLeft = 6;
+        Num = 79;
+        canStack = true;
+        perkColor = PerkColor.Orange;
+    }
+    public override void ImmEffect()
+    {
+        TargetDiv.Faith -= 30;
+    }
+
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDiv.Faith += 30;
+    }
+}
+
+//夸大事实
+public class Perk80 : Perk
+{
+    public Perk80() : base()
+    {
+        Name = "夸大事实";
+        Description = "由“夸大事实”事件产生，公司士气-10点";
+        TimeLeft = 6;//特质
+        Num = 80;
+        canStack = true;
+    }
+    public override void ImmEffect()
+    {
+        GameControl.Instance.Morale -= 10;
+    }
+
+    public override void RemoveEffect()
+    {
+        GameControl.Instance.Morale += 10;
+    }
+}
+
+//设备维修
+public class Perk81 : Perk
+{
+    public Perk81() : base()
+    {
+        Name = "设备维修";
+        Description = "由“设备维修”事件产生，事业部成本+50";
+        TimeLeft = 6;
+        Num = 81;
+        canStack = true;
+        perkColor = PerkColor.Blue;
+    }
+    public override void ImmEffect()
+    {
+        TargetDiv.ExtraCost += 50;
+    }
+
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDiv.ExtraCost -= 50;
+    }
+}
+
+//盗版软件
 public class Perk82 : Perk
 {
     public Perk82() : base()
     {
-        Name = "孤僻";
-        Description = "降低认识新人事件组发生权重1";
-        TimeLeft = -1;//特质
+        Name = "盗版软件";
+        Description = "由“盗版软件”事件产生，公司士气-10点";
+        TimeLeft = 6;
         Num = 82;
-        canStack = false;
+        canStack = true;
+    }
+    public override void ImmEffect()
+    {
+        GameControl.Instance.Morale -= 10;
+    }
+
+    public override void RemoveEffect()
+    {
+        GameControl.Instance.Morale += 10;
     }
 }
 
-//野心家
+//人人自危
 public class Perk83 : Perk
 {
     public Perk83() : base()
     {
-        Name = "野心家";
-        Description = "提高野心事件组发生权重1";
-        TimeLeft = -1;//特质
+        Name = "人人自危";
+        Description = "由“人人自危”事件产生，事业部信念-30点";
+        TimeLeft = 6;
         Num = 83;
-        canStack = false;
+        canStack = true;
+        perkColor = PerkColor.Orange;
+    }
+    public override void ImmEffect()
+    {
+        TargetDiv.Faith -= 30;
+    }
+
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDiv.Faith += 30;
     }
 }
 
-//梦想家
+//琢磨跳槽
 public class Perk84 : Perk
 {
     public Perk84() : base()
     {
-        Name = "梦想家";
-        Description = "提高愿望事件组发生权重1";
-        TimeLeft = -1;//特质
-        Num = 80;
-        canStack = false;
+        Name = "琢磨跳槽";
+        Description = "由“琢磨跳槽”事件产生，公司士气-10点";
+        TimeLeft = 6;
+        Num = 84;
+        canStack = true;
+    }
+    public override void ImmEffect()
+    {
+        GameControl.Instance.Morale -= 10;
+    }
+
+    public override void RemoveEffect()
+    {
+        GameControl.Instance.Morale += 10;
     }
 }
 
-//革命者
+//要求公开财务
 public class Perk85 : Perk
 {
     public Perk85() : base()
     {
-        Name = "革命者";
-        Description = "提高诉求不满事件组发生权重1";
-        TimeLeft = -1;//特质
+        Name = "要求公开财务";
+        Description = "由“要求公开财务”事件产生，公司士气-10点";
+        TimeLeft = 6;
         Num = 85;
-        canStack = false;
+        canStack = true;
+    }
+    public override void ImmEffect()
+    {
+        GameControl.Instance.Morale -= 10;
+    }
+
+    public override void RemoveEffect()
+    {
+        GameControl.Instance.Morale += 10;
     }
 }
 
-//虚荣者
+//出现幻觉
 public class Perk86 : Perk
 {
     public Perk86() : base()
     {
-        Name = "虚荣者";
-        Description = "提高认可交谈事件组发生权重1";
-        TimeLeft = -1;//特质
+        Name = "出现幻觉";
+        Description = "由“出现幻觉”事件产生，事业部信念-30点";
+        TimeLeft = 6;
         Num = 86;
-        canStack = false;
+        canStack = true;
+        perkColor = PerkColor.Orange;
+    }
+    public override void ImmEffect()
+    {
+        TargetDiv.Faith -= 30;
+    }
+
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDiv.Faith += 30;
     }
 }
 
-//社交达人
+//迷路
 public class Perk87 : Perk
 {
     public Perk87() : base()
     {
-        Name = "社交达人";
-        Description = "提高分享日常、分享快乐事件组发生权重1";
-        TimeLeft = -1;//特质
+        Name = "迷路";
+        Description = "由“迷路”事件产生，事业部信念-30点";
+        TimeLeft = 6;
         Num = 87;
-        canStack = false;
+        canStack = true;
+        perkColor = PerkColor.Orange;
+    }
+    public override void ImmEffect()
+    {
+        TargetDiv.Faith -= 30;
+    }
+
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDiv.Faith += 30;
     }
 }
 
-//倾诉者
+//资料丢失
 public class Perk88 : Perk
 {
     public Perk88() : base()
     {
-        Name = "倾诉者";
-        Description = "提高寻求安慰事件组发生权重1";
-        TimeLeft = -1;//特质
+        Name = "资料丢失";
+        Description = "由“资料丢失”事件产生，公司士气-10点";
+        TimeLeft = 6;
         Num = 88;
-        canStack = false;
+        canStack = true;
+    }
+    public override void ImmEffect()
+    {
+        GameControl.Instance.Morale -= 10;
+    }
+
+    public override void RemoveEffect()
+    {
+        GameControl.Instance.Morale += 10;
     }
 }
 
-//躁狂
+//额外工作
 public class Perk89 : Perk
 {
     public Perk89() : base()
     {
-        Name = "躁狂";
-        Description = "提高无聊事件组发生权重1";
-        TimeLeft = -1;//特质
+        Name = "额外工作";
+        Description = "由“额外工作”事件产生，公司士气-10点";
+        TimeLeft = 6;
         Num = 89;
-        canStack = false;
+        canStack = true;
+    }
+    public override void ImmEffect()
+    {
+        GameControl.Instance.Morale -= 10;
+    }
+
+    public override void RemoveEffect()
+    {
+        GameControl.Instance.Morale += 10;
     }
 }
 
@@ -1569,427 +2372,6 @@ public class Perk92 : Perk
         MonthMeeting.Instance.CrystalExtraSuccessRate += 0.1f;
     }
 }
-#endregion
-
-//结构优化
-public class Perk44 : Perk
-{
-    public Perk44() : base()
-    {
-        Name = "结构优化";
-        Description = "降低人员工资和建筑维护费用25%";
-        TimeLeft = 64;
-        Num = 44;
-        canStack = false;
-        perkColor = PerkColor.Blue;
-        TempValue1 = 1;
-    }
-    public override void ImmEffect()
-    {
-        TargetDep.SalaryMultiply -= 0.25f * TempValue1;
-        TargetDep.BuildingPayMultiply -= 0.25f * TempValue1;
-        Description = "降低人员工资和建筑维护费用" + 25 * TempValue1 + "%";
-    }
-    public override void RemoveEffect()
-    {
-        base.RemoveEffect();
-        TargetDep.SalaryMultiply += 0.25f * TempValue1;
-        TargetDep.BuildingPayMultiply += 0.25f * TempValue1;
-    }
-}
-
-//团结
-public class Perk45 : Perk
-{
-    public Perk45() : base()
-    {
-        Name = "团结";
-        Description = "存在时“并肩作战”效果×3";
-        TimeLeft = 64;
-        Num = 45;
-        canStack = false;
-        perkColor = PerkColor.Orange;
-    }
-    public override void ImmEffect()
-    {
-        if (TargetDep != null)
-        {
-            Description = "存在时“并肩作战”效果×3";
-        }
-    }
-    public override void RemoveEffect()
-    {
-        base.RemoveEffect();
-    }
-}
-
-//愿望
-public class Perk55 : Perk
-{
-    public Perk55() : base()
-    {
-        Name = "愿望";
-        Description = "解锁事件，公司港口行为树";
-        TimeLeft = 64;
-        Num = 55;
-        canStack = true;
-    }
-}
-
-//野心
-public class Perk56 : Perk
-{
-    public Perk56() : base()
-    {
-        Name = "野心";
-        Description = "解锁事件，公司港口行为树";
-        TimeLeft = 64;
-        Num = 56;
-        canStack = true;
-    }
-}
-
-//不满
-public class Perk57 : Perk
-{
-    public Perk57() : base()
-    {
-        Name = "不满";
-        Description = "解锁事件，公司港口行为树";
-        TimeLeft = 64;
-        Num = 57;
-        canStack = true;
-    }
-}
-
-//成长
-public class Perk58 : Perk
-{
-    public Perk58() : base()
-    {
-        Name = "成长";
-        Description = "解锁事件，1年内每升一级获取1个，下年清空";
-        TimeLeft = -1; //到年底
-        Num = 58;
-        canStack = true;
-    }
-}
-
-//深刻交谈
-public class Perk59 : Perk
-{
-    public Perk59() : base()
-    {
-        Name = "深刻交谈";
-        Description = "解锁事件，个人港口行为树";
-        TimeLeft = 64;
-        Num = 59;
-        canStack = true;
-    }
-}
-
-//分享乐事
-public class Perk60 : Perk
-{
-    public Perk60() : base()
-    {
-        Name = "分享乐事";
-        Description = "解锁事件，个人港口行为树";
-        TimeLeft = 64;
-        Num = 60;
-        canStack = true;
-    }
-}
-
-//认可交谈
-public class Perk61 : Perk
-{
-    public Perk61() : base()
-    {
-        Name = "认可交谈";
-        Description = "解锁事件，个人港口行为树";
-        TimeLeft = 64;
-        Num = 61;
-        canStack = true;
-    }
-}
-
-//分享日常
-public class Perk62 : Perk
-{
-    public Perk62() : base()
-    {
-        Name = "分享日常";
-        Description = "解锁事件，个人港口行为树";
-        TimeLeft = 64;
-        Num = 62;
-        canStack = true;
-    }
-}
-
-//寻求安慰
-public class Perk63 : Perk
-{
-    public Perk63() : base()
-    {
-        Name = "寻求安慰";
-        Description = "解锁事件，个人港口行为树";
-        TimeLeft = 64;
-        Num = 63;
-        canStack = true;
-    }
-}
-
-//无聊
-public class Perk64 : Perk
-{
-    public Perk64() : base()
-    {
-        Name = "无聊";
-        Description = "解锁事件，个人港口行为树";
-        TimeLeft = 64;
-        Num = 64;
-        canStack = true;
-    }
-}
-
-//受到信任
-public class Perk65 : Perk
-{
-    public Perk65() : base()
-    {
-        Name = "受到信任";
-        Description = "解锁事件，公司普通行为树";
-        TimeLeft = 64;
-        Num = 65;
-        canStack = true;
-    }
-}
-
-//受到质疑
-public class Perk66 : Perk
-{
-    public Perk66() : base()
-    {
-        Name = "受到质疑";
-        Description = "解锁事件，公司普通行为树";
-        TimeLeft = 64;
-        Num = 66;
-        canStack = true;
-    }
-}
-
-//受到赞扬
-public class Perk67 : Perk
-{
-    public Perk67() : base()
-    {
-        Name = "受到赞扬";
-        Description = "解锁事件，公司普通行为树";
-        TimeLeft = 64;
-        Num = 67;
-        canStack = true;
-    }
-}
-
-//受到批评
-public class Perk68 : Perk
-{
-    public Perk68() : base()
-    {
-        Name = "受到批评";
-        Description = "解锁事件，公司普通行为树";
-        TimeLeft = 64;
-        Num = 68;
-        canStack = true;
-    }
-}
-
-//遭到敌意
-public class Perk69 : Perk
-{
-    public Perk69() : base()
-    {
-        Name = "遭到敌意";
-        Description = "解锁事件，公司普通行为树";
-        TimeLeft = 64;
-        Num = 69;
-        canStack = true;
-    }
-}
-
-//理想
-public class Perk70 : Perk
-{
-    public Perk70() : base()
-    {
-        Name = "理想";
-        Description = "解锁事件，公司普通行为树";
-        TimeLeft = -1;//永久，直到完成
-        Num = 70;
-        canStack = false;
-    }
-}
-
-//充分讨论
-public class Perk71 : Perk
-{
-    public Perk71() : base()
-    {
-        Name = "充分讨论";
-        Description = "部门成功率上升5%";
-        TimeLeft = -1;//持续到当前业务结束
-        Num = 71;
-        canStack = true;
-        perkColor = PerkColor.White;
-    }
-    public override void ImmEffect()
-    {
-        if (TargetDep != null)
-        {
-            TargetDep.Efficiency += 0.05f;
-        }
-    }
-    public override void RemoveEffect()
-    {
-        base.RemoveEffect();
-        if (TargetDep != null)
-        {
-            TargetDep.Efficiency -= 0.05f;
-        }
-    }
-}
-
-//期待转岗
-public class Perk72 : Perk
-{
-    public Perk72() : base()
-    {
-        Name = "期待转岗";
-        Description = "持续时间结束时没有消除则员工信念-10";
-        TimeLeft = 64;
-        Num = 72;
-        canStack = false;
-    }
-}
-
-//期待升职
-public class Perk73 : Perk
-{
-    public Perk73() : base()
-    {
-        Name = "期待升职";
-        Description = "持续时间结束时没有消除则员工信念-8";
-        TimeLeft = 64;
-        Num = 73;
-        canStack = false;
-    }
-}
-
-//精神恍惚
-public class Perk74 : Perk
-{
-    public Perk74() : base()
-    {
-        Name = "精神恍惚";
-        Description = "心力爆炸获得，失误率+50%";
-        TimeLeft = 96;
-        Num = 74;
-        canStack = false;
-    }
-}
-
-//善辩
-public class Perk75 : Perk
-{
-    public Perk75() : base()
-    {
-        Name = "善辩";
-        Description = "加事件判定正面修正+1";
-        TimeLeft = -1;//特质
-        Num = 75;
-        canStack = false;
-    }
-}
-
-//说客
-public class Perk76 : Perk
-{
-    public Perk76() : base()
-    {
-        Name = "说客";
-        Description = "加事件判定正面修正+2";
-        TimeLeft = -1;//特质
-        Num = 76;
-        canStack = false;
-    }
-}
-
-//雄辩家
-public class Perk77 : Perk
-{
-    public Perk77() : base()
-    {
-        Name = "雄辩家";
-        Description = "加事件判定正面修正+3";
-        TimeLeft = -1;//特质
-        Num = 77;
-        canStack = false;
-    }
-}
-
-//出众
-public class Perk78 : Perk
-{
-    public Perk78() : base()
-    {
-        Name = "出众";
-        Description = "加事件判定正面修正+1";
-        TimeLeft = -1;//特质
-        Num = 78;
-        canStack = false;
-    }
-}
-
-//领袖气质
-public class Perk79 : Perk
-{
-    public Perk79() : base()
-    {
-        Name = "领袖气质";
-        Description = "加事件判定正面修正+2";
-        TimeLeft = -1;//特质
-        Num = 79;
-        canStack = false;
-    }
-}
-
-//传奇
-public class Perk80 : Perk
-{
-    public Perk80() : base()
-    {
-        Name = "传奇";
-        Description = "加事件判定正面修正+3";
-        TimeLeft = -1;//特质
-        Num = 80;
-        canStack = false;
-    }
-}
-
-//认识新人
-public class Perk81 : Perk
-{
-    public Perk81() : base()
-    {
-        Name = "认识新人";
-        Description = "认识新人的次数，作为标记使用";
-        TimeLeft = -1;
-        Num = 81;
-        canStack = true;
-    }
-}
-
 
 //被害妄想症
 public class Perk93 : Perk
@@ -3112,14 +3494,14 @@ public class Perk143 : Perk
 
     public override void ImmEffect()
     {
-        TargetDep.BaseWorkStatus -= 3 * TempValue1;
-        TargetDep.DepBaseMajorSuccessRate += 0.3f * TempValue1;
+        //TargetDep.BaseWorkStatus -= 3 * TempValue1;
+        //TargetDep.DepBaseMajorSuccessRate += 0.3f * TempValue1;
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDep.BaseWorkStatus += 3 * TempValue1;
-        TargetDep.DepBaseMajorSuccessRate -= 0.3f * TempValue1;
+        //TargetDep.BaseWorkStatus += 3 * TempValue1;
+        //TargetDep.DepBaseMajorSuccessRate -= 0.3f * TempValue1;
     }
 }
 
@@ -3248,12 +3630,12 @@ public class Perk147 : Perk
 
     public override void ImmEffect()
     {
-        TargetDep.StaminaCostRate -= 0.3f * TempValue1;
+        //TargetDep.StaminaCostRate -= 0.3f * TempValue1;
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDep.StaminaCostRate += 0.3f * TempValue1;
+        //TargetDep.StaminaCostRate += 0.3f * TempValue1;
     }
 }
 
@@ -3441,7 +3823,7 @@ public static class PerkData
     public static List<Perk> PerkList = new List<Perk>()
     {
         new Perk12(), new Perk13(), new Perk14(), new Perk15(), new Perk16(), new Perk17(),
-        new Perk18(), new Perk19(), new Perk20(), new Perk21(), new Perk22(),
+        new Perk18(), new Perk20(), new Perk21(), new Perk22(),
         new Perk23(), new Perk108(), new Perk109(), new Perk110(), new Perk111(), new Perk112(), new Perk113(), new Perk130()
     };
 
@@ -3461,10 +3843,16 @@ public static class PerkData
     //管理特质
     public static List<Perk> ManagePerkList = new List<Perk>()
     {
-         new Perk1(), new Perk2(), new Perk3(), new Perk4(), new Perk5(), new Perk6(),
-        new Perk7(), new Perk8(), new Perk9(), new Perk10(), new Perk11()
+         new Perk1(), new Perk2(), new Perk4(), new Perk5(), new Perk6(),
+        new Perk7(), new Perk8(), new Perk9(), new Perk11()
         , new Perk24(), new Perk25(), new Perk26(), new Perk27(), new Perk28(),
         new Perk29(), new Perk30(), new Perk31(), new Perk32()
+    };
+
+    //正面特质（产生正面抉择卡的特质）
+    public static List<Perk> OptionCardPerkList = new List<Perk>()
+    {
+        new Perk108(), new Perk109(), new Perk110(), new Perk111(), new Perk112(), new Perk113()
     };
 
     public static List<Perk> DebuffPerkList = new List<Perk>()

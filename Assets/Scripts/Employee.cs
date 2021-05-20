@@ -152,7 +152,7 @@ public class Employee
     public int StaminaLimitExtra = 0; //体力上限额外值
     public int MentalityLimitExtra = 0; //心力上限额外值
     public int Exp = 0;//升级所需的经验
-    public int ExtraExp = 0;//每回合获得的经验
+    public int ExtraExp = 0;//每回合获得的经验(特质19热情相关)
 
     public int SalaryExtra = 0, Age, EventTime, ObeyTime, NoPromotionTime = 0, NoMarriageTime = 0,
         VacationTime = 0, SpyTime = 0, CoreMemberTime;//放假时间、间谍时间、核心成员说服CD时间
@@ -162,6 +162,7 @@ public class Employee
     public int SpecialTeamTime = 0;//特别小组在事件组结束后额外禁用的回合数
     public int NewRelationTargetTime = 1;
     public float ExtraSuccessRate = 0, SalaryMultiple = 1.0f;
+    public int SelfEventCorrection = 0;//个人事件修正
     public OccupationType Occupation;  //职业
     public Ambition ambition; //志向
 
@@ -174,6 +175,7 @@ public class Employee
     public string Name;
     public bool isCEO = false, SupportCEO;
     public bool inSpecialTeam = false;//是否在特殊小组里
+    public bool MultiEmotion = false;//特质18效果，获取情绪时概率额外获取
 
     public EmpInfo InfoA, InfoB, InfoDetail;
     public DepControl CurrentDep;
@@ -686,8 +688,10 @@ public class Employee
     }
 
     //增减情绪
-    public void AddEmotion(EColor C)
+    public void AddEmotion(EColor C, bool multiEmotion = true)
     {
+        if (multiEmotion == true && MultiEmotion == true && Random.Range(0.0f, 1.0f) < 0.5f)
+            AddEmotion(C, false);
         if (C == EColor.LYellow)
         {
             for (int i = 0; i < CurrentEmotions.Count; i++)

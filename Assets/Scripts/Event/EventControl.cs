@@ -426,10 +426,9 @@ public class EventControl : MonoBehaviour
         CurrentEventGroups.Add(newEventGroup);
         UIManager.Instance.OnAddNewWindow(newEventGroup.DetailPanel.GetComponent<WindowBaseControl>());
         newEventGroup.transform.parent = EventGroupContent;
-        newEventGroup.UpdateUI();
     }
 
-    //判断是否能够进入特殊事件
+    //判断是否能够进入特殊事件和生成其他事件
     public void StartSpecialEvent()
     {
         //有未处理的心态爆炸则必须先处理，没有进入事件流程时不继续
@@ -442,7 +441,7 @@ public class EventControl : MonoBehaviour
         {
             CurrentEventGroups[EventGroupIndex].StartGroupEvent();
         }
-        //处理所有已经完成的事件组
+        //处理所有已经完成的事件组并生成其他事件
         else
         {
             List<EventGroupInfo> FinishList = new List<EventGroupInfo>();
@@ -458,6 +457,22 @@ public class EventControl : MonoBehaviour
                 Destroy(egi.gameObject);
             }
             FinishList.Clear();
+
+            //事件组处理完毕后生成其他事件，并弹出其中的抉择事件
+            foreach (Employee e in GC.CurrentEmployees)
+            {
+                EmpManager.Instance.AddEvent(e);
+            }
+            //如果没有抉择事件就直接结算
+            if (UnfinishedEvents.Count == 0)
+            {
+                foreach (Employee e in GC.CurrentEmployees)
+                {
+                    e.EmotionTimePass();
+                }
+                GC.CheckEventProgress();
+                StartEventQueue = false;
+            }
         }
     }
 
@@ -465,7 +480,7 @@ public class EventControl : MonoBehaviour
     public void ChoiceEventCheck(bool groupEvent)
     {
         //判断是否为事件组事件
-        //不是的话看一下所有一般抉择事件是否都完成，完成后进入下一阶段(情绪回合-1、结算不满/认同、结算一般事件)
+        //不是的话看一下所有一般抉择事件是否都完成，如果都完成则进入下一阶段(情绪回合-1、结算不满/认同、结算一般事件)
         if (groupEvent == false)
         {
             if (UnfinishedEvents.Count == 0)
@@ -475,15 +490,11 @@ public class EventControl : MonoBehaviour
                     e.EmotionTimePass();
                 }
                 GC.CheckEventProgress();
-                foreach (Employee e in GC.CurrentEmployees)
-                {
-                    EmpManager.Instance.AddEvent(e);
-                }
                 StartEventQueue = false;
             }
         }
 
-        //是的话看一下是否遍历了所有事件组事件，是的话删除所有已经完成的事件组并进入下一阶段
+        //是的话看一下是否遍历了所有事件组事件，遍历完的话删除所有已经完成的事件组并进入下一阶段
         else
         {
             EventGroupIndex += 1;

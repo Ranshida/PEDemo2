@@ -41,6 +41,11 @@ public class ChoiceEvent : MonoBehaviour
             else if (ManageCorrection < 0)
                 Text_Correction.text += "事业部管理: " + ManageCorrection + "修正\n";
         }
+        foreach(PerkInfo perk in Self.InfoDetail.PerksInfo)
+        {
+            if (perk.CurrentPerk.Num == 16)
+                Text_Correction.text += Self.Name + "冷静特质:+1修正";
+        }
         for(int i = 0; i < SelectedOptions.Count; i++)
         {
             OptionCardInfo option = SelectedOptions[i];
@@ -117,6 +122,11 @@ public class ChoiceEvent : MonoBehaviour
         }
         else
         {
+            if (EGI.Target == null || EGI.TargetDep == null || EGI.TargetDivision == null)
+            {
+                Debug.Log("丢失目标");
+                EGI.UpdateUI();
+            }
             CurrentEvent.StartEvent(Self, TotalCorrection, null, EGI);
             EGI.STExtraTime();
             EGI.FinishStage += 1;
@@ -142,8 +152,11 @@ public class ChoiceEvent : MonoBehaviour
         Self = emp;
         if (info != null)
         {
-            Text_EventName.text = e.SubEventNames[info.Stage - 1] + "\n所属事件组:" + e.EventName;
-            Text_EventResult.text = "失败效果:" + e.ResultDescription(emp, null, info.Stage);
+            Text_EventName.text = e.SubEventNames[info.RandomEventNum - 1] + "\n所属事件组:" + e.EventName;
+            if (info.TargetEventGroup.DebuffEvent == true)
+                Text_EventResult.text = "失败效果:" + e.ResultDescription(emp, null, info.RandomEventNum);
+            else
+                Text_EventResult.text = "成功效果:" + e.ResultDescription(emp, null, info.RandomEventNum);
         }
         else
         {

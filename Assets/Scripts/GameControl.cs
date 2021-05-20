@@ -51,10 +51,10 @@ public class GameControl : MonoBehaviour
         set
         {
             morale = value;
-            if (morale > 100)
-                morale = 100;
-            else if (morale < 0)
-                morale = 0;
+            //if (morale > 100)
+            //    morale = 100;
+            //else if (morale < 0)
+            //    morale = 0;
             Text_Morale.text = "士气:" + morale;
         }
     }
@@ -74,7 +74,9 @@ public class GameControl : MonoBehaviour
     [HideInInspector] public bool CEOExtraVote = false;//CEO投票是否有额外加成
     [HideInInspector] public bool ResearchExtraMentality = false;//科研额外心力恢复
     [HideInInspector] public bool CEOVacation = false;
-    bool WorkOverTime = false;//是否已经处于加班状态
+    private int Approve = 0;
+    private int Dissatisfied = 0;
+    private bool WorkOverTime = false;//是否已经处于加班状态
     #endregion
 
     [HideInInspector] public EmpInfo CurrentEmpInfo, CurrentEmpInfo2;//2主要用于需要两个员工的动员技能
@@ -100,7 +102,7 @@ public class GameControl : MonoBehaviour
     public InfoPanel infoPanel;
     public GameObject DepSelectPanel, StandbyButton, MessagePrefab, GameOverPanel;
     public Text Text_Time, Text_TechResource, Text_MarketResource, Text_MarketResource2, Text_ProductResource, Text_Money, 
-        Text_Stamina, Text_Mentality, Text_Morale, Text_WarTime, Text_MonthMeetingTime, Text_NextTurn;
+        Text_Stamina, Text_Mentality, Text_Morale, Text_WarTime, Text_MonthMeetingTime, Text_NextTurn, Text_EventProgress;
     public Toggle WorkOvertimeToggle;
     public BrainStormControl BSC;
     [HideInInspector] public UnityEvent DailyEvent, WeeklyEvent, MonthlyEvent, HourEvent, YearEvent, TurnEvent;
@@ -150,6 +152,9 @@ public class GameControl : MonoBehaviour
         //    Timer = 0;
         //    HourPass();
         //}
+
+        Text_EventProgress.text = "不满:" + Dissatisfied + "/" + DissatisfiedLimit + "\n\n认同:" + Approve + "/" + ApproveLimit;
+
         if (Input.GetKeyDown(KeyCode.I))
         {
             Money += 1000;
@@ -322,16 +327,16 @@ public class GameControl : MonoBehaviour
     public void WeekPass()
     {
         //部门的每周体力buff判定
-        foreach(DepControl dep in CurrentDeps)
-        {
-            if (dep.StaminaExtra != 0)
-            {
-                foreach (Employee e in dep.CurrentEmps)
-                {
-                    e.Stamina += (int)(dep.StaminaExtra * dep.StaminaCostRate);
-                }
-            }
-        }
+        //foreach(DepControl dep in CurrentDeps)
+        //{
+        //    if (dep.StaminaExtra != 0)
+        //    {
+        //        foreach (Employee e in dep.CurrentEmps)
+        //        {
+        //            e.Stamina += (int)(dep.StaminaExtra * dep.StaminaCostRate);
+        //        }
+        //    }
+        //}
 
         DailyEvent.Invoke();
         Hour = 1;
@@ -357,20 +362,6 @@ public class GameControl : MonoBehaviour
             YearEvent.Invoke();
             Year += 1;
             Month = 1;
-            for (int i = 0; i < CurrentEmployees.Count; i++)
-            {
-                CurrentEmployees[i].Age += 1;
-                foreach(PerkInfo p in CurrentEmployees[i].InfoDetail.PerksInfo)
-                {
-                    if(p.CurrentPerk.Num == 58)
-                    {
-                        PerkInfo pi = p;
-                        CurrentEmployees[i].InfoDetail.PerksInfo.Remove(pi);
-                        Destroy(pi.gameObject);
-                        break;
-                    }
-                }
-            }
         }
         Text_Time.text = "年" + Year + " 月" + Month + " 周" + Week + " 时" + Hour;
     }
@@ -606,7 +597,7 @@ public class GameControl : MonoBehaviour
         {
             if (CC.CEOSkillNum == 1)
             {
-                depControl.AddPerk(new Perk117());
+                //depControl.AddPerk(new Perk117());
                 QC.Finish(5);
                 new EmpBuff(CC.CEO, 16, -45);
                 ResetSelectMode();
@@ -851,12 +842,25 @@ public class GameControl : MonoBehaviour
     //增加不满或认同,bool = true 为不满，反之是认同
     public void AddEventProgress(int value, bool dissatisfied)
     {
-
+        if (dissatisfied == true)
+            Dissatisfied += value;
+        else
+            Approve += value;
     }
 
+    //检测不满和认同状态，满了就产生事件组
     public void CheckEventProgress()
     {
-
+        if (Dissatisfied >= DissatisfiedLimit)
+        {
+            Dissatisfied -= DissatisfiedLimit;
+            EC.CreateEventGroup(EventData.SpecialEventGroups2[Random.Range(0, EventData.SpecialEventGroups2.Count)]);
+        }
+        if (Approve >= ApproveLimit)
+        {
+            Approve -= ApproveLimit;
+            EC.CreateEventGroup(EventData.SpecialEventGroups[Random.Range(0, EventData.SpecialEventGroups.Count)]);
+        }
     }
 
     //添加Perk
