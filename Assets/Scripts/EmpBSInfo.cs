@@ -195,12 +195,15 @@ public class EmpBSInfo : MonoBehaviour
     //升级骰子
     public void UpgradeDice()
     {
-
+        if (emp == null)
+            return;
+        BSC.UpgradeDice(emp);
     }
 
     //获得经验
     public void AddExp()
     {
-
+        if (emp != null)
+            emp.GainExp(40);
     }
 }

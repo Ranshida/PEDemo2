@@ -169,7 +169,7 @@ public class HireControl : MonoBehaviour
         //创建招聘历史
         if (GC.CC.CEO != null)
             GC.CC.CEO.InfoDetail.AddHistory("招聘了" + ED.emp.Name);
-        HideOptions();
+        //HideOptions();
 
         //扣手续费
         GC.Money -= 100;
@@ -231,10 +231,10 @@ public class HireControl : MonoBehaviour
 
     public void BuildingPurchase(BuildingType type)
     {
-        foreach(DepInfo info in DepInfos)
-        {
-            info.gameObject.SetActive(false);
-        }
+        //foreach(DepInfo info in DepInfos)
+        //{
+        //    info.gameObject.SetActive(false);
+        //}
         BuildingManage.Instance.EnterBuildMode();
         BuildingManage.Instance.StartBuildNew(type);
         Text_Dep.color = Color.black;

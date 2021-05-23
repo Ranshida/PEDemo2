@@ -454,23 +454,34 @@ public class BuildingManage : MonoBehaviour
     //拆除建筑
     public void DismantleBuilding(Building building)
     {
-        if (building.Dismantle())
+        if (ConstructedBuildings.Count == 1)
         {
-            if (building.BuildingSet)
-            {
-                //GameControl.Instance.BuildingPay -= building.Pay;
-            }
+            System.Action DismantleAction = () => { building.Dismantle(); };
+            System.Action cancelAction = () => { };
+            QuestControl.Instance.Init("拆了最后一个建筑会直接失败", DismantleAction, cancelAction);
         }
+        else
+            building.Dismantle();
+        //if (building.Dismantle())
+        //{
+        //    if (building.BuildingSet)
+        //    {
+        //        //GameControl.Instance.BuildingPay -= building.Pay;
+        //    }
+        //}
     }
     public void DismantleBuilding()
     {
-        if (SelectBuilding.Dismantle())
-        {
-            if (SelectBuilding.BuildingSet)
-            {
-                //GameControl.Instance.BuildingPay -= m_SelectBuilding.Pay;
-            }
-        }
+        System.Action DismantleAction = () => { SelectBuilding.Dismantle(); };
+        System.Action cancelAction = () => {};
+        QuestControl.Instance.Init("拆了最后一个建筑会直接失败", DismantleAction, cancelAction);
+        //if (SelectBuilding.Dismantle())
+        //{
+        //    if (SelectBuilding.BuildingSet)
+        //    {
+        //        //GameControl.Instance.BuildingPay -= m_SelectBuilding.Pay;
+        //    }
+        //}
     }
 
     public void AskUnlockArea()

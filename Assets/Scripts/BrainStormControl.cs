@@ -20,6 +20,7 @@ public class BrainStormControl : MonoBehaviour
 
     private int HpLimit;//Boss血量上限，用于UI显示
     private int FightType = 1;//1正常头脑风暴 2事件组 3融资
+    private int UpgradePoint = 0;//当前升级点数
 
     public int[] AcquiredItem = new int[4];
 
@@ -28,11 +29,11 @@ public class BrainStormControl : MonoBehaviour
     public BSRouteNode CurrentNode;//当前所处的节点
     public GameControl GC;
     public GameObject MemberSelectPanel, RouteSelectPanel, FightPanel, SkillButton, CloseButton, 
-        RouteNoticePanel, NodeSkipButton;
+        RouteNoticePanel, NodeSkipButton, DiceUpgradePanel;
     public BSDiceControl DicePrefab;
     public BSBossControl CurrentBoss, BossPrefab;
     public BSSkillMarker MarkerPrefab;
-    public Transform DiceContent, SelectedDiceContent, BossContent;
+    public Transform DiceContent, SelectedDiceContent, BossContent, DiceUpgradeContent;
     public Text Text_SkillName, Text_Turn, Text_Histroy, Text_EmptyDice, Text_RouteNotice, Text_Item;
 
     public List<BSDiceControl> CurrentDices = new List<BSDiceControl>();
@@ -40,8 +41,10 @@ public class BrainStormControl : MonoBehaviour
     public List<BSDiceControl> SelectedDices = new List<BSDiceControl>();
     public List<Employee> CoreMembers = new List<Employee>();
     public List<BSBossControl> Bosses = new List<BSBossControl>();
+    private List<BSSkillMarker> UpgradeDices = new List<BSSkillMarker>();
     public EmpBSInfo[] EmpInfos = new EmpBSInfo[6];
     public EmpBSInfo[] EmpSelectInfos = new EmpBSInfo[6];
+
 
     private void Update()
     {        
@@ -873,5 +876,41 @@ public class BrainStormControl : MonoBehaviour
     {
         CurrentNode.ConfirmNode();
         RouteNoticePanel.SetActive(false);
+    }
+
+    //升级骰子
+    public void UpgradeDice(Employee emp)
+    {
+        DiceUpgradePanel.SetActive(true);
+        for (int i = 0; i < UpgradeDices.Count; i++)
+        {
+            Destroy(UpgradeDices[i].gameObject);
+        }
+        UpgradeDices.Clear();
+        for(int i = 0; i < emp.CurrentDices.Count; i++)
+        {
+            int num = 0;
+            foreach (int n in emp.CurrentDices[i])
+            {
+                if (n != -1)
+                    num += 1;
+                else
+                    break;
+            }
+            if (num == 6)
+                continue;
+            BSSkillMarker m = Instantiate(GC.BSC.MarkerPrefab, DiceUpgradeContent).GetComponent<BSSkillMarker>();
+            m.SetInfo(emp.CurrentDices[i][0], num);
+            UpgradeDices.Add(m);
+            int numb = i;
+            m.GetComponent<Button>().onClick.AddListener(() =>
+            {
+                emp.UpgradeDice(numb);
+                UpgradePoint -= 1;
+                DiceUpgradePanel.SetActive(false);
+                CheckAllMarkers();
+            });
+        }
+
     }
 }

@@ -218,7 +218,7 @@ public class DivisionControl : MonoBehaviour
             {
                 foreach(Employee emp in dep.CurrentEmps)
                 {
-                    emp.GainExp(ExtraExp, 0);
+                    emp.GainExp(ExtraExp);
                     if (MentalityBonus != 0)
                         emp.Mentality += MentalityBonus;
                 }

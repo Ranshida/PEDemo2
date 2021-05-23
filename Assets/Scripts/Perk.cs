@@ -2444,7 +2444,7 @@ public class Perk96 : Perk
     public Perk96() : base()
     {
         Name = "开悟";
-        Description = "不产生红色系情绪，愤怒、反感、侮辱等";
+        Description = "不产生红色系情绪，愤怒、反感、侮辱等，且心力爆炸后不产生负面特质";
         TimeLeft = -1;//特质
         Num = 96;
         canStack = false;

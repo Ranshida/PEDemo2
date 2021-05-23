@@ -63,7 +63,7 @@ public class GameControl : MonoBehaviour
     public int StandbyEmpLimit = 5;//人才库数量限制
 
     #region 杂项变量
-    [HideInInspector] public int ApproveLimit = 5;//认同上限
+    [HideInInspector] public int ApproveLimit = 5, Year = 1, Month = 1;//认同上限;当前年月
     [HideInInspector] public int DissatisfiedLimit = 5;//不满上限
     [HideInInspector] public int ExtraExpense = 0;//额外维护费效果
     [HideInInspector] public bool ProduceBuffBonus = false;//“精进”和“团结”状态的持续时间提高至4m战略效果
@@ -114,7 +114,7 @@ public class GameControl : MonoBehaviour
     public List<PerkInfo> CurrentPerks = new List<PerkInfo>();
     public int[] FinishedTask = new int[10];//0程序迭代 1技术研发 2可行性调研 3传播 4营销文案 5资源拓展 6原型图 7产品研究 8用户访谈 9已删除
 
-    int Year = 1, Month = 1, Week = 1, Day = 1, Hour = 1, morale = 50;
+    int Week = 1, Day = 1, Hour = 1, morale = 50;
     int HireTime = 3;//临时的每3回合刷新一次招聘
     float Timer, MoneyCalcTimer;
     bool TimePause = false; //现在仅用来判断是否处于下班状态，用于其他功能时需检查WorkEndCheck()和WeekStart
@@ -139,6 +139,10 @@ public class GameControl : MonoBehaviour
         //CreateItem(4);
         //CreateItem(5);
         //CreateItem(6);
+
+        Text_Time.text = "<size=27>第" + Turn + "回合</size>" + "\n<size=20>第" + Year + "年" + Month + "月</size>";
+        Text_MonthMeetingTime.text = "距离下次月会还剩" + MonthMeetingTime + "回合";
+        Text_WarTime.text = "距离下次商战还剩" + WarTime + "回合";
     }
 
     private void Update()
@@ -153,7 +157,7 @@ public class GameControl : MonoBehaviour
         //    HourPass();
         //}
 
-        Text_EventProgress.text = "不满:" + Dissatisfied + "/" + DissatisfiedLimit + "\n\n认同:" + Approve + "/" + ApproveLimit;
+        Text_EventProgress.text = "不满:" + Dissatisfied + "/" + DissatisfiedLimit + "                            认同:" + Approve + "/" + ApproveLimit;
 
         if (Input.GetKeyDown(KeyCode.I))
         {
@@ -242,8 +246,10 @@ public class GameControl : MonoBehaviour
             HC.StorePanel.SetWndState(false);//玩家直接进下一回合的话强制关闭
         }
 
-        Text_Time.text = "第" + Turn + "回合";
+        TimeChange();
+        Text_Time.text = "<size=27>第" + Turn + "回合</size>" + "\n<size=20>第" + Year +"年" + Month + "月</size>";
         Text_MonthMeetingTime.text = "距离下次月会还剩" + MonthMeetingTime + "回合";
+        Text_WarTime.text = "距离下次商战还剩" + WarTime + "回合";
 
         //大概在这里确定所有的事件
 
@@ -274,6 +280,17 @@ public class GameControl : MonoBehaviour
         }
         else
             Text_NextTurn.text = "下一回合";
+    }
+
+    //(回合制下的)时间变化
+    void TimeChange()
+    {
+        Month += 1;
+        if (Month > 12)
+        {
+            Month = 1;
+            Year += 1;
+        }
     }
 
     void HourPass()

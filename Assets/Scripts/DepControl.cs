@@ -195,30 +195,30 @@ public class DepControl : MonoBehaviour
     //每工时所有员工获取一份经验
     public void EmpsGetExp()
     {
-        for (int i = 0; i < CurrentEmps.Count; i++)
-        {
-            //判断有几个技能符合
-            int type1 = 0, type2 = 0;
-            foreach(int a in CurrentEmps[i].Professions)
-            {
-                if (a == building.effectValue)
-                    type1 = a;
-                if (a == building.effectValue2)
-                    type2 = a;
-            }
-            if (type1 != 0 && type2 != 0)
-            {
-                CurrentEmps[i].GainExp(AdjustData.EmpExpDoubleSkillObtain, type1);
-                CurrentEmps[i].GainExp(AdjustData.EmpExpDoubleSkillObtain, type2);
-            }
-            else
-            {
-                if (type1 != 0)
-                    CurrentEmps[i].GainExp(AdjustData.EmpExpObtain, type1);
-                if (type2 != 0)
-                    CurrentEmps[i].GainExp(AdjustData.EmpExpObtain, type2);
-            }
-        }
+        //for (int i = 0; i < CurrentEmps.Count; i++)
+        //{
+        //    //判断有几个技能符合
+        //    int type1 = 0, type2 = 0;
+        //    foreach(int a in CurrentEmps[i].Professions)
+        //    {
+        //        if (a == building.effectValue)
+        //            type1 = a;
+        //        if (a == building.effectValue2)
+        //            type2 = a;
+        //    }
+        //    if (type1 != 0 && type2 != 0)
+        //    {
+        //        CurrentEmps[i].GainExp(AdjustData.EmpExpDoubleSkillObtain, type1);
+        //        CurrentEmps[i].GainExp(AdjustData.EmpExpDoubleSkillObtain, type2);
+        //    }
+        //    else
+        //    {
+        //        if (type1 != 0)
+        //            CurrentEmps[i].GainExp(AdjustData.EmpExpObtain, type1);
+        //        if (type2 != 0)
+        //            CurrentEmps[i].GainExp(AdjustData.EmpExpObtain, type2);
+        //    }
+        //}
     }
 
     //删除建筑时重置所有相关数据

@@ -62,6 +62,7 @@ public class DepInfo : MonoBehaviour
         }
         HC.BuildingPurchase(CurrentType);
         HC.StorePanel.SetWndState(false);
+        this.gameObject.SetActive(false);
     }
 
     //生成单图标记

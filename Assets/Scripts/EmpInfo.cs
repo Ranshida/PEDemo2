@@ -58,7 +58,7 @@ public class EmpInfo : MonoBehaviour
                 Text_Tenacity.text = emp.Tenacity.ToString();
                 Text_Manage.text = emp.Manage.ToString();
                 Text_Decision.text = emp.Decision.ToString();
-                Text_Ambition.text = "志向:" + emp.ambition;
+                Text_Ambition.text = "志向:" + emp.Ambition;
                 Text_Occupation.text = "职业:" + emp.Occupation;
 
                 UpdateCharacterUI();
@@ -272,7 +272,7 @@ public class EmpInfo : MonoBehaviour
     public void AddHistory(string Content)
     {
         Text t = Instantiate(GC.HistoryTextPrefab, HistoryContent);
-        t.text = "[第" + GC.Turn + "回合] " + Content;
+        t.text = "[第" + GC.Year + "年" + GC.Month + "月(回合" + GC.Turn + ")] " + Content;
     }
 
     public void AdjustSize()

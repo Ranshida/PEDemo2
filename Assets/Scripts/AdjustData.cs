@@ -4,8 +4,7 @@ using UnityEngine;
 
 static public class AdjustData
 {
-    static public int EmpExpObtain = 5;//有一个技能符合时工作1工时获得的经验
-    static public int EmpExpDoubleSkillObtain = 3;//有两个技能符合时工作1工时获得的经验
+    static public List<int> ExpRequire = new List<int>() { 40, 100, 180, 280, 400, 540, 700, 880, 1080, 1300, 0};//员工升级所需经验
 
     #region 融资相关
     //融资数值相关

@@ -18,11 +18,6 @@ public enum EColor
     //浅黄愉悦 浅红厌恶 浅蓝苦涩 浅橙=橘黄骄傲 浅紫委屈 草色=浅绿敬畏 黄=金振奋 红愤怒 蓝悲伤 橙色偏执 紫沮丧 绿平静
 }
 
-public enum Ambition
-{
-    专家, 高管, 打工人, 无
-}
-
 public class Emotion
 {
     public EColor color;
@@ -151,7 +146,8 @@ public class Employee
     public int MentalityLimit { get { return 100 + (Tenacity * 5) + MentalityLimitExtra; } set { MentalityLimit = value; } } // 心力上限
     public int StaminaLimitExtra = 0; //体力上限额外值
     public int MentalityLimitExtra = 0; //心力上限额外值
-    public int Exp = 0;//升级所需的经验
+    public int Exp = 0;//当前经验
+    public int Level = 0;
     public int ExtraExp = 0;//每回合获得的经验(特质19热情相关)
 
     public int SalaryExtra = 0, Age, EventTime, ObeyTime, NoPromotionTime = 0, NoMarriageTime = 0,
@@ -161,10 +157,10 @@ public class Employee
     public int SkillLimitTime;//头脑风暴中技能禁用的回合数
     public int SpecialTeamTime = 0;//特别小组在事件组结束后额外禁用的回合数
     public int NewRelationTargetTime = 1;
+    public int Ambition = 0;//剩余志向
     public float ExtraSuccessRate = 0, SalaryMultiple = 1.0f;
     public int SelfEventCorrection = 0;//个人事件修正
     public OccupationType Occupation;  //职业
-    public Ambition ambition; //志向
 
     public List<int> Professions = new List<int>();//员工的岗位优势
     public List<int[]> CurrentDices = new List<int[]>();//员工的骰子
@@ -183,6 +179,7 @@ public class Employee
     public Employee Master, Lover, RTarget;
     public Clique CurrentClique;
 
+    public List<Perk> AmbitionPerks = new List<Perk>();//可以通过志向获得的特质
     public List<Employee> Students = new List<Employee>();
     public List<Employee> RelationTargets = new List<Employee>(); 
     public List<Relation> Relations = new List<Relation>();
@@ -190,6 +187,7 @@ public class Employee
     public List<Emotion> CurrentEmotions = new List<Emotion>();
     public List<EmpBuff> CurrentBuffs = new List<EmpBuff>();
     public List<EventCondition> EventConditions = new List<EventCondition>();
+    public List<int> NewProfessions = new List<int>(); //可以通过志向获得的岗位优势
     public List<int> ExhaustedCount = new List<int>();
 
     private List<EColor> TempEmotion = new List<EColor>();
@@ -273,6 +271,21 @@ public class Employee
         Mentality = MentalityLimit;
     }
 
+    //升级骰子
+    public void UpgradeDice(int num)
+    {
+        MonoBehaviour.print(num);
+        int type = CurrentDices[num][0];
+
+        if (type == -1)
+            return;
+
+        for(int i = 0; i < 6; i++)
+        {
+            CurrentDices[num][i] = type;
+        }
+    }
+
     //随机一个职业和志向
     void RandomOccupation(int type = -1)
     {
@@ -346,22 +359,74 @@ public class Employee
             CurrentDices.Add(new int[6] { 2, 2, 2, 2, -1, -1 });
         }
 
-        num = Random.Range(0, 4);
-        ambition = (Ambition)num;
+        //确认各项数据
+        int NormalPerkNum = Random.Range(1, 5), ManagePerkNum = Random.Range(1, 5);
+        int ProfessionsNum = Random.Range(1, 4);
+        if (NormalPerkNum + ManagePerkNum == 2)
+            ProfessionsNum = 3;
+        else if (NormalPerkNum + ManagePerkNum == 8 && ProfessionsNum == 3)
+            ProfessionsNum = 2;
+        Ambition = ProfessionsNum + ManagePerkNum + NormalPerkNum;
+
+        List<Perk> NormalPerk = new List<Perk>(), ManagePerk = new List<Perk>();
+        List<int> PosbProfessions = new List<int>() { 0, 1, 2, 3, 4, 5};
+        foreach (Perk p in PerkData.PerkList)
+        {
+            NormalPerk.Add(p);
+        }
+        foreach(Perk p in PerkData.ManagePerkList)
+        {
+            ManagePerk.Add(p);
+        }
+        foreach (int n in Professions)
+        {
+            PosbProfessions.Remove(n);
+        }
+
+        for (int i = 0; i < NormalPerkNum; i++)
+        {
+            int pNum = Random.Range(0, NormalPerk.Count);
+            AmbitionPerks.Add(NormalPerk[pNum]);
+            NormalPerk.RemoveAt(pNum);
+        }
+        for (int i = 0; i < ManagePerkNum; i++)
+        {
+            int pNum = Random.Range(0, ManagePerk.Count);
+            AmbitionPerks.Add(ManagePerk[pNum]);
+            ManagePerk.RemoveAt(pNum);
+        }
+        for (int i = 0; i < ProfessionsNum; i++)
+        {
+            int pNum = Random.Range(0, PosbProfessions.Count);
+            NewProfessions.Add(PosbProfessions[pNum]);
+            PosbProfessions.RemoveAt(pNum);
+        }
     }
 
-    public void GainExp(int value, int type)
+    public void GainExp(int value)
     {
         Exp += value;
-        //上司经验获取
-        if (CurrentDep != null && CurrentDep.CommandingOffice != null)
+        if (Level < 10 && Exp >= AdjustData.ExpRequire[Level])
         {
-            if (CurrentDep.CommandingOffice.Manager != null)
+            Level += 1;
+            //根据志向获得特质/岗位优势
+            if (Ambition > 0)
             {
-                CurrentDep.CommandingOffice.Manager.ManagerExp += 1;
-                if (CurrentDep.CommandingOffice.Manager.ManagerExp >= 10)
+                Ambition -= 1;
+                int perkposb = AmbitionPerks.Count;
+                int Posb = Random.Range(1, Ambition);
+                if (Posb <= perkposb)
                 {
-                    CurrentDep.CommandingOffice.Manager.ManagerExp = 0;
+                    int pNum = Random.Range(0, AmbitionPerks.Count);
+                    Perk newperk = AmbitionPerks[pNum].Clone();
+                    InfoDetail.AddPerk(newperk);
+                    AmbitionPerks.RemoveAt(pNum);
+                }
+                else
+                {
+                    int pNum = Random.Range(0, NewProfessions.Count);
+                    Professions.Add(NewProfessions[pNum]);
+                    NewProfessions.RemoveAt(pNum);
                 }
             }
         }
@@ -558,7 +623,7 @@ public class Employee
     {
         //额外获取经验的结算
         if (ExtraExp > 0)
-            GainExp(ExtraExp, 0);
+            GainExp(ExtraExp);
 
         if(SpecialTeamTime > 0)
         {
@@ -921,15 +986,21 @@ public class Employee
             return;
         }
         int num = 0;
-        List<int> PosbNum = new List<int> { 93, 94, 95, 96 };
+        List<int> PosbNum = new List<int> { 93, 94, 95 };
         foreach(int n in ExhaustedCount)
         {
+            //获得开悟之后不产生负面特质
+            if (n == 96)
+                return;
             if (PosbNum.Contains(n) == true)
             {
                 PosbNum.Remove(n);
             }
         }
-        num = PosbNum[Random.Range(0, PosbNum.Count)];
+        if (Random.Range(0.0f, 1.0f) < 0.9f)
+            num = PosbNum[Random.Range(0, PosbNum.Count)];
+        else
+            num = 96;
         if (num == 93)
             InfoDetail.AddPerk(new Perk93());
         else if (num == 94)
