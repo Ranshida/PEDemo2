@@ -135,7 +135,7 @@ public class GameControl : MonoBehaviour
         OCL.AddStaticOptions(new OptionCard2());
         OCL.AddStaticOptions(new OptionCard3());
         OCL.AddStaticOptions(new OptionCard4());
-        CreateItem(3);
+        //CreateItem(3);
         //CreateItem(4);
         //CreateItem(5);
         //CreateItem(6);
