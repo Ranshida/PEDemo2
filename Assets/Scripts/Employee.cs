@@ -406,8 +406,10 @@ public class Employee
     public void GainExp(int value)
     {
         Exp += value;
-        if (Level < 10 && Exp >= AdjustData.ExpRequire[Level])
+        //if (Level < 10 && Exp >= AdjustData.ExpRequire[Level])
+        while (Level < 10 && Exp >= 50)
         {
+            Exp -= 50;
             Level += 1;
             //根据志向获得特质/岗位优势
             if (Ambition > 0)

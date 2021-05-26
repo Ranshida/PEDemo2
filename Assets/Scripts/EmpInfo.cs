@@ -9,7 +9,7 @@ public class EmpInfo : MonoBehaviour
     public Employee emp;
     public GameControl GC;
     public Button HireButton, MoveButton, FireButton;
-    public Text Text_Name, Text_Mentality, Text_Stamina, Text_Skill1, Text_Ability, Text_Age, Text_Professions, Text_Occupation, Text_Ambition;
+    public Text Text_Name, Text_Mentality, Text_Stamina, Text_Exp, Text_Ability, Text_Age, Text_Professions, Text_Occupation, Text_Ambition;
     public Text Text_DepName, Text_Tenacity, Text_Manage, Text_Decision, Text_RTarget;
     public EmpInfo DetailInfo;
     public EmotionInfo EmotionInfoPrefab, MainEmotion;
@@ -67,7 +67,7 @@ public class EmpInfo : MonoBehaviour
             if(InfoType == 2)
             {
                 Text_Mentality.text = "心力:" + emp.Mentality;
-
+                Text_Exp.text = "经验:" + emp.Exp + "/50";
                 if (emp.CurrentDep != null)
                     Text_DepName.text = "所属部门:" + emp.CurrentDep.Text_DepName.text;
                 else

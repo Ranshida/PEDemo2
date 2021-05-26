@@ -77,7 +77,8 @@ public class EventGroup : Event
         //如果判定成功就不继续
         if (FindResult(emp, ExtraCorrection, target) == 1)
         {
-            egi.StageMarker[egi.Stage - 1].color = Color.green;            
+            egi.StageMarker[egi.Stage - 1].color = Color.green;
+            GameControl.Instance.BSC.EventSolved();
             if (DebuffEvent == true)
             {
                 QuestControl.Instance.Init("判定成功，未产生负面效果");

@@ -21,6 +21,7 @@ public class BrainStormControl : MonoBehaviour
     private int HpLimit;//Boss血量上限，用于UI显示
     private int FightType = 1;//1正常头脑风暴 2事件组 3融资
     private int UpgradePoint = 0;//当前升级点数
+    private int UpgradeProgress = 0;//当前升级点数获取进度
 
     public int[] AcquiredItem = new int[4];
 
@@ -34,7 +35,7 @@ public class BrainStormControl : MonoBehaviour
     public BSBossControl CurrentBoss, BossPrefab;
     public BSSkillMarker MarkerPrefab;
     public Transform DiceContent, SelectedDiceContent, BossContent, DiceUpgradeContent;
-    public Text Text_SkillName, Text_Turn, Text_Histroy, Text_EmptyDice, Text_RouteNotice, Text_Item;
+    public Text Text_SkillName, Text_Turn, Text_Histroy, Text_EmptyDice, Text_RouteNotice, Text_Item, Text_Upgrade, Text_CoreTeamButton;
 
     public List<BSDiceControl> CurrentDices = new List<BSDiceControl>();
     public List<BSRouteNode> CurrentNodes = new List<BSRouteNode>();
@@ -44,7 +45,6 @@ public class BrainStormControl : MonoBehaviour
     private List<BSSkillMarker> UpgradeDices = new List<BSSkillMarker>();
     public EmpBSInfo[] EmpInfos = new EmpBSInfo[6];
     public EmpBSInfo[] EmpSelectInfos = new EmpBSInfo[6];
-
 
     private void Update()
     {        
@@ -906,11 +906,52 @@ public class BrainStormControl : MonoBehaviour
             m.GetComponent<Button>().onClick.AddListener(() =>
             {
                 emp.UpgradeDice(numb);
-                UpgradePoint -= 1;
+                UpgradePointUse();
                 DiceUpgradePanel.SetActive(false);
                 CheckAllMarkers();
             });
         }
 
+    }
+
+    //成功处理事件后加技能点数进度
+    public void EventSolved()
+    {
+        UpgradeProgress += 1;
+        if (UpgradeProgress >= 15)
+        {
+            UpgradeProgress -= 15;
+            UpgradePoint += 1;
+        }
+        UpgradeCheck();
+    }
+
+    public void UpgradePointUse()
+    {
+        UpgradePoint -= 1;
+        UpgradeCheck();
+    }
+
+    public void UpgradeCheck()
+    {
+        if (UpgradePoint > 0)
+        {
+            foreach(EmpBSInfo info in EmpSelectInfos)
+            {
+                info.AddExpButton.interactable = true;
+                info.UpgradeDiceButton.interactable = true;
+            }
+            Text_CoreTeamButton.color = Color.red;
+        }
+        else
+        {
+            foreach (EmpBSInfo info in EmpSelectInfos)
+            {
+                info.AddExpButton.interactable = false;
+                info.UpgradeDiceButton.interactable = false;
+            }
+            Text_CoreTeamButton.color = Color.black;
+        }
+        Text_Upgrade.text = "成功处理抉择事件 " + UpgradeProgress + "/15 \n当前可用升级点:" + UpgradePoint;
     }
 }

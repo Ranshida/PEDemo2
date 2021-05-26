@@ -44,7 +44,10 @@ public class ChoiceEvent : MonoBehaviour
         foreach(PerkInfo perk in Self.InfoDetail.PerksInfo)
         {
             if (perk.CurrentPerk.Num == 16)
+            {
                 Text_Correction.text += Self.Name + "冷静特质:+1修正";
+                break;
+            }
         }
         for(int i = 0; i < SelectedOptions.Count; i++)
         {
@@ -185,6 +188,14 @@ public class ChoiceEvent : MonoBehaviour
         {
             TotalCorrection += CurrentEvent.CalcDivisionFaith(Self);
             TotalCorrection += CurrentEvent.CalcDivisionManage(Self);
+        }
+        foreach (PerkInfo perk in Self.InfoDetail.PerksInfo)
+        {
+            if (perk.CurrentPerk.Num == 16)
+            {
+                TotalCorrection += 1;
+                break;
+            }
         }
         CheckCorrectionUI();
     }

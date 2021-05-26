@@ -471,12 +471,13 @@ public class EventC1 : Event
 
     protected override int CalcBonus(Employee emp, Employee target = null, EventGroupInfo egi = null)
     {
-        int result = CalcEmotion(emp)  + CalcPerk(emp, target) ;
+        int result = CalcEmotion(emp);
         return result;
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
     {
+        GameControl.Instance.BSC.EventSolved();
         //随机文案
         int posbContent = Random.Range(1, DescriptionCount + 1);
         emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
@@ -521,12 +522,13 @@ public class EventC2 : Event
 
     protected override int CalcBonus(Employee emp, Employee target = null, EventGroupInfo egi = null)
     {
-        int result = CalcEmotion(emp)  + CalcPerk(emp, target) ;
+        int result = CalcEmotion(emp);
         return result;
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
     {
+        GameControl.Instance.BSC.EventSolved();
         //随机文案
         int posbContent = Random.Range(1, DescriptionCount + 1);
         emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
@@ -571,12 +573,13 @@ public class EventC3 : Event
 
     protected override int CalcBonus(Employee emp, Employee target = null, EventGroupInfo egi = null)
     {
-        int result = CalcEmotion(emp)  + CalcPerk(emp, target) ;
+        int result = CalcEmotion(emp);
         return result;
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
     {
+        GameControl.Instance.BSC.EventSolved();
         //随机文案
         int posbContent = Random.Range(1, DescriptionCount + 1);
         emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
@@ -621,12 +624,13 @@ public class EventC4 : Event
 
     protected override int CalcBonus(Employee emp, Employee target = null, EventGroupInfo egi = null)
     {
-        int result = CalcEmotion(emp)  + CalcPerk(emp, target) ;
+        int result = CalcEmotion(emp);
         return result;
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
     {
+        GameControl.Instance.BSC.EventSolved();
         //随机文案
         int posbContent = Random.Range(1, DescriptionCount + 1);
         emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
@@ -671,12 +675,13 @@ public class EventC5 : Event
 
     protected override int CalcBonus(Employee emp, Employee target = null, EventGroupInfo egi = null)
     {
-        int result = CalcEmotion(emp)  + CalcPerk(emp, target) ;
+        int result = CalcEmotion(emp);
         return result;
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
     {
+        GameControl.Instance.BSC.EventSolved();
         //随机文案
         int posbContent = Random.Range(1, DescriptionCount + 1);
         emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));

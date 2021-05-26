@@ -304,6 +304,34 @@ public class EmpManager : MonoBehaviour
                 }
                 return;
             }
+            //有认识的人时根据认识人的数量决定认识新人事件的权值
+            else if (emp.RelationTargets.Count < 5)
+            {
+                int weight = 5 - emp.RelationTargets.Count;
+                int totalweight = weight;
+                Employee targetR = TargetEmps[Random.Range(0, TargetEmps.Count)];
+                List<Event> PosbEventsR = new List<Event>();
+                foreach (Event e in EventData.EmpPersonalEvent)
+                {
+                    if (e.ConditionCheck(emp, targetR) == true)
+                    {
+                        PosbEventsR.Add(e);
+                        totalweight += 4;
+                    }
+                }
+                if (Random.Range(1, totalweight) > weight)
+                    PosbEventsR[Random.Range(0, PosbEventsR.Count)].StartEvent(emp, emp.SelfEventCorrection + targetR.SelfEventCorrection, targetR);
+                else
+                {
+                    Employee rTarget = GameControl.Instance.CurrentEmployees[Random.Range(0, GameControl.Instance.CurrentEmployees.Count)];
+                    while (rTarget == emp)
+                    {
+                        rTarget = GameControl.Instance.CurrentEmployees[Random.Range(0, GameControl.Instance.CurrentEmployees.Count)];
+                    }
+                    new Event14().StartEvent(emp, emp.SelfEventCorrection + rTarget.SelfEventCorrection, rTarget);
+                }
+
+            }
 
             Employee target = TargetEmps[Random.Range(0, TargetEmps.Count)];
             List<Event> PosbEvents = new List<Event>();

@@ -6975,7 +6975,7 @@ MonoBehaviour:
   Text_Name: {fileID: 1050203296612750850}
   Text_Mentality: {fileID: 4532462009522281559}
   Text_Stamina: {fileID: 0}
-  Text_Skill1: {fileID: 0}
+  Text_Exp: {fileID: 2175193738457019878}
   Text_Ability: {fileID: 0}
   Text_Age: {fileID: 5583850426817852188}
   Text_Professions: {fileID: 8814261155159803876}
@@ -7009,6 +7009,7 @@ MonoBehaviour:
   StrategiesInfo: []
   EmotionInfos: []
   SkillMarkers: []
+  OptionCards: []
   InfoType: 2
 --- !u!114 &785817013382733938
 MonoBehaviour:

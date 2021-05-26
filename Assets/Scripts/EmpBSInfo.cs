@@ -204,6 +204,9 @@ public class EmpBSInfo : MonoBehaviour
     public void AddExp()
     {
         if (emp != null)
-            emp.GainExp(40);
+        {
+            emp.GainExp(70);
+            BSC.UpgradePointUse();
+        }
     }
 }
