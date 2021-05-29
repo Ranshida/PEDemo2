@@ -58,7 +58,7 @@ public class EmpInfo : MonoBehaviour
                 Text_Tenacity.text = emp.Tenacity.ToString();
                 Text_Manage.text = emp.Manage.ToString();
                 Text_Decision.text = emp.Decision.ToString();
-                Text_Ambition.text = "志向:" + emp.Ambition;
+                Text_Ambition.text = "志向:\n 管理特质:" + emp.ManagePerkNum + "个\n 一般特质:" + emp.NormalPerkNum + "个\n 岗位优势:" + emp.ProfessionsNum + "个";
                 Text_Occupation.text = "职业:" + emp.Occupation;
 
                 UpdateCharacterUI();

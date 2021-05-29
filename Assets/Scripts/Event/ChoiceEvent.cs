@@ -6,9 +6,9 @@ public class ChoiceEvent : MonoBehaviour
 {
     public int TotalCorrection = 0; //当前提供的总修正
     public string ExtraCorrectionContent;//基本演绎法+1效果的描述
+    public bool DoubleCorrection = false;//抉择卡9寻求共识，下张卡修正翻倍的效果
 
-    public GameObject TipPanel;
-    public Text Text_EventName, Text_Correction, Text_EventResult, Text_EventDescrition, Text_Condition;
+    public Text Text_EventName, Text_Correction, Text_EventResult, Text_EventDescrition, Text_Condition, Text_Tip, Text_OptionCardTip;
     public Transform OptionContent;
     public OptionCardInfo OptionPrefab;
     public EventControl EC;
@@ -19,10 +19,11 @@ public class ChoiceEvent : MonoBehaviour
     //抉择卡特效相关
     public int NoDebuffPerkCount = 0;//随机消除添加负面状态的数量
     public OptionCardInfo SelectedOption;//当前被选中的抉择卡用于选择并去掉1张抉择卡，重新抽取2张的功能
-    public List<int> BonusCards = new List<int>();//修正双倍的卡牌编号
 
     public List<OptionCardInfo> SelectedOptions = new List<OptionCardInfo>();//当前已选中的卡
-    public List<OptionCardInfo> Options = new List<OptionCardInfo>();//所有的卡
+    public List<OptionCardInfo> Options = new List<OptionCardInfo>();//所有可选的卡（手牌）
+    public List<OptionCardInfo> UsedOptions = new List<OptionCardInfo>();//所有打出的卡（弃牌堆）
+    public List<OptionCardInfo> ExtraSelectedOptions = new List<OptionCardInfo>();//选择后激活特殊效果的卡
 
     public void CheckCorrectionUI()
     {
@@ -52,22 +53,14 @@ public class ChoiceEvent : MonoBehaviour
         for(int i = 0; i < SelectedOptions.Count; i++)
         {
             OptionCardInfo option = SelectedOptions[i];
-            if (option.OC.Correction != 0)
-            {
-                int times = 1;
-                foreach(int num in BonusCards)
-                {
-                    if (num == i)
-                    {
-                        times = 2;
-                        break;
-                    }
-                }
-                if (option.OC.Correction > 0)
-                    Text_Correction.text += option.OC.Name + ":  +" + (option.OC.Correction * times) + "修正\n";
-                else
-                    Text_Correction.text += option.OC.Name + ":  " + (option.OC.Correction * times) + "修正\n";
-            }
+            int correction = option.OC.Correction;
+            if (SelectedOptions[i].DoubleCorrection == true)
+                correction *= 2;
+
+            if (correction > 0)
+                Text_Correction.text += option.OC.Name + ":  +" + correction + "修正\n";
+            else if (correction < 0)
+                Text_Correction.text += option.OC.Name + ":  " + correction + "修正\n";
         }
         Text_Correction.text += ExtraCorrectionContent;
 
@@ -80,7 +73,7 @@ public class ChoiceEvent : MonoBehaviour
     {
         EC.UnfinishedEvents.Remove(this);
 
-        //消除提供负面状态效果的功能
+        //消除提供负面状态效果的功能(抉择卡10缓和情绪)
         if (NoDebuffPerkCount > 0)
         {
             List<OptionCardInfo> DebuffPerkInfos = new List<OptionCardInfo>();
@@ -170,17 +163,25 @@ public class ChoiceEvent : MonoBehaviour
                 Text_EventResult.text = "失败效果:" + e.FailDescription;
         }
         CheckSpecialCorrection();
-        CreateOptions();
-    }
-    void CreateOptions()
-    {
+
+        //
+        foreach(OptionCardInfo oci in EC.GC.OCL.CurrentOptions)
+        {
+            Options.Add(oci);
+        }
         for (int i = 0; i < 3; i++)
         {
-            OptionCardInfo option = Instantiate(OptionPrefab, OptionContent);
-            option.RandomOption(this);
-            Options.Add(option);
+            CreateOption();
         }
     }
+
+    //新建一个抉择卡
+    public void CreateOption()
+    {
+        OptionCardInfo option = Instantiate(OptionPrefab, OptionContent);
+        option.RandomOption(this);
+    }
+
     //检查部门和高管提供的修正
     void CheckSpecialCorrection()
     {

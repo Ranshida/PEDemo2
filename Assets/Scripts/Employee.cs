@@ -157,7 +157,7 @@ public class Employee
     public int SkillLimitTime;//头脑风暴中技能禁用的回合数
     public int SpecialTeamTime = 0;//特别小组在事件组结束后额外禁用的回合数
     public int NewRelationTargetTime = 1;
-    public int Ambition = 0;//剩余志向
+    public int Ambition = 0, NormalPerkNum = 0, ManagePerkNum = 0, ProfessionsNum = 0;//剩余志向
     public float ExtraSuccessRate = 0, SalaryMultiple = 1.0f;
     public int SelfEventCorrection = 0;//个人事件修正
     public OccupationType Occupation;  //职业
@@ -360,8 +360,9 @@ public class Employee
         }
 
         //确认各项数据
-        int NormalPerkNum = Random.Range(1, 5), ManagePerkNum = Random.Range(1, 5);
-        int ProfessionsNum = Random.Range(1, 4);
+        NormalPerkNum = Random.Range(1, 5);
+        ManagePerkNum = Random.Range(1, 5);
+        ProfessionsNum = Random.Range(1, 4);
         if (NormalPerkNum + ManagePerkNum == 2)
             ProfessionsNum = 3;
         else if (NormalPerkNum + ManagePerkNum == 8 && ProfessionsNum == 3)
@@ -422,11 +423,18 @@ public class Employee
                     int pNum = Random.Range(0, AmbitionPerks.Count);
                     Perk newperk = AmbitionPerks[pNum].Clone();
                     InfoDetail.AddPerk(newperk);
+
+                    if (PerkData.ManagePerkList.Contains(AmbitionPerks[pNum]))
+                        ManagePerkNum -= 1;
+                    else
+                        NormalPerkNum -= 1;
+
                     AmbitionPerks.RemoveAt(pNum);
                 }
                 else
                 {
                     int pNum = Random.Range(0, NewProfessions.Count);
+                    ProfessionsNum -= 1;
                     Professions.Add(NewProfessions[pNum]);
                     NewProfessions.RemoveAt(pNum);
                 }

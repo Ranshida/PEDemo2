@@ -279,6 +279,7 @@ public class EmpManager : MonoBehaviour
                 if (e.ConditionCheck(emp) == true)
                     PosbEvents.Add(e);
             }
+            print(PosbEvents.Count);
             PosbEvents[Random.Range(0, PosbEvents.Count)].StartEvent(emp, emp.SelfEventCorrection);
         }
         else if (Type == 4)

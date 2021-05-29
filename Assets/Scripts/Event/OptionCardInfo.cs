@@ -5,18 +5,18 @@ using UnityEngine.UI;
 
 public class OptionCardInfo : MonoBehaviour
 {
-    private int SelectType = 0;//确认选择（按钮）类型
+    private int SelectType = 0;//卡牌预制体类型 1表示抉择卡库中使用的预制体 2表示抉择面板使用的
     public bool Selected = false;//(在抉择事件面板)是否被选中
     public bool NoEffect = false;//是否不会产生负面状态（抉择卡10效果）
+    public bool DoubleCorrection = false;//抉择卡9寻求共识，下张卡修正翻倍的效果，这里用来记录是否翻倍，用于UI修正总览处显示
 
-    public Outline outline;
     public OptionCardLibrary OCL;
     public OptionCard OC;
     public Employee Emp;
     public EventGroup EG;
     public ChoiceEvent CurrentEvent;
     public Perk ProvidePerk;//抉择卡效果中可能提供的随机特质的存储
-    public Text Text_Name, Text_Description, Text_Correction, Text_Emp, Text_Index;
+    public Text Text_Name, Text_Description, Text_Correction, Text_Emp, Text_CardContent;
 
     //设置各种基础信息
     public void SetBaseInfo(OptionCard oc)
@@ -63,10 +63,10 @@ public class OptionCardInfo : MonoBehaviour
         SelectType = 2;
     }
 
-    public void SelectOptionCard(bool SkipSelectEffect = false)
+    public void SelectOptionCard()
     {
         //抉择卡库界面信息展示
-        if(SelectType == 1 && Emp != null)
+        if (SelectType == 1 && Emp != null)
         {
             OCL.ShowEmpOptions(Emp);
         }
@@ -79,135 +79,56 @@ public class OptionCardInfo : MonoBehaviour
                 GameControl.Instance.CreateMessage("抉择卡类型和事件组类型不符");
                 return;
             }
-            if (Selected == true)
-            {
-                Selected = false;
-                outline.enabled = false;
-                CurrentEvent.SelectedOptions.Remove(this);
-                if (CurrentEvent.BonusCards.Count > 0)
-                {
-                    foreach (int num in CurrentEvent.BonusCards)
-                    {
-                        if (num == CurrentEvent.SelectedOptions.Count)
-                        {
-                            CurrentEvent.TotalCorrection -= OC.Correction * 2;
-                            break;
-                        }
-                    }
-                }
-                else
-                    CurrentEvent.TotalCorrection -= OC.Correction;
 
-                //重新设置自身和其他抉择卡编号
-                Text_Index.text = "";
-                for (int i = 0; i < CurrentEvent.SelectedOptions.Count; i++)
-                {
-                    CurrentEvent.SelectedOptions[i].Text_Index.text = (i + 1).ToString();
-                }
+            Selected = true;
 
-                if (SkipSelectEffect == false)
-                    SelectEffectCheck(false);              
-            }
-            else
+            //是否有需要额外选择卡牌的抉择卡
+            if (CurrentEvent.SelectedOption != null)
             {
-                Selected = true;
-                outline.enabled = true;
-                if (CurrentEvent.BonusCards.Count > 0)
-                {
-                    foreach(int num in CurrentEvent.BonusCards)
-                    {
-                        if (num == CurrentEvent.SelectedOptions.Count)
-                        {
-                            CurrentEvent.TotalCorrection += OC.Correction * 2;
-                            break;
-                        }
-                    }
-                }
-                else
-                    CurrentEvent.TotalCorrection += OC.Correction;
-                CurrentEvent.SelectedOptions.Add(this);
-                if (SkipSelectEffect == false)
-                    SelectEffectCheck(true);
-                Text_Index.text = CurrentEvent.SelectedOptions.Count.ToString();
-            }
-            CurrentEvent.CheckCorrectionUI();
-        }
-    }
-
-    void SelectEffectCheck(bool Active)
-    {//效果细节根据num在Option里找对应描述
-        if (Active == true)
-        {
-            //先判断选择一张替换的效果
-            if (CurrentEvent.SelectedOption != null && CurrentEvent.SelectedOption.OC.Num == 13 && CurrentEvent.SelectedOption != this)
-            {
-                SelectOptionCard(true);
-                RandomOption(CurrentEvent);
-                CurrentEvent.SelectedOption.SelectOptionCard(true);
-                CurrentEvent.SelectedOption.RandomOption(CurrentEvent);
-                CurrentEvent.SelectedOption = null;
+                CurrentEvent.ExtraSelectedOptions.Add(this);
+                CurrentEvent.SelectedOption.OC.SelectEffectActive(CurrentEvent.SelectedOption);
+                this.gameObject.GetComponent<Outline>().enabled = true;
                 return;
             }
 
-            if (OC.Num == 8)
+            //抉择卡9寻求共识，下张卡修正翻倍的效果
+            if (CurrentEvent.DoubleCorrection == false)
+                CurrentEvent.TotalCorrection += OC.Correction;
+            else
             {
-                foreach (OptionCardInfo info in CurrentEvent.Options)
-                {
-                    if (info.Selected == true)
-                        info.SelectOptionCard();
-                }
-                foreach (OptionCardInfo info in CurrentEvent.Options)
-                {
-                    info.RandomOption(CurrentEvent);
-                }
+                CurrentEvent.TotalCorrection += (OC.Correction * 2);
+                DoubleCorrection = true;
+                CurrentEvent.DoubleCorrection = false;
+                CurrentEvent.Text_Tip.transform.parent.gameObject.SetActive(false);
             }
-            else if (OC.Num == 9)
-                CurrentEvent.BonusCards.Add(CurrentEvent.SelectedOptions.IndexOf(this) + 1);
-            else if (OC.Num == 10)
-                CurrentEvent.NoDebuffPerkCount += 1;
-            else if (OC.Num == 11)
-            {
-                SelectOptionCard();
-                int correction = OC.Correction;
-                if (CurrentEvent.BonusCards.Count > 0)
-                {
-                    foreach (int num in CurrentEvent.BonusCards)
-                    {
-                        if (num == CurrentEvent.SelectedOptions.Count)
-                        {
-                            correction *= 2;
-                            break;
-                        }
-                    }
-                }
-                CurrentEvent.TotalCorrection += correction;
-                CurrentEvent.ExtraCorrectionContent += OC.Name + ":  +" + correction + "修正\n";
-                RandomOption(CurrentEvent);
-            }
-            else if (OC.Num == 13)
-            {
-                CurrentEvent.SelectedOption = this;
-                CurrentEvent.TipPanel.SetActive(true);
-            }
-        }
-        else if (Active == false)
-        {
-            if (OC.Num == 9)
-                CurrentEvent.BonusCards.Remove(CurrentEvent.SelectedOptions.IndexOf(this) + 1);
-            else if (OC.Num == 10)
-                CurrentEvent.NoDebuffPerkCount -= 1;
-            else if (OC.Num == 13)
-            {
-                CurrentEvent.SelectedOption = null;
-                CurrentEvent.TipPanel.SetActive(false);
-            }
+
+            this.gameObject.SetActive(false);
+            CurrentEvent.SelectedOptions.Add(this);
+            CurrentEvent.CheckCorrectionUI();
+
+            //最后看一下有没有特殊效果（重写函数中为空则没效果）
+            OC.SelectEffectActive(this);
         }
     }
 
+    //随机一个卡牌
     public void RandomOption(ChoiceEvent CEvent)
     {
-        OptionCardInfo info = GameControl.Instance.OCL.CurrentOptions[Random.Range(0, GameControl.Instance.OCL.CurrentOptions.Count)];
+        if (CEvent.Options.Count == 0)
+        {
+            foreach (OptionCardInfo oci in CEvent.UsedOptions)
+            {
+                CEvent.Options.Add(oci);
+            }
+            CEvent.UsedOptions.Clear();
+        }
+
+        OptionCardInfo info = CEvent.Options[Random.Range(0, CEvent.Options.Count)];
         SetInfo(info, CEvent);
+        CEvent.Options.Remove(info);
+        CEvent.UsedOptions.Add(info);
+
+        CEvent.Text_OptionCardTip.text = "抽牌堆剩余:" + CEvent.Options.Count + "张";
 
         //有随机负面特质效果的抉择卡随机一个特质
         if (OC.RandomPerk == true)

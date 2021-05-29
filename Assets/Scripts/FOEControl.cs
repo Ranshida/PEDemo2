@@ -192,6 +192,8 @@ public class FOEControl : MonoBehaviour
         Text_CostDetail.text = CostText1 + CostText2 + CostText3 + CostText4;
         #endregion
 
+        RankingSort();
+
         UpdateInvestorInfo();
     }
 
@@ -289,16 +291,19 @@ public class FOEControl : MonoBehaviour
 
         warStart = false;
         GC.WarTime = 3;
+        GC.UpdateUI();
         GC.CheckButtonName();
         RankingSort();
     }
 
+    //根据用户数量排序
     void RankingSort()
     {
         List<FOECompany> CList = new List<FOECompany>(), SortList = new List<FOECompany>();
         foreach(FOECompany c in Companies)
         {
             CList.Add(c);
+            c.UpdateUI();
         }
         FOECompany target = null;
         int num = 0;

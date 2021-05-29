@@ -9,7 +9,7 @@ public class OptionCard
     public bool RandomPerk = false ;//是否会获得随机负面特质
     public bool DebuffCard = false;//是否为负面抉择卡
     public bool AddDebuffPerk = false;//是否会产生负面状态
-    public string Name, Description;
+    public string Name, Description, Content;
 
     public OptionCard()
     {
@@ -21,7 +21,7 @@ public class OptionCard
 
     }
 
-    public virtual void SelectEffectActive()
+    public virtual void SelectEffectActive(OptionCardInfo info)
     {
 
     }
@@ -35,6 +35,7 @@ public class OptionCard1 : OptionCard
         Correction = 1;
         Name = "辩解";
         Description = "所在事业部获得状态“推卸责任”×1";
+        Content = "我没有推卸责任，不是你说的这样";
         DebuffCard = true;
         AddDebuffPerk = true;
     }
@@ -55,7 +56,8 @@ public class OptionCard2 : OptionCard
         Num = 2;
         Correction = 1;
         Name = "坦诚";
-        Description = "";     
+        Description = "";
+        Content = "我想说两句心里话";
         DebuffCard = false;
     }
 
@@ -69,6 +71,7 @@ public class OptionCard3 : OptionCard
         Correction = 3;
         Name = "煤气灯";
         Description = "目标员工获得随机负面特质";
+        Content = "你的脑子需要治疗一下";
         RandomPerk = true;
         DebuffCard = true;
     }
@@ -82,6 +85,7 @@ public class OptionCard4 : OptionCard
         Correction = 0;
         Name = "沉默";
         Description = "";
+        Content = "我也没什么办法...";
         DebuffCard = true;
     }
 }
@@ -94,6 +98,7 @@ public class OptionCard5 : OptionCard
         Correction = 3;
         Name = "推卸责任";
         Description = "所在事业部获得状态“推卸责任”×1,目标员工获得随机负面特质";
+        Content = "把工作做成这样，还好意思提要求";
         RandomPerk = true;
         DebuffCard = true;
         AddDebuffPerk = true;
@@ -116,6 +121,7 @@ public class OptionCard6 : OptionCard
         Correction = 2;
         Name = "转移话题";
         Description = "所在事业部获得状态“推卸责任”×1,目标员工获得随机负面特质";
+        Content = "关于你说的这个事... 看！是不是要下雨了？";
         RandomPerk = true;
         DebuffCard = true;
     }
@@ -129,6 +135,7 @@ public class OptionCard7 : OptionCard
         Correction = 4;
         Name = "捏造事实";
         Description = "所在事业部获得状态“怀疑情绪”×1,目标员工获得随机负面特质";
+        Content = "我说的这个谎话啊，它是真的！";
         RandomPerk = true;
         DebuffCard = true;
         AddDebuffPerk = true;
@@ -150,9 +157,29 @@ public class OptionCard8 : OptionCard
         Num = 8;
         Correction = 0;
         Name = "另辟蹊径";
-        Description = "重新抽取3张抉择卡";
+        Description = "选择并去掉2张抉择卡，重新抽取3张";
+        Content = "我有一个想法！啊不，三个！";
     }
-}//没做完
+
+    public override void SelectEffectActive(OptionCardInfo info)
+    {
+        info.CurrentEvent.SelectedOptions.Remove(info);
+        info.CurrentEvent.Text_Tip.text = "选择2张抉择卡发动效果";
+        info.CurrentEvent.Text_Tip.transform.parent.gameObject.SetActive(true);
+        info.CurrentEvent.SelectedOption = info;
+        if (info.CurrentEvent.ExtraSelectedOptions.Count == 2)
+        {
+            info.CurrentEvent.ExtraSelectedOptions[0].gameObject.SetActive(false);
+            info.CurrentEvent.ExtraSelectedOptions[1].gameObject.SetActive(false);
+            info.CurrentEvent.CreateOption();
+            info.CurrentEvent.CreateOption();
+            info.CurrentEvent.CreateOption();
+            info.CurrentEvent.SelectedOption = null;
+            info.CurrentEvent.ExtraSelectedOptions.Clear();
+            info.CurrentEvent.Text_Tip.transform.parent.gameObject.SetActive(false);
+        }
+    }
+}
 
 public class OptionCard9 : OptionCard
 {
@@ -162,17 +189,17 @@ public class OptionCard9 : OptionCard
         Correction = 0;
         Name = "寻求共识";
         Description = "下张抉择卡的修正翻倍";
+        Content = "在这一点上，我和你站在一起";
         DebuffCard = false;
     }
 
-    public override void StartEffect(Employee emp)
+    public override void SelectEffectActive(OptionCardInfo info)
     {
-        if (emp != null && emp.CurrentDivision != null)
-        {
-
-        }
+        info.CurrentEvent.DoubleCorrection = true;
+        info.CurrentEvent.Text_Tip.text = "下张抉择卡修正效果翻倍";
+        info.CurrentEvent.Text_Tip.transform.parent.gameObject.SetActive(true);
     }
-}//没做完
+}
 
 public class OptionCard10 : OptionCard
 {
@@ -181,18 +208,16 @@ public class OptionCard10 : OptionCard
         Num = 10;
         Correction = 0;
         Name = "缓和情绪";
-        Description = "随机去掉1个待施加的负面状态";    
+        Description = "随机去掉1个待施加的负面状态";
+        Content = "有话好好说嘛，伙计";
         DebuffCard = false;
     }
 
-    public override void StartEffect(Employee emp)
+    public override void SelectEffectActive(OptionCardInfo info)
     {
-        if (emp != null && emp.CurrentDivision != null)
-        {
-
-        }
+        info.CurrentEvent.NoDebuffPerkCount += 1;
     }
-}//没做完
+}
 
 public class OptionCard11 : OptionCard
 {
@@ -202,14 +227,15 @@ public class OptionCard11 : OptionCard
         Correction = 1;
         Name = "基本演绎法";
         Description = "选中后消耗自身并额外获得1张抉择卡";
+        Content = "如果是这样，那么...";
         DebuffCard = false;
     }
 
-    public override void SelectEffectActive()
+    public override void SelectEffectActive(OptionCardInfo info)
     {
-        
+        info.CurrentEvent.CreateOption();
     }
-}//没做完
+}
 
 public class OptionCard12 : OptionCard
 {
@@ -219,15 +245,8 @@ public class OptionCard12 : OptionCard
         Correction = 2;
         Name = "一语中的";
         Description = "";
+        Content = "问题的本质逐渐显露了";
         DebuffCard = false;
-    }
-
-    public override void StartEffect(Employee emp)
-    {
-        if (emp != null && emp.CurrentDivision != null)
-        {
-
-        }
     }
 }
 
@@ -239,17 +258,27 @@ public class OptionCard13 : OptionCard
         Correction = 0;
         Name = "聚焦";
         Description = "选择并去掉1张抉择卡，重新抽取2张";
+        Content = "或许应该优先解决这个";
         DebuffCard = false;
     }
 
-    public override void StartEffect(Employee emp)
+    public override void SelectEffectActive(OptionCardInfo info)
     {
-        if (emp != null && emp.CurrentDivision != null)
+        info.CurrentEvent.SelectedOptions.Remove(info);
+        info.CurrentEvent.Text_Tip.text = "选择1张抉择卡发动效果";
+        info.CurrentEvent.Text_Tip.transform.parent.gameObject.SetActive(true);
+        info.CurrentEvent.SelectedOption = info;
+        if (info.CurrentEvent.ExtraSelectedOptions.Count == 1)
         {
-
+            info.CurrentEvent.ExtraSelectedOptions[0].gameObject.SetActive(false);
+            info.CurrentEvent.CreateOption();
+            info.CurrentEvent.CreateOption();
+            info.CurrentEvent.SelectedOption = null;
+            info.CurrentEvent.ExtraSelectedOptions.Clear();
+            info.CurrentEvent.Text_Tip.transform.parent.gameObject.SetActive(false);
         }
     }
-}//没做完
+}
 
 public class OptionCard14 : OptionCard
 {
@@ -258,7 +287,8 @@ public class OptionCard14 : OptionCard
         Num = 14;
         Correction = 2;
         Name = "呵斥";
-        Description = "所在事业部获得状态“状态低迷”×1";       
+        Description = "所在事业部获得状态“状态低迷”×1";
+        Content = "你在浪费我时间！";
         DebuffCard = true;
         AddDebuffPerk = true;
     }
@@ -280,6 +310,7 @@ public class OptionCard15 : OptionCard
         Correction = 2;
         Name = "一言堂";
         Description = "所在事业部获得状态“寒蝉效应”×1";
+        Content = "大家是同意，还是同意呢？";
         DebuffCard = true;
         AddDebuffPerk = true;
     }
@@ -301,6 +332,7 @@ public class OptionCard16 : OptionCard
         Correction = 2;
         Name = "撒币";
         Description = "所在事业部获得状态“成本飙升”×1";
+        Content = "不就是找个理由来要钱的嘛，切...";
         DebuffCard = true;
         AddDebuffPerk = true;
     }

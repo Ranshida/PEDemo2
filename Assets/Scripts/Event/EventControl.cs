@@ -394,6 +394,12 @@ public class EventControl : MonoBehaviour
 
         }
 
+        if (Dismissal == false && Fire == false)
+        {
+            Text_ManageVoteResult.text = "目前任命高管强制通过";
+            return true;
+        }
+
         if ((AgreeNum * 2) >= VoteNum)
         {
             Text_ManageVoteResult.text = "通过";
@@ -469,6 +475,7 @@ public class EventControl : MonoBehaviour
                 foreach (Employee e in GC.CurrentEmployees)
                 {
                     e.EmotionTimePass();
+                    e.CalcTempValues();
                 }
                 GC.CheckEventProgress();
                 StartEventQueue = false;
@@ -488,6 +495,7 @@ public class EventControl : MonoBehaviour
                 foreach(Employee e in GC.CurrentEmployees)
                 {
                     e.EmotionTimePass();
+                    e.CalcTempValues();
                 }
                 GC.CheckEventProgress();
                 StartEventQueue = false;

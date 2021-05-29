@@ -1662,8 +1662,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 240.35, y: -10.300003}
-  m_SizeDelta: {x: 169.5, y: 30}
+  m_AnchoredPosition: {x: 240.35, y: -64.183}
+  m_SizeDelta: {x: 169.5, y: 92.165}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3521840420496333274
 CanvasRenderer:
@@ -1700,13 +1700,14 @@ MonoBehaviour:
     m_BestFit: 0
     m_MinSize: 1
     m_MaxSize: 40
-    m_Alignment: 3
+    m_Alignment: 0
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u5FD7\u5411:\u4E13\u5BB6"
+  m_Text: "\u5FD7\u5411:\n \u7BA1\u7406\u7279\u8D28:\n \u4E00\u822C\u7279\u8D28:\n
+    \u5C97\u4F4D\u4F18\u52BF"
 --- !u!1 &2410144234878458847
 GameObject:
   m_ObjectHideFlags: 0
@@ -2152,7 +2153,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 231.5, y: -23.3}
+  m_AnchoredPosition: {x: 231.5, y: -15}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &3562093366433777491
@@ -2232,8 +2233,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 195.3, y: 66}
-  m_SizeDelta: {x: 122.62, y: 55.7}
+  m_AnchoredPosition: {x: 178.3, y: 117.33}
+  m_SizeDelta: {x: 89.4, y: 53.44}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &249892503076654987
 CanvasRenderer:
@@ -2265,7 +2266,7 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 18
+    m_FontSize: 16
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 1
@@ -2276,7 +2277,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u6280\u672F/\u6280\u672F"
+  m_Text: "\u554A\u554A\u554A\u554A/\u554A\u554A\u554A\u554A"
 --- !u!1 &3331529435255555474
 GameObject:
   m_ObjectHideFlags: 0
@@ -2860,7 +2861,7 @@ MonoBehaviour:
   Text_Name: {fileID: 3280070376258160664}
   Text_Mentality: {fileID: 0}
   Text_Stamina: {fileID: 0}
-  Text_Skill1: {fileID: 0}
+  Text_Exp: {fileID: 0}
   Text_Ability: {fileID: 0}
   Text_Age: {fileID: 4754005177259638075}
   Text_Professions: {fileID: 4180391769781929023}
@@ -2868,7 +2869,6 @@ MonoBehaviour:
   Text_Ambition: {fileID: 3104644115284564978}
   Text_DepName: {fileID: 0}
   Text_Tenacity: {fileID: 3354914438688233744}
-  Text_Strength: {fileID: 0}
   Text_Manage: {fileID: 221301217151652010}
   Text_Decision: {fileID: 2578408190290541907}
   Text_RTarget: {fileID: 0}
@@ -2894,6 +2894,7 @@ MonoBehaviour:
   StrategiesInfo: []
   EmotionInfos: []
   SkillMarkers: []
+  OptionCards: []
   InfoType: 3
 --- !u!1 &4716920182802104829
 GameObject:
@@ -2929,7 +2930,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 240.35, y: 19.7}
+  m_AnchoredPosition: {x: 240.35, y: 34}
   m_SizeDelta: {x: 169.5, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &8244519606509902079
@@ -3752,7 +3753,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 296.6, y: -36.1}
+  m_AnchoredPosition: {x: 296.6, y: -24.2}
   m_SizeDelta: {x: 66.795, y: 24.24}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4857422866139150762

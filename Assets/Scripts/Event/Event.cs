@@ -13,11 +13,10 @@ public abstract class Event
     protected int FriendRequire = -3; //-3无需求 -2仇人 -1陌路 0陌生人 1朋友 2挚友 此处是指目标相对自身的关系(如目标是我的师傅, 下同)
     protected int MasterRequire = -1; //-1无需求 0无师徒关系 1徒弟 2师傅
     protected int LoveRequire = -1;   //-1无需求 0无恋爱关系 1倾慕 2追求 3情侣 4伴侣
-    protected List<int> LevelRequire = new List<int>();  //-1无需求 0无等级关系 1同事 2上级 3下属
+    protected List<int> LevelRequire = new List<int>();  //1同事 2上级 3下属
     public int FailLimitValue = 10;//事件失败判定的阈值
     public int DescriptionCount = 1;//总共有几种描述文案
     protected bool SingleResult = false;  //是否为单结果事件(无需判定直接输出SuccessResult)
-    protected bool NeedDivision = false; //自身和目标是否必须属于一个事业部
     public string EventName;//事件(组)名称
     public string SuccessDescription, FailDescription;
     protected string SelfName;//员工自身名字
@@ -41,10 +40,6 @@ public abstract class Event
 
         //目标关系检测
         if (RelationCheck(CheckEmp, TargetEmp) == false)
-            return false;
-
-        //事业部存在检测
-        if (DivisionConditionCheck(CheckEmp, TargetEmp) == false)
             return false;
 
         //主导情绪检测
@@ -74,22 +69,6 @@ public abstract class Event
         return false;
     }
 
-    //事业部存在检测
-    protected virtual bool DivisionConditionCheck(Employee emp, Employee target)
-    {
-        if (NeedDivision == false)
-            return true;
-
-        if (emp.CurrentDep != null || emp.CurrentDivision != null)
-            return true;
-        else if (target != null)
-        {
-            if (target.CurrentDep != null || target.CurrentDivision != null)
-                return true;
-        }
-        return false;
-    }
-
     //情绪检测
     protected virtual bool EmotionConditionCheck(Employee emp)
     {
@@ -114,7 +93,7 @@ public abstract class Event
         //无任何需求时
         if (target == null)
         {
-            if (FriendRequire == -3 && MasterRequire == 0 && LoveRequire == 0 && LevelRequire.Count == 0)
+            if (FriendRequire == -3 && MasterRequire == -1 && LoveRequire == -1 && LevelRequire.Count == 0)
                 return true;
             else
                 return false;
@@ -447,14 +426,28 @@ public abstract class Event
             DivName = Emp.CurrentDep.CurrentDivision.DivName;
         }
         else if (Emp.CurrentDivision != null)
+        {
             DivName = Emp.CurrentDivision.DivName;
+            if (targetEmp != null && targetEmp.CurrentDep != null)
+                DepName = targetEmp.CurrentDep.Text_DepName.name;
+            else
+                DepName = "人才储备库";
+        }
         else if (targetEmp != null && targetEmp.CurrentDep != null)
         {
             DepName = targetEmp.CurrentDep.Text_DepName.name;
             DivName = targetEmp.CurrentDep.CurrentDivision.DivName;
         }
         else if (targetEmp != null && targetEmp.CurrentDivision != null)
+        {
             DivName = targetEmp.CurrentDivision.DivName;
+            DepName = "人才储备库";
+        }
+        else
+        {
+            DivName = "";
+            DepName = "人才储备库";
+        }
     }
 }
 
@@ -480,7 +473,7 @@ public class EventC1 : Event
         GameControl.Instance.BSC.EventSolved();
         //随机文案
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -489,7 +482,7 @@ public class EventC1 : Event
 
         //随机文案
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -531,7 +524,7 @@ public class EventC2 : Event
         GameControl.Instance.BSC.EventSolved();
         //随机文案
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -540,7 +533,7 @@ public class EventC2 : Event
 
         //随机文案
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -582,7 +575,7 @@ public class EventC3 : Event
         GameControl.Instance.BSC.EventSolved();
         //随机文案
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -591,7 +584,7 @@ public class EventC3 : Event
 
         //随机文案
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -633,7 +626,7 @@ public class EventC4 : Event
         GameControl.Instance.BSC.EventSolved();
         //随机文案
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -642,7 +635,7 @@ public class EventC4 : Event
 
         //随机文案
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -684,7 +677,7 @@ public class EventC5 : Event
         GameControl.Instance.BSC.EventSolved();
         //随机文案
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -693,7 +686,7 @@ public class EventC5 : Event
 
         //随机文案
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -739,8 +732,8 @@ public class Event1 : Event
 
         //随机文案
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -750,8 +743,8 @@ public class Event1 : Event
 
         //随机文案
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -761,7 +754,7 @@ public class Event1 : Event
         if (success == true)
         {
             if (index == 1)
-                content = "在" + DivName + "，" + SelfName + "与" + TargetName + "一起梳理工作流程，获得很大进展";
+                content = "在" + DepName + "，" + SelfName + "与" + TargetName + "一起梳理工作流程，获得很大进展";
             else if (index == 2)
             {
 
@@ -770,7 +763,7 @@ public class Event1 : Event
         else
         {
             if (index == 1)
-                content = "在" + DivName + "，" + SelfName + "与" + TargetName + "开会，沟通彼此工作方法中的差异";
+                content = "在" + DepName + "，" + SelfName + "与" + TargetName + "开会，沟通彼此工作方法中的差异";
         }
         return content;
     }
@@ -781,9 +774,9 @@ public class Event1 : Event
         SetNames(Emp, targetEmp);//这一行一定要加
         //注意这里SelfName和TargetName要反过来，如果文案本身要反过来的话
         if (success == true)
-            content = content = "在" + DivName + "，" + TargetName + "与" + SelfName + "一起梳理工作流程，获得很大进展";
+            content = content = "在" + DepName + "，" + TargetName + "与" + SelfName + "一起梳理工作流程，获得很大进展";
         else
-            content = content = "在" + DivName + "，" + TargetName + "与" + SelfName + "开会，沟通彼此工作方法中的差异";
+            content = content = "在" + DepName + "，" + TargetName + "与" + SelfName + "开会，沟通彼此工作方法中的差异";
         return content;
     }
 }
@@ -809,8 +802,8 @@ public class Event2 : Event
         target.AddTempEventCondition(EventCondition.成就感);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -820,8 +813,8 @@ public class Event2 : Event
         target.AddTempEventCondition(EventCondition.成就感);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -831,7 +824,7 @@ public class Event2 : Event
         if (success == true)
         {
             if (index == 1)
-                content = "在 " + DivName + "的会议中，上级mm对下属nn当前做法表达赞赏";
+                content = "在 " + DepName + "的会议中，上级mm对下属nn当前做法表达赞赏";
             else if (index == 2)
             {
 
@@ -840,7 +833,7 @@ public class Event2 : Event
         else
         {
             if (index == 1)
-                content = "在 " + DivName + "的会议中，上级mm认可了下属nn当前的做法";
+                content = "在 " + DepName + "的会议中，上级mm认可了下属nn当前的做法";
         }
         return content;
     }
@@ -850,9 +843,9 @@ public class Event2 : Event
         string content = "";
         SetNames(Emp, targetEmp);
         if (success == true)
-            content = content = "在 " + DivName + "的会议中，下属nn接受上级mm的嘉奖";
+            content = content = "在 " + DepName + "的会议中，下属nn接受上级mm的嘉奖";
         else
-            content = content = "在 " + DivName + "的会议中，下属nn当前的做法获得上级mm许可";
+            content = content = "在 " + DepName + "的会议中，下属nn当前的做法获得上级mm许可";
         return content;
     }
 }
@@ -876,8 +869,8 @@ public class Event3 : Event
         target.AddTempEventCondition(EventCondition.烦恼);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -889,8 +882,8 @@ public class Event3 : Event
         target.AddTempEventCondition(EventCondition.烦恼);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -900,7 +893,7 @@ public class Event3 : Event
         if (success == true)
         {
             if (index == 1)
-                content = "在" + DivName + "，" + SelfName + "提出同事" + TargetName + "过于纠结细节，有些浪费时间";
+                content = "在" + DepName + "，" + SelfName + "提出同事" + TargetName + "过于纠结细节，有些浪费时间";
             else if (index == 2)
             {
 
@@ -909,7 +902,7 @@ public class Event3 : Event
         else
         {
             if (index == 1)
-                content = "在" + DivName + "，" + SelfName + "提出自己只想把事做好，同事" + TargetName + "却总设置阻碍";
+                content = "在" + DepName + "，" + SelfName + "提出自己只想把事做好，同事" + TargetName + "却总设置阻碍";
         }
         return content;
     }
@@ -919,9 +912,9 @@ public class Event3 : Event
         string content = "";
         SetNames(Emp, targetEmp);
         if (success == true)
-            content = content = "在" + DivName + "，" + TargetName + "提出同事" + SelfName + "过于强调愿景，有些不切实际";
+            content = content = "在" + DepName + "，" + TargetName + "提出同事" + SelfName + "过于强调愿景，有些不切实际";
         else
-            content = content = "在" + DivName + "，" + TargetName + "提出" + SelfName + "过于自我，对团队配合一无所知";
+            content = content = "在" + DepName + "，" + TargetName + "提出" + SelfName + "过于自我，对团队配合一无所知";
         return content;
     }
 }
@@ -945,8 +938,8 @@ public class Event4 : Event
         target.AddTempEventCondition(EventCondition.困惑);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -958,8 +951,8 @@ public class Event4 : Event
         target.AddTempEventCondition(EventCondition.困惑);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -969,7 +962,7 @@ public class Event4 : Event
         if (success == true)
         {
             if (index == 1)
-                content = "在" + DivName + "，" + SelfName + "表示" + TargetName + "的想法过于模糊，缺乏逻辑";
+                content = "在" + DepName + "，" + SelfName + "表示" + TargetName + "的想法过于模糊，缺乏逻辑";
             else if (index == 2)
             {
 
@@ -978,7 +971,7 @@ public class Event4 : Event
         else
         {
             if (index == 1)
-                content = "在" + DivName + "，" + SelfName + "表示无法理解" + TargetName + "不考虑自己建议的原因";
+                content = "在" + DepName + "，" + SelfName + "表示无法理解" + TargetName + "不考虑自己建议的原因";
         }
         return content;
     }
@@ -988,9 +981,9 @@ public class Event4 : Event
         string content = "";
         SetNames(Emp, targetEmp);
         if (success == true)
-            content = content = "在" + DivName + "，" + TargetName + "提出" + SelfName + "沉浸在自己的逻辑里，根本没有在听自己在说什么";
+            content = content = "在" + DepName + "，" + TargetName + "提出" + SelfName + "沉浸在自己的逻辑里，根本没有在听自己在说什么";
         else
-            content = content = "在" + DivName + "，" + TargetName + "提出如果没有" + SelfName + "瞎指挥，自己会更明确如何工作";
+            content = content = "在" + DepName + "，" + TargetName + "提出如果没有" + SelfName + "瞎指挥，自己会更明确如何工作";
         return content;
     }
 }
@@ -1014,8 +1007,8 @@ public class Event5 : Event
         target.AddTempEventCondition(EventCondition.悔恨);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -1027,8 +1020,8 @@ public class Event5 : Event
         target.AddTempEventCondition(EventCondition.悔恨);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -1038,7 +1031,7 @@ public class Event5 : Event
         if (success == true)
         {
             if (index == 1)
-                content = "在" + DivName + "，上级mm在验收工作时表示未达要求，下属nn误解自己的意思";
+                content = "在" + DepName + "，上级mm在验收工作时表示未达要求，下属nn误解自己的意思";
             else if (index == 2)
             {
 
@@ -1047,7 +1040,7 @@ public class Event5 : Event
         else
         {
             if (index == 1)
-                content = "在" + DivName + "，上级mm在验收工作时表示未达标，下属nn捏造理由推卸责任";
+                content = "在" + DepName + "，上级mm在验收工作时表示未达标，下属nn捏造理由推卸责任";
         }
         return content;
     }
@@ -1057,9 +1050,9 @@ public class Event5 : Event
         string content = "";
         SetNames(Emp, targetEmp);
         if (success == true)
-            content = content = "在" + DivName + "汇报工作时被骂，下属nn用沉默反抗上级mm，最后表示会做修改";
+            content = content = "在" + DepName + "汇报工作时被骂，下属nn用沉默反抗上级mm，最后表示会做修改";
         else
-            content = content = "在" + DivName + "汇报工作时被骂，下属nn表示自己完全按照上级mm的要求来做的";
+            content = content = "在" + DepName + "汇报工作时被骂，下属nn表示自己完全按照上级mm的要求来做的";
         return content;
     }
 }
@@ -1084,7 +1077,7 @@ public class Event6 : Event
         target.AddTempEventCondition(EventCondition.成就感);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -1096,7 +1089,7 @@ public class Event6 : Event
         target.AddTempEventCondition(EventCondition.成就感);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -1147,7 +1140,7 @@ public class Event7 : Event
         target.AddTempEventCondition(EventCondition.烦恼);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -1159,7 +1152,7 @@ public class Event7 : Event
         target.AddTempEventCondition(EventCondition.烦恼);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -1214,7 +1207,7 @@ public class Event8 : Event
         target.AddTempEventCondition(EventCondition.悔恨);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -1226,7 +1219,7 @@ public class Event8 : Event
         target.AddTempEventCondition(EventCondition.悔恨);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -1274,7 +1267,7 @@ public class Event9 : Event
         emp.AddTempEventCondition(EventCondition.分享乐事);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -1283,7 +1276,7 @@ public class Event9 : Event
         emp.AddTempEventCondition(EventCondition.分享乐事);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -1330,7 +1323,7 @@ public class Event10 : Event
         emp.AddTempEventCondition(EventCondition.分享日常);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -1339,7 +1332,7 @@ public class Event10 : Event
         emp.AddTempEventCondition(EventCondition.分享日常);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -1386,7 +1379,7 @@ public class Event11 : Event
         emp.AddTempEventCondition(EventCondition.寻求安慰);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -1395,7 +1388,7 @@ public class Event11 : Event
         emp.AddTempEventCondition(EventCondition.寻求安慰);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -1437,7 +1430,7 @@ public class Event12 : Event
         emp.AddTempEventCondition(EventCondition.深刻交谈);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -1446,7 +1439,7 @@ public class Event12 : Event
         emp.AddTempEventCondition(EventCondition.深刻交谈);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -1492,7 +1485,7 @@ public class Event13 : Event
         emp.AddTempEventCondition(EventCondition.认可交谈);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -1501,7 +1494,7 @@ public class Event13 : Event
         emp.AddTempEventCondition(EventCondition.认可交谈);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -1550,8 +1543,8 @@ public class Event14 : Event
 
         //随机文案
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
 
         new Event15().StartEvent(emp, 0, target);
     }
@@ -1563,8 +1556,8 @@ public class Event14 : Event
 
         //随机文案
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
 
         new Event17().StartEvent(emp, 0, target);
     }
@@ -1615,8 +1608,8 @@ public class Event15 : Event
 
         //随机文案
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
 
         new Event16().StartEvent(emp, 0, target);
     }
@@ -1625,8 +1618,8 @@ public class Event15 : Event
     {
         //随机文案
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -1677,16 +1670,16 @@ public class Event16 : Event
 
         //随机文案
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
     {
         //随机文案
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -1732,8 +1725,8 @@ public class Event17 : Event
     {
         //随机文案
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -1744,8 +1737,8 @@ public class Event17 : Event
         target.AddTempEmotion(EColor.LRed);
         //随机文案
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event18().StartEvent(emp, 0, target);
     }
 
@@ -1792,8 +1785,8 @@ public class Event18 : Event
     {
         //随机文案
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -1805,8 +1798,8 @@ public class Event18 : Event
 
         //随机文案
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -1846,8 +1839,8 @@ public class Event19 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.分享日常;
-        SuccessDescription = " /";
-        FailDescription = " /";
+        
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -1855,8 +1848,8 @@ public class Event19 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event20().StartEvent(emp, 0, target);
     }
 
@@ -1865,8 +1858,8 @@ public class Event19 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event22().StartEvent(emp, 0, target);
     }
 
@@ -1911,7 +1904,7 @@ public class Event20 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.无;
         SuccessDescription = " 双方好感度   +5";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -1921,8 +1914,8 @@ public class Event20 : Event
         target.AddTempRelation(emp, +5);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event21().StartEvent(emp, 0, target);
     }
 
@@ -1931,8 +1924,8 @@ public class Event20 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -1976,7 +1969,7 @@ public class Event21 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.无;
         SuccessDescription = " 双方好感度   +5 ";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -1987,8 +1980,8 @@ public class Event21 : Event
 
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -1996,8 +1989,8 @@ public class Event21 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -2040,7 +2033,7 @@ public class Event22 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -5, 双方获得情绪“厌恶”×1";
     }
 
@@ -2049,8 +2042,8 @@ public class Event22 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -2062,8 +2055,8 @@ public class Event22 : Event
         target.AddTempEmotion(EColor.LRed);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event23().StartEvent(emp, 0, target);
     }
 
@@ -2107,7 +2100,7 @@ public class Event23 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -5";
     }
 
@@ -2116,8 +2109,8 @@ public class Event23 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -2127,8 +2120,8 @@ public class Event23 : Event
         target.AddTempRelation(emp, -5);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -2172,8 +2165,8 @@ public class Event24 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.寻求安慰;
-        SuccessDescription = " /";
-        FailDescription = " /";
+        
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -2181,8 +2174,8 @@ public class Event24 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event25().StartEvent(emp, 0, target);
     }
 
@@ -2191,8 +2184,8 @@ public class Event24 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event27().StartEvent(emp, 0, target);
     }
 
@@ -2237,7 +2230,7 @@ public class Event25 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.无;
         SuccessDescription = " 双方好感度   +5";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -2247,8 +2240,8 @@ public class Event25 : Event
         target.AddTempRelation(emp, +5);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event26().StartEvent(emp, 0, target);
     }
 
@@ -2257,8 +2250,8 @@ public class Event25 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -2302,7 +2295,7 @@ public class Event26 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.无;
         SuccessDescription = " 双方好感度   +10 ";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -2312,8 +2305,8 @@ public class Event26 : Event
         target.AddTempRelation(emp, +10);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -2321,8 +2314,8 @@ public class Event26 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -2365,7 +2358,7 @@ public class Event27 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -5 , 双方获得情绪“厌恶”×1";
     }
 
@@ -2374,8 +2367,8 @@ public class Event27 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -2387,8 +2380,8 @@ public class Event27 : Event
         target.AddTempEmotion(EColor.LRed);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event28().StartEvent(emp, 0, target);
     }
 
@@ -2432,7 +2425,7 @@ public class Event28 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -10";
     }
 
@@ -2441,8 +2434,8 @@ public class Event28 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -2452,8 +2445,8 @@ public class Event28 : Event
         target.AddTempRelation(emp, -10);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -2497,8 +2490,8 @@ public class Event29 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.认可交谈;
-        SuccessDescription = " /";
-        FailDescription = " /";
+        
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -2506,8 +2499,8 @@ public class Event29 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event30().StartEvent(emp, 0, target);
     }
 
@@ -2516,8 +2509,8 @@ public class Event29 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event32().StartEvent(emp, 0, target);
     }
 
@@ -2562,7 +2555,7 @@ public class Event30 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.无;
         SuccessDescription = " 双方好感度   +5";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -2572,8 +2565,8 @@ public class Event30 : Event
         target.AddTempRelation(emp, +5);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event31().StartEvent(emp, 0, target);
     }
 
@@ -2582,8 +2575,8 @@ public class Event30 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -2627,7 +2620,7 @@ public class Event31 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.无;
         SuccessDescription = " 双方好感度   +5 ";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -2637,8 +2630,8 @@ public class Event31 : Event
         target.AddTempRelation(emp, +5);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -2646,8 +2639,8 @@ public class Event31 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -2690,7 +2683,7 @@ public class Event32 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -5, 双方获得情绪“苦涩”×1";
     }
 
@@ -2699,8 +2692,8 @@ public class Event32 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -2712,8 +2705,8 @@ public class Event32 : Event
         target.AddTempEmotion(EColor.LBlue);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event33().StartEvent(emp, 0, target);
     }
 
@@ -2757,7 +2750,7 @@ public class Event33 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -10, 双方获得情绪“厌恶”×1";
     }
 
@@ -2766,8 +2759,8 @@ public class Event33 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -2779,8 +2772,8 @@ public class Event33 : Event
         target.AddTempEmotion(EColor.LRed);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -2824,8 +2817,8 @@ public class Event34 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.深刻交谈;
-        SuccessDescription = " /";
-        FailDescription = " /";
+        
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -2833,8 +2826,8 @@ public class Event34 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event35().StartEvent(emp, 0, target);
     }
 
@@ -2843,8 +2836,8 @@ public class Event34 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event37().StartEvent(emp, 0, target);
     }
 
@@ -2889,7 +2882,7 @@ public class Event35 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.无;
         SuccessDescription = " 双方好感度   +5, 双方获得情绪“愉悦”×1";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -2901,8 +2894,8 @@ public class Event35 : Event
         target.AddTempEmotion(EColor.LYellow);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event36().StartEvent(emp, 0, target);
     }
 
@@ -2911,8 +2904,8 @@ public class Event35 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -2956,7 +2949,7 @@ public class Event36 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.无;
         SuccessDescription = " 双方好感度   +10 ";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -2966,8 +2959,8 @@ public class Event36 : Event
         target.AddTempRelation(emp, +10);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -2975,8 +2968,8 @@ public class Event36 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -3019,7 +3012,7 @@ public class Event37 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -5, 双方获得情绪“苦涩”×1";
     }
 
@@ -3028,8 +3021,8 @@ public class Event37 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -3041,8 +3034,8 @@ public class Event37 : Event
         target.AddTempEmotion(EColor.LBlue);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event38().StartEvent(emp, 0, target);
     }
 
@@ -3086,7 +3079,7 @@ public class Event38 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -5";
     }
 
@@ -3095,8 +3088,8 @@ public class Event38 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -3106,8 +3099,8 @@ public class Event38 : Event
         target.AddTempRelation(emp, -5);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -3151,8 +3144,8 @@ public class Event39 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.分享乐事;
-        SuccessDescription = " /";
-        FailDescription = " /";
+        
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -3160,8 +3153,8 @@ public class Event39 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event40().StartEvent(emp, 0, target);
     }
 
@@ -3170,8 +3163,8 @@ public class Event39 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event42().StartEvent(emp, 0, target);
     }
 
@@ -3216,7 +3209,7 @@ public class Event40 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.无;
         SuccessDescription = " 双方好感度   +5";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -3226,8 +3219,8 @@ public class Event40 : Event
         target.AddTempRelation(emp, +5);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event41().StartEvent(emp, 0, target);
     }
 
@@ -3236,8 +3229,8 @@ public class Event40 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -3281,7 +3274,7 @@ public class Event41 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.无;
         SuccessDescription = " 双方好感度   +5 , 双方获得情绪“愉悦”×1";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -3293,8 +3286,8 @@ public class Event41 : Event
         target.AddTempEmotion(EColor.LYellow);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -3302,8 +3295,8 @@ public class Event41 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -3346,7 +3339,7 @@ public class Event42 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -5, 双方获得情绪“苦涩”×1";
     }
 
@@ -3355,8 +3348,8 @@ public class Event42 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -3368,8 +3361,8 @@ public class Event42 : Event
         target.AddTempEmotion(EColor.LBlue);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event43().StartEvent(emp, 0, target);
     }
 
@@ -3413,7 +3406,7 @@ public class Event43 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -5";
     }
 
@@ -3422,8 +3415,8 @@ public class Event43 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -3433,8 +3426,8 @@ public class Event43 : Event
         target.AddTempRelation(emp, -5);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -3479,7 +3472,7 @@ public class Event44 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.分享日常;
         SuccessDescription = " 双方好感度   +5";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -3489,8 +3482,8 @@ public class Event44 : Event
         target.AddTempRelation(emp, +5);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event45().StartEvent(emp, 0, target);
     }
 
@@ -3499,8 +3492,8 @@ public class Event44 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event47().StartEvent(emp, 0, target);
     }
 
@@ -3545,7 +3538,7 @@ public class Event45 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.无;
         SuccessDescription = " 双方好感度   +5, 双方获得情绪“愉悦”×1";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -3557,8 +3550,8 @@ public class Event45 : Event
         target.AddTempEmotion(EColor.LYellow);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event46().StartEvent(emp, 0, target);
     }
 
@@ -3567,8 +3560,8 @@ public class Event45 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -3612,7 +3605,7 @@ public class Event46 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.无;
         SuccessDescription = " 双方好感度   +5 ";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -3622,8 +3615,8 @@ public class Event46 : Event
         target.AddTempRelation(emp, +5);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -3631,8 +3624,8 @@ public class Event46 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -3675,7 +3668,7 @@ public class Event47 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -5, 双方获得情绪“苦涩”×1";
     }
 
@@ -3684,8 +3677,8 @@ public class Event47 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -3697,8 +3690,8 @@ public class Event47 : Event
         target.AddTempEmotion(EColor.LBlue);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event48().StartEvent(emp, 0, target);
     }
 
@@ -3742,7 +3735,7 @@ public class Event48 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -15, 双方获得情绪“苦涩”×1";
     }
 
@@ -3751,8 +3744,8 @@ public class Event48 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -3764,8 +3757,8 @@ public class Event48 : Event
         target.AddTempEmotion(EColor.LBlue);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -3810,7 +3803,7 @@ public class Event49 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.寻求安慰;
         SuccessDescription = " 双方好感度   +5";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -3820,8 +3813,8 @@ public class Event49 : Event
         target.AddTempRelation(emp, +5);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event50().StartEvent(emp, 0, target);
     }
 
@@ -3830,8 +3823,8 @@ public class Event49 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event52().StartEvent(emp, 0, target);
     }
 
@@ -3876,7 +3869,7 @@ public class Event50 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.无;
         SuccessDescription = " 双方好感度   +5, 双方获得情绪“愉悦”×1";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -3888,8 +3881,8 @@ public class Event50 : Event
         target.AddTempEmotion(EColor.LYellow);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event51().StartEvent(emp, 0, target);
     }
 
@@ -3898,8 +3891,8 @@ public class Event50 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -3943,7 +3936,7 @@ public class Event51 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.无;
         SuccessDescription = " 双方好感度   +5 ";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -3953,8 +3946,8 @@ public class Event51 : Event
         target.AddTempRelation(emp, +5);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -3962,8 +3955,8 @@ public class Event51 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -4006,7 +3999,7 @@ public class Event52 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -15, 双方获得情绪“厌恶”×1";
     }
 
@@ -4015,8 +4008,8 @@ public class Event52 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -4028,8 +4021,8 @@ public class Event52 : Event
         target.AddTempEmotion(EColor.LRed);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event53().StartEvent(emp, 0, target);
     }
 
@@ -4073,7 +4066,7 @@ public class Event53 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -10";
     }
 
@@ -4082,8 +4075,8 @@ public class Event53 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -4093,8 +4086,8 @@ public class Event53 : Event
         target.AddTempRelation(emp, -10);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -4138,8 +4131,8 @@ public class Event54 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.认可交谈;
-        SuccessDescription = " /";
-        FailDescription = " /";
+        
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -4147,8 +4140,8 @@ public class Event54 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event55().StartEvent(emp, 0, target);
     }
 
@@ -4157,8 +4150,8 @@ public class Event54 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event57().StartEvent(emp, 0, target);
     }
 
@@ -4203,7 +4196,7 @@ public class Event55 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.无;
         SuccessDescription = " 双方好感度   +5";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -4213,8 +4206,8 @@ public class Event55 : Event
         target.AddTempRelation(emp, +5);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event56().StartEvent(emp, 0, target);
     }
 
@@ -4223,8 +4216,8 @@ public class Event55 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -4268,7 +4261,7 @@ public class Event56 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.无;
         SuccessDescription = " 双方好感度   +5 ";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -4278,8 +4271,8 @@ public class Event56 : Event
         target.AddTempRelation(emp, +5);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -4287,8 +4280,8 @@ public class Event56 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -4331,7 +4324,7 @@ public class Event57 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -5, 双方获得情绪“苦涩”×1";
     }
 
@@ -4340,8 +4333,8 @@ public class Event57 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -4353,8 +4346,8 @@ public class Event57 : Event
         target.AddTempEmotion(EColor.LBlue);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event58().StartEvent(emp, 0, target);
     }
 
@@ -4398,7 +4391,7 @@ public class Event58 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -10, 双方获得情绪“厌恶”×1";
     }
 
@@ -4407,8 +4400,8 @@ public class Event58 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -4420,8 +4413,8 @@ public class Event58 : Event
         target.AddTempEmotion(EColor.LRed);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -4466,7 +4459,7 @@ public class Event59 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.深刻交谈;
         SuccessDescription = " 双方好感度   +5";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -4476,8 +4469,8 @@ public class Event59 : Event
         target.AddTempRelation(emp, +5);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event60().StartEvent(emp, 0, target);
     }
 
@@ -4486,8 +4479,8 @@ public class Event59 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event62().StartEvent(emp, 0, target);
     }
 
@@ -4532,7 +4525,7 @@ public class Event60 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.无;
         SuccessDescription = " 双方好感度   +5, 双方获得情绪“愉悦”×1";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -4544,8 +4537,8 @@ public class Event60 : Event
         target.AddTempEmotion(EColor.LYellow);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event61().StartEvent(emp, 0, target);
     }
 
@@ -4554,8 +4547,8 @@ public class Event60 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -4599,7 +4592,7 @@ public class Event61 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.无;
         SuccessDescription = " 双方好感度   +5";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -4609,8 +4602,8 @@ public class Event61 : Event
         target.AddTempRelation(emp, +5);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -4618,8 +4611,8 @@ public class Event61 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -4662,7 +4655,7 @@ public class Event62 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -10";
     }
 
@@ -4671,8 +4664,8 @@ public class Event62 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -4682,8 +4675,8 @@ public class Event62 : Event
         target.AddTempRelation(emp, -10);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event63().StartEvent(emp, 0, target);
     }
 
@@ -4727,7 +4720,7 @@ public class Event63 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -15";
     }
 
@@ -4736,8 +4729,8 @@ public class Event63 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -4747,8 +4740,8 @@ public class Event63 : Event
         target.AddTempRelation(emp, -15);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -4793,7 +4786,7 @@ public class Event64 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.分享乐事;
         SuccessDescription = " 双方好感度   +5";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -4803,8 +4796,8 @@ public class Event64 : Event
         target.AddTempRelation(emp, +5);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event65().StartEvent(emp, 0, target);
     }
 
@@ -4813,8 +4806,8 @@ public class Event64 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event67().StartEvent(emp, 0, target);
     }
 
@@ -4859,7 +4852,7 @@ public class Event65 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.无;
         SuccessDescription = " 双方好感度   +5";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -4869,8 +4862,8 @@ public class Event65 : Event
         target.AddTempRelation(emp, +5);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event66().StartEvent(emp, 0, target);
     }
 
@@ -4879,8 +4872,8 @@ public class Event65 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -4924,7 +4917,7 @@ public class Event66 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.无;
         SuccessDescription = " 双方好感度   +5 , 双方获得情绪“愉悦”×1";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -4936,8 +4929,8 @@ public class Event66 : Event
         target.AddTempEmotion(EColor.LYellow);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -4945,8 +4938,8 @@ public class Event66 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -4989,7 +4982,7 @@ public class Event67 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -10";
     }
 
@@ -4998,8 +4991,8 @@ public class Event67 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -5009,8 +5002,8 @@ public class Event67 : Event
         target.AddTempRelation(emp, -10);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event68().StartEvent(emp, 0, target);
     }
 
@@ -5054,7 +5047,7 @@ public class Event68 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -10";
     }
 
@@ -5063,8 +5056,8 @@ public class Event68 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -5074,8 +5067,8 @@ public class Event68 : Event
         target.AddTempRelation(emp, -10);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -5119,8 +5112,8 @@ public class Event69 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.分享日常;
-        SuccessDescription = " /";
-        FailDescription = " /";
+        
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -5128,8 +5121,8 @@ public class Event69 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event70().StartEvent(emp, 0, target);
     }
 
@@ -5138,8 +5131,8 @@ public class Event69 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event72().StartEvent(emp, 0, target);
     }
 
@@ -5184,7 +5177,7 @@ public class Event70 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.无;
         SuccessDescription = " 双方好感度   +5";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -5194,8 +5187,8 @@ public class Event70 : Event
         target.AddTempRelation(emp, +5);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event71().StartEvent(emp, 0, target);
     }
 
@@ -5204,8 +5197,8 @@ public class Event70 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -5249,7 +5242,7 @@ public class Event71 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.无;
         SuccessDescription = " 双方好感度   +5 ";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -5260,8 +5253,8 @@ public class Event71 : Event
         target.AddTempRelation(emp, +5);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -5269,8 +5262,8 @@ public class Event71 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -5313,7 +5306,7 @@ public class Event72 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方获得情绪“苦涩”×1";
     }
 
@@ -5322,8 +5315,8 @@ public class Event72 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -5333,8 +5326,8 @@ public class Event72 : Event
         target.AddTempEmotion(EColor.LBlue);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event73().StartEvent(emp, 0, target);
     }
 
@@ -5378,7 +5371,7 @@ public class Event73 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -10";
     }
 
@@ -5387,8 +5380,8 @@ public class Event73 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -5398,8 +5391,8 @@ public class Event73 : Event
         target.AddTempRelation(emp, -10);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -5443,8 +5436,8 @@ public class Event74 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.寻求安慰;
-        SuccessDescription = " /";
-        FailDescription = " /";
+        
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -5452,8 +5445,8 @@ public class Event74 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event75().StartEvent(emp, 0, target);
     }
 
@@ -5462,8 +5455,8 @@ public class Event74 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event77().StartEvent(emp, 0, target);
     }
 
@@ -5508,7 +5501,7 @@ public class Event75 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.无;
         SuccessDescription = " 双方好感度   +5";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -5518,8 +5511,8 @@ public class Event75 : Event
         target.AddTempRelation(emp, +5);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event76().StartEvent(emp, 0, target);
     }
 
@@ -5528,8 +5521,8 @@ public class Event75 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -5573,7 +5566,7 @@ public class Event76 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.无;
         SuccessDescription = " 双方好感度   +5 ";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -5583,8 +5576,8 @@ public class Event76 : Event
         target.AddTempRelation(emp, +5);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -5592,8 +5585,8 @@ public class Event76 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -5636,7 +5629,7 @@ public class Event77 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方获得情绪“厌恶”×1";
     }
 
@@ -5645,8 +5638,8 @@ public class Event77 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -5656,8 +5649,8 @@ public class Event77 : Event
         target.AddTempEmotion(EColor.LRed);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event78().StartEvent(emp, 0, target);
     }
 
@@ -5701,7 +5694,7 @@ public class Event78 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -10";
     }
 
@@ -5710,8 +5703,8 @@ public class Event78 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -5721,8 +5714,8 @@ public class Event78 : Event
         target.AddTempRelation(emp, -10);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -5766,8 +5759,8 @@ public class Event79 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.认可交谈;
-        SuccessDescription = " /";
-        FailDescription = " /";
+        
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -5775,8 +5768,8 @@ public class Event79 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event80().StartEvent(emp, 0, target);
     }
 
@@ -5785,8 +5778,8 @@ public class Event79 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event82().StartEvent(emp, 0, target);
     }
 
@@ -5831,7 +5824,7 @@ public class Event80 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.无;
         SuccessDescription = " 双方好感度   +5, 双方获得情绪“愉悦”×1";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -5843,8 +5836,8 @@ public class Event80 : Event
         target.AddTempEmotion(EColor.LYellow);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event81().StartEvent(emp, 0, target);
     }
 
@@ -5853,8 +5846,8 @@ public class Event80 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -5898,7 +5891,7 @@ public class Event81 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.无;
         SuccessDescription = " 双方好感度   +5 ";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -5908,8 +5901,8 @@ public class Event81 : Event
         target.AddTempRelation(emp, +5);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -5917,8 +5910,8 @@ public class Event81 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -5961,7 +5954,7 @@ public class Event82 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription =  "获得情绪“厌恶”×1";
     }
 
@@ -5970,8 +5963,8 @@ public class Event82 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -5980,8 +5973,8 @@ public class Event82 : Event
         emp.AddTempEmotion(EColor.LRed);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event83().StartEvent(emp, 0, target);
     }
 
@@ -6025,7 +6018,7 @@ public class Event83 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -10";
     }
 
@@ -6034,8 +6027,8 @@ public class Event83 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -6045,8 +6038,8 @@ public class Event83 : Event
         target.AddTempRelation(emp, -10);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -6090,8 +6083,8 @@ public class Event84 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.深刻交谈;
-        SuccessDescription = " /";
-        FailDescription = " /";
+        
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -6099,8 +6092,8 @@ public class Event84 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event85().StartEvent(emp, 0, target);
     }
 
@@ -6109,8 +6102,8 @@ public class Event84 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event87().StartEvent(emp, 0, target);
     }
 
@@ -6155,7 +6148,7 @@ public class Event85 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.无;
         SuccessDescription = " 双方好感度   +5, 双方获得情绪“愉悦”×1";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -6167,8 +6160,8 @@ public class Event85 : Event
         target.AddTempEmotion(EColor.LYellow);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event86().StartEvent(emp, 0, target);
     }
 
@@ -6177,8 +6170,8 @@ public class Event85 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -6222,7 +6215,7 @@ public class Event86 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.无;
         SuccessDescription = " 双方好感度   +10 ";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -6232,8 +6225,8 @@ public class Event86 : Event
         target.AddTempRelation(emp, +10);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -6241,8 +6234,8 @@ public class Event86 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -6285,7 +6278,7 @@ public class Event87 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -5";
     }
 
@@ -6294,8 +6287,8 @@ public class Event87 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -6305,8 +6298,8 @@ public class Event87 : Event
         target.AddTempRelation(emp, -5);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event88().StartEvent(emp, 0, target);
     }
 
@@ -6350,7 +6343,7 @@ public class Event88 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -10";
     }
 
@@ -6359,8 +6352,8 @@ public class Event88 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -6370,8 +6363,8 @@ public class Event88 : Event
         target.AddTempRelation(emp, -10);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -6415,8 +6408,8 @@ public class Event89 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.分享乐事;
-        SuccessDescription = " /";
-        FailDescription = " /";
+        
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -6424,8 +6417,8 @@ public class Event89 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event90().StartEvent(emp, 0, target);
     }
 
@@ -6434,8 +6427,8 @@ public class Event89 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event92().StartEvent(emp, 0, target);
     }
 
@@ -6480,7 +6473,7 @@ public class Event90 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.无;
         SuccessDescription = " 双方好感度   +5";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -6490,8 +6483,8 @@ public class Event90 : Event
         target.AddTempRelation(emp, +5);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event91().StartEvent(emp, 0, target);
     }
 
@@ -6500,8 +6493,8 @@ public class Event90 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -6545,7 +6538,7 @@ public class Event91 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.无;
         SuccessDescription = " 双方好感度   +5 , 双方获得情绪“愉悦”×1";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -6557,8 +6550,8 @@ public class Event91 : Event
         target.AddTempEmotion(EColor.LYellow);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -6566,8 +6559,8 @@ public class Event91 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -6610,7 +6603,7 @@ public class Event92 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = "获得情绪“苦涩”×1";
     }
 
@@ -6619,8 +6612,8 @@ public class Event92 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -6629,8 +6622,8 @@ public class Event92 : Event
         emp.AddTempEmotion(EColor.LBlue);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event93().StartEvent(emp, 0, target);
     }
 
@@ -6674,7 +6667,7 @@ public class Event93 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -10";
     }
 
@@ -6683,8 +6676,8 @@ public class Event93 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -6694,8 +6687,8 @@ public class Event93 : Event
         target.AddTempRelation(emp, -10);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -6739,7 +6732,7 @@ public class Event94 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.分享日常;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -5";
     }
 
@@ -6748,8 +6741,8 @@ public class Event94 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event95().StartEvent(emp, 0, target);
     }
 
@@ -6760,8 +6753,8 @@ public class Event94 : Event
         target.AddTempRelation(emp, -5);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event97().StartEvent(emp, 0, target);
     }
 
@@ -6806,7 +6799,7 @@ public class Event95 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.无;
         SuccessDescription = " 双方好感度   +5";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -6816,8 +6809,8 @@ public class Event95 : Event
         target.AddTempRelation(emp, +5);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event96().StartEvent(emp, 0, target);
     }
 
@@ -6826,8 +6819,8 @@ public class Event95 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -6871,7 +6864,7 @@ public class Event96 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.无;
         SuccessDescription = " 双方好感度   +10 ";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -6882,8 +6875,8 @@ public class Event96 : Event
 
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -6891,8 +6884,8 @@ public class Event96 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -6935,7 +6928,7 @@ public class Event97 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -5, 双方获得情绪“厌恶”×1";
     }
 
@@ -6944,8 +6937,8 @@ public class Event97 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -6957,8 +6950,8 @@ public class Event97 : Event
         target.AddTempEmotion(EColor.LRed);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event98().StartEvent(emp, 0, target);
     }
 
@@ -7002,7 +6995,7 @@ public class Event98 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -5, 获得情绪“厌恶”×1";
     }
 
@@ -7011,8 +7004,8 @@ public class Event98 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -7024,8 +7017,8 @@ public class Event98 : Event
         emp.AddTempEmotion(EColor.LRed);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -7069,7 +7062,7 @@ public class Event99 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.寻求安慰;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -5";
     }
 
@@ -7078,8 +7071,8 @@ public class Event99 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event100().StartEvent(emp, 0, target);
     }
 
@@ -7090,8 +7083,8 @@ public class Event99 : Event
         target.AddTempRelation(emp, -5);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event102().StartEvent(emp, 0, target);
     }
 
@@ -7146,8 +7139,8 @@ public class Event100 : Event
         target.AddTempRelation(emp, +10);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event101().StartEvent(emp, 0, target);
     }
 
@@ -7157,8 +7150,8 @@ public class Event100 : Event
         emp.AddTempEmotion(EColor.LBlue);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -7202,7 +7195,7 @@ public class Event101 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.无;
         SuccessDescription = " 双方好感度   +10 ";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -7212,8 +7205,8 @@ public class Event101 : Event
         target.AddTempRelation(emp, +10);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -7221,8 +7214,8 @@ public class Event101 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -7265,7 +7258,7 @@ public class Event102 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -5,获得情绪“厌恶”×1";
     }
 
@@ -7274,8 +7267,8 @@ public class Event102 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -7287,8 +7280,8 @@ public class Event102 : Event
         target.AddTempEmotion(EColor.LRed);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event103().StartEvent(emp, 0, target);
     }
 
@@ -7332,7 +7325,7 @@ public class Event103 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -5, 双方获得情绪“厌恶”×1";
     }
 
@@ -7341,8 +7334,8 @@ public class Event103 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -7354,8 +7347,8 @@ public class Event103 : Event
         target.AddTempEmotion(EColor.LRed);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -7399,7 +7392,7 @@ public class Event104 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.认可交谈;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -5";
     }
 
@@ -7408,8 +7401,8 @@ public class Event104 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event105().StartEvent(emp, 0, target);
     }
 
@@ -7420,8 +7413,8 @@ public class Event104 : Event
         target.AddTempRelation(emp, -5);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event107().StartEvent(emp, 0, target);
     }
 
@@ -7466,7 +7459,7 @@ public class Event105 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.无;
         SuccessDescription = " 双方好感度   +5";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -7476,8 +7469,8 @@ public class Event105 : Event
         target.AddTempRelation(emp, +5);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event106().StartEvent(emp, 0, target);
     }
 
@@ -7486,8 +7479,8 @@ public class Event105 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -7531,7 +7524,7 @@ public class Event106 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.无;
         SuccessDescription = " 双方好感度   +15 ";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -7541,8 +7534,8 @@ public class Event106 : Event
         target.AddTempRelation(emp, +15);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -7550,8 +7543,8 @@ public class Event106 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -7594,7 +7587,7 @@ public class Event107 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -5, 双方获得情绪“厌恶”×1";
     }
 
@@ -7603,8 +7596,8 @@ public class Event107 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -7616,8 +7609,8 @@ public class Event107 : Event
         target.AddTempEmotion(EColor.LRed);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event108().StartEvent(emp, 0, target);
     }
 
@@ -7661,7 +7654,7 @@ public class Event108 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -5, 双方获得情绪“厌恶”×1";
     }
 
@@ -7670,8 +7663,8 @@ public class Event108 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -7683,8 +7676,8 @@ public class Event108 : Event
         target.AddTempEmotion(EColor.LRed);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -7728,7 +7721,7 @@ public class Event109 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.深刻交谈;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -5";
     }
 
@@ -7737,8 +7730,8 @@ public class Event109 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event110().StartEvent(emp, 0, target);
     }
 
@@ -7749,8 +7742,8 @@ public class Event109 : Event
         target.AddTempRelation(emp, -5);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event112().StartEvent(emp, 0, target);
     }
 
@@ -7795,7 +7788,7 @@ public class Event110 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.无;
         SuccessDescription = " 双方好感度   +10, 双方获得情绪“愉悦”×1";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -7807,8 +7800,8 @@ public class Event110 : Event
         target.AddTempEmotion(EColor.LYellow);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event111().StartEvent(emp, 0, target);
     }
 
@@ -7817,8 +7810,8 @@ public class Event110 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -7862,7 +7855,7 @@ public class Event111 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.无;
         SuccessDescription = " 双方好感度   +10 ";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -7872,8 +7865,8 @@ public class Event111 : Event
         target.AddTempRelation(emp, +10);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -7881,8 +7874,8 @@ public class Event111 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -7925,7 +7918,7 @@ public class Event112 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -5,己方获得情绪“苦涩”×1";
     }
 
@@ -7934,8 +7927,8 @@ public class Event112 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -7947,8 +7940,8 @@ public class Event112 : Event
         target.AddTempEmotion(EColor.LBlue);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event113().StartEvent(emp, 0, target);
     }
 
@@ -7992,7 +7985,7 @@ public class Event113 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -5, 双方获得情绪“苦涩”×1";
     }
 
@@ -8001,8 +7994,8 @@ public class Event113 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -8014,8 +8007,8 @@ public class Event113 : Event
         target.AddTempEmotion(EColor.LBlue);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -8059,7 +8052,7 @@ public class Event114 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.分享乐事;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -5";
     }
 
@@ -8068,8 +8061,8 @@ public class Event114 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event115().StartEvent(emp, 0, target);
     }
 
@@ -8080,8 +8073,8 @@ public class Event114 : Event
         target.AddTempRelation(emp, -5);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event117().StartEvent(emp, 0, target);
     }
 
@@ -8126,7 +8119,7 @@ public class Event115 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.无;
         SuccessDescription = " 双方好感度   +5";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -8136,8 +8129,8 @@ public class Event115 : Event
         target.AddTempRelation(emp, +5);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event116().StartEvent(emp, 0, target);
     }
 
@@ -8146,8 +8139,8 @@ public class Event115 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -8191,7 +8184,7 @@ public class Event116 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.无;
         SuccessDescription = " 双方好感度   +10 双方获得情绪“愉悦”×1";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -8203,8 +8196,8 @@ public class Event116 : Event
         target.AddTempEmotion(EColor.LYellow);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -8212,8 +8205,8 @@ public class Event116 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -8256,7 +8249,7 @@ public class Event117 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -5，己方获得情绪“苦涩”×1";
     }
 
@@ -8265,8 +8258,8 @@ public class Event117 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -8278,8 +8271,8 @@ public class Event117 : Event
         target.AddTempEmotion(EColor.LBlue);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event118().StartEvent(emp, 0, target);
     }
 
@@ -8323,7 +8316,7 @@ public class Event118 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -5，双方获得情绪“苦涩”×1";
     }
 
@@ -8332,8 +8325,8 @@ public class Event118 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -8345,8 +8338,8 @@ public class Event118 : Event
         target.AddTempEmotion(EColor.LBlue);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -8390,7 +8383,7 @@ public class Event119 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.分享日常;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方获得情绪“苦涩”x1";
     }
 
@@ -8399,8 +8392,8 @@ public class Event119 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event120().StartEvent(emp, 0, target);
     }
 
@@ -8411,8 +8404,8 @@ public class Event119 : Event
         target.AddTempEmotion(EColor.LBlue);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event122().StartEvent(emp, 0, target);
     }
 
@@ -8456,8 +8449,8 @@ public class Event120 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
-        FailDescription = " /";
+        
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -8465,8 +8458,8 @@ public class Event120 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event121().StartEvent(emp, 0, target);
     }
 
@@ -8475,8 +8468,8 @@ public class Event120 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -8520,7 +8513,7 @@ public class Event121 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.无;
         SuccessDescription = " 双方好感度   +10 ";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -8531,8 +8524,8 @@ public class Event121 : Event
 
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -8540,8 +8533,8 @@ public class Event121 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -8584,7 +8577,7 @@ public class Event122 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -5，双方获得情绪“厌恶“x1";
     }
 
@@ -8593,8 +8586,8 @@ public class Event122 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -8606,8 +8599,8 @@ public class Event122 : Event
         target.AddTempEmotion(EColor.LRed);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event123().StartEvent(emp, 0, target);
     }
 
@@ -8651,7 +8644,7 @@ public class Event123 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -5";
     }
 
@@ -8660,8 +8653,8 @@ public class Event123 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -8671,8 +8664,8 @@ public class Event123 : Event
         target.AddTempRelation(emp, -5);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -8716,8 +8709,8 @@ public class Event124 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.寻求安慰;
-        SuccessDescription = " /";
-        FailDescription = " /";
+        
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -8725,8 +8718,8 @@ public class Event124 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event125().StartEvent(emp, 0, target);
     }
 
@@ -8735,8 +8728,8 @@ public class Event124 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event127().StartEvent(emp, 0, target);
     }
 
@@ -8780,7 +8773,7 @@ public class Event125 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方获得情绪“苦涩”×1";
     }
 
@@ -8789,8 +8782,8 @@ public class Event125 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event126().StartEvent(emp, 0, target);
     }
 
@@ -8801,8 +8794,8 @@ public class Event125 : Event
         target.AddTempEmotion(EColor.LBlue);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -8846,7 +8839,7 @@ public class Event126 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.无;
         SuccessDescription = " 双方好感度   +10 ";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -8856,8 +8849,8 @@ public class Event126 : Event
         target.AddTempRelation(emp, +10);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -8865,8 +8858,8 @@ public class Event126 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -8909,7 +8902,7 @@ public class Event127 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -5，双方获得情绪“厌恶”×1";
     }
 
@@ -8918,8 +8911,8 @@ public class Event127 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -8931,8 +8924,8 @@ public class Event127 : Event
         target.AddTempEmotion(EColor.LRed);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event128().StartEvent(emp, 0, target);
     }
 
@@ -8976,7 +8969,7 @@ public class Event128 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -10，双方获得情绪“厌恶”×1";
     }
 
@@ -8985,8 +8978,8 @@ public class Event128 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -8998,8 +8991,8 @@ public class Event128 : Event
         target.AddTempEmotion(EColor.LRed);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -9043,8 +9036,8 @@ public class Event129 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.认可交谈;
-        SuccessDescription = " /";
-        FailDescription = " /";
+        
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -9052,8 +9045,8 @@ public class Event129 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event130().StartEvent(emp, 0, target);
     }
 
@@ -9062,8 +9055,8 @@ public class Event129 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event132().StartEvent(emp, 0, target);
     }
 
@@ -9107,8 +9100,8 @@ public class Event130 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
-        FailDescription = " /";
+        
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -9116,8 +9109,8 @@ public class Event130 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event131().StartEvent(emp, 0, target);
     }
 
@@ -9126,8 +9119,8 @@ public class Event130 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -9171,7 +9164,7 @@ public class Event131 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.无;
         SuccessDescription = " 双方好感度   +10";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -9181,8 +9174,8 @@ public class Event131 : Event
         target.AddTempRelation(emp, +10);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -9190,8 +9183,8 @@ public class Event131 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -9234,7 +9227,7 @@ public class Event132 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -5，双方获得情绪“厌恶”×1";
     }
 
@@ -9243,8 +9236,8 @@ public class Event132 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -9256,8 +9249,8 @@ public class Event132 : Event
         target.AddTempEmotion(EColor.LRed);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event133().StartEvent(emp, 0, target);
     }
 
@@ -9301,7 +9294,7 @@ public class Event133 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -5，双方获得情绪“厌恶”×1";
     }
 
@@ -9310,8 +9303,8 @@ public class Event133 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -9323,8 +9316,8 @@ public class Event133 : Event
         target.AddTempEmotion(EColor.LRed);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -9368,8 +9361,8 @@ public class Event134 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.深刻交谈;
-        SuccessDescription = " /";
-        FailDescription = " /";
+        
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -9377,8 +9370,8 @@ public class Event134 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event135().StartEvent(emp, 0, target);
     }
 
@@ -9387,8 +9380,8 @@ public class Event134 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event137().StartEvent(emp, 0, target);
     }
 
@@ -9432,7 +9425,7 @@ public class Event135 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方获得情绪“苦涩”x1";
     }
 
@@ -9441,8 +9434,8 @@ public class Event135 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event136().StartEvent(emp, 0, target);
     }
 
@@ -9453,8 +9446,8 @@ public class Event135 : Event
         target.AddTempEmotion(EColor.LBlue);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -9498,7 +9491,7 @@ public class Event136 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.无;
         SuccessDescription = " 双方好感度   +10 ";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -9508,8 +9501,8 @@ public class Event136 : Event
         target.AddTempRelation(emp, +10);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -9517,8 +9510,8 @@ public class Event136 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -9561,7 +9554,7 @@ public class Event137 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -5";
     }
 
@@ -9570,8 +9563,8 @@ public class Event137 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -9581,8 +9574,8 @@ public class Event137 : Event
         target.AddTempRelation(emp, -5);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event138().StartEvent(emp, 0, target);
     }
 
@@ -9626,7 +9619,7 @@ public class Event138 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -5";
     }
 
@@ -9635,8 +9628,8 @@ public class Event138 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -9646,8 +9639,8 @@ public class Event138 : Event
         target.AddTempRelation(emp, -5);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -9691,8 +9684,8 @@ public class Event139 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.分享乐事;
-        SuccessDescription = " /";
-        FailDescription = " /";
+        
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -9700,8 +9693,8 @@ public class Event139 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event140().StartEvent(emp, 0, target);
     }
 
@@ -9710,8 +9703,8 @@ public class Event139 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event142().StartEvent(emp, 0, target);
     }
 
@@ -9755,8 +9748,8 @@ public class Event140 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
-        FailDescription = " /";
+        
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -9764,8 +9757,8 @@ public class Event140 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
         new Event141().StartEvent(emp, 0, target);
     }
 
@@ -9774,8 +9767,8 @@ public class Event140 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -9819,7 +9812,7 @@ public class Event141 : Event
         SingleResult = false;
         RequiredCondition = EventCondition.无;
         SuccessDescription = " 双方好感度   +10";
-        FailDescription = " /";
+        
     }
 
     protected override void SuccessResult(Employee emp, Employee target = null)
@@ -9829,8 +9822,8 @@ public class Event141 : Event
         target.AddTempRelation(emp, +10);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -9838,8 +9831,8 @@ public class Event141 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
@@ -9882,7 +9875,7 @@ public class Event142 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -5，对方获得情绪“苦涩”×1";
     }
 
@@ -9891,8 +9884,8 @@ public class Event142 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -9904,8 +9897,8 @@ public class Event142 : Event
         target.AddTempEmotion(EColor.LBlue);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
         new Event143().StartEvent(emp, 0, target);
     }
 
@@ -9949,7 +9942,7 @@ public class Event143 : Event
         DescriptionCount = 1;
         SingleResult = false;
         RequiredCondition = EventCondition.无;
-        SuccessDescription = " /";
+        
         FailDescription = " 双方好感度   -5，双方获得情绪“苦涩”×1";
     }
 
@@ -9958,8 +9951,8 @@ public class Event143 : Event
         //"/
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, true));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, true) + SuccessDescription);
     }
 
     protected override void FailResult(Employee emp, Employee target = null)
@@ -9971,8 +9964,8 @@ public class Event143 : Event
         target.AddTempEmotion(EColor.LBlue);
 
         int posbContent = Random.Range(1, DescriptionCount + 1);
-        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent));
-        target.InfoDetail.AddHistory(TargetDescription(emp, target, false));
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+        target.InfoDetail.AddHistory(TargetDescription(emp, target, false) + FailDescription);
     }
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)

@@ -3103,13 +3103,13 @@ public class Perk124 : Perk
 
     public override void ImmEffect()
     {
-        TargetDep.DepFaith -= TempValue1 * 30;
+        TargetDiv.Faith -= TempValue1 * 30;
         Description = "信念-" + (TempValue1 * 30);
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDep.DepFaith += (TempValue1 * 30);
+        TargetDiv.Faith += (TempValue1 * 30);
     }
 }
 

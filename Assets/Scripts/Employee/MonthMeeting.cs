@@ -323,6 +323,7 @@ public class MonthMeeting : MonoBehaviour
         CrystalPanel.SetWndState(false);
         MeetingStart = false;
         GameControl.Instance.MonthMeetingTime = 3;
+        GameControl.Instance.UpdateUI();
         GameControl.Instance.CheckButtonName();
         CrystalDict = new Dictionary<CrystalType, int>();
         CrystalDict.Add(CrystalType.White, 0);

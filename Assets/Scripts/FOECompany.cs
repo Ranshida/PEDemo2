@@ -75,6 +75,7 @@ public class FOECompany : MonoBehaviour
             if (UserCount < 0)
                 UserCount = 0;
         }
+        UpdateUI();
     }
 
     public void UpdateUI()

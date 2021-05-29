@@ -796,13 +796,13 @@ public class BrainStormControl : MonoBehaviour
                 //根据节点类型产生具体结果(暂时只加数)
                 AcquiredItem[CurrentNode.NodeType - 1] += 1;
                 if (CurrentNode.NodeType == 1)
-                    GC.CreateItem(7);
+                    GC.CreateItem(6);
                 else if (CurrentNode.NodeType == 2)
-                    GC.CreateItem(8);
+                    GC.CreateItem(5);
                 else if (CurrentNode.NodeType == 3)
-                    GC.CreateItem(9);
+                    GC.CreateItem(4);
                 else if (CurrentNode.NodeType == 4)
-                    GC.CreateItem(10);
+                    GC.CreateItem(3);
 
                 System.Action AgreeAction = () =>
                 {
@@ -814,6 +814,7 @@ public class BrainStormControl : MonoBehaviour
             {
                 GC.Morale -= 5;
                 RouteSelectPanel.SetActive(true);
+                GC.QC.Init("议题讨论失败，士气-5");
             }
         }
         //是事件组头脑风暴战斗的时候

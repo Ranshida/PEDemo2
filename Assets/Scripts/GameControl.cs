@@ -102,7 +102,7 @@ public class GameControl : MonoBehaviour
     public InfoPanel infoPanel;
     public GameObject DepSelectPanel, StandbyButton, MessagePrefab, GameOverPanel;
     public Text Text_Time, Text_TechResource, Text_MarketResource, Text_MarketResource2, Text_ProductResource, Text_Money, 
-        Text_Stamina, Text_Mentality, Text_Morale, Text_WarTime, Text_MonthMeetingTime, Text_NextTurn, Text_EventProgress;
+        Text_Morale, Text_WarTime, Text_MonthMeetingTime, Text_NextTurn, Text_EventProgress;
     public Toggle WorkOvertimeToggle;
     public BrainStormControl BSC;
     [HideInInspector] public UnityEvent DailyEvent, WeeklyEvent, MonthlyEvent, HourEvent, YearEvent, TurnEvent;
@@ -135,11 +135,22 @@ public class GameControl : MonoBehaviour
         OCL.AddStaticOptions(new OptionCard2());
         OCL.AddStaticOptions(new OptionCard3());
         OCL.AddStaticOptions(new OptionCard4());
+
+        //OCL.AddStaticOptions(new OptionCard11());
+        //OCL.AddStaticOptions(new OptionCard13());
+        //OCL.AddStaticOptions(new OptionCard9());
+        //OCL.AddStaticOptions(new OptionCard8());
+        //OCL.AddStaticOptions(new OptionCard9());
         //CreateItem(3);
         //CreateItem(4);
         //CreateItem(5);
         //CreateItem(6);
 
+        UpdateUI();
+    }
+
+    public void UpdateUI()
+    {
         Text_Time.text = "<size=27>第" + Turn + "回合</size>" + "\n<size=20>第" + Year + "年" + Month + "月</size>";
         Text_MonthMeetingTime.text = "距离下次月会还剩" + MonthMeetingTime + "回合";
         Text_WarTime.text = "距离下次商战还剩" + WarTime + "回合";
@@ -174,11 +185,6 @@ public class GameControl : MonoBehaviour
             MoneyCalcTimer = 0;
         }
         Text_Money.text = "金钱:" + Money +"\n" + "    " + (CalcCost() + Income) + "/月";
-        if (CurrentEmployees.Count > 0)
-        {
-            Text_Stamina.text = "CEO体力:" + CurrentEmployees[0].Stamina + "/" + CurrentEmployees[0].StaminaLimit;
-            Text_Mentality.text = "CEO心力:" + CurrentEmployees[0].Mentality + "/" + CurrentEmployees[0].MentalityLimit;
-        }
     }
 
     public void NextTurn()
@@ -209,15 +215,17 @@ public class GameControl : MonoBehaviour
         if (EC.UnfinishedEvents.Count > 0)
             return;
 
+        //商战时间检测
+        if (WarTime == 0)
+        {
+            foeControl.PrepareCWar();
+            return;
+        }
+
         //月会时间检测
         if (MonthMeetingTime == 0)
         {
             MonthMeeting.Instance.StartMeeting();
-            return;
-        }
-        if (WarTime == 0)
-        {
-            foeControl.PrepareCWar();
             return;
         }
 
@@ -247,9 +255,7 @@ public class GameControl : MonoBehaviour
         }
 
         TimeChange();
-        Text_Time.text = "<size=27>第" + Turn + "回合</size>" + "\n<size=20>第" + Year +"年" + Month + "月</size>";
-        Text_MonthMeetingTime.text = "距离下次月会还剩" + MonthMeetingTime + "回合";
-        Text_WarTime.text = "距离下次商战还剩" + WarTime + "回合";
+        UpdateUI();
 
         //大概在这里确定所有的事件
 
@@ -268,16 +274,18 @@ public class GameControl : MonoBehaviour
             return;
         }
 
-        if (MonthMeetingTime == 0)
-        {
-            Text_NextTurn.text = "开始月会";
-            return;
-        }
-        else if (WarTime == 0)
+        if (WarTime == 0)
         {
             Text_NextTurn.text = "开始商战";
             return;
         }
+
+        else if (MonthMeetingTime == 0)
+        {
+            Text_NextTurn.text = "开始月会";
+            return;
+        }
+
         else
             Text_NextTurn.text = "下一回合";
     }
@@ -341,6 +349,7 @@ public class GameControl : MonoBehaviour
 
         Text_Time.text = "年" + Year + " 月" + Month + " 周" + Week + " 时" + Hour;
     }
+
     public void WeekPass()
     {
         //部门的每周体力buff判定
