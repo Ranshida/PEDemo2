@@ -21,9 +21,6 @@ public class GridContainer : MonoBehaviour
     public Transform WayPoint;
     public List<Grid> GridList;                               //包含所有单元格的列表
     public Dictionary<int, Dictionary<int, Grid>> GridDict;   //包含所有单元格的二重字典（x,z）
-    public List<Grid> LockGrids_0;     //需解锁的区域A
-    public List<Grid> LockGrids_1;
-    public List<Grid> LockGrids_2;
     public List<WayPoint> AllWayPoint { get; private set; }
     
     public Areas Areas { get; private set; }      //按区域划分的格子列表
@@ -62,9 +59,9 @@ public class GridContainer : MonoBehaviour
 
         //构造区域面积
         MinX = 5;
-        MaxX = 135;
-        MinZ = 85;
-        MaxZ = 155;
+        MaxX = 200;
+        MinZ = 20;
+        MaxZ = 100;
         Areas = GetComponent<Areas>();
         Areas.Init();
     }
@@ -92,40 +89,8 @@ public class GridContainer : MonoBehaviour
 
     public void UnlockGrids(int id)
     {
-        if (id == 0)
-        {
-            foreach (Grid grid in LockGrids_1)
-            {
-                grid.Unlock();
-            }
-            MinX = 5;
-            MaxX = 135;
-            MinZ = 5;
-            MaxZ = 155;
-        }
-        if (id == 1)
-        {
-            foreach (Grid grid in LockGrids_0)
-            {
-                grid.Unlock();
-            }
-            MinX = 5;
-            MaxX = 275;
-            MinZ = 5;
-            MaxZ = 155;
-        }
-        if (id == 2)
-        {
-            foreach (Grid grid in LockGrids_2)
-            {
-                grid.Unlock();
-            }
-            MinX = 5;
-            MaxX = 275;
-            MinZ = 5;
-            MaxZ = 155;
-        }
-
+        Areas.AreaLists[id + 1].UnlockGrid();
+        BuildingManage.Instance.InitBuilding(BuildingType.原型图画室, new Int2(Areas.AreaLists[id + 1].gridList[0].X, Areas.AreaLists[id + 1].gridList[0].Z));
         foreach (var wp in AllWayPoint)
         {
             if (GetGrid(wp.transform.position.x,wp.transform.position.z,out Grid grid))

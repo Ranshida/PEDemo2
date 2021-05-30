@@ -31,15 +31,16 @@ public class Building : MonoBehaviour
     public bool CanDismantle = true;
 
     public Area CurrentArea;
+    public Area AttachedArea;//这个变量有赋值时，该建筑只能放置在对应的区域内
     public DepControl Department; //BM赋值
     public Building MasterBuilding;//作为附加建筑时自身的父建筑
-    public BuildingEffect effect;
+    //public BuildingEffect effect; //旧的BuildingEffect
     public Transform WarePanel;
     private Transform m_Decoration;   //修饰物，建造后删除
 
     public List<Grid> ContainsGrids;   //所包含的格子
     public List<Transform> WorkPos;
-    public List<BuildingEffect> EffectBuildings = new List<BuildingEffect>();
+    //public List<BuildingEffect> EffectBuildings = new List<BuildingEffect>(); //旧的影响范围内的建筑链表
 
     //BUildingManager加载此建筑预制体
     public void LoadPrefab(string[,] value)
@@ -102,14 +103,14 @@ public class Building : MonoBehaviour
         X10 = ((xMax - xMin) * 10 / 2) + (xMin * 10);
         Z10 = ((zMax - zMin) * 10 / 2) + (zMin * 10);
 
-        effect = new BuildingEffect(this);
+        //effect = new BuildingEffect(this);//确认影响范围
         
         //Destroy(m_Decoration);
     }
 
     public void Move()
     {
-        effect.RemoveAffect();
+        //effect.RemoveAffect();//移动前清除影响范围内的建筑
         Moving = true;
         foreach (Grid grid in ContainsGrids)
         {
@@ -122,7 +123,6 @@ public class Building : MonoBehaviour
     {
         if (!CanDismantle)
         {
-            Debug.Log("不能拆除这个建筑");
             GameControl.Instance.CreateMessage("该建筑无法手动拆除");
             return false;
         }
@@ -131,7 +131,7 @@ public class Building : MonoBehaviour
         if (!Moving)
         {
             //重置影响范围
-            effect.RemoveAffect();
+            //effect.RemoveAffect();
             //刷新网格
             foreach (Grid grid in ContainsGrids)
                 grid.Dismantle();

@@ -532,7 +532,7 @@ GameObject:
   - component: {fileID: 876988828179824846}
   - component: {fileID: -2279394563660855739}
   m_Layer: 0
-  m_Name: "10\u539F\u578B\u56FE\u753B\u5BA4"
+  m_Name: "10\u5546\u6218\u5EFA\u7B51"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -571,24 +571,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Type: 9
   ID: 10
-  Name: "\u539F\u578B\u56FE\u753B\u5BA4"
-  Size: 
+  Name: "\u5546\u6218\u5EFA\u7B51"
+  Size: "2\xD74"
   Functions:
-  - 
-  - 
+  - "\u53EF\u4EE5\u6B63\u5E38\u751F\u4EA7"
+  - "\u4E8B\u4E1A\u90E8\u6548\u7387+1"
   - 
   Debuffs:
+  - "\u4E8B\u4E1A\u90E8\u6548\u7387-4"
+  - /
   - 
-  - 
-  - 
-  Require_A: 
-  Description: 
-  MaintainCost: 0
-  PurchaseCost: 0
-  Jobs: 
-  Str_Type: 
-  WeakEffect: 
-  EmpCount: 000000000000000000000000
+  Require_A: "\u4EA7\u54C1\u8BBE\u8BA1"
+  Description: "\u751F\u4EA7\u5546\u6218\u724C-\u539F\u578B\u56FE"
+  MaintainCost: 5
+  PurchaseCost: 20
+  Jobs: 4
+  Str_Type: "\u5546\u6218\u90E8\u95E8"
+  WeakEffect: "\u4E8B\u4E1A\u90E8\u6548\u7387-2"
+  EmpCount: 020000000200000000000000
   X10: 0
   Z10: 0
   Length: 2
@@ -598,8 +598,6 @@ MonoBehaviour:
   effectValue2: 0
   CanDismantle: 1
   CurrentArea:
-    NeighborIndex: 
-    NeighborAreas: []
     gridList: []
     CA: {fileID: 0}
     AS: {fileID: 0}
@@ -607,16 +605,14 @@ MonoBehaviour:
     centerPosition: {x: 0, y: 0, z: 0}
     topPosition: {x: 0, y: 0, z: 0}
   Department: {fileID: 0}
-  effect:
-    CurrentBuilding: {fileID: -2279394563660855739}
-    AffectedBuildings: []
+  MasterBuilding: {fileID: 0}
+  WarePanel: {fileID: 0}
   ContainsGrids: []
   WorkPos:
-  - {fileID: 0}
   - {fileID: 7891280477271827979}
   - {fileID: 8280697845104140793}
-  - {fileID: 0}
-  EffectBuildings: []
+  - {fileID: 4237781701517723944}
+  - {fileID: 2237832224882470477}
 --- !u!1 &4736052767377885791
 GameObject:
   m_ObjectHideFlags: 0

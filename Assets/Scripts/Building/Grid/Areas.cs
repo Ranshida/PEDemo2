@@ -46,11 +46,6 @@ public class Areas : MonoBehaviour
             DC.DS = ds;
             ds.GC = GC;
 
-            foreach (int index in area.NeighborIndex)
-            {
-                area.NeighborAreas.Add(AreaLists[index]);
-            }
-
             //添加事业部至GameContral中的链表
             GC.CurrentDivisions.Add(DC);
 
@@ -60,6 +55,7 @@ public class Areas : MonoBehaviour
                 DC.Locked = true;
             }
         }
+        AreaLists[0].UnlockGrid();
         MonthMeeting.Instance.CrystalPanel.InitCrystalPanel();
     }
 
@@ -86,8 +82,6 @@ public class Areas : MonoBehaviour
 [System.Serializable]
 public class Area
 {
-    public List<int> NeighborIndex;
-    public List<Area> NeighborAreas;
     public List<Grid> gridList;
 
     public CrystalArea CA;
@@ -115,10 +109,21 @@ public class Area
                 topPosition = new Vector3(0, 0, grid.transform.position.z);
             }
             posX += grid.transform.position.x;
+            grid.Type = Grid.GridType.道路;
+            grid.RefreshGrid();
         }
         posX /= gridList.Count;
         topPosition = new Vector3(posX, 0, topPosition.z);
 
 
+    }
+
+    public void UnlockGrid()
+    {
+        foreach (Grid g in gridList)
+        {
+            g.Type = Grid.GridType.可放置;
+            g.RefreshGrid();
+        }
     }
 }

@@ -2493,12 +2493,12 @@ public class Perk98 : Perk
     }
     public override void ImmEffect()
     {
-        
+        GameControl.Instance.StandbyEmpLimit -= 1; 
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        
+        GameControl.Instance.StandbyEmpLimit += 1;
     }
 }
 
@@ -2701,12 +2701,12 @@ public class Perk105 : Perk
     }
     public override void ImmEffect()
     {
-        
+        TargetDiv.ExtraExp -= 3;
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        
+        TargetDiv.ExtraExp += 3;
     }
 }
 

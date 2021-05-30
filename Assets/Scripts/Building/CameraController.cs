@@ -35,7 +35,7 @@ public class CameraController : MonoBehaviour
         Instance = this;
         mainCamera = transform.Find("Main Camera");
         focus = Instantiate(ResourcesLoader.LoadPrefab("Prefabs/Scene/FucosGo"));
-        focus.transform.position = new Vector3(75, 0, 115);
+        focus.transform.position = new Vector3(40, 0, 30);
         height = minHeight;
     }
 

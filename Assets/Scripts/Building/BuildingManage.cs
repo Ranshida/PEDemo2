@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public enum BuildingType
 {
-    空, 自动化研究中心, 企业历史展览, 福报宣传中心, 混沌创意营, 会计办公室, 心理咨询室, 智库小组, 仓库, 原型图画室, 算法小组, 自动化工坊
+    空, 自动化研究中心, 企业历史展览, 福报宣传中心, 混沌创意营, 会计办公室, 心理咨询室, 智库小组, 仓库, 原型图画室, 算法小组 ,自动化工坊
 }
 
 public class BuildingManage : MonoBehaviour
@@ -86,15 +82,14 @@ public class BuildingManage : MonoBehaviour
     private void Start()
     {
         m_EffectHalo.SetActive(false);
-        InitBuilding(BuildingType.心理咨询室, new Int2(1, 11));
-        InitBuilding(BuildingType.自动化研究中心, new Int2(10, 11));
+        InitBuilding(BuildingType.原型图画室, new Int2(1, 1));
+        //InitBuilding(BuildingType.自动化研究中心, new Int2(10, 11));
     }
 
-    //初始化默认建筑
-    void InitBuilding(BuildingType type, Int2 leftDownGird)
+    //直接放置一个建筑
+    public void InitBuilding(BuildingType type, Int2 leftDownGird)
     {
         StartBuildNew(type);
-        
         Grid grid;
         Dictionary<int, Grid> gridDict;
         for (int i = 0; i < Temp_Building.Length; i++)
@@ -125,6 +120,11 @@ public class BuildingManage : MonoBehaviour
         {
             Debug.LogError("无法建造，检查坐标");
         }
+        //if (type == BuildingType.原型图画室)
+        //{
+        //    Temp_Building.CanDismantle = false;
+        //    Temp_Building.AttachedArea = Temp_Building.ContainsGrids[0].BelongedArea;
+        //}
         temp_Grids.Clear();
         Temp_Building = null;
     }
@@ -169,6 +169,11 @@ public class BuildingManage : MonoBehaviour
                         GameControl.Instance.CreateMessage("与父建筑不在同一事业部");
                         return;
                     }
+                    //else if (Temp_Building.AttachedArea != null && temp_Grids[0].BelongedArea != Temp_Building.AttachedArea)
+                    //{
+                    //    GameControl.Instance.CreateMessage("商战部门无法移动到其他事业部");
+                    //    return;
+                    //}
                     BuildConfirm(Temp_Building, temp_Grids);
                     Temp_Building = null;
                 }
@@ -422,11 +427,12 @@ public class BuildingManage : MonoBehaviour
 
         //确定建筑已摆放完毕
         building.Build(grids);
-        foreach (Building temp in ConstructedBuildings)
-        {
-            temp.effect.FindAffect();
-        }
-
+        //此处是旧的确认影响范围内建筑的函数
+        //foreach (Building temp in ConstructedBuildings)
+        //{
+        //    temp.effect.FindAffect();
+        //}
+        building.CurrentArea = building.ContainsGrids[0].BelongedArea;
         //设置事业部
         if (building.Department)
             building.Department.SetDivision(building.CurrentArea.DC);
@@ -497,15 +503,15 @@ public class BuildingManage : MonoBehaviour
     private int m_Area = 0;
     public void UnLockArea()
     {
-        if (GameControl.Instance.Money < 2000)
+        if (GameControl.Instance.Money < 1000)
         {
             Debug.Log("金钱不够");
             return;
         }
-        GameControl.Instance.Money -= 2000;
+        GameControl.Instance.Money -= 1000;
         GridContainer.Instance.UnlockGrids(m_Area);
         m_Area++;
-        if (m_Area >= 3)
+        if (m_Area >= 5)
         {
             btn_AskUnlock.gameObject.SetActive(false);
         }

@@ -128,7 +128,7 @@ public abstract class WindowRoot : MonoBehaviour
 
     protected void OnButton(GameObject btnGo)
     {
-        Debug.Log(btnGo.name);
+        //Debug.Log(btnGo.name);
         OnButton(btnGo.name);
     }
 

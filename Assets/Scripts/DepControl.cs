@@ -46,7 +46,7 @@ public class DepControl : MonoBehaviour
         set { stopWorkTime = value; }
     }
 
-    public bool MajorSuccess = false, canWork = false, DefautDep = false;
+    public bool canWork = false, DefautDep = false;
 
     private int stopWorkTime = 0;//停工时间
     private bool CheatMode = false, TipShowed = false, isWeakend = false;
@@ -279,10 +279,6 @@ public class DepControl : MonoBehaviour
 
     public void BuildingActive()
     {
-        int value = 1;
-        if (MajorSuccess == true)
-            value = 2;
-
         SpProgress = 0;
         ActiveButton.interactable = false;
 
@@ -668,7 +664,7 @@ public class DepControl : MonoBehaviour
                 }
             };
             ActiveMode = 0;
-        }//没弄完
+        }
         else if (building.Type == BuildingType.心理咨询室)
         {
             WeakAction = () => { ExtraProduceLimit += 1; };
@@ -742,7 +738,7 @@ public class DepControl : MonoBehaviour
                 GC.CreateItem(2);
             };
             ActiveMode = 2;
-        }//状态没弄完
+        }
         else if (building.Type == BuildingType.仓库)
         {
             WeakAction = () => 
