@@ -16,6 +16,7 @@ public class DivisionControl : MonoBehaviour
     public int ExtraCost = 0;//额外成本加成
     public int ExtraProduceTime = 0;//额外生产周期加成
     public int ExtraExp = 0;//每回合为管理下的部门的员工额外提供的经验值
+    public int ManagerExtraExp = 0;//高管每回合为除自己以外的员工提供的额外经验值
 
     //特效相关
     public int MentalityBonus = 0;//每回合部门内员工心力变化量
@@ -26,6 +27,7 @@ public class DivisionControl : MonoBehaviour
     public bool StatusShowed = false;//是否显示信息面板
     private bool DetailPanelShowed = false;//是否显示详细信息面板
 
+    public DepControl CWDep;//商战建筑
     public GameControl GC;
     public DepSelect DS;
     public GameObject DetailPanel;
@@ -38,6 +40,8 @@ public class DivisionControl : MonoBehaviour
     public List<PerkInfo> CurrentPerks = new List<PerkInfo>();
     public List<DepControl> CurrentDeps = new List<DepControl>();
     public List<RectTransform> FillMarkers = new List<RectTransform>();
+    public List<CWCardInfo> CWCards = new List<CWCardInfo>();
+    public List<CWCard> PreCards = new List<CWCard>() { null, null, null };//上回合的插槽状态
 
     private void Update()
     {
@@ -56,27 +60,29 @@ public class DivisionControl : MonoBehaviour
 
         if (DetailPanelShowed == true)
         {
-            Text_Faith.text = "部门信念:" + CurrentFaith + "\n\n事件修正:+0";
+            Text_Faith.text = "部门信念:" + CurrentFaith;
+            if (CurrentFaith <= -90)
+                Text_Faith.text += "              <color=red>事件修正-4</color>";
+            else if (CurrentFaith <= -30)
+                Text_Faith.text += "              <color=red>事件修正-2</color>";
+            else if (CurrentFaith <= -10)
+                Text_Faith.text += "              <color=red>事件修正-1</color>";
+            else if (CurrentFaith <= 10)
+                Text_Faith.text += "              事件修正+0";
+            else if (CurrentFaith <= 30)
+                Text_Faith.text += "              事件修正+1";
+            else if (CurrentFaith <= 90)
+                Text_Faith.text += "              事件修正+2";
+            else
+                Text_Faith.text += "              事件修正+4";
 
             Text_Efficiency.text = "效率:" + (CurrentEfficiency);
             if (CurrentEfficiency < 0)
-                Text_Efficiency.text += "\n\n效率等级:0\n工作停止";
-            else if (CurrentEfficiency < 4)
-                Text_Efficiency.text += "\n\n效率等级:1\n产率:1";
-            else if (CurrentEfficiency < 9)
-                Text_Efficiency.text += "\n\n效率等级:2\n产率:2";
-            else
-                Text_Efficiency.text += "\n\n效率等级:3\n产率:3";
+                Text_Efficiency.text += "                <color=red>无法正常生产</color>";
 
             Text_WorkStatus.text = "工作状态:" + CurrentWorkStatus;
             if (CurrentWorkStatus < 0)
-                Text_WorkStatus.text += "\n\n工作等级:0\n工作停止";
-            else if (CurrentWorkStatus < 4)
-                Text_WorkStatus.text += "\n\n工作等级:1\n";
-            else if (CurrentWorkStatus < 9)
-                Text_WorkStatus.text += "\n\n工作等级:2\n";
-            else
-                Text_WorkStatus.text += "\n\n工作等级:3\n";
+                Text_WorkStatus.text += "                <color=red>无法正常生产</color>";
 
             if (Manager != null)
                 Text_Manager.text = "当前高管:" + Manager.Name;
@@ -87,48 +93,43 @@ public class DivisionControl : MonoBehaviour
             Text_Cost.text = "成本:" + (empCost + depCost + ExtraCost) + "/回合\n\n员工工资:" + empCost + "/回合\n建筑维护费:" + depCost + "/回合";
 
             //效率和工作状态调填充
-            if (ExtraEfficiency + Efficiency < 0)
+
+            if (CurrentEfficiency < 0)
             {
-                EfficiencyBarFill.fillAmount = 0.06f;
-                EfficiencyBarFill.color = new Color(1, 0, 0);
-            }
-            else if (ExtraEfficiency + Efficiency < 4)
-            {
-                EfficiencyBarFill.fillAmount = (float)(ExtraEfficiency + Efficiency) / 10 + 0.1f;
-                EfficiencyBarFill.color = new Color(1, 1, 1);
-            }
-            else if (ExtraEfficiency + Efficiency < 9)
-            {
-                EfficiencyBarFill.fillAmount = (float)(ExtraEfficiency + Efficiency) / 10 + 0.1f;
-                EfficiencyBarFill.color = new Color(1, 1, 0);
+                EfficiencyBarFill.color = Color.red;
+                if (CurrentEfficiency < -10)
+                    EfficiencyBarFill.fillAmount = 0.08f;
+                else
+                    EfficiencyBarFill.fillAmount = (CurrentEfficiency + 10) / 20f;
+
             }
             else
             {
-                EfficiencyBarFill.fillAmount = 1;
-                EfficiencyBarFill.color = new Color(0, 1, 0);
+                EfficiencyBarFill.color = Color.green;
+                if (CurrentEfficiency > 10)
+                    EfficiencyBarFill.fillAmount = 0.92f;
+                else
+                    EfficiencyBarFill.fillAmount = (CurrentEfficiency + 10) / 20f;
             }
             FillMarkers[0].anchoredPosition = new Vector2(FillMarkers[0].parent.GetComponent<RectTransform>().sizeDelta.x * EfficiencyBarFill.fillAmount, 0);
 
 
             if (CurrentWorkStatus < 0)
             {
-                WorkStatusBarFill.fillAmount = 0.06f;
-                WorkStatusBarFill.color = new Color(1, 0, 0);
-            }
-            else if (CurrentWorkStatus < 4)
-            {
-                WorkStatusBarFill.fillAmount = (float)(CurrentWorkStatus) / 10 + 0.1f;
-                WorkStatusBarFill.color = new Color(1, 1, 1);
-            }
-            else if (CurrentWorkStatus < 9)
-            {
-                WorkStatusBarFill.fillAmount = (float)(CurrentWorkStatus) / 10 + 0.1f;
-                WorkStatusBarFill.color = new Color(1, 1, 0);
+                WorkStatusBarFill.color = Color.red;
+                if (CurrentWorkStatus < -10)
+                    WorkStatusBarFill.fillAmount = 0.08f;
+                else
+                    WorkStatusBarFill.fillAmount = (CurrentWorkStatus + 10) / 20f;
+
             }
             else
             {
-                WorkStatusBarFill.fillAmount = 1;
-                WorkStatusBarFill.color = new Color(0, 1, 0);
+                WorkStatusBarFill.color = Color.green;
+                if (CurrentWorkStatus > 10)
+                    WorkStatusBarFill.fillAmount = 0.92f;
+                else
+                    WorkStatusBarFill.fillAmount = (CurrentWorkStatus + 10) / 20f;
             }
             FillMarkers[1].anchoredPosition = new Vector2(FillMarkers[1].parent.GetComponent<RectTransform>().sizeDelta.x * WorkStatusBarFill.fillAmount, 0);
 
@@ -169,23 +170,13 @@ public class DivisionControl : MonoBehaviour
 
         if (StatusShowed == true)
         {
+            Text_Status.text = "工作状态:" + CurrentWorkStatus;
             if (CurrentWorkStatus < 0)
-                Text_Status.text = "<color=#FF0000>工作状态:等级0 工作停工</color>";
-            else if (CurrentWorkStatus < 4)
-                Text_Status.text = "<color=#FFFFFF>工作状态:等级1</color>";
-            else if (CurrentWorkStatus < 9)
-                Text_Status.text = "<color=#FFFF00>工作状态:等级2</color>";
-            else
-                Text_Status.text = "<color=#00FF00>工作状态:等级3</color>";
+                Text_Status.text += "<color=red> 工作停工</color>";
 
+            Text_Status.text += "\n效率:" + CurrentEfficiency;
             if (CurrentEfficiency < 0)
-                Text_Status.text += "\n<color=#FF0000>效率:等级0 工作停止</color>";
-            else if (CurrentEfficiency < 4)
-                Text_Status.text += "\n<color=#FFFFFF>效率:等级1</color>";
-            else if (CurrentEfficiency < 9)
-                Text_Status.text += "\n<color=#FFFF00>效率:等级2</color>";
-            else
-                Text_Status.text += "\n<color=#00FF00>效率:等级3</color>";
+                Text_Status.text += "<color=red> 工作停工</color>";
 
             if (CurrentFaith <= -90)
                 Text_Status.text += "\n<color=#FF0000>信念:" + CurrentFaith + "</color>";
@@ -208,22 +199,64 @@ public class DivisionControl : MonoBehaviour
 
     public void Produce()
     {
-        if (canWork == false || Manager == null)
-            return;
+        //开始前先检测属性
+        ExtraStatusCheck();
+        //检测插槽
+        for (int i = 0; i < 3; i++)
+        {
+            if (CWCards[i].CurrentCard != PreCards[i])
+            {
+                AddPerk(new Perk126());                
+            }
+            PreCards[i] = CWCards[i].CurrentCard;
+        }
 
+        //关于每回合额外经验，现在分为两种，ExtraExp是给包括高管的员工提供的，ManagerExtraExp是给高管以外的员工提供的
+        //能工作且有高管时属于正常工作，每回合会提供固定的5点经验，无法工作时没有这个5点经验加成
+        //不管是给高管还是普通员工添加经验，在加上额外经验和固定经验（能工作时+5）后大于0才能添加
+
+        //无法工作时也德额外经验加成和心力加成
+        if (canWork == false || Manager == null)
+        {
+            if (ExtraExp + ManagerExtraExp > 0 || MentalityBonus != 0)
+            {
+                foreach (DepControl dep in CurrentDeps)
+                {
+                    foreach (Employee emp in dep.CurrentEmps)
+                    {
+                        emp.GainExp(ExtraExp + ManagerExtraExp);
+                        if (MentalityBonus != 0)
+                            emp.Mentality += MentalityBonus;
+                    }
+                }
+            }
+            if (ExtraExp > 0 && Manager != null)
+                Manager.GainExp(ExtraExp);
+            return;
+        }
+
+        //能工作时的经验和体力加成以及部门的工作效果，先算高管的再算整体的
+        int exp = ExtraExp + 5;
+        if (exp > 0)
+            Manager.GainExp(exp);
+
+        //先给高管计算并添加经验，再计算加上高管额外经验的总经验
+        exp += ManagerExtraExp;
+        //部门的生产效果
         foreach (DepControl dep in CurrentDeps)
         {
             dep.Produce();
-            if(ExtraExp > 0)
+            if(exp > 0)
             {
                 foreach(Employee emp in dep.CurrentEmps)
                 {
-                    emp.GainExp(ExtraExp);
+                    emp.GainExp(exp);
                     if (MentalityBonus != 0)
                         emp.Mentality += MentalityBonus;
                 }
             }
         }
+
     }
 
     public void SetDetailPanel(bool showed)
@@ -263,8 +296,8 @@ public class DivisionControl : MonoBehaviour
         }
     }
 
-    //部门移动、销毁或者属性变化时检测额外效率
-    public void DepExtraCheck()
+    //部门移动、销毁或者属性变化时检测额外效率以及检测商战卡牌的效果
+    public void ExtraStatusCheck()
     {
         ExtraEfficiency = 0;
         ExtraFaith = 0;
@@ -275,6 +308,16 @@ public class DivisionControl : MonoBehaviour
             ExtraFaith += dep.ExtraFaith;
             ExtraWorkStatus += dep.ExtraWorkStatus;
         }
+
+        foreach (CWCardInfo info in CWCards)
+        {
+            if (info.CurrentCard != null)
+            {
+                ExtraWorkStatus += info.CurrentCard.WorkStatusDebuff[info.CurrentLevel - 1];
+                ExtraEfficiency += info.CurrentCard.EfficiencyDebuff[info.CurrentLevel - 1] * info.CurrentNum;
+            }
+        }
+
         if (ExtraEfficiency + Efficiency < 0 || WorkStatus + ExtraWorkStatus < 0)
             canWork = false;
         else

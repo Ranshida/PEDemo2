@@ -377,7 +377,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fbf92dd024df3634eb7e2476cd848a6b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Type: 11
+  Type: 10
   ID: 4
   Name: "\u81EA\u52A8\u5316\u5DE5\u574A"
   Size: "2\xD72"
@@ -406,21 +406,18 @@ MonoBehaviour:
   effectValue2: 0
   CanDismantle: 1
   CurrentArea:
-    NeighborIndex: 
-    NeighborAreas: []
     gridList: []
     CA: {fileID: 0}
     AS: {fileID: 0}
     DC: {fileID: 0}
     centerPosition: {x: 0, y: 0, z: 0}
     topPosition: {x: 0, y: 0, z: 0}
+  AttachedDivision: {fileID: 0}
   Department: {fileID: 0}
-  effect:
-    CurrentBuilding: {fileID: -2279394563660855739}
-    AffectedBuildings: []
+  MasterBuilding: {fileID: 0}
+  WarePanel: {fileID: 0}
   ContainsGrids: []
   WorkPos: []
-  EffectBuildings: []
 --- !u!1 &4838049746527906403
 GameObject:
   m_ObjectHideFlags: 0

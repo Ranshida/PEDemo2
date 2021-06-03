@@ -31,7 +31,7 @@ public class Building : MonoBehaviour
     public bool CanDismantle = true;
 
     public Area CurrentArea;
-    public Area AttachedArea;//这个变量有赋值时，该建筑只能放置在对应的区域内
+    public DivisionControl AttachedDivision;//这个变量有赋值时，该建筑只能放置在对应的区域内
     public DepControl Department; //BM赋值
     public Building MasterBuilding;//作为附加建筑时自身的父建筑
     //public BuildingEffect effect; //旧的BuildingEffect

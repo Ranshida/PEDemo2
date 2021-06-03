@@ -525,10 +525,8 @@ public class Employee
             r.RPoint += value;
             if (r.RPoint > 100)
                 r.RPoint = 100;
-        }
-        //else if (r.RPoint < 0)
-        //    r.RPoint = 0;
-        //r.RelationCheck();
+            r.RelationCheck();
+        }     
     }
 
     //找到跟目标的关系

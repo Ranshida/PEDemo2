@@ -19,27 +19,15 @@ public class FOECompany : MonoBehaviour
             if (GC == null)
                 GC = GameControl.Instance;
             GC.foeControl.PlayerCardCount = new int[3] { 0, 0, 0 };
-            foreach(DepControl dep in GC.CurrentDeps)
+            foreach (DivisionControl div in GC.CurrentDivisions)
             {
-                if (dep.ActiveMode == 5 && dep.canWork == true && dep.CurrentDivision.canWork == true)
+                if (div.CWDep != null && div.canWork == true && div.CWDep.canWork == true)
                 {
-                    int level = 1, count = 1;
-
-                    if (dep.CurrentDivision.WorkStatus + dep.CurrentDivision.ExtraWorkStatus <= 3)
-                        level = 1;
-                    else if (dep.CurrentDivision.WorkStatus + dep.CurrentDivision.ExtraWorkStatus <= 8)
-                        level = 2;
-                    else
-                        level = 3;
-
-                    if (dep.CurrentDivision.Efficiency + dep.CurrentDivision.ExtraEfficiency <= 3)
-                        count = 1;
-                    else if (dep.CurrentDivision.Efficiency + dep.CurrentDivision.ExtraEfficiency <= 8)
-                        count = 2;
-                    else
-                        count = 3;
-
-                    GC.foeControl.PlayerCardCount[level - 1] += count;
+                    foreach (CWCardInfo card in div.CWCards)
+                    {
+                        if (card.CurrentCard != null && card.CurrentLevel > 0 && card.CurrentNum > 0)
+                            GC.foeControl.PlayerCardCount[card.CurrentLevel - 1] += card.CurrentNum;
+                    }
                 }
             }
         }

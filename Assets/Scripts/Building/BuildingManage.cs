@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public enum BuildingType
 {
-    空, 自动化研究中心, 企业历史展览, 福报宣传中心, 混沌创意营, 会计办公室, 心理咨询室, 智库小组, 仓库, 原型图画室, 算法小组 ,自动化工坊
+    空, 自动化研究中心, 企业历史展览, 福报宣传中心, 混沌创意营, 会计办公室, 心理咨询室, 智库小组, 仓库, 商战建筑, 自动化工坊
 }
 
 public class BuildingManage : MonoBehaviour
@@ -68,7 +68,8 @@ public class BuildingManage : MonoBehaviour
         foreach (GameObject prefab in buildingPrefabs)
         {
             Building building = prefab.GetComponent<Building>();
-            SelectList.Add(building.Type);
+            if (building.Type != BuildingType.商战建筑 && building.Type != BuildingType.自动化工坊)
+                SelectList.Add(building.Type);
         }
         //装饰建筑临时这样做
         //SelectList.Add(BuildingType.空); SelectList.Add(BuildingType.空); SelectList.Add(BuildingType.空); SelectList.Add(BuildingType.空); SelectList.Add(BuildingType.空);
@@ -82,7 +83,7 @@ public class BuildingManage : MonoBehaviour
     private void Start()
     {
         m_EffectHalo.SetActive(false);
-        InitBuilding(BuildingType.原型图画室, new Int2(1, 1));
+        InitBuilding(BuildingType.商战建筑, new Int2(1, 1));
         //InitBuilding(BuildingType.自动化研究中心, new Int2(10, 11));
     }
 
@@ -120,11 +121,11 @@ public class BuildingManage : MonoBehaviour
         {
             Debug.LogError("无法建造，检查坐标");
         }
-        //if (type == BuildingType.原型图画室)
-        //{
-        //    Temp_Building.CanDismantle = false;
-        //    Temp_Building.AttachedArea = Temp_Building.ContainsGrids[0].BelongedArea;
-        //}
+        if (type == BuildingType.商战建筑)
+        {
+            Temp_Building.CanDismantle = false;
+            Temp_Building.AttachedDivision = Temp_Building.ContainsGrids[0].BelongedArea.DC;
+        }
         temp_Grids.Clear();
         Temp_Building = null;
     }
@@ -169,11 +170,11 @@ public class BuildingManage : MonoBehaviour
                         GameControl.Instance.CreateMessage("与父建筑不在同一事业部");
                         return;
                     }
-                    //else if (Temp_Building.AttachedArea != null && temp_Grids[0].BelongedArea != Temp_Building.AttachedArea)
-                    //{
-                    //    GameControl.Instance.CreateMessage("商战部门无法移动到其他事业部");
-                    //    return;
-                    //}
+                    else if (Temp_Building.AttachedDivision != null && temp_Grids[0].BelongedArea.DC != Temp_Building.AttachedDivision)
+                    {
+                        GameControl.Instance.CreateMessage("商战部门无法移动到其他事业部");
+                        return;
+                    }
                     BuildConfirm(Temp_Building, temp_Grids);
                     Temp_Building = null;
                 }
@@ -299,13 +300,8 @@ public class BuildingManage : MonoBehaviour
     public void OpenDetailPanel()
     {
         if (SelectBuilding && SelectBuilding.Department != null)
-        {
             SelectBuilding.Department.ShowDivisionPanel();
-        }
-        else
-        {
-            Debug.LogError("错误的调用位置");
-        }
+        
         UnselectBuilding();
     }
 

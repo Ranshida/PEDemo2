@@ -95,6 +95,7 @@ public class GameControl : MonoBehaviour
     public FOEControl foeControl;
     public EventControl EC;
     public OptionCardLibrary OCL;
+    public CWCardLibrary CWCL;
     public CEOControl CC;
     public Areas AC;
     public WindowBaseControl TotalEmpPanel;
@@ -130,12 +131,7 @@ public class GameControl : MonoBehaviour
     private void Start()
     {
         UpdateResourceInfo();
-        OCL.AddStaticOptions(new OptionCard1());
-        OCL.AddStaticOptions(new OptionCard1());
-        OCL.AddStaticOptions(new OptionCard2());
-        OCL.AddStaticOptions(new OptionCard3());
-        OCL.AddStaticOptions(new OptionCard4());
-
+        CWCL.AddCWCard(new CWCard1());
         //OCL.AddStaticOptions(new OptionCard11());
         //OCL.AddStaticOptions(new OptionCard13());
         //OCL.AddStaticOptions(new OptionCard9());
@@ -184,7 +180,7 @@ public class GameControl : MonoBehaviour
         {
             MoneyCalcTimer = 0;
         }
-        Text_Money.text = "金钱:" + Money +"\n" + "    " + (CalcCost() + Income) + "/月";
+        Text_Money.text = "金钱:" + Money +"\n" + "    " + (CalcCost() * -1 + Income) + "/月";
     }
 
     public void NextTurn()
@@ -194,6 +190,11 @@ public class GameControl : MonoBehaviour
         if (Items.Count > ItemLimit)
         {
             CreateMessage("物品超出上限");
+            return;
+        }
+        if (CWCL.CardDivCheck() == false)
+        {
+            CreateMessage("有商战卡牌没有放入插槽");
             return;
         }
         int StandbyCount = 0;
@@ -441,9 +442,7 @@ public class GameControl : MonoBehaviour
 
         //部门命名
         string newDepName = b.Type.ToString();
-
-            
-
+           
         //根据Excel设置
         //设置员工上限
         newDep.SetDepStatus(int.Parse(b.Jobs));
@@ -456,7 +455,10 @@ public class GameControl : MonoBehaviour
         }
         newDep.Text_DepName.text = newDepName + num;
         newDep.Text_DepName2.text = newDepName + num;
-        newDep.Text_DepName3.text = newDepName + num + "<" + b.Require_A + ">";
+        if (b.Type != BuildingType.商战建筑)
+            newDep.Text_DepName3.text = newDepName + num + "<" + b.Require_A + ">";
+        else
+            newDep.Text_DepName3.text = newDepName + num;
         newDep.GC = this;
         HourEvent.AddListener(newDep.Produce);
 

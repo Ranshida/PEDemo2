@@ -549,9 +549,7 @@ public class EmpInfo : MonoBehaviour
 
     //检查并显示已有的岗位优势
     public void CheckProfessions()
-    {    //1.技术 2.市场 3.产品 4.Ob观察 5.Te坚韧 6.Str强壮 7.Ma管理 8.HR人力 9.Fi财务 10.De决策 
-         //11.Fo行业 12.St谋略 13.Co说服 14.Ch魅力 15.Go八卦 16.Ad行政
-         //int[] Nst = { 1, 2, 3, 8, 9, 11, 12, 13, 15, 16 };//Nst:几个专业技能对应的编号
+    {    
         Text_Professions.text = "";
         for(int i = 0; i < emp.Professions.Count; i++)
         {

@@ -51,10 +51,13 @@ public class PerkInfo : MonoBehaviour
 
     public void RemovePerk()
     {
+        //从对应链表中移除自身
         if (empInfo != null)
             empInfo.PerksInfo.Remove(this);
-        else if (CurrentPerk.TargetDep != null)
-            CurrentPerk.TargetDep.CurrentPerks.Remove(this);
+        else if (CurrentPerk.TargetDiv != null)
+            CurrentPerk.TargetDiv.CurrentPerks.Remove(this);
+        else
+            GameControl.Instance.CurrentPerks.Remove(this);
 
         info.ClosePanel();
         Destroy(this.gameObject);

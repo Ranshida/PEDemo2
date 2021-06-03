@@ -90,7 +90,7 @@ public class GridContainer : MonoBehaviour
     public void UnlockGrids(int id)
     {
         Areas.AreaLists[id + 1].UnlockGrid();
-        BuildingManage.Instance.InitBuilding(BuildingType.原型图画室, new Int2(Areas.AreaLists[id + 1].gridList[0].X, Areas.AreaLists[id + 1].gridList[0].Z));
+        BuildingManage.Instance.InitBuilding(BuildingType.商战建筑, new Int2(Areas.AreaLists[id + 1].gridList[0].X, Areas.AreaLists[id + 1].gridList[0].Z));
         foreach (var wp in AllWayPoint)
         {
             if (GetGrid(wp.transform.position.x,wp.transform.position.z,out Grid grid))

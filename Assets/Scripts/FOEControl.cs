@@ -275,13 +275,16 @@ public class FOEControl : MonoBehaviour
 
         float Posb = BasePosb[0] + (BasePosb[1] * PlayerCardCount[0]) + (BasePosb[2] * PlayerCardCount[1]) + (BasePosb[3] * PlayerCardCount[2]);
         int count = 0;
-        if (Random.Range(0.0f, 1.0f) < Posb)
+        for (int i = 0; i < 5; i++)
         {
-            PlayerCompany.UserCount += 1;
-            if (InvestLevel < 5 && PlayerCompany.UserCount > AdjustData.PlayerUSerLimit[InvestLevel - 1])
-                PlayerCompany.UserCount = AdjustData.PlayerUSerLimit[InvestLevel - 1];
-            else
-                count += 1;
+            if (Random.Range(0.0f, 1.0f) < Posb)
+            {
+                PlayerCompany.UserCount += 1;
+                if (InvestLevel < 5 && PlayerCompany.UserCount > AdjustData.PlayerUSerLimit[InvestLevel - 1])
+                    PlayerCompany.UserCount = AdjustData.PlayerUSerLimit[InvestLevel - 1];
+                else
+                    count += 1;
+            }
         }
         Text_CWResult.gameObject.SetActive(true);
         Text_CWResult.text = "生产1级卡牌:" + PlayerCardCount[0] + "\n生产2级卡牌:" + PlayerCardCount[1] + "\n生产3级卡牌" 

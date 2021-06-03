@@ -66,9 +66,12 @@ public class OptionCardInfo : MonoBehaviour
     public void SelectOptionCard()
     {
         //抉择卡库界面信息展示
-        if (SelectType == 1 && Emp != null)
+        if (SelectType == 1)
         {
-            OCL.ShowEmpOptions(Emp);
+            if (Emp != null)
+                OCL.ShowEmpOptions(Emp);
+            else
+                OCL.Text_EmpName.text = "已开除的员工";
         }
         //抉择事件选择面板进行选择
         else if (SelectType == 2)

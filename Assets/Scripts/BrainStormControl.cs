@@ -43,8 +43,8 @@ public class BrainStormControl : MonoBehaviour
     public List<Employee> CoreMembers = new List<Employee>();
     public List<BSBossControl> Bosses = new List<BSBossControl>();
     private List<BSSkillMarker> UpgradeDices = new List<BSSkillMarker>();
-    public EmpBSInfo[] EmpInfos = new EmpBSInfo[6];
-    public EmpBSInfo[] EmpSelectInfos = new EmpBSInfo[6];
+    public EmpBSInfo[] EmpInfos = new EmpBSInfo[6];       //头脑风暴战斗面板的info
+    public EmpBSInfo[] EmpSelectInfos = new EmpBSInfo[6]; //核心团队选择面板的info
 
     private void Update()
     {        

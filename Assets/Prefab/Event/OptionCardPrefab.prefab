@@ -409,13 +409,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Selected: 0
   NoEffect: 0
-  outline: {fileID: 3975731646478237318}
+  DoubleCorrection: 0
   OCL: {fileID: 0}
   CurrentEvent: {fileID: 0}
   Text_Name: {fileID: 2155179120227055805}
   Text_Description: {fileID: 2155179120521548182}
   Text_Correction: {fileID: 2155179119694910474}
   Text_Emp: {fileID: 6318155182797152944}
+  Text_CardContent: {fileID: 0}
 --- !u!114 &3966815339523275564
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -461,7 +462,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 3545315162308022726}
         m_MethodName: SelectOptionCard
-        m_Mode: 6
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine

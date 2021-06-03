@@ -15,6 +15,7 @@ public class OptionCardLibrary : MonoBehaviour
     public List<OptionCardInfo> CurrentOptions = new List<OptionCardInfo>();
     public List<OptionCardInfo> DisplayOptions = new List<OptionCardInfo>();
 
+    //创建无所属员工的抉择卡（之前在GameControl.Start中使用，目前无调用）
     public void AddStaticOptions(OptionCard oc)
     {
         OptionCardInfo newCard = Instantiate(OptionCardPrefab, TotalOptionContent);
@@ -24,6 +25,7 @@ public class OptionCardLibrary : MonoBehaviour
         UpdateUI();
     }
 
+    //添加属于某个员工的抉择卡（默认抉择卡在HireControl的InitCEO中创建）
     public void AddOptionCard(OptionCard oc, Employee emp)
     {
         OptionCardInfo newCard = Instantiate(OptionCardPrefab, TotalOptionContent);
@@ -47,7 +49,7 @@ public class OptionCardLibrary : MonoBehaviour
         }
         else if (emp.CurrentDivision != null)
         {
-            Text_EmpDivision.text = "事业部:" + emp.CurrentDep.CurrentDivision.DivName;
+            Text_EmpDivision.text = "事业部:" + emp.CurrentDivision.DivName;
             Text_EmpDep.text = "部门:无";
         }
         else

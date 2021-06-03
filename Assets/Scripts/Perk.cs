@@ -370,12 +370,12 @@ public class Perk11 : Perk
 
     public override void ActiveSpecialEffect()
     {
-        TargetEmp.CurrentDivision.ExtraExp += 2;
+        TargetEmp.CurrentDivision.ManagerExtraExp += 2;
     }
 
     public override void DeActiveSpecialEffect()
     {
-        TargetEmp.CurrentDivision.ExtraExp -= 2;
+        TargetEmp.CurrentDivision.ManagerExtraExp -= 2;
     }
 }
 
@@ -3123,6 +3123,31 @@ public class Perk125 : Perk
         TimeLeft = 3;
         Num = 125;
         canStack = false;
+    }
+}
+
+//领导指令
+public class Perk126 : Perk
+{
+    public Perk126() : base()
+    {
+        Name = "业务生疏";
+        Description = "事业部效率-5";
+        TimeLeft = 6;
+        Num = 126;
+        perkColor = PerkColor.Orange;
+        canStack = false;
+    }
+
+    public override void ImmEffect()
+    {
+        TargetDiv.Efficiency -= 5;
+    }
+
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        TargetDiv.Efficiency += 5;
     }
 }
 

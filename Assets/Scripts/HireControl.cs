@@ -17,6 +17,7 @@ public class HireControl : MonoBehaviour
 
     public EmpInfo[] HireInfos = new EmpInfo[5];
     public List<DepInfo> DepInfos = new List<DepInfo>();
+    public List<CWCardInfo> CardInfos = new List<CWCardInfo>();
     List<HireType> HireTypes = new List<HireType>();
 
     int CurrentHireNum;//用于计算单次招聘已选择的人数
@@ -108,10 +109,22 @@ public class HireControl : MonoBehaviour
             if (HireTypes.Count < 1)
                 HireRefreshButton.interactable = false;
         }
-        foreach (DepInfo info in DepInfos)
+        //随机一下是出现建筑还是卡牌
+        for (int i = 0; i < 3; i++)
         {
-            info.SetInfo();
-            info.gameObject.SetActive(true);
+            if (Random.Range(0.0f, 1.0f) < 0.5f)
+            {
+                DepInfos[i].SetInfo();
+                DepInfos[i].gameObject.SetActive(true);
+                CardInfos[i].gameObject.SetActive(false);
+            }
+            else
+            {
+                CardInfos[i].CurrentCard = CWCard.CWCardData[Random.Range(0, CWCard.CWCardData.Count)].Clone();
+                CardInfos[i].UpdateUI();
+                CardInfos[i].gameObject.SetActive(true);
+                DepInfos[i].gameObject.SetActive(false);
+            }
         }
         Text_Hire.color = Color.red;
         Text_Dep.color = Color.red;
@@ -214,6 +227,13 @@ public class HireControl : MonoBehaviour
         //将CEO添加到核心团队
         GC.BSC.CEOInfo.EmpJoin(emp);
         GC.AC.AreaLists[0].DC.SetManager(false, emp);
+
+        //初始的抉择卡创建
+        GC.OCL.AddOptionCard(new OptionCard1(), emp);
+        GC.OCL.AddOptionCard(new OptionCard1(), emp);
+        GC.OCL.AddOptionCard(new OptionCard2(), emp);
+        GC.OCL.AddOptionCard(new OptionCard3(), emp);
+        GC.OCL.AddOptionCard(new OptionCard4(), emp);
     }
 
     //招聘后隐藏其它选项

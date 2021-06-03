@@ -107,8 +107,6 @@ public class DepControl : MonoBehaviour
             //没有员工的情况下直接return，防止完成任务
             if (CurrentEmps.Count == 0)
                 return;
-            //基础经验获取
-            EmpsGetExp();
             //进度增加
             if (SpProgress < (ProducePointLimit + ExtraProduceLimit + CurrentDivision.ExtraProduceTime))
                 SpProgress += 1;
@@ -184,41 +182,35 @@ public class DepControl : MonoBehaviour
     }
     public bool CheckSkillType(Employee emp)
     {
-        foreach(int type in emp.Professions)
+        if (building.Type != BuildingType.商战建筑)
         {
-            if (type == building.effectValue)
+            foreach (int type in emp.Professions)
+            {
+                if (type == building.effectValue)
+                    return true;
+            }
+        }
+        else
+        {
+            int EmptyCount = 0;
+            foreach (CWCardInfo info in CurrentDivision.CWCards)
+            {
+                if (info.CurrentCard != null)
+                {
+                    foreach (int type in emp.Professions)
+                    {
+                        if (type == (int)info.CurrentCard.TypeRequire)
+                            return true;
+                    }
+                }
+                else
+                    EmptyCount += 1;
+            }
+            //没有卡则返回真
+            if (EmptyCount == CurrentDivision.CWCards.Count)
                 return true;
         }
         return false;
-    }
-
-    //每工时所有员工获取一份经验
-    public void EmpsGetExp()
-    {
-        //for (int i = 0; i < CurrentEmps.Count; i++)
-        //{
-        //    //判断有几个技能符合
-        //    int type1 = 0, type2 = 0;
-        //    foreach(int a in CurrentEmps[i].Professions)
-        //    {
-        //        if (a == building.effectValue)
-        //            type1 = a;
-        //        if (a == building.effectValue2)
-        //            type2 = a;
-        //    }
-        //    if (type1 != 0 && type2 != 0)
-        //    {
-        //        CurrentEmps[i].GainExp(AdjustData.EmpExpDoubleSkillObtain, type1);
-        //        CurrentEmps[i].GainExp(AdjustData.EmpExpDoubleSkillObtain, type2);
-        //    }
-        //    else
-        //    {
-        //        if (type1 != 0)
-        //            CurrentEmps[i].GainExp(AdjustData.EmpExpObtain, type1);
-        //        if (type2 != 0)
-        //            CurrentEmps[i].GainExp(AdjustData.EmpExpObtain, type2);
-        //    }
-        //}
     }
 
     //删除建筑时重置所有相关数据
@@ -380,12 +372,14 @@ public class DepControl : MonoBehaviour
         if (DepLevel > level)
         {
             RemoveLevelEffect();
+            print("RemoveLevel");
             DepLevel = level;
         }
         else if (DepLevel < level)
         {
             DepLevel = level;
             AddLevelEffect();
+            print("AddLevel");
         }
     }
 
@@ -421,7 +415,8 @@ public class DepControl : MonoBehaviour
                 EmpEffectMarkers[i].gameObject.GetComponentInChildren<Text>().text = "";
             }
         }
-        //检测削弱效果
+
+        //检测削弱效果和等级效果
         if (weak != isWeakend)
         {
             isWeakend = weak;
@@ -445,7 +440,17 @@ public class DepControl : MonoBehaviour
         else
             SetDepLevel(0);
 
-        CurrentDivision.DepExtraCheck();
+                //商战建筑检测事业部卡牌
+        if (building.Type == BuildingType.商战建筑)
+        {
+            foreach (CWCardInfo info in CurrentDivision.CWCards)
+            {
+                if (info.CurrentCard != null)
+                    info.WeakCheck(this);
+            }
+        }
+
+        CurrentDivision.ExtraStatusCheck();
         UpdateUI();
     }
 
@@ -780,60 +785,49 @@ public class DepControl : MonoBehaviour
             };
             ActiveMode = 0;
         }//状态没弄完
-        else if (building.Type == BuildingType.原型图画室)
+        else if (building.Type == BuildingType.商战建筑)
         {
-            ExtraEfficiency = -4;
-            WeakAction = () => { ExtraEfficiency -= 2; };
-            UnWeakAction = () => { ExtraEfficiency += 2; };
+            WeakAction = () => { };
+            UnWeakAction = () => { };
             AddLevelEffect = () =>
             {
                 if (DepLevel == 1)
-                {
-                    ExtraEfficiency -= 4;
                     canWork = true;
-                }
-                else if (DepLevel == 2)
-                    ExtraEfficiency += 1;
             };
             RemoveLevelEffect = () =>
             {
                 if (DepLevel == 1)
-                {
-                    ExtraEfficiency += 4;
                     canWork = false;
-                }
-                else if (DepLevel == 2)
-                    ExtraEfficiency -= 1;
             };
             ActiveMode = 5;
         }
-        else if (building.Type == BuildingType.算法小组)
-        {
-            ExtraEfficiency = -4;
-            WeakAction = () => { ExtraWorkStatus -= 2; };
-            UnWeakAction = () => { ExtraWorkStatus += 2; };
-            AddLevelEffect = () =>
-            {
-                if (DepLevel == 1)
-                {
-                    ExtraWorkStatus -= 5;
-                    canWork = true;
-                }
-                else if (DepLevel == 2)
-                    ExtraWorkStatus += 1;
-            };
-            RemoveLevelEffect = () =>
-            {
-                if (DepLevel == 1)
-                {
-                    ExtraWorkStatus += 5;
-                    canWork = false;
-                }
-                else if (DepLevel == 2)
-                    ExtraWorkStatus -= 1;
-            };
-            ActiveMode = 5;
-        }
+        //else if (building.Type == BuildingType.算法小组)
+        //{
+        //    ExtraEfficiency = -4;
+        //    WeakAction = () => { ExtraWorkStatus -= 2; };
+        //    UnWeakAction = () => { ExtraWorkStatus += 2; };
+        //    AddLevelEffect = () =>
+        //    {
+        //        if (DepLevel == 1)
+        //        {
+        //            ExtraWorkStatus -= 5;
+        //            canWork = true;
+        //        }
+        //        else if (DepLevel == 2)
+        //            ExtraWorkStatus += 1;
+        //    };
+        //    RemoveLevelEffect = () =>
+        //    {
+        //        if (DepLevel == 1)
+        //        {
+        //            ExtraWorkStatus += 5;
+        //            canWork = false;
+        //        }
+        //        else if (DepLevel == 2)
+        //            ExtraWorkStatus -= 1;
+        //    };
+        //    ActiveMode = 5;
+        //}
         //需要手动激活的才显示激活按钮
         if (ActiveMode == 2 || ActiveMode == 3 || ActiveMode == 4)
             ActiveButton.gameObject.SetActive(true);
@@ -973,8 +967,12 @@ public class DepControl : MonoBehaviour
         DivPanel.transform.parent = DC.DepContent;
         DC.CurrentDeps.Add(this);
         CurrentDivision = DC;
-        CurrentDivision.DepExtraCheck();
+        CurrentDivision.ExtraStatusCheck();
         CurrentDivision.Text_DivName.gameObject.SetActive(true);
+
+        //自身是商战建筑时在DivisionControl中设定相关引用
+        if (building.Type == BuildingType.商战建筑)
+            DC.CWDep = this;
     }
 
     //从现有的事业部中移除
@@ -983,7 +981,7 @@ public class DepControl : MonoBehaviour
         if (CurrentDivision == null)
             return;
         CurrentDivision.CurrentDeps.Remove(this);
-        CurrentDivision.DepExtraCheck();
+        CurrentDivision.ExtraStatusCheck();
         if (CurrentDivision.CurrentDeps.Count == 0)
         {
             CurrentDivision.Text_DivName.gameObject.SetActive(false);
