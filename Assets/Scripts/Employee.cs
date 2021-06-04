@@ -408,7 +408,7 @@ public class Employee
     {
         Exp += value;
         //if (Level < 10 && Exp >= AdjustData.ExpRequire[Level])
-        while (Level < 10 && Exp >= 50)
+        while (Level < 10 && Exp >= AdjustData.EmpLevelUpExp)
         {
             Exp -= 50;
             Level += 1;
@@ -639,6 +639,12 @@ public class Employee
             if (SpecialTeamTime == 0)
                 inSpecialTeam = false;
         }
+        if (CoreMemberTime > 0)
+        {
+            CoreMemberTime -= 1;
+            if (CoreMemberTime == 0)
+                InfoB.Text_CoreMemberCD.gameObject.SetActive(false);
+        }
 
         #region 旧时间判定
         //EventTimePass();
@@ -726,6 +732,7 @@ public class Employee
                 InfoDetail.EmotionInfos.Remove(InfoDetail.MainEmotion);
                 InfoDetail.MainEmotion.Active = false;
                 InfoDetail.MainEmotion.gameObject.SetActive(false);
+                InfoDetail.Entity.EmotionImage.color = Color.white;
             }
         }
     }

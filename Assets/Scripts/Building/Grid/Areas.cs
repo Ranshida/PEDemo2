@@ -55,8 +55,8 @@ public class Areas : MonoBehaviour
                 DC.Locked = true;
             }
         }
-        AreaLists[0].UnlockGrid();
         MonthMeeting.Instance.CrystalPanel.InitCrystalPanel();
+        AreaLists[0].UnlockGrid();
     }
 
     public void CloseAllAS()
@@ -125,5 +125,6 @@ public class Area
             g.Type = Grid.GridType.可放置;
             g.RefreshGrid();
         }
+        CA.gameObject.SetActive(true);
     }
 }

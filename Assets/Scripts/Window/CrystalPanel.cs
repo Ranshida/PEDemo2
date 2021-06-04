@@ -60,6 +60,7 @@ public class CrystalPanel : WindowRoot
             area.CA = crystalArea;
             crystalArea.Init(this, area);
             CrystalAreaList.Add(crystalArea);
+            crystalArea.gameObject.SetActive(false);
             //每个区域中心在UI上显示三个槽位，供放置水晶
             //每个绑定一个按钮，记录水晶类型
             //结束时结算Buff

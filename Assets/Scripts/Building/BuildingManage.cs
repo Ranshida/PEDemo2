@@ -456,14 +456,7 @@ public class BuildingManage : MonoBehaviour
     //拆除建筑
     public void DismantleBuilding(Building building)
     {
-        if (ConstructedBuildings.Count == 1)
-        {
-            System.Action DismantleAction = () => { building.Dismantle(); };
-            System.Action cancelAction = () => { };
-            QuestControl.Instance.Init("拆了最后一个建筑会直接失败", DismantleAction, cancelAction);
-        }
-        else
-            building.Dismantle();
+        building.Dismantle();
         //if (building.Dismantle())
         //{
         //    if (building.BuildingSet)
@@ -474,9 +467,7 @@ public class BuildingManage : MonoBehaviour
     }
     public void DismantleBuilding()
     {
-        System.Action DismantleAction = () => { SelectBuilding.Dismantle(); };
-        System.Action cancelAction = () => {};
-        QuestControl.Instance.Init("拆了最后一个建筑会直接失败", DismantleAction, cancelAction);
+        SelectBuilding.Dismantle();
         //if (SelectBuilding.Dismantle())
         //{
         //    if (SelectBuilding.BuildingSet)

@@ -10,7 +10,7 @@ public class EmpInfo : MonoBehaviour
     public GameControl GC;
     public Button HireButton, MoveButton, FireButton;
     public Text Text_Name, Text_Mentality, Text_Stamina, Text_Exp, Text_Ability, Text_Age, Text_Professions, Text_Occupation, Text_Ambition;
-    public Text Text_DepName, Text_Tenacity, Text_Manage, Text_Decision, Text_RTarget;
+    public Text Text_DepName, Text_Tenacity, Text_Manage, Text_Decision, Text_RTarget, Text_CoreMemberCD;
     public EmpInfo DetailInfo;
     public EmotionInfo EmotionInfoPrefab, MainEmotion;
     public Transform PerkContent, SkillContent, StrategyContent, RelationContent, HistoryContent, EmotionContent, MarkerContent;
@@ -49,6 +49,7 @@ public class EmpInfo : MonoBehaviour
                     Text_DepName.text = emp.CurrentDivision.DivName;
                 else
                     Text_DepName.text = "人才储备库";
+                Text_CoreMemberCD.text = "冷却时间剩余" + emp.CoreMemberTime + "回合";
             }
 
             //雇佣和详细面板通用部分
@@ -140,8 +141,10 @@ public class EmpInfo : MonoBehaviour
         if (NeedVote == true && GC.EC.ManagerVoteCheck(emp, true, true) == false)
             return;
 
+        GC.EC.CreateEventGroup(EventData.EmpFireEventGroup[Random.Range(0, EventData.EmpFireEventGroup.Count)]);
+
         //如果是核心成员则离开核心团队
-        foreach(EmpBSInfo info in GC.BSC.EmpSelectInfos)
+        foreach (EmpBSInfo info in GC.BSC.EmpSelectInfos)
         {
             if(info.emp == emp)
             {
@@ -483,6 +486,21 @@ public class EmpInfo : MonoBehaviour
             MainEmotion.gameObject.SetActive(true);
             MainEmotion.Active = true;
         }
+
+        Color tempColor = Color.white;
+        if (color == EColor.Red)
+            ColorUtility.TryParseHtmlString("#FF0000", out tempColor);
+        else if (color == EColor.Yellow)
+            ColorUtility.TryParseHtmlString("#FFFF00", out tempColor);
+        else if (color == EColor.Blue)
+            ColorUtility.TryParseHtmlString("#0000FF", out tempColor);
+        else if (color == EColor.Green)
+            ColorUtility.TryParseHtmlString("#00CC00", out tempColor);
+        else if (color == EColor.Orange)
+            ColorUtility.TryParseHtmlString("#FF8000", out tempColor);
+        else if (color == EColor.Purple)
+            ColorUtility.TryParseHtmlString("#6600CC", out tempColor);
+        Entity.EmotionImage.color = tempColor;
     }
 
     public void CreateStrategy()

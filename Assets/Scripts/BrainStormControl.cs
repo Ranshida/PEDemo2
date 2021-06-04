@@ -8,7 +8,6 @@ public class BrainStormControl : MonoBehaviour
     public int SkillType;//玩家当前技能类型
     public int BossLevel;//敌人等级
     public int Shield;//玩家护盾值
-    public int DebuffA;//Boss攻击力削弱40%buff的层数
     public int DebuffB;//人脉，免疫一次攻击
     public int ExtraDamage;//想象力，每次攻击能附加的额外伤害
     public int ReduceDiceNum;//每回合少获得n个骰子的Debuff
@@ -30,13 +29,13 @@ public class BrainStormControl : MonoBehaviour
     public BSRouteNode CurrentNode;//当前所处的节点
     public GameControl GC;
     public GameObject MemberSelectPanel, RouteSelectPanel, FightPanel, SkillButton, CloseButton, 
-        RouteNoticePanel, NodeSkipButton, DiceUpgradePanel;
+        RouteNoticePanel, NodeSkipButton, DiceUpgradePanel, EscapeButton;
     public BSDiceControl DicePrefab;
     public BSBossControl CurrentBoss, BossPrefab;
     public BSSkillMarker MarkerPrefab;
     public Transform DiceContent, SelectedDiceContent, BossContent, DiceUpgradeContent;
     public Text Text_SkillName, Text_Turn, Text_Histroy, Text_EmptyDice, Text_RouteNotice, Text_Item, Text_Upgrade, Text_CoreTeamButton;
-
+    public Text Text_Shield, Text_ExtraDamage, Text_ExtraStatus;
     public List<BSDiceControl> CurrentDices = new List<BSDiceControl>();
     public List<BSRouteNode> CurrentNodes = new List<BSRouteNode>();
     public List<BSDiceControl> SelectedDices = new List<BSDiceControl>();
@@ -50,8 +49,13 @@ public class BrainStormControl : MonoBehaviour
     {        
         Text_Turn.text = "回合" + TurnCount;
         Text_EmptyDice.text = "本回合空白骰子数:" + EmptyDiceNum;
-        if (Shield > 0)
-            Text_EmptyDice.text += "\n护盾:" + Shield;
+        Text_Shield.text = "护盾\n" + Shield;
+        Text_ExtraDamage.text = "想象力\n" + ExtraDamage;
+        Text_ExtraStatus.text = "";
+        if (ExtraAttack > 0)
+            Text_ExtraStatus.text += "本回合攻击力+3\n";
+        if (DebuffB > 0)
+            Text_ExtraStatus.text += "抵消" + DebuffB + "次攻击";
     }
 
     //头脑风暴结束后的一系列设定
@@ -152,7 +156,8 @@ public class BrainStormControl : MonoBehaviour
         FightPanel.SetActive(true);
     }
 
-    public void StartEventBossFight(int level)
+    //融资的头脑风暴战斗
+    public void StartInvestBossFight(int level)
     {
         //有未处理事件时不能继续
         if (GC.EC.UnfinishedEvents.Count > 0 || BSStarted == true)
@@ -160,6 +165,7 @@ public class BrainStormControl : MonoBehaviour
         GC.AskPause(this);
         BSStarted = true;
         FightType = 3;
+        EscapeButton.SetActive(true);
         //核心成员信息传递
         for (int i = 0; i < 6; i++)
         {
@@ -213,10 +219,6 @@ public class BrainStormControl : MonoBehaviour
             GC.QC.Init("所有成员心力为0，议题失败");
         }
 
-        //bossDeBuff减少
-        if (DebuffA > 0)
-            DebuffA -= 1;
-
         //额外伤害归零
         ExtraAttack = 0;
         //回合+1
@@ -230,7 +232,6 @@ public class BrainStormControl : MonoBehaviour
     {
         SkillType = 0;
         Shield = 0;//玩家护盾值
-        DebuffA = 0;//Boss攻击力削弱40%buff的层数
         DebuffB = 0;//人脉，免疫一次攻击
         ExtraDamage = 0;//想象力，每次攻击能附加的额外伤害
         ReduceDiceNum = 0;//每回合少获得n个骰子的Debuff
@@ -601,7 +602,7 @@ public class BrainStormControl : MonoBehaviour
             CauseDamage(12);
         }
         else if (SkillType == 6)
-            DebuffA += 2;
+            CurrentBoss.DebuffA += 2;
         else if (SkillType == 7)
             CurrentBoss.DotValue += 3;
         else if (SkillType == 8)
@@ -786,7 +787,7 @@ public class BrainStormControl : MonoBehaviour
     }
 
     //战斗结果判定
-    void FightFinish(bool Win)
+    public void FightFinish(bool Win)
     {
         //不是事件组头脑风暴战斗的时候
         if (FightType == 1)
@@ -825,6 +826,8 @@ public class BrainStormControl : MonoBehaviour
                 GC.QC.Init("事件组议题成功");
                 CurrentEGI.ResolveStage(CurrentEGI.TargetEventGroup.BSTurnCorrection);
             }
+            else
+                GC.QC.Init("事件组议题失败");
             CurrentEGI = null;
             EndBS();
         }
@@ -836,6 +839,8 @@ public class BrainStormControl : MonoBehaviour
                 GC.QC.Init("融资议题成功");
                 GC.foeControl.InvestComplete();
             }
+            else
+                GC.QC.Init("融资议题失败");
             EndBS();
         }
         
@@ -845,6 +850,7 @@ public class BrainStormControl : MonoBehaviour
             Destroy(Bosses[i].gameObject);
         }
         Bosses.Clear();
+        EscapeButton.SetActive(false);
         FightPanel.SetActive(false);
     }
 
@@ -919,9 +925,9 @@ public class BrainStormControl : MonoBehaviour
     public void EventSolved()
     {
         UpgradeProgress += 1;
-        if (UpgradeProgress >= 15)
+        if (UpgradeProgress >= AdjustData.CoreMemberUpgradePointLimit)
         {
-            UpgradeProgress -= 15;
+            UpgradeProgress -= AdjustData.CoreMemberUpgradePointLimit;
             UpgradePoint += 1;
         }
         UpgradeCheck();
@@ -953,6 +959,6 @@ public class BrainStormControl : MonoBehaviour
             }
             Text_CoreTeamButton.color = Color.black;
         }
-        Text_Upgrade.text = "成功处理抉择事件 " + UpgradeProgress + "/15 \n当前可用升级点:" + UpgradePoint;
+        Text_Upgrade.text = "成功处理抉择事件 " + UpgradeProgress + "/" + AdjustData.CoreMemberUpgradePointLimit + " \n当前可用升级点:" + UpgradePoint;
     }
 }

@@ -24,6 +24,7 @@ public class EmpEntity : MonoBehaviour
     public EmpInfo InfoDetail { get; private set; }
     private Vector3 offset = new Vector3(0, 2.2f, 2.2f);
     private Transform mesh;
+    public Image EmotionImage;
 
     //重要属性
     public Grid StandGrid
@@ -112,6 +113,8 @@ public class EmpEntity : MonoBehaviour
         EventStage = 0;
         CurrentEvent = null;
         NextWP = GridContainer.Instance.AllWayPoint[Random.Range(0, GridContainer.Instance.AllWayPoint.Count)];
+        if (GameControl.Instance.ShowEmpEmotion == true)
+            EmotionImage.gameObject.SetActive(true);
     }
 
     void Update()

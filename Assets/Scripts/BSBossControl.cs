@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class BSBossControl : MonoBehaviour
 {
+    public int DebuffA = 0;//Boss攻击力削弱40%buff（小意思）的层数
     public int BossLevel;//等级
     public int BossHp;//血量
     public int DotValue;//洞察，持续伤害
@@ -22,7 +23,11 @@ public class BSBossControl : MonoBehaviour
     public void UpdateUI()
     {
         if (BossHp > 0)
+        {
             Text_Status.text = "进度 " + (HpLimit - BossHp) + "/" + HpLimit + "\n洞察:" + DotValue;
+            if (DebuffA > 0)
+                Text_Status.text += "\n攻击力下降(" + DebuffA + "回合)";
+        }
         else
         {
             Text_Status.gameObject.SetActive(false);
@@ -30,12 +35,12 @@ public class BSBossControl : MonoBehaviour
             DeadMarker.SetActive(true);
 
             //如果当前目标是自己则先取消自身选择，再尝试自动切换至另一目标
-            if(BSC.CurrentBoss == this)
+            if (BSC.CurrentBoss == this)
             {
                 SelectBoss(false);
-                foreach(BSBossControl boss in BSC.Bosses)
+                foreach (BSBossControl boss in BSC.Bosses)
                 {
-                    if(boss.BossHp > 0)
+                    if (boss.BossHp > 0)
                     {
                         boss.SelectBoss();
                         break;
@@ -237,8 +242,9 @@ public class BSBossControl : MonoBehaviour
         }
 
         //计算Debuff
-        if (BSC.DebuffA > 0)
+        if (DebuffA > 0)
         {
+            DebuffA -= 1;
             value = (int)(value * 0.4f);
             BSC.Text_Histroy.text += "\n[回合" + BSC.TurnCount + "]受到的伤害被Debuff削弱";
         }

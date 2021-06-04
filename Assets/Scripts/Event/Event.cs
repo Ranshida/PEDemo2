@@ -529,7 +529,7 @@ public class EventC2 : Event
 
     protected override void FailResult(Employee emp, Employee target = null)
     {
-        GameControl.Instance.AddEventProgress(1, true);
+        GameControl.Instance.AddEventProgress(1, false);
 
         //随机文案
         int posbContent = Random.Range(1, DescriptionCount + 1);
@@ -580,7 +580,7 @@ public class EventC3 : Event
 
     protected override void FailResult(Employee emp, Employee target = null)
     {
-        GameControl.Instance.AddEventProgress(1, true);
+        GameControl.Instance.AddEventProgress(1, false);
 
         //随机文案
         int posbContent = Random.Range(1, DescriptionCount + 1);
@@ -10006,14 +10006,18 @@ public class Event143 : Event
 
 public static class EventData
 {
-    //公司日常事件序列(无状态条件事件)
+    //公司日常正面事件序列(无状态条件事件)
     public static List<Event> CompanyRoutineEventA = new List<Event>()
     {
-        new Event1(), new Event2(), new Event3(), new Event4(),new Event5()
+        new Event1(), new Event2()
     };
-
-    //公司日常事件序列(状态条件事件)
+    //公司日常负面事件序列(无状态条件事件)
     public static List<Event> CompanyRoutineEventB = new List<Event>()
+    {
+        new Event3(), new Event4(),new Event5()
+    };
+    //公司日常事件序列(状态条件事件)
+    public static List<Event> CompanyRoutineEventC = new List<Event>()
     {
         new Event6(), new Event7(), new Event8()
     };
@@ -10048,7 +10052,21 @@ public static class EventData
     //特殊事件组(负面)
     public static List<EventGroup> SpecialEventGroups2 = new List<EventGroup>()
     {
-        new EventGroup1(), new EventGroup2(), new EventGroup3(), new EventGroup7(), new EventGroup8(), new EventGroup9(), new EventGroup10()
-        , new EventGroup11(), new EventGroup12(), new EventGroup13()
+        new EventGroup1(), new EventGroup2(), new EventGroup3()
+    };
+
+    public static List<EventGroup> CWEventGroup = new List<EventGroup>()
+    {
+        new EventGroup7(), new EventGroup8(), new EventGroup9(),
+    };
+
+    public static List<EventGroup> EmpFireEventGroup = new List<EventGroup>()
+    {
+        new EventGroup10(), new EventGroup11()
+    };
+
+    public static List<EventGroup> BuildingDismentleEventGroup = new List<EventGroup>()
+    {
+        new EventGroup12(), new EventGroup13()
     };
 }

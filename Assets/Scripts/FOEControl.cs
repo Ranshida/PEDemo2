@@ -191,7 +191,6 @@ public class FOEControl : MonoBehaviour
         Text_Cost.text = "公司人均成本:" + AvgCost;
         Text_CostDetail.text = CostText1 + CostText2 + CostText3 + CostText4;
         #endregion
-
         RankingSort();
 
         UpdateInvestorInfo();
@@ -297,6 +296,18 @@ public class FOEControl : MonoBehaviour
         GC.UpdateUI();
         GC.CheckButtonName();
         RankingSort();
+
+        float EventPosb = 0;
+        //玩家根据排名随机商战事件组
+        if (Companies[0].Ranking == 2)
+            EventPosb = 0.33f;
+        else if (Companies[0].Ranking == 3)
+            EventPosb = 0.66f;
+        else if (Companies[0].Ranking == 4)
+            EventPosb = 1.0f;
+
+        if (Random.Range(0.0f, 1.0f) < EventPosb)
+            GC.EC.CreateEventGroup(EventData.CWEventGroup[Random.Range(0, EventData.CWEventGroup.Count)]);
     }
 
     //根据用户数量排序
@@ -350,13 +361,13 @@ public class FOEControl : MonoBehaviour
             return;
         }
         else if (InvestWill <= AdjustData.InvestWillLevel[1])
-            GC.BSC.StartEventBossFight(3);
+            GC.BSC.StartInvestBossFight(3);
         else if (InvestWill <= AdjustData.InvestWillLevel[2])
-            GC.BSC.StartEventBossFight(2);
+            GC.BSC.StartInvestBossFight(2);
         else if (InvestWill <= AdjustData.InvestWillLevel[3])
-            GC.BSC.StartEventBossFight(2);
+            GC.BSC.StartInvestBossFight(2);
         else
-            GC.BSC.StartEventBossFight(1);
+            GC.BSC.StartInvestBossFight(1);
     }
 
     public void InvestComplete()

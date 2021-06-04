@@ -390,7 +390,7 @@ public class CEOControl : MonoBehaviour
             else if (CEOSkillNum == 20 || CEOSkillNum == 21)
             {
                 GC.BSC.CurrentBSInfo = null;
-                Target.CoreMemberTime += 96;
+                Target.CoreMemberTime += 3;
                 GC.TotalEmpPanel.SetWndState(false);
                 GC.ResetSelectMode();
             }
@@ -757,8 +757,13 @@ public class CEOControl : MonoBehaviour
             {
                 foreach (Employee e in GC.CurrentEmployees)
                 {
-                    if (e.isCEO == true || e.CoreMemberTime > 0 || GC.BSC.CoreMembers.Contains(e))
+                    if (e.isCEO == true || GC.BSC.CoreMembers.Contains(e))
                         e.InfoB.gameObject.SetActive(false);
+                    else if (e.CoreMemberTime > 0)
+                    {
+                        e.InfoB.gameObject.GetComponent<Button>().interactable = false;
+                        e.InfoB.Text_CoreMemberCD.gameObject.SetActive(true);
+                    }
                 }
             }
         }

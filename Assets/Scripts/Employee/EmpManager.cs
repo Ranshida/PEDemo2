@@ -251,15 +251,48 @@ public class EmpManager : MonoBehaviour
             Employee target = TargetEmps[Random.Range(0, TargetEmps.Count)];
 
             //确认所有可用事件
-            List<Event> PosbEvents = new List<Event>();
+            List<Event> PosbEventsA = new List<Event>(), PosbEventsB = new List<Event>(), PosbEventsC = new List<Event>();
             foreach(Event e in EventData.CompanyRoutineEventA)
             {
                 if (e.ConditionCheck(emp, target) == true)
-                    PosbEvents.Add(e);
+                    PosbEventsA.Add(e);
+            }
+            foreach (Event e in EventData.CompanyRoutineEventB)
+            {
+                if (e.ConditionCheck(emp, target) == true)
+                    PosbEventsB.Add(e);
+            }
+            foreach (Event e in EventData.CompanyRoutineEventC)
+            {
+                if (e.ConditionCheck(emp, target) == true)
+                    PosbEventsC.Add(e);
             }
 
-            //直接随机一个事件结算效果
-            PosbEvents[Random.Range(0, PosbEvents.Count)].StartEvent(emp, 0, target);
+            //有状态事件的话先判断能否进状态事件，否则计算正面事件的发生概率
+            if (PosbEventsC.Count > 0 && Random.Range(0.0f, 1.0f) < 0.2f)
+                PosbEventsC[Random.Range(0, PosbEventsC.Count)].StartEvent(emp, 0, target);
+            else
+            {
+                float Posb;
+                int morale = GameControl.Instance.Morale;
+                if (morale < 40)
+                    Posb = 0.1f;
+                else if (morale < 60)
+                    Posb = 0.3f;
+                else if (morale < 80)
+                    Posb = 0.5f;
+                else if (morale < 100)
+                    Posb = 0.7f;
+                else
+                    Posb = 0.9f;
+
+                if (Random.Range(0.0f, 1.0f) < Posb)
+                    PosbEventsA[Random.Range(0, PosbEventsA.Count)].StartEvent(emp, 0, target);
+                else
+                    PosbEventsB[Random.Range(0, PosbEventsB.Count)].StartEvent(emp, 0, target);
+            }
+
+
         }
         else if (Type == 2)
         {
@@ -279,7 +312,6 @@ public class EmpManager : MonoBehaviour
                 if (e.ConditionCheck(emp) == true)
                     PosbEvents.Add(e);
             }
-            print(PosbEvents.Count);
             PosbEvents[Random.Range(0, PosbEvents.Count)].StartEvent(emp, emp.SelfEventCorrection);
         }
         else if (Type == 4)

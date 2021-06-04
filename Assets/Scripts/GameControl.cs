@@ -74,6 +74,7 @@ public class GameControl : MonoBehaviour
     [HideInInspector] public bool CEOExtraVote = false;//CEO投票是否有额外加成
     [HideInInspector] public bool ResearchExtraMentality = false;//科研额外心力恢复
     [HideInInspector] public bool CEOVacation = false;
+    [HideInInspector] public bool ShowEmpEmotion = false;
     private int Approve = 0;
     private int Dissatisfied = 0;
     private bool WorkOverTime = false;//是否已经处于加班状态
@@ -116,7 +117,7 @@ public class GameControl : MonoBehaviour
     public int[] FinishedTask = new int[10];//0程序迭代 1技术研发 2可行性调研 3传播 4营销文案 5资源拓展 6原型图 7产品研究 8用户访谈 9已删除
 
     int Week = 1, Day = 1, Hour = 1, morale = 50;
-    int HireTime = 3;//临时的每3回合刷新一次招聘
+    int StoreTime = 3;//临时的每3回合刷新一次招聘
     float Timer, MoneyCalcTimer;
     bool TimePause = false; //现在仅用来判断是否处于下班状态，用于其他功能时需检查WorkEndCheck()和WeekStart
 
@@ -126,6 +127,7 @@ public class GameControl : MonoBehaviour
     {
         Instance = this;
         Morale = 50;
+        StoreTime = Random.Range(2, 5);
     }
 
     private void Start()
@@ -149,7 +151,7 @@ public class GameControl : MonoBehaviour
     {
         Text_Time.text = "<size=27>第" + Turn + "回合</size>" + "\n<size=20>第" + Year + "年" + Month + "月</size>";
         Text_MonthMeetingTime.text = "距离下次月会还剩" + MonthMeetingTime + "回合";
-        Text_WarTime.text = "距离下次商战还剩" + WarTime + "回合";
+        Text_WarTime.text = "距离下次商战还剩" + WarTime + "回合\n\n" + "距离下次商店刷新还剩" + StoreTime + "回合";
     }
 
     private void Update()
@@ -240,10 +242,10 @@ public class GameControl : MonoBehaviour
         WarTime -= 1;
 
         //临时招聘
-        HireTime -= 1;
-        if (HireTime == 0)
+        StoreTime -= 1;
+        if (StoreTime == 0)
         {
-            HireTime = 3;
+            StoreTime = Random.Range(2, 5);
             HC.AddHireTypes(new HireType());
             HC.Refresh();
             HC.Text_HireButtonText.transform.parent.GetComponent<Button>().interactable = true;
@@ -706,7 +708,7 @@ public class GameControl : MonoBehaviour
             CurrentEmpInfo.emp.CurrentDep.EmpEffectCheck();
             emp.CurrentDep = null;
         }
-        else if (CurrentEmpInfo.emp.CurrentDivision != null)
+        else if (emp.CurrentDivision != null)
             CurrentEmpInfo.emp.CurrentDivision.SetManager(true);
     }
 
@@ -740,6 +742,8 @@ public class GameControl : MonoBehaviour
         {
             CurrentEmployees[i].InfoB.gameObject.SetActive(true);
             CurrentEmployees[i].InfoB.MoveButton.GetComponentInChildren<Text>().text = "移动";
+            CurrentEmployees[i].InfoB.gameObject.GetComponent<Button>().interactable = true;
+            CurrentEmployees[i].InfoB.Text_CoreMemberCD.gameObject.SetActive(false);
             if (CurrentEmployees[i].isCEO == false)
                 CurrentEmployees[i].InfoB.FireButton.gameObject.SetActive(true);
 
@@ -775,6 +779,15 @@ public class GameControl : MonoBehaviour
     public void ToggleWorkHour(bool value)
     {
         WorkToggle = value;
+    }
+
+    public void ToggleEmpEmotionGraph(bool value)
+    {
+        ShowEmpEmotion = value;
+        foreach (Employee emp in CurrentEmployees)
+        {
+            emp.InfoDetail.Entity.EmotionImage.gameObject.SetActive(ShowEmpEmotion);
+        }
     }
     //游戏结束后续钱继续
     public void GameReset()

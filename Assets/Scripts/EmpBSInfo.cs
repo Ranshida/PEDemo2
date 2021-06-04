@@ -100,7 +100,7 @@ public class EmpBSInfo : MonoBehaviour
     {
         if(emp.CoreMemberTime > 0)
         {
-            BSC.GC.QC.Init("该员工说服冷却中(剩余" + emp.CoreMemberTime + "时),无法进行说服");
+            BSC.GC.QC.Init("该员工说服冷却中(剩余" + emp.CoreMemberTime + "回合),无法进行说服");
             return;
         }
         BSC.CurrentBSInfo = this;
@@ -205,7 +205,7 @@ public class EmpBSInfo : MonoBehaviour
     {
         if (emp != null)
         {
-            emp.GainExp(70);
+            emp.GainExp(AdjustData.CoreMemberExp);
             BSC.UpgradePointUse();
         }
     }

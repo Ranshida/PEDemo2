@@ -9,6 +9,7 @@ public class DepInfo : MonoBehaviour
     public GameObject SingleEffectPrefab, DoubleEffectPrefab;
     public HireControl HC;
     public Transform EmpInfoContent;
+    public InfoPanelTrigger IPT;
 
     public List<GameObject> Effects = new List<GameObject>();
 
@@ -49,6 +50,14 @@ public class DepInfo : MonoBehaviour
                 InitDoubleMarker(building.Functions[i], building.Debuffs[i]);
             Text_Function.text = building.Description;
         }
+
+        if (building.ExtraInfo != null)
+        {
+            IPT.ContentB = building.ExtraInfo;
+            IPT.gameObject.SetActive(true);
+        }
+        else
+            IPT.gameObject.SetActive(false);
     }
 
     public void ConfirmBuilding()

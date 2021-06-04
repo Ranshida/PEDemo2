@@ -212,6 +212,85 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
+--- !u!1 &3133726820610209052
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7912582927218029404}
+  - component: {fileID: 3046323424302041666}
+  - component: {fileID: 4360519828694553905}
+  m_Layer: 5
+  m_Name: Text_CoreMemberCD
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &7912582927218029404
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3133726820610209052}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 7304820793347005820}
+  m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 2.2024, y: -30.3}
+  m_SizeDelta: {x: 211.2, y: 30}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!222 &3046323424302041666
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3133726820610209052}
+  m_CullTransparentMesh: 0
+--- !u!114 &4360519828694553905
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3133726820610209052}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 0, b: 0, a: 1}
+  m_RaycastTarget: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
+      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  m_FontData:
+    m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
+    m_FontSize: 20
+    m_FontStyle: 0
+    m_BestFit: 0
+    m_MinSize: 2
+    m_MaxSize: 40
+    m_Alignment: 3
+    m_AlignByGeometry: 0
+    m_RichText: 1
+    m_HorizontalOverflow: 0
+    m_VerticalOverflow: 0
+    m_LineSpacing: 1
+  m_Text: "\u51B7\u5374\u4E8B\u4EF6\u5269\u4F5910\u56DE\u5408"
 --- !u!1 &7304820793013105193
 GameObject:
   m_ObjectHideFlags: 0
@@ -488,6 +567,7 @@ RectTransform:
   - {fileID: 7304820794850983585}
   - {fileID: 7304820795017196095}
   - {fileID: 657412516657973078}
+  - {fileID: 7912582927218029404}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -554,21 +634,21 @@ MonoBehaviour:
   Text_Name: {fileID: 7304820794338048668}
   Text_Mentality: {fileID: 7304820794304870686}
   Text_Stamina: {fileID: 7304820793050914309}
-  Text_Skill1: {fileID: 7304820793826842105}
+  Text_Exp: {fileID: 0}
   Text_Ability: {fileID: 0}
   Text_Age: {fileID: 0}
-  Text_School: {fileID: 0}
-  Text_Major: {fileID: 0}
   Text_Professions: {fileID: 0}
+  Text_Occupation: {fileID: 0}
+  Text_Ambition: {fileID: 0}
   Text_DepName: {fileID: 7304820793013105191}
   Text_Tenacity: {fileID: 0}
-  Text_Strength: {fileID: 0}
   Text_Manage: {fileID: 7304820794850983614}
   Text_Decision: {fileID: 0}
-  Text_Emotion: {fileID: 0}
   Text_RTarget: {fileID: 0}
+  Text_CoreMemberCD: {fileID: 4360519828694553905}
   DetailInfo: {fileID: 0}
   EmotionInfoPrefab: {fileID: 0}
+  MainEmotion: {fileID: 0}
   PerkContent: {fileID: 0}
   SkillContent: {fileID: 0}
   StrategyContent: {fileID: 0}
@@ -588,6 +668,7 @@ MonoBehaviour:
   StrategiesInfo: []
   EmotionInfos: []
   SkillMarkers: []
+  OptionCards: []
   InfoType: 1
 --- !u!114 &1923080826609381477
 MonoBehaviour:
@@ -662,7 +743,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &7304820793826842104
 RectTransform:
   m_ObjectHideFlags: 0
@@ -916,7 +997,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -50.619976, y: -32.200027}
+  m_AnchoredPosition: {x: -50.619976, y: -2.9}
   m_SizeDelta: {x: 105.56, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &7304820794850983615

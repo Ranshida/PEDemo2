@@ -28,7 +28,7 @@ public class Perk
     public DivisionControl TargetDiv;
     public PerkInfo Info;
 
-    public int TempValue1, TempValue2, TempValue3;//用于检测和保存的一些数值
+    public int TempValue1, TempValue2, TempValue3;//用于检测和保存的一些数值，在事业部影响效果中，1储存工作状态 2储存效率 3储存信念
     public float TempValue4;
 
     private bool StackAdded = false;
@@ -227,17 +227,18 @@ public class Perk5 : Perk
         Description = "成为高管后生效，管理的事业部信念+10";
         TimeLeft = -1;
         Num = 5;
+        TempValue3 = 10;
         DivisionPerk = true;
     }
 
     public override void ActiveSpecialEffect()
     {
-        TargetEmp.CurrentDivision.Faith += 10;
+        TargetEmp.CurrentDivision.Faith += TempValue3;
     }
 
     public override void DeActiveSpecialEffect()
     {
-        TargetEmp.CurrentDivision.Faith -= 10;
+        TargetEmp.CurrentDivision.Faith -= TempValue3;
     }
 }
 
@@ -250,17 +251,18 @@ public class Perk6 : Perk
         Description = "成为高管后生效，管理的事业部效率+2";
         TimeLeft = -1;
         Num = 6;
+        TempValue2 = 2;
         DivisionPerk = true;
     }
 
     public override void ActiveSpecialEffect()
     {
-        TargetEmp.CurrentDivision.Efficiency += 2;
+        TargetEmp.CurrentDivision.Efficiency += TempValue2;
     }
 
     public override void DeActiveSpecialEffect()
     {
-        TargetEmp.CurrentDivision.Efficiency -= 2;
+        TargetEmp.CurrentDivision.Efficiency -= TempValue2;
     }
 }
 
@@ -273,17 +275,18 @@ public class Perk7 : Perk
         Description = "成为高管后生效，管理的事业部工作状态+2";
         TimeLeft = -1;
         Num = 7;
+        TempValue1 = 2;
         DivisionPerk = true;
     }
 
     public override void ActiveSpecialEffect()
     {
-        TargetEmp.CurrentDivision.WorkStatus += 2;
+        TargetEmp.CurrentDivision.WorkStatus += TempValue1;
     }
 
     public override void DeActiveSpecialEffect()
     {
-        TargetEmp.CurrentDivision.WorkStatus -= 2;
+        TargetEmp.CurrentDivision.WorkStatus -= TempValue1;
     }
 }
 
@@ -388,6 +391,7 @@ public class Perk12 : Perk
         Description = "所在事业部效率+1";
         TimeLeft = -1;
         Num = 12;
+        TempValue2 = 1;
         DepPerk = true;
         DivisionPerk = true;
     }
@@ -395,17 +399,17 @@ public class Perk12 : Perk
     public override void ActiveSpecialEffect()
     {
         if (TargetEmp.CurrentDep != null)
-            TargetEmp.CurrentDep.CurrentDivision.Efficiency += 1;
+            TargetEmp.CurrentDep.CurrentDivision.Efficiency += TempValue2;
         else
-            TargetEmp.CurrentDivision.Efficiency += 1;
+            TargetEmp.CurrentDivision.Efficiency += TempValue2;
     }
 
     public override void DeActiveSpecialEffect()
     {
         if (TargetEmp.CurrentDep != null)
-            TargetEmp.CurrentDep.CurrentDivision.Efficiency -= 1;
+            TargetEmp.CurrentDep.CurrentDivision.Efficiency -= TempValue2;
         else
-            TargetEmp.CurrentDivision.Efficiency -= 1;
+            TargetEmp.CurrentDivision.Efficiency -= TempValue2;
     }
 }
 
@@ -418,6 +422,7 @@ public class Perk13 : Perk
         Description = "所在事业部工作状态+1";
         TimeLeft = -1;
         Num = 13;
+        TempValue1 = 1;
         DepPerk = true;
         DivisionPerk = true;
     }
@@ -425,17 +430,17 @@ public class Perk13 : Perk
     public override void ActiveSpecialEffect()
     {
         if (TargetEmp.CurrentDep != null)
-            TargetEmp.CurrentDep.CurrentDivision.WorkStatus += 1;
+            TargetEmp.CurrentDep.CurrentDivision.WorkStatus += TempValue1;
         else
-            TargetEmp.CurrentDivision.WorkStatus += 1;
+            TargetEmp.CurrentDivision.WorkStatus += TempValue1;
     }
 
     public override void DeActiveSpecialEffect()
     {
         if (TargetEmp.CurrentDep != null)
-            TargetEmp.CurrentDep.CurrentDivision.WorkStatus -= 1;
+            TargetEmp.CurrentDep.CurrentDivision.WorkStatus -= TempValue1;
         else
-            TargetEmp.CurrentDivision.WorkStatus -= 1;
+            TargetEmp.CurrentDivision.WorkStatus -= TempValue1;
     }
 }
 
@@ -448,6 +453,7 @@ public class Perk14 : Perk
         Description = "所在事业部信念+10";
         TimeLeft = -1;
         Num = 14;
+        TempValue3 = 10;
         DepPerk = true;
         DivisionPerk = true;
     }
@@ -455,17 +461,17 @@ public class Perk14 : Perk
     public override void ActiveSpecialEffect()
     {
         if (TargetEmp.CurrentDep != null)
-            TargetEmp.CurrentDep.CurrentDivision.Faith += 10;
+            TargetEmp.CurrentDep.CurrentDivision.Faith += TempValue3;
         else
-            TargetEmp.CurrentDivision.Faith += 10;
+            TargetEmp.CurrentDivision.Faith += TempValue3;
     }
 
     public override void DeActiveSpecialEffect()
     {
         if (TargetEmp.CurrentDep != null)
-            TargetEmp.CurrentDep.CurrentDivision.Faith -= 10;
+            TargetEmp.CurrentDep.CurrentDivision.Faith -= TempValue3;
         else
-            TargetEmp.CurrentDivision.Faith -= 10;
+            TargetEmp.CurrentDivision.Faith -= TempValue3;
     }
 }
 
@@ -589,6 +595,7 @@ public class Perk20 : Perk
         Description = "办公室中存在两名持有此特质的员工时效率+2";
         TimeLeft = -1;
         Num = 20;
+        TempValue2 = 0;
         DepPerk = true;
     }
 
@@ -609,27 +616,15 @@ public class Perk20 : Perk
             }
         }
         if (num == 1)
-            TargetEmp.CurrentDep.CurrentDivision.Efficiency += 2;
+        {
+            TempValue2 = 2;
+            TargetEmp.CurrentDep.CurrentDivision.Efficiency += TempValue2;
+        }
     }
 
     public override void DeActiveSpecialEffect()
     {
-        int num = 0;
-        foreach (Employee emp in TargetEmp.CurrentDep.CurrentEmps)
-        {
-            if (emp == TargetEmp)
-                continue;
-            foreach (PerkInfo perk in emp.InfoDetail.PerksInfo)
-            {
-                if (perk.CurrentPerk.Num == 20)
-                {
-                    num += 1;
-                    break;
-                }
-            }
-        }
-        if (num == 1)
-            TargetEmp.CurrentDep.CurrentDivision.Efficiency -= 2;
+        TargetEmp.CurrentDep.CurrentDivision.Efficiency -= TempValue2;
     }
 }
 
@@ -941,6 +936,8 @@ public class Perk36 : Perk
         Description = "所在事业部工作状态-1，效率+1";
         TimeLeft = -1;
         Num = 36;
+        TempValue1 = -1;
+        TempValue2 = 1;
         DepPerk = true;
         DivisionPerk = true;
     }
@@ -949,13 +946,13 @@ public class Perk36 : Perk
     {
         if (TargetEmp.CurrentDep != null)
         {
-            TargetEmp.CurrentDep.CurrentDivision.WorkStatus -= 1;
-            TargetEmp.CurrentDep.CurrentDivision.Efficiency += 1;
+            TargetEmp.CurrentDep.CurrentDivision.WorkStatus += TempValue1;
+            TargetEmp.CurrentDep.CurrentDivision.Efficiency += TempValue2;
         }
         else
         {
-            TargetEmp.CurrentDivision.WorkStatus -= 1;
-            TargetEmp.CurrentDivision.Efficiency += 1;
+            TargetEmp.CurrentDivision.WorkStatus += TempValue1;
+            TargetEmp.CurrentDivision.Efficiency += TempValue2;
         }
     }
 
@@ -963,13 +960,13 @@ public class Perk36 : Perk
     {
         if (TargetEmp.CurrentDep != null)
         {
-            TargetEmp.CurrentDep.CurrentDivision.WorkStatus += 1;
-            TargetEmp.CurrentDep.CurrentDivision.Efficiency -= 1;
+            TargetEmp.CurrentDep.CurrentDivision.WorkStatus -= TempValue1;
+            TargetEmp.CurrentDep.CurrentDivision.Efficiency -= TempValue2;
         }
         else
         {
-            TargetEmp.CurrentDivision.WorkStatus += 1;
-            TargetEmp.CurrentDivision.Efficiency -= 1;
+            TargetEmp.CurrentDivision.WorkStatus -= TempValue1;
+            TargetEmp.CurrentDivision.Efficiency -= TempValue2;
         }
     }
 }
@@ -1078,6 +1075,7 @@ public class Perk40 : Perk
         Description = "所在事业部信念+10，所在事业部高管管理-1";
         TimeLeft = -1;
         Num = 40;
+        TempValue3 = 10;
         DepPerk = true;
         DivisionPerk = true;
     }
@@ -1086,22 +1084,28 @@ public class Perk40 : Perk
     {
         if (TargetEmp.CurrentDep != null)
         {
-            TargetEmp.CurrentDep.CurrentDivision.ExtraCost -= 5;
+            TargetEmp.CurrentDep.CurrentDivision.Faith += TempValue3;
             TargetEmp.CurrentDep.CurrentDivision.ExtraManage -= 1;
         }
         else
-            TargetEmp.CurrentDivision.ExtraCost -= 5;
+        {
+            TargetEmp.CurrentDivision.Faith += TempValue3;
+            TargetEmp.CurrentDivision.ExtraManage -= 1;
+        }
     }
 
     public override void DeActiveSpecialEffect()
     {
         if (TargetEmp.CurrentDep != null)
         {
-            TargetEmp.CurrentDep.CurrentDivision.ExtraCost += 5;
+            TargetEmp.CurrentDep.CurrentDivision.Faith -= TempValue3;
             TargetEmp.CurrentDep.CurrentDivision.ExtraManage += 1;
         }
         else
-            TargetEmp.CurrentDivision.ExtraCost += 5;
+        {
+            TargetEmp.CurrentDivision.Faith -= TempValue3;
+            TargetEmp.CurrentDivision.ExtraManage += 1;
+        }
     }
 }
 
@@ -1114,6 +1118,8 @@ public class Perk41 : Perk
         Description = "所在事业部工作状态+1，信念-10";
         TimeLeft = -1;
         Num = 41;
+        TempValue1 = 1;
+        TempValue3 = -10;
         DepPerk = true;
         DivisionPerk = true;
     }
@@ -1122,13 +1128,13 @@ public class Perk41 : Perk
     {
         if (TargetEmp.CurrentDep != null)
         {
-            TargetEmp.CurrentDep.CurrentDivision.WorkStatus += 1;
-            TargetEmp.CurrentDep.CurrentDivision.Faith -= 10;
+            TargetEmp.CurrentDep.CurrentDivision.WorkStatus += TempValue1;
+            TargetEmp.CurrentDep.CurrentDivision.Faith += TempValue3;
         }
         else
         {
-            TargetEmp.CurrentDivision.WorkStatus += 1;
-            TargetEmp.CurrentDivision.Faith -= 10;
+            TargetEmp.CurrentDivision.WorkStatus += TempValue1;
+            TargetEmp.CurrentDivision.Faith += TempValue3;
         }
     }
 
@@ -1136,13 +1142,13 @@ public class Perk41 : Perk
     {
         if (TargetEmp.CurrentDep != null)
         {
-            TargetEmp.CurrentDep.CurrentDivision.WorkStatus -= 1;
-            TargetEmp.CurrentDep.CurrentDivision.Faith += 10;
+            TargetEmp.CurrentDep.CurrentDivision.WorkStatus -= TempValue1;
+            TargetEmp.CurrentDep.CurrentDivision.Faith -= TempValue3;
         }
         else
         {
-            TargetEmp.CurrentDivision.WorkStatus -= 1;
-            TargetEmp.CurrentDivision.Faith += 10;
+            TargetEmp.CurrentDivision.WorkStatus -= TempValue1;
+            TargetEmp.CurrentDivision.Faith -= TempValue3;
         }
     }
 }
@@ -1156,6 +1162,7 @@ public class Perk42 : Perk
         Description = "所在事业部效率-1，自身坚韧+1";
         TimeLeft = -1;
         Num = 42;
+        TempValue2 = -1;
         DepPerk = true;
         DivisionPerk = true;
     }
@@ -1163,17 +1170,17 @@ public class Perk42 : Perk
     public override void ActiveSpecialEffect()
     {
         if (TargetEmp.CurrentDep != null)
-            TargetEmp.CurrentDep.CurrentDivision.Efficiency -= 1;
+            TargetEmp.CurrentDep.CurrentDivision.Efficiency += TempValue2;
         else
-            TargetEmp.CurrentDivision.Efficiency -= 1;
+            TargetEmp.CurrentDivision.Efficiency += TempValue2;
     }
 
     public override void DeActiveSpecialEffect()
     {
         if (TargetEmp.CurrentDep != null)
-            TargetEmp.CurrentDep.CurrentDivision.Efficiency += 1;
+            TargetEmp.CurrentDep.CurrentDivision.Efficiency -= TempValue2;
         else
-            TargetEmp.CurrentDivision.Efficiency += 1;
+            TargetEmp.CurrentDivision.Efficiency -= TempValue2;
     }
 
     public override void ImmEffect()
@@ -1607,17 +1614,18 @@ public class Perk60 : Perk
         TimeLeft = 6;
         Num = 60;
         canStack = true;
+        TempValue1 = -3;
         perkColor = PerkColor.White;
     }
     public override void ImmEffect()
     {
-        TargetDiv.WorkStatus -= 3;
+        TargetDiv.WorkStatus += TempValue1;
     }
 
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDiv.WorkStatus += 3;
+        TargetDiv.WorkStatus -= TempValue1;
     }
 }
 
@@ -1630,18 +1638,19 @@ public class Perk61 : Perk
         Description = "由“上班捕鱼”事件产生，事业部工作状态-3点";
         TimeLeft = 6;
         Num = 61;
+        TempValue1 = -3;
         canStack = true;
         perkColor = PerkColor.White;
     }
     public override void ImmEffect()
     {
-        TargetDiv.WorkStatus -= 3;
+        TargetDiv.WorkStatus += TempValue1;
     }
 
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDiv.WorkStatus += 3;
+        TargetDiv.WorkStatus -= TempValue1;
     }
 }
 
@@ -1774,18 +1783,19 @@ public class Perk67 : Perk
         Description = "由“电音派对”事件产生，事业部工作状态+3点";
         TimeLeft = 6;
         Num = 67;
+        TempValue1 = 3;
         canStack = true;
         perkColor = PerkColor.White;
     }
     public override void ImmEffect()
     {
-        TargetDiv.WorkStatus += 3;
+        TargetDiv.WorkStatus += TempValue1;
     }
 
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDiv.WorkStatus -= 3;
+        TargetDiv.WorkStatus -= TempValue1;
     }
 }
 
@@ -2970,17 +2980,18 @@ public class Perk119 : Perk
         Description = "事业部工作状态-2";
         TimeLeft = 6;
         Num = 119;
+        TempValue1 = -2;
         canStack = true;
         perkColor = PerkColor.White;
     }
     public override void ImmEffect()
     {
-        TargetDiv.WorkStatus -= 2;
+        TargetDiv.WorkStatus += TempValue1;
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDiv.WorkStatus += 2;
+        TargetDiv.WorkStatus -= TempValue1;
     }
 }
 
@@ -3135,19 +3146,20 @@ public class Perk126 : Perk
         Description = "事业部效率-5";
         TimeLeft = 6;
         Num = 126;
+        TempValue1 = -5;
         perkColor = PerkColor.Orange;
         canStack = false;
     }
 
     public override void ImmEffect()
     {
-        TargetDiv.Efficiency -= 5;
+        TargetDiv.Efficiency += TempValue1;
     }
 
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDiv.Efficiency += 5;
+        TargetDiv.Efficiency -= TempValue1;
     }
 }
 
@@ -3730,17 +3742,18 @@ public class Perk150 : Perk
         TimeLeft = 3;
         Num = 150;
         canStack = true;
+        TempValue1 = 1;
         perkColor = PerkColor.White;
     }
 
     public override void ImmEffect()
     {
-        TargetDiv.WorkStatus += 1;
+        TargetDiv.WorkStatus += TempValue1;
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDiv.WorkStatus -= 1;
+        TargetDiv.WorkStatus -= TempValue1;
     }
 }
 

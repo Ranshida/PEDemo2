@@ -19,6 +19,7 @@ public class Building : MonoBehaviour
     public string Jobs;                        //岗位数量
     public string Str_Type;                    //建筑类型
     public string WeakEffect;                  //弱化效果
+    public string ExtraInfo;                   //额外的物品和状态信息
     public int[] EmpCount = new int[3];//各等级功能所需员工数量
 
     public int X10, Z10;//建筑中点位坐标值*10
@@ -68,6 +69,7 @@ public class Building : MonoBehaviour
         Functions[2] = value[ID, 16];
         Debuffs[2] = value[ID, 17];
         WeakEffect = value[ID, 18];
+        ExtraInfo = value[ID, 19];
 
         //技能需求转化
         if (Require_A != "/")
@@ -127,6 +129,7 @@ public class Building : MonoBehaviour
             return false;
         }
 
+        GameControl.Instance.EC.CreateEventGroup(EventData.BuildingDismentleEventGroup[Random.Range(0, EventData.BuildingDismentleEventGroup.Count)]);
         CanDismantle = false;
         if (!Moving)
         {
@@ -143,8 +146,6 @@ public class Building : MonoBehaviour
             Department.ClearDep();
         }
         BuildingManage.Instance.ConstructedBuildings.Remove(this);
-        if (BuildingManage.Instance.ConstructedBuildings.Count == 0)
-            GameControl.Instance.GameOverPanel.GetComponent<WindowBaseControl>().SetWndState(true);
         Destroy(gameObject);
 
         return true;

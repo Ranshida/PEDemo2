@@ -27,6 +27,7 @@ public class DivisionControl : MonoBehaviour
     public bool StatusShowed = false;//是否显示信息面板
     private bool DetailPanelShowed = false;//是否显示详细信息面板
 
+    public InfoPanelTrigger WorkStatusInfo, EfficiencyInfo, FaithInfo;
     public DepControl CWDep;//商战建筑
     public GameControl GC;
     public DepSelect DS;
@@ -411,5 +412,173 @@ public class DivisionControl : MonoBehaviour
         {
             newPerkList[i].transform.SetSiblingIndex(i);
         }
+    }
+
+    public void SetWorkStatusDetail()
+    {
+        string content = "";
+        foreach (PerkInfo info in CurrentPerks)
+        {
+            if (info.CurrentPerk.perkColor == PerkColor.White)
+            {
+                if (info.CurrentPerk.TempValue1 >= 0)
+                    content += "事业部状态" + info.CurrentPerk.Name + " +" + info.CurrentPerk.TempValue1 + "\n";
+                else
+                    content += "事业部状态" + info.CurrentPerk.Name + info.CurrentPerk.TempValue1 + "\n";
+            }
+        }
+        foreach (DepControl dep in CurrentDeps)
+        {
+            foreach (Employee emp in dep.CurrentEmps)
+            {
+                foreach (PerkInfo perk in emp.InfoDetail.PerksInfo)
+                {
+                    if (perk.CurrentPerk.DepPerk == true || perk.CurrentPerk.DivisionPerk == true)
+                    {
+                        if (perk.CurrentPerk.TempValue1 > 0)
+                            content += emp.Name + "特质 " + perk.CurrentPerk.Name + " +" + perk.CurrentPerk.TempValue1 + "\n";
+                        else if (perk.CurrentPerk.TempValue1 < 0)
+                            content += emp.Name + "特质 " + perk.CurrentPerk.Name + " " + perk.CurrentPerk.TempValue1 + "\n";
+                    }                       
+                }
+            }
+        }
+        if (Manager != null)
+        {
+            foreach (PerkInfo perk in Manager.InfoDetail.PerksInfo)
+            {
+                if (perk.CurrentPerk.DepPerk == true || perk.CurrentPerk.DivisionPerk == true)
+                {
+                    if (perk.CurrentPerk.TempValue1 > 0)
+                        content += Manager.Name + "特质 " + perk.CurrentPerk.Name + " +" + perk.CurrentPerk.TempValue1 + "\n";
+                    else if (perk.CurrentPerk.TempValue1 < 0)
+                        content += Manager.Name + "特质 " + perk.CurrentPerk.Name + " " + perk.CurrentPerk.TempValue1 + "\n";
+                }
+            }
+        }
+        foreach (DepControl dep in CurrentDeps)
+        {
+            if (dep.ExtraWorkStatus > 0)
+                content += dep.Text_DepName.text + "额外效果 +" + dep.ExtraWorkStatus + "\n";
+            else if (dep.ExtraWorkStatus < 0)
+                content += dep.Text_DepName.text + "额外效果 " + dep.ExtraWorkStatus + "\n";
+        }
+        foreach (CWCardInfo card in CWCards)
+        {
+            if (card.CurrentCard != null)
+                content += "卡牌" + card.CurrentCard.Name + " " + card.CurrentCard.WorkStatusDebuff[card.CurrentLevel - 1] + "\n";
+        }
+        WorkStatusInfo.ContentB = content;
+    }
+
+    public void SetEfficiencyDetail()
+    {
+        string content = "";
+        foreach (PerkInfo info in CurrentPerks)
+        {
+            if (info.CurrentPerk.perkColor == PerkColor.Grey)
+            {
+                if (info.CurrentPerk.TempValue2 >= 0)
+                    content += "事业部状态" + info.CurrentPerk.Name + " +" + info.CurrentPerk.TempValue2 + "\n";
+                else
+                    content += "事业部状态" + info.CurrentPerk.Name + info.CurrentPerk.TempValue2 + "\n";
+            }
+        }
+        foreach (DepControl dep in CurrentDeps)
+        {
+            foreach (Employee emp in dep.CurrentEmps)
+            {
+                foreach (PerkInfo perk in emp.InfoDetail.PerksInfo)
+                {
+                    if (perk.CurrentPerk.DepPerk == true || perk.CurrentPerk.DivisionPerk == true)
+                    {
+                        if (perk.CurrentPerk.TempValue2 > 0)
+                            content += emp.Name + "特质 " + perk.CurrentPerk.Name + " +" + perk.CurrentPerk.TempValue2 + "\n";
+                        else if (perk.CurrentPerk.TempValue2 < 0)
+                            content += emp.Name + "特质 " + perk.CurrentPerk.Name + " " + perk.CurrentPerk.TempValue2 + "\n";
+                    }
+                }
+            }
+        }
+        if (Manager != null)
+        {
+            foreach (PerkInfo perk in Manager.InfoDetail.PerksInfo)
+            {
+                if (perk.CurrentPerk.DepPerk == true || perk.CurrentPerk.DivisionPerk == true)
+                {
+                    if (perk.CurrentPerk.TempValue2 > 0)
+                        content += Manager.Name + "特质 " + perk.CurrentPerk.Name + " +" + perk.CurrentPerk.TempValue2 + "\n";
+                    else if (perk.CurrentPerk.TempValue2 < 0)
+                        content += Manager.Name + "特质 " + perk.CurrentPerk.Name + " " + perk.CurrentPerk.TempValue2 + "\n";
+                }
+            }
+        }
+        foreach (DepControl dep in CurrentDeps)
+        {
+
+            if (dep.ExtraEfficiency > 0)
+                content += dep.Text_DepName.text + "额外效果 +" + dep.ExtraEfficiency + "\n";
+            else if (dep.ExtraEfficiency < 0)
+                content += dep.Text_DepName.text + "额外效果 " + dep.ExtraEfficiency + "\n";
+        }
+        foreach (CWCardInfo card in CWCards)
+        {
+            if (card.CurrentCard != null && card.CurrentNum != 0)
+                content += "卡牌" + card.CurrentCard.Name + "效果 " + (card.CurrentCard.EfficiencyDebuff[card.CurrentLevel - 1] * card.CurrentNum) + "\n";
+        }
+        EfficiencyInfo.ContentB = content;
+    }
+
+    public void SetFaithDetail()
+    {
+        string content = "";
+        foreach (PerkInfo info in CurrentPerks)
+        {
+            if (info.CurrentPerk.perkColor == PerkColor.Orange)
+            {
+                if (info.CurrentPerk.TempValue3 >= 0)
+                    content += "事业部状态" + info.CurrentPerk.Name + " +" + info.CurrentPerk.TempValue3 + "\n";
+                else
+                    content += "事业部状态" + info.CurrentPerk.Name + info.CurrentPerk.TempValue3 + "\n";
+            }
+        }
+        foreach (DepControl dep in CurrentDeps)
+        {
+            foreach (Employee emp in dep.CurrentEmps)
+            {
+                foreach (PerkInfo perk in emp.InfoDetail.PerksInfo)
+                {
+                    if (perk.CurrentPerk.DepPerk == true || perk.CurrentPerk.DivisionPerk == true)
+                    {
+                        if (perk.CurrentPerk.TempValue3 > 0)
+                            content += emp.Name + "特质 " + perk.CurrentPerk.Name + " +" + perk.CurrentPerk.TempValue3 + "\n";
+                        else if (perk.CurrentPerk.TempValue3 < 0)
+                            content += emp.Name + "特质 " + perk.CurrentPerk.Name + " " + perk.CurrentPerk.TempValue3 + "\n";
+                    }
+                }
+            }
+        }
+        if (Manager != null)
+        {
+            foreach (PerkInfo perk in Manager.InfoDetail.PerksInfo)
+            {
+                if (perk.CurrentPerk.DepPerk == true || perk.CurrentPerk.DivisionPerk == true)
+                {
+                    if (perk.CurrentPerk.TempValue3 > 0)
+                        content += Manager.Name + "特质 " + perk.CurrentPerk.Name + " +" + perk.CurrentPerk.TempValue3 + "\n";
+                    else if (perk.CurrentPerk.TempValue3 < 0)
+                        content += Manager.Name + "特质 " + perk.CurrentPerk.Name + " " + perk.CurrentPerk.TempValue3 + "\n";
+                }
+            }
+        }
+        foreach (DepControl dep in CurrentDeps)
+        {
+
+            if (dep.ExtraFaith > 0)
+                content += dep.Text_DepName.text + "额外效果 +" + dep.ExtraFaith + "\n";
+            else if (dep.ExtraFaith < 0)
+                content += dep.Text_DepName.text + "额外效果 " + dep.ExtraFaith + "\n";
+        }
+        FaithInfo.ContentB = content;
     }
 }
