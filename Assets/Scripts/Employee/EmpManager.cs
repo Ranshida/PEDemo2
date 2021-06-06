@@ -136,7 +136,7 @@ public class EmpManager : MonoBehaviour
         return TargetEmps;
     }
 
-    private void CheckRelation(Employee self)
+    public void CheckRelation(Employee self)
     {
         Employee boss = FindBoss(self);
         if (boss != null) 
@@ -302,7 +302,7 @@ public class EmpManager : MonoBehaviour
                 if (e.ConditionCheck(emp) == true)
                     PosbEvents.Add(e);
             }
-            PosbEvents[Random.Range(0, PosbEvents.Count)].StartEvent(emp);
+            GameControl.Instance.EC.StartChoiceEvent(PosbEvents[Random.Range(0, PosbEvents.Count)], emp);
         }
         else if (Type == 3)
         {
@@ -322,17 +322,20 @@ public class EmpManager : MonoBehaviour
                 if (TargetEmps.Contains(e) == false)
                     TargetEmps.Add(e);
             }
-
+            
             //没有任何目标时直接执行认识新人事件
             if (TargetEmps.Count == 0)
             {
-                if (GameControl.Instance.CurrentEmployees.Count > 1)
+                //先寻找有没有不认识的人
+                List<Employee> KnowedEmp = new List<Employee>();
+                foreach (Relation r in emp.Relations)
                 {
-                    Employee rTarget = GameControl.Instance.CurrentEmployees[Random.Range(0, GameControl.Instance.CurrentEmployees.Count)];
-                    while(rTarget == emp)
-                    {
-                        rTarget = GameControl.Instance.CurrentEmployees[Random.Range(0, GameControl.Instance.CurrentEmployees.Count)];
-                    }
+                    if (r.KnowEachOther == false)
+                        KnowedEmp.Add(r.Target);
+                }
+                if (KnowedEmp.Count > 0)
+                {
+                    Employee rTarget = KnowedEmp[Random.Range(0, KnowedEmp.Count)];
                     new Event14().StartEvent(emp, emp.SelfEventCorrection + rTarget.SelfEventCorrection, rTarget);
                 }
                 return;
@@ -363,7 +366,7 @@ public class EmpManager : MonoBehaviour
                     }
                     new Event14().StartEvent(emp, emp.SelfEventCorrection + rTarget.SelfEventCorrection, rTarget);
                 }
-
+                return;
             }
 
             Employee target = TargetEmps[Random.Range(0, TargetEmps.Count)];

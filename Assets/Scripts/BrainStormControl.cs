@@ -825,6 +825,8 @@ public class BrainStormControl : MonoBehaviour
             {
                 GC.QC.Init("事件组议题成功");
                 CurrentEGI.ResolveStage(CurrentEGI.TargetEventGroup.BSTurnCorrection);
+                CurrentEGI.BrainStormUsed = true;
+                CurrentEGI.UseResourceButton.interactable = true;
             }
             else
                 GC.QC.Init("事件组议题失败");

@@ -124,8 +124,8 @@ public class StrategyControl : MonoBehaviour
         }
         canChangeCulture = true;
         CultureStrCheck();
-        if (GC.MeetingBlockTime == 0)
-            StartVote();
+        //if (GC.MeetingBlockTime == 0)
+        //    StartVote();
     }
     void StartVote()
     {

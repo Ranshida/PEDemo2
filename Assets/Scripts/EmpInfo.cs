@@ -106,6 +106,13 @@ public class EmpInfo : MonoBehaviour
 
     public void StartHire()
     {
+        if (GameControl.Instance.Money >= 100)
+            GameControl.Instance.Money -= 100;
+        else
+        {
+            GameControl.Instance.CreateMessage("金钱不足");
+            return;
+        }
         GC.CurrentEmpInfo = this;
         GC.SelectMode = 1;
         GC.ShowDepSelectPanel(emp);

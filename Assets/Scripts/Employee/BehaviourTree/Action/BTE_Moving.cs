@@ -33,7 +33,7 @@ public class BTE_Moving : BTE_Action
         if (GameControl.Instance.ForceTimePause)
             navMeshAgent.speed = 0;
         else
-            navMeshAgent.speed = 20 * GameControl.Instance.TimeMultiply;
+            navMeshAgent.speed = 20;
 
         navMeshAgent.stoppingDistance = StopDistance.Value;
         navMeshAgent.SetDestination(Destination.Value);

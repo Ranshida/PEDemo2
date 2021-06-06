@@ -86,10 +86,9 @@ public class DivisionControl : MonoBehaviour
                 Text_WorkStatus.text += "                <color=red>无法正常生产</color>";
 
             if (Manager != null)
-                Text_Manager.text = "当前高管:" + Manager.Name;
-            else
+                Text_Manager.text = "当前高管:" + Manager.Name + "\n\n\n管理能力:" + Manager.Manage + "\n决策能力:" + Manager.Decision;
+            else 
                 Text_Manager.text = "当前高管:无";
-
             int empCost = CalcCost(1), depCost = CalcCost(2);
             Text_Cost.text = "成本:" + (empCost + depCost + ExtraCost) + "/回合\n\n员工工资:" + empCost + "/回合\n建筑维护费:" + depCost + "/回合";
 

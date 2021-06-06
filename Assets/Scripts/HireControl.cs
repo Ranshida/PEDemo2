@@ -183,9 +183,6 @@ public class HireControl : MonoBehaviour
         if (GC.CC.CEO != null)
             GC.CC.CEO.InfoDetail.AddHistory("招聘了" + ED.emp.Name);
         //HideOptions();
-
-        //扣手续费
-        GC.Money -= 100;
         Text_Hire.color = Color.black;
     }
 

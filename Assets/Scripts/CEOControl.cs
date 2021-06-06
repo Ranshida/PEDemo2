@@ -764,6 +764,8 @@ public class CEOControl : MonoBehaviour
                         e.InfoB.gameObject.GetComponent<Button>().interactable = false;
                         e.InfoB.Text_CoreMemberCD.gameObject.SetActive(true);
                     }
+                    e.InfoB.FireButton.gameObject.SetActive(false);
+                    e.InfoB.MoveButton.gameObject.SetActive(false);
                 }
             }
         }

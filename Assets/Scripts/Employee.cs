@@ -150,13 +150,13 @@ public class Employee
     public int Level = 0;
     public int ExtraExp = 0;//每回合获得的经验(特质19热情相关)
 
-    public int SalaryExtra = 0, Age, EventTime, ObeyTime, NoPromotionTime = 0, NoMarriageTime = 0,
+    public int SalaryExtra = 0, Age, ObeyTime, NoPromotionTime = 0, NoMarriageTime = 0,
         VacationTime = 0, SpyTime = 0, CoreMemberTime;//放假时间、间谍时间、核心成员说服CD时间
     public int ManagerExp;//作为高管的经验值，属下员工技能升级时经验+1，攒够10点获得一个技能点数
     public int Confidence;//信心，头脑风暴中的护盾
     public int SkillLimitTime;//头脑风暴中技能禁用的回合数
     public int SpecialTeamTime = 0;//特别小组在事件组结束后额外禁用的回合数
-    public int NewRelationTargetTime = 1;
+    public int NewRelationTargetTime = 6;
     public int Ambition = 0, NormalPerkNum = 0, ManagePerkNum = 0, ProfessionsNum = 0;//剩余志向
     public float ExtraSuccessRate = 0, SalaryMultiple = 1.0f;
     public int SelfEventCorrection = 0;//个人事件修正
@@ -238,7 +238,6 @@ public class Employee
         }
         CheckCharacter();
 
-        EventTime = Random.Range(7,10);
         Stamina = StaminaLimit;
         Mentality = MentalityLimit;
     }
@@ -263,7 +262,6 @@ public class Employee
                 Character[4] = Random.Range(0, 101);
         }
         CheckCharacter();
-        EventTime = 8;
 
         RandomOccupation();
 
@@ -645,79 +643,13 @@ public class Employee
             if (CoreMemberTime == 0)
                 InfoB.Text_CoreMemberCD.gameObject.SetActive(false);
         }
-
-        #region 旧时间判定
-        //EventTimePass();
-        ////假期计时
-        //if (VacationTime > 0)
-        //{
-        //    VacationTime -= 1;
-        //    Stamina += 2;
-        //    if (VacationTime == 0)
-        //        EndVacation();
-        //}
-        ////核心成员说服CD倒计时
-        //if (CoreMemberTime > 0)
-        //    CoreMemberTime -= 1;
-        ////间谍时间倒计时
-        //if (SpyTime > 0)
-        //{
-        //    SpyTime -= 1;
-        //    if (SpyTime == 0)
-        //        InfoDetail.Entity.SetFree();
-        //}
-
-        //if (CurrentDep == null)
-        //    NoPromotionTime += 1;
-        //else if (CurrentDep.building.Type != BuildingType.CEO办公室 || CurrentDep.building.Type != BuildingType.高管办公室)
-        //    NoPromotionTime += 1;
-
-        //if (Lover == null)
-        //    NoMarriageTime += 1;
-        //else if (FindRelation(Lover).LoveValue < 3)
-        //    NoMarriageTime += 1;
-
-        ////清除Items
-        //if (CurrentItems.Count > 0)
-        //{
-        //    List<EmpItem> DesItems = new List<EmpItem>();
-        //    for (int i = 0; i < CurrentItems.Count; i++)
-        //    {
-        //        if (CurrentItems[i].TimeLeft > 0)
-        //            CurrentItems[i].TimeLeft -= 1;
-        //        if (CurrentItems[i].TimeLeft == 0)
-        //            DesItems.Add(CurrentItems[i]);
-        //    }
-        //    for(int i = 0; i < DesItems.Count; i++)
-        //    {
-        //        CurrentItems.Remove(DesItems[i]);
-        //    }
-        //    DesItems.Clear();
-        //}
-        ////计算经验加成
-        //if(CurrentBuffs.Count > 0)
-        //{
-        //    List<EmpBuff> RemoveBonus = new List<EmpBuff>();
-        //    foreach(EmpBuff buff in CurrentBuffs)
-        //    {
-        //        if (buff.Type < 16)
-        //            GainExp(buff.Value, buff.Type);
-        //        buff.Time -= 1;
-        //        if (buff.Time <= 0)
-        //            RemoveBonus.Add(buff);
-        //    }
-        //    foreach(EmpBuff buff in RemoveBonus)
-        //    {
-        //        if (buff.Type == 16)
-        //        {
-        //            StaminaLimitExtra -= buff.Value;
-        //            Stamina += 0;
-        //        }
-        //        CurrentBuffs.Remove(buff);
-        //    }
-        //    RemoveBonus.Clear();
-        //}
-        #endregion
+        //寻找新关系发展目标
+        NewRelationTargetTime -= 1;
+        if (NewRelationTargetTime == 0)
+        {
+            FindRelationTarget();
+            NewRelationTargetTime = 6;
+        }
     }
 
     //主导情绪持续时间减少
@@ -734,24 +666,6 @@ public class Employee
                 InfoDetail.MainEmotion.gameObject.SetActive(false);
                 InfoDetail.Entity.EmotionImage.color = Color.white;
             }
-        }
-    }
-
-    //事件相关时间判定
-    public void EventTimePass()
-    {
-        EventTime -= 1;
-        if (EventTime == 0)
-        {
-            EventTime = Random.Range(7, 10);
-            //InfoDetail.Entity.AddEvent(EmpManager.Instance.RandomEventTarget(this, out int index), index);
-        }
-        //寻找新关系发展目标
-        NewRelationTargetTime -= 1;
-        if (NewRelationTargetTime == 0)
-        {
-            FindRelationTarget();
-            NewRelationTargetTime = 192;
         }
     }
 

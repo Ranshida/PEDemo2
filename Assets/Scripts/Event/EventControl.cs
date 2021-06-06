@@ -25,7 +25,7 @@ public class EventControl : MonoBehaviour
     {
         if (GC == null)
             GC = GameControl.Instance;
-        //CreateEventGroup(EventData.SpecialEventGroups2[0]);
+        CreateEventGroup(new EventGroup9());
     }
 
     //换高管投票检测

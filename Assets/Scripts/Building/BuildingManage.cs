@@ -492,7 +492,7 @@ public class BuildingManage : MonoBehaviour
     {
         if (GameControl.Instance.Money < 1000)
         {
-            Debug.Log("金钱不够");
+            GameControl.Instance.CreateMessage("金钱不足");
             return;
         }
         GameControl.Instance.Money -= 1000;

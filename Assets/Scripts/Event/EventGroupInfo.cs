@@ -11,7 +11,7 @@ public class EventGroupInfo : MonoBehaviour
     public int STTime = 0;
     public int FinishStage = 1; //已完成的阶段，完成抉择事件会增加，完成特殊指令会增加
     public float STSuccessRate = 0;//特别小组成功率
-    public bool SpecialTeamUsed = false;//是否已经添加了特别小组修正
+    public bool SpecialTeamUsed = false, BrainStormUsed = false;//是否已经添加了特别小组修正/是否进行过头脑风暴了
     private int PrepareTurnLeft = 0;
 
     public Text Text_GroupName1, Text_GroupName2, Text_GroupInfo1, Text_GroupInfo2, Text_Description, Text_SpecialTeamEffect,
@@ -40,6 +40,18 @@ public class EventGroupInfo : MonoBehaviour
         Text_GroupName1.text = TargetEventGroup.EventName;
         Text_GroupName2.text = TargetEventGroup.EventName;
         Text_PrepareTurn.text = "准备\n" + e.ExtraStage + "回合";
+        Text_SpecialTeamEffect.text = "成功效果:事件组-" + e.ST_TurnCorrection + "回合";
+        Text_BSEffect.text = "成功效果:事件组-" + e.BSTurnCorrection + "回合\n难度等级:" + e.BSBossLevel;
+        Text_ResourceEffect.text = "成功效果:事件组-" + e.ResourceTurnCorretion + "回合\n需求:";
+        if (e.MoneyRequest > 0)
+            Text_ResourceEffect.text += "金钱 " + e.MoneyRequest + " ";
+        if (e.ItemTypeRequest.Count > 0)
+        {
+            for (int i = 0; i < e.ItemTypeRequest.Count; i++)
+            {
+                Text_ResourceEffect.text += ItemData.Items[e.ItemTypeRequest[i] - 1].Name + "*" + e.ItemValueRequest[i];
+            }
+        }
         if (e.StageCount < 6)
         {
             for(int i = e.StageCount; i < 6; i++)
@@ -116,7 +128,8 @@ public class EventGroupInfo : MonoBehaviour
         if (SpecialTeamUsed == true)
         {
             BSButton.interactable = true;
-            UseResourceButton.interactable = true;
+            if (BrainStormUsed == true)
+                UseResourceButton.interactable = true;
         }
         STOperateButton.interactable = true;
         if (STTime > 0)
@@ -253,7 +266,6 @@ public class EventGroupInfo : MonoBehaviour
             {
                 SpecialTeamUsed = true;
                 BSButton.interactable = true;
-                UseResourceButton.interactable = true;
             }
             ResolveStage(TargetEventGroup.ST_TurnCorrection);
             QuestControl.Instance.Init("特别小组处理成功");

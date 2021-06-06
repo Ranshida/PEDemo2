@@ -972,7 +972,10 @@ public class DepControl : MonoBehaviour
 
         //自身是商战建筑时在DivisionControl中设定相关引用
         if (building.Type == BuildingType.商战建筑)
+        {
             DC.CWDep = this;
+            DivPanel.gameObject.SetActive(false);
+        }
     }
 
     //从现有的事业部中移除

@@ -18,14 +18,6 @@ public class UnlockAreaWindow : WindowRoot
         btn_Yes = transform.Find("Btn_Yes").GetComponent<Button>();
     }
 
-    protected override void UpdateSpecific()
-    {
-        if (GameControl.Instance.Money >= 2000)
-            btn_Yes.interactable = true;
-        else
-            btn_Yes.interactable = false;
-    }
-
     protected override void OnButton(string btnName)
     {
         switch (btnName)

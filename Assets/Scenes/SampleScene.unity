@@ -69831,8 +69831,6 @@ MonoBehaviour:
   BuildingPay: 0
   MobilizeExtraMent: 0
   ExtraDice: 0
-  TimeMultiply: 1
-  WorkEndEmpCount: 0
   EfficiencyExtraScience: 0
   ExtrafailRate: 0
   TotalSalaryMultiply: 1
@@ -69843,9 +69841,8 @@ MonoBehaviour:
   BaseDepExtraSuccessRate: 0
   SelectMode: 1
   AreaSelectMode: 1
-  Money: 6100
+  Money: 1000
   DoubleMobilizeCost: 0
-  MeetingBlockTime: 1
   MonthMeetingTime: 3
   WarTime: 3
   ForceTimePause: 0
@@ -69873,7 +69870,7 @@ MonoBehaviour:
   QC: {fileID: 1554920930}
   EmpEntityPrefab: {fileID: 3837058262487944403, guid: 7afffee593c48404bbfe6b9c5ebf6ef0,
     type: 3}
-  PerkInfoPrefab: {fileID: 4438930308979422489, guid: 956efecfd82a818459b8b9aacf56589a,
+  PerkInfoPrefab: {fileID: 4438930308979422489, guid: 68b2c9e7f52c2964aab5a6d43da61a8a,
     type: 3}
   PerkInfoPrefab_Company: {fileID: 4438930308979422489, guid: 68b2c9e7f52c2964aab5a6d43da61a8a,
     type: 3}
@@ -99308,7 +99305,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 161.55, y: 0}
   m_SizeDelta: {x: 141.41, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!1 &8580098923768609244
@@ -99402,7 +99399,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 161.55, y: 0}
   m_SizeDelta: {x: 321.94, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &8580098924163480940
@@ -99529,7 +99526,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 161.55, y: 0}
   m_SizeDelta: {x: 309.2, y: 0}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!1 &8580098924407679216

@@ -1920,12 +1920,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0e301dd2f07a4a4aa850fb9e25999e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  RandomEventNum: 0
   Stage: 1
   STEmpIndex: 0
   STTime: 0
   FinishStage: 0
   STSuccessRate: 0
   SpecialTeamUsed: 0
+  BrainStormUsed: 0
   Text_GroupName1: {fileID: 1832493546439848553}
   Text_GroupName2: {fileID: 1832493546639379659}
   Text_GroupInfo1: {fileID: 1832493545201586360}
@@ -1948,6 +1950,7 @@ MonoBehaviour:
   DetailPanel: {fileID: 1832493544871510371}
   StagePointer: {fileID: 1832493544690431158}
   TargetDivision: {fileID: 0}
+  TargetDep: {fileID: 0}
   STRemoveButtons:
   - {fileID: 2099203671622386392}
   - {fileID: 4206351848618754807}
@@ -3147,8 +3150,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 199.68, y: -1.82}
-  m_SizeDelta: {x: 204.57, y: 60.71}
+  m_AnchoredPosition: {x: 199.68, y: -5.46}
+  m_SizeDelta: {x: 204.57, y: 92.3}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &1832493545863253955
 CanvasRenderer:
@@ -3191,7 +3194,8 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u6210\u529F\u6548\u679C:\u4E8B\u4EF6\u7EC4-X\u56DE\u5408\n\u96BE\u5EA6\u7B49\u7EA7:\u91D1\u94B1-50"
+  m_Text: "\u6210\u529F\u6548\u679C:\u4E8B\u4EF6\u7EC4-X\u56DE\u5408\n\u9700\u6C42:\u91D1\u94B1100
+    \u300A\u67D0\u4E2A\u7269\u54C1\u7684\u540D\u5B57\u300B"
 --- !u!1 &1832493545905647462
 GameObject:
   m_ObjectHideFlags: 0
