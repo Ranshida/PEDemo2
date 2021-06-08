@@ -331,6 +331,8 @@ public class DivisionControl : MonoBehaviour
         {
             cost += dep.CalcCost(type);
         }
+        if (type == 1 && Manager != null)
+            cost += Manager.InfoDetail.CalcSalary();
         return cost;
     }
 

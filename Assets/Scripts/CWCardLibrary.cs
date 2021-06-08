@@ -15,11 +15,6 @@ public class CWCardLibrary : MonoBehaviour
 
     public WindowBaseControl WBC;
 
-    private void Start()
-    {
-        WBC = this.gameObject.GetComponent<WindowBaseControl>();
-    }
-
     //添加一张卡到库
     public void AddCWCard(CWCard card)
     {

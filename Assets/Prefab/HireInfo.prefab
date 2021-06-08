@@ -2356,7 +2356,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u5DE5\u8D44:10/\u56DE\u5408"
+  m_Text: "\u5DE5\u8D44:5/\u56DE\u5408"
 --- !u!1 &3547335230984216593
 GameObject:
   m_ObjectHideFlags: 0
@@ -2872,6 +2872,7 @@ MonoBehaviour:
   Text_Manage: {fileID: 221301217151652010}
   Text_Decision: {fileID: 2578408190290541907}
   Text_RTarget: {fileID: 0}
+  Text_CoreMemberCD: {fileID: 0}
   DetailInfo: {fileID: 0}
   EmotionInfoPrefab: {fileID: 0}
   MainEmotion: {fileID: 0}
@@ -5194,7 +5195,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\u624B\u7EED\u8D39:100"
+  m_Text: "\u624B\u7EED\u8D39:25"
 --- !u!1 &8236619631240716141
 GameObject:
   m_ObjectHideFlags: 0

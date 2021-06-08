@@ -106,8 +106,8 @@ public class EmpInfo : MonoBehaviour
 
     public void StartHire()
     {
-        if (GameControl.Instance.Money >= 100)
-            GameControl.Instance.Money -= 100;
+        if (GameControl.Instance.Money >= 25)
+            GameControl.Instance.Money -= 25;
         else
         {
             GameControl.Instance.CreateMessage("金钱不足");
@@ -397,8 +397,8 @@ public class EmpInfo : MonoBehaviour
     }
 
     public int CalcSalary()
-    {//暂时定为10
-        return 10;
+    {//暂时定为5
+        return 5;
     }
 
     void UpdateCharacterUI()

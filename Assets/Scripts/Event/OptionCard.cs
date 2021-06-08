@@ -6,7 +6,7 @@ public class OptionCard
 {
     public int Num = 0;
     public int Correction = 0;
-    public bool RandomPerk = false ;//是否会获得随机负面特质
+    public bool MentalityEffect = false ;//是否会获得随机负面特质
     public bool DebuffCard = false;//是否为负面抉择卡
     public bool AddDebuffPerk = false;//是否会产生负面状态
     public string Name, Description, Content;
@@ -70,9 +70,9 @@ public class OptionCard3 : OptionCard
         Num = 3;
         Correction = 3;
         Name = "煤气灯";
-        Description = "目标员工获得随机负面特质";
+        Description = "目标员工心力-20";
         Content = "你的脑子需要治疗一下";
-        RandomPerk = true;
+        MentalityEffect = true;
         DebuffCard = true;
     }
 }
@@ -97,9 +97,9 @@ public class OptionCard5 : OptionCard
         Num = 5;
         Correction = 3;
         Name = "推卸责任";
-        Description = "所在事业部获得状态“推卸责任”×1,目标员工获得随机负面特质";
+        Description = "所在事业部获得状态“推卸责任”×1,目标员工心力-20";
         Content = "把工作做成这样，还好意思提要求";
-        RandomPerk = true;
+        MentalityEffect = true;
         DebuffCard = true;
         AddDebuffPerk = true;
     }
@@ -120,9 +120,9 @@ public class OptionCard6 : OptionCard
         Num = 6;
         Correction = 2;
         Name = "转移话题";
-        Description = "所在事业部获得状态“推卸责任”×1,目标员工获得随机负面特质";
+        Description = "所在事业部获得状态“推卸责任”×1,目标员工心力-20";
         Content = "关于你说的这个事... 看！是不是要下雨了？";
-        RandomPerk = true;
+        MentalityEffect = true;
         DebuffCard = true;
     }
 }
@@ -134,9 +134,9 @@ public class OptionCard7 : OptionCard
         Num = 7;
         Correction = 4;
         Name = "捏造事实";
-        Description = "所在事业部获得状态“怀疑情绪”×1,目标员工获得随机负面特质";
+        Description = "所在事业部获得状态“怀疑情绪”×1,目标员工心力-20";
         Content = "我说的这个谎话啊，它是真的！";
-        RandomPerk = true;
+        MentalityEffect = true;
         DebuffCard = true;
         AddDebuffPerk = true;
     }

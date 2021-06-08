@@ -914,31 +914,40 @@ public class Employee
             InfoDetail.AddHistory(Name + "再次心力爆炸但是没有任何效果");
             return;
         }
-        int num = 0;
-        List<int> PosbNum = new List<int> { 93, 94, 95 };
-        foreach(int n in ExhaustedCount)
+        foreach (PerkInfo info in InfoDetail.PerksInfo)
         {
-            //获得开悟之后不产生负面特质
-            if (n == 96)
+            //开悟后不获得负面特质
+            if (info.CurrentPerk.Num == 96)
                 return;
-            if (PosbNum.Contains(n) == true)
-            {
-                PosbNum.Remove(n);
-            }
         }
-        if (Random.Range(0.0f, 1.0f) < 0.9f)
-            num = PosbNum[Random.Range(0, PosbNum.Count)];
-        else
-            num = 96;
-        if (num == 93)
-            InfoDetail.AddPerk(new Perk93());
-        else if (num == 94)
-            InfoDetail.AddPerk(new Perk94());
-        else if (num == 95)
-            InfoDetail.AddPerk(new Perk95());
-        else if (num == 96)
-            InfoDetail.AddPerk(new Perk96());
-        ExhaustedCount.Add(num);
+
+        InfoDetail.AddPerk(PerkData.DebuffPerkList[Random.Range(0, PerkData.DebuffPerkList.Count)].Clone());
+
+        //int num = 0;
+        //List<int> PosbNum = new List<int>();
+        //foreach(int n in ExhaustedCount)
+        //{
+        //    //获得开悟之后不产生负面特质
+        //    if (n == 96)
+        //        return;
+        //    if (PosbNum.Contains(n) == true)
+        //    {
+        //        PosbNum.Remove(n);
+        //    }
+        //}
+        //if (Random.Range(0.0f, 1.0f) < 0.9f)
+        //    num = PosbNum[Random.Range(0, PosbNum.Count)];
+        //else
+        //    num = 96;
+        //if (num == 93)
+        //    InfoDetail.AddPerk(new Perk93());
+        //else if (num == 94)
+        //    InfoDetail.AddPerk(new Perk94());
+        //else if (num == 95)
+        //    InfoDetail.AddPerk(new Perk95());
+        //else if (num == 96)
+        //    InfoDetail.AddPerk(new Perk96());
+        //ExhaustedCount.Add(num);
         InfoDetail.GC.CreateMessage(Name + "心力爆炸,获得了" + InfoDetail.PerksInfo[InfoDetail.PerksInfo.Count - 1].CurrentPerk.Name);
         InfoDetail.AddHistory(Name + "心力爆炸,获得了" + InfoDetail.PerksInfo[InfoDetail.PerksInfo.Count - 1].CurrentPerk.Name);
     }

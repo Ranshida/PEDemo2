@@ -69841,7 +69841,7 @@ MonoBehaviour:
   BaseDepExtraSuccessRate: 0
   SelectMode: 1
   AreaSelectMode: 1
-  Money: 1000
+  Money: 0
   DoubleMobilizeCost: 0
   MonthMeetingTime: 3
   WarTime: 3
@@ -69870,7 +69870,7 @@ MonoBehaviour:
   QC: {fileID: 1554920930}
   EmpEntityPrefab: {fileID: 3837058262487944403, guid: 7afffee593c48404bbfe6b9c5ebf6ef0,
     type: 3}
-  PerkInfoPrefab: {fileID: 4438930308979422489, guid: 68b2c9e7f52c2964aab5a6d43da61a8a,
+  PerkInfoPrefab: {fileID: 4438930308979422489, guid: 956efecfd82a818459b8b9aacf56589a,
     type: 3}
   PerkInfoPrefab_Company: {fileID: 4438930308979422489, guid: 68b2c9e7f52c2964aab5a6d43da61a8a,
     type: 3}

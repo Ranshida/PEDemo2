@@ -133,8 +133,11 @@ public class OptionCardInfo : MonoBehaviour
 
         CEvent.Text_OptionCardTip.text = "抽牌堆剩余:" + CEvent.Options.Count + "张";
 
+        //暂时不加负面特质效果
+        return;
+
         //有随机负面特质效果的抉择卡随机一个特质
-        if (OC.RandomPerk == true)
+        if (OC.MentalityEffect == true)
         {
             RandomPerk();
         }
@@ -152,6 +155,11 @@ public class OptionCardInfo : MonoBehaviour
     //为目标提供负面特质
     public void TargetAddPerk(Employee emp)
     {
+        if (OC.MentalityEffect == true && emp != null)
+        {
+            emp.Mentality -= 20;
+            return;
+        }
         if (ProvidePerk == null || emp == null)
             return;
 

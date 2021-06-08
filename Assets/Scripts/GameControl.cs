@@ -131,6 +131,8 @@ public class GameControl : MonoBehaviour
     {
         UpdateResourceInfo();
         CWCL.AddCWCard(new CWCard1());
+        CurrentDivisions[0].CWCards[0].StartReplace();
+        CWCL.ReplaceCard(CWCL.CurrentCards[0]);
         //OCL.AddStaticOptions(new OptionCard11());
         //OCL.AddStaticOptions(new OptionCard13());
         //OCL.AddStaticOptions(new OptionCard9());
@@ -179,7 +181,7 @@ public class GameControl : MonoBehaviour
         {
             MoneyCalcTimer = 0;
         }
-        Text_Money.text = "金钱:" + Money +"\n" + "    " + (CalcCost() * -1 + Income) + "/月";
+        Text_Money.text = "金钱:" + Money +"\n" + "    " + (CalcCost() * -1 + Income + 50) + "/月";
     }
 
     public void NextTurn()
@@ -233,7 +235,7 @@ public class GameControl : MonoBehaviour
         int value = CalcCost();
         if (value > 0)
             Money -= value;
-        Money += Income;
+        Money += Income + 50;
         Turn += 1;
         MonthMeetingTime -= 1;
         WarTime -= 1;

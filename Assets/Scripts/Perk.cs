@@ -2925,12 +2925,12 @@ public class Perk116 : Perk
     }
 }
 
-//亲自指导
+//推卸责任
 public class Perk117 : Perk
 {
     public Perk117() : base()
     {
-        Name = "亲自指导";
+        Name = "推卸责任";
         Description = "事业部信念-10";
         TimeLeft = 6;
         Num = 117;
@@ -3144,7 +3144,7 @@ public class Perk126 : Perk
     {
         Name = "业务生疏";
         Description = "事业部效率-5";
-        TimeLeft = 6;
+        TimeLeft = 3;
         Num = 126;
         TempValue1 = -5;
         perkColor = PerkColor.Orange;
