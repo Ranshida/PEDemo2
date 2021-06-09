@@ -1518,17 +1518,18 @@ public class Perk56 : Perk
         TimeLeft = 6;
         Num = 56;
         canStack = true;
+        TempValue3 = -30;
         perkColor = PerkColor.Orange;
     }
     public override void ImmEffect()
     {
-        TargetDiv.Faith -= 30;
+        TargetDiv.Faith += TempValue3;
     }
 
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDiv.Faith += 30;
+        TargetDiv.Faith -= TempValue3;
     }
 }
 
@@ -1542,17 +1543,18 @@ public class Perk57 : Perk
         TimeLeft = 6;
         Num = 57;
         canStack = true;
+        TempValue3 = -30;
         perkColor = PerkColor.Orange;
     }
     public override void ImmEffect()
     {
-        TargetDiv.Faith -= 30;
+        TargetDiv.Faith += TempValue3;
     }
 
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDiv.Faith += 30;
+        TargetDiv.Faith -= TempValue3;
     }
 }
 
@@ -1566,17 +1568,18 @@ public class Perk58 : Perk
         TimeLeft = 6; 
         Num = 58;
         canStack = true;
+        TempValue3 = -30;
         perkColor = PerkColor.Orange;
     }
     public override void ImmEffect()
     {
-        TargetDiv.Faith -= 30;
+        TargetDiv.Faith += TempValue3;
     }
 
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDiv.Faith += 30;
+        TargetDiv.Faith -= TempValue3;
     }
 }
 
@@ -1833,17 +1836,18 @@ public class Perk69 : Perk
         TimeLeft = 6;
         Num = 69;
         canStack = true;
+        TempValue3 = 30;
         perkColor = PerkColor.Orange;
     }
     public override void ImmEffect()
     {
-        TargetDiv.Faith += 30;
+        TargetDiv.Faith += TempValue3;
     }
 
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDiv.Faith -= 30;
+        TargetDiv.Faith -= TempValue3;
     }
 }
 
@@ -1857,17 +1861,18 @@ public class Perk70 : Perk
         TimeLeft = 6;
         Num = 70;
         canStack = true;
+        TempValue3 = 30;
         perkColor = PerkColor.Orange;
     }
     public override void ImmEffect()
     {
-        TargetDiv.Faith += 30;
+        TargetDiv.Faith += TempValue3;
     }
 
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDiv.Faith -= 30;
+        TargetDiv.Faith -= TempValue3;
     }
 }
 
@@ -1953,17 +1958,18 @@ public class Perk74 : Perk
         TimeLeft = 6;
         Num = 74;
         canStack = true;
+        TempValue3 = 30;
         perkColor = PerkColor.Orange;
     }
     public override void ImmEffect()
     {
-        TargetDiv.Faith += 30;
+        TargetDiv.Faith += TempValue3;
     }
 
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDiv.Faith -= 30;
+        TargetDiv.Faith -= TempValue3;
     }
 }
 
@@ -2000,17 +2006,18 @@ public class Perk76 : Perk
         TimeLeft = 6;//特质
         Num = 76;
         canStack = true;
+        TempValue3 = -30;
         perkColor = PerkColor.Orange;
     }
     public override void ImmEffect()
     {
-        TargetDiv.Faith -= 30;
+        TargetDiv.Faith += TempValue3;
     }
 
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDiv.Faith += 30;
+        TargetDiv.Faith -= TempValue3;
     }
 }
 
@@ -2069,17 +2076,18 @@ public class Perk79 : Perk
         TimeLeft = 6;
         Num = 79;
         canStack = true;
+        TempValue3 = -30;
         perkColor = PerkColor.Orange;
     }
     public override void ImmEffect()
     {
-        TargetDiv.Faith -= 30;
+        TargetDiv.Faith += TempValue3;
     }
 
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDiv.Faith += 30;
+        TargetDiv.Faith -= TempValue3;
     }
 }
 
@@ -2161,17 +2169,18 @@ public class Perk83 : Perk
         TimeLeft = 6;
         Num = 83;
         canStack = true;
+        TempValue3 = -30;
         perkColor = PerkColor.Orange;
     }
     public override void ImmEffect()
     {
-        TargetDiv.Faith -= 30;
+        TargetDiv.Faith += TempValue3;
     }
 
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDiv.Faith += 30;
+        TargetDiv.Faith -= TempValue3;
     }
 }
 
@@ -2229,17 +2238,18 @@ public class Perk86 : Perk
         TimeLeft = 6;
         Num = 86;
         canStack = true;
+        TempValue3 = -30;
         perkColor = PerkColor.Orange;
     }
     public override void ImmEffect()
     {
-        TargetDiv.Faith -= 30;
+        TargetDiv.Faith += TempValue3;
     }
 
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDiv.Faith += 30;
+        TargetDiv.Faith -= TempValue3;
     }
 }
 
@@ -2253,17 +2263,18 @@ public class Perk87 : Perk
         TimeLeft = 6;
         Num = 87;
         canStack = true;
+        TempValue3 = -30;
         perkColor = PerkColor.Orange;
     }
     public override void ImmEffect()
     {
-        TargetDiv.Faith -= 30;
+        TargetDiv.Faith += TempValue3;
     }
 
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDiv.Faith += 30;
+        TargetDiv.Faith -= TempValue3;
     }
 }
 
@@ -2345,18 +2356,19 @@ public class Perk91 : Perk
         TimeLeft = -1;//特质
         Num = 91;
         canStack = true;
+        TempValue3 = -20;
         perkColor = PerkColor.Orange;
     }
 
     public override void ImmEffect()
     {
-        TargetDiv.Faith -= 20;
+        TargetDiv.Faith += TempValue3;
     }
 
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDiv.Faith += 20;
+        TargetDiv.Faith -= TempValue3;
     }
 }
 
@@ -2707,7 +2719,7 @@ public class Perk105 : Perk
         TimeLeft = -1;
         Num = 105;
         canStack = true;
-        perkColor = PerkColor.Orange;
+        perkColor = PerkColor.None;
     }
     public override void ImmEffect()
     {
@@ -2935,16 +2947,17 @@ public class Perk117 : Perk
         TimeLeft = 6;
         Num = 117;
         canStack = true;
+        TempValue3 = -10;
         perkColor = PerkColor.Orange;
     }
     public override void ImmEffect()
     {
-        TargetDiv.Faith -= 10;
+        TargetDiv.Faith += TempValue3;
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDiv.Faith += 10;
+        TargetDiv.Faith -= TempValue3;
     }
 }
 
@@ -2958,16 +2971,17 @@ public class Perk118 : Perk
         TimeLeft = 9;
         Num = 118;
         canStack = true;
+        TempValue3 = -15;
         perkColor = PerkColor.Orange;
     }
     public override void ImmEffect()
     {
-        TargetDiv.Faith -= 15;
+        TargetDiv.Faith += TempValue3;
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDiv.Faith += 15;
+        TargetDiv.Faith -= TempValue3;
     }
 }
 
@@ -3031,18 +3045,21 @@ public class Perk121 : Perk
         TimeLeft = 3;
         Num = 121;
         canStack = false;
+        TempValue3 = 15;
+        TempValue1 = 1;
         perkColor = PerkColor.Orange;
     }
 
     public override void ImmEffect()
     {
-        Description = "信念+" + (TempValue1 * 15);
-        TargetDiv.Faith += 15 * TempValue1;
+        TempValue3 = TempValue1 * 15;
+        Description = "信念+" + TempValue3;
+        TargetDiv.Faith += TempValue3;
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDiv.Faith -= 15 * TempValue1;
+        TargetDiv.Faith -= TempValue3;
     }
 }
 
@@ -3057,18 +3074,20 @@ public class Perk122 : Perk
         Num = 122;
         canStack = false;
         TempValue1 = 1;
+        TempValue2 = 1;
         perkColor = PerkColor.Grey;
     }
 
     public override void ImmEffect()
     {
-        TargetDiv.Efficiency += TempValue1;
-        Description = "事业部效率+" + TempValue1;
+        TempValue2 = TempValue1 * 1;
+        TargetDiv.Efficiency += TempValue2;
+        Description = "事业部效率+" + TempValue2;
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDiv.Efficiency -= TempValue1;
+        TargetDiv.Efficiency -= TempValue2;
     }
 }
 
@@ -3108,19 +3127,21 @@ public class Perk124 : Perk
         TimeLeft = 3;
         Num = 124;
         canStack = false;
+        TempValue3 = -30;
         TempValue1 = 1;
         perkColor = PerkColor.Orange;
     }
 
     public override void ImmEffect()
     {
-        TargetDiv.Faith -= TempValue1 * 30;
-        Description = "信念-" + (TempValue1 * 30);
+        TempValue3 = -30 * TempValue1;
+        TargetDiv.Faith += TempValue3;
+        Description = "信念" + TempValue3;
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDiv.Faith += (TempValue1 * 30);
+        TargetDiv.Faith -= TempValue3;
     }
 }
 
@@ -3130,14 +3151,14 @@ public class Perk125 : Perk
     public Perk125() : base()
     {
         Name = "领导指令";
-        Description = "部门内全部员工每周结束时体力-10";
+        Description = "部门内全部员工每周结束时体力-10(效果没加，描述是临时放着的)";
         TimeLeft = 3;
         Num = 125;
         canStack = false;
     }
 }
 
-//领导指令
+//业务生疏
 public class Perk126 : Perk
 {
     public Perk126() : base()
@@ -3147,7 +3168,7 @@ public class Perk126 : Perk
         TimeLeft = 3;
         Num = 126;
         TempValue1 = -5;
-        perkColor = PerkColor.Orange;
+        perkColor = PerkColor.Grey;
         canStack = false;
     }
 

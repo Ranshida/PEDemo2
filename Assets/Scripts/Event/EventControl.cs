@@ -28,6 +28,12 @@ public class EventControl : MonoBehaviour
         //CreateEventGroup(new EventGroup1());
     }
 
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Z))
+            CreateEventGroup(new EventGroup9());
+    }
+
     //换高管投票检测
     public bool ManagerVoteCheck(Employee emp, bool Dismissal = false, bool Fire = false)
     {

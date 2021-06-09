@@ -110,6 +110,7 @@ public class CrystalArea : MonoBehaviour
         {
             Image img = item.Find("Crystal").GetComponent<Image>();
             img.gameObject.SetActive(false);
+            CrystalDict[item] = CrystalType.None;
         }
     }
 
@@ -142,7 +143,7 @@ public class CrystalArea : MonoBehaviour
             {
                 types.Add(item.Value);
             }
-        }
+        }        
         parentPanel.Manager.SettleArea(types, Area);
     }
 

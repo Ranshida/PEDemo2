@@ -90,7 +90,7 @@ public class DivisionControl : MonoBehaviour
             else 
                 Text_Manager.text = "当前高管:无";
             int empCost = CalcCost(1), depCost = CalcCost(2);
-            Text_Cost.text = "成本:" + (empCost + depCost + ExtraCost) + "/回合\n\n员工工资:" + empCost + "/回合\n建筑维护费:" + depCost + "/回合";
+            Text_Cost.text = "成本:" + (empCost + depCost + ExtraCost) + "/回合\n额外成本: " + ExtraCost + "/回合\n员工工资:" + empCost + "/回合\n建筑维护费:" + depCost + "/回合";
 
             //效率和工作状态调填充
 
@@ -417,7 +417,7 @@ public class DivisionControl : MonoBehaviour
 
     public void SetWorkStatusDetail()
     {
-        string content = "";
+        string content = "基础值:4\n";
         foreach (PerkInfo info in CurrentPerks)
         {
             if (info.CurrentPerk.perkColor == PerkColor.White)
@@ -474,7 +474,7 @@ public class DivisionControl : MonoBehaviour
 
     public void SetEfficiencyDetail()
     {
-        string content = "";
+        string content = "基础值:4\n";
         foreach (PerkInfo info in CurrentPerks)
         {
             if (info.CurrentPerk.perkColor == PerkColor.Grey)

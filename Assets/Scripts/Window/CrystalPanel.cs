@@ -202,7 +202,7 @@ public class CrystalPanel : WindowRoot
         {
             item.Settle();
         }
-        //约会结束时如果之前没有手动打开水晶面板时再关闭
+        //月会结束时如果之前没有手动打开水晶面板时再关闭
         if (toggle_ShowPanel.isOn == false)
             Areas.gameObject.SetActive(false);
         foreach (CompanyItem item in GameControl.Instance.Items)
