@@ -1087,6 +1087,7 @@ MonoBehaviour:
   Text_Condition: {fileID: 6857258944112416671}
   Text_Tip: {fileID: 251539538634031073}
   Text_OptionCardTip: {fileID: 7409028699134088897}
+  Text_Description: {fileID: 6857258944635885818}
   OptionContent: {fileID: 6857258945541279652}
   OptionPrefab: {fileID: 6896780739696359035, guid: cbad827db3461764eb1a7b519d4e38d6,
     type: 3}

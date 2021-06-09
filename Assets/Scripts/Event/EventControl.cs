@@ -464,6 +464,7 @@ public class EventControl : MonoBehaviour
             }
             foreach(EventGroupInfo egi in FinishList)
             {
+                egi.STExtraTime();
                 CurrentEventGroups.Remove(egi);
                 Destroy(egi.DetailPanel.gameObject);
                 Destroy(egi.gameObject);

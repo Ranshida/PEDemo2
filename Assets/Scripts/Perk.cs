@@ -3167,20 +3167,20 @@ public class Perk126 : Perk
         Description = "事业部效率-5";
         TimeLeft = 3;
         Num = 126;
-        TempValue1 = -5;
+        TempValue2 = -5;
         perkColor = PerkColor.Grey;
         canStack = false;
     }
 
     public override void ImmEffect()
     {
-        TargetDiv.Efficiency += TempValue1;
+        TargetDiv.Efficiency += TempValue2;
     }
 
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDiv.Efficiency -= TempValue1;
+        TargetDiv.Efficiency -= TempValue2;
     }
 }
 

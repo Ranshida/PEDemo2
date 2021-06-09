@@ -12,13 +12,13 @@ public class EventGroupInfo : MonoBehaviour
     public int FinishStage = 1; //已完成的阶段，完成抉择事件会增加，完成特殊指令会增加
     public float STSuccessRate = 0;//特别小组成功率
     public bool SpecialTeamUsed = false, BrainStormUsed = false;//是否已经添加了特别小组修正/是否进行过头脑风暴了
-    private int PrepareTurnLeft = 0;
+    private int PrepareTurnLeft = 0, STEndTurn;
 
     public Text Text_GroupName1, Text_GroupName2, Text_GroupInfo1, Text_GroupInfo2, Text_Description, Text_SpecialTeamEffect,
         Text_BSEffect, Text_ResourceEffect, Text_FailResult, Text_PrepareTurn, Text_STRateDetail, Text_STStatus, Text_STRate;
     public EventControl EC;
     public Button SpecialTeamButton, BSButton, UseResourceButton, STOperateButton;
-    public GameObject SpecialTeamPanel;
+    public GameObject SpecialTeamPanel, STEndPanel;
     public Transform DetailPanel, StagePointer;
     public EventGroup TargetEventGroup;
     public Employee Target;
@@ -69,10 +69,11 @@ public class EventGroupInfo : MonoBehaviour
         //先判断是否处于准备阶段或下一阶段已经完成,是的话直接继续
         if (PrepareTurnLeft > 0 || Stage <= FinishStage)
         {
+            //正面事件组的话，如果下一阶段已完成则直接输出成功结果
             if (Stage <= FinishStage && TargetEventGroup.DebuffEvent == false)
                 TargetEventGroup.StartEvent(Target, 1000, null, this);
+
             NextStage();
-            STExtraTime();
             EC.ChoiceEventCheck(true);
         }
         //否则创建相应抉择事件
@@ -132,14 +133,20 @@ public class EventGroupInfo : MonoBehaviour
                 UseResourceButton.interactable = true;
         }
         STOperateButton.interactable = true;
+
+        //特别小组时间减少
         if (STTime > 0)
         {
             STTime -= 1;
+            //3回合事件结束后重置
             if (STTime == 0)
             {
                 for(int i = 0; i < 3; i++)
                 {
                     STRemoveButtons[i].interactable = true;
+                    STRemoveButtons[i].gameObject.SetActive(false);
+                    if (STMembers[i] != null)
+                        RemoveSTMember(i);
                 }
                 STOperateButton.GetComponentInChildren<Text>().text = "派遣并处理事件";
             }
@@ -245,6 +252,17 @@ public class EventGroupInfo : MonoBehaviour
                     emp.SpecialTeamTime = STTime;
             }
         }
+        else
+        {
+            foreach (Employee emp in STMembers)
+            {
+                if (emp != null)
+                {
+                    emp.SpecialTeamTime = 0;
+                    emp.inSpecialTeam = false;
+                }
+            }
+        }
     }
 
     //开始派遣/处理事件
@@ -253,11 +271,14 @@ public class EventGroupInfo : MonoBehaviour
         CheckSTStatus();
         if (STTime == 0)
         {
+            STTime = 3;
             for(int i = 0; i < 3; i++)
             {
+                STRemoveButtons[i].gameObject.SetActive(true);
                 STRemoveButtons[i].interactable = false;
             }
             STOperateButton.GetComponentInChildren<Text>().text = "处理事件";
+            STEndTurn = EC.GC.Turn + 3;
         }
         STOperateButton.interactable = false;
         if (Random.Range(0.0f, 1.0f) < STSuccessRate)
@@ -268,6 +289,7 @@ public class EventGroupInfo : MonoBehaviour
                 BSButton.interactable = true;
             }
             ResolveStage(TargetEventGroup.ST_TurnCorrection);
+            STEndPanel.SetActive(true);
             QuestControl.Instance.Init("特别小组处理成功");
         }
         else
@@ -399,12 +421,10 @@ public class EventGroupInfo : MonoBehaviour
             Text_STRateDetail.text += "<color=gray>特质“救火队员” +10%/人\n</color>";
 
         }
-
-        Text_STStatus.text = "被派遣调研的员工直到第" + (EC.GC.Turn + 3) + "回合不能调整岗位\n";
         if (STTime == 0)
-            Text_STStatus.text += "当前状态:未派遣";
+            Text_STStatus.text = "被派遣调研的员工直到第" + (EC.GC.Turn + 3) + "回合不能调整岗位\n当前状态:未派遣";
         else
-            Text_STStatus.text += "当前状态:已派遣-剩余" + STTime + "回合";
+            Text_STStatus.text = "被派遣调研的员工直到第" + STEndTurn + "回合不能调整岗位\n当前状态:已派遣-剩余" + STTime + "回合";
 
         Text_STRate.text = "成功率 " + (STSuccessRate * 100) + "%";
     }

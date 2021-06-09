@@ -471,6 +471,7 @@ public class EventC1 : Event
     protected override void SuccessResult(Employee emp, Employee target = null)
     {
         GameControl.Instance.BSC.EventSolved();
+        QuestControl.Instance.Init("判定成功，未产生负面效果");
         //随机文案
         int posbContent = Random.Range(1, DescriptionCount + 1);
         emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
@@ -479,7 +480,7 @@ public class EventC1 : Event
     protected override void FailResult(Employee emp, Employee target = null)
     {
         GameControl.Instance.AddEventProgress(1, true);
-
+        QuestControl.Instance.Init("判定失败，公司内产生不满 x1");
         //随机文案
         int posbContent = Random.Range(1, DescriptionCount + 1);
         emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
@@ -487,19 +488,29 @@ public class EventC1 : Event
 
     public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
     {
-        string content = "";
+        string content;
         SetNames(Emp, targetEmp);
+        content = EventDescription(Emp, targetEmp, index);
         if (success == true)
         {
             if (index == 1)
-                content = SelfName + "在工作中处处碰壁，感到烦恼缠身。因此发来邮件，希望老板能帮助自己改善工作表现...，但是没有效果";
+                content += "，但是没有效果";
         }
         else
         {
             if (index == 1)
-                content = SelfName + "在工作中处处碰壁，感到烦恼缠身。因此发来邮件，希望老板能帮助自己改善工作表现..." + FailDescription;
+                content += FailDescription;
 
         }
+        return content;
+    }
+
+    public override string EventDescription(Employee Emp, Employee targetEmp, int index, EventGroupInfo egi = null)
+    {
+        string content = "";
+        SetNames(Emp, targetEmp);
+        if (index == 1)
+            content = SelfName + "在工作中处处碰壁，感到烦恼缠身。因此发来邮件，希望老板能帮助自己改善工作表现...";
         return content;
     }
 }
@@ -522,6 +533,7 @@ public class EventC2 : Event
     protected override void SuccessResult(Employee emp, Employee target = null)
     {
         GameControl.Instance.BSC.EventSolved();
+        QuestControl.Instance.Init("判定成功，公司内产生认同 x1");
         //随机文案
         int posbContent = Random.Range(1, DescriptionCount + 1);
         emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
@@ -530,7 +542,7 @@ public class EventC2 : Event
     protected override void FailResult(Employee emp, Employee target = null)
     {
         GameControl.Instance.AddEventProgress(1, false);
-
+        QuestControl.Instance.Init("判定失败，未产生效果");
         //随机文案
         int posbContent = Random.Range(1, DescriptionCount + 1);
         emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
@@ -540,17 +552,27 @@ public class EventC2 : Event
     {
         string content = "";
         SetNames(Emp, targetEmp);
+        content = EventDescription(Emp, targetEmp, index);
         if (success == true)
         {
             if (index == 1)
-                content = SelfName + "已经连续多次工作没有被驳回！项目进展非常迅速！" + SuccessDescription;
+                content += SuccessDescription;
         }
         else
         {
             if (index == 1)
-                content = SelfName + "已经连续多次工作没有被驳回！项目进展非常迅速！但是没有效果";
+                content += "但是没有效果";
 
         }
+        return content;
+    }
+
+    public override string EventDescription(Employee Emp, Employee targetEmp, int index, EventGroupInfo egi = null)
+    {
+        string content = "";
+        SetNames(Emp, targetEmp);
+        if (index == 1)
+            content = SelfName + "已经连续多次工作没有被驳回！项目进展非常迅速！";
         return content;
     }
 }
@@ -573,6 +595,7 @@ public class EventC3 : Event
     protected override void SuccessResult(Employee emp, Employee target = null)
     {
         GameControl.Instance.BSC.EventSolved();
+        QuestControl.Instance.Init("判定成功，公司内产生认同 x1");
         //随机文案
         int posbContent = Random.Range(1, DescriptionCount + 1);
         emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
@@ -581,7 +604,7 @@ public class EventC3 : Event
     protected override void FailResult(Employee emp, Employee target = null)
     {
         GameControl.Instance.AddEventProgress(1, false);
-
+        QuestControl.Instance.Init("判定失败，未产生效果");
         //随机文案
         int posbContent = Random.Range(1, DescriptionCount + 1);
         emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
@@ -591,17 +614,27 @@ public class EventC3 : Event
     {
         string content = "";
         SetNames(Emp, targetEmp);
+        content = EventDescription(Emp, targetEmp, index);
         if (success == true)
         {
             if (index == 1)
-                content = SelfName + "在统一了方法论之后使自己的效率翻倍了！成堆的已完成的工作让他感受到了每一滴汗水的价值！" + SuccessDescription;
+                content += SuccessDescription;
         }
         else
         {
             if (index == 1)
-                content = SelfName + "在统一了方法论之后使自己的效率翻倍了！成堆的已完成的工作让他感受到了每一滴汗水的价值！但是没有效果";
+                content += "但是没有效果";
 
         }
+        return content;
+    }
+
+    public override string EventDescription(Employee Emp, Employee targetEmp, int index, EventGroupInfo egi = null)
+    {
+        string content = "";
+        SetNames(Emp, targetEmp);
+        if (index == 1)
+            content = SelfName + "在统一了方法论之后使自己的效率翻倍了！成堆的已完成的工作让他感受到了每一滴汗水的价值！";
         return content;
     }
 }
@@ -624,6 +657,7 @@ public class EventC4 : Event
     protected override void SuccessResult(Employee emp, Employee target = null)
     {
         GameControl.Instance.BSC.EventSolved();
+        QuestControl.Instance.Init("判定成功，未产生负面效果");
         //随机文案
         int posbContent = Random.Range(1, DescriptionCount + 1);
         emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
@@ -632,7 +666,7 @@ public class EventC4 : Event
     protected override void FailResult(Employee emp, Employee target = null)
     {
         GameControl.Instance.AddEventProgress(1, true);
-
+        QuestControl.Instance.Init("判定失败，公司内产生不满 x1");
         //随机文案
         int posbContent = Random.Range(1, DescriptionCount + 1);
         emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
@@ -642,17 +676,27 @@ public class EventC4 : Event
     {
         string content = "";
         SetNames(Emp, targetEmp);
+        content = EventDescription(Emp, targetEmp, index);
         if (success == true)
         {
             if (index == 1)
-                content = SelfName + "对自己的工作感到非常困惑，总是在抱怨自己不知道自己在做什么…，但是没有效果";
+                content += "但是没有效果";
         }
         else
         {
             if (index == 1)
-                content = SelfName + "对自己的工作感到非常困惑，总是在抱怨自己不知道自己在做什么…" + FailDescription;
+                content += FailDescription;
 
         }
+        return content;
+    }
+
+    public override string EventDescription(Employee Emp, Employee targetEmp, int index, EventGroupInfo egi = null)
+    {
+        string content = "";
+        SetNames(Emp, targetEmp);
+        if (index == 1)
+            content = SelfName + SelfName + "对自己的工作感到非常困惑，总是在抱怨自己不知道自己在做什么…";
         return content;
     }
 }
@@ -675,6 +719,7 @@ public class EventC5 : Event
     protected override void SuccessResult(Employee emp, Employee target = null)
     {
         GameControl.Instance.BSC.EventSolved();
+        QuestControl.Instance.Init("判定成功，未产生负面效果");
         //随机文案
         int posbContent = Random.Range(1, DescriptionCount + 1);
         emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
@@ -683,7 +728,7 @@ public class EventC5 : Event
     protected override void FailResult(Employee emp, Employee target = null)
     {
         GameControl.Instance.AddEventProgress(1, true);
-
+        QuestControl.Instance.Init("判定失败，公司内产生不满 x1");
         //随机文案
         int posbContent = Random.Range(1, DescriptionCount + 1);
         emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
@@ -693,17 +738,27 @@ public class EventC5 : Event
     {
         string content = "";
         SetNames(Emp, targetEmp);
+        content = EventDescription(Emp, targetEmp, index);
         if (success == true)
         {
             if (index == 1)
-                content = SelfName + "感到非常耻辱，他觉得都是同事的错才会导致他犯下这样的低级错误，但是没有效果";
+                content += "，但是没有效果";
         }
         else
         {
             if (index == 1)
-                content = SelfName + "感到非常耻辱，他觉得都是同事的错才会导致他犯下这样的低级错误" + FailDescription;
+                content += FailDescription;
 
         }
+        return content;
+    }
+
+    public override string EventDescription(Employee Emp, Employee targetEmp, int index, EventGroupInfo egi = null)
+    {
+        string content = "";
+        SetNames(Emp, targetEmp);
+        if (index == 1)
+            content = SelfName + "感到非常耻辱，他觉得都是同事的错才会导致他犯下这样的低级错误";
         return content;
     }
 }

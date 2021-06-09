@@ -124,7 +124,6 @@ public class ChoiceEvent : MonoBehaviour
                 EGI.UpdateUI();
             }
             CurrentEvent.StartEvent(Self, TotalCorrection, null, EGI);
-            EGI.STExtraTime();
             EGI.FinishStage += 1;
             EGI.NextStage();
             EC.ChoiceEventCheck(true);
@@ -153,6 +152,7 @@ public class ChoiceEvent : MonoBehaviour
                 Text_EventResult.text = "失败效果:" + e.ResultDescription(emp, null, info.RandomEventNum);
             else
                 Text_EventResult.text = "成功效果:" + e.ResultDescription(emp, null, info.RandomEventNum);
+            Text_EventDescrition.text = e.EventDescription(emp, null, info.RandomEventNum, info);
         }
         else
         {
@@ -161,6 +161,7 @@ public class ChoiceEvent : MonoBehaviour
                 Text_EventResult.text = "成功效果:" + e.SuccessDescription;
             else
                 Text_EventResult.text = "失败效果:" + e.FailDescription;
+            Text_EventDescrition.text = e.EventDescription(emp, null, 1);
         }
         CheckSpecialCorrection();
 
