@@ -905,8 +905,8 @@ public class Employee
                 GameControl.Instance.EC.StartSpecialEvent();
             };
             QuestControl.Instance.Init(Name + "心力爆炸产生了崩溃，向您索赔金钱500，如果不接受，该员工将会离职", AgreeAction, RefuseAction);
+            GameControl.Instance.EC.ExhaustedCount += 1;
         }
-        GameControl.Instance.EC.ExhaustedCount += 1;
         Mentality += 50;
         if (ExhaustedCount.Count >= 4)
         {
