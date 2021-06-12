@@ -6986,6 +6986,7 @@ MonoBehaviour:
   Text_Manage: {fileID: 2184439662620227194}
   Text_Decision: {fileID: 7138886245543245419}
   Text_RTarget: {fileID: 2707504390543549620}
+  Text_CoreMemberCD: {fileID: 0}
   DetailInfo: {fileID: 2202406373417226232}
   EmotionInfoPrefab: {fileID: 407121461600760515, guid: ffe0369b6c01d0744970956d3e336847,
     type: 3}

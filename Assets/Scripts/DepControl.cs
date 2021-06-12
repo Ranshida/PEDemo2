@@ -416,6 +416,9 @@ public class DepControl : MonoBehaviour
             }
         }
 
+        if (CurrentEmps.Count == 0)
+            weak = true;
+
         //检测削弱效果和等级效果
         if (weak != isWeakend)
         {
@@ -976,6 +979,7 @@ public class DepControl : MonoBehaviour
             DC.CWDep = this;
             DivPanel.gameObject.SetActive(false);
         }
+        EmpEffectCheck();
     }
 
     //从现有的事业部中移除
@@ -983,8 +987,14 @@ public class DepControl : MonoBehaviour
     {
         if (CurrentDivision == null)
             return;
+        if (isWeakend == true)
+        {
+            isWeakend = false;
+            UnWeakAction();
+        }
         CurrentDivision.CurrentDeps.Remove(this);
         CurrentDivision.ExtraStatusCheck();
+        //（旧）事业部内没有部门时移除高管
         if (CurrentDivision.CurrentDeps.Count == 0)
         {
             CurrentDivision.Text_DivName.gameObject.SetActive(false);

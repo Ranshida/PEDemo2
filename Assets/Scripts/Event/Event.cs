@@ -534,6 +534,7 @@ public class EventC2 : Event
     {
         GameControl.Instance.BSC.EventSolved();
         QuestControl.Instance.Init("判定成功，公司内产生认同 x1");
+        GameControl.Instance.AddEventProgress(1, false);
         //随机文案
         int posbContent = Random.Range(1, DescriptionCount + 1);
         emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
@@ -541,7 +542,6 @@ public class EventC2 : Event
 
     protected override void FailResult(Employee emp, Employee target = null)
     {
-        GameControl.Instance.AddEventProgress(1, false);
         QuestControl.Instance.Init("判定失败，未产生效果");
         //随机文案
         int posbContent = Random.Range(1, DescriptionCount + 1);
@@ -596,6 +596,7 @@ public class EventC3 : Event
     {
         GameControl.Instance.BSC.EventSolved();
         QuestControl.Instance.Init("判定成功，公司内产生认同 x1");
+        GameControl.Instance.AddEventProgress(1, false);
         //随机文案
         int posbContent = Random.Range(1, DescriptionCount + 1);
         emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
@@ -603,7 +604,6 @@ public class EventC3 : Event
 
     protected override void FailResult(Employee emp, Employee target = null)
     {
-        GameControl.Instance.AddEventProgress(1, false);
         QuestControl.Instance.Init("判定失败，未产生效果");
         //随机文案
         int posbContent = Random.Range(1, DescriptionCount + 1);

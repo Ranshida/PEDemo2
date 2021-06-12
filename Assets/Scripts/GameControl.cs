@@ -133,6 +133,7 @@ public class GameControl : MonoBehaviour
         CWCL.AddCWCard(new CWCard1());
         CurrentDivisions[0].CWCards[0].StartReplace();
         CWCL.ReplaceCard(CWCL.CurrentCards[0]);
+        CurrentDivisions[0].PreCards[0] = CurrentDivisions[0].CWCards[0].CurrentCard;
         //OCL.AddStaticOptions(new OptionCard11());
         //OCL.AddStaticOptions(new OptionCard13());
         //OCL.AddStaticOptions(new OptionCard9());

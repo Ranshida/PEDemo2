@@ -29,7 +29,7 @@ public class BrainStormControl : MonoBehaviour
     public BSRouteNode CurrentNode;//当前所处的节点
     public GameControl GC;
     public GameObject MemberSelectPanel, RouteSelectPanel, FightPanel, SkillButton, CloseButton, 
-        RouteNoticePanel, NodeSkipButton, DiceUpgradePanel, EscapeButton;
+        RouteNoticePanel, BSStartPanel, NodeSkipButton, DiceUpgradePanel, EscapeButton;
     public BSDiceControl DicePrefab;
     public BSBossControl CurrentBoss, BossPrefab;
     public BSSkillMarker MarkerPrefab;
@@ -123,6 +123,7 @@ public class BrainStormControl : MonoBehaviour
         }
 
         MemberSelectPanel.SetActive(false);
+        BSStartPanel.SetActive(false);
         RouteSelectPanel.SetActive(true);
         ResetStatus();
     }
@@ -130,8 +131,14 @@ public class BrainStormControl : MonoBehaviour
     //事件组的头脑风暴战斗
     public void StartEventBossFight(EventGroupInfo e)
     {
+        //其他议题过程中无法开始
+        if (BSStarted == true)
+        {
+            GC.CreateMessage("有其他议题正在进行，无法开始新的议题");
+            return;
+        }
         //有未处理事件时不能继续
-        if (GC.EC.UnfinishedEvents.Count > 0 || BSStarted == true)
+        if (GC.EC.UnfinishedEvents.Count > 0)
             return;
         GC.AskPause(this);
         CurrentEGI = e;
@@ -153,14 +160,21 @@ public class BrainStormControl : MonoBehaviour
         this.GetComponent<WindowBaseControl>().SetWndState(true);
         MemberSelectPanel.SetActive(false);
         RouteSelectPanel.SetActive(false);
+        BSStartPanel.SetActive(false);
         FightPanel.SetActive(true);
     }
 
     //融资的头脑风暴战斗
     public void StartInvestBossFight(int level)
     {
+        //其他议题过程中无法开始
+        if (BSStarted == true)
+        {
+            GC.CreateMessage("有其他议题正在进行，无法开始新的议题");
+            return;
+        }
         //有未处理事件时不能继续
-        if (GC.EC.UnfinishedEvents.Count > 0 || BSStarted == true)
+        if (GC.EC.UnfinishedEvents.Count > 0)
             return;
         GC.AskPause(this);
         BSStarted = true;
@@ -182,6 +196,7 @@ public class BrainStormControl : MonoBehaviour
         this.GetComponent<WindowBaseControl>().SetWndState(true);
         MemberSelectPanel.SetActive(false);
         RouteSelectPanel.SetActive(false);
+        BSStartPanel.SetActive(false);
         FightPanel.SetActive(true);
     }
     //下一回合
@@ -463,6 +478,18 @@ public class BrainStormControl : MonoBehaviour
                 SkillType = 0;
                 HighLightDices(new int[6] { 0, 0, 0, 0, 0, 1 });
             }
+            //辅助+防御
+            else if (TypeCount[4] == 1 && TypeCount[2] == 1)
+            {
+                SkillType = 0;
+                HighLightDices(new int[6] { 0, 0, 0, 1, 0, 0 });
+            }
+            //辅助+钱
+            else if (TypeCount[2] == 1 && TypeCount[1] == 1)
+            {
+                SkillType = 0;
+                HighLightDices(new int[6] { 0, 0, 0, 1, 0, 0 });
+            }
             //钱2
             else if (TypeCount[1] == 2)
             {
@@ -680,6 +707,36 @@ public class BrainStormControl : MonoBehaviour
         CheckSkillType();
         if (CurrentBoss != null)
             CurrentBoss.UpdateUI();
+    }
+
+    public void EnterBSPanel()
+    {
+        //其他议题过程中无法开始
+        if (BSStarted == true)
+        {
+            GC.CreateMessage("有其他议题正在进行，无法开始新的议题");
+            return;
+        }
+
+        this.GetComponent<WindowBaseControl>().SetWndState(true);
+        MemberSelectPanel.SetActive(false);
+        BSStartPanel.SetActive(true);
+    }
+
+    public void EnterCorememberPanel()
+    {
+        //其他议题过程中无法开始
+        if (BSStarted == true)
+        {
+            GC.CreateMessage("有其他议题正在进行，无法调整核心团队");
+            return;
+        }
+        CheckAllMarkers();
+        UpgradeCheck();
+        this.GetComponent<WindowBaseControl>().SetWndState(true);
+        MemberSelectPanel.SetActive(true);
+        BSStartPanel.SetActive(false);
+        
     }
 
     //进入选择员工界面

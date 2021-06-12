@@ -132,6 +132,17 @@ public class EmpInfo : MonoBehaviour
         }
     }
 
+    public void ManualFire()
+    {
+        if (GC.EC.UnfinishedEvents.Count > 0)
+        {
+            GC.CreateMessage("抉择时无法手动开除员工");
+            return;
+        }
+        else
+            Fire();
+    }
+
     public void Fire(bool NeedVote = true)
     {
         //不能删CEO

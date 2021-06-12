@@ -217,7 +217,6 @@ public class BSBossControl : MonoBehaviour
             TakeDamage(DotValue);
             DotValue -= 1;
         }
-        UpdateUI();
         //如果Hp为0或技能无法发动时不继续发动技能
         if (BossHp == 0)
             return;
@@ -227,6 +226,7 @@ public class BSBossControl : MonoBehaviour
             return;
         }
         BossSkill(NextSkillType, NextSkillValue);
+        UpdateUI();
         //确认下一个行动
         SetNextMove();
     }

@@ -8,7 +8,7 @@ public class ChoiceEvent : MonoBehaviour
     public string ExtraCorrectionContent;//基本演绎法+1效果的描述
     public bool DoubleCorrection = false;//抉择卡9寻求共识，下张卡修正翻倍的效果
 
-    public Text Text_EventName, Text_Correction, Text_EventResult, Text_EventDescrition, Text_Condition, Text_Tip, Text_OptionCardTip;
+    public Text Text_EventName, Text_Correction, Text_EventResult, Text_EventDescrition, Text_Condition, Text_Tip, Text_OptionCardTip, Text_TargetEmp;
     public Transform OptionContent;
     public OptionCardInfo OptionPrefab;
     public EventControl EC;
@@ -24,6 +24,12 @@ public class ChoiceEvent : MonoBehaviour
     public List<OptionCardInfo> Options = new List<OptionCardInfo>();//所有可选的卡（手牌）
     public List<OptionCardInfo> UsedOptions = new List<OptionCardInfo>();//所有打出的卡（弃牌堆）
     public List<OptionCardInfo> ExtraSelectedOptions = new List<OptionCardInfo>();//选择后激活特殊效果的卡
+
+    private void Update()
+    {
+        if (Self != null)
+            Text_TargetEmp.text = "目标员工:" + Self.Name + "             当前心力:" + Self.Mentality;
+    }
 
     public void CheckCorrectionUI()
     {
@@ -200,5 +206,11 @@ public class ChoiceEvent : MonoBehaviour
             }
         }
         CheckCorrectionUI();
+    }
+
+    //显示目标员工详细信息
+    public void ShowTargetEmpInfo()
+    {
+        Self.InfoDetail.ShowPanel();
     }
 }

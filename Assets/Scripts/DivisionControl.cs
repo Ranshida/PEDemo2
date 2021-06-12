@@ -204,7 +204,7 @@ public class DivisionControl : MonoBehaviour
         //检测插槽
         for (int i = 0; i < 3; i++)
         {
-            if (CWCards[i].CurrentCard != PreCards[i])
+            if (CWCards[i] != null && CWCards[i].CurrentCard != PreCards[i])
             {
                 AddPerk(new Perk126());                
             }
