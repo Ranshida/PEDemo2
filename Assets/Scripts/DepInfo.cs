@@ -5,19 +5,22 @@ using UnityEngine.UI;
 //商店页面的建筑信息
 public class DepInfo : MonoBehaviour
 {
-    public Text Text_Name, Text_Require, Text_Function, Text_Size, Text_PurchaseCost, Text_MaintainCost;
+    public Text Text_Name, Text_Require, Text_Function, Text_Size, Text_PurchaseCost, Text_MaintainCost, Text_NodeName;
+    public CourseNode CurrentNode;//当前所处节点
     public GameObject SingleEffectPrefab, DoubleEffectPrefab;
     public HireControl HC;
     public Transform EmpInfoContent;
     public InfoPanelTrigger IPT;
+    public Button PurchaseButton;
 
     public List<GameObject> Effects = new List<GameObject>();
 
     BuildingType CurrentType;
     int cost;
 
-    public void SetInfo()
+    public void SetInfo(CourseNode node)
     {
+        this.gameObject.SetActive(true);
         foreach(GameObject g in Effects)
         {
             Destroy(g);
@@ -34,6 +37,12 @@ public class DepInfo : MonoBehaviour
         Building building = null;
         if (BuildingManage.Instance.m_AllBuildingPrefab.TryGetValue(CurrentType, out GameObject go))
             building = go.GetComponent<Building>();
+
+        CurrentNode = node;
+        if (node.Type == CourseNodeType.货运浮岛平台)
+            Text_NodeName.text = "位于货运浮岛平台";
+        else if (node.Type == CourseNodeType.走私船)
+            Text_NodeName.text = "位于" + node.Text_Name.text;
 
         Text_Name.text = building.Name;
         Text_Size.text = "尺寸:" + building.Size;
@@ -72,6 +81,8 @@ public class DepInfo : MonoBehaviour
         HC.BuildingPurchase(CurrentType);
         HC.StorePanel.SetWndState(false);
         this.gameObject.SetActive(false);
+        HC.GC.CrC.GetComponent<WindowBaseControl>().SetWndState(false);
+        HC.NodeCheck();
     }
 
     //生成单图标记

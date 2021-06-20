@@ -27,6 +27,7 @@ public class Perk
     public DepControl TargetDep;
     public DivisionControl TargetDiv;
     public PerkInfo Info;
+    public OptionCardInfo card;
 
     public int TempValue1, TempValue2, TempValue3;//用于检测和保存的一些数值，在事业部影响效果中，1储存工作状态 2储存效率 3储存信念
     public float TempValue4;
@@ -65,7 +66,13 @@ public class Perk
             Level -= 1;
             TimeLeft = BaseTime;
         }
-        if (canStack == false || Level == 0 || Num == 48 || Num == 50)
+        if (card != null)
+        {
+            GameControl.Instance.OCL.CurrentOptions.Remove(card);
+            Object.Destroy(card.gameObject);
+            card = null;
+        }
+        if (canStack == false || Level == 0)
         {
             Info.RemovePerk();
             RemoveAllListeners();
@@ -1340,6 +1347,7 @@ public class Perk52 : Perk
     public override void ImmEffect()
     {
         GameControl.Instance.OCL.AddOptionCard(new OptionCard5(), TargetEmp);
+        card = GameControl.Instance.OCL.CurrentOptions[GameControl.Instance.OCL.CurrentOptions.Count - 1];
     }
 }
 
@@ -1357,6 +1365,7 @@ public class Perk53 : Perk
     public override void ImmEffect()
     {
         GameControl.Instance.OCL.AddOptionCard(new OptionCard6(), TargetEmp);
+        card = GameControl.Instance.OCL.CurrentOptions[GameControl.Instance.OCL.CurrentOptions.Count - 1];
     }
 }
 
@@ -1374,6 +1383,7 @@ public class Perk54 : Perk
     public override void ImmEffect()
     {
         GameControl.Instance.OCL.AddOptionCard(new OptionCard3(), TargetEmp);
+        card = GameControl.Instance.OCL.CurrentOptions[GameControl.Instance.OCL.CurrentOptions.Count - 1];
     }
 }
 
@@ -2900,6 +2910,7 @@ public class Perk114 : Perk
     public override void ImmEffect()
     {
         GameControl.Instance.OCL.AddOptionCard(new OptionCard14(), TargetEmp);
+        card = GameControl.Instance.OCL.CurrentOptions[GameControl.Instance.OCL.CurrentOptions.Count - 1];
     }
 }
 
@@ -2917,6 +2928,7 @@ public class Perk115 : Perk
     public override void ImmEffect()
     {
         GameControl.Instance.OCL.AddOptionCard(new OptionCard15(), TargetEmp);
+        card = GameControl.Instance.OCL.CurrentOptions[GameControl.Instance.OCL.CurrentOptions.Count - 1];
     }
 }
 
@@ -2934,6 +2946,7 @@ public class Perk116 : Perk
     public override void ImmEffect()
     {
         GameControl.Instance.OCL.AddOptionCard(new OptionCard16(), TargetEmp);
+        card = GameControl.Instance.OCL.CurrentOptions[GameControl.Instance.OCL.CurrentOptions.Count - 1];
     }
 }
 

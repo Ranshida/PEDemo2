@@ -4,12 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class HireType
-{
-    public int HireNum = 3;
-    public bool MajorSuccess = false;
-}
-
 public class DepControl : MonoBehaviour
 {
 
@@ -801,6 +795,30 @@ public class DepControl : MonoBehaviour
             {
                 if (DepLevel == 1)
                     canWork = false;
+            };
+            ActiveMode = 5;
+        }
+        else if (building.Type == BuildingType.动力舱)
+        {
+            WeakAction = () => { };
+            UnWeakAction = () => { };
+            AddLevelEffect = () =>
+            {
+                if (DepLevel == 1)
+                    GC.CrC.SetPower(1);
+                else if (DepLevel == 2)
+                    GC.CrC.SetPower(2);
+                else if (DepLevel == 3)
+                    GC.CrC.SetPower(3);
+            };
+            RemoveLevelEffect = () =>
+            {
+                if (DepLevel == 1)
+                    GC.CrC.SetPower(0);
+                else if (DepLevel == 2)
+                    GC.CrC.SetPower(1);
+                else if (DepLevel == 3)
+                    GC.CrC.SetPower(2);
             };
             ActiveMode = 5;
         }

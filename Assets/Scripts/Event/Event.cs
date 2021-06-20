@@ -451,6 +451,145 @@ public abstract class Event
     }
 }
 
+public class EventCr1 : Event
+{
+    public EventCr1() : base()
+    {
+        EventName = "晕船风波";
+        DescriptionCount = 1;
+        RequiredCondition = EventCondition.无;
+        FailDescription = " 随机事业部全体员工主导情绪变为愤怒且心力-10"; //只设置失败/成功其中之一的描述，另一个没效果的不要定义描述
+    }
+
+    protected override int CalcBonus(Employee emp, Employee target = null, EventGroupInfo egi = null)
+    {
+        int result = CalcEmotion(emp);
+        return result;
+    }
+
+    protected override void SuccessResult(Employee emp, Employee target = null)
+    {
+        GameControl.Instance.BSC.EventSolved();
+        QuestControl.Instance.Init("判定成功，未产生负面效果");
+        //随机文案
+        int posbContent = Random.Range(1, DescriptionCount + 1);
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+    }
+
+    protected override void FailResult(Employee emp, Employee target = null)
+    {
+        foreach (DepControl dep in GameControl.Instance.CurrentDivisions[Random.Range(0, GameControl.Instance.CurrentDivisions.Count)].CurrentDeps)
+        {
+            foreach (Employee e in dep.CurrentEmps)
+            {
+                e.AddEmotion(EColor.Red);
+                e.Mentality -= 10;
+            }
+        }
+        QuestControl.Instance.Init("判定失败，" + FailDescription);
+        //随机文案
+        int posbContent = Random.Range(1, DescriptionCount + 1);
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+    }
+
+    public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
+    {
+        string content = "";
+        SetNames(Emp, targetEmp);
+        content = EventDescription(Emp, targetEmp, index);
+        if (success == true)
+        {
+            if (index == 1)
+                content += "，但是没有效果";
+        }
+        else
+        {
+            if (index == 1)
+                content += FailDescription;
+
+        }
+        return content;
+    }
+
+    public override string EventDescription(Employee Emp, Employee targetEmp, int index, EventGroupInfo egi = null)
+    {
+        string content = "";
+        SetNames(Emp, targetEmp);
+        if (index == 1)
+            content = SelfName + "在公司论坛中发帖称由于CEO不顾员工感受长期航行导致自己晕船严重影响正常生活";
+        return content;
+    }
+}
+
+public class EventCr2 : Event
+{
+    public EventCr2() : base()
+    {
+        EventName = "异常电波";
+        DescriptionCount = 1;
+        RequiredCondition = EventCondition.无;
+        FailDescription = " 随机事业部全体员工心力-15"; //只设置失败/成功其中之一的描述，另一个没效果的不要定义描述
+    }
+
+    protected override int CalcBonus(Employee emp, Employee target = null, EventGroupInfo egi = null)
+    {
+        int result = CalcEmotion(emp);
+        return result;
+    }
+
+    protected override void SuccessResult(Employee emp, Employee target = null)
+    {
+        GameControl.Instance.BSC.EventSolved();
+        QuestControl.Instance.Init("判定成功，未产生负面效果");
+        //随机文案
+        int posbContent = Random.Range(1, DescriptionCount + 1);
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+    }
+
+    protected override void FailResult(Employee emp, Employee target = null)
+    {
+        foreach (DepControl dep in GameControl.Instance.CurrentDivisions[Random.Range(0, GameControl.Instance.CurrentDivisions.Count)].CurrentDeps)
+        {
+            foreach (Employee e in dep.CurrentEmps)
+            {
+                e.Mentality -= 15;
+            }
+        }
+        QuestControl.Instance.Init("判定失败，" + FailDescription);
+        //随机文案
+        int posbContent = Random.Range(1, DescriptionCount + 1);
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+    }
+
+    public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
+    {
+        string content = "";
+        SetNames(Emp, targetEmp);
+        content = EventDescription(Emp, targetEmp, index);
+        if (success == true)
+        {
+            if (index == 1)
+                content += "，但是没有效果";
+        }
+        else
+        {
+            if (index == 1)
+                content += FailDescription;
+
+        }
+        return content;
+    }
+
+    public override string EventDescription(Employee Emp, Employee targetEmp, int index, EventGroupInfo egi = null)
+    {
+        string content = "";
+        SetNames(Emp, targetEmp);
+        if (index == 1)
+            content = SelfName + "在公司论坛中跟帖称自己总是在工作中收到异常的信号，电脑上总是出现奇怪的英文字符，尤其是在自己睡着之后最为明显（实际上是上班睡觉压键盘上了）";
+        return content;
+    }
+}
+
 #region 公司一般事件
 public class EventC1 : Event
 {
@@ -10083,6 +10222,12 @@ public static class EventData
         new EventC1(),new EventC2(),new EventC3(),new EventC4(),new EventC5(),
     };
 
+    //航线突发事件
+    public static List<Event> CourseAccidentEvent = new List<Event>()
+    {
+        new EventCr1(),new EventCr2()
+    };
+
     //个人港口事件序列
     public static List<Event> EmpPortEvent = new List<Event>()
     {
@@ -10124,4 +10269,6 @@ public static class EventData
     {
         new EventGroup12(), new EventGroup13()
     };
+
+
 }

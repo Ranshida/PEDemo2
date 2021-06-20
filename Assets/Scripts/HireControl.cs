@@ -11,21 +11,20 @@ public class HireControl : MonoBehaviour
     public Transform TotalEmpContent;
     public GameControl GC;
     public Button HireRefreshButton;
-    public Text Text_HireButtonText, Text_Hire, Text_Dep;
+    public Text Text_HireButtonText, Text_Hire, Text_Dep, Text_Item;
     public EmpInfo EmpInfoPrefab, EmpDetailPrefab;
     public WindowBaseControl StorePanel;
 
     public EmpInfo[] HireInfos = new EmpInfo[5];
-    public List<DepInfo> DepInfos = new List<DepInfo>();
+    public List<DepInfo> DepInfos = new List<DepInfo>(); //3个,0号为货运平台的， 1/2号为走私船的
+    public List<CItemPurchaseInfo> ItemInfos = new List<CItemPurchaseInfo>();//3个 0/1为走私船的，2为货运平台的
     public List<CWCardInfo> CardInfos = new List<CWCardInfo>();
-    List<HireType> HireTypes = new List<HireType>();
 
     int CurrentHireNum;//用于计算单次招聘已选择的人数
 
     private void Start()
     {
         InitCEO();
-        AddHireTypes(new HireType());
         Refresh();
         //初始的员工
         for (int i = 0; i < 5; i++)
@@ -43,9 +42,11 @@ public class HireControl : MonoBehaviour
             }
             HireInfos[i].gameObject.SetActive(false);
         }
+        HireInfos[2].CurrentNode.RemoveEmpInfo();
         GC.CurrentEmpInfo = null;
-        AddHireTypes(new HireType());
-        Refresh();
+
+        //因为目前跟招聘有关，所以航线地图初始化在这里进行
+        GC.CrC.InitDefaultMap();
     }
 
     public void OpenStorePanel()
@@ -56,84 +57,54 @@ public class HireControl : MonoBehaviour
         StorePanel.SetWndState(true);
     }
 
-    //添加从人力资源部获得的招聘
-    public void AddHireTypes(HireType ht)
-    {
-        HireTypes.Add(ht);
-        //HireRefreshButton.interactable = true;
-        Text_HireButtonText.color = Color.red;
-    }
 
-    //刷新招聘
     public void Refresh()
     {
-        if (HireTypes.Count > 0)
-        {
-            CurrentHireNum = 0;
-            if(ExtraHireOption > 2)
-            {
-                HireTypes[0].HireNum += 2;
-                ExtraHireOption -= 2;
-            }
-            else
-            {
-                HireTypes[0].HireNum += ExtraHireOption;
-                ExtraHireOption = 0;
-            }
-
-            for (int i = 0; i < 5; i++)
-            {
-                HireInfos[i].gameObject.SetActive(true);
-                foreach (Transform child in HireInfos[i].PerkContent)
-                {
-                    Destroy(child.gameObject);
-                }
-                foreach (Transform child in HireInfos[i].SkillContent)
-                {
-                    Destroy(child.gameObject);
-                }
-                foreach (Transform child in HireInfos[i].StrategyContent)
-                {
-                    Destroy(child.gameObject);
-                }
-                HireInfos[i].PerksInfo.Clear();
-                HireInfos[i].StrategiesInfo.Clear();
-                HireInfos[i].CreateEmp();
-
-                if(i > HireTypes[0].HireNum - 1)
-                {
-                    HireInfos[i].gameObject.SetActive(false);
-                }
-            }
-            HireTypes.RemoveAt(0);
-            if (HireTypes.Count < 1)
-                HireRefreshButton.interactable = false;
-        }
-        //随机一下是出现建筑还是卡牌
         for (int i = 0; i < 3; i++)
         {
-            if (Random.Range(0.0f, 1.0f) < 0.5f)
+            HireInfos[i].gameObject.SetActive(true);
+            foreach (Transform child in HireInfos[i].PerkContent)
             {
-                DepInfos[i].SetInfo();
-                DepInfos[i].gameObject.SetActive(true);
-                CardInfos[i].gameObject.SetActive(false);
+                Destroy(child.gameObject);
             }
-            else
+            foreach (Transform child in HireInfos[i].SkillContent)
             {
-                CardInfos[i].CurrentCard = CWCard.CWCardData[Random.Range(0, CWCard.CWCardData.Count)].Clone();
-                CardInfos[i].UpdateUI();
-                CardInfos[i].gameObject.SetActive(true);
-                DepInfos[i].gameObject.SetActive(false);
+                Destroy(child.gameObject);
             }
+            foreach (Transform child in HireInfos[i].StrategyContent)
+            {
+                Destroy(child.gameObject);
+            }
+            HireInfos[i].PerksInfo.Clear();
+            HireInfos[i].StrategiesInfo.Clear();
+            HireInfos[i].CreateEmp();
+            RandomNode(HireInfos[i]);
         }
-        Text_Hire.color = Color.red;
-        Text_Dep.color = Color.red;
+        ////随机一下是出现建筑还是卡牌
+        //for (int i = 0; i < 3; i++)
+        //{
+        //    if (Random.Range(0.0f, 1.0f) < 0.5f)
+        //    {
+        //        DepInfos[i].SetInfo();
+        //        DepInfos[i].gameObject.SetActive(true);
+        //        CardInfos[i].gameObject.SetActive(false);
+        //    }
+        //    else
+        //    {
+        //        CardInfos[i].CurrentCard = CWCard.CWCardData[Random.Range(0, CWCard.CWCardData.Count)].Clone();
+        //        CardInfos[i].UpdateUI();
+        //        CardInfos[i].gameObject.SetActive(true);
+        //        DepInfos[i].gameObject.SetActive(false);
+        //    }
+        //}
     }
 
     //(Hire)招聘后信息转移和创建信息面板
     public void SetInfoPanel()
     {
-        GC.CurrentEmpInfo.HireButton.interactable = false;
+        GC.CurrentEmpInfo.CurrentNode.RemoveEmpInfo();
+        GC.CurrentEmpInfo.gameObject.SetActive(false);
+        GC.HC.NodeCheck();
 
         EmpInfo ED = UIManager.Instance.NewWindow(EmpDetailPrefab.gameObject).GetComponent<EmpInfo>();
         GC.CurrentEmpInfo.CopyStatus(ED);
@@ -183,7 +154,6 @@ public class HireControl : MonoBehaviour
         if (GC.CC.CEO != null)
             GC.CC.CEO.InfoDetail.AddHistory("招聘了" + ED.emp.Name);
         //HideOptions();
-        Text_Hire.color = Color.black;
     }
 
     //初始化CEO
@@ -254,6 +224,107 @@ public class HireControl : MonoBehaviour
         //}
         BuildingManage.Instance.EnterBuildMode();
         BuildingManage.Instance.StartBuildNew(type);
-        Text_Dep.color = Color.black;
+    }
+
+    //检测当前节点是否能雇佣员工和购买物品与建筑
+    public void NodeCheck()
+    {
+        bool EmpCheck = false, BuildingCheck = false, ItemCheck = false;
+        foreach(EmpInfo info in HireInfos)
+        {
+            if (info.gameObject.activeSelf == false)
+                continue;
+            if (info.CurrentNode == null || GC.CrC.CurrentNode.CityNum != info.CurrentNode.CityNum)
+            {
+                info.HireButton.interactable = false;
+            }
+            else if (GC.CrC.CurrentNode.CityNum == info.CurrentNode.CityNum)
+            {
+                info.HireButton.interactable = true;
+                EmpCheck = true;
+            }
+        }
+        foreach (DepInfo info in DepInfos)
+        {
+            if (info.gameObject.activeSelf == false)
+                continue;
+            if (info.CurrentNode == null)
+            {
+                info.PurchaseButton.interactable = false;
+                continue;
+            }
+            if (info.CurrentNode != GC.CrC.CurrentNode)
+                info.PurchaseButton.interactable = false;
+            else
+            {
+                info.PurchaseButton.interactable = true;
+                BuildingCheck = true;
+            }
+        }
+
+        foreach (CItemPurchaseInfo info in ItemInfos)
+        {
+            if (info.gameObject.activeSelf == false)
+                continue;
+            if (info.CurrentNode == null)
+            {
+                info.PurchaseButton.interactable = false;
+                continue;
+            }
+            if (info.CurrentNode != GC.CrC.CurrentNode)
+                info.PurchaseButton.interactable = false;
+            else
+            {
+                info.PurchaseButton.interactable = true;
+                ItemCheck = true;
+            }
+        }
+
+        if (EmpCheck == true)
+            Text_Hire.color = Color.red;
+        else
+            Text_Hire.color = Color.black;
+
+        if (BuildingCheck == true)
+            Text_Dep.color = Color.red;
+        else
+            Text_Dep.color = Color.black;
+
+        if (ItemCheck == true)
+            Text_Item.color = Color.red;
+        else
+            Text_Item.color = Color.black;
+
+        //物品栏
+
+        if (EmpCheck == true || BuildingCheck == true || ItemCheck == true)
+            Text_HireButtonText.color = Color.red;
+        else
+            Text_HireButtonText.color = Color.black;
+
+    }
+
+    private void RandomNode(EmpInfo info)
+    {
+        List<CourseNode> nodes = new List<CourseNode>();
+        bool CityGAdded = false;
+        foreach(CourseNode node in GC.CrC.CityNodes)
+        {
+            //G城只能有1个员工
+            if (node.HaveEmp == false)
+            {
+                if (node.CityNum == 7 && CityGAdded == true)
+                    continue;
+                else
+                    CityGAdded = true;
+                nodes.Add(node);
+            }
+            else if (node.CityNum == 7)
+                CityGAdded = true;
+        }
+        int num = Random.Range(0, nodes.Count);
+        nodes[num].SetEmpInfo();
+        info.CurrentNode = nodes[num];
+        info.Text_City.text = nodes[num].Text_City.text;
     }
 }

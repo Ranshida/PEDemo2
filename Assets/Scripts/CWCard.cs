@@ -30,7 +30,7 @@ public class CWCard
 
     static public List<CWCard> CWCardData = new List<CWCard>()
     {
-        new CWCard1()
+        new CWCard1(), new CWCard2()
     };
 }
 

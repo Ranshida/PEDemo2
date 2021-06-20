@@ -4,7 +4,7 @@ using UnityEngine.UI;
 
 public enum BuildingType
 {
-    空, 自动化研究中心, 企业历史展览, 福报宣传中心, 混沌创意营, 会计办公室, 心理咨询室, 智库小组, 仓库, 商战建筑, 自动化工坊
+    空, 自动化研究中心, 企业历史展览, 福报宣传中心, 混沌创意营, 会计办公室, 心理咨询室, 智库小组, 仓库, 商战建筑, 自动化工坊, 动力舱
 }
 
 public class BuildingManage : MonoBehaviour
@@ -68,7 +68,7 @@ public class BuildingManage : MonoBehaviour
         foreach (GameObject prefab in buildingPrefabs)
         {
             Building building = prefab.GetComponent<Building>();
-            if (building.Type != BuildingType.商战建筑 && building.Type != BuildingType.自动化工坊)
+            if (building.Type != BuildingType.商战建筑 && building.Type != BuildingType.自动化工坊 && building.Type != BuildingType.动力舱)
                 SelectList.Add(building.Type);
         }
         //装饰建筑临时这样做
@@ -84,6 +84,7 @@ public class BuildingManage : MonoBehaviour
     {
         m_EffectHalo.SetActive(false);
         InitBuilding(BuildingType.商战建筑, new Int2(1, 1));
+        InitBuilding(BuildingType.动力舱, new Int2(3, 1));
         //InitBuilding(BuildingType.自动化研究中心, new Int2(10, 11));
     }
 

@@ -13,7 +13,7 @@ public class GameControl : MonoBehaviour
         BaseDepExtraSuccessRate = 0;
     public int SelectMode = 1; //1员工招聘时部门选择 2员工移动时部门选择 3事件组特别小组成员选择 4发动动员技能时员工选择 
     //5发动建筑技能时员工选择 6CEO技能员工/部门选择 7选择两个员工发动动员技能 8普通办公室的上级(高管办公室)选择  9头脑风暴的员工选择
-    //10选择两个员工的CEO技能 11部门/员工的物品使用
+    //10选择两个员工的CEO技能 11部门/员工的物品使用 12航线事件和去除负面特质相关
     public int AreaSelectMode = 1;//1部门目标区域的选择（暂时删除）  2物品目标区域的选择
     public int Money = 1000, DoubleMobilizeCost = 0, MonthMeetingTime = 3, WarTime = 3;
     public bool ForceTimePause = false;
@@ -97,6 +97,7 @@ public class GameControl : MonoBehaviour
     public OptionCardLibrary OCL;
     public CWCardLibrary CWCL;
     public CEOControl CC;
+    public CourseControl CrC;
     public Areas AC;
     public WindowBaseControl TotalEmpPanel;
     public Transform DepContent, DepSelectContent, StandbyContent, MessageContent, ItemContent, PerkContent;
@@ -116,7 +117,6 @@ public class GameControl : MonoBehaviour
     public int[] FinishedTask = new int[10];//0程序迭代 1技术研发 2可行性调研 3传播 4营销文案 5资源拓展 6原型图 7产品研究 8用户访谈 9已删除
 
     int morale = 50;
-    int StoreTime = 3;//临时的每3回合刷新一次招聘
     float Timer, MoneyCalcTimer;
     bool TimePause = false; //现在仅用来判断是否处于下班状态，用于其他功能时需检查WorkEndCheck()和WeekStart
 
@@ -124,7 +124,7 @@ public class GameControl : MonoBehaviour
     {
         Instance = this;
         Morale = 50;
-        StoreTime = Random.Range(2, 5);
+        CrC.InitNodeRef();//因为招聘刷新初始员工需要节点先设置好所以放在Awake内
     }
 
     private void Start()
@@ -151,13 +151,12 @@ public class GameControl : MonoBehaviour
     {
         Text_Time.text = "<size=27>第" + Turn + "回合</size>" + "\n<size=20>第" + Year + "年" + Month + "月</size>";
         Text_MonthMeetingTime.text = "距离下次月会还剩" + MonthMeetingTime + "回合";
-        Text_WarTime.text = "距离下次商战还剩" + WarTime + "回合\n\n" + "距离下次商店刷新还剩" + StoreTime + "回合";
+        Text_WarTime.text = "距离下次商战还剩" + WarTime + "回合";
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.P))
-            HC.AddHireTypes(new HireType());
+        //旧的计时
         //if (TimePause == false && ForceTimePause == false)
         //    Timer += Time.deltaTime * TimeMultiply;
         //if(Timer >= 10)
@@ -199,6 +198,11 @@ public class GameControl : MonoBehaviour
             CreateMessage("有商战卡牌没有放入插槽");
             return;
         }
+        if (CrC.PowerLevel == 0)
+        {
+            CreateMessage("动力舱没有员工");
+            return;
+        }
         int StandbyCount = 0;
         foreach (Employee e in CurrentEmployees)
         {
@@ -232,6 +236,12 @@ public class GameControl : MonoBehaviour
             return;
         }
 
+        //航线检测
+        if (CrC.ShipMoved == false)
+        {
+            CrC.SetCourse();
+            return;
+        }
         //扣维护费
         int value = CalcCost();
         if (value > 0)
@@ -240,22 +250,6 @@ public class GameControl : MonoBehaviour
         Turn += 1;
         MonthMeetingTime -= 1;
         WarTime -= 1;
-
-        //临时招聘
-        StoreTime -= 1;
-        if (StoreTime == 0)
-        {
-            StoreTime = Random.Range(2, 5);
-            HC.AddHireTypes(new HireType());
-            HC.Refresh();
-            HC.Text_HireButtonText.transform.parent.GetComponent<Button>().interactable = true;
-        }
-        else
-        {
-            HC.Text_HireButtonText.transform.parent.GetComponent<Button>().interactable = false;
-            HC.Text_HireButtonText.color = Color.black;
-            HC.StorePanel.SetWndState(false);//玩家直接进下一回合的话强制关闭
-        }
 
         TimeChange();
         UpdateUI();
@@ -289,6 +283,11 @@ public class GameControl : MonoBehaviour
             return;
         }
 
+        else if (CrC.ShipMoved == false)
+        {
+            Text_NextTurn.text = "开始航行";
+            return;
+        }
         else
             Text_NextTurn.text = "下一回合";
     }

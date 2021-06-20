@@ -10,12 +10,13 @@ public class EmpInfo : MonoBehaviour
     public GameControl GC;
     public Button HireButton, MoveButton, FireButton;
     public Text Text_Name, Text_Mentality, Text_Stamina, Text_Exp, Text_Ability, Text_Age, Text_Professions, Text_Occupation, Text_Ambition;
-    public Text Text_DepName, Text_Tenacity, Text_Manage, Text_Decision, Text_RTarget, Text_CoreMemberCD;
+    public Text Text_DepName, Text_Tenacity, Text_Manage, Text_Decision, Text_RTarget, Text_CoreMemberCD, Text_City;
     public EmpInfo DetailInfo;
     public EmotionInfo EmotionInfoPrefab, MainEmotion;
     public Transform PerkContent, SkillContent, StrategyContent, RelationContent, HistoryContent, EmotionContent, MarkerContent;
     public Transform PerkContent2;//特质专用面板，上面的是状态面板
     public StrategyInfo CurrentStrategy;
+    public CourseNode CurrentNode;//航线玩法设定：当前员工所在城市
 
     public Scrollbar[] Scrollbar_Character = new Scrollbar[5];
     public List<PerkInfo> PerksInfo = new List<PerkInfo>();
@@ -105,7 +106,7 @@ public class EmpInfo : MonoBehaviour
     }
 
     public void StartHire()
-    {
+    {//该事件绑定在HireInfo的招募按钮上
         if (GameControl.Instance.Money >= 25)
             GameControl.Instance.Money -= 25;
         else
@@ -267,6 +268,15 @@ public class EmpInfo : MonoBehaviour
         {
             GC.CurrentItem.item.TargetEmp = emp.InfoDetail;
             GC.CurrentItem.UseItem();
+            GC.ResetSelectMode();
+            GC.TotalEmpPanel.SetWndState(false);
+        }
+
+        //航线事件
+        else if (GC.SelectMode == 12)
+        {
+            GC.CrC.TargetEmp = emp;
+            GC.CrC.EventEffect();
             GC.ResetSelectMode();
             GC.TotalEmpPanel.SetWndState(false);
         }
