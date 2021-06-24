@@ -12,8 +12,8 @@ public class GameControl : MonoBehaviour
         HRBuildingMentalityExtra = 1.0f, BuildingSkillSuccessExtra = 0, TotalBuildingPayMultiply = 1.0f, HireSuccessExtra = 0, 
         BaseDepExtraSuccessRate = 0;
     public int SelectMode = 1; //1员工招聘时部门选择 2员工移动时部门选择 3事件组特别小组成员选择 4发动动员技能时员工选择 
-    //5发动建筑技能时员工选择 6CEO技能员工/部门选择 7选择两个员工发动动员技能 8普通办公室的上级(高管办公室)选择  9头脑风暴的员工选择
-    //10选择两个员工的CEO技能 11部门/员工的物品使用 12航线事件和去除负面特质相关
+    //5发动建筑技能时员工选择 6CEO技能员工/部门选择 7选择两个员工发动动员技能 8普通办公室的上级(高管办公室)选择  
+    //10选择两个员工的CEO技能 11部门/员工的物品使用 12航线事件和去除负面特质相关 13在员工面板选择加入的部门（或替换已有员工）
     public int AreaSelectMode = 1;//1部门目标区域的选择（暂时删除）  2物品目标区域的选择
     public int Money = 1000, DoubleMobilizeCost = 0, MonthMeetingTime = 3, WarTime = 3;
     public bool ForceTimePause = false;
@@ -534,10 +534,15 @@ public class GameControl : MonoBehaviour
             CurrentEmpInfo.emp.CurrentDep = depControl;
             depControl.CurrentEmps.Add(CurrentEmpInfo.emp);
             CurrentEmpInfo.emp.CurrentDep.EmpEffectCheck();
-            foreach(PerkInfo perk in CurrentEmpInfo.emp.InfoDetail.PerksInfo)
+
+            //独立建筑没有事业部所以需要额外检测是否有所属事业部
+            if (CurrentEmpInfo.emp.CurrentDep.CurrentDivision != null)
             {
-                if (perk.CurrentPerk.DepPerk == true)
-                    perk.CurrentPerk.ActiveSpecialEffect();
+                foreach (PerkInfo perk in CurrentEmpInfo.emp.InfoDetail.PerksInfo)
+                {
+                    if (perk.CurrentPerk.DepPerk == true)
+                        perk.CurrentPerk.ActiveSpecialEffect();
+                }
             }
             //调动信息历史添加
             CurrentEmpInfo.emp.InfoDetail.AddHistory("调动至" + depControl.Text_DepName.text);
@@ -634,19 +639,20 @@ public class GameControl : MonoBehaviour
             CurrentEmployees[i].InfoB.MoveButton.gameObject.SetActive(true);
             if (CurrentEmployees[i].isCEO == false)
                 CurrentEmployees[i].InfoB.FireButton.gameObject.SetActive(true);
-
         }
+        CurrentEmpInfo = null;
+        CurrentDep = null;
     }
 
     //选两个员工时取消选择
     public void CancelEmpSelect()
     {
-        if(SelectMode == 4 || SelectMode == 11)
+        if(SelectMode == 4 || SelectMode == 11 || SelectMode == 13)
         {
             TotalEmpPanel.SetWndState(false);
             ResetSelectMode();
         }
-        else if (SelectMode == 6)
+        else if (SelectMode == 6 || SelectMode == 12 )
             ResetSelectMode();
         else if (SelectMode == 7 || SelectMode == 10)
         {

@@ -123,16 +123,7 @@ public class EmpBSInfo : MonoBehaviour
         EmpStatus.SetActive(false);
         EmpSetSign.SetActive(true);
         this.GetComponent<Button>().enabled = true;
-    }
-    
-    //根据员工能力生成骰子
-    public void CreateDices()
-    {
-        foreach(int[] count in emp.CurrentDices)
-        {
-            BSC.InitDice(count);
-        }
-    }
+    }   
 
     //设置技能图标
     public void CheckMarker()

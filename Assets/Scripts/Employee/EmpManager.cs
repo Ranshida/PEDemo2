@@ -53,6 +53,10 @@ public class EmpManager : MonoBehaviour
         if (!self.CurrentDep)
             return null;
 
+        //独立建筑没有事业部也没有上级
+        if (self.CurrentDep.CurrentDivision == null)
+            return null;
+
         if (self.CurrentDep.CurrentDivision.Manager != null) 
         {
             Employee boss = self.CurrentDep.CurrentDivision.Manager;
@@ -112,7 +116,7 @@ public class EmpManager : MonoBehaviour
                 if (e != emp)
                     TargetEmps.Add(e);
             }
-            if (emp.CurrentDep.CurrentDivision.Manager != null)
+            if (emp.CurrentDep.CurrentDivision != null && emp.CurrentDep.CurrentDivision.Manager != null)
                 TargetEmps.Add(emp.CurrentDep.CurrentDivision.Manager);
         }
         else if (emp.CurrentDivision != null)
@@ -170,7 +174,7 @@ public class EmpManager : MonoBehaviour
         //是否有上司、下属或同事(待命时所有待命员工互相为同事)
         if (emp.CurrentDep != null)
         {
-            if (emp.CurrentDep.CurrentEmps.Count > 1 || emp.CurrentDep.CurrentDivision.Manager != null)
+            if (emp.CurrentDep.CurrentEmps.Count > 1 || (emp.CurrentDep.CurrentDivision != null && emp.CurrentDep.CurrentDivision.Manager != null))
                 HaveColleague = true;
         }
         else if (emp.CurrentDivision != null)

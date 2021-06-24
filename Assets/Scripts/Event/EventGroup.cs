@@ -4,9 +4,11 @@ using UnityEngine;
 
 public class EventGroup : Event
 {
+    public int MentalityDebuffCount = 3;//减心力效果影响的员工数量
+    public int MentalityDebuffValue = 60;//减心力效果的数值
     public int ExtraStage = 0;//事件组生成后待机(不产生效果)的回合数
     public int StageCount = 6;//事件组总阶段数
-    public int BSBossLevel = 2;//头脑风暴boss等级
+    public int BSBossLevel = 1;//头脑风暴boss等级
     public int BSTurnCorrection = 2;
     public int ResourceTurnCorretion = 1;
     public int MoneyRequest = 0;//资源消耗选项-金钱消耗
@@ -96,7 +98,10 @@ public class EventGroup : Event
                 return;
             }
             else
+            {
                 QuestControl.Instance.Init("判定失败," + ResultDescription(emp, target, egi.RandomEventNum));
+                egi.MentalityDebuff();
+            }
         }
 
         if (egi.RandomEventNum == 1)
@@ -480,7 +485,8 @@ public class EventGroup4 : EventGroup
         SubEventNames[4] = "读书会";
         SubEventNames[5] = "甲板烧烤";
         DebuffEvent = false;
-
+        MentalityDebuffValue = 0;
+        MentalityDebuffCount = 0;
 
         ST_BaseRate = 0.3f;//基础成功率
         ST_EmpRate = 0.05f;//每增加一名员工提供的额外成功率
@@ -617,6 +623,8 @@ public class EventGroup5 : EventGroup
         SubEventNames[2] = "夜跑";
         SubEventNames[3] = "辩论会";
         DebuffEvent = false;
+        MentalityDebuffValue = 0;
+        MentalityDebuffCount = 0;
 
         ST_BaseRate = 0.3f;//基础成功率
         ST_EmpRate = 0.1f;//每增加一名员工提供的额外成功率
@@ -723,6 +731,8 @@ public class EventGroup6 : EventGroup
         SubEventNames[2] = "资源共享";
         SubEventNames[3] = "产品创意";
         DebuffEvent = false;
+        MentalityDebuffValue = 0;
+        MentalityDebuffCount = 0;
 
         ST_BaseRate = 0.3f;//基础成功率
         ST_EmpRate = 0.1f;//每增加一名员工提供的额外成功率
@@ -1111,6 +1121,8 @@ public class EventGroup10 : EventGroup
         SubEventNames[1] = "琢磨跳槽";
         SubEventNames[2] = "猎头上门";
         DebuffEvent = true;
+        MentalityDebuffValue = 0;
+        MentalityDebuffCount = 0;
 
         ST_BaseRate = 0.3f;//基础成功率
         ST_EmpRate = 0.1f;//每增加一名员工提供的额外成功率
@@ -1199,6 +1211,8 @@ public class EventGroup11 : EventGroup
         SubEventNames[1] = "出现幻觉";
         BSTurnCorrection = 1;
         DebuffEvent = true;
+        MentalityDebuffValue = 0;
+        MentalityDebuffCount = 0;
 
         ST_BaseRate = 0.3f;//基础成功率
         ST_EmpRate = 0.1f;//每增加一名员工提供的额外成功率
@@ -1271,6 +1285,8 @@ public class EventGroup12 : EventGroup
         SubEventNames[2] = "担心裁员";
         BSTurnCorrection = 1;
         DebuffEvent = true;
+        MentalityDebuffValue = 0;
+        MentalityDebuffCount = 0;
 
         ST_BaseRate = 0.3f;//基础成功率
         ST_EmpRate = 0.1f;//每增加一名员工提供的额外成功率
@@ -1363,6 +1379,8 @@ public class EventGroup13 : EventGroup
         SubEventNames[1] = "额外工作";
         BSTurnCorrection = 1;
         DebuffEvent = true;
+        MentalityDebuffValue = 0;
+        MentalityDebuffCount = 0;
 
         ST_BaseRate = 0.3f;//基础成功率
         ST_EmpRate = 0.1f;//每增加一名员工提供的额外成功率

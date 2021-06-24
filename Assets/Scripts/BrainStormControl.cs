@@ -15,6 +15,8 @@ public class BrainStormControl : MonoBehaviour
     public int EmptyDiceNum;//空白骰子的数量
     public int StageCount = 0;//已经历关卡数
     public int TurnCount;//回合数
+    public int NoBuffDice = 0;//无法生成己方buff(0)骰子的回合数
+    public int NoDefenseDice = 0;//无法生成防御(4)骰子的回合数
     public bool BSStarted = false;//是否已经开始头脑风暴，用于心力爆炸检测
 
     private int HpLimit;//Boss血量上限，用于UI显示
@@ -155,7 +157,7 @@ public class BrainStormControl : MonoBehaviour
             else
                 EmpInfos[i].gameObject.SetActive(false);
         }
-        SetBossLevel(e.TargetEventGroup.BSBossLevel);
+        SetBossLevel(e.TargetEventGroup.BSBossLevel + ((GC.Turn - 1) / 10));
         Text_Item.text = "";
         this.GetComponent<WindowBaseControl>().SetWndState(true);
         MemberSelectPanel.SetActive(false);
@@ -191,6 +193,9 @@ public class BrainStormControl : MonoBehaviour
             else
                 EmpInfos[i].gameObject.SetActive(false);
         }
+        level = level + ((GC.Turn - 1) / 10);
+        if (level > 7)
+            level = 7;
         SetBossLevel(level);
         Text_Item.text = "";
         this.GetComponent<WindowBaseControl>().SetWndState(true);
@@ -208,6 +213,12 @@ public class BrainStormControl : MonoBehaviour
             if (emp.SkillLimitTime > 0)
                 emp.SkillLimitTime -= 1;
         }
+
+        //减少无法生成特定骰子buff的时间
+        if (NoBuffDice > 0)
+            NoBuffDice -= 1;
+        if (NoDefenseDice > 0)
+            NoDefenseDice -= 1;
 
         int FinishCount = 0;
         //如果boss还能行动则发动技能
@@ -251,6 +262,8 @@ public class BrainStormControl : MonoBehaviour
         ExtraDamage = 0;//想象力，每次攻击能附加的额外伤害
         ReduceDiceNum = 0;//每回合少获得n个骰子的Debuff
         TurnCount = 1;//回合数重置
+        NoBuffDice = 0;//无法生成buff骰子的时间
+        NoDefenseDice = 0;//无法生成防御骰子的时间
         Text_Histroy.text = "";
         foreach (Employee emp in CoreMembers)
         {
@@ -295,8 +308,14 @@ public class BrainStormControl : MonoBehaviour
     }
 
     //生成一个骰子预制体
-    public void InitDice(int[] sides)
+    private void InitDice(int[] sides)
     {
+        //有无法生成某种骰子buff的时候
+        if (sides[0] == 0 && NoBuffDice > 0)
+            return;
+        if (sides[0] == 4 && NoDefenseDice > 0)
+            return;
+
         BSDiceControl dice = Instantiate(DicePrefab, DiceContent);
         dice.BSC = this;
         dice.SetSides(sides);
@@ -323,7 +342,12 @@ public class BrainStormControl : MonoBehaviour
                 continue;
 
             if (info.emp != null)
-                info.CreateDices();
+            {
+                foreach (int[] count in info.emp.CurrentDices)
+                {
+                    InitDice(count);
+                }
+            }
         }
         //根据buff移除随机数量的骰子
         if (CurrentDices.Count > 0)//先检测有没有能删的骰子
@@ -800,15 +824,31 @@ public class BrainStormControl : MonoBehaviour
     public void SetBossLevel(int level)
     {
         if(level == 1)
-        {
             InitBoss(1);
-            InitBoss(1);
-            InitBoss(1);
-        }
         else if (level == 2)
             InitBoss(2);
         else if (level == 3)
             InitBoss(3);
+        else if (level == 4)
+        {
+            InitBoss(4);
+            InitBoss(4);
+            InitBoss(4);
+        }
+        else if (level == 5)
+            InitBoss(5);
+        else if (level == 6)
+        {
+            InitBoss(6);
+            InitBoss(6);
+        }
+        else if (level == 7)
+        {
+            InitBoss(7);
+            InitBoss(7);
+            InitBoss(7);           
+        }
+
         BossLevel = level;
         
         RandomDice();

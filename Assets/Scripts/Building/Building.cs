@@ -29,7 +29,9 @@ public class Building : MonoBehaviour
     public int effectValue = 0, effectValue2 = 0;//1技术 2市场 3产品 4观察 5坚韧 6强壮 7管理 8人力 9财务 10决策 11行业 12谋略 13说服 14魅力 15八卦 16行政
     public bool BuildingSet { get; private set; } = false;   //设置完毕不再动
     public bool Moving { get; private set; } = false;        //移动中
-    public bool CanDismantle = true;
+    public bool CanDismantle = true;//建筑模式下是否可以拆除
+    public bool CanMove = true;//建筑模式下是否可以选中并移动
+    public bool IndependentBuilding = false;//是否为独立建筑（直接放置在场景中，没有所属的事业部）
 
     public Area CurrentArea;
     public DivisionControl AttachedDivision;//这个变量有赋值时，该建筑只能放置在对应的区域内
@@ -43,6 +45,17 @@ public class Building : MonoBehaviour
     public List<Transform> WorkPos;
     //public List<BuildingEffect> EffectBuildings = new List<BuildingEffect>(); //旧的影响范围内的建筑链表
 
+
+    private void Start()
+    {
+        if (IndependentBuilding)
+        {
+            LoadPrefab(ExcelTool.ReadAsString(Application.streamingAssetsPath + "/Excel/BuildingFunction.xlsx"));
+
+            Department = GameControl.Instance.CreateDep(this);
+            Department.DivPanel.gameObject.SetActive(false);
+        }
+    }
     //BUildingManager加载此建筑预制体
     public void LoadPrefab(string[,] value)
     {

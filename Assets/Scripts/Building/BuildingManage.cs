@@ -84,7 +84,6 @@ public class BuildingManage : MonoBehaviour
     {
         m_EffectHalo.SetActive(false);
         InitBuilding(BuildingType.商战建筑, new Int2(1, 1));
-        InitBuilding(BuildingType.动力舱, new Int2(3, 1));
         //InitBuilding(BuildingType.自动化研究中心, new Int2(10, 11));
     }
 
@@ -499,9 +498,18 @@ public class BuildingManage : MonoBehaviour
         GameControl.Instance.Money -= 1000;
         GridContainer.Instance.UnlockGrids(m_Area);
         m_Area++;
-        if (m_Area >= 5)
+
+        //原本是5,且没有核心成员槽位解锁
+        if (m_Area == 1)
+        {
+            GameControl.Instance.BSC.EmpSelectInfos[2].gameObject.SetActive(true);
+            GameControl.Instance.BSC.EmpSelectInfos[3].gameObject.SetActive(true);
+        }
+        if (m_Area == 2)
         {
             btn_AskUnlock.gameObject.SetActive(false);
+            GameControl.Instance.BSC.EmpSelectInfos[4].gameObject.SetActive(true);
+            GameControl.Instance.BSC.EmpSelectInfos[5].gameObject.SetActive(true);
         }
         UnlockAreaWindow.SetWndState(false);
     }

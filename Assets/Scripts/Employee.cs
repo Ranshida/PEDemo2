@@ -143,7 +143,7 @@ public class Employee
         }
     }
     public int StaminaLimit { get { return 100 + (Strength * 5) + StaminaLimitExtra; } set { StaminaLimit = value;} } //体力上限
-    public int MentalityLimit { get { return 100 + (Tenacity * 5) + MentalityLimitExtra; } set { MentalityLimit = value; } } // 心力上限
+    public int MentalityLimit { get { return 100 + (Tenacity * 30) + MentalityLimitExtra; } set { MentalityLimit = value; } } // 心力上限
     public int StaminaLimitExtra = 0; //体力上限额外值
     public int MentalityLimitExtra = 0; //心力上限额外值
     public int Exp = 0;//当前经验
@@ -237,9 +237,6 @@ public class Employee
                 Character[4] = Random.Range(0, 101);
         }
         CheckCharacter();
-
-        Stamina = StaminaLimit;
-        Mentality = MentalityLimit;
     }
 
     //初始化CEO属性
@@ -264,21 +261,22 @@ public class Employee
         CheckCharacter();
 
         RandomOccupation();
-
-        Stamina = StaminaLimit;
-        Mentality = MentalityLimit;
     }
 
     //升级骰子
     public void UpgradeDice(int num)
     {
-        MonoBehaviour.print(num);
         int type = CurrentDices[num][0];
 
         if (type == -1)
             return;
 
-        for(int i = 0; i < 6; i++)
+        //第一次升级到4面，第二次才升级到6面
+        int index = 4;
+        if (CurrentDices[num][2] != -1)
+            index = 6;
+
+        for(int i = 0; i < index; i++)
         {
             CurrentDices[num][i] = type;
         }
@@ -298,63 +296,63 @@ public class Employee
             Occupation = OccupationType.超级黑客;
             Professions.Add(0);
             Professions.Add(5);
-            CurrentDices.Add(new int[6] { 3, 3, 3, 3, -1, -1 });
-            CurrentDices.Add(new int[6] { 3, 3, 3, 3, -1, -1 });
+            CurrentDices.Add(new int[6] { 3, 3, -1, -1, -1, -1 });
+            CurrentDices.Add(new int[6] { 3, 3, -1, -1, -1, -1 });
         }
         else if (num == 1)
         {
             Occupation = OccupationType.神秘打工仔;
-            CurrentDices.Add(new int[6] { 1, 1, 1, 1, -1, -1 });
-            CurrentDices.Add(new int[6] { 0, 0, 0, 0, -1, -1 });
-            CurrentDices.Add(new int[6] { 5, 5, 5, 5, -1, -1 });
+            CurrentDices.Add(new int[6] { 1, 1, -1, -1, -1, -1 });
+            CurrentDices.Add(new int[6] { 0, 0, -1, -1, -1, -1 });
+            CurrentDices.Add(new int[6] { 5, 5, -1, -1, -1, -1 });
         }
         else if (num == 2)
         {
             Occupation = OccupationType.大企业中层;
             Professions.Add(3);
-            CurrentDices.Add(new int[6] { 2, 2, 2, 2, -1, -1 });
-            CurrentDices.Add(new int[6] { 4, 4, 4, 4, -1, -1 });
+            CurrentDices.Add(new int[6] { 2, 2, -1, -1, -1, -1 });
+            CurrentDices.Add(new int[6] { 4, 4, -1, -1, -1, -1 });
         }
         else if (num == 3)
         {
             Occupation = OccupationType.海盗;
             Professions.Add(4);
-            CurrentDices.Add(new int[6] { 1, 1, 1, 1, -1, -1 });
-            CurrentDices.Add(new int[6] { 0, 0, 0, 0, -1, -1 });
+            CurrentDices.Add(new int[6] { 1, 1, -1, -1, -1, -1 });
+            CurrentDices.Add(new int[6] { 0, 0, -1, -1, -1, -1 });
         }
         else if (num == 4)
         {
             Occupation = OccupationType.大学毕业生;
             Professions.Add(1);
-            CurrentDices.Add(new int[6] { 4, 4, 4, 4, -1, -1 });
-            CurrentDices.Add(new int[6] { 3, 3, 3, 3, -1, -1 });
+            CurrentDices.Add(new int[6] { 4, 4, -1, -1, -1, -1 });
+            CurrentDices.Add(new int[6] { 3, 3, -1, -1, -1, -1 });
         }
         else if (num == 5)
         {
             Occupation = OccupationType.论坛版主;
             Professions.Add(3);
-            CurrentDices.Add(new int[6] { 0, 0, 0, 0, -1, -1 });
-            CurrentDices.Add(new int[6] { 5, 5, 5, 5, -1, -1 });
+            CurrentDices.Add(new int[6] { 0, 0, -1, -1, -1, -1 });
+            CurrentDices.Add(new int[6] { 5, 5, -1, -1, -1, -1 });
         }
         else if (num == 6)
         {
             Occupation = OccupationType.独立开发者;
             Professions.Add(1);
-            CurrentDices.Add(new int[6] { 2, 2, 2, 2, -1, -1 });
-            CurrentDices.Add(new int[6] { 3, 3, 3, 3, -1, -1 });
+            CurrentDices.Add(new int[6] { 2, 2, -1, -1, -1, -1 });
+            CurrentDices.Add(new int[6] { 3, 3, -1, -1, -1, -1 });
         }
         else if (num == 7)
         {
             Occupation = OccupationType.键盘艺术家;
             Professions.Add(0);
-            CurrentDices.Add(new int[6] { 4, 4, 4, 4, -1, -1 });
-            CurrentDices.Add(new int[6] { 4, 4, 4, 4, -1, -1 });
+            CurrentDices.Add(new int[6] { 4, 4, -1, -1, -1, -1 });
+            CurrentDices.Add(new int[6] { 4, 4, -1, -1, -1, -1 });
         }
         else if (num == 8)
         {
             Occupation = OccupationType.酒保;
             Professions.Add(2);
-            CurrentDices.Add(new int[6] { 2, 2, 2, 2, -1, -1 });
+            CurrentDices.Add(new int[6] { 2, 2, -1, -1, -1, -1 });
         }
 
         //确认各项数据

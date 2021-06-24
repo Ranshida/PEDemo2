@@ -110,7 +110,7 @@ public abstract class Event
             bool result = false;
             foreach (int num in LevelRequire)
             {
-                //不能有上下级关系时
+                //不能有上下级关系时（好像没有这种情况）
                 if (num == 0)
                 {
                     if (emp.CurrentDep != null)
@@ -153,7 +153,7 @@ public abstract class Event
                 //要求目标是自己的上级时
                 else if (num == 2)
                 {
-                    if (emp.CurrentDep != null && emp.CurrentDep.CurrentDivision.Manager == target)
+                    if (emp.CurrentDep != null && emp.CurrentDep.CurrentDivision != null && emp.CurrentDep.CurrentDivision.Manager == target)
                         result = true;
                 }
                 //要求目标是自己的下属时
@@ -423,7 +423,8 @@ public abstract class Event
         if (Emp.CurrentDep != null)
         {
             DepName = Emp.CurrentDep.Text_DepName.text;
-            DivName = Emp.CurrentDep.CurrentDivision.DivName;
+            if (Emp.CurrentDep.CurrentDivision != null)
+                DivName = Emp.CurrentDep.CurrentDivision.DivName;
         }
         else if (Emp.CurrentDivision != null)
         {
@@ -436,7 +437,8 @@ public abstract class Event
         else if (targetEmp != null && targetEmp.CurrentDep != null)
         {
             DepName = targetEmp.CurrentDep.Text_DepName.name;
-            DivName = targetEmp.CurrentDep.CurrentDivision.DivName;
+            if (Emp.CurrentDep.CurrentDivision != null)
+                DivName = targetEmp.CurrentDep.CurrentDivision.DivName;
         }
         else if (targetEmp != null && targetEmp.CurrentDivision != null)
         {

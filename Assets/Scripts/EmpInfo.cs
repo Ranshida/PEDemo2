@@ -96,6 +96,9 @@ public class EmpInfo : MonoBehaviour
     {
         AddThreeRandomStrategy();
         AddRandomPerk();
+        //因为特质会增加韧性所以这里设置一下心力体力
+        emp.Mentality = emp.MentalityLimit;
+        emp.Stamina = emp.StaminaLimit;
     }
 
     public void CopyStatus(EmpInfo ei)
@@ -120,17 +123,15 @@ public class EmpInfo : MonoBehaviour
     }
     public void StartMove()
     {
-        if (GC.SelectMode != 9)
+        GC.ResetSelectMode();
+        if (emp.inSpecialTeam == true)
         {
-            if (emp.inSpecialTeam == true)
-            {
-                QuestControl.Instance.Init("员工目前隶属特别小组，无法移动");
-                return;
-            }
-            GC.CurrentEmpInfo = this;
-            GC.SelectMode = 2;
-            GC.ShowDepSelectPanel(emp);
+            QuestControl.Instance.Init("员工目前隶属特别小组，无法移动");
+            return;
         }
+        GC.CurrentEmpInfo = this;
+        GC.SelectMode = 2;
+        GC.ShowDepSelectPanel(emp);
     }
 
     public void ManualFire()
@@ -277,6 +278,18 @@ public class EmpInfo : MonoBehaviour
         {
             GC.CrC.TargetEmp = emp;
             GC.CrC.EventEffect();
+            GC.ResetSelectMode();
+            GC.TotalEmpPanel.SetWndState(false);
+        }
+
+        //在员工面板选择加入的部门（或替换已有员工）
+        else if (GC.SelectMode == 13)
+        {
+            GC.SelectMode = 2;
+            if (GC.CurrentEmpInfo != null)          
+                GC.SelectDep();
+            GC.CurrentEmpInfo = emp.InfoDetail;
+            GC.SelectDep(GC.CurrentDep);
             GC.ResetSelectMode();
             GC.TotalEmpPanel.SetWndState(false);
         }

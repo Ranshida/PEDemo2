@@ -71,10 +71,26 @@ public class BSRouteNode : MonoBehaviour
             return;
         }
 
-        if (isElite == false)
-            BSC.SetBossLevel(NodeLevel);
-        else
-            BSC.SetBossLevel(3);
+        int level = NodeLevel;
+        if (NodeLevel == 1)
+        {
+            level += (GameControl.Instance.Turn - 1) / 10;
+            if (level > 5)
+                level = 5;
+        }
+        else if (NodeLevel == 2)
+        {
+            level += (GameControl.Instance.Turn - 1) / 10;
+            if (level > 6)
+                level = 6;
+        }
+        else if (NodeLevel == 3)
+        {
+            level += (GameControl.Instance.Turn - 1) / 10;
+            if (level > 7)
+                level = 7;
+        }
+        BSC.SetBossLevel(level);
     }
 
     //随机节点类型（暂时不用）

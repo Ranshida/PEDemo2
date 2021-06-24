@@ -4,11 +4,9 @@ using UnityEngine;
 
 static public class AdjustData
 {
-    static public List<int> ExpRequire = new List<int>() { 40, 100, 180, 280, 400, 540, 700, 880, 1080, 1300, 0};//员工升级所需经验
-
     static public int EmpLevelUpExp = 50;//员工升级所需经验
     static public int CoreMemberExp = 70;//核心团队获取经验量
-    static public int CoreMemberUpgradePointLimit = 15;//核心团队获得升级点数所需要的解决的事件数量
+    static public int CoreMemberUpgradePointLimit = 6;//核心团队获得升级点数所需要的解决的事件数量
 
     #region 融资相关
     //融资数值相关
@@ -21,7 +19,7 @@ static public class AdjustData
     static public int[] CostLevel = new int[] { 20, 30, 40};
 
     //根据用户数量等级确定的意愿加成
-    static public int[] UserRult = new int[] { 0, 1, 2, 3, 4 };
+    static public int[] UserResult = new int[] { 0, 1, 2, 3, 4 };
     //商战排名1-4时的意愿加成
     static public int[] RankResult = new int[] { 3, 2, 1, 0 };
     //士气从最高到最低的意愿加成
@@ -59,6 +57,6 @@ static public class AdjustData
     static public float[] PUserPosb5 = new float[] { -0.3f, 0.08f, 0.12f, 0.2f };//上市
 
     //各轮融资阶段玩家用户上限
-    static public int[] PlayerUSerLimit = new int[] { 10, 22, 40, 65 };
+    static public int[] PlayerUserLimit = new int[] { 10, 22, 40, 65 };
     #endregion
 }

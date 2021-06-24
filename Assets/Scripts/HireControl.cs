@@ -63,6 +63,8 @@ public class HireControl : MonoBehaviour
         for (int i = 0; i < 3; i++)
         {
             HireInfos[i].gameObject.SetActive(true);
+            if (HireInfos[i].CurrentNode != null)
+                HireInfos[i].CurrentNode.RemoveEmpInfo();
             foreach (Transform child in HireInfos[i].PerkContent)
             {
                 Destroy(child.gameObject);

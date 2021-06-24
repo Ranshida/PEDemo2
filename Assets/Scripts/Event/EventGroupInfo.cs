@@ -31,6 +31,7 @@ public class EventGroupInfo : MonoBehaviour
     public Image[] STImages = new Image[3];
     public Image[] Lines = new Image[6];
     public Image[] StageMarker = new Image[6];
+    public List<Employee> MDebuffEmps = new List<Employee>();
 
     public void SetEvent(EventGroup e)
     {
@@ -41,7 +42,7 @@ public class EventGroupInfo : MonoBehaviour
         Text_GroupName2.text = TargetEventGroup.EventName;
         Text_PrepareTurn.text = "准备\n" + e.ExtraStage + "回合";
         Text_SpecialTeamEffect.text = "成功效果:事件组-" + e.ST_TurnCorrection + "回合";
-        Text_BSEffect.text = "成功效果:事件组-" + e.BSTurnCorrection + "回合\n难度等级:" + e.BSBossLevel;
+        Text_BSEffect.text = "成功效果:事件组-" + e.BSTurnCorrection + "回合\n难度等级:" + (e.BSBossLevel + ((EC.GC.Turn - 1) / 10));
         Text_ResourceEffect.text = "成功效果:事件组-" + e.ResourceTurnCorretion + "回合\n需求:";
         if (e.MoneyRequest > 0)
             Text_ResourceEffect.text += "金钱 " + e.MoneyRequest + " ";
@@ -84,6 +85,39 @@ public class EventGroupInfo : MonoBehaviour
             {
                 UpdateUI();
                 print("抉择事件开始前丢失目标");
+            }
+            //如果有减心力的buff则寻找目标
+            if (TargetEventGroup.MentalityDebuffCount > 0)
+            {
+                MDebuffEmps.Clear();
+                if (TargetEventGroup.MentalityDebuffCount == 1)
+                    MDebuffEmps.Add(Target);
+                else
+                {
+                    List<Employee> PosbEmps = new List<Employee>();
+                    foreach (Employee emp in GameControl.Instance.CurrentEmployees)
+                    {
+                        if (emp != Target)
+                            PosbEmps.Add(emp);
+                    }
+
+                    if (PosbEmps.Count < TargetEventGroup.MentalityDebuffCount - 1)
+                    {
+                        foreach (Employee emp in PosbEmps)
+                        {
+                            MDebuffEmps.Add(emp);
+                        }
+                    }
+                    else
+                    {
+                        for (int i = 0; i < TargetEventGroup.MentalityDebuffCount - 1; i++)
+                        {
+                            int num = Random.Range(0, PosbEmps.Count);
+                            MDebuffEmps.Add(PosbEmps[num]);
+                            PosbEmps.RemoveAt(num);
+                        }
+                    }
+                }
             }
             EC.StartChoiceEvent(TargetEventGroup, Target, this);
         }
@@ -171,7 +205,7 @@ public class EventGroupInfo : MonoBehaviour
         if (TargetDivision == null)
         {
             //找目标事业部，目标员工没有所属事业部时，找第一个有部门的事业部
-            if (Target.CurrentDep != null)
+            if (Target.CurrentDep != null && Target.CurrentDep.CurrentDivision != null)
                 TargetDivision = Target.CurrentDep.CurrentDivision;
             else if (Target.CurrentDivision != null)
                 TargetDivision = Target.CurrentDivision;
@@ -239,6 +273,22 @@ public class EventGroupInfo : MonoBehaviour
     public void UseResource()
     {
         TargetEventGroup.UseResource(this);
+    }
+
+    //事件组造成心力减益的效果
+    public void MentalityDebuff()
+    {
+        if (TargetEventGroup.MentalityDebuffCount == 0)
+            return;
+
+        if (Target != null)
+        {
+            Target.Mentality -= TargetEventGroup.MentalityDebuffValue;
+        }
+        foreach (Employee emp in MDebuffEmps)
+        {
+            emp.Mentality -= TargetEventGroup.MentalityDebuffValue;
+        }
     }
 
     //事件组结束后额外的特别小组禁用时间

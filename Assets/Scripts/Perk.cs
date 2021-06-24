@@ -405,17 +405,17 @@ public class Perk12 : Perk
 
     public override void ActiveSpecialEffect()
     {
-        if (TargetEmp.CurrentDep != null)
+        if (TargetEmp.CurrentDep != null && TargetEmp.CurrentDep.CurrentDivision != null)
             TargetEmp.CurrentDep.CurrentDivision.Efficiency += TempValue2;
-        else
+        else if (TargetEmp.CurrentDivision != null)
             TargetEmp.CurrentDivision.Efficiency += TempValue2;
     }
 
     public override void DeActiveSpecialEffect()
     {
-        if (TargetEmp.CurrentDep != null)
+        if (TargetEmp.CurrentDep != null && TargetEmp.CurrentDep.CurrentDivision != null)
             TargetEmp.CurrentDep.CurrentDivision.Efficiency -= TempValue2;
-        else
+        else if (TargetEmp.CurrentDivision != null)
             TargetEmp.CurrentDivision.Efficiency -= TempValue2;
     }
 }
@@ -436,17 +436,17 @@ public class Perk13 : Perk
 
     public override void ActiveSpecialEffect()
     {
-        if (TargetEmp.CurrentDep != null)
+        if (TargetEmp.CurrentDep != null && TargetEmp.CurrentDep.CurrentDivision != null)
             TargetEmp.CurrentDep.CurrentDivision.WorkStatus += TempValue1;
-        else
+        else if (TargetEmp.CurrentDivision != null)
             TargetEmp.CurrentDivision.WorkStatus += TempValue1;
     }
 
     public override void DeActiveSpecialEffect()
     {
-        if (TargetEmp.CurrentDep != null)
+        if (TargetEmp.CurrentDep != null && TargetEmp.CurrentDep.CurrentDivision != null)
             TargetEmp.CurrentDep.CurrentDivision.WorkStatus -= TempValue1;
-        else
+        else if (TargetEmp.CurrentDivision != null)
             TargetEmp.CurrentDivision.WorkStatus -= TempValue1;
     }
 }
@@ -467,17 +467,17 @@ public class Perk14 : Perk
 
     public override void ActiveSpecialEffect()
     {
-        if (TargetEmp.CurrentDep != null)
+        if (TargetEmp.CurrentDep != null && TargetEmp.CurrentDep.CurrentDivision != null)
             TargetEmp.CurrentDep.CurrentDivision.Faith += TempValue3;
-        else
+        else if (TargetEmp.CurrentDivision != null)
             TargetEmp.CurrentDivision.Faith += TempValue3;
     }
 
     public override void DeActiveSpecialEffect()
     {
-        if (TargetEmp.CurrentDep != null)
+        if (TargetEmp.CurrentDep != null && TargetEmp.CurrentDep.CurrentDivision != null)
             TargetEmp.CurrentDep.CurrentDivision.Faith -= TempValue3;
-        else
+        else if (TargetEmp.CurrentDivision != null)
             TargetEmp.CurrentDivision.Faith -= TempValue3;
     }
 }
@@ -497,17 +497,17 @@ public class Perk15 : Perk
 
     public override void ActiveSpecialEffect()
     {
-        if (TargetEmp.CurrentDep != null)
+        if (TargetEmp.CurrentDep != null && TargetEmp.CurrentDep.CurrentDivision != null)
             TargetEmp.CurrentDep.CurrentDivision.ExtraCost -= 5;
-        else
+        else if (TargetEmp.CurrentDivision != null)
             TargetEmp.CurrentDivision.ExtraCost -= 5;
     }
 
     public override void DeActiveSpecialEffect()
     {
-        if (TargetEmp.CurrentDep != null)
+        if (TargetEmp.CurrentDep != null && TargetEmp.CurrentDep.CurrentDivision != null)
             TargetEmp.CurrentDep.CurrentDivision.ExtraCost += 5;
-        else
+        else if (TargetEmp.CurrentDivision != null)
             TargetEmp.CurrentDivision.ExtraCost += 5;
     }
 }
@@ -625,13 +625,15 @@ public class Perk20 : Perk
         if (num == 1)
         {
             TempValue2 = 2;
-            TargetEmp.CurrentDep.CurrentDivision.Efficiency += TempValue2;
+            if (TargetEmp.CurrentDep != null && TargetEmp.CurrentDep.CurrentDivision != null)
+                TargetEmp.CurrentDep.CurrentDivision.Efficiency += TempValue2;
         }
     }
 
     public override void DeActiveSpecialEffect()
     {
-        TargetEmp.CurrentDep.CurrentDivision.Efficiency -= TempValue2;
+        if (TargetEmp.CurrentDep != null && TargetEmp.CurrentDep.CurrentDivision != null)
+            TargetEmp.CurrentDep.CurrentDivision.Efficiency -= TempValue2;
     }
 }
 
@@ -925,12 +927,14 @@ public class Perk35 : Perk
 
     public override void ActiveSpecialEffect()
     {
-        TargetEmp.CurrentDep.CurrentDivision.ExtraManage -= 1;
+        if (TargetEmp.CurrentDep != null && TargetEmp.CurrentDep.CurrentDivision != null)
+            TargetEmp.CurrentDep.CurrentDivision.ExtraManage -= 1;
     }
 
     public override void DeActiveSpecialEffect()
     {
-        TargetEmp.CurrentDep.CurrentDivision.ExtraManage += 1;
+        if (TargetEmp.CurrentDep != null && TargetEmp.CurrentDep.CurrentDivision != null)
+            TargetEmp.CurrentDep.CurrentDivision.ExtraManage += 1;
     }
 }
 
@@ -951,12 +955,12 @@ public class Perk36 : Perk
 
     public override void ActiveSpecialEffect()
     {
-        if (TargetEmp.CurrentDep != null)
+        if (TargetEmp.CurrentDep != null && TargetEmp.CurrentDep.CurrentDivision != null)
         {
             TargetEmp.CurrentDep.CurrentDivision.WorkStatus += TempValue1;
             TargetEmp.CurrentDep.CurrentDivision.Efficiency += TempValue2;
         }
-        else
+        else if (TargetEmp.CurrentDivision != null)
         {
             TargetEmp.CurrentDivision.WorkStatus += TempValue1;
             TargetEmp.CurrentDivision.Efficiency += TempValue2;
@@ -965,12 +969,12 @@ public class Perk36 : Perk
 
     public override void DeActiveSpecialEffect()
     {
-        if (TargetEmp.CurrentDep != null)
+        if (TargetEmp.CurrentDep != null && TargetEmp.CurrentDep.CurrentDivision != null)
         {
             TargetEmp.CurrentDep.CurrentDivision.WorkStatus -= TempValue1;
             TargetEmp.CurrentDep.CurrentDivision.Efficiency -= TempValue2;
         }
-        else
+        else if (TargetEmp.CurrentDivision != null)
         {
             TargetEmp.CurrentDivision.WorkStatus -= TempValue1;
             TargetEmp.CurrentDivision.Efficiency -= TempValue2;
@@ -993,17 +997,17 @@ public class Perk37 : Perk
 
     public override void ActiveSpecialEffect()
     {
-        if (TargetEmp.CurrentDep != null)
+        if (TargetEmp.CurrentDep != null && TargetEmp.CurrentDep.CurrentDivision != null)
             TargetEmp.CurrentDep.CurrentDivision.ExtraCost += 5;
-        else
+        else if (TargetEmp.CurrentDivision != null)
             TargetEmp.CurrentDivision.ExtraCost += 5;
     }
 
     public override void DeActiveSpecialEffect()
     {
-        if (TargetEmp.CurrentDep != null)
+        if (TargetEmp.CurrentDep != null && TargetEmp.CurrentDep.CurrentDivision != null)
             TargetEmp.CurrentDep.CurrentDivision.ExtraCost -= 5;
-        else
+        else if (TargetEmp.CurrentDivision != null)
             TargetEmp.CurrentDivision.ExtraCost -= 5;
     }
 
@@ -1028,17 +1032,17 @@ public class Perk38 : Perk
 
     public override void ActiveSpecialEffect()
     {
-        if (TargetEmp.CurrentDep != null)
+        if (TargetEmp.CurrentDep != null && TargetEmp.CurrentDep.CurrentDivision != null)
             TargetEmp.CurrentDep.CurrentDivision.ExtraCost += 5;
-        else
+        else if (TargetEmp.CurrentDivision != null)
             TargetEmp.CurrentDivision.ExtraCost += 5;
     }
 
     public override void DeActiveSpecialEffect()
     {
-        if (TargetEmp.CurrentDep != null)
+        if (TargetEmp.CurrentDep != null && TargetEmp.CurrentDep.CurrentDivision != null)
             TargetEmp.CurrentDep.CurrentDivision.ExtraCost -= 5;
-        else
+        else if (TargetEmp.CurrentDivision != null)
             TargetEmp.CurrentDivision.ExtraCost -= 5;
     }
 }
@@ -1058,17 +1062,17 @@ public class Perk39 : Perk
 
     public override void ActiveSpecialEffect()
     {
-        if (TargetEmp.CurrentDep != null)
+        if (TargetEmp.CurrentDep != null && TargetEmp.CurrentDep.CurrentDivision != null)
             TargetEmp.CurrentDep.CurrentDivision.ExtraCost -= 5;
-        else
+        else if (TargetEmp.CurrentDivision != null)
             TargetEmp.CurrentDivision.ExtraCost -= 5;
     }
 
     public override void DeActiveSpecialEffect()
     {
-        if (TargetEmp.CurrentDep != null)
+        if (TargetEmp.CurrentDep != null && TargetEmp.CurrentDep.CurrentDivision != null)
             TargetEmp.CurrentDep.CurrentDivision.ExtraCost += 5;
-        else
+        else if (TargetEmp.CurrentDivision != null)
             TargetEmp.CurrentDivision.ExtraCost += 5;
     }
 }
@@ -1089,12 +1093,12 @@ public class Perk40 : Perk
 
     public override void ActiveSpecialEffect()
     {
-        if (TargetEmp.CurrentDep != null)
+        if (TargetEmp.CurrentDep != null && TargetEmp.CurrentDep.CurrentDivision != null)
         {
             TargetEmp.CurrentDep.CurrentDivision.Faith += TempValue3;
             TargetEmp.CurrentDep.CurrentDivision.ExtraManage -= 1;
         }
-        else
+        else if (TargetEmp.CurrentDivision != null)
         {
             TargetEmp.CurrentDivision.Faith += TempValue3;
             TargetEmp.CurrentDivision.ExtraManage -= 1;
@@ -1103,12 +1107,12 @@ public class Perk40 : Perk
 
     public override void DeActiveSpecialEffect()
     {
-        if (TargetEmp.CurrentDep != null)
+        if (TargetEmp.CurrentDep != null && TargetEmp.CurrentDep.CurrentDivision != null)
         {
             TargetEmp.CurrentDep.CurrentDivision.Faith -= TempValue3;
             TargetEmp.CurrentDep.CurrentDivision.ExtraManage += 1;
         }
-        else
+        else if (TargetEmp.CurrentDivision != null)
         {
             TargetEmp.CurrentDivision.Faith -= TempValue3;
             TargetEmp.CurrentDivision.ExtraManage += 1;
@@ -1133,12 +1137,12 @@ public class Perk41 : Perk
 
     public override void ActiveSpecialEffect()
     {
-        if (TargetEmp.CurrentDep != null)
+        if (TargetEmp.CurrentDep != null && TargetEmp.CurrentDep.CurrentDivision != null)
         {
             TargetEmp.CurrentDep.CurrentDivision.WorkStatus += TempValue1;
             TargetEmp.CurrentDep.CurrentDivision.Faith += TempValue3;
         }
-        else
+        else if (TargetEmp.CurrentDivision != null)
         {
             TargetEmp.CurrentDivision.WorkStatus += TempValue1;
             TargetEmp.CurrentDivision.Faith += TempValue3;
@@ -1147,12 +1151,12 @@ public class Perk41 : Perk
 
     public override void DeActiveSpecialEffect()
     {
-        if (TargetEmp.CurrentDep != null)
+        if (TargetEmp.CurrentDep != null && TargetEmp.CurrentDep.CurrentDivision != null)
         {
             TargetEmp.CurrentDep.CurrentDivision.WorkStatus -= TempValue1;
             TargetEmp.CurrentDep.CurrentDivision.Faith -= TempValue3;
         }
-        else
+        else if (TargetEmp.CurrentDivision != null)
         {
             TargetEmp.CurrentDivision.WorkStatus -= TempValue1;
             TargetEmp.CurrentDivision.Faith -= TempValue3;
@@ -1176,17 +1180,17 @@ public class Perk42 : Perk
 
     public override void ActiveSpecialEffect()
     {
-        if (TargetEmp.CurrentDep != null)
+        if (TargetEmp.CurrentDep != null && TargetEmp.CurrentDep.CurrentDivision != null)
             TargetEmp.CurrentDep.CurrentDivision.Efficiency += TempValue2;
-        else
+        else if (TargetEmp.CurrentDivision != null)
             TargetEmp.CurrentDivision.Efficiency += TempValue2;
     }
 
     public override void DeActiveSpecialEffect()
     {
-        if (TargetEmp.CurrentDep != null)
+        if (TargetEmp.CurrentDep != null && TargetEmp.CurrentDep.CurrentDivision != null)
             TargetEmp.CurrentDep.CurrentDivision.Efficiency -= TempValue2;
-        else
+        else if (TargetEmp.CurrentDivision != null)
             TargetEmp.CurrentDivision.Efficiency -= TempValue2;
     }
 

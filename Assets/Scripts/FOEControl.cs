@@ -37,7 +37,7 @@ public class FOEControl : MonoBehaviour
 
         #region 用户数检查
         int u = PlayerCompany.UserCount;
-        int[] uL, uR = AdjustData.UserRult;
+        int[] uL, uR = AdjustData.UserResult;
         if (InvestLevel == 1)
             uL = AdjustData.UserLevel1;
         else if (InvestLevel == 2)
@@ -279,8 +279,8 @@ public class FOEControl : MonoBehaviour
             if (Random.Range(0.0f, 1.0f) < Posb)
             {
                 PlayerCompany.UserCount += 1;
-                if (InvestLevel < 5 && PlayerCompany.UserCount > AdjustData.PlayerUSerLimit[InvestLevel - 1])
-                    PlayerCompany.UserCount = AdjustData.PlayerUSerLimit[InvestLevel - 1];
+                if (InvestLevel < 5 && PlayerCompany.UserCount > AdjustData.PlayerUserLimit[InvestLevel - 1])
+                    PlayerCompany.UserCount = AdjustData.PlayerUserLimit[InvestLevel - 1];
                 else
                     count += 1;
             }
@@ -361,9 +361,9 @@ public class FOEControl : MonoBehaviour
             return;
         }
         else if (InvestWill <= AdjustData.InvestWillLevel[1])
-            GC.BSC.StartInvestBossFight(3);
+            GC.BSC.StartInvestBossFight(4);
         else if (InvestWill <= AdjustData.InvestWillLevel[2])
-            GC.BSC.StartInvestBossFight(2);
+            GC.BSC.StartInvestBossFight(3);
         else if (InvestWill <= AdjustData.InvestWillLevel[3])
             GC.BSC.StartInvestBossFight(2);
         else

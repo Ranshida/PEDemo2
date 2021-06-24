@@ -49,10 +49,25 @@ public class EmpEffect : MonoBehaviour
     //替换员工(如果有的话)
     public void ReplaceEmp(int num)
     {
-
+        dep.GC.SelectMode = 13;
+        dep.GC.CurrentDep = dep;
+        if (num == 1)
+        {
+            if (dep.CurrentEmps.Count > EmpIndex && dep.CurrentEmps[EmpIndex] != null)
+                dep.GC.CurrentEmpInfo = dep.CurrentEmps[EmpIndex].InfoDetail;
+            else
+                dep.GC.CurrentEmpInfo = null;
+        }
+        else
+        {
+            if (dep.CurrentEmps.Count > EmpIndex + 1 && dep.CurrentEmps[EmpIndex + 1] != null)
+                dep.GC.CurrentEmpInfo = dep.CurrentEmps[EmpIndex].InfoDetail;
+            else
+                dep.GC.CurrentEmpInfo = null;
+        }
+        dep.GC.TotalEmpPanel.SetWndState(true);
     }
 
-    //显示员工详细信息(如果有的话)
     public void SelectEmp(int num)
     {
         if (num == 1)
@@ -60,7 +75,8 @@ public class EmpEffect : MonoBehaviour
             if (dep.CurrentEmps.Count > EmpIndex && dep.CurrentEmps[EmpIndex] != null)
             {
                 dep.CurrentEmps[EmpIndex].InfoDetail.ShowPanel();
-                EmpTip.SetActive(false);
+                if (EmpTip)
+                    EmpTip.SetActive(false);
             }
         }
         else
@@ -68,7 +84,8 @@ public class EmpEffect : MonoBehaviour
             if (dep.CurrentEmps.Count > EmpIndex + 1 && dep.CurrentEmps[EmpIndex + 1] != null)
             {
                 dep.CurrentEmps[EmpIndex + 1].InfoDetail.ShowPanel();
-                EmpTip.SetActive(false);
+                if (EmpTip)
+                    EmpTip.SetActive(false);
             }
         }
     }

@@ -373,7 +373,6 @@ public class DepControl : MonoBehaviour
         {
             DepLevel = level;
             AddLevelEffect();
-            print("AddLevel");
         }
     }
 
@@ -446,8 +445,8 @@ public class DepControl : MonoBehaviour
                     info.WeakCheck(this);
             }
         }
-
-        CurrentDivision.ExtraStatusCheck();
+        if (CurrentDivision != null)
+            CurrentDivision.ExtraStatusCheck();
         UpdateUI();
     }
 
@@ -459,6 +458,9 @@ public class DepControl : MonoBehaviour
         {
             Image image = Instantiate(EmpMarkerPrefab, EmpMarkerContent).GetComponent<Image>();
             EmpMarkers.Add(image);
+            EmpEffect Ee = image.gameObject.GetComponent<EmpEffect>();
+            Ee.dep = this;
+            Ee.EmpIndex = i;
         }
 
         int EmpIndex = 0;

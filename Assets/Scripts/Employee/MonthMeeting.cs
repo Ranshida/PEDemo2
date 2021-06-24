@@ -63,7 +63,7 @@ public class MonthMeeting : MonoBehaviour
         List<Employee> managers = new List<Employee>();
         foreach (EmpBSInfo info in GameControl.Instance.BSC.EmpSelectInfos)
         {
-            if (info.emp != null && info.emp.CurrentDivision != null)
+            if (info.emp != null)
             {
                 managers.Add(info.emp);
             }

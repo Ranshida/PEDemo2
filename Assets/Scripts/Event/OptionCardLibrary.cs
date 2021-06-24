@@ -44,7 +44,10 @@ public class OptionCardLibrary : MonoBehaviour
         Text_EmpOccupation.text = "职业:" + emp.Occupation;
         if (emp.CurrentDep != null)
         {
-            Text_EmpDivision.text = "事业部:" + emp.CurrentDep.CurrentDivision.DivName;
+            if (emp.CurrentDep.CurrentDivision != null)
+                Text_EmpDivision.text = "事业部:" + emp.CurrentDep.CurrentDivision.DivName;
+            else
+                Text_EmpDivision.text = "事业部:---";
             Text_EmpDep.text = "部门:" + emp.CurrentDep.Text_DepName.text;
         }
         else if (emp.CurrentDivision != null)
