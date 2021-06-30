@@ -8,6 +8,13 @@ static public class AdjustData
     static public int CoreMemberExp = 70;//核心团队获取经验量
     static public int CoreMemberUpgradePointLimit = 6;//核心团队获得升级点数所需要的解决的事件数量
 
+    static public float AmbitionTypeAPosb = 0.2f, AmbitionTypeBPosb = 0.4f, AmbitionTypeCPosb = 0.4f;//志向模板1-3的概率
+    //模板1-3（A-C）的强度（1弱3强）和4（D）岗位优势模板的强度
+    static public int[] AmbitionTypeA = new int[] { 2, 1, 2, 1, 3 }, AmbitionTypeB = new int[] { 1, 1, 2, 2, 3 };
+    static public int[] AmbitionTypeC = new int[] { 2, 2, 1, 1, 2 }, AmbitionTypeD = new int[] { 0, 1, 0, 2, 0 };
+    //储存所有模板的链表
+    static public List<int[]> AmbitionTypes = new List<int[]>() { AmbitionTypeA, AmbitionTypeB, AmbitionTypeC, AmbitionTypeD };
+
     #region 融资相关
     //融资数值相关
     //天使、A、B、C、上市投资轮的各等级用户意愿判定阈值

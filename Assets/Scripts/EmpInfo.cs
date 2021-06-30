@@ -17,6 +17,7 @@ public class EmpInfo : MonoBehaviour
     public Transform PerkContent2;//特质专用面板，上面的是状态面板
     public StrategyInfo CurrentStrategy;
     public CourseNode CurrentNode;//航线玩法设定：当前员工所在城市
+    public Sprite AmbitionSprite1, AmbitionSprite2, AmbitionSprite3;
 
     public Scrollbar[] Scrollbar_Character = new Scrollbar[5];
     public List<PerkInfo> PerksInfo = new List<PerkInfo>();
@@ -24,6 +25,7 @@ public class EmpInfo : MonoBehaviour
     public List<EmotionInfo> EmotionInfos = new List<EmotionInfo>();
     public List<BSSkillMarker> SkillMarkers = new List<BSSkillMarker>();
     public List<OptionCardInfo> OptionCards = new List<OptionCardInfo>();
+    public List<Image> AmbitionImgs = new List<Image>();
 
     public int InfoType;
 
@@ -36,7 +38,7 @@ public class EmpInfo : MonoBehaviour
             //小面板
             if (InfoType == 1)
             {
-                Text_Mentality.text = "心力:" + emp.Mentality;
+                Text_Mentality.text = "心力:" + emp.Mentality + "/" + emp.MentalityLimit;
                 Text_Stamina.text = "体力:" + emp.Stamina;
 
                 if (emp.Confidence > 0)
@@ -60,15 +62,14 @@ public class EmpInfo : MonoBehaviour
                 Text_Tenacity.text = emp.Tenacity.ToString();
                 Text_Manage.text = emp.Manage.ToString();
                 Text_Decision.text = emp.Decision.ToString();
-                Text_Ambition.text = "志向:\n 管理特质:" + emp.ManagePerkNum + "个\n 一般特质:" + emp.NormalPerkNum + "个\n 岗位优势:" + emp.ProfessionsNum + "个";
-                Text_Occupation.text = "职业:" + emp.Occupation;
+                Text_Ambition.text = "志向:" + (AmbitionType)emp.Ambition1 + "/" + (AmbitionType)emp.Ambition2;
 
                 UpdateCharacterUI();
             }
             //详细面板
             if(InfoType == 2)
             {
-                Text_Mentality.text = "心力:" + emp.Mentality;
+                Text_Mentality.text = "心力:" + emp.Mentality + "/" + emp.MentalityLimit;
                 Text_Exp.text = "经验:" + emp.Exp + "/50";
                 if (emp.CurrentDep != null)
                     Text_DepName.text = "所属部门:" + emp.CurrentDep.Text_DepName.text;
@@ -348,7 +349,7 @@ public class EmpInfo : MonoBehaviour
             }
         }
         PerkInfo newPerk;
-        if (perk.Num >= 1 && perk.Num <= 51 && PerkContent2 != null)
+        if ((perk.Num <= 54 || perk.Weight != 0) && PerkContent2 != null)
             newPerk = Instantiate(GC.PerkInfoPrefab, PerkContent2);
         else
             newPerk = Instantiate(GC.PerkInfoPrefab, PerkContent);
@@ -618,4 +619,28 @@ public class EmpInfo : MonoBehaviour
         }
     }
 
+    //设置志向面板
+    public void SetAmbitionInfo()
+    {
+        for(int i = 0; i < 5; i++)
+        {
+            AmbitionType a = (AmbitionType)emp.Ambitions[i];
+            AmbitionImgs[i].gameObject.GetComponentInChildren<Text>().text = a.ToString();
+            if (AdjustData.AmbitionTypes[emp.AmbitionType - 1][i] == 2)
+                AmbitionImgs[i].sprite = AmbitionSprite2;
+            else if (AdjustData.AmbitionTypes[emp.AmbitionType - 1][i] == 3)
+                AmbitionImgs[i].sprite = AmbitionSprite3;
+        }
+    }
+    //隐藏已经升过的志向
+    public void HideAmbitionStage(int Level)
+    {
+        AmbitionImgs[Level].color = Color.gray;
+        AmbitionImgs[Level].gameObject.GetComponentInChildren<Text>().text = "";
+    }
+
+    public void AddExp(int value)
+    {
+        emp.GainExp(value);
+    }
 }

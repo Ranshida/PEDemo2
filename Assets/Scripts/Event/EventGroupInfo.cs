@@ -196,6 +196,10 @@ public class EventGroupInfo : MonoBehaviour
             List<Employee> PosbEmps = new List<Employee>();
             foreach(Employee e in EC.GC.CurrentEmployees)
             {
+                //在心理咨询室中回复的员工无法作为事件目标
+                if (e.CurrentDep != null && e.CurrentDep.building.Type == BuildingType.心理咨询室 && EC.GC.PsycholCDep.AffectedEmps.Contains(e))
+                    continue;
+
                 if (e.inSpecialTeam == false)
                     PosbEmps.Add(e);
             }
@@ -264,6 +268,12 @@ public class EventGroupInfo : MonoBehaviour
         //有未处理事件时不能继续
         if (EC.UnfinishedEvents.Count > 0)
             return;
+        //不处于调整回合时无法使用
+        if (EC.GC.AdjustTurn != 0)
+        {
+            EC.GC.CreateMessage("未处于调整回合");
+            return;
+        }
         BSButton.interactable = false;
         EC.GC.BSC.StartEventBossFight(this);
         DetailPanel.GetComponent<WindowBaseControl>().SetWndState(false);
@@ -272,6 +282,12 @@ public class EventGroupInfo : MonoBehaviour
     //使用消耗资源修正
     public void UseResource()
     {
+        //不处于调整回合时无法使用
+        if (EC.GC.AdjustTurn != 0)
+        {
+            EC.GC.CreateMessage("未处于调整回合");
+            return;
+        }
         TargetEventGroup.UseResource(this);
     }
 
@@ -318,6 +334,12 @@ public class EventGroupInfo : MonoBehaviour
     //开始派遣/处理事件
     public void STOperate()
     {
+        //不处于调整回合时无法使用
+        if (EC.GC.AdjustTurn != 0)
+        {
+            EC.GC.CreateMessage("未处于调整回合");
+            return;
+        }
         CheckSTStatus();
         if (STTime == 0)
         {

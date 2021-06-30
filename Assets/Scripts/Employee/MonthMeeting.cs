@@ -277,35 +277,35 @@ public class MonthMeeting : MonoBehaviour
         {
             Debug.Log(area.DC.DivName + "获得白色水晶");
             Perk newPerk = new Perk120();
-            newPerk.TempValue1 = NumA;
+            newPerk.WorkStatusValue = NumA;
             area.DC.AddPerk(newPerk);
         }
         if (NumB > 0)
         {
             Debug.Log(area.DC.DivName + "获得橙色水晶");
             Perk newPerk = new Perk121();
-            newPerk.TempValue1 = NumB;
+            newPerk.WorkStatusValue = NumB;
             area.DC.AddPerk(newPerk);
         }
         if (NumC > 0)
         {
             Debug.Log(area.DC.DivName + "获得灰色水晶");
             Perk newPerk = new Perk122();
-            newPerk.TempValue1 = NumC;
+            newPerk.WorkStatusValue = NumC;
             area.DC.AddPerk(newPerk);
         }
         if (NumD > 0)
         {
             Debug.Log(area.DC.DivName + "获得蓝色水晶");
             Perk newPerk = new Perk123();
-            newPerk.TempValue1 = NumD;
+            newPerk.WorkStatusValue = NumD;
             area.DC.AddPerk(newPerk);
         }
         if (NumE > 0)
         {
             Debug.Log(area.DC.DivName + "获得黑色水晶");
             Perk newPerk = new Perk124();
-            newPerk.TempValue1 = NumE;
+            newPerk.WorkStatusValue = NumE;
             area.DC.AddPerk(newPerk);
         }
 

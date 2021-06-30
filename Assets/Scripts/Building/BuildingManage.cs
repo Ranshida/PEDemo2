@@ -68,7 +68,7 @@ public class BuildingManage : MonoBehaviour
         foreach (GameObject prefab in buildingPrefabs)
         {
             Building building = prefab.GetComponent<Building>();
-            if (building.Type != BuildingType.商战建筑 && building.Type != BuildingType.自动化工坊 && building.Type != BuildingType.动力舱)
+            if (building.Type != BuildingType.商战建筑 && building.Type != BuildingType.自动化工坊 && building.Type != BuildingType.动力舱 && building.Type != BuildingType.心理咨询室)
                 SelectList.Add(building.Type);
         }
         //装饰建筑临时这样做
@@ -84,7 +84,7 @@ public class BuildingManage : MonoBehaviour
     {
         m_EffectHalo.SetActive(false);
         InitBuilding(BuildingType.商战建筑, new Int2(1, 1));
-        //InitBuilding(BuildingType.自动化研究中心, new Int2(10, 11));
+        InitBuilding(BuildingType.企业历史展览, new Int2(3, 1));
     }
 
     //直接放置一个建筑
@@ -511,6 +511,7 @@ public class BuildingManage : MonoBehaviour
             GameControl.Instance.BSC.EmpSelectInfos[4].gameObject.SetActive(true);
             GameControl.Instance.BSC.EmpSelectInfos[5].gameObject.SetActive(true);
         }
+        GameControl.Instance.EmpLimit += 8;
         UnlockAreaWindow.SetWndState(false);
     }
 

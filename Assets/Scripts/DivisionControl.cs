@@ -201,15 +201,15 @@ public class DivisionControl : MonoBehaviour
     {
         //开始前先检测属性
         ExtraStatusCheck();
-        //检测插槽
-        for (int i = 0; i < 3; i++)
-        {
-            if (CWCards[i] != null && CWCards[i].CurrentCard != PreCards[i])
-            {
-                AddPerk(new Perk126());                
-            }
-            PreCards[i] = CWCards[i].CurrentCard;
-        }
+        ////检测插槽
+        //for (int i = 0; i < 3; i++)
+        //{
+        //    if (CWCards[i] != null && CWCards[i].CurrentCard != PreCards[i])
+        //    {
+        //        AddPerk(new Perk126());                
+        //    }
+        //    PreCards[i] = CWCards[i].CurrentCard;
+        //}
 
         //关于每回合额外经验，现在分为两种，ExtraExp是给包括高管的员工提供的，ManagerExtraExp是给高管以外的员工提供的
         //能工作且有高管时属于正常工作，每回合会提供固定的5点经验，无法工作时没有这个5点经验加成
@@ -322,6 +322,8 @@ public class DivisionControl : MonoBehaviour
             canWork = false;
         else
             canWork = true;
+
+        GC.CalcCompanyEW();
     }
 
     public int CalcCost(int type)
@@ -422,10 +424,10 @@ public class DivisionControl : MonoBehaviour
         {
             if (info.CurrentPerk.perkColor == PerkColor.White)
             {
-                if (info.CurrentPerk.TempValue1 >= 0)
-                    content += "事业部状态" + info.CurrentPerk.Name + " +" + info.CurrentPerk.TempValue1 + "\n";
+                if (info.CurrentPerk.WorkStatusValue >= 0)
+                    content += "事业部状态" + info.CurrentPerk.Name + " +" + info.CurrentPerk.WorkStatusValue + "\n";
                 else
-                    content += "事业部状态" + info.CurrentPerk.Name + info.CurrentPerk.TempValue1 + "\n";
+                    content += "事业部状态" + info.CurrentPerk.Name + info.CurrentPerk.WorkStatusValue + "\n";
             }
         }
         foreach (DepControl dep in CurrentDeps)
@@ -436,10 +438,10 @@ public class DivisionControl : MonoBehaviour
                 {
                     if (perk.CurrentPerk.DepPerk == true || perk.CurrentPerk.DivisionPerk == true)
                     {
-                        if (perk.CurrentPerk.TempValue1 > 0)
-                            content += emp.Name + "特质 " + perk.CurrentPerk.Name + " +" + perk.CurrentPerk.TempValue1 + "\n";
-                        else if (perk.CurrentPerk.TempValue1 < 0)
-                            content += emp.Name + "特质 " + perk.CurrentPerk.Name + " " + perk.CurrentPerk.TempValue1 + "\n";
+                        if (perk.CurrentPerk.WorkStatusValue > 0)
+                            content += emp.Name + "特质 " + perk.CurrentPerk.Name + " +" + perk.CurrentPerk.WorkStatusValue + "\n";
+                        else if (perk.CurrentPerk.WorkStatusValue < 0)
+                            content += emp.Name + "特质 " + perk.CurrentPerk.Name + " " + perk.CurrentPerk.WorkStatusValue + "\n";
                     }                       
                 }
             }
@@ -450,10 +452,10 @@ public class DivisionControl : MonoBehaviour
             {
                 if (perk.CurrentPerk.DepPerk == true || perk.CurrentPerk.DivisionPerk == true)
                 {
-                    if (perk.CurrentPerk.TempValue1 > 0)
-                        content += Manager.Name + "特质 " + perk.CurrentPerk.Name + " +" + perk.CurrentPerk.TempValue1 + "\n";
-                    else if (perk.CurrentPerk.TempValue1 < 0)
-                        content += Manager.Name + "特质 " + perk.CurrentPerk.Name + " " + perk.CurrentPerk.TempValue1 + "\n";
+                    if (perk.CurrentPerk.WorkStatusValue > 0)
+                        content += Manager.Name + "特质 " + perk.CurrentPerk.Name + " +" + perk.CurrentPerk.WorkStatusValue + "\n";
+                    else if (perk.CurrentPerk.WorkStatusValue < 0)
+                        content += Manager.Name + "特质 " + perk.CurrentPerk.Name + " " + perk.CurrentPerk.WorkStatusValue + "\n";
                 }
             }
         }
@@ -479,10 +481,10 @@ public class DivisionControl : MonoBehaviour
         {
             if (info.CurrentPerk.perkColor == PerkColor.Grey)
             {
-                if (info.CurrentPerk.TempValue2 >= 0)
-                    content += "事业部状态" + info.CurrentPerk.Name + " +" + info.CurrentPerk.TempValue2 + "\n";
+                if (info.CurrentPerk.EfficiencyValue >= 0)
+                    content += "事业部状态" + info.CurrentPerk.Name + " +" + info.CurrentPerk.EfficiencyValue + "\n";
                 else
-                    content += "事业部状态" + info.CurrentPerk.Name + info.CurrentPerk.TempValue2 + "\n";
+                    content += "事业部状态" + info.CurrentPerk.Name + info.CurrentPerk.EfficiencyValue + "\n";
             }
         }
         foreach (DepControl dep in CurrentDeps)
@@ -493,10 +495,10 @@ public class DivisionControl : MonoBehaviour
                 {
                     if (perk.CurrentPerk.DepPerk == true || perk.CurrentPerk.DivisionPerk == true)
                     {
-                        if (perk.CurrentPerk.TempValue2 > 0)
-                            content += emp.Name + "特质 " + perk.CurrentPerk.Name + " +" + perk.CurrentPerk.TempValue2 + "\n";
-                        else if (perk.CurrentPerk.TempValue2 < 0)
-                            content += emp.Name + "特质 " + perk.CurrentPerk.Name + " " + perk.CurrentPerk.TempValue2 + "\n";
+                        if (perk.CurrentPerk.EfficiencyValue > 0)
+                            content += emp.Name + "特质 " + perk.CurrentPerk.Name + " +" + perk.CurrentPerk.EfficiencyValue + "\n";
+                        else if (perk.CurrentPerk.EfficiencyValue < 0)
+                            content += emp.Name + "特质 " + perk.CurrentPerk.Name + " " + perk.CurrentPerk.EfficiencyValue + "\n";
                     }
                 }
             }
@@ -507,10 +509,10 @@ public class DivisionControl : MonoBehaviour
             {
                 if (perk.CurrentPerk.DepPerk == true || perk.CurrentPerk.DivisionPerk == true)
                 {
-                    if (perk.CurrentPerk.TempValue2 > 0)
-                        content += Manager.Name + "特质 " + perk.CurrentPerk.Name + " +" + perk.CurrentPerk.TempValue2 + "\n";
-                    else if (perk.CurrentPerk.TempValue2 < 0)
-                        content += Manager.Name + "特质 " + perk.CurrentPerk.Name + " " + perk.CurrentPerk.TempValue2 + "\n";
+                    if (perk.CurrentPerk.EfficiencyValue > 0)
+                        content += Manager.Name + "特质 " + perk.CurrentPerk.Name + " +" + perk.CurrentPerk.EfficiencyValue + "\n";
+                    else if (perk.CurrentPerk.EfficiencyValue < 0)
+                        content += Manager.Name + "特质 " + perk.CurrentPerk.Name + " " + perk.CurrentPerk.EfficiencyValue + "\n";
                 }
             }
         }
@@ -537,10 +539,10 @@ public class DivisionControl : MonoBehaviour
         {
             if (info.CurrentPerk.perkColor == PerkColor.Orange)
             {
-                if (info.CurrentPerk.TempValue3 >= 0)
-                    content += "事业部状态" + info.CurrentPerk.Name + " +" + info.CurrentPerk.TempValue3 + "\n";
+                if (info.CurrentPerk.FaithValue >= 0)
+                    content += "事业部状态" + info.CurrentPerk.Name + " +" + info.CurrentPerk.FaithValue + "\n";
                 else
-                    content += "事业部状态" + info.CurrentPerk.Name + info.CurrentPerk.TempValue3 + "\n";
+                    content += "事业部状态" + info.CurrentPerk.Name + info.CurrentPerk.FaithValue + "\n";
             }
         }
         foreach (DepControl dep in CurrentDeps)
@@ -551,10 +553,10 @@ public class DivisionControl : MonoBehaviour
                 {
                     if (perk.CurrentPerk.DepPerk == true || perk.CurrentPerk.DivisionPerk == true)
                     {
-                        if (perk.CurrentPerk.TempValue3 > 0)
-                            content += emp.Name + "特质 " + perk.CurrentPerk.Name + " +" + perk.CurrentPerk.TempValue3 + "\n";
-                        else if (perk.CurrentPerk.TempValue3 < 0)
-                            content += emp.Name + "特质 " + perk.CurrentPerk.Name + " " + perk.CurrentPerk.TempValue3 + "\n";
+                        if (perk.CurrentPerk.FaithValue > 0)
+                            content += emp.Name + "特质 " + perk.CurrentPerk.Name + " +" + perk.CurrentPerk.FaithValue + "\n";
+                        else if (perk.CurrentPerk.FaithValue < 0)
+                            content += emp.Name + "特质 " + perk.CurrentPerk.Name + " " + perk.CurrentPerk.FaithValue + "\n";
                     }
                 }
             }
@@ -565,10 +567,10 @@ public class DivisionControl : MonoBehaviour
             {
                 if (perk.CurrentPerk.DepPerk == true || perk.CurrentPerk.DivisionPerk == true)
                 {
-                    if (perk.CurrentPerk.TempValue3 > 0)
-                        content += Manager.Name + "特质 " + perk.CurrentPerk.Name + " +" + perk.CurrentPerk.TempValue3 + "\n";
-                    else if (perk.CurrentPerk.TempValue3 < 0)
-                        content += Manager.Name + "特质 " + perk.CurrentPerk.Name + " " + perk.CurrentPerk.TempValue3 + "\n";
+                    if (perk.CurrentPerk.FaithValue > 0)
+                        content += Manager.Name + "特质 " + perk.CurrentPerk.Name + " +" + perk.CurrentPerk.FaithValue + "\n";
+                    else if (perk.CurrentPerk.FaithValue < 0)
+                        content += Manager.Name + "特质 " + perk.CurrentPerk.Name + " " + perk.CurrentPerk.FaithValue + "\n";
                 }
             }
         }

@@ -43,7 +43,7 @@ public class CWCard1 : CWCard
         EfficiencyDebuff = new List<int>() { -2, -2, -3};
         WorkStatusDebuff = new List<int>() { -2, -4, -7 };
         TypeRequire = ProfessionType.产品设计;
-        EmpNumRequire = 2;
+        EmpNumRequire = 1;
     }
 
     public override void AddDebuff()
@@ -66,7 +66,7 @@ public class CWCard2 : CWCard
         EfficiencyDebuff = new List<int>() { -2, -2, -2 };
         WorkStatusDebuff = new List<int>() { -3, -5, -8 };
         TypeRequire = ProfessionType.工程学;
-        EmpNumRequire = 2;
+        EmpNumRequire = 1;
     }
 
     public override void AddDebuff()

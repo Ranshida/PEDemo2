@@ -21,7 +21,7 @@ public class FOECompany : MonoBehaviour
             GC.foeControl.PlayerCardCount = new int[3] { 0, 0, 0 };
             foreach (DivisionControl div in GC.CurrentDivisions)
             {
-                if (div.CWDep != null && div.canWork == true && div.CWDep.canWork == true)
+                if (div.CWDep != null && div.canWork == true && div.CWDep.canWork == true && GC.TotalEfficiency > 0 && GC.TotalWorkStatus > 0)
                 {
                     foreach (CWCardInfo card in div.CWCards)
                     {

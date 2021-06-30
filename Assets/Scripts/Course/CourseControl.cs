@@ -16,6 +16,8 @@ public class CourseControl : MonoBehaviour
     public int PowerLevel = 1;//当前的动力等级
     public bool canRefesh = true;//是否能够刷新地图（刷新一次之后必须踩到下一个城市才能再次刷新）
     public bool ShipMoved = false;//判断一回合内是否已经进行过移动
+    public bool CEOSkillA = false;//不受天气影响
+    public bool CEOSkillB = false;//能选择向前或向后移动一次
     public float MarkerMoveTime = 1f;//玩家图标在节点间移动的时间
 
     private CourseNode NextNode;
@@ -24,7 +26,7 @@ public class CourseControl : MonoBehaviour
     public GameControl GC;
     public CourseNode CurrentNode;
     public WindowBaseControl ItemPanel;//物品栏引用，用于在航线面板临时显示物品栏面板
-    public GameObject PlayerMarker, CourseEndButton, CloseButton, EventPanel;
+    public GameObject PlayerMarker, CourseEndButton, CloseButton, EventPanel, ExtraMovePanel;
     public Transform NodeTrans;
     public Text Text_Power, Text_Weather, Text_EventName, Text_EventDescription;
 
@@ -79,6 +81,12 @@ public class CourseControl : MonoBehaviour
         Text_Power.gameObject.SetActive(false);
         CloseButton.SetActive(false);
         ShipMoved = true;
+        if (CEOSkillA == true)
+        {
+            CEOSkillA = false;
+            QuestControl.Instance.Init("由于CEO技能效果，没有额外移动影响", ShipMove);
+            return;
+        }
         float posb = Random.Range(0.0f, 1.0f);
         if (CurrentWeather == WeatherType.大风 && posb < 0.5f)
         {
@@ -151,7 +159,20 @@ public class CourseControl : MonoBehaviour
             MoveDistance += 1;
         }
         else
-            MoveEnd();
+        {
+            if (CEOSkillB == false)
+                MoveEnd();
+            else
+                ExtraMovePanel.SetActive(true);
+        }
+    }
+
+    public void ExtraMove(int value)
+    {
+        MoveDistance = value;
+        CEOSkillB = false;
+        ShipMove();
+        ExtraMovePanel.SetActive(false);
     }
 
     //移动至下一个节点
@@ -174,7 +195,12 @@ public class CourseControl : MonoBehaviour
         if (MoveDistance != 0)
             ShipMove();
         else
-            MoveEnd();
+        {
+            if (CEOSkillB == false)
+                MoveEnd();
+            else
+                ExtraMovePanel.SetActive(true);
+        }
     }
 
     //度过移动时间
@@ -193,6 +219,8 @@ public class CourseControl : MonoBehaviour
         CourseEndButton.SetActive(true);
         CloseButton.SetActive(true);
         GC.CheckButtonName();
+        if (CEOSkillB == true)
+            ExtraMovePanel.SetActive(true);
     }
 
     //直接在航线界面进入下一回合，事件绑定在CourseEndButton上

@@ -83,6 +83,11 @@ public class BrainStormControl : MonoBehaviour
         //有未处理事件时不能继续
         if (GC.EC.UnfinishedEvents.Count > 0)
             return;
+        if (GC.AdjustTurn != 0)
+        {
+            GC.CreateMessage("在调整回合以外无法进行头脑风暴");
+            return;
+        }
         GC.AskPause(this);
         BSStarted = true;
         StageCount = 0;
@@ -139,6 +144,11 @@ public class BrainStormControl : MonoBehaviour
             GC.CreateMessage("有其他议题正在进行，无法开始新的议题");
             return;
         }
+        if (GC.AdjustTurn != 0)
+        {
+            GC.CreateMessage("在调整回合以外无法进行头脑风暴");
+            return;
+        }
         //有未处理事件时不能继续
         if (GC.EC.UnfinishedEvents.Count > 0)
             return;
@@ -173,6 +183,11 @@ public class BrainStormControl : MonoBehaviour
         if (BSStarted == true)
         {
             GC.CreateMessage("有其他议题正在进行，无法开始新的议题");
+            return;
+        }
+        if (GC.AdjustTurn != 0)
+        {
+            GC.CreateMessage("在调整回合以外无法进行融资谈判");
             return;
         }
         //有未处理事件时不能继续

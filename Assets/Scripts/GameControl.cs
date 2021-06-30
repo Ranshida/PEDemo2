@@ -15,7 +15,7 @@ public class GameControl : MonoBehaviour
     //5发动建筑技能时员工选择 6CEO技能员工/部门选择 7选择两个员工发动动员技能 8普通办公室的上级(高管办公室)选择  
     //10选择两个员工的CEO技能 11部门/员工的物品使用 12航线事件和去除负面特质相关 13在员工面板选择加入的部门（或替换已有员工）
     public int AreaSelectMode = 1;//1部门目标区域的选择（暂时删除）  2物品目标区域的选择
-    public int Money = 1000, DoubleMobilizeCost = 0, MonthMeetingTime = 3, WarTime = 3;
+    public int Money = 1000, DoubleMobilizeCost = 0, MonthMeetingTime = 3, WarTime = 3, AdjustTurn = 0;
     public bool ForceTimePause = false;
     public int Stamina
     {
@@ -60,12 +60,14 @@ public class GameControl : MonoBehaviour
     }
     public int Turn = 1;//当前回合数
     public int ItemLimit = 6;//物品数量限制
-    public int StandbyEmpLimit = 5;//人才库数量限制
+    public int EmpLimit = 10;//人才库数量限制
+    public int TotalWorkStatus = 0;//公司工作状态
+    public int TotalEfficiency = 0;//公司效率
 
     #region 杂项变量
     [HideInInspector] public int ApproveLimit = 5, Year = 1, Month = 1;//认同上限;当前年月
     [HideInInspector] public int DissatisfiedLimit = 5;//不满上限
-    [HideInInspector] public int ExtraExpense = 0;//额外维护费效果
+    [HideInInspector] public int ExtraCost = 0;//额外维护费效果
     [HideInInspector] public bool ProduceBuffBonus = false;//“精进”和“团结”状态的持续时间提高至4m战略效果
     [HideInInspector] public bool GymBuffBonus = false;//“健身房”大成功时获得“强化”或“铁人”状态的概率上升为80%战略效果
     [HideInInspector] public bool WorkToggle = false;//下周开始是否加班
@@ -84,10 +86,11 @@ public class GameControl : MonoBehaviour
     public QuestControl QC;
     public EmpEntity EmpEntityPrefab;
     public PerkInfo PerkInfoPrefab, PerkInfoPrefab_Company;
-    public DepControl DepPrefab, HRDepPrefab;
+    public AmbitionSelect AmbitionPanelPrefab;
+    public DepControl DepPrefab, PCDepPrefab, PsycholCDep;
     public DepSelect DepSelectButtonPrefab;
     public RelationInfo RelationInfoPrefab;
-    public Text HistoryTextPrefab, Text_EmpSelectTip;
+    public Text HistoryTextPrefab, Text_EmpSelectTip, Text_CompanyEW;
     public CompanyItem ItemPrefab, CurrentItem;
     public HireControl HC;
     public BuildingManage BM;
@@ -102,7 +105,7 @@ public class GameControl : MonoBehaviour
     public WindowBaseControl TotalEmpPanel;
     public Transform DepContent, DepSelectContent, StandbyContent, MessageContent, ItemContent, PerkContent;
     public InfoPanel infoPanel;
-    public GameObject DepSelectPanel, StandbyButton, MessagePrefab, GameOverPanel;
+    public GameObject DepSelectPanel, StandbyButton, MessagePrefab, GameOverPanel, AdjustTurnWarning;
     public Text Text_Time, Text_TechResource, Text_MarketResource, Text_MarketResource2, Text_ProductResource, Text_Money, 
         Text_Morale, Text_WarTime, Text_MonthMeetingTime, Text_NextTurn, Text_EventProgress;
     public Toggle WorkOvertimeToggle;
@@ -181,7 +184,9 @@ public class GameControl : MonoBehaviour
         {
             MoneyCalcTimer = 0;
         }
-        Text_Money.text = "金钱:" + Money +"\n" + "    " + (CalcCost() * -1 + Income + 50) + "/月";
+        //显示金钱和员工数量限制
+        Text_Money.text = "金钱:" + Money + "  " + (CalcCost() * -1 + Income + 50) + "/月\n\n员工数量:" 
+            + CurrentEmployees.Count + "/" + EmpLimit;
     }
 
     public void NextTurn()
@@ -203,13 +208,7 @@ public class GameControl : MonoBehaviour
             CreateMessage("动力舱没有员工");
             return;
         }
-        int StandbyCount = 0;
-        foreach (Employee e in CurrentEmployees)
-        {
-            if (e.CurrentDep == null && e.CurrentDivision == null)
-                StandbyCount += 1;
-        }
-        if (StandbyCount > StandbyEmpLimit)
+        if (CurrentEmployees.Count > EmpLimit)
         {
             CreateMessage("人才储备库员工超出上限");
             return;
@@ -251,6 +250,19 @@ public class GameControl : MonoBehaviour
         MonthMeetingTime -= 1;
         WarTime -= 1;
 
+        if (AdjustTurn == 0)
+        {
+            AdjustTurn = 2;
+            AdjustTurnWarning.SetActive(true);
+        }
+        else
+        {
+            AdjustTurn -= 1;
+            AdjustTurnWarning.SetActive(false);
+            //进入调整回合后恢复心理咨询室的员工的心力
+            if (AdjustTurn == 0)
+                PsycholCDep.RestoreMentality();
+        }
         TimeChange();
         UpdateUI();
 
@@ -261,6 +273,8 @@ public class GameControl : MonoBehaviour
         EC.EventGroupIndex = 0;
         EC.StartEventQueue = true;
         EC.StartSpecialEvent();
+        //CEO体力回复
+        CC.CEO.Stamina += 10;
     }
 
     public void CheckButtonName()
@@ -316,14 +330,38 @@ public class GameControl : MonoBehaviour
             if (emp.CurrentDep == null && emp.CurrentDivision == null)
                 value += emp.InfoDetail.CalcSalary();
         }
-        value += ExtraExpense;
+        value += ExtraCost;
         return value;
+    }
+
+    //计算公司的整体效率和工作状态
+    public void CalcCompanyEW()
+    {
+        TotalEfficiency = 0;
+        TotalWorkStatus = 0;
+        foreach (DivisionControl div in CurrentDivisions)
+        {
+            if (div.CurrentDeps.Count == 0)
+                continue;
+            TotalEfficiency += (div.ExtraEfficiency + div.Efficiency);
+            TotalWorkStatus += (div.ExtraWorkStatus + div.WorkStatus);
+        }
+        Text_CompanyEW.text = "公司整体效率:" + TotalEfficiency + "\n公司整体工作状态" + TotalWorkStatus;
     }
 
     public DepControl CreateDep(Building b)
     {
         DepControl newDep;
-        newDep = Instantiate(DepPrefab, this.transform);
+        //心理咨询室需要额外设定
+        if (b.Type == BuildingType.心理咨询室)
+        {
+            newDep = Instantiate(PCDepPrefab, this.transform);
+            PsycholCDep = newDep;
+            TurnEvent.AddListener(newDep.CloseRemoveButton);
+            UIManager.Instance.OnAddNewWindow(newDep.DivPanel.GetComponent<WindowBaseControl>());
+        }
+        else
+            newDep = Instantiate(DepPrefab, this.transform);
         newDep.transform.parent = DepContent;
         newDep.building = b;
         UIManager.Instance.OnAddNewWindow(newDep.EmpPanel.GetComponent<WindowBaseControl>());
@@ -333,7 +371,7 @@ public class GameControl : MonoBehaviour
            
         //根据Excel设置
         //设置员工上限
-        newDep.SetDepStatus(int.Parse(b.Jobs));
+        newDep.SetDepStatus();
 
         int num = 1;
         for(int i = 0; i < CurrentDeps.Count; i++)
@@ -373,29 +411,40 @@ public class GameControl : MonoBehaviour
 
         DepSelectPanel.GetComponent<WindowBaseControl>().SetWndState(true);
 
-        //人才库员工数量检查（最好单独记一下待命员工数量？）
-        int StandbyCount = 0;
-        foreach(Employee e in CurrentEmployees)
-        {
-            if (e.CurrentDep == null && e.CurrentDivision == null)
-                StandbyCount += 1;
-        }
-        if (StandbyCount >= StandbyEmpLimit || emp.isCEO == true)
-            StandbyButton.SetActive(false);
-        else
+        if (AdjustTurn == 0)
             StandbyButton.SetActive(true);
+        else
+        {
+            //非调整回合如果是招募则可以待命，否则不能待命
+            if (CurrentEmployees.Contains(emp) == false)
+                StandbyButton.SetActive(true);
+            else
+                StandbyButton.SetActive(false);
+        }
 
         for (int i = 0; i < CurrentDeps.Count; i++)
         {
+            //如果员工已经在该部门或部门人数达到上限则不显示
             if (CurrentDeps[i] == emp.CurrentDep || CurrentDeps[i].CheckEmpNum() == false)
+                CurrentDeps[i].DS.gameObject.SetActive(false);
+            //非调整回合时不显示非独立建筑
+            else if (AdjustTurn != 0 && CurrentDeps[i].building.IndependentBuilding == false)
                 CurrentDeps[i].DS.gameObject.SetActive(false);
             else
             {
-                CurrentDeps[i].DS.gameObject.SetActive(true);
-                if (CurrentDeps[i].CheckSkillType(emp) == false)
+                if (CurrentDeps[i].CheckSkillType(emp) == 0 && CurrentDeps[i].building.Type != BuildingType.动力舱)
+                {
                     CurrentDeps[i].DS.Text_DepName.color = Color.red;
+                    //心理咨询室只能放符合条件的员工
+                    if (CurrentDeps[i].building.Type == BuildingType.心理咨询室)
+                    {
+                        CurrentDeps[i].DS.gameObject.SetActive(false);
+                        continue;
+                    }
+                }
                 else
                     CurrentDeps[i].DS.Text_DepName.color = Color.black;
+                CurrentDeps[i].DS.gameObject.SetActive(true);
             }
         }
         foreach(DivisionControl div in CurrentDivisions)
@@ -485,6 +534,7 @@ public class GameControl : MonoBehaviour
     public void SelectDep(DepControl depControl)
     {
         DepSelectPanel.GetComponent<WindowBaseControl>().SetWndState(false);
+        //雇佣直接加入
         if (SelectMode == 1)
         {
             QC.Finish(8);
@@ -492,6 +542,7 @@ public class GameControl : MonoBehaviour
             CurrentEmpInfo.emp.InfoA.transform.parent = StandbyContent;//不管后面有无投票，投票结果如何都先把infoA放好
             CurrentEmpInfo.emp.InfoA.transform.parent = depControl.EmpContent;
         }
+        //移动
         else if (SelectMode == 2)
         {
             //离任高管投票检测
@@ -531,6 +582,7 @@ public class GameControl : MonoBehaviour
         //调动信息设置
         if (SelectMode == 1 || SelectMode == 2)
         {
+            CurrentEmpInfo.emp.ProfessionUse = 1;
             CurrentEmpInfo.emp.CurrentDep = depControl;
             depControl.CurrentEmps.Add(CurrentEmpInfo.emp);
             CurrentEmpInfo.emp.CurrentDep.EmpEffectCheck();
@@ -590,6 +642,16 @@ public class GameControl : MonoBehaviour
             emp = CurrentEmpInfo.emp;
         if (emp.CurrentDep != null)
         {
+            //如果是心理咨询室的被回复员工，则特殊处理
+            if (emp.CurrentDep.building.Type == BuildingType.心理咨询室)
+            {
+                //作为被回复的员工时将自身从槽位中移除
+                if (emp.CurrentDep.AffectedEmps.Contains(emp) == true)
+                {
+                    emp.CurrentDep.RemovePCTarget(emp.CurrentDep.AffectedEmps.IndexOf(emp));
+                    return;
+                }
+            }
             foreach (PerkInfo perk in emp.InfoDetail.PerksInfo)
             {
                 if (perk.CurrentPerk.DepPerk == true)
@@ -871,4 +933,10 @@ public class GameControl : MonoBehaviour
         CheckButtonName();
     }
 
+    //生成志向选择面板（选择岗位优势）
+    public void CreateAmbitionSelectPanel(Employee emp)
+    {
+        AmbitionSelect As = Instantiate(AmbitionPanelPrefab, this.transform);
+        As.SetEmp(emp);
+    }
 }

@@ -736,6 +736,26 @@ public class CEOControl : MonoBehaviour
             CEOSkillNum = num;
             SetPanelContent(GC.BSC.CurrentBSInfo.emp);
         }
+        else if (num == 22)
+        {
+            if (CEO.Stamina < 40)
+            {
+                GC.CreateMessage("CEO体力不足");
+                return;
+            }
+            CEO.Stamina -= 40;
+            GC.CrC.CEOSkillA = true;
+        }
+        else if (num == 23)
+        {
+            if (CEO.Stamina < 40)
+            {
+                GC.CreateMessage("CEO体力不足");
+                return;
+            }
+            CEO.Stamina -= 40;
+            GC.CrC.CEOSkillB = true;
+        }
         else
         {
             CEOSkillNum = num;

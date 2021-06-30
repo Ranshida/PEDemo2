@@ -7,18 +7,13 @@ using UnityEngine.UI;
 public class DepControl : MonoBehaviour
 {
 
-    [HideInInspector] public int FailProgress = 0, EfficiencyLevel = 0, SpType;
     //BuildingMode用于区分建筑模式  ActiveMode用于区分激活方式 0无法激活 1直接激活 2选择员工 3选择部门 4选择区域 5卡牌生产
     [HideInInspector] public int ProducePointLimit = 20, ActiveMode = 1, Mode2EffectValue = -2;
-    [HideInInspector] public bool SurveyStart = false;
+    [HideInInspector] public int DepFaith = 50, BaseWorkStatus;//基本工作状态;
 
     public int DepLevel = 0;//部门等级,用于计算效果
-    public int DepFaith = 50;
     public int StaminaExtra = 0;//特质导致的每周体力buff
-    public int ManageValue;//管理值
-    public int ManageUse;//作为下属时的管理值消耗
     public int EmpLimit;
-    public int BaseWorkStatus;//基本工作状态
     public int ExtraEfficiency = 0;//提供给事业部的额外效率加成
     public int ExtraFaith = 0;//提供给事业部的额外信念加成
     public int ExtraWorkStatus = 0;//提供给事业部的额外工作状态加成
@@ -43,13 +38,15 @@ public class DepControl : MonoBehaviour
     public bool canWork = false, DefautDep = false;
 
     private int stopWorkTime = 0;//停工时间
-    private bool CheatMode = false, TipShowed = false, isWeakend = false;
+    private int PCLevel = 1;//心理咨询室的等级
+    private int PsychoCSlotNum = 0;//当前选中的心力回复槽位，用于将选中的员工放置在对应的槽位上
+    private bool TipShowed = false, isWeakend = false;
 
     Action WeakAction, UnWeakAction, AddLevelEffect = () => { }, RemoveLevelEffect = () => { }, DepEffect = () => { };//弱化效果，弱化清除效果，等级增加效果，等级减少效果，部门激活效果
     public Area TargetArea;
     public Employee Manager;
     public Transform EmpContent, PerkContent, EmpPanel, DivPanel, EmpMarkerContent, EmpEffectContent;
-    public GameObject EmpEffectPrefab, EmpEffect2Prefab, EmpMarkerPrefab;
+    public GameObject EmpEffectPrefab, EmpEffect2Prefab, EmpMarkerPrefab, PsychoCUpgradeButton;//最后一个是心理咨询室升级按钮
     public Button ActiveButton;
     public Building building = null;
     public GameControl GC;
@@ -59,13 +56,17 @@ public class DepControl : MonoBehaviour
     public Text Text_DepName, Text_DepName2, Text_DepName3, Text_WeakEffect, Text_InfoProgress, Text_DivProgress, Text_DepFunction,
         Text_StopWork;
 
-
+    public List<Employee> AffectedEmps = new List<Employee>() { null, null, null};
     public List<Employee> CurrentEmps = new List<Employee>();
     public List<Building> SubBuildings = new List<Building>();//保存的所有附加建筑
     public List<PerkInfo> CurrentPerks = new List<PerkInfo>();
     public List<Image> EmpMarkers = new List<Image>();
     public List<Image> EmpEffectMarkers = new List<Image>();
-    public int[] DepHeadHuntStatus = new int[15];
+    //心理咨询室相关
+    public List<GameObject> PsychoCPanel = new List<GameObject>();//3个槽位的面板
+    public List<GameObject> PsychoCSelectButtons = new List<GameObject>();//3个槽位的选人按钮
+    public List<Text> Text_PCInfos = new List<Text>();//3个槽位的进驻人信息
+    public List<GameObject> PsychoCRemoveButtons = new List<GameObject>();//3个槽位的删除按钮
 
     private void Start()
     {
@@ -124,7 +125,7 @@ public class DepControl : MonoBehaviour
             Text_InfoProgress.text = "生产进度:" + SpProgress + "/" + (ProducePointLimit + ExtraProduceLimit + CurrentDivision.ExtraProduceTime);
             Text_DivProgress.text = "生产进度:" + SpProgress + "/" + (ProducePointLimit + ExtraProduceLimit + CurrentDivision.ExtraProduceTime);
         }
-        else if (ActiveMode == 2 || ActiveMode == 3 || ActiveMode == 4)
+        else if ((ActiveMode == 2 || ActiveMode == 3 || ActiveMode == 4) && building.Type != BuildingType.心理咨询室)
         {
             Text_InfoProgress.text = "充能进度:" + SpProgress + "/" + (ProducePointLimit + ExtraProduceLimit + CurrentDivision.ExtraProduceTime);
             Text_DivProgress.text = "充能进度:" + SpProgress + "/" + (ProducePointLimit + ExtraProduceLimit + CurrentDivision.ExtraProduceTime);
@@ -156,7 +157,7 @@ public class DepControl : MonoBehaviour
     //显示当前所处的事业部面板并关闭其他事业部面板
     public void ShowDivisionPanel()
     {
-        if(CurrentDivision != null)
+        if (CurrentDivision != null)
         {
             for (int i = 0; i < GC.CurrentDivisions.Count; i++)
             {
@@ -174,37 +175,44 @@ public class DepControl : MonoBehaviour
         else
             return false;
     }
-    public bool CheckSkillType(Employee emp)
+    public int CheckSkillType(Employee emp)
     {
         if (building.Type != BuildingType.商战建筑)
         {
+            int count = 0;
             foreach (int type in emp.Professions)
             {
                 if (type == building.effectValue)
-                    return true;
+                    count += 1;
             }
+            return count;
         }
         else
         {
             int EmptyCount = 0;
+            int professionCount = 0;//当满足多个卡时取满足的最多的那张卡
             foreach (CWCardInfo info in CurrentDivision.CWCards)
             {
                 if (info.CurrentCard != null)
                 {
+                    int cardProCount = 0;
                     foreach (int type in emp.Professions)
                     {
                         if (type == (int)info.CurrentCard.TypeRequire)
-                            return true;
+                            cardProCount += 1;
                     }
+                    if (cardProCount > professionCount)
+                        professionCount = cardProCount;
                 }
                 else
                     EmptyCount += 1;
             }
             //没有卡则返回真
             if (EmptyCount == CurrentDivision.CWCards.Count)
-                return true;
+                return 1;
+            else
+                return professionCount;
         }
-        return false;
     }
 
     //删除建筑时重置所有相关数据
@@ -253,7 +261,10 @@ public class DepControl : MonoBehaviour
     {
         //有未处理事件时不能继续
         if (GC.EC.UnfinishedEvents.Count > 0)
+        {
+            GC.CreateMessage("有未处理的抉择事件");
             return;
+        }
         GC.CurrentDep = this;
         if (ActiveMode == 2)
         {
@@ -365,9 +376,12 @@ public class DepControl : MonoBehaviour
         //变换前等级比现在高时清空高级效果,低的时候添加额外效果
         if (DepLevel > level)
         {
-            RemoveLevelEffect();
-            print("RemoveLevel");
-            DepLevel = level;
+            //有多重岗位优势后可能一次性降低1等级以上,所以要进行降低等级数量的检测
+            for (int i = 0; i < DepLevel - level; i++)
+            {
+                RemoveLevelEffect();
+                DepLevel -= 1;
+            }
         }
         else if (DepLevel < level)
         {
@@ -381,31 +395,74 @@ public class DepControl : MonoBehaviour
     {
         bool weak = false;
         //设置人员数量效果图标
+        int PExtra = 0;//额外岗位优势替代的员工数量
         for (int i = 0; i < EmpLimit; i++)
         {
+            //超过图片index的话直接结束（在之前的遍历中会遍历可能略过的黄色图标）
+            if (i + PExtra >= EmpLimit)
+                break;
+            EmpEffect Ee = EmpEffectMarkers[i + PExtra].transform.parent.gameObject.GetComponent<EmpEffect>();
             if (CurrentEmps.Count > i)
             {
-                //符合技能需求的标绿
-                if (CheckSkillType(CurrentEmps[i]) == true)
+                int pCount = CheckSkillType(CurrentEmps[i]);
+                //符合技能1项需求的标绿
+                if (pCount == 1)
                 {
-                    EmpEffectMarkers[i].color = Color.green;
-                    EmpMarkers[i].color = Color.green;
+                    EmpEffectMarkers[i + PExtra].color = Color.green;
+                    EmpMarkers[i + PExtra].color = Color.green;
+                    EmpEffectMarkers[i + PExtra].GetComponent<Outline>().enabled = false;
+                    EmpMarkers[i + PExtra].GetComponent<Outline>().enabled = false;
+                }
+                //符合多项需求的标绿并加黄框
+                else if (pCount > 1)
+                {
+                    EmpEffectMarkers[i + PExtra].color = Color.green;
+                    EmpMarkers[i + PExtra].color = Color.green;
+                    EmpEffectMarkers[i + PExtra].GetComponent<Outline>().enabled = true;
+                    EmpMarkers[i + PExtra].GetComponent<Outline>().enabled = true;
                 }
                 //不符合的标红
                 else
                 {
-                    EmpEffectMarkers[i].color = Color.red;
-                    EmpMarkers[i].color = Color.red;
+                    EmpEffectMarkers[i + PExtra].color = Color.red;
+                    EmpMarkers[i + PExtra].color = Color.red;
                     weak = true;
+                    EmpEffectMarkers[i + PExtra].GetComponent<Outline>().enabled = false;
+                    EmpMarkers[i + PExtra].GetComponent<Outline>().enabled = false;
                 }
-                EmpEffectMarkers[i].gameObject.GetComponentInChildren<Text>().text = CurrentEmps[i].Name;
+                Ee.SetProfessionCount(pCount, CurrentEmps[i], EmpEffectMarkers[i + PExtra]);
+                EmpEffectMarkers[i + PExtra].gameObject.GetComponentInChildren<Text>().text = CurrentEmps[i].Name;
+                //设置额外岗位优势效果
+                if (CurrentEmps[i].ProfessionUse > 1)
+                {
+                    for (int j = i + PExtra + 1; j < i + CurrentEmps[i].ProfessionUse + PExtra; j++)
+                    {
+                        if (j >= EmpLimit)
+                            break;
+                        EmpEffectMarkers[j].color = Color.yellow;
+                        EmpMarkers[j].color = Color.yellow;
+
+                        EmpEffectMarkers[j].GetComponent<Outline>().enabled = false;
+                        EmpMarkers[j].GetComponent<Outline>().enabled = false;
+
+                        EmpEffect Ee2 = EmpEffectMarkers[j].transform.parent.gameObject.GetComponent<EmpEffect>();
+                        print(EmpEffectMarkers[j]);
+                        Ee2.SetProfessionCount(0, null, EmpEffectMarkers[j]);
+
+                        EmpEffectMarkers[j].gameObject.GetComponentInChildren<Text>().text = "";
+                    }
+                    PExtra += (CurrentEmps[i].ProfessionUse - 1);
+                }
             }
             //超出人数的标白
             else
             {
-                EmpEffectMarkers[i].color = Color.white;
-                EmpMarkers[i].color = Color.white;
-                EmpEffectMarkers[i].gameObject.GetComponentInChildren<Text>().text = "";
+                EmpEffectMarkers[i + PExtra].color = Color.white;
+                EmpMarkers[i + PExtra].color = Color.white;
+                EmpEffectMarkers[i + PExtra].gameObject.GetComponentInChildren<Text>().text = "";
+                EmpEffectMarkers[i + PExtra].GetComponent<Outline>().enabled = false;
+                EmpMarkers[i + PExtra].GetComponent<Outline>().enabled = false;
+                Ee.SetProfessionCount(0, null, EmpEffectMarkers[i + PExtra]);
             }
         }
 
@@ -427,11 +484,11 @@ public class DepControl : MonoBehaviour
                 Text_WeakEffect.gameObject.SetActive(false);
             }
         }
-        if (building.EmpCount[2] != 0 && CurrentEmps.Count >= (building.EmpCount[0] + building.EmpCount[1] + building.EmpCount[2]))
+        if (building.EmpCount[2] != 0 && CurrentEmps.Count + PExtra >= (building.EmpCount[0] + building.EmpCount[1] + building.EmpCount[2]))
             SetDepLevel(3);
-        else if (building.EmpCount[1] != 0 && CurrentEmps.Count >= (building.EmpCount[0] + building.EmpCount[1]))
+        else if (building.EmpCount[1] != 0 && CurrentEmps.Count + PExtra >= (building.EmpCount[0] + building.EmpCount[1]))
             SetDepLevel(2);
-        else if (building.EmpCount[0] != 0 && CurrentEmps.Count >= building.EmpCount[0])
+        else if (building.EmpCount[0] != 0 && CurrentEmps.Count + PExtra >= building.EmpCount[0])
             SetDepLevel(1);
         else
             SetDepLevel(0);
@@ -451,32 +508,37 @@ public class DepControl : MonoBehaviour
     }
 
     //设置人员上限和人员标记以及一些额外效果
-    public void SetDepStatus(int empLimit)
+    public void SetDepStatus()
     {
-        EmpLimit = empLimit;
-        for (int i = 0; i < empLimit; i++)
+        EmpLimit = int.Parse(building.Jobs);
+
+        //心理咨询室有自己的面板
+        if (building.Type != BuildingType.心理咨询室)
         {
-            Image image = Instantiate(EmpMarkerPrefab, EmpMarkerContent).GetComponent<Image>();
-            EmpMarkers.Add(image);
-            EmpEffect Ee = image.gameObject.GetComponent<EmpEffect>();
-            Ee.dep = this;
-            Ee.EmpIndex = i;
+            for (int i = 0; i < EmpLimit; i++)
+            {
+                Image image = Instantiate(EmpMarkerPrefab, EmpMarkerContent).GetComponent<Image>();
+                EmpMarkers.Add(image);
+                EmpEffect Ee = image.gameObject.GetComponent<EmpEffect>();
+                Ee.dep = this;
+            }
+
+            int EmpIndex = 0;
+            for (int i = 0; i < 3; i++)
+            {
+                if (building.EmpCount[i] == 1)
+                {
+                    InitMarker(building.Functions[i], building.Debuffs[i], EmpIndex);
+                    EmpIndex += 1;
+                }
+                else if (building.EmpCount[i] == 2)
+                {
+                    InitDoubleMarker(building.Functions[i], building.Debuffs[i], EmpIndex);
+                    EmpIndex += 2;
+                }
+            }
         }
 
-        int EmpIndex = 0;
-        for (int i = 0; i < 3; i++)
-        {
-            if (building.EmpCount[i] == 1)
-            {
-                InitMarker(building.Functions[i], building.Debuffs[i], EmpIndex);
-                EmpIndex += 1;
-            }
-            else if (building.EmpCount[i] == 2)
-            {
-                InitDoubleMarker(building.Functions[i], building.Debuffs[i], EmpIndex);
-                EmpIndex += 2;
-            }
-        }
         Text_DepFunction.text = building.Description;
         Text_WeakEffect.gameObject.GetComponent<InfoPanelTrigger>().ContentB = building.WeakEffect;
 
@@ -638,15 +700,15 @@ public class DepControl : MonoBehaviour
             AddLevelEffect = () =>
             {
                 if (DepLevel == 1)
-                    GC.ExtraExpense -= 20;
+                    GC.ExtraCost -= 20;
                 else if (DepLevel == 2)
                 {
-                    GC.ExtraExpense -= 15;
+                    GC.ExtraCost -= 15;
                     GC.AddPerk(new Perk92());
                 }
                 else if (DepLevel == 3)
                 {
-                    GC.ExtraExpense -= 25;
+                    GC.ExtraCost -= 25;
                     GC.AddPerk(new Perk92());
                     GC.AddPerk(new Perk92());
                 }
@@ -654,15 +716,15 @@ public class DepControl : MonoBehaviour
             RemoveLevelEffect = () =>
             {
                 if (DepLevel == 1)
-                    GC.ExtraExpense += 20;
+                    GC.ExtraCost += 20;
                 else if (DepLevel == 2)
                 {
-                    GC.ExtraExpense += 15;
+                    GC.ExtraCost += 15;
                     GC.RemovePerk(92);
                 }
                 else if (DepLevel == 3)
                 {
-                    GC.ExtraExpense += 25;
+                    GC.ExtraCost += 25;
                     GC.RemovePerk(92);
                     GC.RemovePerk(92);
                 }
@@ -677,33 +739,56 @@ public class DepControl : MonoBehaviour
             {
                 if (DepLevel == 1)
                 {
-                    ProducePointLimit  = 3;
-                    canWork = true;
+                    PsychoCSelectButtons[0].SetActive(true);
+                    Text_PCInfos[0].transform.parent.gameObject.SetActive(true);
                 }
                 else if (DepLevel == 2)
                 {
-                    ProducePointLimit = 1;
-                    GC.AddPerk(new Perk97());
+                    PsychoCSelectButtons[1].SetActive(true);
+                    Text_PCInfos[1].transform.parent.gameObject.SetActive(true);
+                }
+                else if (DepLevel == 3)
+                {
+                    PsychoCSelectButtons[2].SetActive(true);
+                    Text_PCInfos[2].transform.parent.gameObject.SetActive(true);
                 }
             };
             RemoveLevelEffect = () =>
             {
+                int MaxNum = 0;
+                foreach (Employee emp in CurrentEmps)
+                {
+                    MaxNum += emp.ProfessionUse;
+                }
+                //先移除多余槽位上的员工
+                for (int i = 0; i < 3; i++)
+                {
+                    if (AffectedEmps[i] != null && i >= MaxNum)
+                        RemovePCTarget(i);
+                }
                 if (DepLevel == 1)
                 {
-                    ProducePointLimit = 0;
-                    canWork = false;
+                    PsychoCSelectButtons[0].SetActive(false);
+                    Text_PCInfos[0].transform.parent.gameObject.SetActive(false);
                 }
                 else if (DepLevel == 2)
                 {
-                    ProducePointLimit = 3;
-                    GC.RemovePerk(97);
+                    PsychoCSelectButtons[1].SetActive(false);
+                    Text_PCInfos[1].transform.parent.gameObject.SetActive(false);
+                }
+                else if (DepLevel == 3)
+                {
+                    PsychoCSelectButtons[2].SetActive(false);
+                    Text_PCInfos[2].transform.parent.gameObject.SetActive(false);
                 }
             };
             DepEffect = () =>
             {
-                GC.CurrentEmpInfo.emp.Mentality += 15;
+                AddTarget();
             };
             ActiveMode = 2;
+            //初始改为1岗位
+            EmpLimit = 1;
         }
         else if (building.Type == BuildingType.智库小组)
         {
@@ -783,7 +868,7 @@ public class DepControl : MonoBehaviour
                 }
             };
             ActiveMode = 0;
-        }//状态没弄完
+        }
         else if (building.Type == BuildingType.商战建筑)
         {
             WeakAction = () => { };
@@ -824,35 +909,9 @@ public class DepControl : MonoBehaviour
             };
             ActiveMode = 5;
         }
-        //else if (building.Type == BuildingType.算法小组)
-        //{
-        //    ExtraEfficiency = -4;
-        //    WeakAction = () => { ExtraWorkStatus -= 2; };
-        //    UnWeakAction = () => { ExtraWorkStatus += 2; };
-        //    AddLevelEffect = () =>
-        //    {
-        //        if (DepLevel == 1)
-        //        {
-        //            ExtraWorkStatus -= 5;
-        //            canWork = true;
-        //        }
-        //        else if (DepLevel == 2)
-        //            ExtraWorkStatus += 1;
-        //    };
-        //    RemoveLevelEffect = () =>
-        //    {
-        //        if (DepLevel == 1)
-        //        {
-        //            ExtraWorkStatus += 5;
-        //            canWork = false;
-        //        }
-        //        else if (DepLevel == 2)
-        //            ExtraWorkStatus -= 1;
-        //    };
-        //    ActiveMode = 5;
-        //}
+
         //需要手动激活的才显示激活按钮
-        if (ActiveMode == 2 || ActiveMode == 3 || ActiveMode == 4)
+        if ((ActiveMode == 2 || ActiveMode == 3 || ActiveMode == 4) && building.Type != BuildingType.心理咨询室)
             ActiveButton.gameObject.SetActive(true);
     }
     //生成单图标记
@@ -863,7 +922,8 @@ public class DepControl : MonoBehaviour
         effect.InitEffect(describe);
         effect.InitDebuff(debuff);
         EmpEffectMarkers.Add(effect.Marker1);
-        effect.EmpIndex = index;
+        effect.DepMarker1 = EmpMarkers[index].GetComponent<EmpEffect>();
+        effect.SetDepMarkerRef();
     }
     //生成双图标记
     void InitDoubleMarker(string describe, string debuff, int index)
@@ -874,7 +934,9 @@ public class DepControl : MonoBehaviour
         effect.InitDebuff(debuff);
         EmpEffectMarkers.Add(effect.Marker1);
         EmpEffectMarkers.Add(effect.Marker2);
-        effect.EmpIndex = index;
+        effect.DepMarker1 = EmpMarkers[index].GetComponent<EmpEffect>();
+        effect.DepMarker2 = EmpMarkers[index + 1].GetComponent<EmpEffect>();
+        effect.SetDepMarkerRef();
     }
 
     void AddSubBulding()
@@ -903,12 +965,6 @@ public class DepControl : MonoBehaviour
         SubBuildings[a].CanDismantle = true;
         GC.BM.DismantleBuilding(SubBuildings[a]);
         SubBuildings.RemoveAt(a);
-    }
-
-    //作弊模式
-    public void ToggleCheatMode(bool value)
-    {
-        CheatMode = value;
     }
 
     //删除持续时间为业务时间和头脑风暴时间的perk
@@ -997,7 +1053,7 @@ public class DepControl : MonoBehaviour
         if (building.Type == BuildingType.商战建筑)
         {
             DC.CWDep = this;
-            DivPanel.gameObject.SetActive(false);
+            //DivPanel.gameObject.SetActive(false);
         }
         EmpEffectCheck();
     }
@@ -1023,4 +1079,93 @@ public class DepControl : MonoBehaviour
     }
 
 
+    //心理咨询室相关
+    //————————————————————————————————————————
+    //移除一个回复槽位上的员工
+    public void RemovePCTarget(int num)
+    {
+        AffectedEmps[num].CurrentDep = null;
+        AffectedEmps[num] = null;
+        PsychoCRemoveButtons[num].SetActive(false);
+        PsychoCSelectButtons[num].SetActive(true);
+    }
+
+    //设定一个槽位开始选择员工
+    public void StartPCSelect(int num)
+    {
+        PsychoCSlotNum = num;
+        GC.CurrentDep = this;
+        GC.SelectMode = 5;
+        GC.Text_EmpSelectTip.text = "选择一个员工";
+        GC.TotalEmpPanel.SetWndState(true);
+        //可调整回合中所有人应该都可以进入
+        if (GC.AdjustTurn == 0)
+        {
+            foreach (Employee emp in GC.CurrentEmployees)
+            {
+                if (emp.CurrentDep == this)
+                    emp.InfoB.gameObject.SetActive(false);
+            }
+        }
+        //非调整回合只能让待命员工进入
+        else
+        {
+            foreach (Employee emp in GC.CurrentEmployees)
+            {
+                if (emp.CurrentDep != null || emp.CurrentDivision != null)
+                    emp.InfoB.gameObject.SetActive(false);
+            }
+        }
+    }
+
+    //向回复槽位添加一个员工
+    private void AddTarget()
+    {
+        Employee e = GC.CurrentEmpInfo.emp;
+        GC.ResetOldAssignment(e);
+        AffectedEmps[PsychoCSlotNum] = e;
+        e.CurrentDep = this;
+        PsychoCSelectButtons[PsychoCSlotNum].SetActive(false);
+        PsychoCRemoveButtons[PsychoCSlotNum].SetActive(true);
+        Text_PCInfos[PsychoCSlotNum].text = GC.CurrentEmpInfo.emp.Name + "\n心力:" + GC.CurrentEmpInfo.emp.Mentality + "/" + GC.CurrentEmpInfo.emp.MentalityLimit;
+    }
+
+    //心理咨询室升级
+    public void AddPCLevel()
+    {
+        if (GC.Money >= 300)
+        {
+            PsychoCPanel[PCLevel].SetActive(true);
+            EmpMarkers[PCLevel].gameObject.SetActive(true);
+            PCLevel += 1;
+            EmpLimit += 1;
+            GC.Money -= 300;
+            if (PCLevel == 3)
+                PsychoCUpgradeButton.SetActive(false);
+        }
+        else
+            GC.CreateMessage("金钱不足");
+    }
+
+    //恢复心力
+    public void RestoreMentality()
+    {
+        for(int i = 0; i < 3; i++)
+        {
+            if (AffectedEmps[i] != null)
+            {
+                AffectedEmps[i].Mentality += 1000;
+                RemovePCTarget(i);
+            }
+        }
+    }
+
+    //进入下一回合后关闭移除按钮
+    public void CloseRemoveButton()
+    {
+        foreach(GameObject g in PsychoCRemoveButtons)
+        {
+            g.SetActive(false);
+        }
+    }
 }

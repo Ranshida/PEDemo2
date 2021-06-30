@@ -49,6 +49,7 @@ public class EmpEntity : MonoBehaviour
             
             if (ThisEmp.InfoDetail.emp.CurrentDep != null)
             {
+
                 return ThisEmp.InfoDetail.emp.CurrentDep.building;
             }
             return null;
@@ -62,7 +63,12 @@ public class EmpEntity : MonoBehaviour
             {
                 if (WorkBuilding.Department)
                 {
-                    return new Vector3Value(true, WorkBuilding.WorkPos[ThisEmp.CurrentDep.CurrentEmps.IndexOf(ThisEmp)].position);
+                    if (WorkBuilding.Type != BuildingType.心理咨询室)
+                        return new Vector3Value(true, WorkBuilding.WorkPos[ThisEmp.CurrentDep.CurrentEmps.IndexOf(ThisEmp)].position);
+                    else if (WorkBuilding.Department.CurrentEmps.Contains(ThisEmp))
+                        return new Vector3Value(true, WorkBuilding.WorkPos[ThisEmp.CurrentDep.CurrentEmps.IndexOf(ThisEmp)].position);
+                    else if (WorkBuilding.Department.AffectedEmps.Contains(ThisEmp))
+                        return new Vector3Value(true, WorkBuilding.WorkPos[ThisEmp.CurrentDep.AffectedEmps.IndexOf(ThisEmp) + 3].position);
                 }
             }
             return new Vector3Value(false);

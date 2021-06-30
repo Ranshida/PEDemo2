@@ -12,6 +12,11 @@ public enum OccupationType
     超级黑客, 神秘打工仔, 大企业中层, 海盗, 大学毕业生, 论坛版主, 独立开发者, 键盘艺术家, 酒保
 }
 
+public enum AmbitionType
+{
+    创新家, 实践者, 专家, 多面手, 可塑之才, 会计师, 贤者, 倾听者, 助手
+}
+
 public enum EColor
 {//L开头为对应1级浅色情绪
     White, Gray, LYellow, LRed, LBlue, LOrange, LPurple, LGreen, Yellow, Red, Blue, Orange, Purple, Green, None
@@ -149,7 +154,10 @@ public class Employee
     public int Exp = 0;//当前经验
     public int Level = 0;
     public int ExtraExp = 0;//每回合获得的经验(特质19热情相关)
+    public int Ambition1, Ambition2;//两个志向
+    public int AmbitionType = 0;//志向模板
 
+    public int ProfessionUse = 1;//如果利用多岗位优势在部门中额外顶替一个位置，则>1否则默认为1
     public int SalaryExtra = 0, Age, ObeyTime, NoPromotionTime = 0, NoMarriageTime = 0,
         VacationTime = 0, SpyTime = 0, CoreMemberTime;//放假时间、间谍时间、核心成员说服CD时间
     public int ManagerExp;//作为高管的经验值，属下员工技能升级时经验+1，攒够10点获得一个技能点数
@@ -157,11 +165,11 @@ public class Employee
     public int SkillLimitTime;//头脑风暴中技能禁用的回合数
     public int SpecialTeamTime = 0;//特别小组在事件组结束后额外禁用的回合数
     public int NewRelationTargetTime = 6;
-    public int Ambition = 0, NormalPerkNum = 0, ManagePerkNum = 0, ProfessionsNum = 0;//剩余志向
     public float ExtraSuccessRate = 0, SalaryMultiple = 1.0f;
     public int SelfEventCorrection = 0;//个人事件修正
     public OccupationType Occupation;  //职业
 
+    public List<int> Ambitions = new List<int>();//当前志向类型
     public List<int> Professions = new List<int>();//员工的岗位优势
     public List<int[]> CurrentDices = new List<int[]>();//员工的骰子
     public int[] CharacterTendency = new int[4];//(0文化 -独裁 +开源) (1信仰-机械 +人文) (2道德-功利主义 +绝对律令) (3行事-随心所欲 +严格守序)
@@ -179,7 +187,6 @@ public class Employee
     public Employee Master, Lover, RTarget;
     public Clique CurrentClique;
 
-    public List<Perk> AmbitionPerks = new List<Perk>();//可以通过志向获得的特质
     public List<Employee> Students = new List<Employee>();
     public List<Employee> RelationTargets = new List<Employee>(); 
     public List<Relation> Relations = new List<Relation>();
@@ -187,7 +194,6 @@ public class Employee
     public List<Emotion> CurrentEmotions = new List<Emotion>();
     public List<EmpBuff> CurrentBuffs = new List<EmpBuff>();
     public List<EventCondition> EventConditions = new List<EventCondition>();
-    public List<int> NewProfessions = new List<int>(); //可以通过志向获得的岗位优势
     public List<int> ExhaustedCount = new List<int>();
 
     private List<EColor> TempEmotion = new List<EColor>();
@@ -355,86 +361,139 @@ public class Employee
             CurrentDices.Add(new int[6] { 2, 2, -1, -1, -1, -1 });
         }
 
-        //确认各项数据
-        NormalPerkNum = Random.Range(1, 5);
-        ManagePerkNum = Random.Range(1, 5);
-        ProfessionsNum = Random.Range(1, 4);
-        if (NormalPerkNum + ManagePerkNum == 2)
-            ProfessionsNum = 3;
-        else if (NormalPerkNum + ManagePerkNum == 8 && ProfessionsNum == 3)
-            ProfessionsNum = 2;
-        Ambition = ProfessionsNum + ManagePerkNum + NormalPerkNum;
+        //随机志向
+        Ambition1 = Random.Range(0, 9);
+        Ambition2 = Random.Range(0, 9);
+        while (Ambition1 == Ambition2 || (Ambition1 >= 2 && Ambition1 <= 4 && Ambition2 >=2 && Ambition2 <= 4))
+        {
+            Ambition2 = Random.Range(0, 9);
+        }
+        if ((Ambition1 >= 2 && Ambition1 <= 4) || (Ambition2 >= 2 && Ambition2 <= 4))
+            AmbitionType = 4;
+        else
+        {
+            float posb = Random.Range(0.0f, 1.0f);
+            if (posb < AdjustData.AmbitionTypeAPosb)
+                AmbitionType = 1;
+            else if (posb < AdjustData.AmbitionTypeBPosb + AdjustData.AmbitionTypeAPosb)
+                AmbitionType = 2;
+            else
+                AmbitionType = 3;
+        }
+        if (AmbitionType < 4)
+        {
+            int countA = 3, countB = 2;
+            for (int i = 0; i < 5; i++)
+            {
+                float p = Random.Range(0.0f, 1.0f);
+                if (p < 0.5f || countB == 0)
+                {
+                    Ambitions.Add(Ambition1);
+                    countA -= 1;
+                }
+                else
+                {
+                    Ambitions.Add(Ambition2);
+                    countB -= 1;
+                }
+            }
+        }
+        //带岗位优势的志向
+        else
+        {
+            int NormalAmbition, OccAmbition;
+            if (Ambition1 >= 2 && Ambition1 <= 4)
+            {
+                OccAmbition = Ambition1;
+                NormalAmbition = Ambition2;
+            }
+            else
+            {
+                OccAmbition = Ambition2;
+                NormalAmbition = Ambition1;
+            }
+            Ambitions = new List<int> { OccAmbition, NormalAmbition, OccAmbition, NormalAmbition, OccAmbition };
+        }
 
-        List<Perk> NormalPerk = new List<Perk>(), ManagePerk = new List<Perk>();
-        List<int> PosbProfessions = new List<int>() { 0, 1, 2, 3, 4, 5};
-        foreach (Perk p in PerkData.PerkList)
-        {
-            NormalPerk.Add(p);
-        }
-        foreach(Perk p in PerkData.ManagePerkList)
-        {
-            ManagePerk.Add(p);
-        }
-        foreach (int n in Professions)
-        {
-            PosbProfessions.Remove(n);
-        }
-
-        for (int i = 0; i < NormalPerkNum; i++)
-        {
-            int pNum = Random.Range(0, NormalPerk.Count);
-            AmbitionPerks.Add(NormalPerk[pNum]);
-            NormalPerk.RemoveAt(pNum);
-        }
-        for (int i = 0; i < ManagePerkNum; i++)
-        {
-            int pNum = Random.Range(0, ManagePerk.Count);
-            AmbitionPerks.Add(ManagePerk[pNum]);
-            ManagePerk.RemoveAt(pNum);
-        }
-        for (int i = 0; i < ProfessionsNum; i++)
-        {
-            int pNum = Random.Range(0, PosbProfessions.Count);
-            NewProfessions.Add(PosbProfessions[pNum]);
-            PosbProfessions.RemoveAt(pNum);
-        }
     }
 
     public void GainExp(int value)
     {
         Exp += value;
         //if (Level < 10 && Exp >= AdjustData.ExpRequire[Level])
-        while (Level < 10 && Exp >= AdjustData.EmpLevelUpExp)
+        while (Level < 5 && Exp >= AdjustData.EmpLevelUpExp)
         {
             Exp -= 50;
-            Level += 1;
-            //根据志向获得特质/岗位优势
-            if (Ambition > 0)
+            //获取特质
+            if (Ambitions[Level] < 2 || Ambitions[Level] > 4)
             {
-                Ambition -= 1;
-                int perkposb = AmbitionPerks.Count;
-                int Posb = Random.Range(1, Ambition);
-                if (Posb <= perkposb)
+                List<Perk> PosbPerks = new List<Perk>();
+                List<int> PerkWeight = new List<int>();
+                int weight = 0;
+                foreach (Perk p in PerkData.PerkList)
                 {
-                    int pNum = Random.Range(0, AmbitionPerks.Count);
-                    Perk newperk = AmbitionPerks[pNum].Clone();
-                    InfoDetail.AddPerk(newperk);
-
-                    if (PerkData.ManagePerkList.Contains(AmbitionPerks[pNum]))
-                        ManagePerkNum -= 1;
-                    else
-                        NormalPerkNum -= 1;
-
-                    AmbitionPerks.RemoveAt(pNum);
+                    if (p.ambitionType == (AmbitionType)Ambitions[Level] && p.Stage == AdjustData.AmbitionTypes[AmbitionType - 1][Level])
+                    {
+                        PosbPerks.Add(p);
+                        weight += p.Weight;
+                        PerkWeight.Add(weight);
+                    }
                 }
-                else
+
+                int posb = Random.Range(0, weight);
+                Perk newPerk;
+                for(int i = 0; i < PerkWeight.Count; i++)
                 {
-                    int pNum = Random.Range(0, NewProfessions.Count);
-                    ProfessionsNum -= 1;
-                    Professions.Add(NewProfessions[pNum]);
-                    NewProfessions.RemoveAt(pNum);
+                    if (posb < PerkWeight[i])
+                    {
+                        newPerk = PosbPerks[i].Clone();
+                        InfoDetail.AddPerk(newPerk);
+                        break;
+                    }
                 }
             }
+            else
+            {
+                //专家，获得已有岗位优势
+                if (Ambitions[Level] == 2)
+                {
+                    List<int> posbPro = new List<int>();
+                    foreach(int n in Professions)
+                    {
+                        posbPro.Add(n);
+                    }
+                    int a = Random.Range(0, posbPro.Count);
+                    //MonoBehaviour.print(a + " " + posbPro.Count);
+                    if (posbPro.Count > 0)
+                        Professions.Add(posbPro[a]);
+                    else
+                        Professions.Add(Random.Range(0, 6));
+                }
+                //多面手,获得没有的岗位优势
+                else if (Ambitions[Level] == 3)
+                {
+                    List<int> posbPro = new List<int>() { 0, 1, 2, 3, 4, 5};
+                    foreach (int n in Professions)
+                    {
+                        if (posbPro.Contains(n) == true)
+                            posbPro.Remove(n);
+                    }
+                    int a = Random.Range(0, posbPro.Count);
+                    //MonoBehaviour.print(a + " " + posbPro.Count);
+                    if (posbPro.Count > 0)
+                        Professions.Add(posbPro[a]);
+                    else
+                        Professions.Add(Random.Range(0, 6));
+                }
+                //可塑之才，能选
+                else if (Ambitions[Level] == 4)
+                {
+                    GameControl.Instance.CreateAmbitionSelectPanel(this);
+                }
+                InfoDetail.CheckProfessions();
+            }
+            InfoDetail.HideAmbitionStage(Level);
+            Level += 1;
         }
 
     }

@@ -25,12 +25,13 @@ public class HireControl : MonoBehaviour
     private void Start()
     {
         InitCEO();
+
         Refresh();
         //初始的员工
         for (int i = 0; i < 5; i++)
         {
             if (i < 2)
-            {           
+            {
                 GC.CurrentEmpInfo = HireInfos[i];
                 SetInfoPanel();
                 GC.CurrentEmpInfo.emp.InfoA.transform.parent = GC.StandbyContent;
@@ -43,6 +44,7 @@ public class HireControl : MonoBehaviour
             HireInfos[i].gameObject.SetActive(false);
         }
         HireInfos[2].CurrentNode.RemoveEmpInfo();
+
         GC.CurrentEmpInfo = null;
 
         //因为目前跟招聘有关，所以航线地图初始化在这里进行
@@ -152,6 +154,9 @@ public class HireControl : MonoBehaviour
             ED.StrategiesInfo.Add(GC.CurrentEmpInfo.StrategiesInfo[i]);
         }
         GC.CurrentEmpInfo.StrategiesInfo.Clear();
+
+        ED.SetAmbitionInfo();
+
         //创建招聘历史
         if (GC.CC.CEO != null)
             GC.CC.CEO.InfoDetail.AddHistory("招聘了" + ED.emp.Name);
@@ -187,7 +192,7 @@ public class HireControl : MonoBehaviour
         emp.InitRelation();
         //创建特质和技能
         ED.InitStrategyAndPerk();
-
+        ED.SetAmbitionInfo();
         //创建员工实体
         ED.Entity = EmpManager.Instance.CreateEmp(BuildingManage.Instance.ExitPos.position);
         ED.Entity.SetInfo(ED);
