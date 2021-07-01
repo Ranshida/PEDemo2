@@ -114,14 +114,6 @@ public class CWCardInfo : MonoBehaviour
     //DepControl的检测调用
     public void WeakCheck(DepControl dep)
     {        
-        //没人的时候直接移除弱化效果
-        if (dep.CurrentEmps.Count == 0)
-        {
-            RemoveWeakEffect();
-            return;
-        }
-
-        //有人的时候进行检测
         int count = 0;
         foreach (Employee emp in dep.CurrentEmps)
         {
@@ -134,7 +126,6 @@ public class CWCardInfo : MonoBehaviour
                 }
             }
         }
-        print(count);
         if (count >= CurrentCard.EmpNumRequire)
             RemoveWeakEffect();
         else
@@ -150,7 +141,6 @@ public class CWCardInfo : MonoBehaviour
             img.color = Color.red;
             CurrentCard.AddDebuff();
         }
-        print("AddWeak");
         UpdateUI();
     }
     private void RemoveWeakEffect()

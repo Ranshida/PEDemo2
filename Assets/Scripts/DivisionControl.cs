@@ -469,7 +469,11 @@ public class DivisionControl : MonoBehaviour
         foreach (CWCardInfo card in CWCards)
         {
             if (card.CurrentCard != null)
+            {
                 content += "卡牌" + card.CurrentCard.Name + " " + card.CurrentCard.WorkStatusDebuff[card.CurrentLevel - 1] + "\n";
+                if (card.Weak == true && card.CurrentCard.WeakDebuff_WorkStatus != 0)
+                    content += "卡牌" + card.CurrentCard.Name + "弱化效果 " + card.CurrentCard.WeakDebuff_WorkStatus + "\n";
+            }
         }
         WorkStatusInfo.ContentB = content;
     }
@@ -527,7 +531,11 @@ public class DivisionControl : MonoBehaviour
         foreach (CWCardInfo card in CWCards)
         {
             if (card.CurrentCard != null && card.CurrentNum != 0)
+            {
                 content += "卡牌" + card.CurrentCard.Name + "效果 " + (card.CurrentCard.EfficiencyDebuff[card.CurrentLevel - 1] * card.CurrentNum) + "\n";
+                if (card.Weak == true && card.CurrentCard.WeakDebuff_Efficiency != 0)
+                    content += "卡牌" + card.CurrentCard.Name + "弱化效果 " + card.CurrentCard.WeakDebuff_Efficiency + "\n";
+            }
         }
         EfficiencyInfo.ContentB = content;
     }

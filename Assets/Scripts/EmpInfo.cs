@@ -107,6 +107,8 @@ public class EmpInfo : MonoBehaviour
         ei.GC = GC;
         ei.emp = emp;
         ei.Text_Name.text = emp.Name;
+        if (ei.Text_Occupation != null)
+            ei.Text_Occupation.text = "职业:" + emp.Occupation;
     }
 
     public void StartHire()
@@ -162,7 +164,8 @@ public class EmpInfo : MonoBehaviour
         if (NeedVote == true && GC.EC.ManagerVoteCheck(emp, true, true) == false)
             return;
 
-        GC.EC.CreateEventGroup(EventData.EmpFireEventGroup[Random.Range(0, EventData.EmpFireEventGroup.Count)]);
+        if (Random.Range(0.0f, 1.0f) < AdjustData.EmpFireEventPosb)
+            GC.EC.CreateEventGroup(EventData.EmpFireEventGroup[Random.Range(0, EventData.EmpFireEventGroup.Count)]);
 
         //如果是核心成员则离开核心团队
         foreach (EmpBSInfo info in GC.BSC.EmpSelectInfos)

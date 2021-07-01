@@ -323,6 +323,12 @@ public class MonthMeeting : MonoBehaviour
         CrystalPanel.SetWndState(false);
         MeetingStart = false;
         GameControl.Instance.MonthMeetingTime = 3;
+
+        //月会结束后进入调整回合
+        GameControl.Instance.AdjustTurn = 0;
+        GameControl.Instance.AdjustTurnWarning.SetActive(false);
+        GameControl.Instance.PsycholCDep.RestoreMentality();
+
         GameControl.Instance.UpdateUI();
         GameControl.Instance.CheckButtonName();
         CrystalDict = new Dictionary<CrystalType, int>();

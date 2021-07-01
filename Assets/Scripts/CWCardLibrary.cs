@@ -5,13 +5,14 @@ using UnityEngine.UI;
 
 public class CWCardLibrary : MonoBehaviour
 {
+    public CWCard newCard;
     public CWCardInfo SelectedCard;
     public CWCardInfo CWCInfoPrefab;
     public GameObject EmptyOption;
     public Transform CardContent;
-    public WindowBaseControl DetailPanel;
+    public WindowBaseControl DetailPanel, NewCardPanel;
 
-    public List<CWCardInfo> CurrentCards = new List<CWCardInfo>(), DetailCards = new List<CWCardInfo>();
+    public List<CWCardInfo> CurrentCards = new List<CWCardInfo>(), DetailCards = new List<CWCardInfo>(), NewCardsDetail = new List<CWCardInfo>();
 
     public WindowBaseControl WBC;
 
@@ -108,5 +109,33 @@ public class CWCardLibrary : MonoBehaviour
                 return false;
         }
         return true;
+    }
+
+    //刷新后随机一张卡牌并询问玩家是否需要
+    public void RefreshNewCard()
+    {
+        newCard = CWCard.CWCardData[Random.Range(0, CWCard.CWCardData.Count)].Clone();
+        NewCardPanel.SetWndState(true);
+        foreach (CWCardInfo info in NewCardsDetail)
+        {
+            info.CurrentCard = newCard;
+            info.UpdateUI();
+            info.CurrentCard = null;
+        }
+    }
+
+    //接受新卡牌
+    public void AcceptNewCardCard()
+    {
+        AddCWCard(newCard);
+        NewCardPanel.SetWndState(false);
+        newCard = null;
+    }
+
+    //拒绝新卡牌
+    public void RejectNewCard()
+    {
+        newCard = null;
+        NewCardPanel.SetWndState(false);
     }
 }

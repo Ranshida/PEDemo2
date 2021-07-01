@@ -218,6 +218,7 @@ public class Employee
         Age = 20 + WorkYear;
 
         RandomOccupation();
+        RandomAmbition();
         //设定姓名并检查是否重名
         bool nameCheck = false;
         while (nameCheck == false)
@@ -267,6 +268,7 @@ public class Employee
         CheckCharacter();
 
         RandomOccupation();
+        RandomAmbition();
     }
 
     //升级骰子
@@ -289,11 +291,15 @@ public class Employee
     }
 
     //随机一个职业和志向
-    void RandomOccupation(int type = -1)
+    public void RandomOccupation(int type = -1)
     {
         int num;
         if (type != -1)
+        {
             num = type;
+            CurrentDices.Clear();
+            Professions.Clear();
+        }
         else
             num = Random.Range(0, 9);
 
@@ -361,10 +367,14 @@ public class Employee
             CurrentDices.Add(new int[6] { 2, 2, -1, -1, -1, -1 });
         }
 
+    }
+
+    private void RandomAmbition()
+    {
         //随机志向
         Ambition1 = Random.Range(0, 9);
         Ambition2 = Random.Range(0, 9);
-        while (Ambition1 == Ambition2 || (Ambition1 >= 2 && Ambition1 <= 4 && Ambition2 >=2 && Ambition2 <= 4))
+        while (Ambition1 == Ambition2 || (Ambition1 >= 2 && Ambition1 <= 4 && Ambition2 >= 2 && Ambition2 <= 4))
         {
             Ambition2 = Random.Range(0, 9);
         }
@@ -414,16 +424,16 @@ public class Employee
             }
             Ambitions = new List<int> { OccAmbition, NormalAmbition, OccAmbition, NormalAmbition, OccAmbition };
         }
-
     }
 
     public void GainExp(int value)
     {
         Exp += value;
         //if (Level < 10 && Exp >= AdjustData.ExpRequire[Level])
-        while (Level < 5 && Exp >= AdjustData.EmpLevelUpExp)
+        //while (Level < 5 && Exp >= AdjustData.EmpLevelUpExp)
+        while (Level < 5 && Exp >= AdjustData.ExpRequire[Level])
         {
-            Exp -= 50;
+            Exp -= AdjustData.ExpRequire[Level];
             //获取特质
             if (Ambitions[Level] < 2 || Ambitions[Level] > 4)
             {

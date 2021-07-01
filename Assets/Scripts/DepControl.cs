@@ -464,10 +464,7 @@ public class DepControl : MonoBehaviour
                 EmpMarkers[i + PExtra].GetComponent<Outline>().enabled = false;
                 Ee.SetProfessionCount(0, null, EmpEffectMarkers[i + PExtra]);
             }
-        }
-
-        if (CurrentEmps.Count == 0)
-            weak = true;
+        }        
 
         //检测削弱效果和等级效果
         if (weak != isWeakend)
@@ -1053,7 +1050,7 @@ public class DepControl : MonoBehaviour
         if (building.Type == BuildingType.商战建筑)
         {
             DC.CWDep = this;
-            //DivPanel.gameObject.SetActive(false);
+            DivPanel.gameObject.SetActive(false);
         }
         EmpEffectCheck();
     }

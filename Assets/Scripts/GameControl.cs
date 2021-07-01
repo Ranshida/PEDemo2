@@ -90,7 +90,7 @@ public class GameControl : MonoBehaviour
     public DepControl DepPrefab, PCDepPrefab, PsycholCDep;
     public DepSelect DepSelectButtonPrefab;
     public RelationInfo RelationInfoPrefab;
-    public Text HistoryTextPrefab, Text_EmpSelectTip, Text_CompanyEW;
+    public Text HistoryTextPrefab, Text_EmpSelectTip, Text_CompanyEfficiency, Text_CompanyWorkStatus;
     public CompanyItem ItemPrefab, CurrentItem;
     public HireControl HC;
     public BuildingManage BM;
@@ -193,6 +193,11 @@ public class GameControl : MonoBehaviour
     {
         if (ForceTimePause == true)
             return;
+        if (CWCL.newCard != null)
+        {
+            CreateMessage("有商战卡牌没有选择");
+            return;
+        }
         if (Items.Count > ItemLimit)
         {
             CreateMessage("物品超出上限");
@@ -221,17 +226,17 @@ public class GameControl : MonoBehaviour
         if (EC.UnfinishedEvents.Count > 0)
             return;
 
-        //商战时间检测
-        if (WarTime == 0)
-        {
-            foeControl.PrepareCWar();
-            return;
-        }
-
         //月会时间检测
         if (MonthMeetingTime == 0)
         {
             MonthMeeting.Instance.StartMeeting();
+            return;
+        }
+
+        //商战时间检测
+        if (WarTime == 0)
+        {
+            foeControl.PrepareCWar();
             return;
         }
 
@@ -249,20 +254,21 @@ public class GameControl : MonoBehaviour
         Turn += 1;
         MonthMeetingTime -= 1;
         WarTime -= 1;
-
+       
         if (AdjustTurn == 0)
         {
             AdjustTurn = 2;
             AdjustTurnWarning.SetActive(true);
         }
-        else
-        {
-            AdjustTurn -= 1;
-            AdjustTurnWarning.SetActive(false);
-            //进入调整回合后恢复心理咨询室的员工的心力
-            if (AdjustTurn == 0)
-                PsycholCDep.RestoreMentality();
-        }
+        //原调整回合计算（现改为月会结束后直接进入调整回合）
+        //else
+        //{
+        //    AdjustTurn -= 1;
+        //    AdjustTurnWarning.SetActive(false);
+        //    //进入调整回合后恢复心理咨询室的员工的心力
+        //    if (AdjustTurn == 0)
+        //        PsycholCDep.RestoreMentality();
+        //}
         TimeChange();
         UpdateUI();
 
@@ -285,15 +291,15 @@ public class GameControl : MonoBehaviour
             return;
         }
 
-        if (WarTime == 0)
+        if (MonthMeetingTime == 0)
         {
-            Text_NextTurn.text = "开始商战";
+            Text_NextTurn.text = "开始月会";
             return;
         }
 
-        else if (MonthMeetingTime == 0)
+        else if (WarTime == 0)
         {
-            Text_NextTurn.text = "开始月会";
+            Text_NextTurn.text = "开始商战";
             return;
         }
 
@@ -346,7 +352,8 @@ public class GameControl : MonoBehaviour
             TotalEfficiency += (div.ExtraEfficiency + div.Efficiency);
             TotalWorkStatus += (div.ExtraWorkStatus + div.WorkStatus);
         }
-        Text_CompanyEW.text = "公司整体效率:" + TotalEfficiency + "\n公司整体工作状态" + TotalWorkStatus;
+        Text_CompanyEfficiency.text = "公司整体效率:" + TotalEfficiency;
+        Text_CompanyWorkStatus.text = "公司整体工作状态:" + TotalWorkStatus;
     }
 
     public DepControl CreateDep(Building b)

@@ -32,6 +32,10 @@ public class HireControl : MonoBehaviour
         {
             if (i < 2)
             {
+                if (i == 0)
+                    HireInfos[i].emp.RandomOccupation(6);
+                else if (i == 1)
+                    HireInfos[i].emp.RandomOccupation(0);
                 GC.CurrentEmpInfo = HireInfos[i];
                 SetInfoPanel();
                 GC.CurrentEmpInfo.emp.InfoA.transform.parent = GC.StandbyContent;

@@ -4,7 +4,13 @@ using UnityEngine;
 
 static public class AdjustData
 {
-    static public int EmpLevelUpExp = 50;//员工升级所需经验
+    #region 事件相关
+    static public float BuildingDismentleEventPosb = 0.5f;//建筑拆除时产生负面事件组的概率
+    static public float EmpFireEventPosb = 0.5f;//开除员工时产生负面事件组的概率
+    #endregion
+
+    #region 员工升级相关
+    static public int[] ExpRequire = new int[] { 50, 50, 50, 50, 50 };//员工各等级升级所需经验
     static public int CoreMemberExp = 70;//核心团队获取经验量
     static public int CoreMemberUpgradePointLimit = 6;//核心团队获得升级点数所需要的解决的事件数量
 
@@ -14,6 +20,7 @@ static public class AdjustData
     static public int[] AmbitionTypeC = new int[] { 2, 2, 1, 1, 2 }, AmbitionTypeD = new int[] { 0, 1, 0, 2, 0 };
     //储存所有模板的链表
     static public List<int[]> AmbitionTypes = new List<int[]>() { AmbitionTypeA, AmbitionTypeB, AmbitionTypeC, AmbitionTypeD };
+    #endregion
 
     #region 融资相关
     //融资数值相关

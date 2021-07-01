@@ -334,7 +334,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8af71e5d6f19e4e43869256ecbcbea8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  EmpIndex: 0
   MaxPro1: 0
   MaxPro2: 0
   Marker1: {fileID: 8517482827884213977}
@@ -351,6 +350,8 @@ MonoBehaviour:
   ReplaceButton2: {fileID: 1610718743582247442}
   ProButton1: {fileID: 897078399418563199}
   ProButton2: {fileID: 3727904041866221465}
+  DepMarker1: {fileID: 0}
+  DepMarker2: {fileID: 0}
 --- !u!1 &360749340456285385
 GameObject:
   m_ObjectHideFlags: 0
@@ -524,7 +525,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2502383215748581825
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1123,7 +1124,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &7378405756176481289
 RectTransform:
   m_ObjectHideFlags: 0

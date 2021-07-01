@@ -84,7 +84,7 @@ public class BuildingManage : MonoBehaviour
     {
         m_EffectHalo.SetActive(false);
         InitBuilding(BuildingType.商战建筑, new Int2(1, 1));
-        InitBuilding(BuildingType.企业历史展览, new Int2(3, 1));
+        //InitBuilding(BuildingType.企业历史展览, new Int2(3, 1));
     }
 
     //直接放置一个建筑

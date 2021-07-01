@@ -378,9 +378,7 @@ public class CourseControl : MonoBehaviour
             return;
 
         //获得新卡牌
-        CWCard card = CWCard.CWCardData[Random.Range(0, CWCard.CWCardData.Count)].Clone();
-        GC.CWCL.AddCWCard(card);
-        GC.CreateMessage("获得了商战卡牌:" + card.Name);
+        GC.CWCL.RefreshNewCard();
 
         foreach (CourseNode node in CityNodes)
         {

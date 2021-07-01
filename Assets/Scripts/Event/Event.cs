@@ -480,15 +480,21 @@ public class EventCr1 : Event
 
     protected override void FailResult(Employee emp, Employee target = null)
     {
-        foreach (DepControl dep in GameControl.Instance.CurrentDivisions[Random.Range(0, GameControl.Instance.CurrentDivisions.Count)].CurrentDeps)
+        List<DivisionControl> PosbDivs = new List<DivisionControl>();
+        foreach (DivisionControl div in GameControl.Instance.CurrentDivisions)
+        {
+            if (div.CurrentDeps.Count > 0)
+                PosbDivs.Add(div);
+        }
+        int num = Random.Range(0, PosbDivs.Count);
+        foreach (DepControl dep in PosbDivs[num].CurrentDeps)
         {
             foreach (Employee e in dep.CurrentEmps)
             {
-                e.AddEmotion(EColor.Red);
                 e.Mentality -= 10;
             }
         }
-        QuestControl.Instance.Init("判定失败，" + FailDescription);
+        QuestControl.Instance.Init("判定失败，" + PosbDivs[num].DivName + "全体员工心力-10");
         //随机文案
         int posbContent = Random.Range(1, DescriptionCount + 1);
         emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
@@ -550,14 +556,21 @@ public class EventCr2 : Event
 
     protected override void FailResult(Employee emp, Employee target = null)
     {
-        foreach (DepControl dep in GameControl.Instance.CurrentDivisions[Random.Range(0, GameControl.Instance.CurrentDivisions.Count)].CurrentDeps)
+        List<DivisionControl> PosbDivs = new List<DivisionControl>();
+        foreach (DivisionControl div in GameControl.Instance.CurrentDivisions)
+        {
+            if (div.CurrentDeps.Count > 0)
+                PosbDivs.Add(div);
+        }
+        int num = Random.Range(0, PosbDivs.Count);
+        foreach (DepControl dep in PosbDivs[num].CurrentDeps)
         {
             foreach (Employee e in dep.CurrentEmps)
             {
                 e.Mentality -= 15;
             }
         }
-        QuestControl.Instance.Init("判定失败，" + FailDescription);
+        QuestControl.Instance.Init("判定失败，" + PosbDivs[num].DivName + "全体员工心力-15");
         //随机文案
         int posbContent = Random.Range(1, DescriptionCount + 1);
         emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);

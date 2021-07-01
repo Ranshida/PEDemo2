@@ -142,7 +142,8 @@ public class Building : MonoBehaviour
             return false;
         }
 
-        GameControl.Instance.EC.CreateEventGroup(EventData.BuildingDismentleEventGroup[Random.Range(0, EventData.BuildingDismentleEventGroup.Count)]);
+        if (Random.Range(0.0f, 1.0f) < AdjustData.BuildingDismentleEventPosb)
+            GameControl.Instance.EC.CreateEventGroup(EventData.BuildingDismentleEventGroup[Random.Range(0, EventData.BuildingDismentleEventGroup.Count)]);
         CanDismantle = false;
         if (!Moving)
         {
