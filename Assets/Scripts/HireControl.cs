@@ -66,11 +66,16 @@ public class HireControl : MonoBehaviour
 
     public void Refresh()
     {
+        //先全检查一遍并重置已有归属的城市，如果在下面的for中依次检查，有可能靠后的info原本属于靠前的info刚随机到的城市
+        for(int i = 0; i < 3; i++)
+        {
+            if (HireInfos[i].CurrentNode != null)
+                HireInfos[i].CurrentNode.RemoveEmpInfo();
+        }
+
         for (int i = 0; i < 3; i++)
         {
             HireInfos[i].gameObject.SetActive(true);
-            if (HireInfos[i].CurrentNode != null)
-                HireInfos[i].CurrentNode.RemoveEmpInfo();
             foreach (Transform child in HireInfos[i].PerkContent)
             {
                 Destroy(child.gameObject);

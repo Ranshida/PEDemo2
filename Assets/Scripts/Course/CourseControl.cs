@@ -369,6 +369,7 @@ public class CourseControl : MonoBehaviour
                 GC.HC.ItemInfos[0].SetInfo(AvailableNodes[num]);
                 GC.HC.ItemInfos[1].SetInfo(AvailableNodes[num]);
             }
+            AvailableNodes.RemoveAt(num);
         }
     }
     public void RefreshMap()
