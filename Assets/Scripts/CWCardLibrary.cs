@@ -5,6 +5,8 @@ using UnityEngine.UI;
 
 public class CWCardLibrary : MonoBehaviour
 {
+    private bool FirstRefresh = true;
+
     public CWCard newCard;
     public CWCardInfo SelectedCard;
     public CWCardInfo CWCInfoPrefab;
@@ -114,6 +116,11 @@ public class CWCardLibrary : MonoBehaviour
     //刷新后随机一张卡牌并询问玩家是否需要
     public void RefreshNewCard()
     {
+        if (FirstRefresh == true)
+        {
+            FirstRefresh = false;
+            return;
+        }
         newCard = CWCard.CWCardData[Random.Range(0, CWCard.CWCardData.Count)].Clone();
         NewCardPanel.SetWndState(true);
         foreach (CWCardInfo info in NewCardsDetail)

@@ -8,7 +8,8 @@ public class CEOControl : MonoBehaviour
     public GameControl GC;
     public Button SkillButton;
     //Text_Condition为旧的Text_Fail，用来显示失败效果
-    public Text Text_Name, Text_Name2, Text_ConditionContent, Text_SuccessContent, Text_OptionContent, Text_Result, Text_Requirement, Text_Extra;
+    public Text Text_Name, Text_Name2, Text_ConditionContent, Text_SuccessContent, Text_OptionContent, Text_Result
+        , Text_Requirement, Text_Extra, Text_CEOStamina;
     public GameObject SelectPanel, ResultPanel, WarningPanel, SuccessText, FailText, ResultCheckButton, CRChangePanel, VacationPanel, TrainingPanel;
     public Employee Target, Target2 ,CEO;
 
@@ -17,6 +18,11 @@ public class CEOControl : MonoBehaviour
 
     int SuccessLimit = 10;
     bool ASkillUsed = false, BSkillUsed = false, CSkillUsed = false, DSkillUsed = false;//引导任务专用判定
+
+    public void UpdateStaminaUI()
+    {
+        Text_CEOStamina.text = "当前CEO体力:" + CEO.Stamina + "/" + CEO.StaminaLimit;
+    }
 
     private void Start()
     {
@@ -738,6 +744,11 @@ public class CEOControl : MonoBehaviour
         }
         else if (num == 22)
         {
+            if (GC.CrC.CEOSkillA == true)
+            {
+                GC.CreateMessage("该技能已经发动");
+                return;
+            }
             if (CEO.Stamina < 40)
             {
                 GC.CreateMessage("CEO体力不足");
@@ -748,6 +759,11 @@ public class CEOControl : MonoBehaviour
         }
         else if (num == 23)
         {
+            if (GC.CrC.CEOSkillB == true)
+            {
+                GC.CreateMessage("该技能已经发动");
+                return;
+            }
             if (CEO.Stamina < 40)
             {
                 GC.CreateMessage("CEO体力不足");

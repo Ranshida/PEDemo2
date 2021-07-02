@@ -4,10 +4,17 @@ using UnityEngine;
 
 static public class AdjustData
 {
+    #region 公司相关
+    static public int DefaultMoney = 0;//初始默认金钱
+    static public int DefaultIncome = 50;//初始默认收入
+    #endregion
+
+
     #region 事件相关
     static public float BuildingDismentleEventPosb = 0.5f;//建筑拆除时产生负面事件组的概率
     static public float EmpFireEventPosb = 0.5f;//开除员工时产生负面事件组的概率
     #endregion
+
 
     #region 员工升级相关
     static public int[] ExpRequire = new int[] { 50, 50, 50, 50, 50 };//员工各等级升级所需经验
@@ -21,6 +28,7 @@ static public class AdjustData
     //储存所有模板的链表
     static public List<int[]> AmbitionTypes = new List<int[]>() { AmbitionTypeA, AmbitionTypeB, AmbitionTypeC, AmbitionTypeD };
     #endregion
+
 
     #region 融资相关
     //融资数值相关
@@ -46,6 +54,7 @@ static public class AdjustData
     //投资意愿等级阈值
     static public int[] InvestWillLevel = new int[] { 3, 5, 7, 9 };
     #endregion
+
 
     #region 商战相关
     //敌对公司A用户获取

@@ -110,6 +110,8 @@ public class Employee
                 stamina = StaminaLimit + StaminaLimitExtra;
             else if (stamina < 0)
                 stamina = 0;
+            if (isCEO == true)
+                InfoDetail.GC.CC.UpdateStaminaUI();
         }
     }
     public int Mentality

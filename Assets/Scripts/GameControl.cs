@@ -146,7 +146,7 @@ public class GameControl : MonoBehaviour
         //CreateItem(4);
         //CreateItem(5);
         //CreateItem(6);
-
+        Money = AdjustData.DefaultMoney;
         UpdateUI();
     }
 
@@ -185,7 +185,7 @@ public class GameControl : MonoBehaviour
             MoneyCalcTimer = 0;
         }
         //显示金钱和员工数量限制
-        Text_Money.text = "金钱:" + Money + "  " + (CalcCost() * -1 + Income + 50) + "/月\n\n员工数量:" 
+        Text_Money.text = "金钱:" + Money + "  " + (CalcCost() * -1 + Income + AdjustData.DefaultIncome) + "/月\n\n员工数量:" 
             + CurrentEmployees.Count + "/" + EmpLimit;
     }
 
