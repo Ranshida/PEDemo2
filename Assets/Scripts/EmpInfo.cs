@@ -644,6 +644,7 @@ public class EmpInfo : MonoBehaviour
 
     public void AddExp(int value)
     {
+        emp.Mentality -= 200;
         emp.GainExp(value);
     }
 }

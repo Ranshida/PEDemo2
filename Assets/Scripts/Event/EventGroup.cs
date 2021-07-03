@@ -261,22 +261,21 @@ public class EventGroup1 : EventGroup
             TargetName = targetEmp.Name;
 
         if (index == 1)
-            content = DivName + "所有员工主导情绪变为“愤怒”";
+            content = DivName + "所有员工主导情绪变为“愤怒”，随机3名员工心力下降60点";
         else if (index == 2)
-            content = DivName + "所有员工主导情绪变为“愤怒”";
+            content = DivName + "所有员工主导情绪变为“愤怒”，随机3名员工心力下降60点";
         else if (index == 3)
-            content = SelfName + "获得“虐待传闻”状态，所有个人事件修正-5，持续6个回合";
+            content = SelfName + "获得“虐待传闻”状态，所有个人事件修正-5，持续6个回合，随机3名员工心力下降60点";
         else if (index == 4)
-            content = DivName + "获得状态“机械傀儡”×1，每个“机械傀儡”导致信念下降30点，持续6回合";
+            content = DivName + "获得状态“机械傀儡”×1，每个“机械傀儡”导致信念下降30点，持续6回合，随机3名员工心力下降60点";
         else if (index == 5)
-            content = DivName + "获得状态“发奋涂墙”×1，每个“发奋涂墙”导致信念下降30点，持续6回合";
+            content = DivName + "获得状态“发奋涂墙”×1，每个“发奋涂墙”导致信念下降30点，持续6回合，随机3名员工心力下降60点";
         else if (index == 6)
-            content = DivName + "获得状态“警惕人工智能”×1，每个“警惕人工智能”导致信念下降30点，持续6回合";
+            content = DivName + "获得状态“警惕人工智能”×1，每个“警惕人工智能”导致信念下降30点，持续6回合，随机3名员工心力下降60点";
 
         return content;
     }
 }
-
 public class EventGroup2 : EventGroup
 {
     public EventGroup2() : base()
@@ -354,13 +353,13 @@ public class EventGroup2 : EventGroup
             TargetName = targetEmp.Name;
 
         if (index == 1)
-            content = DivName + "获得“拖延工期”状态×1，每个“拖延工期”使效率下降3点，持续6个月";
+            content = DivName + "获得“拖延工期”状态×1，每个“拖延工期”使效率下降3点，持续6个月，随机3名员工心力下降60点";
         else if (index == 2)
-            content = DivName + "获得“占领公厕”状态×1，每个“占领公厕”使工作状态下降3点，持续6回合";
+            content = DivName + "获得“占领公厕”状态×1，每个“占领公厕”使工作状态下降3点，持续6回合，随机3名员工心力下降60点";
         else if (index == 3)
-            content = DivName + "获得“上班捕鱼”状态×1，每个“摸鱼”使工作状态下降3点，持续6回合";
+            content = DivName + "获得“上班捕鱼”状态×1，每个“摸鱼”使工作状态下降3点，持续6回合，随机3名员工心力下降60点";
         else if (index == 4)
-            content = DivName + "获得“信号不良”状态×1，每个“信号不良”使效率下降3点，持续6个月";
+            content = DivName + "获得“信号不良”状态×1，每个“信号不良”使效率下降3点，持续6个月，随机3名员工心力下降60点";
 
         return content;
     }
@@ -456,17 +455,17 @@ public class EventGroup3 : EventGroup
             TargetName = targetEmp.Name;
 
         if (index == 1)
-            content = DivName + "获得状态“食堂降价”×1，每个“食堂降价”使事业部运行成本增加50";
+            content = DivName + "获得状态“食堂降价”×1，每个“食堂降价”使事业部运行成本增加50，随机3名员工心力下降60点";
         else if (index == 2)
-            content = DivName + "获得状态“要求涨工资”×1，每个“要求涨工资”使事业部运行成本增加50";
+            content = DivName + "获得状态“要求涨工资”×1，每个“要求涨工资”使事业部运行成本增加50，随机3名员工心力下降60点";
         else if (index == 3)
-            content = DepName + "停工6回合";
+            content = DepName + "停工6回合，随机3名员工心力下降60点";
         else if (index == 4)
-            content = DepName + "停工6回合";
+            content = DepName + "停工6回合，随机3名员工心力下降60点";
         else if (index == 5)
-            content = SelfName + "离职";
+            content = SelfName + "离职，随机3名员工心力下降60点";
         else if (index == 6)
-            content = SelfName + "离职";
+            content = SelfName + "离职，随机3名员工心力下降60点";
 
         return content;
     }
@@ -905,17 +904,17 @@ public class EventGroup7 : EventGroup
             TargetName = targetEmp.Name;
 
         if (index == 1)
-            content = SelfName + "离职";
+            content = SelfName + "离职，随机3名员工心力下降60点";
         else if (index == 2)
-            content = "公司获得状态“设施老旧”×1，每个“设施老旧”状态降低士气10点，持续6回合";
+            content = "公司获得状态“设施老旧”×1，每个“设施老旧”状态降低士气10点，持续6回合，随机3名员工心力下降60点";
         else if (index == 3)
-            content = DepName + "停工6回合";
+            content = DepName + "停工6回合，随机3名员工心力下降60点";
         else if (index == 4)
-            content = DepName + "停工6回合";
+            content = DepName + "停工6回合，随机3名员工心力下降60点";
         else if (index == 5)
-            content = DivName + "获得状态“谁是内鬼”×1，每个“谁是内鬼”导致信念下降30点，持续6回合";
+            content = DivName + "获得状态“谁是内鬼”×1，每个“谁是内鬼”导致信念下降30点，持续6回合，随机3名员工心力下降60点";
         else if (index == 6)
-            content = DepName + "停工6回合";
+            content = DepName + "停工6回合，随机3名员工心力下降60点";
 
         return content;
     }
@@ -1011,13 +1010,13 @@ public class EventGroup8 : EventGroup
             TargetName = targetEmp.Name;
 
         if (index == 1)
-            content = "公司获得状态“谣言”×1，每个“谣言”状态降低士气10点，持续6回合";
+            content = "公司获得状态“谣言”×1，每个“谣言”状态降低士气10点，持续6回合，随机3名员工心力下降60点";
         else if (index == 2)
-            content = "公司获得状态“舆论谴责”×1，每个“舆论谴责”状态降低士气10点，持续6回合";
+            content = "公司获得状态“舆论谴责”×1，每个“舆论谴责”状态降低士气10点，持续6回合，随机3名员工心力下降60点";
         else if (index == 3)
-            content = DivName + "获得状态“用户流失”×1，每个“用户流失”导致信念下降30点，持续6回合";
+            content = DivName + "获得状态“用户流失”×1，每个“用户流失”导致信念下降30点，持续6回合，随机3名员工心力下降60点";
         else if (index == 4)
-            content = DivName + "所有员工主导情绪变为“愤怒”";
+            content = DivName + "所有员工主导情绪变为“愤怒”，随机3名员工心力下降60点";
 
         return content;
     }
@@ -1099,13 +1098,13 @@ public class EventGroup9 : EventGroup
             TargetName = targetEmp.Name;
 
         if (index == 1)
-            content = "损失一半金钱（自动计算出具体数字）";
+            content = "损失一半金钱（自动计算出具体数字），随机3名员工心力下降60点";
         else if (index == 2)
-            content = "公司获得状态“夸大事实”×1，每个“夸大事实”状态降低士气10点，持续6回合";
+            content = "公司获得状态“夸大事实”×1，每个“夸大事实”状态降低士气10点，持续6回合，随机3名员工心力下降60点";
         else if (index == 3)
-            content = DivName + "获得状态“设备维修”×1，每个“设备维修”使事业部运行成本增加50";
+            content = DivName + "获得状态“设备维修”×1，每个“设备维修”使事业部运行成本增加50，随机3名员工心力下降60点";
         else if (index == 4)
-            content = "公司获得状态“盗版软件”×1，每个“盗版软件”状态降低士气10点，持续6回合";
+            content = "公司获得状态“盗版软件”×1，每个“盗版软件”状态降低士气10点，持续6回合，随机3名员工心力下降60点";
 
         return content;
     }

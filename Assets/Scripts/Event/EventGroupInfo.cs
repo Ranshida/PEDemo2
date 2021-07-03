@@ -90,32 +90,27 @@ public class EventGroupInfo : MonoBehaviour
             if (TargetEventGroup.MentalityDebuffCount > 0)
             {
                 MDebuffEmps.Clear();
-                if (TargetEventGroup.MentalityDebuffCount == 1)
-                    MDebuffEmps.Add(Target);
+                List<Employee> PosbEmps = new List<Employee>();
+                foreach (Employee emp in GameControl.Instance.CurrentEmployees)
+                {
+                    if (emp != Target)
+                        PosbEmps.Add(emp);
+                }
+
+                if (PosbEmps.Count < TargetEventGroup.MentalityDebuffCount)
+                {
+                    foreach (Employee emp in PosbEmps)
+                    {
+                        MDebuffEmps.Add(emp);
+                    }
+                }
                 else
                 {
-                    List<Employee> PosbEmps = new List<Employee>();
-                    foreach (Employee emp in GameControl.Instance.CurrentEmployees)
+                    for (int i = 0; i < TargetEventGroup.MentalityDebuffCount; i++)
                     {
-                        if (emp != Target)
-                            PosbEmps.Add(emp);
-                    }
-
-                    if (PosbEmps.Count < TargetEventGroup.MentalityDebuffCount - 1)
-                    {
-                        foreach (Employee emp in PosbEmps)
-                        {
-                            MDebuffEmps.Add(emp);
-                        }
-                    }
-                    else
-                    {
-                        for (int i = 0; i < TargetEventGroup.MentalityDebuffCount - 1; i++)
-                        {
-                            int num = Random.Range(0, PosbEmps.Count);
-                            MDebuffEmps.Add(PosbEmps[num]);
-                            PosbEmps.RemoveAt(num);
-                        }
+                        int num = Random.Range(0, PosbEmps.Count);
+                        MDebuffEmps.Add(PosbEmps[num]);
+                        PosbEmps.RemoveAt(num);
                     }
                 }
             }

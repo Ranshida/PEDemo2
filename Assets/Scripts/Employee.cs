@@ -126,12 +126,12 @@ public class Employee
                 {
                     if(CurrentDep == null)
                         QuestControl.Instance.Init(Name + "出现心力低下现象\n可以调节所在部门的信念或使用CEO技能“安抚”");
-                    else if (CurrentDep != null)
-                    {
-                        System.Action AgreeAction = () => { CurrentDep.ShowEmpInfoPanel(); };
-                        QuestControl.Instance.Init(Name + "出现心力低下现象\n可以调节所在部门的信念或使用CEO技能“安抚”\n点击“确认”" +
-                            "跳转至员工所在部门详细面板", AgreeAction);
-                    }
+                    //else if (CurrentDep != null)
+                    //{
+                    //    System.Action AgreeAction = () => { CurrentDep.ShowEmpInfoPanel(); };
+                    //    QuestControl.Instance.Init(Name + "出现心力低下现象\n可以调节所在部门的信念或使用CEO技能“安抚”\n点击“确认”" +
+                    //        "跳转至员工所在部门详细面板", AgreeAction);
+                    //}
                 }
             }
 
@@ -964,8 +964,6 @@ public class Employee
             System.Action AgreeAction = () =>
             {
                 MoneyRequest();
-                GameControl.Instance.EC.ExhaustedCount -= 1;
-                GameControl.Instance.EC.StartSpecialEvent();
             };
             System.Action RefuseAction = () =>
             {
@@ -973,7 +971,7 @@ public class Employee
                 GameControl.Instance.EC.ExhaustedCount -= 1;
                 GameControl.Instance.EC.StartSpecialEvent();
             };
-            QuestControl.Instance.Init(Name + "心力爆炸产生了崩溃，向您索赔金钱500，如果不接受，该员工将会离职", AgreeAction, RefuseAction);
+            QuestControl.Instance.Init(Name + "心力爆炸产生了崩溃，向您索赔金钱50，如果不接受，该员工将会离职", AgreeAction, RefuseAction);
             GameControl.Instance.EC.ExhaustedCount += 1;
         }
         Mentality += 50;
@@ -1024,9 +1022,11 @@ public class Employee
     //心力爆炸金钱需求
     public void MoneyRequest()
     {
-        if(GameControl.Instance.Money >= 500)
+        if(GameControl.Instance.Money >= 50)
         {
-            GameControl.Instance.Money -= 500;
+            GameControl.Instance.Money -= 50;
+            GameControl.Instance.EC.ExhaustedCount -= 1;
+            GameControl.Instance.EC.StartSpecialEvent();
         }
         else
         {
@@ -1038,7 +1038,7 @@ public class Employee
             {
                 InfoDetail.Fire(false);
             };
-            QuestControl.Instance.Init(Name + "心力爆炸产生了崩溃，向您索赔金钱500，如果不接受，该员工将会离职", AgreeAction, RefuseAction);
+            QuestControl.Instance.Init(Name + "心力爆炸产生了崩溃，向您索赔金钱50，如果不接受，该员工将会离职", AgreeAction, RefuseAction);
             GameControl.Instance.CreateMessage("金钱不足!");
         }
     }

@@ -108,7 +108,7 @@ TextMesh:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 511172084051192502}
-  m_Text: "\u52A8\u529B\u8231"
+  m_Text: "\u798F\u62A5\u5BA3\u4F20\u4E2D\u5FC3"
   m_OffsetZ: 0
   m_CharacterSize: 1
   m_LineSpacing: 1
@@ -406,6 +406,8 @@ MonoBehaviour:
   effectValue: 1
   effectValue2: 0
   CanDismantle: 1
+  CanMove: 1
+  IndependentBuilding: 0
   CurrentArea:
     gridList: []
     CA: {fileID: 0}

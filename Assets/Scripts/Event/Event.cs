@@ -227,13 +227,13 @@ public abstract class Event
         //找目标事业部
         if (egi != null && egi.TargetDivision)
             TargetDivision = egi.TargetDivision;
-        else if (emp.CurrentDep != null)
+        else if (emp.CurrentDep != null && emp.CurrentDep.CurrentDivision != null)
             TargetDivision = emp.CurrentDep.CurrentDivision;
         else if (emp.CurrentDivision != null)
             TargetDivision = emp.CurrentDivision;
         else if (target != null)
         {
-            if (target.CurrentDep != null)
+            if (target.CurrentDep != null && target.CurrentDep.CurrentDivision != null)
                 TargetDivision = target.CurrentDep.CurrentDivision;
             else if (target.CurrentDivision != null)
                 TargetDivision = target.CurrentDivision;
@@ -269,13 +269,13 @@ public abstract class Event
         //找目标事业部
         if (egi != null && egi.TargetDivision)
             TargetDivision = egi.TargetDivision;
-        else if (emp.CurrentDep != null)
+        else if (emp.CurrentDep != null && emp.CurrentDep.CurrentDivision != null)
             TargetDivision = emp.CurrentDep.CurrentDivision;
         else if (emp.CurrentDivision != null)
             TargetDivision = emp.CurrentDivision;
         else if (target != null)
         {
-            if (target.CurrentDep != null)
+            if (target.CurrentDep != null && target.CurrentDep.CurrentDivision != null)
                 TargetDivision = target.CurrentDep.CurrentDivision;
             else if (target.CurrentDivision != null)
                 TargetDivision = target.CurrentDivision;

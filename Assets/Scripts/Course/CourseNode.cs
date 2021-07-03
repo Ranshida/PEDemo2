@@ -231,9 +231,14 @@ public class CourseNode : MonoBehaviour
             if (Visited == false)
             {
                 if (HaveBar == true)
-                    CC.GC.HC.Refresh();
+                {
+                    if (CC.FirstRefresh == true)
+                        CC.GC.HC.Refresh();
+                    else
+                        CC.BarButton.SetActive(true);
+                }
                 if (HaveCasino == true)
-                    CC.RefreshSmuggler();
+                    CC.CasinoButton.SetActive(true);
                 Visited = true;
             }
         }

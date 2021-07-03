@@ -406,6 +406,8 @@ MonoBehaviour:
   effectValue: 1
   effectValue2: 0
   CanDismantle: 1
+  CanMove: 1
+  IndependentBuilding: 0
   CurrentArea:
     gridList: []
     CA: {fileID: 0}

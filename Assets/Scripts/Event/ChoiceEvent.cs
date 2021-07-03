@@ -35,9 +35,9 @@ public class ChoiceEvent : MonoBehaviour
             for (int i = 0; i < EGI.MDebuffEmps.Count; i++)
             {
                 if (EGI.MDebuffEmps[i] != null)
-                    Text_TargetEmps[i + 1].text = "目标员工:" + EGI.MDebuffEmps[i].Name + "             当前心力:" + EGI.MDebuffEmps[i].Mentality;
+                    Text_TargetEmps[i + 1].text = EGI.MDebuffEmps[i].Name + "    " + EGI.MDebuffEmps[i].Mentality + "/" + EGI.MDebuffEmps[i].MentalityLimit;
                 else
-                    Text_TargetEmps[i + 1].text = "目标员工:无             当前心力:---";
+                    Text_TargetEmps[i + 1].text = "无对象";
             }
         }
     }
@@ -176,6 +176,8 @@ public class ChoiceEvent : MonoBehaviour
                 {
                     Text_TargetEmps[i + 1].gameObject.SetActive(true);
                 }
+                Text_TargetEmps[9].gameObject.SetActive(true);
+                Text_TargetEmps[9].text = "失败时以下员工将会损失" + info.TargetEventGroup.MentalityDebuffValue + "点心力：";
             }
         }
         else

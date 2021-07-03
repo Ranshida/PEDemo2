@@ -144,9 +144,10 @@ public class DepControl : MonoBehaviour
         return (int)Mathf.Round(time);
     }
 
-    //显示员工面板并关闭其他部门面板
+    //显示员工面板并关闭其他部门面板(暂时不用了)
     public void ShowEmpInfoPanel()
     {
+        return;
         for (int i = 0; i < GC.CurrentDeps.Count; i++)
         {
             GC.CurrentDeps[i].EmpPanel.GetComponent<WindowBaseControl>().SetWndState(false);
@@ -941,7 +942,6 @@ public class DepControl : MonoBehaviour
         GC.BM.EnterBuildMode();
         CurrentDivision.SetDetailPanel(false);
         GC.TotalEmpPanel.SetWndState(false);
-        GC.ResetSelectMode();
         GC.HC.StorePanel.SetWndState(false);
         Building b = Instantiate(GC.BM.SubDepPrefab);
         b.CanDismantle = false;

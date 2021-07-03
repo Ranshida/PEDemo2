@@ -6,13 +6,13 @@ using UnityEngine.UI;
 
 public class DivisionControl : MonoBehaviour
 {
-    public int Faith = 0;//事业部信念
-    public int Efficiency = 0;//事业部效率
+    public int Faith { get { return faith; } set { faith = value; UpdateStatusUI(); } }//事业部信念
+    public int Efficiency { get { return efficiency; } set { efficiency = value; UpdateStatusUI(); } }//事业部效率
+    public int WorkStatus { get { return workstatus; } set { workstatus = value; UpdateStatusUI(); } }//事业部工作状态
     public int ExtraEfficiency = 0;//部门提供的额外效率
     public int ExtraFaith = 0;//部门提供的额外信仰加成
     public int ExtraWorkStatus = 0;//部门提供的额外工作状态加成
     public int ExtraManage = 0;//部门提供的额外高管管理能力加成
-    public int WorkStatus = 0;//事业部工作状态
     public int ExtraCost = 0;//额外成本加成
     public int ExtraProduceTime = 0;//额外生产周期加成
     public int ExtraExp = 0;//每回合为管理下的部门的员工额外提供的经验值
@@ -26,6 +26,8 @@ public class DivisionControl : MonoBehaviour
     public bool Locked = false;//事业部是否处于未解锁状态
     public bool StatusShowed = false;//是否显示信息面板
     private bool DetailPanelShowed = false;//是否显示详细信息面板
+
+    private int faith = 0, efficiency = 4, workstatus = 4;
 
     public InfoPanelTrigger WorkStatusInfo, EfficiencyInfo, FaithInfo;
     public DepControl CWDep;//商战建筑
@@ -49,152 +51,145 @@ public class DivisionControl : MonoBehaviour
         if(CurrentArea != null)
             Text_DivName.transform.position = Function.World2ScreenPoint(CurrentArea.topPosition);
 
-        //各种信息更新
-        if (Manager == null)
-            Text_DivName.text = DivName + "(无高管)";
-        else
-            Text_DivName.text = DivName;
+        if (DetailPanelShowed == true)
+        {
+            if (Manager != null)
+                Text_Manager.text = "当前高管:" + Manager.Name + "\n\n\n管理能力:" + Manager.Manage + "\n决策能力:" + Manager.Decision;
+            else
+                Text_Manager.text = "当前高管:无";
 
+            int empCost = CalcCost(1), depCost = CalcCost(2);
+            Text_Cost.text = "成本:" + (empCost + depCost + ExtraCost) + "/回合\n额外成本: " + ExtraCost + "/回合\n员工工资:" + empCost + "/回合\n建筑维护费:" + depCost + "/回合";
+        }
+    }
+
+    private void UpdateStatusUI()
+    {
         int CurrentEfficiency = Efficiency + ExtraEfficiency;
         int CurrentFaith = Faith + ExtraFaith;
         int CurrentWorkStatus = WorkStatus + ExtraWorkStatus;
 
-        if (DetailPanelShowed == true)
+        Text_Faith.text = "部门信念:" + CurrentFaith;
+        if (CurrentFaith <= -90)
+            Text_Faith.text += "              <color=red>事件修正-4</color>";
+        else if (CurrentFaith <= -30)
+            Text_Faith.text += "              <color=red>事件修正-2</color>";
+        else if (CurrentFaith <= -10)
+            Text_Faith.text += "              <color=red>事件修正-1</color>";
+        else if (CurrentFaith <= 10)
+            Text_Faith.text += "              事件修正+0";
+        else if (CurrentFaith <= 30)
+            Text_Faith.text += "              事件修正+1";
+        else if (CurrentFaith <= 90)
+            Text_Faith.text += "              事件修正+2";
+        else
+            Text_Faith.text += "              事件修正+4";
+
+        Text_Efficiency.text = "效率:" + (CurrentEfficiency);
+        if (CurrentEfficiency < 0)
+            Text_Efficiency.text += "                <color=red>无法正常生产</color>";
+
+        Text_WorkStatus.text = "工作状态:" + CurrentWorkStatus;
+        if (CurrentWorkStatus < 0)
+            Text_WorkStatus.text += "                <color=red>无法正常生产</color>";
+
+        //效率和工作状态调填充
+        if (CurrentEfficiency < 0)
         {
-            Text_Faith.text = "部门信念:" + CurrentFaith;
-            if (CurrentFaith <= -90)
-                Text_Faith.text += "              <color=red>事件修正-4</color>";
-            else if (CurrentFaith <= -30)
-                Text_Faith.text += "              <color=red>事件修正-2</color>";
-            else if (CurrentFaith <= -10)
-                Text_Faith.text += "              <color=red>事件修正-1</color>";
-            else if (CurrentFaith <= 10)
-                Text_Faith.text += "              事件修正+0";
-            else if (CurrentFaith <= 30)
-                Text_Faith.text += "              事件修正+1";
-            else if (CurrentFaith <= 90)
-                Text_Faith.text += "              事件修正+2";
+            EfficiencyBarFill.color = Color.red;
+            if (CurrentEfficiency < -10)
+                EfficiencyBarFill.fillAmount = 0.08f;
             else
-                Text_Faith.text += "              事件修正+4";
-
-            Text_Efficiency.text = "效率:" + (CurrentEfficiency);
-            if (CurrentEfficiency < 0)
-                Text_Efficiency.text += "                <color=red>无法正常生产</color>";
-
-            Text_WorkStatus.text = "工作状态:" + CurrentWorkStatus;
-            if (CurrentWorkStatus < 0)
-                Text_WorkStatus.text += "                <color=red>无法正常生产</color>";
-
-            if (Manager != null)
-                Text_Manager.text = "当前高管:" + Manager.Name + "\n\n\n管理能力:" + Manager.Manage + "\n决策能力:" + Manager.Decision;
-            else 
-                Text_Manager.text = "当前高管:无";
-            int empCost = CalcCost(1), depCost = CalcCost(2);
-            Text_Cost.text = "成本:" + (empCost + depCost + ExtraCost) + "/回合\n额外成本: " + ExtraCost + "/回合\n员工工资:" + empCost + "/回合\n建筑维护费:" + depCost + "/回合";
-
-            //效率和工作状态调填充
-
-            if (CurrentEfficiency < 0)
-            {
-                EfficiencyBarFill.color = Color.red;
-                if (CurrentEfficiency < -10)
-                    EfficiencyBarFill.fillAmount = 0.08f;
-                else
-                    EfficiencyBarFill.fillAmount = (CurrentEfficiency + 10) / 20f;
-
-            }
-            else
-            {
-                EfficiencyBarFill.color = Color.green;
-                if (CurrentEfficiency > 10)
-                    EfficiencyBarFill.fillAmount = 0.92f;
-                else
-                    EfficiencyBarFill.fillAmount = (CurrentEfficiency + 10) / 20f;
-            }
-            FillMarkers[0].anchoredPosition = new Vector2(FillMarkers[0].parent.GetComponent<RectTransform>().sizeDelta.x * EfficiencyBarFill.fillAmount, 0);
-
-
-            if (CurrentWorkStatus < 0)
-            {
-                WorkStatusBarFill.color = Color.red;
-                if (CurrentWorkStatus < -10)
-                    WorkStatusBarFill.fillAmount = 0.08f;
-                else
-                    WorkStatusBarFill.fillAmount = (CurrentWorkStatus + 10) / 20f;
-
-            }
-            else
-            {
-                WorkStatusBarFill.color = Color.green;
-                if (CurrentWorkStatus > 10)
-                    WorkStatusBarFill.fillAmount = 0.92f;
-                else
-                    WorkStatusBarFill.fillAmount = (CurrentWorkStatus + 10) / 20f;
-            }
-            FillMarkers[1].anchoredPosition = new Vector2(FillMarkers[1].parent.GetComponent<RectTransform>().sizeDelta.x * WorkStatusBarFill.fillAmount, 0);
-
-
-            if (CurrentFaith <= -90)
-            {
-                FaithFill.fillAmount = 0.06f;
-                FaithFill.color = new Color(1, 0, 0);
-            }
-            else if (CurrentFaith <= -30)
-            {
-                FaithFill.fillAmount = (float)(100 + CurrentFaith) / 200;
-                FaithFill.color = new Color(1, 0.4f, 0.4f);
-            }
-            else if (CurrentFaith < 0)
-            {
-                FaithFill.fillAmount = (float)(100 + CurrentFaith) / 200;
-                FaithFill.color = new Color(1, 0.8f, 0.8f);
-            }
-            else if (CurrentFaith <= 30)
-            {
-                FaithFill.fillAmount = (float)CurrentFaith / 200 + 0.5f;
-                FaithFill.color = new Color(0.8f, 1, 0.8f);
-            }
-            else if (CurrentFaith <= 90)
-            {
-                FaithFill.fillAmount = (float)CurrentFaith / 200 + 0.5f;
-                FaithFill.color = new Color(0.4f, 1, 0.4f);
-            }
-            else
-            {
-                FaithFill.fillAmount = 1;
-                FaithFill.color = new Color(0, 1, 0);
-            }
-            FillMarkers[2].anchoredPosition = new Vector2(FillMarkers[2].parent.GetComponent<RectTransform>().sizeDelta.x * FaithFill.fillAmount, 0);
-
+                EfficiencyBarFill.fillAmount = (CurrentEfficiency + 10) / 20f;
         }
-
-        if (StatusShowed == true)
+        else
         {
-            Text_Status.text = "工作状态:" + CurrentWorkStatus;
-            if (CurrentWorkStatus < 0)
-                Text_Status.text += "<color=red> 工作停工</color>";
-
-            Text_Status.text += "\n效率:" + CurrentEfficiency;
-            if (CurrentEfficiency < 0)
-                Text_Status.text += "<color=red> 工作停工</color>";
-
-            if (CurrentFaith <= -90)
-                Text_Status.text += "\n<color=#FF0000>信念:" + CurrentFaith + "</color>";
-            else if (CurrentFaith <= -30)
-                Text_Status.text += "\n<color=#FF6666>信念:" + CurrentFaith + "</color>";
-            else if (CurrentFaith < 0)
-                Text_Status.text += "\n<color=#FFCCCC>信念:" + CurrentFaith + "</color>";
-            else if (CurrentFaith == 0)
-                Text_Status.text += "\n<color=#FFFFFF>信念:" + CurrentFaith + "</color>";
-            else if (CurrentFaith <= 30)
-                Text_Status.text += "\n<color=#CCFFCC>信念:" + CurrentFaith + "</color>";
-            else if (CurrentFaith <= 90)
-                Text_Status.text += "\n<color=#66FF66>信念:" + CurrentFaith + "</color>";
+            EfficiencyBarFill.color = Color.green;
+            if (CurrentEfficiency > 10)
+                EfficiencyBarFill.fillAmount = 0.92f;
             else
-                Text_Status.text += "\n<color=#00FF00>信念:" + CurrentFaith + "</color>";
-
-            Text_Status.text += "\n成本:" + (CalcCost(1) + CalcCost(2)) + "/回合";
+                EfficiencyBarFill.fillAmount = (CurrentEfficiency + 10) / 20f;
         }
+        FillMarkers[0].anchoredPosition = new Vector2(FillMarkers[0].parent.GetComponent<RectTransform>().sizeDelta.x * EfficiencyBarFill.fillAmount, 0);
+
+        if (CurrentWorkStatus < 0)
+        {
+            WorkStatusBarFill.color = Color.red;
+            if (CurrentWorkStatus < -10)
+                WorkStatusBarFill.fillAmount = 0.08f;
+            else
+                WorkStatusBarFill.fillAmount = (CurrentWorkStatus + 10) / 20f;
+        }
+        else
+        {
+            WorkStatusBarFill.color = Color.green;
+            if (CurrentWorkStatus > 10)
+                WorkStatusBarFill.fillAmount = 0.92f;
+            else
+                WorkStatusBarFill.fillAmount = (CurrentWorkStatus + 10) / 20f;
+        }
+        FillMarkers[1].anchoredPosition = new Vector2(FillMarkers[1].parent.GetComponent<RectTransform>().sizeDelta.x * WorkStatusBarFill.fillAmount, 0);
+
+
+        if (CurrentFaith <= -90)
+        {
+            FaithFill.fillAmount = 0.06f;
+            FaithFill.color = new Color(1, 0, 0);
+        }
+        else if (CurrentFaith <= -30)
+        {
+            FaithFill.fillAmount = (float)(100 + CurrentFaith) / 200;
+            FaithFill.color = new Color(1, 0.4f, 0.4f);
+        }
+        else if (CurrentFaith < 0)
+        {
+            FaithFill.fillAmount = (float)(100 + CurrentFaith) / 200;
+            FaithFill.color = new Color(1, 0.8f, 0.8f);
+        }
+        else if (CurrentFaith <= 30)
+        {
+            FaithFill.fillAmount = (float)CurrentFaith / 200 + 0.5f;
+            FaithFill.color = new Color(0.8f, 1, 0.8f);
+        }
+        else if (CurrentFaith <= 90)
+        {
+            FaithFill.fillAmount = (float)CurrentFaith / 200 + 0.5f;
+            FaithFill.color = new Color(0.4f, 1, 0.4f);
+        }
+        else
+        {
+            FaithFill.fillAmount = 1;
+            FaithFill.color = new Color(0, 1, 0);
+        }
+        FillMarkers[2].anchoredPosition = new Vector2(FillMarkers[2].parent.GetComponent<RectTransform>().sizeDelta.x * FaithFill.fillAmount, 0);
+
+
+        //办公室界面面板信息更新
+        Text_Status.text = "工作状态:" + CurrentWorkStatus;
+        if (CurrentWorkStatus < 0)
+            Text_Status.text += "<color=red> 工作停工</color>";
+
+        Text_Status.text += "\n效率:" + CurrentEfficiency;
+        if (CurrentEfficiency < 0)
+            Text_Status.text += "<color=red> 工作停工</color>";
+
+        if (CurrentFaith <= -90)
+            Text_Status.text += "\n<color=#FF0000>信念:" + CurrentFaith + "</color>";
+        else if (CurrentFaith <= -30)
+            Text_Status.text += "\n<color=#FF6666>信念:" + CurrentFaith + "</color>";
+        else if (CurrentFaith < 0)
+            Text_Status.text += "\n<color=#FFCCCC>信念:" + CurrentFaith + "</color>";
+        else if (CurrentFaith == 0)
+            Text_Status.text += "\n<color=#FFFFFF>信念:" + CurrentFaith + "</color>";
+        else if (CurrentFaith <= 30)
+            Text_Status.text += "\n<color=#CCFFCC>信念:" + CurrentFaith + "</color>";
+        else if (CurrentFaith <= 90)
+            Text_Status.text += "\n<color=#66FF66>信念:" + CurrentFaith + "</color>";
+        else
+            Text_Status.text += "\n<color=#00FF00>信念:" + CurrentFaith + "</color>";
+
+        Text_Status.text += "\n成本:" + (CalcCost(1) + CalcCost(2)) + "/回合";
+
     }
 
     public void Produce()
@@ -266,10 +261,11 @@ public class DivisionControl : MonoBehaviour
     }
 
     public void SetManager(bool RemoveManager, Employee emp = null)
-    {
+    {           
         //撤掉高管
-        if(RemoveManager == true)
+        if (RemoveManager == true)
         {
+            Text_DivName.text = DivName + "(无高管)";
             if (Manager != null)
             {
                 foreach (PerkInfo perk in Manager.InfoDetail.PerksInfo)
@@ -285,6 +281,7 @@ public class DivisionControl : MonoBehaviour
         //任命高管
         else
         {
+            Text_DivName.text = DivName;
             Manager = emp;
             emp.CurrentDivision = this;
             Text_DivName.color = Color.black;
@@ -322,7 +319,7 @@ public class DivisionControl : MonoBehaviour
             canWork = false;
         else
             canWork = true;
-
+        UpdateStatusUI();
         GC.CalcCompanyEW();
     }
 

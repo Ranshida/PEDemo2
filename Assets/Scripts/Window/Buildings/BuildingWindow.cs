@@ -41,7 +41,7 @@ public class BuildingWindow : WindowRoot
         //BuildingManage.Instance.AddInfoListener(transform.Find("Btn_产品部门"), BuildingType.产品部门);
         //BuildingManage.Instance.AddInfoListener(transform.Find("Btn_公关营销部"), BuildingType.公关营销部);
         //BuildingManage.Instance.AddInfoListener(transform.Find("Btn_高管办公室"), BuildingType.高管办公室);
-        BuildingManage.Instance.AddInfoListener(transform.Find("Btn_人力资源部"), BuildingType.福报宣传中心);
+        BuildingManage.Instance.AddInfoListener(transform.Find("Btn_人力资源部"), BuildingType.仓库);
         
         m_PanelTrigger = btn_FinishBuild.GetComponent<InfoPanelTrigger>();
     }
@@ -102,7 +102,7 @@ public class BuildingWindow : WindowRoot
                 //_Manage.StartBuildNew(BuildingType.高管办公室);
                 break; 
             case "Btn_人力资源部":
-                _Manage.StartBuildNew(BuildingType.福报宣传中心);
+                _Manage.StartBuildNew(BuildingType.自动化研究中心);
                 break;
             default:
                 break;

@@ -87,7 +87,7 @@ public class GameControl : MonoBehaviour
     public EmpEntity EmpEntityPrefab;
     public PerkInfo PerkInfoPrefab, PerkInfoPrefab_Company;
     public AmbitionSelect AmbitionPanelPrefab;
-    public DepControl DepPrefab, PCDepPrefab, PsycholCDep;
+    public DepControl DepPrefab, PCDepPrefab, PsycholCDep, EngineDep;
     public DepSelect DepSelectButtonPrefab;
     public RelationInfo RelationInfoPrefab;
     public Text HistoryTextPrefab, Text_EmpSelectTip, Text_CompanyEfficiency, Text_CompanyWorkStatus;
@@ -336,6 +336,9 @@ public class GameControl : MonoBehaviour
             if (emp.CurrentDep == null && emp.CurrentDivision == null)
                 value += emp.InfoDetail.CalcSalary();
         }
+        value += PsycholCDep.CalcCost(1);
+        value += EngineDep.CalcCost(1);
+
         value += ExtraCost;
         return value;
     }
@@ -369,6 +372,9 @@ public class GameControl : MonoBehaviour
         }
         else
             newDep = Instantiate(DepPrefab, this.transform);
+
+        if (b.Type == BuildingType.动力舱)
+            EngineDep = newDep;
         newDep.transform.parent = DepContent;
         newDep.building = b;
         UIManager.Instance.OnAddNewWindow(newDep.EmpPanel.GetComponent<WindowBaseControl>());
@@ -667,7 +673,7 @@ public class GameControl : MonoBehaviour
             emp.CurrentDep.CurrentEmps.Remove(emp);
             //修改生产力显示
             emp.CurrentDep.UpdateUI();
-            CurrentEmpInfo.emp.CurrentDep.EmpEffectCheck();
+            emp.CurrentDep.EmpEffectCheck();
             emp.CurrentDep = null;
         }
         else if (emp.CurrentDivision != null)

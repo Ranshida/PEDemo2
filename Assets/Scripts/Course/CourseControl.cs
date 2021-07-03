@@ -18,6 +18,7 @@ public class CourseControl : MonoBehaviour
     public bool ShipMoved = false;//判断一回合内是否已经进行过移动
     public bool CEOSkillA = false;//不受天气影响
     public bool CEOSkillB = false;//能选择向前或向后移动一次
+    public bool FirstRefresh = true;//是否为第一次刷新（刚进图）
     public float MarkerMoveTime = 1f;//玩家图标在节点间移动的时间
 
     private CourseNode NextNode;
@@ -26,7 +27,7 @@ public class CourseControl : MonoBehaviour
     public GameControl GC;
     public CourseNode CurrentNode;
     public WindowBaseControl ItemPanel;//物品栏引用，用于在航线面板临时显示物品栏面板
-    public GameObject PlayerMarker, CourseEndButton, CloseButton, EventPanel, ExtraMovePanel;
+    public GameObject PlayerMarker, CourseEndButton, CloseButton, EventPanel, ExtraMovePanel, CasinoButton, BarButton;
     public Transform NodeTrans;
     public Text Text_Power, Text_Weather, Text_EventName, Text_EventDescription;
 
@@ -79,6 +80,9 @@ public class CourseControl : MonoBehaviour
     public void CheckWeather()
     {//该方法绑定在MoveButton上
         Text_Power.gameObject.SetActive(false);
+        FirstRefresh = false;
+        CasinoButton.SetActive(false);
+        BarButton.SetActive(false);
         CloseButton.SetActive(false);
         ShipMoved = true;
         if (CEOSkillA == true)
@@ -379,7 +383,8 @@ public class CourseControl : MonoBehaviour
             return;
 
         //获得新卡牌
-        GC.CWCL.RefreshNewCard();
+        if (FirstRefresh == false)
+            GC.CWCL.RefreshNewCard();
 
         foreach (CourseNode node in CityNodes)
         {
