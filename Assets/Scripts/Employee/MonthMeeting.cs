@@ -71,6 +71,7 @@ public class MonthMeeting : MonoBehaviour
 
         //统计每个Boss的发言和水晶统计
         Dictionary<Employee, List<CrystalType>> managerCrystalDict = new Dictionary<Employee, List<CrystalType>>();
+        bool haveBlack = false;//检测一次会议中是否产生了黑色水晶
         foreach (Employee employee in managers)
         {
             bool success;
@@ -107,6 +108,7 @@ public class MonthMeeting : MonoBehaviour
                     crystal = CrystalType.Black;
                     managerCrystalDict[employee].Add(crystal);
                     CrystalDict[crystal] += 1;
+                    haveBlack = true;
                 }
             }
 
@@ -143,6 +145,9 @@ public class MonthMeeting : MonoBehaviour
 
             MeetingWindow.AddDiaLogue(dialogue, detail, result,crystal);
         }
+
+        if (haveBlack == true)
+            GameControl.Instance.CPC.DebuffEffect(135);
 
         //UI显示
         //foreach (KeyValuePair<Employee, List<CrystalType>> item in managerCrystalDict)

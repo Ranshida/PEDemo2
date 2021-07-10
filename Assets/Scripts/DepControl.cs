@@ -702,13 +702,13 @@ public class DepControl : MonoBehaviour
                 else if (DepLevel == 2)
                 {
                     GC.ExtraCost -= 15;
-                    GC.AddPerk(new Perk92());
+                    GC.CPC.AddPerk(new Perk92());
                 }
                 else if (DepLevel == 3)
                 {
                     GC.ExtraCost -= 25;
-                    GC.AddPerk(new Perk92());
-                    GC.AddPerk(new Perk92());
+                    GC.CPC.AddPerk(new Perk92());
+                    GC.CPC.AddPerk(new Perk92());
                 }
             };
             RemoveLevelEffect = () =>
@@ -718,13 +718,13 @@ public class DepControl : MonoBehaviour
                 else if (DepLevel == 2)
                 {
                     GC.ExtraCost += 15;
-                    GC.RemovePerk(92);
+                    GC.CPC.RemovePerk(92);
                 }
                 else if (DepLevel == 3)
                 {
                     GC.ExtraCost += 25;
-                    GC.RemovePerk(92);
-                    GC.RemovePerk(92);
+                    GC.CPC.RemovePerk(92);
+                    GC.CPC.RemovePerk(92);
                 }
             };
             ActiveMode = 0;
@@ -802,8 +802,8 @@ public class DepControl : MonoBehaviour
                 else if (DepLevel == 2)
                 {
                     ProducePointLimit = 1;
-                    GC.AddPerk(new Perk98());
-                    GC.AddPerk(new Perk98());
+                    GC.CPC.AddPerk(new Perk98());
+                    GC.CPC.AddPerk(new Perk98());
                 }
             };
             RemoveLevelEffect = () =>
@@ -831,25 +831,25 @@ public class DepControl : MonoBehaviour
             WeakAction = () => 
             {
                 if (DepLevel > 0)
-                    GC.RemovePerk(106);
+                    GC.CPC.RemovePerk(106);
             };
             UnWeakAction = () => 
             {
                 if (DepLevel > 0)
-                    GC.AddPerk(new Perk106());
+                    GC.CPC.AddPerk(new Perk106());
             };
             AddLevelEffect = () =>
             {
                 if (DepLevel == 1)
                 {
                     if (isWeakend == false)
-                        GC.AddPerk(new Perk106());
+                        GC.CPC.AddPerk(new Perk106());
                 }
                 else if (DepLevel == 2)
                 {
                     CurrentDivision.AddPerk(new Perk105());
-                    GC.AddPerk(new Perk106());
-                    GC.AddPerk(new Perk106());
+                    GC.CPC.AddPerk(new Perk106());
+                    GC.CPC.AddPerk(new Perk106());
                 }
             };
             RemoveLevelEffect = () =>
@@ -860,8 +860,8 @@ public class DepControl : MonoBehaviour
                 }
                 else if (DepLevel == 2)
                 {
-                    GC.RemovePerk(106);
-                    GC.RemovePerk(106);
+                    GC.CPC.RemovePerk(106);
+                    GC.CPC.RemovePerk(106);
                     CurrentDivision.RemovePerk(105);
                 }
             };

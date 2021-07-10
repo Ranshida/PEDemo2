@@ -16,7 +16,12 @@ public abstract class Event
     protected List<int> LevelRequire = new List<int>();  //1同事 2上级 3下属
     public int FailLimitValue = 10;//事件失败判定的阈值
     public int DescriptionCount = 1;//总共有几种描述文案
+    public int MentalityDebuffCount = 3;//减心力效果影响的员工数量
+    public int MentalityDebuffValue = 0;//减心力效果的数值
+    public bool AgreementEvent = false;//是否为认同事件
+
     protected bool SingleResult = false;  //是否为单结果事件(无需判定直接输出SuccessResult)
+
     public string EventName;//事件(组)名称
     public string SuccessDescription, FailDescription;
     protected string SelfName;//员工自身名字
@@ -187,7 +192,12 @@ public abstract class Event
         if (posb > FailLimitValue)
             result = 1;
         else
+        {
             result = 0;
+            //心力debuff
+            if (MentalityDebuffValue > 0 && GameControl.Instance.EC.CurrentChoiceEvent != null)
+                GameControl.Instance.EC.CurrentChoiceEvent.MentalityDebuff();
+        }
 
         MonoBehaviour.print(emp.Name + " 事件:" + EventName + " 点数结果:" + posb);
 
@@ -296,6 +306,41 @@ public abstract class Event
             else if (TargetDivision.Manager.Manage == 5)
                 result += 7;
         }
+        return result;
+    }
+
+    //检测事业部信念加成
+    public virtual int CalcDivisionPerk(Employee emp, Employee target = null, EventGroupInfo egi = null)
+    {
+        int result = 0;
+        DivisionControl TargetDivision = null;
+        //找目标事业部
+        if (egi != null && egi.TargetDivision)
+            TargetDivision = egi.TargetDivision;
+        else if (emp.CurrentDep != null && emp.CurrentDep.CurrentDivision != null)
+            TargetDivision = emp.CurrentDep.CurrentDivision;
+        else if (emp.CurrentDivision != null)
+            TargetDivision = emp.CurrentDivision;
+        else if (target != null)
+        {
+            if (target.CurrentDep != null && target.CurrentDep.CurrentDivision != null)
+                TargetDivision = target.CurrentDep.CurrentDivision;
+            else if (target.CurrentDivision != null)
+                TargetDivision = target.CurrentDivision;
+        }
+        if (TargetDivision == null)
+            return 0;
+        else
+        {
+            foreach (PerkInfo info in TargetDivision.CurrentPerks)
+            {
+                if (info.CurrentPerk.Num == 156)
+                {
+                    result += (info.CurrentPerk.Level * 2);
+                }
+            }
+        }
+
         return result;
     }
 
@@ -613,7 +658,8 @@ public class EventC1 : Event
         EventName = "烦恼缠身";
         DescriptionCount = 1;
         RequiredCondition = EventCondition.烦恼;
-        FailDescription = " 失败，公司内产生不满 x1"; //只设置失败/成功其中之一的描述，另一个没效果的不要定义描述
+        FailDescription = " 失败，公司内产生不满 x1，随机3名员工心力下降20点"; //只设置失败/成功其中之一的描述，另一个没效果的不要定义描述
+        MentalityDebuffValue = 20;
     }
 
     protected override int CalcBonus(Employee emp, Employee target = null, EventGroupInfo egi = null)
@@ -676,6 +722,7 @@ public class EventC2 : Event
         DescriptionCount = 1;
         RequiredCondition = EventCondition.顺利;
         SuccessDescription = " 成功，公司内产生认同 x1"; //只设置失败/成功其中之一的描述，另一个没效果的不要定义描述
+        AgreementEvent = true;
     }
 
     protected override int CalcBonus(Employee emp, Employee target = null, EventGroupInfo egi = null)
@@ -738,6 +785,7 @@ public class EventC3 : Event
         DescriptionCount = 1;
         RequiredCondition = EventCondition.成就感;
         SuccessDescription = " 成功，公司内产生认同 x1"; //只设置失败/成功其中之一的描述，另一个没效果的不要定义描述
+        AgreementEvent = true;
     }
 
     protected override int CalcBonus(Employee emp, Employee target = null, EventGroupInfo egi = null)
@@ -799,7 +847,8 @@ public class EventC4 : Event
         EventName = "怀疑发展方向";
         DescriptionCount = 1;
         RequiredCondition = EventCondition.困惑;
-        FailDescription = " 失败，公司内产生不满 x1"; //只设置失败/成功其中之一的描述，另一个没效果的不要定义描述
+        FailDescription = " 失败，公司内产生不满 x1，随机3名员工心力下降20点"; //只设置失败/成功其中之一的描述，另一个没效果的不要定义描述
+        MentalityDebuffValue = 20;
     }
 
     protected override int CalcBonus(Employee emp, Employee target = null, EventGroupInfo egi = null)
@@ -861,7 +910,8 @@ public class EventC5 : Event
         EventName = "甩锅";
         DescriptionCount = 1;
         RequiredCondition = EventCondition.悔恨;
-        FailDescription = " 失败，公司内产生不满 x1"; //只设置失败/成功其中之一的描述，另一个没效果的不要定义描述
+        FailDescription = " 失败，公司内产生不满 x1，随机3名员工心力下降20点"; //只设置失败/成功其中之一的描述，另一个没效果的不要定义描述
+        MentalityDebuffValue = 20;
     }
 
     protected override int CalcBonus(Employee emp, Employee target = null, EventGroupInfo egi = null)
@@ -916,6 +966,595 @@ public class EventC5 : Event
         return content;
     }
 }
+
+//以下为仅通过负面特质产生的公司一般事件
+public class EventC6 : Event
+{
+    public EventC6() : base()
+    {
+        EventName = "晕船";
+        DescriptionCount = 1;
+        RequiredCondition = EventCondition.无;
+        FailDescription = " 失败，随机3名员工心力下降60点"; //只设置失败/成功其中之一的描述，另一个没效果的不要定义描述
+        MentalityDebuffValue = 60;
+    }
+
+    protected override int CalcBonus(Employee emp, Employee target = null, EventGroupInfo egi = null)
+    {
+        int result = CalcEmotion(emp);
+        return result;
+    }
+
+    protected override void SuccessResult(Employee emp, Employee target = null)
+    {
+        GameControl.Instance.BSC.EventSolved();
+        QuestControl.Instance.Init("判定成功，未产生负面效果");
+        //随机文案
+        int posbContent = Random.Range(1, DescriptionCount + 1);
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+    }
+
+    protected override void FailResult(Employee emp, Employee target = null)
+    {
+        GameControl.Instance.AddEventProgress(1, true);
+        //随机文案
+        int posbContent = Random.Range(1, DescriptionCount + 1);
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+    }
+
+    public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
+    {
+        string content = "";
+        SetNames(Emp, targetEmp);
+        content = EventDescription(Emp, targetEmp, index);
+        if (success == true)
+        {
+            if (index == 1)
+                content += "，不过他忍住了";
+        }
+        else
+        {
+            if (index == 1)
+                content += FailDescription;
+
+        }
+        return content;
+    }
+
+    public override string EventDescription(Employee Emp, Employee targetEmp, int index, EventGroupInfo egi = null)
+    {
+        string content = "";
+        SetNames(Emp, targetEmp);
+        if (index == 1)
+            content = "过快的船速引起了" + SelfName + "的严重不适，他看着远方的海平线在眼前左右高低不断变化，觉得体内一阵翻滚……";
+        return content;
+    }
+}
+
+public class EventC7 : Event
+{
+    public EventC7() : base()
+    {
+        EventName = "酗酒";
+        DescriptionCount = 1;
+        RequiredCondition = EventCondition.无;
+        FailDescription = " 失败，目标员工事业部工作状态下降5点，持续3回合。"; //只设置失败/成功其中之一的描述，另一个没效果的不要定义描述
+    }
+
+    protected override int CalcBonus(Employee emp, Employee target = null, EventGroupInfo egi = null)
+    {
+        int result = CalcEmotion(emp);
+        return result;
+    }
+
+    protected override void SuccessResult(Employee emp, Employee target = null)
+    {
+        GameControl.Instance.BSC.EventSolved();
+        QuestControl.Instance.Init("判定成功，未产生负面效果");
+        //随机文案
+        int posbContent = Random.Range(1, DescriptionCount + 1);
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+    }
+
+    protected override void FailResult(Employee emp, Employee target = null)
+    {
+        GameControl.Instance.AddEventProgress(1, true);
+
+        DivisionControl dc;
+        if (emp.CurrentDivision != null)
+            dc = emp.CurrentDivision;
+        else if (emp.CurrentDep != null && emp.CurrentDep.CurrentDivision != null)
+            dc = emp.CurrentDep.CurrentDivision;
+        else
+        {
+            List<DivisionControl> PosbDiv = new List<DivisionControl>();
+            foreach (DivisionControl div in GameControl.Instance.CurrentDivisions)
+            {
+                if (div.CurrentDeps.Count > 0)
+                    PosbDiv.Add(div);
+            }
+            dc = PosbDiv[Random.Range(0, PosbDiv.Count)];
+        }
+        dc.AddPerk(new Perk155());
+
+        //随机文案
+        int posbContent = Random.Range(1, DescriptionCount + 1);
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+    }
+
+    public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
+    {
+        string content = "";
+        SetNames(Emp, targetEmp);
+        content = EventDescription(Emp, targetEmp, index);
+        if (success == true)
+        {
+            if (index == 1)
+                content += "，但是没有效果";
+        }
+        else
+        {
+            if (index == 1)
+                content += FailDescription;
+
+        }
+        return content;
+    }
+
+    public override string EventDescription(Employee Emp, Employee targetEmp, int index, EventGroupInfo egi = null)
+    {
+        string content = "";
+        SetNames(Emp, targetEmp);
+        if (index == 1)
+            content = "听到了一阵刺耳的嘈杂声，正在酒吧里打听消息的你望向了嘈杂声传来的方向，发现" + SelfName + "正在和一群壮汉喝酒，旁边堆成小山的空酒桶看起来非常的不妙";
+        return content;
+    }
+}
+
+public class EventC8 : Event
+{
+    public EventC8() : base()
+    {
+        EventName = "材料遗失";
+        DescriptionCount = 1;
+        RequiredCondition = EventCondition.无;
+        FailDescription = " 失败，所有核心团队成员心力下降40点。"; //只设置失败/成功其中之一的描述，另一个没效果的不要定义描述
+    }
+
+    protected override int CalcBonus(Employee emp, Employee target = null, EventGroupInfo egi = null)
+    {
+        int result = CalcEmotion(emp);
+        return result;
+    }
+
+    protected override void SuccessResult(Employee emp, Employee target = null)
+    {
+        GameControl.Instance.BSC.EventSolved();
+        QuestControl.Instance.Init("判定成功，未产生负面效果");
+        //随机文案
+        int posbContent = Random.Range(1, DescriptionCount + 1);
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+    }
+
+    protected override void FailResult(Employee emp, Employee target = null)
+    {
+        GameControl.Instance.AddEventProgress(1, true);
+
+        foreach (Employee e in GameControl.Instance.BSC.CoreMembers)
+        {
+            e.Mentality -= 40;
+        }
+
+        //随机文案
+        int posbContent = Random.Range(1, DescriptionCount + 1);
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+    }
+
+    public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
+    {
+        string content = "";
+        SetNames(Emp, targetEmp);
+        content = EventDescription(Emp, targetEmp, index);
+        if (success == true)
+        {
+            if (index == 1)
+                content += "，但是没有效果";
+        }
+        else
+        {
+            if (index == 1)
+                content += FailDescription;
+
+        }
+        return content;
+    }
+
+    public override string EventDescription(Employee Emp, Employee targetEmp, int index, EventGroupInfo egi = null)
+    {
+        string content = "";
+        SetNames(Emp, targetEmp);
+        if (index == 1)
+            content = "公司的核心团队成员已经坐上了赶往谈判现场的车，在车上检查文件的时候才猛然发现委托给" + SelfName + "的PPT少了几页";
+        return content;
+    }
+}
+
+public class EventC9 : Event
+{
+    public EventC9() : base()
+    {
+        EventName = "小道消息";
+        DescriptionCount = 1;
+        RequiredCondition = EventCondition.无;
+        FailDescription = " 失败，目标所在事业部成员获得浅蓝色情绪"; //只设置失败/成功其中之一的描述，另一个没效果的不要定义描述
+    }
+
+    protected override int CalcBonus(Employee emp, Employee target = null, EventGroupInfo egi = null)
+    {
+        int result = CalcEmotion(emp);
+        return result;
+    }
+
+    protected override void SuccessResult(Employee emp, Employee target = null)
+    {
+        GameControl.Instance.BSC.EventSolved();
+        QuestControl.Instance.Init("判定成功，未产生负面效果");
+        //随机文案
+        int posbContent = Random.Range(1, DescriptionCount + 1);
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+    }
+
+    protected override void FailResult(Employee emp, Employee target = null)
+    {
+        GameControl.Instance.AddEventProgress(1, true);
+
+        DivisionControl dc;
+        if (emp.CurrentDivision != null)
+            dc = emp.CurrentDivision;
+        else if (emp.CurrentDep != null && emp.CurrentDep.CurrentDivision != null)
+            dc = emp.CurrentDep.CurrentDivision;
+        else
+        {
+            List<DivisionControl> PosbDiv = new List<DivisionControl>();
+            foreach (DivisionControl div in GameControl.Instance.CurrentDivisions)
+            {
+                if (div.CurrentDeps.Count > 0)
+                    PosbDiv.Add(div);
+            }
+            dc = PosbDiv[Random.Range(0, PosbDiv.Count)];
+        }
+        
+        foreach (DepControl dep in dc.CurrentDeps)
+        {
+            foreach (Employee e in dep.CurrentEmps)
+            {
+                e.AddEmotion(EColor.LBlue);
+            }
+        }
+
+        //随机文案
+        int posbContent = Random.Range(1, DescriptionCount + 1);
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+    }
+
+    public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
+    {
+        string content = "";
+        SetNames(Emp, targetEmp);
+        content = EventDescription(Emp, targetEmp, index);
+        if (success == true)
+        {
+            if (index == 1)
+                content += "，但是没有效果";
+        }
+        else
+        {
+            if (index == 1)
+                content += FailDescription;
+
+        }
+        return content;
+    }
+
+    public override string EventDescription(Employee Emp, Employee targetEmp, int index, EventGroupInfo egi = null)
+    {
+        string content = "";
+        SetNames(Emp, targetEmp);
+        if (index == 1)
+            content = SelfName + "宣称自己知晓离职员工的离职原因，懂的都懂，不懂的说了也不懂，背后牵扯的利益相关太多…";
+        return content;
+    }
+}
+
+public class EventC10 : Event
+{
+    public EventC10() : base()
+    {
+        EventName = "制造恐慌";
+        DescriptionCount = 1;
+        RequiredCondition = EventCondition.无;
+        FailDescription = " 失败，目标所在事业部信念降低20点，持续3回合"; //只设置失败/成功其中之一的描述，另一个没效果的不要定义描述
+    }
+
+    protected override int CalcBonus(Employee emp, Employee target = null, EventGroupInfo egi = null)
+    {
+        int result = CalcEmotion(emp);
+        return result;
+    }
+
+    protected override void SuccessResult(Employee emp, Employee target = null)
+    {
+        GameControl.Instance.BSC.EventSolved();
+        QuestControl.Instance.Init("判定成功，未产生负面效果");
+        //随机文案
+        int posbContent = Random.Range(1, DescriptionCount + 1);
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+    }
+
+    protected override void FailResult(Employee emp, Employee target = null)
+    {
+        GameControl.Instance.AddEventProgress(1, true);
+
+        DivisionControl dc;
+        if (emp.CurrentDivision != null)
+            dc = emp.CurrentDivision;
+        else if (emp.CurrentDep != null && emp.CurrentDep.CurrentDivision != null)
+            dc = emp.CurrentDep.CurrentDivision;
+        else
+        {
+            List<DivisionControl> PosbDiv = new List<DivisionControl>();
+            foreach (DivisionControl div in GameControl.Instance.CurrentDivisions)
+            {
+                if (div.CurrentDeps.Count > 0)
+                    PosbDiv.Add(div);
+            }
+            dc = PosbDiv[Random.Range(0, PosbDiv.Count)];
+        }
+        dc.AddPerk(new Perk158());
+
+        //随机文案
+        int posbContent = Random.Range(1, DescriptionCount + 1);
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+    }
+
+    public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
+    {
+        string content = "";
+        SetNames(Emp, targetEmp);
+        content = EventDescription(Emp, targetEmp, index);
+        if (success == true)
+        {
+            if (index == 1)
+                content += "，但是没有效果";
+        }
+        else
+        {
+            if (index == 1)
+                content += FailDescription;
+
+        }
+        return content;
+    }
+
+    public override string EventDescription(Employee Emp, Employee targetEmp, int index, EventGroupInfo egi = null)
+    {
+        string content = "";
+        SetNames(Emp, targetEmp);
+        if (index == 1)
+            content = SelfName + "在内网的论坛上发布了关于公司财政不堪重负甚至多一个人的工资都负担不了了";
+        return content;
+    }
+}
+
+public class EventC11 : Event
+{
+    public EventC11() : base()
+    {
+        EventName = "煽动";
+        DescriptionCount = 1;
+        RequiredCondition = EventCondition.无;
+        FailDescription = " 失败，随机5名员工心力下降50点"; //只设置失败/成功其中之一的描述，另一个没效果的不要定义描述
+        MentalityDebuffCount = 5;
+        MentalityDebuffValue = 50;
+    }
+
+    protected override int CalcBonus(Employee emp, Employee target = null, EventGroupInfo egi = null)
+    {
+        int result = CalcEmotion(emp);
+        return result;
+    }
+
+    protected override void SuccessResult(Employee emp, Employee target = null)
+    {
+        GameControl.Instance.BSC.EventSolved();
+        QuestControl.Instance.Init("判定成功，未产生负面效果");
+        //随机文案
+        int posbContent = Random.Range(1, DescriptionCount + 1);
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+    }
+
+    protected override void FailResult(Employee emp, Employee target = null)
+    {
+        GameControl.Instance.AddEventProgress(1, true);
+        //随机文案
+        int posbContent = Random.Range(1, DescriptionCount + 1);
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+    }
+
+    public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
+    {
+        string content = "";
+        SetNames(Emp, targetEmp);
+        content = EventDescription(Emp, targetEmp, index);
+        if (success == true)
+        {
+            if (index == 1)
+                content += "，但是没有效果";
+        }
+        else
+        {
+            if (index == 1)
+                content += FailDescription;
+
+        }
+        return content;
+    }
+
+    public override string EventDescription(Employee Emp, Employee targetEmp, int index, EventGroupInfo egi = null)
+    {
+        string content = "";
+        SetNames(Emp, targetEmp);
+        if (index == 1)
+            content = SelfName + "在公司中疯狂鼓动几个同事抓住公司部门改组的时机搞点大事";
+        return content;
+    }
+}
+
+public class EventC12 : Event
+{
+    public EventC12() : base()
+    {
+        EventName = "神经衰弱";
+        DescriptionCount = 1;
+        RequiredCondition = EventCondition.无;
+        FailDescription = " 失败，公司士气下降30点，持续3回合。"; //只设置失败/成功其中之一的描述，另一个没效果的不要定义描述
+    }
+
+    protected override int CalcBonus(Employee emp, Employee target = null, EventGroupInfo egi = null)
+    {
+        int result = CalcEmotion(emp);
+        return result;
+    }
+
+    protected override void SuccessResult(Employee emp, Employee target = null)
+    {
+        GameControl.Instance.BSC.EventSolved();
+        QuestControl.Instance.Init("判定成功，未产生负面效果");
+        //随机文案
+        int posbContent = Random.Range(1, DescriptionCount + 1);
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+    }
+
+    protected override void FailResult(Employee emp, Employee target = null)
+    {
+        GameControl.Instance.AddEventProgress(1, true);
+        GameControl.Instance.CPC.AddPerk(new Perk159());
+
+        //随机文案
+        int posbContent = Random.Range(1, DescriptionCount + 1);
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+    }
+
+    public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
+    {
+        string content = "";
+        SetNames(Emp, targetEmp);
+        content = EventDescription(Emp, targetEmp, index);
+        if (success == true)
+        {
+            if (index == 1)
+                content += "，但是没有效果";
+        }
+        else
+        {
+            if (index == 1)
+                content += FailDescription;
+
+        }
+        return content;
+    }
+
+    public override string EventDescription(Employee Emp, Employee targetEmp, int index, EventGroupInfo egi = null)
+    {
+        string content = "";
+        SetNames(Emp, targetEmp);
+        if (index == 1)
+            content = "其他部门的改组导致" + SelfName + "最近一阵经常神经过敏，只要提到岗位和工资就觉得公司要完了，并且周围的员工也快接受他的暗示了……";
+        return content;
+    }
+}
+
+public class EventC13 : Event
+{
+    public EventC13() : base()
+    {
+        EventName = "不粘锅";
+        DescriptionCount = 1;
+        RequiredCondition = EventCondition.无;
+        FailDescription = " 失败，随机（1×持有的员工数）名员工心力下降40点"; //只设置失败/成功其中之一的描述，另一个没效果的不要定义描述
+    }
+
+    protected override int CalcBonus(Employee emp, Employee target = null, EventGroupInfo egi = null)
+    {
+        int result = CalcEmotion(emp);
+        return result;
+    }
+
+    protected override void SuccessResult(Employee emp, Employee target = null)
+    {
+        GameControl.Instance.BSC.EventSolved();
+        QuestControl.Instance.Init("判定成功，未产生负面效果");
+        //随机文案
+        int posbContent = Random.Range(1, DescriptionCount + 1);
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, true, posbContent) + SuccessDescription);
+    }
+
+    protected override void FailResult(Employee emp, Employee target = null)
+    {
+        GameControl.Instance.AddEventProgress(1, true);
+        int count = GameControl.Instance.CPC.CurrentDebuffPerks[148].Count;
+        List<Employee> PosbEmps = new List<Employee>();
+        foreach (Employee e in GameControl.Instance.CurrentEmployees)
+        {
+            if (e != emp)
+                PosbEmps.Add(e);
+        }
+        if (PosbEmps.Count > 0)
+        {
+            if (PosbEmps.Count < count)
+                count = PosbEmps.Count;
+            for (int i = 0; i < count; i++)
+            {
+                Employee et = PosbEmps[Random.Range(0, PosbEmps.Count)];
+                et.Mentality -= 40;
+                PosbEmps.Remove(et);
+            }
+        }
+
+        //随机文案
+        int posbContent = Random.Range(1, DescriptionCount + 1);
+        emp.InfoDetail.AddHistory(SelfDescription(emp, target, false, posbContent) + FailDescription);
+    }
+
+    public override string SelfDescription(Employee Emp, Employee targetEmp, bool success, int index)
+    {
+        string content = "";
+        SetNames(Emp, targetEmp);
+        content = EventDescription(Emp, targetEmp, index);
+        if (success == true)
+        {
+            if (index == 1)
+                content += "，但是没有效果";
+        }
+        else
+        {
+            if (index == 1)
+                content += FailDescription;
+
+        }
+        return content;
+    }
+
+    public override string EventDescription(Employee Emp, Employee targetEmp, int index, EventGroupInfo egi = null)
+    {
+        string content = "";
+        SetNames(Emp, targetEmp);
+        if (index == 1)
+            content = SelfName + "公开指责这次有人崩溃完全是其他几个人的原因";
+        return content;
+    }
+}
+
 #endregion
 
 #region 公司日常

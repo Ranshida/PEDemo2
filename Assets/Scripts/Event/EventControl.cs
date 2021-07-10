@@ -14,7 +14,7 @@ public class EventControl : MonoBehaviour
     public Transform ManageVoteContent, EventGroupContent;
     public VoteCell VoteCellPrefab;
     public Text Text_MeetingName, Text_ManageVoteResult;
-    public ChoiceEvent ChoiceEventPrefab;
+    public ChoiceEvent ChoiceEventPrefab, CurrentChoiceEvent;//CurrentChoiceEvent用于随机员工心力debuff，event开始前赋值
     public EventGroupInfo EventGroupPrefab, CurrentEventGroup;
 
     private List<VoteCell> VCells = new List<VoteCell>();
@@ -438,6 +438,10 @@ public class EventControl : MonoBehaviour
         CurrentEventGroups.Add(newEventGroup);
         UIManager.Instance.OnAddNewWindow(newEventGroup.DetailPanel.GetComponent<WindowBaseControl>());
         newEventGroup.transform.parent = EventGroupContent;
+
+        //负面特质检测
+        if (e.DebuffEvent == true)
+            GC.CPC.DebuffEffect(147);
     }
 
     //判断是否能够进入特殊事件和生成其他事件

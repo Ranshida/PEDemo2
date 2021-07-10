@@ -276,6 +276,8 @@ public class BrainStormControl : MonoBehaviour
         DebuffB = 0;//人脉，免疫一次攻击
         ExtraDamage = 0;//想象力，每次攻击能附加的额外伤害
         ReduceDiceNum = 0;//每回合少获得n个骰子的Debuff
+        if (GC.CPC.CurrentDebuffPerks.ContainsKey(150))
+            ReduceDiceNum += GC.CPC.CurrentDebuffPerks[150].Count;
         TurnCount = 1;//回合数重置
         NoBuffDice = 0;//无法生成buff骰子的时间
         NoDefenseDice = 0;//无法生成防御骰子的时间
@@ -736,6 +738,19 @@ public class BrainStormControl : MonoBehaviour
         else if (SkillType == 21)
             CauseDamage(Shield);
 
+        //负面特质的额外检测
+        if (TurnCount == 1)
+        {
+            foreach (BSDiceControl dice in SelectedDices)
+            {
+                if (dice.CurrentType == 3)
+                {
+                    GC.CPC.DebuffEffect(146);
+                    break;
+                }
+            }
+        }
+
         //不管有没有取消选择，都把骰子重置一下
         for(int i = 0; i < SelectedDices.Count; i++)
         {
@@ -954,7 +969,10 @@ public class BrainStormControl : MonoBehaviour
                 GC.foeControl.InvestComplete();
             }
             else
+            {
                 GC.QC.Init("融资议题失败");
+                GC.CPC.DebuffEffect(137);
+            }
             EndBS();
         }
         

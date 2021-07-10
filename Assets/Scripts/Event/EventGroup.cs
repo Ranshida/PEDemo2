@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class EventGroup : Event
 {
-    public int MentalityDebuffCount = 3;//减心力效果影响的员工数量
-    public int MentalityDebuffValue = 60;//减心力效果的数值
     public int ExtraStage = 0;//事件组生成后待机(不产生效果)的回合数
     public int StageCount = 6;//事件组总阶段数
     public int BSBossLevel = 1;//头脑风暴boss等级
@@ -100,7 +98,6 @@ public class EventGroup : Event
             else
             {
                 QuestControl.Instance.Init("判定失败," + ResultDescription(emp, target, egi.RandomEventNum));
-                egi.MentalityDebuff();
             }
         }
 
@@ -158,6 +155,7 @@ public class EventGroup1 : EventGroup
         SubEventNames[4] = "仙人掌中毒";
         SubEventNames[5] = "蹭网风波";
         DebuffEvent = true;
+        MentalityDebuffValue = 60;
 
         ST_BaseRate = 0.3f;//基础成功率
         ST_EmpRate = 0.05f;//每增加一名员工提供的额外成功率
@@ -288,6 +286,7 @@ public class EventGroup2 : EventGroup
         SubEventNames[2] = "上班捕鱼";
         SubEventNames[3] = "信号不良";
         DebuffEvent = true;
+        MentalityDebuffValue = 60;
 
         ST_BaseRate = 0.3f;//基础成功率
         ST_EmpRate = 0.1f;//每增加一名员工提供的额外成功率
@@ -377,7 +376,7 @@ public class EventGroup3 : EventGroup
         SubEventNames[3] = "罢工";
         SubEventNames[4] = "离职威胁";
         SubEventNames[5] = "拒绝命令";
-        DebuffEvent = true;
+        MentalityDebuffValue = 60;
 
         ST_BaseRate = 0.3f;//基础成功率
         ST_EmpRate = 0.05f;//每增加一名员工提供的额外成功率
@@ -484,8 +483,6 @@ public class EventGroup4 : EventGroup
         SubEventNames[4] = "读书会";
         SubEventNames[5] = "甲板烧烤";
         DebuffEvent = false;
-        MentalityDebuffValue = 0;
-        MentalityDebuffCount = 0;
 
         ST_BaseRate = 0.3f;//基础成功率
         ST_EmpRate = 0.05f;//每增加一名员工提供的额外成功率
@@ -622,8 +619,6 @@ public class EventGroup5 : EventGroup
         SubEventNames[2] = "夜跑";
         SubEventNames[3] = "辩论会";
         DebuffEvent = false;
-        MentalityDebuffValue = 0;
-        MentalityDebuffCount = 0;
 
         ST_BaseRate = 0.3f;//基础成功率
         ST_EmpRate = 0.1f;//每增加一名员工提供的额外成功率
@@ -730,8 +725,6 @@ public class EventGroup6 : EventGroup
         SubEventNames[2] = "资源共享";
         SubEventNames[3] = "产品创意";
         DebuffEvent = false;
-        MentalityDebuffValue = 0;
-        MentalityDebuffCount = 0;
 
         ST_BaseRate = 0.3f;//基础成功率
         ST_EmpRate = 0.1f;//每增加一名员工提供的额外成功率
@@ -827,6 +820,7 @@ public class EventGroup7 : EventGroup
         SubEventNames[4] = "谁是内鬼";
         SubEventNames[5] = "恶意断网";
         DebuffEvent = true;
+        MentalityDebuffValue = 60;
 
         ST_BaseRate = 0.3f;//基础成功率
         ST_EmpRate = 0.05f;//每增加一名员工提供的额外成功率
@@ -850,7 +844,7 @@ public class EventGroup7 : EventGroup
     }
     protected override void EffectB(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
-        GameControl.Instance.AddPerk(new Perk75());
+        GameControl.Instance.CPC.AddPerk(new Perk75());
     }
     protected override void EffectC(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
@@ -932,6 +926,7 @@ public class EventGroup8 : EventGroup
         SubEventNames[3] = "段子横飞";
         BSTurnCorrection = 1;
         DebuffEvent = true;
+        MentalityDebuffValue = 60;
 
         ST_BaseRate = 0.3f;//基础成功率
         ST_EmpRate = 0.1f;//每增加一名员工提供的额外成功率
@@ -951,11 +946,11 @@ public class EventGroup8 : EventGroup
 
     protected override void EffectA(Employee emp, EventGroupInfo egi = null, Employee target = null )
     {
-        GameControl.Instance.AddPerk(new Perk77());
+        GameControl.Instance.CPC.AddPerk(new Perk77());
     }
     protected override void EffectB(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
-        GameControl.Instance.AddPerk(new Perk78());
+        GameControl.Instance.CPC.AddPerk(new Perk78());
     }
     protected override void EffectC(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
@@ -1033,6 +1028,7 @@ public class EventGroup9 : EventGroup
         SubEventNames[2] = "设备维修";
         SubEventNames[3] = "盗版软件";
         DebuffEvent = true;
+        MentalityDebuffValue = 60;
 
         ST_BaseRate = 0.3f;//基础成功率
         ST_EmpRate = 0.1f;//每增加一名员工提供的额外成功率
@@ -1056,7 +1052,7 @@ public class EventGroup9 : EventGroup
     }
     protected override void EffectB(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
-        GameControl.Instance.AddPerk(new Perk80());
+        GameControl.Instance.CPC.AddPerk(new Perk80());
     }
     protected override void EffectC(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
@@ -1064,7 +1060,7 @@ public class EventGroup9 : EventGroup
     }
     protected override void EffectD(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
-        GameControl.Instance.AddPerk(new Perk82());
+        GameControl.Instance.CPC.AddPerk(new Perk82());
     }
 
     public override string EventDescription(Employee Emp, Employee targetEmp, int index, EventGroupInfo egi = null)
@@ -1120,8 +1116,6 @@ public class EventGroup10 : EventGroup
         SubEventNames[1] = "琢磨跳槽";
         SubEventNames[2] = "猎头上门";
         DebuffEvent = true;
-        MentalityDebuffValue = 0;
-        MentalityDebuffCount = 0;
 
         ST_BaseRate = 0.3f;//基础成功率
         ST_EmpRate = 0.1f;//每增加一名员工提供的额外成功率
@@ -1145,7 +1139,7 @@ public class EventGroup10 : EventGroup
     }
     protected override void EffectB(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
-        GameControl.Instance.AddPerk(new Perk84());
+        GameControl.Instance.CPC.AddPerk(new Perk84());
     }
     protected override void EffectC(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
@@ -1210,8 +1204,6 @@ public class EventGroup11 : EventGroup
         SubEventNames[1] = "出现幻觉";
         BSTurnCorrection = 1;
         DebuffEvent = true;
-        MentalityDebuffValue = 0;
-        MentalityDebuffCount = 0;
 
         ST_BaseRate = 0.3f;//基础成功率
         ST_EmpRate = 0.1f;//每增加一名员工提供的额外成功率
@@ -1231,7 +1223,7 @@ public class EventGroup11 : EventGroup
 
     protected override void EffectA(Employee emp, EventGroupInfo egi = null, Employee target = null )
     {
-        GameControl.Instance.AddPerk(new Perk85());
+        GameControl.Instance.CPC.AddPerk(new Perk85());
     }
     protected override void EffectB(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
@@ -1284,8 +1276,6 @@ public class EventGroup12 : EventGroup
         SubEventNames[2] = "担心裁员";
         BSTurnCorrection = 1;
         DebuffEvent = true;
-        MentalityDebuffValue = 0;
-        MentalityDebuffCount = 0;
 
         ST_BaseRate = 0.3f;//基础成功率
         ST_EmpRate = 0.1f;//每增加一名员工提供的额外成功率
@@ -1309,7 +1299,7 @@ public class EventGroup12 : EventGroup
     }
     protected override void EffectB(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
-        GameControl.Instance.AddPerk(new Perk88());
+        GameControl.Instance.CPC.AddPerk(new Perk88());
     }
     protected override void EffectC(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
@@ -1378,8 +1368,6 @@ public class EventGroup13 : EventGroup
         SubEventNames[1] = "额外工作";
         BSTurnCorrection = 1;
         DebuffEvent = true;
-        MentalityDebuffValue = 0;
-        MentalityDebuffCount = 0;
 
         ST_BaseRate = 0.3f;//基础成功率
         ST_EmpRate = 0.1f;//每增加一名员工提供的额外成功率
@@ -1416,7 +1404,7 @@ public class EventGroup13 : EventGroup
     }
     protected override void EffectB(Employee emp, EventGroupInfo egi = null, Employee target = null)
     {
-        GameControl.Instance.AddPerk(new Perk89());
+        GameControl.Instance.CPC.AddPerk(new Perk89());
     }
 
     public override string EventDescription(Employee Emp, Employee targetEmp, int index, EventGroupInfo egi = null)

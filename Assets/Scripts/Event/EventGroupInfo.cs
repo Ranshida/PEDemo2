@@ -31,7 +31,6 @@ public class EventGroupInfo : MonoBehaviour
     public Image[] STImages = new Image[3];
     public Image[] Lines = new Image[6];
     public Image[] StageMarker = new Image[6];
-    public List<Employee> MDebuffEmps = new List<Employee>();
 
     public void SetEvent(EventGroup e)
     {
@@ -87,33 +86,7 @@ public class EventGroupInfo : MonoBehaviour
                 print("抉择事件开始前丢失目标");
             }
             //如果有减心力的buff则寻找目标
-            if (TargetEventGroup.MentalityDebuffCount > 0)
-            {
-                MDebuffEmps.Clear();
-                List<Employee> PosbEmps = new List<Employee>();
-                foreach (Employee emp in GameControl.Instance.CurrentEmployees)
-                {
-                    if (emp != Target)
-                        PosbEmps.Add(emp);
-                }
 
-                if (PosbEmps.Count < TargetEventGroup.MentalityDebuffCount)
-                {
-                    foreach (Employee emp in PosbEmps)
-                    {
-                        MDebuffEmps.Add(emp);
-                    }
-                }
-                else
-                {
-                    for (int i = 0; i < TargetEventGroup.MentalityDebuffCount; i++)
-                    {
-                        int num = Random.Range(0, PosbEmps.Count);
-                        MDebuffEmps.Add(PosbEmps[num]);
-                        PosbEmps.RemoveAt(num);
-                    }
-                }
-            }
             EC.StartChoiceEvent(TargetEventGroup, Target, this);
         }
     }
@@ -284,22 +257,6 @@ public class EventGroupInfo : MonoBehaviour
             return;
         }
         TargetEventGroup.UseResource(this);
-    }
-
-    //事件组造成心力减益的效果
-    public void MentalityDebuff()
-    {
-        if (TargetEventGroup.MentalityDebuffCount == 0)
-            return;
-
-        if (Target != null)
-        {
-            Target.Mentality -= TargetEventGroup.MentalityDebuffValue;
-        }
-        foreach (Employee emp in MDebuffEmps)
-        {
-            emp.Mentality -= TargetEventGroup.MentalityDebuffValue;
-        }
     }
 
     //事件组结束后额外的特别小组禁用时间

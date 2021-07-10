@@ -179,8 +179,14 @@ public class EmpInfo : MonoBehaviour
 
         foreach (PerkInfo perk in emp.InfoDetail.PerksInfo)
         {
-            perk.CurrentPerk.RemoveAllListeners();
+            if (perk.CurrentPerk.CompanyDebuffPerk == true)
+                perk.CurrentPerk.RemoveEffect();
+            else
+                perk.CurrentPerk.RemoveAllListeners();
         }
+
+        GC.CPC.DebuffEffect(142);
+        GC.CPC.DebuffEffect(143);
 
         GC.CC.CEO.InfoDetail.AddHistory("解雇了" + emp.Name);
 
@@ -412,6 +418,8 @@ public class EmpInfo : MonoBehaviour
         Perk perk3 = PerkData.DefaultPerkList[num].Clone();
         perk3.TargetEmp = emp;
         AddPerk(perk3, true);
+        //负面特质测试
+        //AddPerk(new Perk133(), false);
 
         //职业特质
         if (emp.Occupation == OccupationType.超级黑客)

@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class CourseControl : MonoBehaviour
 {
+    private int DistanceCount = 0;//当前回合总共移动的距离（用于133特质计算）
     private int MoveDistance = 2;//当前的移动距离
     private int MaxDistance = 3;//最大航行距离
     private int MinDistance = 2;//最小航行距离
@@ -79,6 +80,7 @@ public class CourseControl : MonoBehaviour
     //应用天气效果并准备开始航行
     public void CheckWeather()
     {//该方法绑定在MoveButton上
+        DistanceCount = 0;
         Text_Power.gameObject.SetActive(false);
         FirstRefresh = false;
         CasinoButton.SetActive(false);
@@ -147,6 +149,7 @@ public class CourseControl : MonoBehaviour
                 }
             }
             MoveDistance -= 1;
+            DistanceCount += 1;
         }
         else if (MoveDistance < 0)
         {
@@ -161,6 +164,7 @@ public class CourseControl : MonoBehaviour
                 }
             }
             MoveDistance += 1;
+            DistanceCount += 1;
         }
         else
         {
@@ -225,6 +229,10 @@ public class CourseControl : MonoBehaviour
         GC.CheckButtonName();
         if (CEOSkillB == true)
             ExtraMovePanel.SetActive(true);
+
+        //公司特质效果
+        if (DistanceCount > 3)
+            GC.CPC.DebuffEffect(133);
     }
 
     //直接在航线界面进入下一回合，事件绑定在CourseEndButton上

@@ -189,7 +189,7 @@ public class DivisionControl : MonoBehaviour
             Text_Status.text += "\n<color=#00FF00>信念:" + CurrentFaith + "</color>";
 
         Text_Status.text += "\n成本:" + (CalcCost(1) + CalcCost(2)) + "/回合";
-
+        GC.CalcCompanyEW();
     }
 
     public void Produce()
@@ -320,7 +320,6 @@ public class DivisionControl : MonoBehaviour
         else
             canWork = true;
         UpdateStatusUI();
-        GC.CalcCompanyEW();
     }
 
     public int CalcCost(int type)

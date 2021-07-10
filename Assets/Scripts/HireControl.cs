@@ -153,6 +153,10 @@ public class HireControl : MonoBehaviour
             else
                 GC.CurrentEmpInfo.PerksInfo[i].transform.parent = ED.PerkContent;
             ED.PerksInfo.Add(GC.CurrentEmpInfo.PerksInfo[i]);
+
+            //部分影响公司的负面特质的临时效果添加（刷新时不直接添加效果）
+            if (GC.CurrentEmpInfo.PerksInfo[i].CurrentPerk.CompanyDebuffPerk == true)
+                GC.CurrentEmpInfo.PerksInfo[i].CurrentPerk.AddEffect(); 
         }
         GC.CurrentEmpInfo.PerksInfo.Clear();
 

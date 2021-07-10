@@ -19,17 +19,6 @@ public class PerkInfo : MonoBehaviour
                 Timer += Time.deltaTime;
             else
             {
-                if (CurrentPerk != null)
-                {
-                    info.Text_Name.text = CurrentPerk.Name;
-                    if (CurrentPerk.Level > 1)
-                        info.Text_Name.text += "(" + CurrentPerk.Level + "层)";
-                    info.Text_Description.text = CurrentPerk.Description;
-                    if (CurrentPerk.TimeLeft != -1)
-                        info.Text_ExtraInfo.text = "剩余" + CurrentPerk.TimeLeft + "回合";
-                    else
-                        info.Text_ExtraInfo.text = "剩余∞回合";
-                }
                 if (info.Visible == false)
                     info.ShowPanel();
                 info.transform.position = Input.mousePosition;
@@ -39,6 +28,29 @@ public class PerkInfo : MonoBehaviour
 
     public void PointerEnter()
     {
+        if (CurrentPerk != null)
+        {
+            info.Text_Name.text = CurrentPerk.Name;
+            info.Text_Description.text = CurrentPerk.Description;
+            if (CurrentPerk.CompanyDebuffPerk == false)
+            {
+                if (CurrentPerk.Level > 1)
+                    info.Text_Name.text += "(" + CurrentPerk.Level + "层)";
+                if (CurrentPerk.TimeLeft != -1)
+                    info.Text_ExtraInfo.text = "剩余" + CurrentPerk.TimeLeft + "回合";
+                else
+                    info.Text_ExtraInfo.text = "剩余∞回合";
+            }
+            else
+            {
+                info.Text_Name.text += "(" + GameControl.Instance.CPC.CurrentDebuffPerks[CurrentPerk.Num].Count + ")";
+                info.Text_ExtraInfo.text = "持有员工:\n";
+                foreach (Employee emp in GameControl.Instance.CPC.CurrentDebuffPerks[CurrentPerk.Num])
+                {
+                    info.Text_ExtraInfo.text += emp.Name + "   ";
+                }
+            }
+        }
         ShowPanel = true;
     }
 
@@ -57,7 +69,7 @@ public class PerkInfo : MonoBehaviour
         else if (CurrentPerk.TargetDiv != null)
             CurrentPerk.TargetDiv.CurrentPerks.Remove(this);
         else
-            GameControl.Instance.CurrentPerks.Remove(this);
+            GameControl.Instance.CPC.CurrentPerksInfo.Remove(this);
 
         info.ClosePanel();
         Destroy(this.gameObject);

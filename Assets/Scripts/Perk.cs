@@ -18,10 +18,12 @@ public class Perk
 
     public int TimeLeft, Num = 0, Level = 1, BaseTime;  //Time单位小时,BaseTime用于可叠加Perk清除层数时重置时间
     public bool canStack = false;//是否可叠加
+    public bool StackDelete = false;//是否时间结束后直接删除所有堆叠效果
     public bool ManagePerk = false;//是否为在成为核心团队成员后奏效
     public bool DivisionPerk = false;//是否在成为高管后奏效
     public bool DepPerk = false;//是否为编入部门后生效
     public bool OptionCardPerk = false;//是否为生成抉择卡的特质
+    public bool CompanyDebuffPerk = false;//是否为影响公司的（负面）特质
     public string Name, Description;
     public AmbitionType ambitionType;
     public EffectType effectType;
@@ -57,6 +59,8 @@ public class Perk
                 GameControl.Instance.MonthlyEvent.AddListener(ContinuousEffect);
             }
             GameControl.Instance.TurnEvent.AddListener(TimePass);
+            if (CompanyDebuffPerk == true)
+                GameControl.Instance.CPC.AddDebuffPerk(Clone());
             StackAdded = true;
         }
         ImmEffect();
@@ -70,9 +74,8 @@ public class Perk
 
     public virtual void RemoveEffect()
     {
-
         //可叠加的时间清零后直接重置
-        if (canStack == true)
+        if (canStack == true && StackDelete == false)
         {
             Level -= 1;
             TimeLeft = BaseTime;
@@ -83,7 +86,7 @@ public class Perk
             Object.Destroy(card.gameObject);
             card = null;
         }
-        if (canStack == false || Level == 0)
+        if (canStack == false || Level == 0 || StackDelete == true)
         {
             Info.RemovePerk();
             RemoveAllListeners();
@@ -104,6 +107,8 @@ public class Perk
         {
             GameControl.Instance.MonthlyEvent.RemoveListener(ContinuousEffect);
         }
+        if (CompanyDebuffPerk == true)
+            GameControl.Instance.CPC.RemoveDebuffPerk(Num, TargetEmp);
         GameControl.Instance.TurnEvent.RemoveListener(TimePass);
     }
 
@@ -135,6 +140,17 @@ public class Perk
     public virtual void DeActiveSpecialEffect()
     {
         //管理特质效果解除
+    }
+
+    public virtual void ActiveCompanyDebuffEffect(List<Employee> Emps)
+    {
+
+    }
+
+    public virtual string SetSpecialDescription()
+    {
+        string content = "";
+        return content;
     }
 
     public Perk Clone()
@@ -3533,533 +3549,417 @@ public class Perk132 : Perk
     }
 }
 
-//孤僻
+//晕船
 public class Perk133 : Perk
 {
     public Perk133() : base()
     {
-        Name = "孤僻";
-        Description = "管理-1，第一份工作技能等级+1";
+        Name = "晕船";
+        Description = "一回合内航行距离超过3格时有（持有的员工数×20%）几率触发，如果事件判定失败则随机3名员工心力下降60点。";
         TimeLeft = -1;
         Num = 133;
-        canStack = false;
+        CompanyDebuffPerk = true;
     }
 
-    public override void ImmEffect()
+    public override void ActiveCompanyDebuffEffect(List<Employee> Emps)
     {
-        TargetEmp.Manage -= 2;
-        if (TargetEmp.Manage < 0)
-            TargetEmp.Manage = 0;
-    }
-    public override void RemoveEffect()
-    {
-        base.RemoveEffect();
-        TargetEmp.Manage += 2;
+        if (Random.Range(0.0f, 1.0f) < (Emps.Count * 0.2f))        
+            GameControl.Instance.EC.StartChoiceEvent(new EventC6(), Emps[Random.Range(0, Emps.Count)]);       
     }
 }
 
 
-//魔鬼筋肉人(金色特质)
+//酗酒
 public class Perk134 : Perk
 {
     public Perk134() : base()
     {
-        Name = "魔鬼筋肉人(金)";
-        Description = "成为核心团队成员后生效，增加CEO强壮2点";
+        Name = "酗酒";
+        Description = "航行到酒馆时有（持有的员工数×20%）几率触发，如果事件判定失败则随机事业部工作状态下降5点，持续3回合。";
         TimeLeft = -1;
         Num = 134;
-        canStack = false;
+        CompanyDebuffPerk = true;
     }
 
-    public override void ImmEffect()
+    public override void ActiveCompanyDebuffEffect(List<Employee> Emps)
     {
-
-    }
-    public override void RemoveEffect()
-    {
-        base.RemoveEffect();
-
+        if (Random.Range(0.0f, 1.0f) < (Emps.Count * 0.2f))
+            GameControl.Instance.EC.StartChoiceEvent(new EventC7(), Emps[Random.Range(0, Emps.Count)]);
     }
 }
 
 
-//智囊(金色特质)
+//暴躁
 public class Perk135 : Perk
 {
     public Perk135() : base()
     {
-        Name = "智囊(金)";
-        Description = "成为核心团队成员后生效，增加CEO决策2点";
+        Name = "暴躁";
+        Description = "月会时有人产出黑色水晶时触发，触发后则目标员工所在事业部事件修正（-2×持有的员工数），持续3回合。";
         TimeLeft = -1;
         Num = 135;
-        canStack = false;
-        ManagePerk = true;
+        CompanyDebuffPerk = true;
     }
 
-    public override void ImmEffect()
+    public override void ActiveCompanyDebuffEffect(List<Employee> Emps)
     {
+        DivisionControl div;
+        List<DivisionControl> PosbDivs = new List<DivisionControl>();
+        foreach (Employee emp in Emps)
+        {
+            if (emp.CurrentDep != null && emp.CurrentDep.CurrentDivision != null)
+                PosbDivs.Add(emp.CurrentDep.CurrentDivision);
+            else if (emp.CurrentDivision != null)
+                PosbDivs.Add(emp.CurrentDivision);
+        }
 
-    }
-    public override void RemoveEffect()
-    {
-        base.RemoveEffect();
+        if (PosbDivs.Count == 0)
+        {
+            foreach (DivisionControl d in GameControl.Instance.CurrentDivisions)
+            {
+                if (d.CurrentDeps.Count > 0)
+                    PosbDivs.Add(d);
+                else
+                    break;
+            }
+        }
 
+        if (PosbDivs.Count == 0)
+        {
+            Debug.LogError("目标事业部有问题");
+            return;
+        }
+        div = PosbDivs[Random.Range(0, PosbDivs.Count)];
+
+        for (int i = 0; i < Emps.Count; i++)
+        {
+            div.AddPerk(new Perk156());
+        }
     }
 }
 
-//脱口秀演员(金色特质)
+//带投大哥
 public class Perk136 : Perk
 {
     public Perk136() : base()
     {
-        Name = "脱口秀演员(金)";
-        Description = "成为核心团队成员后生效，增加CEO坚韧2点";
+        Name = "带投大哥";
+        Description = "公司中不满事件判定失败时触发，额外获得（持有的员工数）个不满。";
         TimeLeft = -1;
         Num = 136;
-        canStack = false;
-        ManagePerk = true;
+        CompanyDebuffPerk = true;
     }
 
-    public override void ImmEffect()
+    public override void ActiveCompanyDebuffEffect(List<Employee> Emps)
     {
-
-    }
-    public override void RemoveEffect()
-    {
-        base.RemoveEffect();
-
+        GameControl.Instance.AddEventProgress(Emps.Count, true);
     }
 }
 
-//管理咨询师(金色特质)
+//阴阳师
 public class Perk137 : Perk
 {
     public Perk137() : base()
     {
-        Name = "管理咨询师(金)";
-        Description = "成为核心团队成员后生效，增加CEO管理2点";
+        Name = "阴阳师";
+        Description = "融资失败时触发，触发后公司士气降低（10×持有的员工数）点，持续3回合。";
         TimeLeft = -1;
         Num = 137;
-        canStack = false;
-        ManagePerk = true;
+        CompanyDebuffPerk = true;
     }
 
-    public override void ImmEffect()
+    public override void ActiveCompanyDebuffEffect(List<Employee> Emps)
     {
-
-    }
-    public override void RemoveEffect()
-    {
-        base.RemoveEffect();
-
+        for (int i = 0; i < Emps.Count; i++)
+        {
+            GameControl.Instance.CPC.AddPerk(new Perk157());
+        }
     }
 }
 
-//怠惰(金色特质)
+//丢三落四
 public class Perk138 : Perk
 {
     public Perk138() : base()
     {
-        Name = "怠惰(金)";
-        Description = "成为核心团队成员后生效，减少CEO强壮2点";
+        Name = "丢三落四";
+        Description = "开启融资谈判时有（持有的员工数×20%）几率触发，触发后产生抉择事件，如果事件判定失败则所有核心团队成员心力下降40点。";
         TimeLeft = -1;
         Num = 138;
-        canStack = false;
-        ManagePerk = true;
+        CompanyDebuffPerk = true;
     }
 
-    public override void ImmEffect()
+    public override void ActiveCompanyDebuffEffect(List<Employee> Emps)
     {
-
-    }
-    public override void RemoveEffect()
-    {
-        base.RemoveEffect();
-
+        if (Random.Range(0.0f, 1.0f) < (Emps.Count * 0.2f))
+            GameControl.Instance.EC.StartChoiceEvent(new EventC8(), Emps[Random.Range(0, Emps.Count)]);
     }
 }
 
-//神经质(金色特质)
+//死板
 public class Perk139 : Perk
 {
     public Perk139() : base()
     {
-        Name = "神经质(金)";
-        Description = "成为核心团队成员后生效，减少CEO坚韧2点";
+        Name = "死板";
+        Description = "公司工作状态降低（2×持有的员工数）点";
         TimeLeft = -1;
         Num = 139;
-        canStack = false;
-        ManagePerk = true;
+        CompanyDebuffPerk = true;
     }
 
     public override void ImmEffect()
     {
-
+        GameControl.Instance.ExtraWorkStatus -= 2;
+        GameControl.Instance.CalcCompanyEW();
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-
+        GameControl.Instance.ExtraWorkStatus += 2;
+        GameControl.Instance.CalcCompanyEW();
     }
 }
 
-//独断专行(金色特质)
+//上班摸鱼
 public class Perk140 : Perk
 {
     public Perk140() : base()
     {
-        Name = "独断专行(金)";
-        Description = "自身管理-1，成为核心团队成员后生效，减少CEO管理2点";
+        Name = "上班摸鱼";
+        Description = "公司效率降低（2×持有的员工数）点";
         TimeLeft = -1;
         Num = 140;
-        canStack = false;
-        ManagePerk = true;
+        CompanyDebuffPerk = true;
     }
 
     public override void ImmEffect()
     {
-        TargetEmp.Manage -= 1;
+        GameControl.Instance.ExtraEfficiency -= 2;
+        GameControl.Instance.CalcCompanyEW();
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetEmp.Manage += 1;
+        GameControl.Instance.ExtraEfficiency += 2;
+        GameControl.Instance.CalcCompanyEW();
     }
 }
 
-//选择困难症(金色特质)
+//贪婪
 public class Perk141 : Perk
 {
     public Perk141() : base()
     {
-        Name = "选择困难症(金)";
-        Description = "成为核心团队成员后生效，减少CEO决策2点";
+        Name = "贪婪";
+        Description = "公司成本增加（10×持有的员工数）";
         TimeLeft = -1;
         Num = 141;
-        canStack = false;
-        ManagePerk = true;
+        CompanyDebuffPerk = true;
     }
 
     public override void ImmEffect()
     {
-
+        GameControl.Instance.ExtraCost += 10;
     }
     public override void RemoveEffect()
     {
         base.RemoveEffect();
+        GameControl.Instance.ExtraCost -= 10;
     }
 }
 
-//瓶颈
+//小道消息
 public class Perk142 : Perk
 {
     public Perk142() : base()
     {
-        Name = "瓶颈";
-        Description = "每拥有1层“瓶颈”特质，升级时所需经验增加800点";
+        Name = "小道消息";
+        Description = "开除员工时，有（持有的员工数×20%）几率产生抉择事件（9），失败则目标员工所在事业部成员获得浅蓝色情绪";
         TimeLeft = -1;
         Num = 142;
-        canStack = true;
+        CompanyDebuffPerk = true;
     }
 
-    public override void ImmEffect()
+    public override void ActiveCompanyDebuffEffect(List<Employee> Emps)
     {
-        //TargetEmp.ExtraExp += AdjustData.BottleneckValue;
-    }
-    public override void RemoveEffect()
-    {
-        base.RemoveEffect();
-        //TargetEmp.ExtraExp -= AdjustData.BottleneckValue;
+        if (Random.Range(0.0f, 1.0f) < (Emps.Count * 0.2f))
+            GameControl.Instance.EC.StartChoiceEvent(new EventC9(), Emps[Random.Range(0, Emps.Count)]);
     }
 }
 
-//混乱与创造
+//恐慌制造者
 public class Perk143 : Perk
 {
     public Perk143() : base()
     {
-        Name = "混乱与创造";
-        Description = "部门工作状态-3，大成功率增加30%";
-        TimeLeft = 64;
+        Name = "恐慌制造者";
+        Description = "开除员工时，有（持有的员工数×20%）几率产生抉择事件，失败则目标员工所在事业部信念降低20点，持续3回合。";
+        TimeLeft = -1;
         Num = 143;
-        canStack = false;
-        WorkStatusValue = 1;
-        perkColor = PerkColor.White;
+        CompanyDebuffPerk = true;
     }
 
-    public override void ImmEffect()
+    public override void ActiveCompanyDebuffEffect(List<Employee> Emps)
     {
-        //TargetDep.BaseWorkStatus -= 3 * TempValue1;
-        //TargetDep.DepBaseMajorSuccessRate += 0.3f * TempValue1;
-    }
-    public override void RemoveEffect()
-    {
-        base.RemoveEffect();
-        //TargetDep.BaseWorkStatus += 3 * TempValue1;
-        //TargetDep.DepBaseMajorSuccessRate -= 0.3f * TempValue1;
+        if (Random.Range(0.0f, 1.0f) < (Emps.Count * 0.2f))
+            GameControl.Instance.EC.StartChoiceEvent(new EventC10(), Emps[Random.Range(0, Emps.Count)]);
     }
 }
 
 
-//必胜信念
+//煽动者
 public class Perk144 : Perk
 {
     public Perk144() : base()
     {
-        Name = "必胜信念";
-        Description = "部门信念下降30，工作状态+2";
+        Name = "煽动者";
+        Description = "拆除建筑时，有（持有的员工数×20%）几率产生抉择事件，失败则5名员工心力下降50点";
         TimeLeft = -1;
         Num = 144;
-        canStack = false;
-        WorkStatusValue = 1;
-        perkColor = PerkColor.White;
+        CompanyDebuffPerk = true;
     }
 
-    public override void ImmEffect()
+    public override void ActiveCompanyDebuffEffect(List<Employee> Emps)
     {
-        TargetDep.BaseWorkStatus += 2 * WorkStatusValue;
-        TargetDep.DepFaith -= 30 * WorkStatusValue;
-    }
-    public override void RemoveEffect()
-    {
-        base.RemoveEffect();
-        TargetDep.BaseWorkStatus -= 2 * WorkStatusValue;
-        TargetDep.DepFaith += 30 * WorkStatusValue;
+        if (Random.Range(0.0f, 1.0f) < (Emps.Count * 0.2f))
+            GameControl.Instance.EC.StartChoiceEvent(new EventC11(), Emps[Random.Range(0, Emps.Count)]);
     }
 }
 
-//机器人员工
+//神经衰弱
 public class Perk145 : Perk
 {
     public Perk145() : base()
     {
-        Name = "机器人员工";
-        Description = "部门效率上升25%";
-        TimeLeft = 64;
+        Name = "神经衰弱";
+        Description = "拆除建筑时，有（持有的员工数×20%）几率产生抉择事件，失败则公司士气下降30点，持续3回合。";
+        TimeLeft = -1;
         Num = 145;
-        canStack = false;
-        WorkStatusValue = 1;
-        perkColor = PerkColor.Grey;
+        CompanyDebuffPerk = true;
     }
 
-    public override void ImmEffect()
+    public override void ActiveCompanyDebuffEffect(List<Employee> Emps)
     {
-        TargetDep.Efficiency += 0.25f * WorkStatusValue;
-        //Perk146额外检测
-        foreach (PerkInfo perk in TargetDep.CurrentPerks)
-        {
-            if (perk.CurrentPerk.Num == 146)
-            {
-                TargetDep.Efficiency += 0.15f * perk.CurrentPerk.WorkStatusValue;
-                break;
-            }
-        }
-    }
-    public override void RemoveEffect()
-    {
-        base.RemoveEffect();
-        TargetDep.Efficiency -= 0.25f * WorkStatusValue;
-        //Perk146额外检测
-        foreach (PerkInfo perk in TargetDep.CurrentPerks)
-        {
-            if (perk.CurrentPerk.Num == 146)
-            {
-                TargetDep.Efficiency -= 0.15f * perk.CurrentPerk.WorkStatusValue;
-                break;
-            }
-        }
+        if (Random.Range(0.0f, 1.0f) < (Emps.Count * 0.2f))
+            GameControl.Instance.EC.StartChoiceEvent(new EventC12(), Emps[Random.Range(0, Emps.Count)]);
     }
 }
 
-//机械检修
+//反应迟钝
 public class Perk146 : Perk
 {
     public Perk146() : base()
     {
-        Name = "机械检修";
-        Description = "拥有机器人员工时效率额外+15%";
+        Name = "反应迟钝";
+        Description = "头脑风暴第一回合中，每使用一枚电脑图案的骰子，降低所有核心团队成员（10×持有的员工数）点心力。";
         TimeLeft = -1;
         Num = 146;
-        canStack = false;
-        WorkStatusValue = 1;
-        perkColor = PerkColor.Grey;
+        CompanyDebuffPerk = true;
     }
 
-    public override void ImmEffect()
+    public override void ActiveCompanyDebuffEffect(List<Employee> Emps)
     {
-        foreach(PerkInfo perk in TargetDep.CurrentPerks)
+        foreach (Employee e in GameControl.Instance.BSC.CoreMembers)
         {
-            if(perk.CurrentPerk.Num == 145)
-            {
-                TargetDep.Efficiency += 0.15f * WorkStatusValue;
-                break;
-            }
+            e.Mentality -= (10 * Emps.Count);
         }
-    }
-    public override void RemoveEffect()
-    {
-        base.RemoveEffect();
-        foreach (PerkInfo perk in TargetDep.CurrentPerks)
-        {
-            if (perk.CurrentPerk.Num == 145)
-            {
-                TargetDep.Efficiency -= 0.15f * WorkStatusValue;
-                break;
-            }
-        }
+        QuestControl.Instance.Init("由于负面特质效果，核心团队成员心力下降" + (10 * Emps.Count));
     }
 }
 
-//肌体强化
+//斤斤计较
 public class Perk147 : Perk
 {
     public Perk147() : base()
     {
-        Name = "肌体强化";
-        Description = "部门内员工每周体力消耗减少30%";
+        Name = "斤斤计较";
+        Description = "公司每次产生特殊事件（认同特殊事件除外）时，获得（1×持有的员工数）个不满";
         TimeLeft = -1;
         Num = 147;
-        canStack = false;
-        WorkStatusValue = 1;
+        CompanyDebuffPerk = true;
     }
 
-    public override void ImmEffect()
+    public override void ActiveCompanyDebuffEffect(List<Employee> Emps)
     {
-        //TargetDep.StaminaCostRate -= 0.3f * TempValue1;
-    }
-    public override void RemoveEffect()
-    {
-        base.RemoveEffect();
-        //TargetDep.StaminaCostRate += 0.3f * TempValue1;
+        GameControl.Instance.AddEventProgress(Emps.Count, true);
     }
 }
 
-//自由之翼
+//不粘锅
 public class Perk148 : Perk
 {
     public Perk148() : base()
     {
-        Name = "自由之翼";
-        Description = "随机增加1点天赋";
+        Name = "不粘锅";
+        Description = "每回合第一次有员工心力爆炸时触发，产生抉择事件，失败则随机（1×持有的员工数）名员工心力下降40点";
         TimeLeft = -1;
         Num = 148;
-        canStack = false;
-        WorkStatusValue = 1;
+        CompanyDebuffPerk = true;
     }
 
-    public override void ImmEffect()
+    public override void ActiveCompanyDebuffEffect(List<Employee> Emps)
     {
-        WorkStatusValue = Random.Range(0, 3);
-        //TargetEmp.StarLimit[TargetEmp.Professions[TempValue1] - 1] += 1 * TempValue1;
-    }
-    public override void RemoveEffect()
-    {
-        base.RemoveEffect();
-        //TargetEmp.StarLimit[TargetEmp.Professions[TempValue1] - 1] -= 1 * TempValue1;
+        GameControl.Instance.EC.StartChoiceEvent(new EventC13(), Emps[Random.Range(0, Emps.Count)]);
     }
 }
 
-//脑机芯片
+//碎碎念
 public class Perk149 : Perk
 {
     public Perk149() : base()
     {
-        Name = "脑机芯片";
-        Description = "随机一项职业技能增加3点";
-        TimeLeft = 64;
+        Name = "碎碎念";
+        Description = "每回合第一次有员工心力爆炸时触发，公司士气下降（10×持有的员工数）点（160），持续3回合";
+        TimeLeft = -1;
         Num = 149;
-        canStack = false;
-        WorkStatusValue = 1;
+        CompanyDebuffPerk = true;
     }
 
-    public override void ImmEffect()
+    public override void ActiveCompanyDebuffEffect(List<Employee> Emps)
     {
-        int limit = 0;
-        //foreach(int a in TargetEmp.Professions)
-        //{
-        //    if (a != 0)
-        //        limit++;
-        //}
-        //TempValue1 = Random.Range(0, limit);
-        //TargetEmp.ExtraAttributes[TargetEmp.Professions[TempValue1] - 1] += 3 * TempValue1;
-    }
-    public override void RemoveEffect()
-    {
-        base.RemoveEffect();
-        //TargetEmp.ExtraAttributes[TargetEmp.Professions[TempValue1] - 1] -= 3 * TempValue1;
+        for (int i = 0; i < Emps.Count; i++)
+        {
+            GameControl.Instance.CPC.AddPerk(new Perk160());
+        }
     }
 }
 
-//胜利开发
+//打断发言
 public class Perk150 : Perk
 {
     public Perk150() : base()
     {
-        Name = "胜利开发";
-        Description = "提升工作状态1点";
-        TimeLeft = 3;
+        Name = "打断发言";
+        Description = "每回合头脑风暴额外丢弃（1×持有的员工数）枚随机骰子";
+        TimeLeft = -1;
         Num = 150;
-        canStack = true;
-        WorkStatusValue = 1;
-        perkColor = PerkColor.White;
-    }
-
-    public override void ImmEffect()
-    {
-        TargetDiv.WorkStatus += WorkStatusValue;
-    }
-    public override void RemoveEffect()
-    {
-        base.RemoveEffect();
-        TargetDiv.WorkStatus -= WorkStatusValue;
+        CompanyDebuffPerk = true;
     }
 }
 
-//节省支出
+//阴谋论者
 public class Perk151 : Perk
 {
     public Perk151() : base()
     {
         Name = "节省支出";
-        Description = "降低成本3点";
-        TimeLeft = 3;
+        Description = "员工产生认同事件时触发，事件修正（-2×持有的员工数）";
+        TimeLeft = -1;
         Num = 151;
-        canStack = true;
-        perkColor = PerkColor.Blue;
-    }
-
-    public override void ImmEffect()
-    {
-        TargetDiv.ExtraCost -= 3;
-    }
-    public override void RemoveEffect()
-    {
-        base.RemoveEffect();
-        TargetDiv.ExtraCost += 3;
+        CompanyDebuffPerk = true;
     }
 }
 
-//信仰充值
+//自闭
 public class Perk152 : Perk
 {
     public Perk152() : base()
     {
-        Name = "信仰充值";
-        Description = "提升信念10点";
-        TimeLeft = 3;
+        Name = "自闭";
+        Description = "员工进行常规事件时修正-3";
+        TimeLeft = -1;
         Num = 152;
-        canStack = true;
-        perkColor = PerkColor.Orange;
-    }
-
-    public override void ImmEffect()
-    {
-        TargetDiv.Faith += 10;
-    }
-    public override void RemoveEffect()
-    {
-        base.RemoveEffect();
-        TargetDiv.Faith -= 10;
     }
 }
 
@@ -4111,6 +4011,179 @@ public class Perk154 : Perk
     }
 }
 
+//酗酒
+public class Perk155 : Perk
+{
+    public Perk155() : base()
+    {
+        Name = "酗酒";
+        Description = "工作状态下降5点";
+        TimeLeft = 3;
+        Num = 155;
+        canStack = true;
+        StackDelete = true;
+        perkColor = PerkColor.White;
+        WorkStatusValue = 0;
+    }
+
+    public override void ImmEffect()
+    {
+        WorkStatusValue -= 5;
+        Description = "工作状态下降" +  (-1 * WorkStatusValue) + "点";
+        if (TargetEmp.CurrentDep != null && TargetEmp.CurrentDep.CurrentDivision != null)
+            TargetEmp.CurrentDep.CurrentDivision.WorkStatus -= 5;
+        else if (TargetEmp.CurrentDivision != null)
+            TargetEmp.CurrentDivision.WorkStatus -= 5;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        if (TargetEmp.CurrentDep != null && TargetEmp.CurrentDep.CurrentDivision != null)
+            TargetEmp.CurrentDep.CurrentDivision.WorkStatus -= WorkStatusValue;
+        else if (TargetEmp.CurrentDivision != null)
+            TargetEmp.CurrentDivision.WorkStatus -= WorkStatusValue;
+    }
+}
+
+//暴躁
+public class Perk156 : Perk
+{
+    public Perk156() : base()
+    {
+        Name = "暴躁";
+        Description = "事件修正-2";
+        TimeLeft = 3;
+        Num = 156;
+        canStack = true;
+        StackDelete = true;
+        perkColor = PerkColor.None;
+    }
+
+    public override void ImmEffect()
+    {
+        Description = "事件修正-" + (Level * 2);
+    }
+}
+
+//阴阳师
+public class Perk157 : Perk
+{
+    public Perk157() : base()
+    {
+        Name = "阴阳师";
+        Description = "士气降低10点";
+        TimeLeft = 3;
+        Num = 157;
+        canStack = true;
+        StackDelete = true;
+        perkColor = PerkColor.None;
+        WorkStatusValue = 0;//该变量暂时用于表示士气
+    }
+
+    public override void ImmEffect()
+    {
+        WorkStatusValue += 10;
+        Description = "士气降低" + WorkStatusValue + "点";
+        GameControl.Instance.Morale -= 10;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        GameControl.Instance.Morale += WorkStatusValue;
+    }
+}
+
+//恐慌制造者
+public class Perk158 : Perk
+{
+    public Perk158() : base()
+    {
+        Name = "恐慌制造者";
+        Description = "信念降低20点";
+        TimeLeft = 3;
+        Num = 158;
+        canStack = true;
+        StackDelete = true;
+        perkColor = PerkColor.Orange;
+        FaithValue = 0;
+    }
+
+    public override void ImmEffect()
+    {
+        FaithValue -= 20;
+        Description = "信念降低" + (-1 * FaithValue) + "点";
+        if (TargetEmp.CurrentDep != null && TargetEmp.CurrentDep.CurrentDivision != null)
+            TargetEmp.CurrentDep.CurrentDivision.Faith -= 20;
+        else if (TargetEmp.CurrentDivision != null)
+            TargetEmp.CurrentDivision.Faith -= 20;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        FaithValue += 5;
+        Description = "信念降低" + FaithValue + "点";
+        if (TargetEmp.CurrentDep != null && TargetEmp.CurrentDep.CurrentDivision != null)
+            TargetEmp.CurrentDep.CurrentDivision.Faith += FaithValue;
+        else if (TargetEmp.CurrentDivision != null)
+            TargetEmp.CurrentDivision.Faith += FaithValue;
+    }
+}
+
+//神经衰弱
+public class Perk159 : Perk
+{
+    public Perk159() : base()
+    {
+        Name = "神经衰弱";
+        Description = "士气降低30点";
+        TimeLeft = 3;
+        Num = 159;
+        canStack = true;
+        StackDelete = true;
+        perkColor = PerkColor.None;
+        WorkStatusValue = 0;//该变量暂时用于表示士气
+    }
+
+    public override void ImmEffect()
+    {
+        WorkStatusValue += 30;
+        Description = "士气降低" + WorkStatusValue + "点";
+        GameControl.Instance.Morale -= 30;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        GameControl.Instance.Morale += WorkStatusValue;
+    }
+}
+
+//碎碎念
+public class Perk160 : Perk
+{
+    public Perk160() : base()
+    {
+        Name = "碎碎念";
+        Description = "士气降低10点";
+        TimeLeft = 3;
+        Num = 160;
+        canStack = true;
+        StackDelete = true;
+        perkColor = PerkColor.None;
+        WorkStatusValue = 0;//该变量暂时用于表示士气
+    }
+
+    public override void ImmEffect()
+    {
+        WorkStatusValue += 10;
+        Description = "士气降低" + WorkStatusValue + "点";
+        GameControl.Instance.Morale -= 10;
+    }
+    public override void RemoveEffect()
+    {
+        base.RemoveEffect();
+        GameControl.Instance.Morale += WorkStatusValue;
+    }
+}
 #endregion
 public static class PerkData
 {
@@ -4156,6 +4229,9 @@ public static class PerkData
 
     public static List<Perk> DebuffPerkList = new List<Perk>()
     {
-        new Perk52(), new Perk53(), new Perk54(), new Perk114(), new Perk115(), new Perk116()
+        new Perk52(), new Perk53(), new Perk54(), new Perk114(), new Perk115(), new Perk116(), new Perk133(), new Perk134(), new Perk135()
+        , new Perk136(), new Perk137(), new Perk138(), new Perk139(), new Perk140(), new Perk141(), new Perk142(), new Perk143(),
+        new Perk144(), new Perk145(), new Perk146(), new Perk147(), new Perk148(), new Perk149(), new Perk150(), new Perk151(),
+        new Perk152(), new Perk153(),
     };
 }

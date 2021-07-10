@@ -154,6 +154,8 @@ public class Building : MonoBehaviour
                 grid.Dismantle();
         }
 
+        GameControl.Instance.CPC.DebuffEffect(144);
+        GameControl.Instance.CPC.DebuffEffect(145);
         //销毁前的准备工作
         if (Department)
         {

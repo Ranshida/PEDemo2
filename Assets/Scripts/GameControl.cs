@@ -61,8 +61,8 @@ public class GameControl : MonoBehaviour
     public int Turn = 1;//当前回合数
     public int ItemLimit = 6;//物品数量限制
     public int EmpLimit = 10;//人才库数量限制
-    public int TotalWorkStatus = 0;//公司工作状态
-    public int TotalEfficiency = 0;//公司效率
+    public int TotalWorkStatus = 0, ExtraWorkStatus = 0;//公司工作状态
+    public int TotalEfficiency = 0, ExtraEfficiency = 0;//公司效率
 
     #region 杂项变量
     [HideInInspector] public int ApproveLimit = 5, Year = 1, Month = 1;//认同上限;当前年月
@@ -77,6 +77,7 @@ public class GameControl : MonoBehaviour
     [HideInInspector] public bool ResearchExtraMentality = false;//科研额外心力恢复
     [HideInInspector] public bool CEOVacation = false;
     [HideInInspector] public bool ShowEmpEmotion = false;
+    [HideInInspector] public bool FirstExhausted = false;//是否在一回合内产生过心力爆炸的员工
     private int Approve = 0;
     private int Dissatisfied = 0;
     #endregion
@@ -85,7 +86,7 @@ public class GameControl : MonoBehaviour
     public DepControl CurrentDep, SelectedDep;
     public QuestControl QC;
     public EmpEntity EmpEntityPrefab;
-    public PerkInfo PerkInfoPrefab, PerkInfoPrefab_Company;
+    public PerkInfo PerkInfoPrefab;
     public AmbitionSelect AmbitionPanelPrefab;
     public DepControl DepPrefab, PCDepPrefab, PsycholCDep, EngineDep;
     public DepSelect DepSelectButtonPrefab;
@@ -101,9 +102,10 @@ public class GameControl : MonoBehaviour
     public CWCardLibrary CWCL;
     public CEOControl CC;
     public CourseControl CrC;
+    public CompanyPerkControl CPC;
     public Areas AC;
     public WindowBaseControl TotalEmpPanel;
-    public Transform DepContent, DepSelectContent, StandbyContent, MessageContent, ItemContent, PerkContent;
+    public Transform DepContent, DepSelectContent, StandbyContent, MessageContent, ItemContent;
     public InfoPanel infoPanel;
     public GameObject DepSelectPanel, StandbyButton, MessagePrefab, GameOverPanel, AdjustTurnWarning;
     public Text Text_Time, Text_TechResource, Text_MarketResource, Text_MarketResource2, Text_ProductResource, Text_Money, 
@@ -116,7 +118,6 @@ public class GameControl : MonoBehaviour
     public List<Employee> CurrentEmployees = new List<Employee>();
     public List<CompanyItem> Items = new List<CompanyItem>();
     public List<DivisionControl> CurrentDivisions = new List<DivisionControl>();
-    public List<PerkInfo> CurrentPerks = new List<PerkInfo>();
     public int[] FinishedTask = new int[10];//0程序迭代 1技术研发 2可行性调研 3传播 4营销文案 5资源拓展 6原型图 7产品研究 8用户访谈 9已删除
 
     int morale = 50;
@@ -148,6 +149,12 @@ public class GameControl : MonoBehaviour
         //CreateItem(6);
         Money = AdjustData.DefaultMoney;
         UpdateUI();
+
+        int a = 1;
+        string A = "显示" + a + "数值";
+        print(A);
+        a += 1;
+        print(A);
     }
 
     public void UpdateUI()
@@ -276,6 +283,7 @@ public class GameControl : MonoBehaviour
 
         CheckButtonName();
         TurnEvent.Invoke();
+        FirstExhausted = false;
         EC.EventGroupIndex = 0;
         EC.StartEventQueue = true;
         EC.StartSpecialEvent();
@@ -355,8 +363,8 @@ public class GameControl : MonoBehaviour
             TotalEfficiency += (div.ExtraEfficiency + div.Efficiency);
             TotalWorkStatus += (div.ExtraWorkStatus + div.WorkStatus);
         }
-        Text_CompanyEfficiency.text = "公司整体效率:" + TotalEfficiency;
-        Text_CompanyWorkStatus.text = "公司整体工作状态:" + TotalWorkStatus;
+        Text_CompanyEfficiency.text = "公司整体效率:" + (TotalEfficiency + ExtraEfficiency);
+        Text_CompanyWorkStatus.text = "公司整体工作状态:" + (TotalWorkStatus + ExtraWorkStatus);
     }
 
     public DepControl CreateDep(Building b)
@@ -853,7 +861,10 @@ public class GameControl : MonoBehaviour
     public void AddEventProgress(int value, bool dissatisfied)
     {
         if (dissatisfied == true)
+        {
             Dissatisfied += value;
+            CPC.DebuffEffect(136);
+        }
         else
             Approve += value;
     }
@@ -870,53 +881,6 @@ public class GameControl : MonoBehaviour
         {
             Approve -= ApproveLimit;
             EC.CreateEventGroup(EventData.SpecialEventGroups[Random.Range(0, EventData.SpecialEventGroups.Count)]);
-        }
-    }
-
-    //添加Perk
-    public void AddPerk(Perk perk)
-    {
-        //同类Perk检测
-        foreach (PerkInfo p in CurrentPerks)
-        {
-            if (p.CurrentPerk.Num == perk.Num)
-            {
-                //可叠加的进行累加
-                if (perk.canStack == true)
-                {
-                    p.CurrentPerk.Level += 1;
-                    p.CurrentPerk.AddEffect();
-                    return;
-                }
-                //不可叠加的清除
-                else
-                {
-                    p.CurrentPerk.RemoveEffect();
-                    break;
-                }
-            }
-        }
-        PerkInfo newPerk = Instantiate(PerkInfoPrefab_Company, PerkContent);
-        newPerk.CurrentPerk = perk;
-        newPerk.CurrentPerk.BaseTime = perk.TimeLeft;
-        newPerk.CurrentPerk.Info = newPerk;
-        newPerk.Text_Name.text = perk.Name;
-        newPerk.info = infoPanel;
-        CurrentPerks.Add(newPerk);
-        newPerk.CurrentPerk.AddEffect();
-        newPerk.SetColor();
-    }
-
-    //移除Perk
-    public void RemovePerk(int num)
-    {
-        foreach (PerkInfo info in CurrentPerks)
-        {
-            if (info.CurrentPerk.Num == num)
-            {
-                info.CurrentPerk.RemoveEffect();
-                break;
-            }
         }
     }
 

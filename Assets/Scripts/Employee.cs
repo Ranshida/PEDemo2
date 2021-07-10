@@ -981,6 +981,15 @@ public class Employee
             InfoDetail.AddHistory(Name + "再次心力爆炸但是没有任何效果");
             return;
         }
+
+        //负面特质效果检测
+        if (GameControl.Instance.FirstExhausted == false)
+        {
+            GameControl.Instance.FirstExhausted = true;
+            GameControl.Instance.CPC.DebuffEffect(148);
+            GameControl.Instance.CPC.DebuffEffect(149);
+        }
+
         foreach (PerkInfo info in InfoDetail.PerksInfo)
         {
             //开悟后不获得负面特质
@@ -988,7 +997,23 @@ public class Employee
                 return;
         }
 
-        InfoDetail.AddPerk(PerkData.DebuffPerkList[Random.Range(0, PerkData.DebuffPerkList.Count)].Clone());
+        List<Perk> PosbPerks = new List<Perk>();
+        foreach (Perk p in PerkData.DebuffPerkList)
+        {
+            bool HavePerk = false;
+            foreach (PerkInfo info in InfoDetail.PerksInfo)
+            {
+                if (info.CurrentPerk.Num == p.Num)
+                {
+                    HavePerk = true;
+                    break;
+                }
+            }
+            if (HavePerk == false)
+                PosbPerks.Add(p);
+        }
+        if (PosbPerks.Count > 0)
+            InfoDetail.AddPerk(PosbPerks[Random.Range(0, PosbPerks.Count)].Clone());
 
         //int num = 0;
         //List<int> PosbNum = new List<int>();

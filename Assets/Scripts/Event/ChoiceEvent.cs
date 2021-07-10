@@ -25,17 +25,18 @@ public class ChoiceEvent : MonoBehaviour
     public List<OptionCardInfo> UsedOptions = new List<OptionCardInfo>();//所有打出的卡（弃牌堆）
     public List<OptionCardInfo> ExtraSelectedOptions = new List<OptionCardInfo>();//选择后激活特殊效果的卡
     public List<Text> Text_TargetEmps = new List<Text>();
+    public List<Employee> MDebuffEmps = new List<Employee>();
 
     private void Update()
     {
         if (Self != null)
             Text_TargetEmps[0].text = "目标员工:" + Self.Name + "             当前心力:" + Self.Mentality;
-        if (EGI != null && EGI.MDebuffEmps.Count > 0)
+        if (MDebuffEmps.Count > 0)
         {
-            for (int i = 0; i < EGI.MDebuffEmps.Count; i++)
+            for (int i = 0; i < MDebuffEmps.Count; i++)
             {
-                if (EGI.MDebuffEmps[i] != null)
-                    Text_TargetEmps[i + 1].text = EGI.MDebuffEmps[i].Name + "    " + EGI.MDebuffEmps[i].Mentality + "/" + EGI.MDebuffEmps[i].MentalityLimit;
+                if (MDebuffEmps[i] != null)
+                    Text_TargetEmps[i + 1].text = MDebuffEmps[i].Name + "    " + MDebuffEmps[i].Mentality + "/" + MDebuffEmps[i].MentalityLimit;
                 else
                     Text_TargetEmps[i + 1].text = "无对象";
             }
@@ -49,25 +50,40 @@ public class ChoiceEvent : MonoBehaviour
         {
             int FaithCorrection = CurrentEvent.CalcDivisionFaith(Self);
             int ManageCorrection = CurrentEvent.CalcDivisionManage(Self);
+            int PerkCorrection = CurrentEvent.CalcDivisionPerk(Self);
 
             if (FaithCorrection > 0)
                 Text_Correction.text += "事业部信念: +" + FaithCorrection + "修正\n";
             else if (FaithCorrection < 0)
                 Text_Correction.text += "事业部信念: " + FaithCorrection + "修正\n";
+
             if (ManageCorrection > 0)
                 Text_Correction.text += "事业部管理: +" + ManageCorrection + "修正\n";
             else if (ManageCorrection < 0)
                 Text_Correction.text += "事业部管理: " + ManageCorrection + "修正\n";
+
+            if (PerkCorrection > 0)
+                Text_Correction.text += "事业部状态: +" + PerkCorrection + "修正\n";
+            else if (PerkCorrection < 0)
+                Text_Correction.text += "事业部状态: " + PerkCorrection + "修正\n";
         }
         foreach(PerkInfo perk in Self.InfoDetail.PerksInfo)
         {
-            if (perk.CurrentPerk.Num == 16)
+            if (perk.CurrentPerk.Num == 152)
             {
-                Text_Correction.text += Self.Name + "冷静特质:+1修正";
+                Text_Correction.text += Self.Name + "自闭特质:-3修正";
                 break;
             }
         }
-        for(int i = 0; i < SelectedOptions.Count; i++)
+
+        //负面特质修正
+        if (CurrentEvent.AgreementEvent == true && EC.GC.CPC.CurrentDebuffPerks.ContainsKey(151))
+        {
+            Text_Correction.text += "阴谋论者特质:- " + (2 * EC.GC.CPC.CurrentDebuffPerks[150].Count) + "修正";
+            TotalCorrection -= (2 * EC.GC.CPC.CurrentDebuffPerks[150].Count);
+        }
+
+        for (int i = 0; i < SelectedOptions.Count; i++)
         {
             OptionCardInfo option = SelectedOptions[i];
             int correction = option.OC.Correction;
@@ -128,6 +144,7 @@ public class ChoiceEvent : MonoBehaviour
                 option.TargetAddPerk(Self);
             }
         }
+        EC.CurrentChoiceEvent = this;
         if (EGI == null)
         {
             CurrentEvent.StartEvent(Self, TotalCorrection);
@@ -145,6 +162,7 @@ public class ChoiceEvent : MonoBehaviour
             EGI.NextStage();
             EC.ChoiceEventCheck(true);
         }
+        EC.CurrentChoiceEvent = null;
         Destroy(this.gameObject);
     }
 
@@ -170,15 +188,6 @@ public class ChoiceEvent : MonoBehaviour
             else
                 Text_EventResult.text = "成功效果:" + e.ResultDescription(emp, null, info.RandomEventNum);
             Text_EventDescrition.text = e.EventDescription(emp, null, info.RandomEventNum, info);
-            if (EGI.MDebuffEmps.Count > 0)
-            {
-                for (int i = 0; i < EGI.MDebuffEmps.Count; i++)
-                {
-                    Text_TargetEmps[i + 1].gameObject.SetActive(true);
-                }
-                Text_TargetEmps[9].gameObject.SetActive(true);
-                Text_TargetEmps[9].text = "失败时以下员工将会损失" + info.TargetEventGroup.MentalityDebuffValue + "点心力：";
-            }
         }
         else
         {
@@ -189,6 +198,43 @@ public class ChoiceEvent : MonoBehaviour
                 Text_EventResult.text = "失败效果:" + e.FailDescription;
             Text_EventDescrition.text = e.EventDescription(emp, null, 1);
         }
+
+        if (e.MentalityDebuffValue > 0)
+        {
+            MDebuffEmps.Clear();
+            List<Employee> PosbEmps = new List<Employee>();
+            foreach (Employee me in GameControl.Instance.CurrentEmployees)
+            {
+                if (me != emp)
+                    PosbEmps.Add(me);
+            }
+
+            if (PosbEmps.Count < e.MentalityDebuffCount)
+            {
+                foreach (Employee re in PosbEmps)
+                {
+                    MDebuffEmps.Add(re);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < e.MentalityDebuffCount; i++)
+                {
+                    int num = Random.Range(0, PosbEmps.Count);
+                    MDebuffEmps.Add(PosbEmps[num]);
+                    PosbEmps.RemoveAt(num);
+                }
+            }
+
+            for (int i = 0; i < MDebuffEmps.Count; i++)
+            {
+                Text_TargetEmps[i + 1].gameObject.SetActive(true);
+            }
+            Text_TargetEmps[9].gameObject.SetActive(true);
+            Text_TargetEmps[9].text = "失败时以下员工将会损失" + e.MentalityDebuffValue + "点心力：";
+        }
+
+
         CheckSpecialCorrection();
 
         //
@@ -206,6 +252,7 @@ public class ChoiceEvent : MonoBehaviour
     public void CreateOption()
     {
         OptionCardInfo option = Instantiate(OptionPrefab, OptionContent);
+        print("Create");
         option.RandomOption(this);
     }
 
@@ -216,14 +263,19 @@ public class ChoiceEvent : MonoBehaviour
         {
             TotalCorrection += CurrentEvent.CalcDivisionFaith(Self);
             TotalCorrection += CurrentEvent.CalcDivisionManage(Self);
+            TotalCorrection += CurrentEvent.CalcDivisionPerk(Self);
         }
         foreach (PerkInfo perk in Self.InfoDetail.PerksInfo)
         {
-            if (perk.CurrentPerk.Num == 16)
+            if (perk.CurrentPerk.Num == 152)
             {
-                TotalCorrection += 1;
+                TotalCorrection -= 3;
                 break;
             }
+        }
+        if (CurrentEvent.AgreementEvent == true && EC.GC.CPC.CurrentDebuffPerks.ContainsKey(151))
+        {
+            TotalCorrection -= (2 * EC.GC.CPC.CurrentDebuffPerks[150].Count);
         }
         CheckCorrectionUI();
     }
@@ -233,7 +285,20 @@ public class ChoiceEvent : MonoBehaviour
     {
         if (num == 0 && Self != null)
             Self.InfoDetail.ShowPanel();
-        else if (EGI != null && EGI.MDebuffEmps.Count > 0)
-            EGI.MDebuffEmps[num - 1].InfoDetail.ShowPanel();
+        else if (MDebuffEmps.Count > 0)
+            MDebuffEmps[num - 1].InfoDetail.ShowPanel();
+    }
+
+    //随机员工心力Debuff
+    public void MentalityDebuff()
+    {
+        //心力debuff
+        if (MDebuffEmps.Count > 0)
+        {
+            foreach (Employee emp in MDebuffEmps)
+            {
+                emp.Mentality -= CurrentEvent.MentalityDebuffValue;
+            }
+        }
     }
 }
