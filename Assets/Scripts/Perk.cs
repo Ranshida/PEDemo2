@@ -4052,27 +4052,86 @@ public class Perk152 : Perk
     }
 }
 
-//效率至上
+//小心眼
 public class Perk153 : Perk
 {
     public Perk153() : base()
     {
-        Name = "效率至上";
-        Description = "提升效率1点";
-        TimeLeft = 3;
+        Name = "小心眼";
+        Description = "此员工事业部中存在与自己敌对的员工时触发，每名陌路+1层，每名仇人+2层，每层降低公司1点效率。";
+        TimeLeft = -1;
         Num = 153;
-        canStack = true;
-        perkColor = PerkColor.Grey;
+        EfficiencyValue = 0;
     }
 
     public override void ImmEffect()
     {
-        TargetDiv.Efficiency += 1;
+        TargetEmp.SpecialPerk153 = true;
+        //确定旧值和重置效率加成
+        int oldvalue = EfficiencyValue;
+        if (EfficiencyValue != 0)
+        {
+            GameControl.Instance.ExtraEfficiency -= EfficiencyValue;
+            EfficiencyValue = 0;
+        }
+
+        //重新计算加成
+        if (TargetEmp.CurrentDivision != null)
+        {
+            foreach (DepControl dep in TargetEmp.CurrentDivision.CurrentDeps)
+            {
+                foreach (Employee emp in dep.CurrentEmps)
+                {
+                    if (TargetEmp.FindRelation(emp).FriendValue == -1)
+                        EfficiencyValue -= 1;
+                    else if (TargetEmp.FindRelation(emp).FriendValue == -2)
+                        EfficiencyValue -= 2;
+                }
+            }
+        }
+        else if (TargetEmp.CurrentDep != null && TargetEmp.CurrentDep.CurrentDivision != null)
+        {
+            foreach (DepControl dep in TargetEmp.CurrentDep.CurrentDivision.CurrentDeps)
+            {
+                foreach (Employee emp in dep.CurrentEmps)
+                {
+                    if (emp == TargetEmp)
+                        continue;
+                    if (TargetEmp.FindRelation(emp).FriendValue == -1)
+                        EfficiencyValue -= 1;
+                    else if (TargetEmp.FindRelation(emp).FriendValue == -2)
+                        EfficiencyValue -= 2;
+                }
+            }
+            if (TargetEmp.CurrentDep.CurrentDivision.Manager != null)
+            {
+                if (TargetEmp.FindRelation(TargetEmp.CurrentDep.CurrentDivision.Manager).FriendValue == -1)
+                    EfficiencyValue -= 1;
+                else if (TargetEmp.FindRelation(TargetEmp.CurrentDep.CurrentDivision.Manager).FriendValue == -2)
+                    EfficiencyValue -= 2;
+            }
+        }
+
+        //根据新旧加成判断是否要增减Debuff
+        if (EfficiencyValue == 0 && oldvalue != 0)
+            GameControl.Instance.CPC.RemoveDebuffPerk(Num, TargetEmp);
+        else if (EfficiencyValue != 0 && oldvalue == 0)
+            GameControl.Instance.CPC.AddDebuffPerk(Clone());
+        //无论新加成是多少都重新计算
+        GameControl.Instance.ExtraEfficiency += EfficiencyValue;
+        GameControl.Instance.CalcCompanyEW();
+        GameControl.Instance.CPC.ExtraCountCheck();
     }
+
     public override void RemoveEffect()
     {
         base.RemoveEffect();
-        TargetDiv.Efficiency -= 1;
+        TargetEmp.SpecialPerk153 = false;
+    }
+
+    public override string SetSpecialDescription(int num = 0)
+    {
+        return "此员工事业部中存在与自己敌对的员工时触发，每名陌路+1层，每名仇人+2层，每层降低公司1点效率。";
     }
 }
 

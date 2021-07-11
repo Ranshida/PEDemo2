@@ -44,7 +44,6 @@ public class PerkInfo : MonoBehaviour
             }
             else
             {
-                info.Text_Name.text += "(" + GameControl.Instance.CPC.CurrentDebuffPerks[CurrentPerk.Num].Count + ")";
                 info.Text_ExtraInfo.text = "持有员工:\n";
                 foreach (Employee emp in GameControl.Instance.CPC.CurrentDebuffPerks[CurrentPerk.Num])
                 {

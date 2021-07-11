@@ -149,12 +149,6 @@ public class GameControl : MonoBehaviour
         //CreateItem(6);
         Money = AdjustData.DefaultMoney;
         UpdateUI();
-
-        int a = 1;
-        string A = "显示" + a + "数值";
-        print(A);
-        a += 1;
-        print(A);
     }
 
     public void UpdateUI()
@@ -616,6 +610,7 @@ public class GameControl : MonoBehaviour
                     if (perk.CurrentPerk.DepPerk == true)
                         perk.CurrentPerk.ActiveSpecialEffect();
                 }
+                CurrentEmpInfo.emp.CurrentDep.CurrentDivision.SpecialPerkCheck();
             }
             //调动信息历史添加
             CurrentEmpInfo.emp.InfoDetail.AddHistory("调动至" + depControl.Text_DepName.text);
@@ -679,10 +674,15 @@ public class GameControl : MonoBehaviour
                     perk.CurrentPerk.DeActiveSpecialEffect();
             }
             emp.CurrentDep.CurrentEmps.Remove(emp);
+
+            if (emp.CurrentDep.CurrentDivision != null)
+                emp.CurrentDep.CurrentDivision.SpecialPerkCheck();
+
             //修改生产力显示
             emp.CurrentDep.UpdateUI();
             emp.CurrentDep.EmpEffectCheck();
             emp.CurrentDep = null;
+            emp.SpecialPerkEffect();
         }
         else if (emp.CurrentDivision != null)
             CurrentEmpInfo.emp.CurrentDivision.SetManager(true);

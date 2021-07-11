@@ -181,7 +181,7 @@ public class Employee
     public string Name;
     public bool isCEO = false, SupportCEO;
     public bool inSpecialTeam = false;//是否在特殊小组里
-    public bool MultiEmotion = false;//特质18效果，获取情绪时概率额外获取
+    public bool SpecialPerk153 = false;//特质153效果，根据事业部仇敌和陌路的数量减公司效率
 
     public EmpInfo InfoA, InfoB, InfoDetail;
     public DepControl CurrentDep;
@@ -751,10 +751,8 @@ public class Employee
     }
 
     //增减情绪
-    public void AddEmotion(EColor C, bool multiEmotion = true)
+    public void AddEmotion(EColor C)
     {
-        if (multiEmotion == true && MultiEmotion == true && Random.Range(0.0f, 1.0f) < 0.5f)
-            AddEmotion(C, false);
         if (C == EColor.LYellow)
         {
             for (int i = 0; i < CurrentEmotions.Count; i++)
@@ -1111,6 +1109,22 @@ public class Employee
         TempEmotion.Clear();
         TempRelationTargets.Clear();
         TempRelationValue.Clear();
+    }
+
+    //特殊特质（153）判定
+    public void SpecialPerkEffect()
+    {
+        if (SpecialPerk153 == true)
+        {
+            foreach (PerkInfo info in InfoDetail.PerksInfo)
+            {
+                if (info.CurrentPerk.Num == 153)
+                {
+                    info.CurrentPerk.ImmEffect();
+                    break;
+                }
+            }
+        }
     }
 }
 

@@ -177,6 +177,14 @@ public class EmpInfo : MonoBehaviour
             }
         }
 
+        GC.CPC.DebuffEffect(142);
+        GC.CPC.DebuffEffect(143);
+
+        GC.CC.CEO.InfoDetail.AddHistory("解雇了" + emp.Name);
+
+        GC.ResetOldAssignment(emp);
+
+        //重置负面特质的效果
         foreach (PerkInfo perk in emp.InfoDetail.PerksInfo)
         {
             if (perk.CurrentPerk.CompanyDebuffPerk == true)
@@ -185,12 +193,6 @@ public class EmpInfo : MonoBehaviour
                 perk.CurrentPerk.RemoveAllListeners();
         }
 
-        GC.CPC.DebuffEffect(142);
-        GC.CPC.DebuffEffect(143);
-
-        GC.CC.CEO.InfoDetail.AddHistory("解雇了" + emp.Name);
-
-        GC.ResetOldAssignment(emp);
         emp.ClearRelations();//清空所有关系
         GC.TurnEvent.RemoveListener(emp.TimePass);
         GC.CurrentEmployees.Remove(emp);
@@ -358,7 +360,7 @@ public class EmpInfo : MonoBehaviour
             }
         }
         PerkInfo newPerk;
-        if ((perk.Num <= 54 || perk.Weight != 0) && PerkContent2 != null)
+        if ((perk.Num <= 54 || (perk.Num <= 153 && perk.Num >= 130) || (perk.Num <= 116 && perk.Num >= 108)) && PerkContent2 != null)
             newPerk = Instantiate(GC.PerkInfoPrefab, PerkContent2);
         else
             newPerk = Instantiate(GC.PerkInfoPrefab, PerkContent);
@@ -419,7 +421,7 @@ public class EmpInfo : MonoBehaviour
         perk3.TargetEmp = emp;
         AddPerk(perk3, true);
         //负面特质测试
-        AddPerk(new Perk139(), false);
+        AddPerk(new Perk153(), true);
 
         //职业特质
         if (emp.Occupation == OccupationType.超级黑客)

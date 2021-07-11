@@ -71,6 +71,10 @@ public class CompanyPerkControl : MonoBehaviour
             perk.Info.Text_Count.transform.parent.gameObject.SetActive(true);
             CurrentPerksInfo.Add(perk.Info);
             CurrentDebuffPerks.Add(perk.Num, new List<Employee>() { perk.TargetEmp });
+
+            //由于153特质的性质所以需要额外赋值
+            if (perk.Num == 153)
+                perk.CompanyDebuffPerk = true;
         }
         else
         {
@@ -79,7 +83,8 @@ public class CompanyPerkControl : MonoBehaviour
             {
                 if (p.CurrentPerk.Num == perk.Num)
                 {
-                    p.Text_Count.text = "x" + CurrentDebuffPerks[perk.Num].Count;
+                    if (perk.Num != 153)
+                        p.Text_Count.text = "x" + CurrentDebuffPerks[perk.Num].Count;                   
                 }
             }
         }
@@ -101,7 +106,10 @@ public class CompanyPerkControl : MonoBehaviour
                     CurrentDebuffPerks.Remove(num);
                 }
                 else
-                    p.Text_Count.text = "x" + CurrentDebuffPerks[num].Count;
+                {
+                    if (num != 153)
+                        p.Text_Count.text = "x" + CurrentDebuffPerks[num].Count;
+                }
                 break;
             }
         }
@@ -122,6 +130,34 @@ public class CompanyPerkControl : MonoBehaviour
                 }
                 p.CurrentPerk.ActiveCompanyDebuffEffect(CurrentDebuffPerks[num]);
                 return;
+            }
+        }
+    }
+
+    //153特质图标右下角层数的额外计数方式
+    public void ExtraCountCheck()
+    {
+        if (CurrentDebuffPerks.ContainsKey(153) == false)
+            return;
+        int count = 0;
+        foreach (PerkInfo p in CurrentPerksInfo)
+        {
+            if (p.CurrentPerk.Num == 153)
+            {
+                foreach (Employee emp in CurrentDebuffPerks[153])
+                {
+                    foreach (PerkInfo info in emp.InfoDetail.PerksInfo)
+                    {
+                        if (info.CurrentPerk.Num == 153)
+                        {
+                            //因为值是负的所以用-
+                            count -= info.CurrentPerk.EfficiencyValue;
+                            break;
+                        }
+                    }
+                }
+                p.Text_Count.text = "x" + count;
+                break;
             }
         }
     }

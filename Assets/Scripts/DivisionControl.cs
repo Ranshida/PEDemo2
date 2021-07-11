@@ -274,6 +274,7 @@ public class DivisionControl : MonoBehaviour
                         perk.CurrentPerk.DeActiveSpecialEffect();
                 }
                 Manager.CurrentDivision = null;
+                Manager.SpecialPerkEffect();
             }
             Manager = null;
             Text_DivName.color = Color.red;
@@ -291,6 +292,7 @@ public class DivisionControl : MonoBehaviour
                     perk.CurrentPerk.ActiveSpecialEffect();
             }
         }
+        SpecialPerkCheck();
     }
 
     //部门移动、销毁或者属性变化时检测额外效率以及检测商战卡牌的效果
@@ -382,6 +384,20 @@ public class DivisionControl : MonoBehaviour
                 break;
             }
         }
+    }
+
+    //153特质效果检测
+    public void SpecialPerkCheck()
+    {
+        foreach (DepControl dep in CurrentDeps)
+        {
+            foreach (Employee emp in dep.CurrentEmps)
+            {
+                emp.SpecialPerkEffect();
+            }
+        }
+        if (Manager != null)
+            Manager.SpecialPerkEffect();
     }
 
     //状态排序
