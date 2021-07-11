@@ -421,7 +421,7 @@ public class EmpInfo : MonoBehaviour
         perk3.TargetEmp = emp;
         AddPerk(perk3, true);
         //负面特质测试
-        AddPerk(new Perk153(), true);
+        //AddPerk(new Perk153(), false);
 
         //职业特质
         if (emp.Occupation == OccupationType.超级黑客)
