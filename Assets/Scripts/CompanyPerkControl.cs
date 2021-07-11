@@ -68,11 +68,21 @@ public class CompanyPerkControl : MonoBehaviour
             perk.Info.CurrentPerk = perk;
             perk.Info.Text_Name.text = perk.Name;
             perk.Info.info = GC.infoPanel;
+            perk.Info.Text_Count.transform.parent.gameObject.SetActive(true);
             CurrentPerksInfo.Add(perk.Info);
             CurrentDebuffPerks.Add(perk.Num, new List<Employee>() { perk.TargetEmp });
         }
         else
+        {
             CurrentDebuffPerks[perk.Num].Add(perk.TargetEmp);
+            foreach (PerkInfo p in CurrentPerksInfo)
+            {
+                if (p.CurrentPerk.Num == perk.Num)
+                {
+                    p.Text_Count.text = "x" + CurrentDebuffPerks[perk.Num].Count;
+                }
+            }
+        }
         
     }
 
@@ -80,19 +90,22 @@ public class CompanyPerkControl : MonoBehaviour
     public void RemoveDebuffPerk(int num, Employee emp)
     {
         CurrentDebuffPerks[num].Remove(emp);
-        if (CurrentDebuffPerks[num].Count == 0)
+        foreach (PerkInfo p in CurrentPerksInfo)
         {
-            foreach (PerkInfo p in CurrentPerksInfo)
+            if (p.CurrentPerk.Num == num)
             {
-                if (p.CurrentPerk.Num == num)
+                if (CurrentDebuffPerks[num].Count == 0)
                 {
                     CurrentPerksInfo.Remove(p);
                     Destroy(p.gameObject);
-                    break;
+                    CurrentDebuffPerks.Remove(num);
                 }
+                else
+                    p.Text_Count.text = "x" + CurrentDebuffPerks[num].Count;
+                break;
             }
-            CurrentDebuffPerks.Remove(num);
         }
+
     }
 
     //负面buff检测，其中134的检测放在航线按钮上了

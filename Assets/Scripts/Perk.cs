@@ -147,7 +147,7 @@ public class Perk
 
     }
 
-    public virtual string SetSpecialDescription()
+    public virtual string SetSpecialDescription(int num = 0)
     {
         string content = "";
         return content;
@@ -3566,8 +3566,12 @@ public class Perk133 : Perk
         if (Random.Range(0.0f, 1.0f) < (Emps.Count * 0.2f))        
             GameControl.Instance.EC.StartChoiceEvent(new EventC6(), Emps[Random.Range(0, Emps.Count)]);       
     }
-}
 
+    public override string SetSpecialDescription(int num = 0)
+    {
+        return "一回合内航行距离超过3格时有<color=red>" + (20 * num) + "%</color>几率触发，如果事件判定失败则随机3名员工心力下降60点。";
+    } 
+}
 
 //酗酒
 public class Perk134 : Perk
@@ -3586,8 +3590,12 @@ public class Perk134 : Perk
         if (Random.Range(0.0f, 1.0f) < (Emps.Count * 0.2f))
             GameControl.Instance.EC.StartChoiceEvent(new EventC7(), Emps[Random.Range(0, Emps.Count)]);
     }
-}
 
+    public override string SetSpecialDescription(int num = 0)
+    {
+        return "航行到酒馆时有<color=red>" + (20 * num) + "%</color>几率触发，如果事件判定失败则随机事业部工作状态下降5点，持续3回合。";
+    }
+}
 
 //暴躁
 public class Perk135 : Perk
@@ -3636,6 +3644,11 @@ public class Perk135 : Perk
             div.AddPerk(new Perk156());
         }
     }
+
+    public override string SetSpecialDescription(int num = 0)
+    {
+        return "月会时有人产出黑色水晶时触发，触发后则目标员工所在事业部事件修正<color=red>" + (-2 * num) + "</color>，持续3回合。";
+    }
 }
 
 //带投大哥
@@ -3654,6 +3667,11 @@ public class Perk136 : Perk
     {
         GameControl.Instance.AddEventProgress(Emps.Count, true);
     }
+    public override string SetSpecialDescription(int num = 0)
+    {
+        return "公司中不满事件判定失败时触发，额外获得<color=red>" + num + "</color>个不满。";
+    }
+
 }
 
 //阴阳师
@@ -3675,6 +3693,10 @@ public class Perk137 : Perk
             GameControl.Instance.CPC.AddPerk(new Perk157());
         }
     }
+    public override string SetSpecialDescription(int num = 0)
+    {
+        return "融资失败时触发，触发后公司士气降低<color=red>" + (10 * num) + "</color>点，持续3回合。";
+    }
 }
 
 //丢三落四
@@ -3693,6 +3715,11 @@ public class Perk138 : Perk
     {
         if (Random.Range(0.0f, 1.0f) < (Emps.Count * 0.2f))
             GameControl.Instance.EC.StartChoiceEvent(new EventC8(), Emps[Random.Range(0, Emps.Count)]);
+    }
+
+    public override string SetSpecialDescription(int num = 0)
+    {
+        return "开启融资谈判时有<color=red>" + (20 * num) + "</color>%几率触发，触发后产生抉择事件，如果事件判定失败则所有核心团队成员心力下降40点。";
     }
 }
 
@@ -3719,6 +3746,10 @@ public class Perk139 : Perk
         GameControl.Instance.ExtraWorkStatus += 2;
         GameControl.Instance.CalcCompanyEW();
     }
+    public override string SetSpecialDescription(int num = 0)
+    {
+        return "公司工作状态降低<color=red>" + (2 * num) + "</color>点";
+    }
 }
 
 //上班摸鱼
@@ -3744,6 +3775,10 @@ public class Perk140 : Perk
         GameControl.Instance.ExtraEfficiency += 2;
         GameControl.Instance.CalcCompanyEW();
     }
+    public override string SetSpecialDescription(int num = 0)
+    {
+        return "公司效率降低<color=red>" + (2 * num) + "</color>点";
+    }
 }
 
 //贪婪
@@ -3767,6 +3802,11 @@ public class Perk141 : Perk
         base.RemoveEffect();
         GameControl.Instance.ExtraCost -= 10;
     }
+
+    public override string SetSpecialDescription(int num = 0)
+    {
+        return "公司成本增加<color=red>" + (10 * num) + "</color>";
+    }
 }
 
 //小道消息
@@ -3775,7 +3815,7 @@ public class Perk142 : Perk
     public Perk142() : base()
     {
         Name = "小道消息";
-        Description = "开除员工时，有（持有的员工数×20%）几率产生抉择事件（9），失败则目标员工所在事业部成员获得浅蓝色情绪";
+        Description = "开除员工时，有（持有的员工数×20%）几率产生抉择事件，失败则目标员工所在事业部成员获得浅蓝色情绪";
         TimeLeft = -1;
         Num = 142;
         CompanyDebuffPerk = true;
@@ -3785,6 +3825,11 @@ public class Perk142 : Perk
     {
         if (Random.Range(0.0f, 1.0f) < (Emps.Count * 0.2f))
             GameControl.Instance.EC.StartChoiceEvent(new EventC9(), Emps[Random.Range(0, Emps.Count)]);
+    }
+
+    public override string SetSpecialDescription(int num = 0)
+    {
+        return "开除员工时，有<color=red>" + (20 * num) + "%</color>几率产生抉择事件，失败则目标员工所在事业部成员获得浅蓝色情绪";
     }
 }
 
@@ -3805,8 +3850,12 @@ public class Perk143 : Perk
         if (Random.Range(0.0f, 1.0f) < (Emps.Count * 0.2f))
             GameControl.Instance.EC.StartChoiceEvent(new EventC10(), Emps[Random.Range(0, Emps.Count)]);
     }
-}
 
+    public override string SetSpecialDescription(int num = 0)
+    {
+        return "开除员工时，有<color=red>" + (20 * num) + "%</color>几率产生抉择事件，失败则目标员工所在事业部信念降低20点，持续3回合。";
+    }
+}
 
 //煽动者
 public class Perk144 : Perk
@@ -3824,6 +3873,11 @@ public class Perk144 : Perk
     {
         if (Random.Range(0.0f, 1.0f) < (Emps.Count * 0.2f))
             GameControl.Instance.EC.StartChoiceEvent(new EventC11(), Emps[Random.Range(0, Emps.Count)]);
+    }
+
+    public override string SetSpecialDescription(int num = 0)
+    {
+        return "拆除建筑时，有<color=red>" + (20 * num) + "%</color>几率产生抉择事件，失败则5名员工心力下降50点";
     }
 }
 
@@ -3843,6 +3897,11 @@ public class Perk145 : Perk
     {
         if (Random.Range(0.0f, 1.0f) < (Emps.Count * 0.2f))
             GameControl.Instance.EC.StartChoiceEvent(new EventC12(), Emps[Random.Range(0, Emps.Count)]);
+    }
+
+    public override string SetSpecialDescription(int num = 0)
+    {
+        return "拆除建筑时，有<color=red>" + (20 * num) + "%</color>几率产生抉择事件，失败则公司士气下降30点，持续3回合。";
     }
 }
 
@@ -3866,6 +3925,11 @@ public class Perk146 : Perk
         }
         QuestControl.Instance.Init("由于负面特质效果，核心团队成员心力下降" + (10 * Emps.Count));
     }
+
+    public override string SetSpecialDescription(int num = 0)
+    {
+        return "头脑风暴第一回合中，每使用一枚电脑图案的骰子，降低所有核心团队成员<color=red>" + (10 * num) + "</color>点心力。";
+    }
 }
 
 //斤斤计较
@@ -3883,6 +3947,11 @@ public class Perk147 : Perk
     public override void ActiveCompanyDebuffEffect(List<Employee> Emps)
     {
         GameControl.Instance.AddEventProgress(Emps.Count, true);
+    }
+
+    public override string SetSpecialDescription(int num = 0)
+    {
+        return "公司每次产生特殊事件（认同特殊事件除外）时，获得<color=red>" + (num) + "</color>个不满。";
     }
 }
 
@@ -3902,6 +3971,11 @@ public class Perk148 : Perk
     {
         GameControl.Instance.EC.StartChoiceEvent(new EventC13(), Emps[Random.Range(0, Emps.Count)]);
     }
+
+    public override string SetSpecialDescription(int num = 0)
+    {
+        return "每回合第一次有员工心力爆炸时触发，产生抉择事件，失败则随机<color=red>" + (num) + "</color>名员工心力下降40点。";
+    }
 }
 
 //碎碎念
@@ -3910,7 +3984,7 @@ public class Perk149 : Perk
     public Perk149() : base()
     {
         Name = "碎碎念";
-        Description = "每回合第一次有员工心力爆炸时触发，公司士气下降（10×持有的员工数）点（160），持续3回合";
+        Description = "每回合第一次有员工心力爆炸时触发，公司士气下降（10×持有的员工数）点，持续3回合";
         TimeLeft = -1;
         Num = 149;
         CompanyDebuffPerk = true;
@@ -3922,6 +3996,11 @@ public class Perk149 : Perk
         {
             GameControl.Instance.CPC.AddPerk(new Perk160());
         }
+    }
+
+    public override string SetSpecialDescription(int num = 0)
+    {
+        return "每回合第一次有员工心力爆炸时触发，公司士气下降<color=red>" + (10 * num) + "</color>点，持续3回合";
     }
 }
 
@@ -3936,6 +4015,11 @@ public class Perk150 : Perk
         Num = 150;
         CompanyDebuffPerk = true;
     }
+
+    public override string SetSpecialDescription(int num = 0)
+    {
+        return "每回合头脑风暴额外丢弃<color=red>" + (num) + "</color>枚随机骰子";
+    }
 }
 
 //阴谋论者
@@ -3948,6 +4032,11 @@ public class Perk151 : Perk
         TimeLeft = -1;
         Num = 151;
         CompanyDebuffPerk = true;
+    }
+
+    public override string SetSpecialDescription(int num = 0)
+    {
+        return "员工产生认同事件时触发，事件修正<color=red>" + (-2 * num) + "</color>";
     }
 }
 

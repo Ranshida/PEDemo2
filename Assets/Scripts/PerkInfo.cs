@@ -6,7 +6,7 @@ public class PerkInfo : MonoBehaviour
     public Perk CurrentPerk;
     public EmpInfo empInfo;
     public InfoPanel info ;
-    public Text Text_Name;
+    public Text Text_Name, Text_Count;
 
     float Timer = 0;
     bool ShowPanel;
@@ -31,7 +31,6 @@ public class PerkInfo : MonoBehaviour
         if (CurrentPerk != null)
         {
             info.Text_Name.text = CurrentPerk.Name;
-            info.Text_Description.text = CurrentPerk.Description;
             if (CurrentPerk.CompanyDebuffPerk == false)
             {
                 if (CurrentPerk.Level > 1)
@@ -40,6 +39,8 @@ public class PerkInfo : MonoBehaviour
                     info.Text_ExtraInfo.text = "剩余" + CurrentPerk.TimeLeft + "回合";
                 else
                     info.Text_ExtraInfo.text = "剩余∞回合";
+
+                info.Text_Description.text = CurrentPerk.Description;
             }
             else
             {
@@ -47,8 +48,10 @@ public class PerkInfo : MonoBehaviour
                 info.Text_ExtraInfo.text = "持有员工:\n";
                 foreach (Employee emp in GameControl.Instance.CPC.CurrentDebuffPerks[CurrentPerk.Num])
                 {
-                    info.Text_ExtraInfo.text += emp.Name + "   ";
+                    info.Text_ExtraInfo.text += emp.Name + " ";
                 }
+
+                info.Text_Description.text = CurrentPerk.SetSpecialDescription(GameControl.Instance.CPC.CurrentDebuffPerks[CurrentPerk.Num].Count);
             }
         }
         ShowPanel = true;
