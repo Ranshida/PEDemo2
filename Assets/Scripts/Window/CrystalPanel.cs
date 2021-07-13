@@ -8,11 +8,15 @@ using UnityEngine.UI;
 /// </summary>
 public class CrystalPanel : WindowRoot
 {
+    private int BlackCount = 0;//黑色水晶计数 用于检测垃圾桶有没有放够
+
     public MonthMeeting Manager;
     public List<Areas> UnlockedAreaList;
     public Transform BG;
     public Transform Areas;
     public Transform PutButton;
+    public Transform TrashContent;
+    public Button TrashButtonPrefab;
 
     public Toggle toggle_ShowPanel;
     private Button btn_Finish;
@@ -23,26 +27,34 @@ public class CrystalPanel : WindowRoot
     private Text txt_BlackChys;
 
     private Dictionary<CrystalType, Transform> putCrystalDict;
+    private Dictionary<Transform, CrystalType> TrashCrystalDict = new Dictionary<Transform, CrystalType>();
 
     private GameObject AreaPrefab;     //区域的水晶放置物体
     private List<CrystalArea> CrystalAreaList;
+    private List<GameObject> TrashButtons = new List<GameObject>();
 
     protected override void OnActive()
     {
         base.OnActive();
 
+        //月会结束后的显示
         if (Manager.MeetingStart == true)
         {
+            TrashContent.parent.parent.parent.gameObject.SetActive(true);
             btn_Finish.gameObject.SetActive(true);
             BG.gameObject.SetActive(true);
             foreach(CrystalArea area in CrystalAreaList)
             {
                 area.ResetAllCrystal();
             }
+            BlackCount = Manager.CrystalDict[CrystalType.Black];
+            SetTrashButtons();
             AskPause();
         }
+        //普通的视图
         else
         {
+            TrashContent.parent.parent.parent.gameObject.SetActive(false);
             btn_Finish.gameObject.SetActive(false);
             BG.gameObject.SetActive(false);
         }
@@ -95,7 +107,7 @@ public class CrystalPanel : WindowRoot
         txt_BlueChys.text = "× " + Manager.CrystalDict[CrystalType.Blue];
         txt_BlackChys.text = "× " + Manager.CrystalDict[CrystalType.Black];
 
-        if (Manager.CrystalDict[CrystalType.Black] > 0) 
+        if (BlackCount > 0) 
         {
             btn_Finish.interactable = false;
         }
@@ -145,6 +157,72 @@ public class CrystalPanel : WindowRoot
         }
     }
 
+    private void SetTrashButtons()
+    {
+        int count = 0;
+        foreach (var c in Manager.CrystalDict)
+        {
+            if (c.Key != CrystalType.Black && c.Key != CrystalType.None)
+            {
+                count += c.Value;
+            }
+        }
+        if (count <= BlackCount)
+        {
+            EndMeeting();
+            QuestControl.Instance.Init("黑色水晶过多，月会直接结束");
+        }
+        if (Manager.CrystalDict[CrystalType.Black] > TrashButtons.Count)
+        {
+            for (int i = 0; i < Manager.CrystalDict[CrystalType.Black]; i++)
+            {
+                if (TrashButtons.Count < i + 1)
+                {
+                    Button b = Instantiate(TrashButtonPrefab, TrashContent);
+                    TrashCrystalDict.Add(b.transform, CrystalType.None);
+                    b.onClick.AddListener(delegate () { SelectTrashSeat(b.transform); });
+                    TrashButtons.Add(b.gameObject);
+                }
+                TrashButtons[i].SetActive(true);
+                TrashButtons[i].transform.Find("Crystal").gameObject.SetActive(false);
+                TrashCrystalDict[TrashButtons[i].transform] = CrystalType.None;
+            }
+        }
+        else
+        {
+            for (int i = 0; i < TrashButtons.Count; i++)
+            {
+                if (i < Manager.CrystalDict[CrystalType.Black])
+                {
+                    TrashButtons[i].SetActive(true);
+                    TrashButtons[i].transform.Find("Crystal").gameObject.SetActive(false);
+                    TrashCrystalDict[TrashButtons[i].transform] = CrystalType.None;
+                }
+                else
+                    TrashButtons[i].SetActive(false);
+            }
+        }
+    }
+
+    //垃圾桶选择
+    public void SelectTrashSeat(Transform seat)
+    {
+        PutButton.gameObject.SetActive(true);
+        tempSeat = seat;
+        tempArea = null;
+        //只显示黑色水晶和X
+        putCrystalDict[CrystalType.None].gameObject.SetActive(true);
+        foreach (KeyValuePair<CrystalType, int> item in Manager.CrystalDict)
+        {
+            putCrystalDict[item.Key].gameObject.SetActive(false);
+            //不显示黑色水晶
+            if (item.Value > 0 && item.Key != CrystalType.Black)
+            {
+                putCrystalDict[item.Key].gameObject.SetActive(true);
+            }
+        }
+    }
+
     //当前想要放置水晶的位置
     public CrystalArea tempArea;
     public Transform tempSeat;
@@ -158,7 +236,8 @@ public class CrystalPanel : WindowRoot
         foreach (KeyValuePair<CrystalType, int> item in Manager.CrystalDict) 
         {
             putCrystalDict[item.Key].gameObject.SetActive(false);
-            if (item.Value > 0) 
+            //不显示黑色水晶
+            if (item.Value > 0 && item.Key != CrystalType.Black) 
             {
                 putCrystalDict[item.Key].gameObject.SetActive(true);
             }
@@ -175,20 +254,57 @@ public class CrystalPanel : WindowRoot
             Debug.LogError("没有选择位置");
         }
 
-        if (tempArea.TryPutCrystal(tempSeat, type))
+        //普通放置
+        if (tempArea != null && tempArea.TryPutCrystal(tempSeat, type))
         {
             tempSeat = null;
             tempArea = null;
+            PutButton.gameObject.SetActive(false);
+        }
+        //垃圾桶放置
+        else if (tempSeat != null)
+        {
+            if (TrashCrystalDict[tempSeat] != CrystalType.None)
+            {
+                Manager.RecycleCrystal(type);
+                TrashCrystalDict[tempSeat] = CrystalType.None;
+                BlackCount += 1;//以前有的话只是替换，要先把计数加回去
+            }
+
+            Image img = tempSeat.Find("Crystal").GetComponent<Image>();
+            img.gameObject.SetActive(true);
+            img.color = MonthMeeting.GetCrystalColor(type);
+            Manager.PutCrystal(type);
+            TrashCrystalDict[tempSeat] = type;
+            BlackCount -= 1;
+            tempSeat = null;
             PutButton.gameObject.SetActive(false);
         }
     }
 
     public void RemoveCrystal()
     {
-        tempArea.RemoveCrystal(tempSeat);
-        tempSeat = null;
-        tempArea = null;
-        PutButton.gameObject.SetActive(false);
+        //普通移除
+        if (tempArea != null)
+        {
+            tempArea.RemoveCrystal(tempSeat);
+            tempSeat = null;
+            tempArea = null;
+            PutButton.gameObject.SetActive(false);
+        }
+        //垃圾桶移除
+        else
+        {
+            if (TrashCrystalDict[tempSeat] == CrystalType.None)
+                return;
+            Image img = tempSeat.Find("Crystal").GetComponent<Image>();
+            img.gameObject.SetActive(false);
+            Manager.RecycleCrystal(TrashCrystalDict[tempSeat]);
+            TrashCrystalDict[tempSeat] = CrystalType.None;
+            BlackCount += 1;
+            tempSeat = null;
+            PutButton.gameObject.SetActive(false);
+        }
     }
 
     public void EndMeeting()

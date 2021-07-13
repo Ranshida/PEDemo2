@@ -199,7 +199,7 @@ public abstract class Event
                 GameControl.Instance.EC.CurrentChoiceEvent.MentalityDebuff();
         }
 
-        MonoBehaviour.print(emp.Name + " 事件:" + EventName + " 点数结果:" + posb);
+        MonoBehaviour.print(emp.Name + " 事件:" + EventName + " 点数结果:" + posb + "/" + FailLimitValue);
 
         return result;
     }

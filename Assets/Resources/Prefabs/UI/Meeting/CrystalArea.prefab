@@ -1484,8 +1484,6 @@ MonoBehaviour:
   parentPanel: {fileID: 0}
   dynamicWindow: {fileID: 0}
   Area:
-    NeighborIndex: 
-    NeighborAreas: []
     gridList: []
     CA: {fileID: 0}
     AS: {fileID: 0}

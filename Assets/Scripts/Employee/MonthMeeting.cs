@@ -72,7 +72,7 @@ public class MonthMeeting : MonoBehaviour
         //统计每个Boss的发言和水晶统计
         Dictionary<Employee, List<CrystalType>> managerCrystalDict = new Dictionary<Employee, List<CrystalType>>();
         bool haveBlack = false;//检测一次会议中是否产生了黑色水晶
-        foreach (Employee employee in managers)
+        foreach (Employee employee in GameControl.Instance.CurrentEmployees)
         {
             bool success;
             int result = 0;     // 1成功  2大成功  3失败  4大失败
